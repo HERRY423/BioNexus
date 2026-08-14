@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bio-research"
+version = "1.2.0"
+description = "A portable AI agent plugin for early-stage life sciences R&D, genomics, and preclinical research."
+authors = [{ name = "Anthropic" }]
+license = { text = "Apache-2.0" }
+readme = "README.md"
+requires-python = ">=3.10"
+keywords = [
+    "bio-research",
+    "biology",
+    "bioinformatics",
+    "genomics",
+    "single-cell",
+    "nextflow",
+    "allotrope",
+    "mcp"
+]
+dependencies = [
+    "numpy>=1.23.0",
+    "pandas>=2.0.0",
+    "scipy>=1.10.0",
+    "requests>=2.28.0",
+    "pyyaml>=6.0",
+    "tqdm>=4.65.0",
+    "jsonschema>=4.17.0"
+]
+
+[project.optional-dependencies]
+singlecell = [
+    "scanpy>=1.9.0",
+    "anndata>=0.9.0",
+    "scvi-tools>=1.0.0",
+    "torch>=2.0.0",
+    "scikit-learn>=1.2.0",
+    "matplotlib>=3.7.0",
+    "seaborn>=0.12.0",
+    "h5py>=3.8.0"
+]
+allotrope = [
+    "allotropy>=0.1.30",
+    "polars>=0.20.0",
+    "openpyxl>=3.1.0",
+    "xlrd>=2.0.1",
+    "pypdf>=3.15.0"
+]
+all = [
+    "bio-research[singlecell,allotrope]"
+]
+dev = [
+    "pytest>=7.0.0",
+    "ruff>=0.1.0"
+]
