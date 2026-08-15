@@ -31,8 +31,30 @@ python skills/spatial-transcriptomics/scripts/spatial_inspect.py visium.h5ad
 python skills/spatial-transcriptomics/scripts/spatial_pipeline.py visium.h5ad -o spatial_out.h5ad
 ```
 
-## Install
+## Installation & Platform Integration
 
+### 1. Codex / ChatGPT Marketplace (GUI)
+In Codex / ChatGPT Plugin Marketplace, click **"Add Marketplace" (添加插件市场)** and enter:
+- **来源 (Source)**: `HERRY423/BioNexus` (or `https://github.com/HERRY423/BioNexus.git`)
+- **Git 引用 (Git Reference)**: `main`
+- **稀疏路径 (Sparse Path)**: *(leave blank or enter `.`)*
+
+Codex automatically reads `.codex/config.json` and connects the local MCP server along with hosted bio-research endpoints.
+
+### 2. Claude Desktop / Claude CLI
+Add to your Claude Desktop config (`claude_desktop_config.json`):
+```json
+{
+  "mcpServers": {
+    "bio-research": {
+      "command": "python",
+      "args": ["<path-to-BioNexus>/scripts/local_mcp_server.py"]
+    }
+  }
+}
+```
+
+### 3. CLI & Local Python Environment
 ```bash
 # Windows
 .\setup.ps1
@@ -49,7 +71,7 @@ Optional extras:
 ```bash
 pip install -e ".[goldchain]"   # scanpy, leidenalg, harmonypy (no torch)
 pip install -e ".[scverse]"     # goldchain + scvi-tools + torch
-pip install -e ".[spatial]"     # squidpy + spatialdata
+pip install -e ".[spatial]"     # squidpy
 pip install -e ".[survival]"    # lifelines
 pip install -e ".[plm]"         # transformers (ESM-2; set BIONEXUS_ALLOW_ESM=1)
 pip install -e ".[structure]"   # abnumber, biotite
