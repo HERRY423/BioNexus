@@ -1,6 +1,14 @@
-"""BioNexus plugin kernel: contracts, backend probes, I/O, provenance."""
-
-from .agent_routing import DEFAULT_SKILLS, LEGACY_SKILLS, is_default_skill
+from .agent_routing import (
+    DEFAULT_SKILLS,
+    LEGACY_SKILLS,
+    RoutingDecision,
+    RoutingStatus,
+    ScientificIntentRequest,
+    discoverable_skill_names,
+    extract_scientific_capability,
+    is_default_skill,
+    route_scientific_intent,
+)
 from .backends import BackendUnavailable, is_available, probe, probe_all, require
 from .capabilities import (
     CANONICAL_CAPABILITIES,
@@ -96,7 +104,9 @@ __all__ = [
     "audit_statistical_significance",
     "canonical_skills",
     "core_skills",
+    "discoverable_skill_names",
     "evaluate_capability_preconditions",
+    "extract_scientific_capability",
     "find_capabilities_by_intent",
     "get_capability",
     "get_skill",
@@ -110,6 +120,10 @@ __all__ = [
     "refuse",
     "require",
     "require_doctor",
+    "route_scientific_intent",
+    "RoutingDecision",
+    "RoutingStatus",
+    "ScientificIntentRequest",
     "run_doctor",
     "sha256_file",
     "sidecar",

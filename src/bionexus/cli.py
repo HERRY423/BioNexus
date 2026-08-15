@@ -26,6 +26,7 @@ from bionexus.capabilities import (
 )
 from bionexus.doctor import run_doctor
 from bionexus.integrity import audit_expression_matrix
+from bionexus.intent_router import RoutingStatus, route_scientific_intent
 from bionexus.inventory import (
     SKILLS,
     as_markdown_table,
@@ -714,6 +715,66 @@ def handle_capability(args: argparse.Namespace) -> int:
     return 0
 
 
+def handle_route(args: argparse.Namespace) -> int:
+    """Handle the 'route' command for scientific intent routing."""
+    meta = {}
+    if getattr(args, "min_replicates", None) is not None:
+        meta["min_replicates_per_condition"] = args.min_replicates
+    if getattr(args, "is_normalized", False):
+        meta["is_normalized"] = True
+        meta["is_integer_like"] = False
+
+    decision = route_scientific_intent(
+        query=args.query,
+        data_path=args.data,
+        data_metadata=meta,
+        allow_degraded=args.allow_degraded,
+    )
+
+    if args.json:
+        print(json.dumps(decision.to_dict(), indent=2))
+        return 0 if decision.status == RoutingStatus.PERMITTED else 1
+
+    print("\n=== BioNexus Scientific Intent Routing Decision ===")
+    print(f"**Query**: \"{args.query}\"")
+    print(f"**Routing Status**: `{decision.status.value}`")
+    if decision.matched_capability:
+        print(f"**Matched Capability**: `{decision.matched_capability.id}` ({decision.matched_capability.display_name})")
+        print(f"**Target Skill**: `{decision.target_skill}`")
+    print(f"**Rationale**: {decision.rationale}\n")
+
+    if decision.status == RoutingStatus.PERMITTED:
+        print("[PERMITTED] Analysis is scientifically valid.")
+        if decision.recommended_script:
+            print(f"  - Recommended Script: `{decision.recommended_script}`")
+        if decision.recommended_command:
+            print(f"  - Recommended Command: `{decision.recommended_command}`")
+        return 0
+
+    elif decision.status == RoutingStatus.NEEDS_DATA:
+        print("[NEEDS DATA] Additional scientific metadata or inputs required:")
+        for req in decision.missing_data_requests:
+            print(f"  * {req}")
+        return 2
+
+    elif decision.status == RoutingStatus.ABSTAIN:
+        print("[ABSTAIN / REFUSED] Analysis is scientifically invalid or prohibited:")
+        for v in decision.violations:
+            print(f"  - {v}")
+        print("\nActionable Scientific Remedies:")
+        for r in decision.remedies:
+            print(f"  * {r}")
+        return 1
+
+    elif decision.status == RoutingStatus.DEGRADED_ADVISORY:
+        print("[DEGRADED ADVISORY] Execution permitted via Grade C heuristic fallback:")
+        for v in decision.violations:
+            print(f"  - {v}")
+        return 0
+
+    return 0
+
+
 # ==============================================================================
 # Main Parser & Router
 # ==============================================================================
@@ -815,6 +876,15 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_cap_check.add_argument("--is-normalized", action="store_true", help="Flag if input is normalized floats")
     p_cap_check.add_argument("--json", action="store_true", help="Output evaluation as JSON")
 
+    # 7. route (Validated Scientific Intent Router)
+    p_route = subparsers.add_parser("route", help="Route scientific queries to validated capabilities with invariant checks")
+    p_route.add_argument("query", help="User scientific query / intent string")
+    p_route.add_argument("--data", default=None, help="Optional path to dataset file (.h5ad, .csv)")
+    p_route.add_argument("--min-replicates", type=int, default=None, help="Number of biological replicates per condition")
+    p_route.add_argument("--is-normalized", action="store_true", help="Flag if input matrix is normalized continuous floats")
+    p_route.add_argument("--allow-degraded", action="store_true", help="Allow fallback to Grade C heuristics")
+    p_route.add_argument("--json", action="store_true", help="Output routing decision as JSON")
+
     args = parser.parse_args(argv)
 
     if not args.command:
@@ -839,6 +909,8 @@ def main(argv: Optional[list[str]] = None) -> int:
             p_cap.print_help()
             return 0
         return handle_capability(args)
+    elif args.command == "route":
+        return handle_route(args)
 
     return 0
 

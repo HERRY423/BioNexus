@@ -141,7 +141,68 @@ bionexus capability check scrna.pseudobulk_de --min-replicates 1
 
 ---
 
-## 🧬 4. The Scientific Evidence Operating Layer (EvidenceCard 2.0)
+## 🚦 4. The 6-Stage Scientific Intent & Invariant Router
+
+BioNexus replaces static skill lookup with a validated 6-stage **Scientific Intent Routing Pipeline** ([`src/bionexus/intent_router.py`](file:///c:/Plugin/BioNexus/src/bionexus/intent_router.py)):
+
+```text
+User Scientific Prompt ("compare tumor vs normal in my scRNA data")
+                     │
+                     ▼
+       1. Identify Analytical Intent (e.g. compare_conditions)
+                     │
+                     ▼
+       2. Inspect Data Semantics (counts vs log-floats, matrix shape)
+                     │
+                     ▼
+       3. Check Scientific Preconditions (replicates >= 2, valid geometry)
+                     │
+                     ▼
+       4. Match Canonical Capability (scrna.pseudobulk_de)
+                     │
+                     ▼
+       5. Probe Backend Lifecycle (pydeseq2 installed vs missing)
+                     │
+                     ▼
+       6. Authoritative Routing Decision:
+          ├── [PERMITTED]         -> Execute Gold-Chain (PyDESeq2)
+          ├── [NEEDS_DATA]        -> Request missing biological replicates in adata.obs
+          ├── [ABSTAIN]           -> Prohibit pseudoreplication with remedies
+          └── [DEGRADED_ADVISORY] -> Grade C fallback notice
+```
+
+### Programmatic & CLI Usage
+```python
+from bionexus.agent_routing import route_scientific_intent, RoutingStatus
+
+# Agent evaluates user query with available data metadata
+decision = route_scientific_intent(
+    query="compare tumor vs normal in my scRNA data",
+    data_metadata={"min_replicates_per_condition": 1}  # Single sample
+)
+
+if decision.status == RoutingStatus.ABSTAIN:
+    # Host agent directly receives reasons to refuse invalid analysis
+    print(decision.rationale)
+    print("Scientific Remedies:", decision.remedies)
+```
+
+```bash
+# Agent or user CLI routing
+bionexus route "compare treated vs control in scRNA"
+# -> [NEEDS DATA] Please provide biological replicate identifiers in adata.obs (e.g. sample_id, donor_id, batch).
+
+bionexus route "compare treated vs control in scRNA" --min-replicates 1
+# -> [ABSTAIN] Fewer than 2 biological replicates per experimental condition (pseudoreplication).
+
+bionexus route "compare treated vs control in scRNA" --min-replicates 3
+# -> [PERMITTED] Analysis is scientifically valid.
+#    Recommended Script: skills/single-cell-rna-qc/scripts/scrna_deseq.py
+```
+
+---
+
+## 🧬 5. The Scientific Evidence Operating Layer (EvidenceCard 2.0)
 
 BioNexus strictly decouples **Execution Fidelity** (whether an algorithm successfully computed) from **Scientific Evidence Quality** (statistical power, input validity, parameter sensitivity, and external replication).
 
