@@ -58,7 +58,90 @@ backend: "<Primary execution engine>"  # Required: e.g. "scanpy", "squidpy", "sc
 
 ---
 
-## 🧬 3. The Scientific Evidence Operating Layer
+## 📐 3. Machine-Readable Scientific Capability Contracts
+
+AI coding agents need more than human-readable markdown: they need **machine-actionable scientific contracts** that specify *when an analysis is scientifically valid* and *when it is statistically/biologically invalid and must be refused*.
+
+In BioNexus, every biological capability defines a formal `CapabilityContract` ([`src/bionexus/capabilities.py`](file:///c:/Plugin/BioNexus/src/bionexus/capabilities.py)):
+
+```yaml
+capability:
+  id: scrna.pseudobulk_de
+  version: 1
+  display_name: "Single-Cell Pseudobulk Differential Expression"
+  skill_name: "single-cell-rna-qc"
+
+intent:
+  - compare_conditions
+  - differential_expression
+  - treatment_effect
+
+inputs:
+  expression:
+    semantic_type: raw_counts
+    required: true
+    validation_rule: "audit_expression_matrix:counts"
+  sample_design:
+    semantic_type: sample_metadata
+    required: true
+
+preconditions:
+  - id: min_replicates
+    rule: "n_replicates_per_condition >= 2"
+    description: "At least 2 biological replicates per group to estimate dispersion."
+  - id: raw_integer_counts
+    rule: "is_integer_like(counts) == True"
+    description: "Negative binomial GLM requires discrete integer counts."
+
+backend:
+  canonical:
+    name: pydeseq2
+    minimum_version: 0.4.0
+    extra: deseq
+
+refusal_conditions:
+  - id: normalized_matrix_only
+    description: "Continuous floats provided where raw counts required."
+    remedy: "Sum unnormalized raw counts (adata.raw.X) over (sample, condition) before testing."
+  - id: missing_replicates
+    description: "Fewer than 2 biological replicates per group."
+    remedy: "Condition DE is invalid without replicates (pseudoreplication). Collect replicates or report exploratory rankings only."
+  - id: missing_backend
+    description: "PyDESeq2 backend missing."
+    remedy: "Install via `pip install bionexus[deseq]`."
+
+evidence_requirements:
+  multiple_testing: required
+  effect_size: required
+  min_fdr_alpha: 0.05
+```
+
+### Querying and Evaluating Capabilities via Python / CLI
+```python
+from bionexus.capabilities import evaluate_capability_preconditions
+
+result = evaluate_capability_preconditions(
+    "scrna.pseudobulk_de",
+    input_metadata={"min_replicates_per_condition": 1, "is_normalized": True}
+)
+
+if not result.permitted:
+    # Deterministic scientific refusal with actionable remedies
+    print(f"Refusal Status: {result.status}")
+    print(f"Violations: {result.violations}")
+    print(f"Actionable Remedies: {result.remedies}")
+```
+
+```bash
+# Query capabilities via CLI
+bionexus capability list --intent differential_expression
+bionexus capability show scrna.pseudobulk_de
+bionexus capability check scrna.pseudobulk_de --min-replicates 1
+```
+
+---
+
+## 🧬 4. The Scientific Evidence Operating Layer (EvidenceCard 2.0)
 
 BioNexus strictly decouples **Execution Fidelity** (whether an algorithm successfully computed) from **Scientific Evidence Quality** (statistical power, input validity, parameter sensitivity, and external replication).
 

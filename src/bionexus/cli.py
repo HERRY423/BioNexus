@@ -20,6 +20,10 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+from bionexus.capabilities import (
+    get_capability,
+    list_capabilities,
+)
 from bionexus.doctor import run_doctor
 from bionexus.integrity import audit_expression_matrix
 from bionexus.inventory import (
@@ -620,6 +624,96 @@ def handle_audit(args: argparse.Namespace) -> int:
         return 0 if grade in ("A", "B") else 1
 
 
+def handle_capability(args: argparse.Namespace) -> int:
+    """Handle the 'capability' command."""
+    action = getattr(args, "capability_action", "list")
+
+    if action == "list":
+        caps = list_capabilities(intent=args.intent, skill_name=args.skill)
+        if args.json:
+            print(json.dumps([c.to_dict() for c in caps], indent=2))
+            return 0
+
+        print(f"\n=== BioNexus Scientific Capabilities ({len(caps)} Registered) ===\n")
+        print("| Capability ID | Display Name | Skill | Canonical Backend | Intents |")
+        print("|---|---|---|---|---|")
+        for c in caps:
+            intents_str = ", ".join(c.intent[:3])
+            print(f"| `{c.id}` | **{c.display_name}** | `{c.skill_name}` | `{c.backend.canonical_name}` | {intents_str} |")
+        print()
+        return 0
+
+    elif action == "show":
+        try:
+            contract = get_capability(args.id)
+            if args.json:
+                print(json.dumps(contract.to_dict(), indent=2))
+                return 0
+
+            print(f"\n### Capability Contract: `{contract.id}` (v{contract.version})")
+            print(f"**{contract.display_name}** (`{contract.skill_name}`)\n")
+            print(f"> {contract.summary}\n")
+            print(f"- **Intents**: {', '.join(contract.intent)}")
+            print(f"- **Canonical Backend**: `{contract.backend.canonical_name}` (min version: {contract.backend.minimum_version or 'any'})")
+            print("\n#### Input Semantic Specifications:")
+            for name, spec in contract.inputs.items():
+                print(f"- `{name}` ({spec.semantic_type}, required={spec.required}): {spec.description}")
+            print("\n#### Scientific Preconditions:")
+            for p in contract.preconditions:
+                print(f"- `{p.id}`: `{p.rule}` ({p.description})")
+            print("\n#### Deterministic Refusal Triggers:")
+            for r in contract.refusal_conditions:
+                print(f"- **`{r.condition_id}`**: {r.description}")
+                print(f"  *Remedy*: {r.remedy}")
+            print("\n#### Expected Outputs:")
+            for out in contract.outputs:
+                print(f"- {out}")
+            print()
+            return 0
+        except KeyError as e:
+            print(f"[ERROR] {e}", file=sys.stderr)
+            return 1
+
+    elif action == "check":
+        try:
+            contract = get_capability(args.id)
+            meta = {}
+            if getattr(args, "meta_json", None):
+                with open(args.meta_json, "r", encoding="utf-8") as f:
+                    meta = json.load(f)
+
+            if getattr(args, "min_replicates", None) is not None:
+                meta["min_replicates_per_condition"] = args.min_replicates
+            if getattr(args, "is_normalized", False):
+                meta["is_normalized"] = True
+                meta["is_integer_like"] = False
+
+            result = contract.evaluate_viability(input_metadata=meta)
+            if args.json:
+                print(json.dumps(result.to_dict(), indent=2))
+                return 0 if result.permitted else 1
+
+            print(f"\n=== Capability Precondition Evaluation: `{contract.id}` ===")
+            print(f"**Status**: `{result.status}` | **Conclusion Maturity**: `{result.conclusion_maturity}`\n")
+            if result.permitted:
+                print("[OK] All scientific preconditions satisfied. Analysis is scientifically valid.")
+                return 0
+            else:
+                print("[REFUSED] Analysis cannot be validly executed due to scientific violations:")
+                for v in result.violations:
+                    print(f"  - {v}")
+                print("\nActionable Remedies:")
+                for r in result.remedies:
+                    print(f"  * {r}")
+                print()
+                return 1
+        except KeyError as e:
+            print(f"[ERROR] {e}", file=sys.stderr)
+            return 1
+
+    return 0
+
+
 # ==============================================================================
 # Main Parser & Router
 # ==============================================================================
@@ -698,6 +792,29 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_audit.add_argument("path", help="Path to .h5ad or matrix file to inspect")
     p_audit.add_argument("--expected-type", choices=["counts", "normalized"], default="counts")
 
+    # 6. capability
+    p_cap = subparsers.add_parser("capability", help="Query and validate machine-readable scientific capability contracts")
+    cap_subs = p_cap.add_subparsers(dest="capability_action", help="Capability actions")
+
+    # capability list
+    p_cap_list = cap_subs.add_parser("list", help="List available capability contracts")
+    p_cap_list.add_argument("--intent", default=None, help="Filter by scientific intent")
+    p_cap_list.add_argument("--skill", default=None, help="Filter by skill name")
+    p_cap_list.add_argument("--json", action="store_true", help="Output as JSON")
+
+    # capability show <id>
+    p_cap_show = cap_subs.add_parser("show", help="Show full capability contract specification")
+    p_cap_show.add_argument("id", help="Capability contract ID (e.g. scrna.pseudobulk_de)")
+    p_cap_show.add_argument("--json", action="store_true", help="Output contract as JSON")
+
+    # capability check <id>
+    p_cap_check = cap_subs.add_parser("check", help="Evaluate capability preconditions and refusal triggers")
+    p_cap_check.add_argument("id", help="Capability contract ID (e.g. scrna.pseudobulk_de)")
+    p_cap_check.add_argument("--meta-json", default=None, help="Path to input metadata JSON")
+    p_cap_check.add_argument("--min-replicates", type=int, default=None, help="Number of replicates per condition")
+    p_cap_check.add_argument("--is-normalized", action="store_true", help="Flag if input is normalized floats")
+    p_cap_check.add_argument("--json", action="store_true", help="Output evaluation as JSON")
+
     args = parser.parse_args(argv)
 
     if not args.command:
@@ -717,9 +834,15 @@ def main(argv: Optional[list[str]] = None) -> int:
         return handle_registry(args)
     elif args.command == "audit":
         return handle_audit(args)
+    elif args.command == "capability":
+        if not getattr(args, "capability_action", None):
+            p_cap.print_help()
+            return 0
+        return handle_capability(args)
 
     return 0
 
 
 if __name__ == "__main__":
     sys.exit(main())
+
