@@ -151,3 +151,21 @@ def test_cli_capability_commands(capsys):
     captured = capsys.readouterr()
     assert "[REFUSED]" in captured.out
     assert "Fewer than 2 biological replicates" in captured.out
+
+
+def test_preflight_vs_postexecution_evidence_distinction():
+    """Verify EvidenceCard 2.1 preflight evidence remains PRELIMINARY and UNTESTED for statistics."""
+    eval_res = evaluate_capability_preconditions(
+        "scrna.exploratory_clustering",
+        input_metadata={"is_integer_like": True},
+    )
+    assert eval_res.permitted is True
+    assert eval_res.status == "PERMITTED"
+    assert eval_res.conclusion_maturity == ConclusionMaturity.PRELIMINARY.value
+
+    card = eval_res.evidence_card
+    assert card.statistical_support == "UNTESTED"
+    assert card.parameter_robustness == "UNTESTED"
+    assert card.external_validation == "UNTESTED"
+    assert card.details["evaluation_stage"] == "preflight_viability"
+

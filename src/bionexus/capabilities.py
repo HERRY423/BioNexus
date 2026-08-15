@@ -258,15 +258,24 @@ class CapabilityContract:
             status = "REFUSED"
         else:
             exec_state = ExecutionState.EXECUTED.value
-            concl_maturity = ConclusionMaturity.SUPPORTED.value
+            concl_maturity = ConclusionMaturity.PRELIMINARY.value
             card = EvidenceCard(
                 execution_state=exec_state,
-                input_integrity=DimensionGrade.GRADE_A.value,
-                assumption_validity=DimensionGrade.GRADE_A.value,
-                statistical_support=DimensionGrade.GRADE_A.value,
+                input_integrity=DimensionGrade.GRADE_A.value if meta else DimensionGrade.UNTESTED.value,
+                assumption_validity=DimensionGrade.GRADE_A.value if meta else DimensionGrade.GRADE_B.value,
+                statistical_support=DimensionGrade.UNTESTED.value,
+                parameter_robustness=DimensionGrade.UNTESTED.value,
+                cross_method_concordance=DimensionGrade.UNTESTED.value,
+                external_validation=DimensionGrade.UNTESTED.value,
                 details={
                     "contract_id": self.id,
                     "execution_backend": self.backend.canonical_name,
+                    "evaluation_stage": "preflight_viability",
+                    "notes": (
+                        "Preconditions satisfied and required backend verified. "
+                        "Execution is permitted; conclusion maturity remains PRELIMINARY "
+                        "until post-execution statistical tests (p-values, FDR, effect size) are computed."
+                    ),
                 },
             )
             status = "PERMITTED"
