@@ -232,6 +232,21 @@ def to_codex_config(registry: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def to_codex_plugin_json(registry: Dict[str, Any]) -> Dict[str, Any]:
+    """Generate Codex .codex-plugin/plugin.json manifest."""
+    pkg = registry["package"]
+    mcp_data = to_agent_plugins_mcp_json(registry)
+    author_name = pkg["author"]["name"] if isinstance(pkg.get("author"), dict) else str(pkg.get("author", "BioNexus Team"))
+    return {
+        "name": pkg["name"],
+        "version": pkg["version"],
+        "description": pkg["description"],
+        "author": author_name,
+        "license": pkg.get("license", "Apache-2.0"),
+        "mcpServers": mcp_data.get("mcpServers", {})
+    }
+
+
 def to_marketplace_json(registry: Dict[str, Any]) -> Dict[str, Any]:
     """Generate Codex / Claude Marketplace registry manifest (marketplace.json)."""
     pkg = registry["package"]
@@ -263,16 +278,21 @@ def to_marketplace_json(registry: Dict[str, Any]) -> Dict[str, Any]:
 
 def get_expected_manifests(registry: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
     """Return dictionary of relative file paths to their expected dictionary representations."""
+    codex_plugin = to_codex_plugin_json(registry)
+    mkt = to_marketplace_json(registry)
     return {
         "plugin.json": to_agent_plugins_plugin_json(registry),
         "mcp.json": to_agent_plugins_mcp_json(registry),
         ".claude-plugin/plugin.json": to_claude_plugin_json(registry),
         ".mcp.json": to_claude_mcp_json(registry),
         ".codex/config.json": to_codex_config(registry),
-        ".agents/plugins/marketplace.json": to_marketplace_json(registry),
-        ".codex/marketplace.json": to_marketplace_json(registry),
-        ".claude-plugin/marketplace.json": to_marketplace_json(registry),
-        "marketplace.json": to_marketplace_json(registry)
+        ".codex-plugin/plugin.json": codex_plugin,
+        "plugins/codex/.codex-plugin/plugin.json": codex_plugin,
+        "plugins/bio-research/.codex-plugin/plugin.json": codex_plugin,
+        ".agents/plugins/marketplace.json": mkt,
+        ".codex/marketplace.json": mkt,
+        ".claude-plugin/marketplace.json": mkt,
+        "marketplace.json": mkt
     }
 
 
