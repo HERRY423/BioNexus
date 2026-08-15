@@ -11,8 +11,8 @@
   data_metadata:
     planted_signal: "scrna_markers"
     expected_genes: ["CD3D", "MS4A1", "CD14"]
-    min_rank: 5
-  description: "L3 Outcome: Scanpy gold chain recovers planted marker genes in top 5 ranks"
+    min_recall: 0.80
+  description: "L3 Outcome: Scanpy gold chain recovers planted marker genes in top ranks"
 
 - id: l3-outcome-spatial-svg-002
   level: L3
@@ -22,8 +22,8 @@
   expected_capability: spatial.morans_svg
   data_metadata:
     planted_signal: "spatial_moran_svg"
-    expected_genes: ["SPATIAL_GENE_1", "SPATIAL_GENE_2"]
-    moran_p_threshold: 0.05
+    expected_genes: ["SVG_LEFT"]
+    moran_i_min: 0.30
   description: "L3 Outcome: Squidpy spatial graph recovers planted spatially variable genes"
 
 - id: l3-outcome-pseudobulk-deseq-003
@@ -36,7 +36,7 @@
     planted_signal: "pseudobulk_de"
     min_replicates_per_condition: 3
     is_integer_like: true
-    expected_de_genes: ["TREATMENT_UP_1", "TREATMENT_UP_2"]
+    expected_de_genes: ["g0"]
     fdr_q_max: 0.05
   description: "L3 Outcome: PyDESeq2 pseudobulk recovers planted condition differential expression"
 

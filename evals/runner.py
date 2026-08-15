@@ -155,31 +155,119 @@ def run_single_case(
         actual_cap = case.expected_capability
         signal_type = case.data_metadata.get("planted_signal", "")
 
+        repo_root = Path(__file__).resolve().parents[1]
+        import sys
+        for p in [
+            str(repo_root / "src"),
+            str(repo_root / "skills" / "single-cell-rna-qc" / "scripts"),
+            str(repo_root / "skills" / "spatial-transcriptomics" / "scripts"),
+            str(repo_root / "tests" / "fixtures"),
+        ]:
+            if p not in sys.path:
+                sys.path.insert(0, p)
+
         if signal_type == "scrna_markers":
-            # Test planted signal recovery
-            import numpy as np
-            X = np.random.poisson(lam=2.0, size=(100, 50))
-            grade, notes, stats = audit_expression_matrix(X, expected_type="counts")
-            if not stats.get("is_integer_like", False):
-                failure_reasons.append("L3 Failure: Matrix integer check failed.")
+            # 1. Run actual Scanpy gold chain pipeline on planted dataset
+            from make_tiny import write_tiny_scrna
+            import anndata as ad
+            from scrna_pipeline import run_scrna_gold_chain
+
+            fixture_path = repo_root / "tests" / "fixtures" / "tiny_scrna.h5ad"
+            if not fixture_path.is_file():
+                write_tiny_scrna(fixture_path)
+            adata = ad.read_h5ad(fixture_path)
+
+            out, markers, summary = run_scrna_gold_chain(
+                adata, run_qc=False, n_top_genes=60, resolution=1.2, n_marker_genes=15
+            )
+            expected = set(case.data_metadata.get("expected_genes", ["CD3D", "MS4A1", "CD14"]))
+            name_col = "names" if "names" in markers.columns else ("gene" if "gene" in markers.columns else markers.columns[1])
+            top_markers = set(markers[name_col].astype(str))
+            recovered = expected.intersection(top_markers)
+            recall = len(recovered) / len(expected) if expected else 1.0
+            min_recall = case.data_metadata.get("min_recall", 0.80)
+            if recall < min_recall:
+                failure_reasons.append(
+                    f"L3 Failure: Marker recall {recall:.2f} < threshold {min_recall:.2f}. Expected: {expected}, Recovered: {recovered}"
+                )
             actual_status = "PERMITTED"
 
-        elif signal_type == "clustering_stability":
-            import numpy as np
-            labels_a = np.array([0] * 50 + [1] * 50)
-            labels_b = np.array([0] * 48 + [1] * 2 + [1] * 50)
-            grade, notes, stats = audit_parameter_stability([labels_a, labels_b], metric="ari")
-            if stats.get("mean_similarity", 0.0) < case.data_metadata.get("target_ari_min", 0.80):
-                failure_reasons.append(f"L3 Failure: ARI {stats.get('mean_similarity')} below threshold.")
+        elif signal_type == "spatial_moran_svg":
+            # 2. Run actual Squidpy spatial gold chain pipeline on planted dataset
+            from make_tiny import write_tiny_spatial
+            import anndata as ad
+            from spatial_pipeline import run_spatial_gold_chain
+
+            fixture_path = repo_root / "tests" / "fixtures" / "tiny_spatial.h5ad"
+            if not fixture_path.is_file():
+                write_tiny_spatial(fixture_path)
+            adata = ad.read_h5ad(fixture_path)
+
+            out, svg, summary = run_spatial_gold_chain(adata, cluster=False, top_n=10, n_neighs=6)
+            top_svgs = set(svg.head(5)["gene"].astype(str))
+            expected = set(case.data_metadata.get("expected_genes", ["SVG_LEFT"]))
+            if not expected.issubset(top_svgs):
+                failure_reasons.append(
+                    f"L3 Failure: Expected SVGs {expected} not recovered in top 5: {top_svgs}"
+                )
+            if "SVG_LEFT" in set(svg["gene"]):
+                left_i = float(svg.loc[svg["gene"] == "SVG_LEFT", "morans_i"].iloc[0])
+                min_i = case.data_metadata.get("moran_i_min", 0.30)
+                if left_i < min_i:
+                    failure_reasons.append(
+                        f"L3 Failure: Moran's I {left_i:.3f} < threshold {min_i:.3f}"
+                    )
             actual_status = "PERMITTED"
 
         elif signal_type == "pseudobulk_de":
+            # 3. Run actual PyDESeq2 Wald test on planted condition DE matrix
             import numpy as np
-            fdr = np.array([0.0001, 0.0002, 0.45, 0.89])
-            lfc = np.array([2.5, 3.1, 0.1, -0.2])
-            grade, notes, stats = audit_statistical_significance(fdr_q=fdr, effect_sizes=lfc, alpha=0.05)
-            if grade != "A":
-                failure_reasons.append("L3 Failure: Failed to recover planted differential expression.")
+            import pandas as pd
+            from scrna_deseq import run_pydeseq2
+
+            rng = np.random.default_rng(1)
+            genes = [f"g{i}" for i in range(20)]
+            samples = [f"s{i}" for i in range(8)]
+            cond = ["A"] * 4 + ["B"] * 4
+            mat = rng.poisson(20, size=(8, 20)).astype(int)
+            mat[4:, 0] += 80  # g0 is true planted condition DEG
+            counts = pd.DataFrame(mat, index=samples, columns=genes)
+            design = pd.DataFrame({"sample_id": samples, "condition": cond})
+
+            table, contract = run_pydeseq2(counts, design, condition="condition", reference="A", contrast_level="B")
+            top_degs = table.sort_values("pvalue").head(5)["gene"].astype(str).tolist()
+            expected_de = case.data_metadata.get("expected_de_genes", ["g0"])
+            for g in expected_de:
+                if g not in top_degs:
+                    failure_reasons.append(f"L3 Failure: Planted DEG '{g}' not found in top PyDESeq2 findings: {top_degs}")
+            actual_status = "PERMITTED"
+
+        elif signal_type == "clustering_stability":
+            # 4. Run parameter resolution sweep and compute actual Adjusted Rand Index
+            import anndata as ad
+            from make_tiny import write_tiny_scrna
+            from scrna_preprocess import preprocess_scrna
+            from scrna_reduce_cluster import reduce_and_cluster
+
+            fixture_path = repo_root / "tests" / "fixtures" / "tiny_scrna.h5ad"
+            if not fixture_path.is_file():
+                write_tiny_scrna(fixture_path)
+            adata = ad.read_h5ad(fixture_path)
+
+            adata_pre, _ = preprocess_scrna(adata, n_top_genes=50)
+            adata_res05, _ = reduce_and_cluster(adata_pre.copy(), resolution=0.5)
+            adata_res08, _ = reduce_and_cluster(adata_pre.copy(), resolution=0.8)
+
+            labels_05 = adata_res05.obs["leiden"].values
+            labels_08 = adata_res08.obs["leiden"].values
+
+            grade, notes, stats = audit_parameter_stability([labels_05, labels_08], metric="ari")
+            ari_score = stats.get("mean_similarity", 0.0)
+            target_ari = case.data_metadata.get("target_ari_min", 0.80)
+            if ari_score < target_ari:
+                failure_reasons.append(
+                    f"L3 Failure: Clustering stability ARI {ari_score:.3f} < target threshold {target_ari:.3f}"
+                )
             actual_status = "PERMITTED"
 
         else:
