@@ -8,20 +8,22 @@
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-purple.svg?style=flat-square)](https://claude.ai/)
 [![Cursor MCP](https://img.shields.io/badge/Cursor-MCP%20Ready-black.svg?style=flat-square)](https://cursor.com/)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg?style=flat-square)](https://www.python.org/)
-[![Tests](https://img.shields.io/badge/Tests-190%20Passed-success.svg?style=flat-square)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-217%20Passed-success.svg?style=flat-square)](tests/)
+[![Eval CRI](https://img.shields.io/badge/Eval%20CRI-96.2%25-blueviolet.svg?style=flat-square)](evals/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
 [![RUO](https://img.shields.io/badge/Status-Research%20Use%20Only-yellow.svg?style=flat-square)](#-regulatory-notice--compliance)
 
 <p align="center">
   <b>BioNexus</b> transforms AI coding agents (<b>OpenAI Codex</b>, <b>Anthropic Claude Code</b>, <b>Cursor</b>) into rigorous, peer-reviewed computational biology assistants.<br/>
-  It enforces gold-standard bioinformatics pipelines, deterministic 7-dimensional evidence grading, multi-database MCP connectivity, and non-negotiable scientific abstention when experimental conditions fail.
+  It enforces gold-standard bioinformatics pipelines, deterministic 3-layer EvidenceCard 2.0 grading, machine-readable Capability Contracts, multi-database MCP connectivity, and non-negotiable scientific abstention when experimental conditions fail.
 </p>
 
 ```text
 ✓ Single-Cell RNA-seq QC & Clustering (scanpy)    ✓ Spatial Transcriptomics & SVG Analysis (squidpy)
 ✓ Deep Generative VAE Modeling (scvi-tools)       ✓ nf-core Pipeline Automation (RNA-seq / Sarek)
 ✓ 16+ Local MCP Biological Database Tools         ✓ 9 Cloud-Hosted Biological MCP Endpoints
-✓ 7-Dimensional EvidenceCard Grading              ✓ W3C PROV-O Provenance Tracking
+✓ EvidenceCard 2.0 Epistemic Evaluation           ✓ Machine-Readable Capability Contracts
+✓ 6-Stage Scientific Intent & Invariant Router    ✓ BioNexus Eval Agent Behavior Benchmark (96.2% CRI)
 ✓ Zero-Key Out-of-the-Box Core Databases          ✓ Deterministic Scientific Refusal Protocols
 ```
 
@@ -300,20 +302,35 @@ python scripts/registry_compiler.py --validate-endpoints
 
 ---
 
-## 🧪 Testing & Quality Assurance
+## 🧪 Testing & Reliability Benchmark
 
 BioNexus is continuously tested on **Linux, Windows, and macOS** with **Python 3.10, 3.11, 3.12, and 3.13**:
 
 ```bash
-# Run full unit test suite (190+ tests)
+# Run full unit test suite (217+ tests)
 pytest
 
-# Run backend lifecycle matrix tests (installed, missing, partial, incompatible, missing weights/binaries)
+# Run BioNexus Eval Benchmark across all 8 reliability pillars
+bionexus eval
+
+# Run backend lifecycle matrix tests
 pytest tests/unit/test_backend_matrix.py -v
 
 # Run code style & linting checks
 ruff check .
 ```
+
+---
+
+## 📚 Governance, Documentation & Releases
+
+- 📜 **[Changelog & Release Notes](CHANGELOG.md)**: Full record of changes and release highlights.
+- 🏛️ **[Semantic Versioning Policy](docs/versioning-policy.md)**: Release lifecycle, support windows, and versioning rules.
+- 🤖 **[Compatibility Matrix](docs/compatibility-matrix.md)**: AI agent hosts, Python runtimes, and bioinformatics backend versions.
+- 🚀 **[Migration & Upgrade Guide](docs/migration-guide.md)**: How to migrate from EvidenceCard 1.0 to EvidenceCard 2.0.
+- ⏳ **[Deprecation Policy & Sunset Schedule](docs/deprecation-policy.md)**: 3-phase deprecation policy and timeline.
+- 🛠️ **[Developer & Skill Development Guide](docs/plugin-development.md)**: Anatomy of a Gold Reference skill and CLI scaffolding.
+- 🤝 **[Contributing Guidelines](CONTRIBUTING.md)**: Scientific honesty contract and pull request acceptance criteria.
 
 ---
 
@@ -331,3 +348,4 @@ ruff check .
 
 BioNexus is open-source software licensed under the [Apache License, Version 2.0](LICENSE).
 Copyright (c) 2026 BioNexus Team.
+

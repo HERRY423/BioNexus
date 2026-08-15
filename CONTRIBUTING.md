@@ -128,7 +128,7 @@ If you added or modified MCP endpoints or registry metadata, synchronize all pla
 bionexus registry --generate
 ```
 
-### 6. Run Quality Checks & Test Suite
+### 6. Run Quality Checks, Test Suite & Reliability Benchmark
 ```bash
 # Run Ruff linter
 ruff check .
@@ -139,12 +139,21 @@ bionexus registry --check
 # Run full test suite
 pytest tests/ -v
 
+# Run BioNexus Eval Benchmark (Composite Reliability Index >= 95%)
+bionexus eval
+
 # Run gold-chain smoke test
 python scripts/goldchain_smoke.py
 ```
 
-### 7. Submit Your Pull Request
+### 7. Governance, Versioning & Releases
+- **Semantic Versioning**: Adhere to [`docs/versioning-policy.md`](file:///c:/Plugin/BioNexus/docs/versioning-policy.md).
+- **Compatibility Matrix**: Verify platform & library support in [`docs/compatibility-matrix.md`](file:///c:/Plugin/BioNexus/docs/compatibility-matrix.md).
+- **Deprecation Rules**: Consult [`docs/deprecation-policy.md`](file:///c:/Plugin/BioNexus/docs/deprecation-policy.md).
+- **Changelog**: Add an entry under `## [Unreleased]` in [`CHANGELOG.md`](file:///c:/Plugin/BioNexus/CHANGELOG.md).
+
+### 8. Submit Your Pull Request
 Push your branch to GitHub and open a Pull Request against `main`. Ensure your PR description includes:
 - Summary of the new skill or architectural improvement.
-- Evidence that all CI tests are green.
+- Evidence that all CI tests and `bionexus eval` benchmark cases are green.
 - Example inputs and outputs demonstrating `EvidenceCard` synthesis.
