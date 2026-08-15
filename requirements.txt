@@ -2,11 +2,11 @@
 #   pip install -e ".[scverse]"   # gold chain
 #   pip install -e ".[scvi]" is part of [scverse]
 #   pip install -e ".[spatial]" "[survival]" "[allotrope]"
-numpy>=1.23.0,<2.0.0
+numpy>=1.23.0
 pandas>=2.0.0,<3.0.0
-scipy>=1.10.0,<2.0.0
+scipy>=1.10.0
 requests>=2.28.0,<3.0.0
 pyyaml>=6.0,<7.0
 tqdm>=4.65.0,<5.0.0
-jsonschema>=4.17.0,<5.0.0
-scikit-learn>=1.2.0,<2.0.0
+jsonschema>=4.17.0,<6.0.0
+scikit-learn>=1.2.0

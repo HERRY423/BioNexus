@@ -44,32 +44,40 @@ jobs:
       - name: Install Dependencies
         shell: bash
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements-dev.txt
-          pip install -e ".[dev,goldchain]"
+          pip install -e .
       - name: Spatial extra (Ubuntu 3.11, required)
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
         shell: bash
         run: pip install -e ".[spatial]"
-      - name: Run Pytest with Coverage
+      - name: Run Pytest Test Suite
         shell: bash
         run: |
-          pytest tests/ --cov=scripts --cov=skills --cov-report=xml --cov-report=term-missing
+          pytest tests/ -v
       - name: Fixture gold-chain smoke
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
         shell: bash
         run: python scripts/goldchain_smoke.py
-      - name: Verify Local MCP Server JSON-RPC Protocol
+      - name: Verify FastMCP SDK & Local MCP Server Protocol
         shell: bash
         run: |
           python -c "
+          import sys
+          sys.path.insert(0, 'scripts')
+          from local_mcp_server import create_mcp_server
+          s = create_mcp_server()
+          assert s.name == 'bio-research-local-mcp'
+          print('Official FastMCP Server initialization PASSED.')
+          "
+          python -c "
           import subprocess, json
-          p = subprocess.Popen(['python', 'scripts/local_mcp_server.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+          p = subprocess.Popen(['python', 'scripts/local_mcp_server.py', '--legacy'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
           req = {'jsonrpc': '2.0', 'id': 1, 'method': 'initialize', 'params': {}}
           out, _ = p.communicate(json.dumps(req) + '\n', timeout=10)
           resp = json.loads(out.strip())
           assert resp['result']['serverInfo']['name'] == 'bio-research-local-mcp'
-          print('Local MCP Server initialization test PASSED.')
+          print('Local MCP Server legacy stdio protocol PASSED.')
           "
 
   scvi-smoke:
