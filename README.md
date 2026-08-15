@@ -32,13 +32,24 @@ Codex natively loads BioNexus skills, analysis rules, and MCP endpoints as a str
   2. Search for **`BioNexus`** and click **Install**.
   BioNexus provides biomedical workflow skills, scientific reliability rules, MCP-backed biological databases, and provenance-aware analysis.
 
-- **Option B: Add Marketplace (GitHub Source)**
+- **Option B: Add Marketplace (GitHub Source — GUI)**
   1. In the Codex interface, click **"Add Plugin Marketplace" (添加插件市场)**.
   2. Fill in the repository details:
      - **Source (来源)**: `HERRY423/BioNexus` *(or `https://github.com/HERRY423/BioNexus.git`)*
      - **Git Reference (Git 引用)**: `main`
-     - **Sparse Path (稀疏路径)**: `.` *(or leave blank)*
-  3. Click **Add Marketplace**. Codex automatically loads [`.codex/config.json`](file:///.codex/config.json) and connects local & cloud MCP servers.
+     - **Sparse Path (稀疏路径)**: **⚠️ Leave EMPTY — do NOT enter `.`**
+  3. Click **Add Marketplace (添加市场)**.
+
+  > ⚠️ **Important**: Do NOT enter `.` in the Sparse Path field. A `.` sparse-checkout pattern excludes dot-prefixed directories (`.agents/`, `.codex-plugin/`), which contain the required marketplace and plugin manifests. Leaving it empty clones the full repository correctly.
+
+- **Option C: Add Marketplace (CLI)**
+  ```bash
+  # Add the BioNexus marketplace source from GitHub
+  codex plugin marketplace add HERRY423/BioNexus --ref main
+
+  # Install and enable the bio-research plugin
+  codex plugin add bio-research@bionexus-marketplace
+  ```
 
 ---
 
