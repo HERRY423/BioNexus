@@ -154,7 +154,7 @@ SKILLS: List[SkillRecord] = [
         "tier": "wrapper",
         "does": "SHA-256 file hashes, environment snapshot, activity-aware Methods text.",
         "does_not": "Provide 21 CFR Part 11, GxP, or CLIA audit trails.",
-        "backend": "bio_research.provenance",
+        "backend": "bionexus.provenance",
     },
     {
         "name": "knowledge-graph-augmentation",

@@ -11,8 +11,8 @@ sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
 from local_mcp_server import TOOLS_SCHEMA
 
-from bio_research.doctor import run_doctor
-from bio_research.inventory import core_skills
+from bionexus.doctor import run_doctor
+from bionexus.inventory import core_skills
 
 
 def test_doctor_reports_tier_and_forbids_clia():

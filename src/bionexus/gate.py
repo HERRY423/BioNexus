@@ -71,7 +71,7 @@ def _enforce_ready(
     flags = report.get("ready") or report.get("flags") or {}
     scverse_ok = bool(flags.get("scverse_ready") or flags.get("scverse"))
     if require_scverse and not scverse_ok:
-        raise DoctorGateError("scRNA gold chain requires scanpy+anndata. pip install 'bio-research[goldchain]'.")
+        raise DoctorGateError("scRNA gold chain requires scanpy+anndata. pip install 'bionexus[goldchain]'.")
     spatial_ok = bool(flags.get("spatial_ready") or flags.get("squidpy"))
     if require_spatial and not spatial_ok:
-        raise DoctorGateError("spatial gold chain requires squidpy. pip install 'bio-research[spatial]'.")
+        raise DoctorGateError("spatial gold chain requires squidpy. pip install 'bionexus[spatial]'.")

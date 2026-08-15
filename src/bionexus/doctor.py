@@ -61,7 +61,7 @@ def run_doctor() -> Dict[str, Any]:
         )
         next_actions.append("stop at numeric clusters + markers; do not invent cell types")
     else:
-        next_actions.append("pip install 'bio-research[goldchain]' before scRNA work")
+        next_actions.append("pip install 'bionexus[goldchain]' before scRNA work")
     if ready["scvi_ready"]:
         next_actions.append("use skills/scvi-tools for batch integration after the gold chain")
     if ready["spatial_ready"]:
@@ -69,7 +69,7 @@ def run_doctor() -> Dict[str, Any]:
             "run skills/spatial-transcriptomics/scripts/spatial_pipeline.py on SpatialData/.h5ad"
         )
     else:
-        next_actions.append("pip install 'bio-research[spatial]' before spatial gold-chain work")
+        next_actions.append("pip install 'bionexus[spatial]' before spatial gold-chain work")
 
     report = {
         "plugin_version": PLUGIN_VERSION,

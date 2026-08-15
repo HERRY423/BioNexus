@@ -15,7 +15,7 @@ if _SRC.is_dir() and str(_SRC) not in sys.path:
 from _common import attach_meta
 from spatial_io import load_spatial_anndata, resolve_spatial_key, spatial_load_contract
 
-from bio_research.contracts import GRADE_A
+from bionexus.contracts import GRADE_A
 
 
 def inspect_spatial(adata, *, spatial_key: str | None = None) -> dict:
@@ -61,7 +61,7 @@ def main() -> None:
     parser.add_argument("--table", default=None, help="SpatialData table name (required if multiple tables)")
     parser.add_argument("--skip-doctor", action="store_true")
     args = parser.parse_args()
-    from bio_research.gate import require_doctor
+    from bionexus.gate import require_doctor
 
     require_doctor(require_spatial=True, skip=args.skip_doctor)
     adata = load_spatial_anndata(args.input, table_key=args.table)

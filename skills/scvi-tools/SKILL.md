@@ -7,7 +7,7 @@ description: Train official scvi-tools models (scVI/scANVI/totalVI/PeakVI/MultiV
 
 Train official scvi-tools models. Use **after** the scRNA gold chain (or on raw counts). Do not log-normalize before `setup_anndata`.
 
-Pins and pitfalls live in `bio_research.versions` (`scvi-tools` 1.1+, train on counts only).
+Pins and pitfalls live in `bionexus.versions` (`scvi-tools` 1.1+, train on counts only).
 
 ## When to Use This Skill
 

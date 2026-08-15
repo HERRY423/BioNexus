@@ -288,7 +288,7 @@ def get_expected_manifests(registry: Dict[str, Any]) -> Dict[str, Dict[str, Any]
         ".codex/config.json": to_codex_config(registry),
         ".codex-plugin/plugin.json": codex_plugin,
         "plugins/codex/.codex-plugin/plugin.json": codex_plugin,
-        "plugins/bio-research/.codex-plugin/plugin.json": codex_plugin,
+        "plugins/bionexus/.codex-plugin/plugin.json": codex_plugin,
         ".agents/plugins/marketplace.json": mkt,
         ".codex/marketplace.json": mkt,
         ".claude-plugin/marketplace.json": mkt,

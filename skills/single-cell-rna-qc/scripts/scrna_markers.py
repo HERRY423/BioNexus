@@ -17,9 +17,9 @@ _SRC = Path(__file__).resolve().parents[3] / "src"
 if _SRC.is_dir() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from bio_research.backends import require
-from bio_research.contracts import GRADE_B, attach_meta
-from bio_research.provenance import sidecar
+from bionexus.backends import require
+from bionexus.contracts import GRADE_B, attach_meta
+from bionexus.provenance import sidecar
 
 
 def find_cluster_markers(
@@ -74,7 +74,7 @@ def main() -> None:
     parser.add_argument("--n-genes", type=int, default=20)
     parser.add_argument("--skip-doctor", action="store_true")
     args = parser.parse_args()
-    from bio_research.gate import require_doctor
+    from bionexus.gate import require_doctor
 
     require_doctor(require_scverse=True, skip=args.skip_doctor)
     import scanpy as sc

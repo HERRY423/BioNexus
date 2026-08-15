@@ -67,7 +67,7 @@ jobs:
           sys.path.insert(0, 'scripts')
           from local_mcp_server import create_mcp_server
           s = create_mcp_server()
-          assert s.name == 'bio-research-local-mcp'
+          assert s.name == 'bionexus-local-mcp'
           print('Official FastMCP Server initialization PASSED.')
           "
           python -c "
@@ -76,7 +76,7 @@ jobs:
           req = {'jsonrpc': '2.0', 'id': 1, 'method': 'initialize', 'params': {}}
           out, _ = p.communicate(json.dumps(req) + '\n', timeout=10)
           resp = json.loads(out.strip())
-          assert resp['result']['serverInfo']['name'] == 'bio-research-local-mcp'
+          assert resp['result']['serverInfo']['name'] == 'bionexus-local-mcp'
           print('Local MCP Server legacy stdio protocol PASSED.')
           "
 

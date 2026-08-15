@@ -1,9 +1,9 @@
 {
-  "name": "bio-research",
+  "name": "BioNexus",
   "version": "2.7.0",
   "provider": "BioNexus",
   "mcpServers": {
-    "local-bio-mcp": {
+    "bionexus-local-mcp": {
       "type": "stdio",
       "command": "python",
       "args": [

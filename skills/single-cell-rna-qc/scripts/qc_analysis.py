@@ -81,7 +81,7 @@ args = parser.parse_args()
 _SRC = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "src"))
 if os.path.isdir(_SRC) and _SRC not in sys.path:
     sys.path.insert(0, _SRC)
-from bio_research.gate import require_doctor
+from bionexus.gate import require_doctor
 
 require_doctor(require_scverse=True, skip=args.skip_doctor)
 

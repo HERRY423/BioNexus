@@ -53,7 +53,7 @@ def read_h5ad(path: PathLike):
     try:
         import anndata as ad
     except ImportError as exc:
-        raise ImportError("Reading .h5ad requires anndata. pip install 'bio-research[scverse]'") from exc
+        raise ImportError("Reading .h5ad requires anndata. pip install 'bionexus[scverse]'") from exc
     return ad.read_h5ad(str(path))
 
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cross-Platform Environment Setup & Hardware Acceleration Installer for Bio-Research.
+Cross-Platform Environment Setup & Hardware Acceleration Installer for BioNexus.
 Detects OS, CPU architecture, and GPU acceleration (NVIDIA CUDA / Apple MPS / CPU),
 and installs appropriate dependencies via uv, conda, or pip.
 
@@ -29,7 +29,7 @@ if sys.platform == "win32":
 
 def print_banner():
     print("=" * 75)
-    print(" [Bio-Research Plugin] One-Click Environment Initializer")
+    print(" [BioNexus Plugin] One-Click Environment Initializer")
     print("=" * 75)
 
 
@@ -161,7 +161,7 @@ def run_installation(hw_info: Dict[str, Any], mgrs: Dict[str, Optional[str]], ro
         subprocess.run(cmd, check=True)
 
         # Step 2: Install remaining requirements
-        print("\n[Step 2/2] Installing Bio-Research requirements (scanpy, scvi-tools, allotropy, etc.)...")
+        print("\n[Step 2/2] Installing BioNexus requirements (scanpy, scvi-tools, allotropy, etc.)...")
         subprocess.run(["uv", "pip", "install", "-r", req_file], check=True)
 
     else:
@@ -174,17 +174,17 @@ def run_installation(hw_info: Dict[str, Any], mgrs: Dict[str, Optional[str]], ro
         subprocess.run(cmd, check=True)
 
         # Step 2: Install remaining requirements
-        print("\n[Step 2/2] Installing Bio-Research requirements (scanpy, scvi-tools, allotropy, etc.)...")
+        print("\n[Step 2/2] Installing BioNexus requirements (scanpy, scvi-tools, allotropy, etc.)...")
         subprocess.run([python_exe, "-m", "pip", "install", "-r", req_file], check=True)
 
     print("\n" + "=" * 75)
-    print(" [DONE] Bio-Research environment setup completed successfully!")
+    print(" [DONE] BioNexus environment setup completed successfully!")
     print("=" * 75)
     return True
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Bio-Research Environment Initializer")
+    parser = argparse.ArgumentParser(description="BioNexus Environment Initializer")
     parser.add_argument("--check-only", action="store_true", help="Run system check without installing")
     parser.add_argument("--cpu", action="store_true", help="Force CPU-only PyTorch installation")
     parser.add_argument("--cuda", action="store_true", help="Force CUDA PyTorch installation")

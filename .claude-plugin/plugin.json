@@ -1,5 +1,5 @@
 {
-  "name": "bio-research",
+  "name": "BioNexus",
   "version": "2.7.0",
   "description": "Agent skill pack that routes biomedical analyses to community tools or named local heuristics, with evidence grades and refusal when a gold-standard backend is missing.",
   "author": {

@@ -1,12 +1,12 @@
 <#
 .SYNOPSIS
-    One-click environment initializer for Bio-Research Plugin (PowerShell).
+    One-click environment initializer for BioNexus Plugin (PowerShell).
 .DESCRIPTION
     Creates a local virtual environment (.venv) and runs hardware-optimized package installation.
 #>
 
 Write-Host "==============================================================================" -ForegroundColor Cyan
-Write-Host " 🧬 Bio-Research Plugin: Windows PowerShell One-Click Setup" -ForegroundColor Cyan
+Write-Host " 🧬 BioNexus Plugin: Windows PowerShell One-Click Setup" -ForegroundColor Cyan
 Write-Host "==============================================================================" -ForegroundColor Cyan
 
 $pythonCmd = Get-Command python -ErrorAction SilentlyContinue

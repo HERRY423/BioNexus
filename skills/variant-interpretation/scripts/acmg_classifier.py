@@ -18,7 +18,7 @@ _SRC = Path(__file__).resolve().parents[3] / "src"
 if _SRC.is_dir() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from bio_research.contracts import EvidenceCard, attach_meta  # noqa: E402
+from bionexus.contracts import EvidenceCard, attach_meta  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
 logger = logging.getLogger("ACMGClassifier")

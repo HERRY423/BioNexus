@@ -26,9 +26,9 @@ from variant_annotator import (
     propose_acmg_criteria,
 )
 
-from bio_research.backends import probe
-from bio_research.contracts import GRADE_C, attach_meta, refuse
-from bio_research.inventory import SKILLS, get_skill
+from bionexus.backends import probe
+from bionexus.contracts import GRADE_C, attach_meta, refuse
+from bionexus.inventory import SKILLS, get_skill
 
 
 def test_inventory_covers_seventeen_skills():
@@ -112,7 +112,7 @@ def test_splice_pwm_does_not_assign_acmg():
 
 
 def test_provenance_sidecar_disclaims_part11():
-    from bio_research.provenance import sidecar
+    from bionexus.provenance import sidecar
 
     note = sidecar(activity_name="demo")["compliance_note"]
     assert "21 CFR" in note

@@ -1,7 +1,7 @@
 @echo off
 setlocal
 echo ==============================================================================
-echo  Bio-Research Plugin: Windows One-Click Setup
+echo  BioNexus Plugin: Windows One-Click Setup
 echo ==============================================================================
 
 where python >nul 2>nul

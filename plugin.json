@@ -1,6 +1,6 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "bio-research",
+  "name": "BioNexus",
   "version": "2.7.0",
   "description": "Agent skill pack that routes biomedical analyses to community tools (scanpy, squidpy, scvi-tools, nf-core, allotropy) or named local heuristics, with explicit evidence grades and refusal when a gold-standard backend is missing.",
   "author": {
@@ -8,7 +8,7 @@
   },
   "license": "Apache-2.0",
   "keywords": [
-    "bio-research",
+    "bionexus",
     "bioinformatics",
     "single-cell",
     "scanpy",

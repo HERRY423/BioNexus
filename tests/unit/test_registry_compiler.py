@@ -23,7 +23,7 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from bio_research.registry import (
+from bionexus.registry import (
     check_manifest_drift,
     compile_and_write_all,
     load_canonical_registry,
@@ -41,7 +41,7 @@ def test_canonical_registry_loading_and_structure():
     """Verify bionexus.registry.yaml loads properly and satisfies schema."""
     registry = load_canonical_registry(_REPO_ROOT / "bionexus.registry.yaml")
     assert registry is not None
-    assert registry["package"]["name"] == "bio-research"
+    assert registry["package"]["name"] == "BioNexus"
     assert registry["package"]["version"] == "2.7.0"
     assert "mcp_servers" in registry
     assert "local" in registry["mcp_servers"]
@@ -58,13 +58,13 @@ def test_generate_agent_plugins_manifests():
     mcp_json = to_agent_plugins_mcp_json(registry)
 
     assert plugin_json["$schema"] == "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
-    assert plugin_json["name"] == "bio-research"
+    assert plugin_json["name"] == "BioNexus"
     assert plugin_json["author"]["name"] == "BioNexus Team"
 
     assert mcp_json["$schema"] == "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json"
     servers = mcp_json["mcpServers"]
-    assert "local-bio-mcp" in servers
-    assert servers["local-bio-mcp"]["type"] == "stdio"
+    assert "bionexus-local-mcp" in servers
+    assert servers["bionexus-local-mcp"]["type"] == "stdio"
     assert "pubmed" in servers
     assert servers["pubmed"]["type"] == "streamable-http"
     assert "benchling" not in servers  # Disabled server excluded
@@ -76,13 +76,13 @@ def test_generate_claude_manifests():
     c_plugin = to_claude_plugin_json(registry)
     c_mcp = to_claude_mcp_json(registry)
 
-    assert c_plugin["name"] == "bio-research"
+    assert c_plugin["name"] == "BioNexus"
     assert "mcpServers" in c_mcp
     servers = c_mcp["mcpServers"]
     assert "pubmed" in servers
     assert servers["pubmed"]["type"] == "http"
-    # Verify no local-bio-mcp in hosted-only Claude manifest and disabled benchling is absent
-    assert "local-bio-mcp" not in servers
+    # Verify no bionexus-local-mcp in hosted-only Claude manifest and disabled benchling is absent
+    assert "bionexus-local-mcp" not in servers
     assert "benchling" not in servers
 
 
@@ -91,9 +91,9 @@ def test_generate_codex_config():
     registry = load_canonical_registry(_REPO_ROOT / "bionexus.registry.yaml")
     codex_conf = to_codex_config(registry)
 
-    assert codex_conf["name"] == "bio-research"
+    assert codex_conf["name"] == "BioNexus"
     assert codex_conf["provider"] == "BioNexus"
-    assert "local-bio-mcp" in codex_conf["mcpServers"]
+    assert "bionexus-local-mcp" in codex_conf["mcpServers"]
     assert "pubmed" in codex_conf["mcpServers"]
 
 

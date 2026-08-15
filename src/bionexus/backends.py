@@ -217,7 +217,7 @@ def probe(name: str) -> BackendStatus:
         elif not pkg_present:
             state = BackendState.MISSING
             available = False
-            note = f"Package '{import_name}' is not installed. Install with 'pip install bio-research[plm]'."
+            note = f"Package '{import_name}' is not installed. Install with 'pip install bionexus[plm]'."
         elif not weights_ready:
             state = BackendState.MISSING_WEIGHTS
             available = False
@@ -276,7 +276,7 @@ def probe(name: str) -> BackendStatus:
             is_partial = True
 
         state = BackendState.PARTIAL if is_partial else BackendState.MISSING
-        note = f"{desc} (missing '{import_name}'). Install with: pip install 'bio-research[{extra}]'."
+        note = f"{desc} (missing '{import_name}'). Install with: pip install 'bionexus[{extra}]'."
         return BackendStatus(
             name=name,
             available=False,
@@ -325,7 +325,7 @@ def require(name: str, *, for_method: str, min_version: Optional[str] = None) ->
     """
     status = probe(name)
     if not status.available:
-        extra_hint = f" Install extra: pip install 'bio-research[{status.extra}]'." if status.extra else ""
+        extra_hint = f" Install extra: pip install 'bionexus[{status.extra}]'." if status.extra else ""
         if status.state == BackendState.INCOMPATIBLE_VERSION:
             raise IncompatibleVersion(
                 f"{for_method} requires backend '{name}' >= {status.min_version}, "

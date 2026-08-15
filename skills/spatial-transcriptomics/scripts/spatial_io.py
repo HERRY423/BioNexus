@@ -11,8 +11,8 @@ _SRC = Path(__file__).resolve().parents[3] / "src"
 if _SRC.is_dir() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from bio_research.backends import require
-from bio_research.contracts import GRADE_A, attach_meta
+from bionexus.backends import require
+from bionexus.contracts import GRADE_A, attach_meta
 
 
 def _looks_like_zarr(path: Path) -> bool:

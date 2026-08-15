@@ -5,4 +5,4 @@ description: SHA-256 hashes, environment snapshot, and activity-aware Methods te
 
 # Provenance sidecar
 
-Prefer `bio_research.provenance.sidecar` from the shared kernel. The skill scripts wrap the same functions. Methods text is generated from the activity name and recorded parameters; it will not invent an scRNA-seq paragraph for a docking job.
+Prefer `bionexus.provenance.sidecar` from the shared kernel. The skill scripts wrap the same functions. Methods text is generated from the activity name and recorded parameters; it will not invent an scRNA-seq paragraph for a docking job.

@@ -3,7 +3,7 @@ name: start
 description: Orient a session on this plugin. Use first. Run scripts/doctor.py, then route only to core gold-chain skills unless the user names a heuristic job. Do not assign cell-type labels. Do not use this skill to run analyses.
 ---
 
-# Bio-research start
+# BioNexus start
 
 This plugin is an **agent skill pack**. It stops at **numeric clusters + marker tables**. It does not annotate cell types.
 

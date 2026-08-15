@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Bio-Research Plugin: Linux / macOS One-Click Setup Script
+# BioNexus Plugin: Linux / macOS One-Click Setup Script
 # ==============================================================================
 set -e
 
 echo "=============================================================================="
-echo " 🧬 Bio-Research Plugin: Linux / macOS One-Click Setup"
+echo " 🧬 BioNexus Plugin: Linux / macOS One-Click Setup"
 echo "=============================================================================="
 
 # Check Python command

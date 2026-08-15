@@ -1,8 +1,8 @@
-# Bio Research Plugin — Short-Term Fixes
+# BioNexus Plugin — Short-Term Fixes
 
 > 基于深度审阅报告 (2026-07-23) 中的 5 个短期改进任务。
-> 原始插件路径: `~/.claude/plugins/marketplaces/obsidian-local/plugins/bio-research`
-> 改动版路径: `C:\Plugin\bio-research`
+> 原始插件路径: `~/.claude/plugins/marketplaces/obsidian-local/plugins/bionexus`
+> 改动版路径: `C:\Plugin\BioNexus`
 
 ---
 
@@ -88,7 +88,7 @@
 ## Unchanged
 
 - Original plugin files (`~/.claude/plugins/...`) are completely untouched
-- All non-target files in `C:\Plugin\bio-research\` are identical copies of the originals
+- All non-target files in `C:\Plugin\BioNexus\` are identical copies of the originals
 - `.mcp.json`, `plugin.json`, `CONNECTORS.md`, `README.md` were not modified
 
 ---

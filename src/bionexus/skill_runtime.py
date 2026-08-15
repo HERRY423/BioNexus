@@ -1,6 +1,6 @@
 """Single import surface for skill scripts.
 
-Scripts should `from bio_research.skill_runtime import attach_meta, is_available`
+Scripts should `from bionexus.skill_runtime import attach_meta, is_available`
 after ensuring `src/` is on sys.path (see ensure_src_on_path).
 """
 
@@ -25,17 +25,17 @@ from .provenance import sidecar
 
 
 def ensure_src_on_path(start: Path | None = None) -> Path | None:
-    """Walk parents until src/bio_research is found and prepend it to sys.path."""
+    """Walk parents until src/bionexus is found and prepend it to sys.path."""
     here = start or Path(__file__).resolve()
     for parent in [here, *here.parents] if here.is_file() else [here, *here.parents]:
         src = parent / "src" if parent.name != "src" else parent
-        if (src / "bio_research" / "__init__.py").exists():
+        if (src / "bionexus" / "__init__.py").exists():
             path = str(src)
             if path not in sys.path:
                 sys.path.insert(0, path)
             return src
         candidate = parent / "src"
-        if (candidate / "bio_research" / "__init__.py").exists():
+        if (candidate / "bionexus" / "__init__.py").exists():
             path = str(candidate)
             if path not in sys.path:
                 sys.path.insert(0, path)

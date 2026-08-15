@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Authentication & Credential Helper for Bio-Research Plugin.
+Authentication & Credential Helper for BioNexus Plugin.
 Loads, validates, and checks API credentials from environment variables or .env file.
 """
 
@@ -105,7 +105,7 @@ def check_status():
     """Print comprehensive credential diagnostic table."""
     load_env_file()
     print("=" * 75)
-    print(" [Bio-Research Plugin] Credential & API Authentication Status")
+    print(" [BioNexus Plugin] Credential & API Authentication Status")
     print("=" * 75)
     print(f"{'Key Name':<22} | {'Provider':<24} | {'Status':<10} | {'Type'}")
     print("-" * 75)
@@ -131,7 +131,7 @@ def check_status():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Bio-Research Auth & Credential Helper")
+    parser = argparse.ArgumentParser(description="BioNexus Auth & Credential Helper")
     parser.add_argument("--status", "--check", action="store_true", help="Check credential configuration status")
     args = parser.parse_args()
 

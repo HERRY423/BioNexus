@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Local Fallback MCP Server for Bio-Research (High-Performance Async Edition v2.0.0).
+Local Fallback MCP Server for BioNexus (High-Performance Async Edition v2.0.0).
 Implements Model Context Protocol (MCP) JSON-RPC 2.0 over stdio with asyncio.
 Provides direct, non-blocking, rate-limit resilient access to:
   - NCBI PubMed & PubMed Central
@@ -1770,7 +1770,7 @@ def create_mcp_server():
     if FastMCP is None:
         raise ImportError("Official MCP Python SDK (`mcp`) is not installed. Install via `pip install mcp`.")
 
-    mcp = FastMCP("bio-research-local-mcp")
+    mcp = FastMCP("bionexus-local-mcp")
 
     @mcp.tool(name="search_uniprot", description="Search UniProtKB for protein metadata, sequences, and functional annotations.")
     async def search_uniprot(query: str, organism: str = "human", limit: int = 5) -> str:
@@ -1929,7 +1929,7 @@ async def handle_rpc_request_async(req: Dict[str, Any]) -> Optional[Dict[str, An
                     "prompts": {},
                 },
                 "serverInfo": {
-                    "name": "bio-research-local-mcp",
+                    "name": "bionexus-local-mcp",
                     "version": "2.0.0",
                 },
             },
@@ -1943,7 +1943,7 @@ async def handle_rpc_request_async(req: Dict[str, Any]) -> Optional[Dict[str, An
             "id": msg_id,
             "result": {
                 "serverInfo": {
-                    "name": "bio-research-local-mcp",
+                    "name": "bionexus-local-mcp",
                     "version": "2.0.0",
                     "sdk": "official-mcp-python-sdk",
                 },

@@ -18,7 +18,7 @@ def test_official_fastmcp_server_sdk():
     """Verify official MCP Python SDK FastMCP server instance and tool registration."""
     server = create_mcp_server()
     assert server is not None
-    assert server.name == "bio-research-local-mcp"
+    assert server.name == "bionexus-local-mcp"
     tools = server._tool_manager.list_tools()
     assert len(tools) == 16
     tool_names = {t.name for t in tools}
@@ -69,7 +69,7 @@ def test_mcp_initialize():
     assert "result" in resp
     result = resp["result"]
     assert result["protocolVersion"] == "2024-11-05"
-    assert result["serverInfo"]["name"] == "bio-research-local-mcp"
+    assert result["serverInfo"]["name"] == "bionexus-local-mcp"
     assert result["serverInfo"]["version"] == "2.0.0"
 
 

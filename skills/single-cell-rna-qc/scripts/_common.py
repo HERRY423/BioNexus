@@ -9,7 +9,7 @@ from pathlib import Path
 def _ensure_kernel() -> None:
     for parent in Path(__file__).resolve().parents:
         candidate = parent / "src"
-        if (candidate / "bio_research" / "__init__.py").exists():
+        if (candidate / "bionexus" / "__init__.py").exists():
             path = str(candidate)
             if path not in sys.path:
                 sys.path.insert(0, path)
@@ -18,8 +18,8 @@ def _ensure_kernel() -> None:
 
 _ensure_kernel()
 
-from bio_research.backends import is_available, probe  # noqa: E402
-from bio_research.contracts import (  # noqa: E402
+from bionexus.backends import is_available, probe  # noqa: E402
+from bionexus.contracts import (  # noqa: E402
     ABSTAIN,
     GRADE_A,
     GRADE_B,
@@ -27,8 +27,8 @@ from bio_research.contracts import (  # noqa: E402
     attach_meta,
     refuse,
 )
-from bio_research.gate import require_doctor  # noqa: E402
-from bio_research.pipeline_config import load_pipeline_config, merge_config  # noqa: E402
+from bionexus.gate import require_doctor  # noqa: E402
+from bionexus.pipeline_config import load_pipeline_config, merge_config  # noqa: E402
 
 
 def add_skip_doctor(parser) -> None:

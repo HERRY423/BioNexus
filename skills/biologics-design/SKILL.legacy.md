@@ -22,8 +22,8 @@ description: Only if the user explicitly asked for a grade-C heuristic. Sequence
 
 | Task | Backend | Extra |
 |---|---|---|
-| IMGT numbering | `abnumber` | `bio-research[structure]` |
-| MFE | ViennaRNA `RNA` | `bio-research[biologics]` |
+| IMGT numbering | `abnumber` | `bionexus[structure]` |
+| MFE | ViennaRNA `RNA` | `bionexus[biologics]` |
 | Motifs / codon table | local | none |
 
 Refuse to emit `evidence_grade=A` unless the matching backend ran.

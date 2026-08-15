@@ -14,8 +14,8 @@ if _SRC.is_dir() and str(_SRC) not in sys.path:
 
 from spatial_io import load_spatial_anndata, resolve_spatial_key
 
-from bio_research.backends import require
-from bio_research.contracts import GRADE_A, attach_meta
+from bionexus.backends import require
+from bionexus.contracts import GRADE_A, attach_meta
 
 
 def plot_spatial(adata, out_dir: str, *, color: str | None = None, spatial_key: str = "spatial"):
@@ -62,7 +62,7 @@ def main() -> None:
     parser.add_argument("--table", default=None)
     parser.add_argument("--skip-doctor", action="store_true")
     args = parser.parse_args()
-    from bio_research.gate import require_doctor
+    from bionexus.gate import require_doctor
 
     require_doctor(require_spatial=True, skip=args.skip_doctor)
     adata = load_spatial_anndata(args.input, table_key=args.table)

@@ -22,7 +22,7 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from bio_research.contracts import (
+from bionexus.contracts import (
     ABSTAIN,
     GRADE_A,
     GRADE_B,
@@ -33,7 +33,7 @@ from bio_research.contracts import (
     refuse,
     synthesize_conclusion_status,
 )
-from bio_research.integrity import (
+from bionexus.integrity import (
     audit_expression_matrix,
     audit_spatial_coordinates,
     audit_statistical_significance,

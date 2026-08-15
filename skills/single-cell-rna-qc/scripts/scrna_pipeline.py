@@ -22,10 +22,10 @@ from scrna_markers import find_cluster_markers
 from scrna_preprocess import preprocess_scrna
 from scrna_reduce_cluster import reduce_and_cluster
 
-from bio_research.backends import require
-from bio_research.contracts import GRADE_A, GRADE_B, EvidenceCard, attach_meta
-from bio_research.integrity import audit_expression_matrix
-from bio_research.provenance import sidecar
+from bionexus.backends import require
+from bionexus.contracts import GRADE_A, GRADE_B, EvidenceCard, attach_meta
+from bionexus.integrity import audit_expression_matrix
+from bionexus.provenance import sidecar
 
 
 def run_scrna_gold_chain(
@@ -140,8 +140,8 @@ def main() -> None:
     parser.add_argument("--extra-resolutions", nargs="*", type=float, default=None)
     parser.add_argument("--run-scrublet", action="store_true", help="Run scanpy.pp.scrublet after QC")
     args = parser.parse_args()
-    from bio_research.gate import require_doctor
-    from bio_research.pipeline_config import load_pipeline_config, merge_config
+    from bionexus.gate import require_doctor
+    from bionexus.pipeline_config import load_pipeline_config, merge_config
 
     require_doctor(require_scverse=True, skip=args.skip_doctor)
     cfg = merge_config(

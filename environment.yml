@@ -1,4 +1,4 @@
-name: bio-research
+name: bionexus
 channels:
   - conda-forge
   - bioconda

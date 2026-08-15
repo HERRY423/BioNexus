@@ -15,7 +15,7 @@ sys.path.insert(0, str(PROJECT_ROOT / "skills" / "single-cell-rna-qc" / "scripts
 sys.path.insert(0, str(PROJECT_ROOT / "skills" / "spatial-transcriptomics" / "scripts"))
 sys.path.insert(0, str(PROJECT_ROOT / "skills" / "nextflow-development" / "scripts"))
 
-from bio_research.gate import DoctorGateError, _enforce_ready
+from bionexus.gate import DoctorGateError, _enforce_ready
 
 
 def test_default_scrna_skill_does_not_recommend_soupx():

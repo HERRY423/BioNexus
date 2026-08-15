@@ -1,11 +1,11 @@
 {
-  "name": "bio-research",
+  "name": "BioNexus",
   "version": "2.7.0",
   "description": "Agent skill pack that routes biomedical analyses to community tools (scanpy, squidpy, scvi-tools, nf-core, allotropy) or named local heuristics, with explicit evidence grades and refusal when a gold-standard backend is missing.",
   "author": "BioNexus Team",
   "license": "Apache-2.0",
   "mcpServers": {
-    "local-bio-mcp": {
+    "bionexus-local-mcp": {
       "type": "stdio",
       "command": "python",
       "args": [

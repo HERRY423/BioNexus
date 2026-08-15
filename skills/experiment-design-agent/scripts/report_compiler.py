@@ -75,7 +75,7 @@ def compile_research_monograph(
 ---
 
 ## FAIR Data & Computational Provenance
-- Outline only. Attach `bio_research.provenance.sidecar` hashes if files exist.
+- Outline only. Attach `bionexus.provenance.sidecar` hashes if files exist.
 - Not 21 CFR Part 11 / GxP / ALCOA+.
 """
     return md

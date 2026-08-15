@@ -24,7 +24,7 @@ _SRC = _REPO_ROOT / "src"
 if _SRC.is_dir() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from bio_research.registry import (  # noqa: E402
+from bionexus.registry import (  # noqa: E402
     check_manifest_drift,
     compile_and_write_all,
     load_canonical_registry,

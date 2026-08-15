@@ -8,7 +8,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-from bio_research.gate import require_doctor, write_doctor_report
+from bionexus.gate import require_doctor, write_doctor_report
 
 
 def test_doctor_report_roundtrip():
@@ -35,7 +35,7 @@ def test_require_doctor_skip_does_not_write():
 
 
 def test_doctor_does_not_mention_celltypepilot():
-    from bio_research.doctor import run_doctor
+    from bionexus.doctor import run_doctor
 
     report = run_doctor()
     blob = json_blob(report)

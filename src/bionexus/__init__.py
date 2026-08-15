@@ -1,4 +1,4 @@
-"""Bio-research plugin kernel: contracts, backend probes, I/O, provenance."""
+"""BioNexus plugin kernel: contracts, backend probes, I/O, provenance."""
 
 from .agent_routing import DEFAULT_SKILLS, LEGACY_SKILLS, is_default_skill
 from .backends import BackendUnavailable, is_available, probe, probe_all, require

@@ -18,11 +18,11 @@ if _SRC.is_dir() and str(_SRC) not in sys.path:
 
 from spatial_io import load_spatial_anndata, resolve_spatial_key
 
-from bio_research.backends import require
-from bio_research.contracts import GRADE_A, GRADE_B, GRADE_C, EvidenceCard, attach_meta
-from bio_research.integrity import audit_expression_matrix, audit_spatial_coordinates
-from bio_research.pipeline_config import load_pipeline_config, merge_config
-from bio_research.provenance import sidecar
+from bionexus.backends import require
+from bionexus.contracts import GRADE_A, GRADE_B, GRADE_C, EvidenceCard, attach_meta
+from bionexus.integrity import audit_expression_matrix, audit_spatial_coordinates
+from bionexus.pipeline_config import load_pipeline_config, merge_config
+from bionexus.provenance import sidecar
 
 
 def run_spatial_gold_chain(
@@ -205,7 +205,7 @@ def main() -> None:
     parser.add_argument("--table", default=None, help="SpatialData table name (required if multiple tables)")
     parser.add_argument("--skip-doctor", action="store_true")
     args = parser.parse_args()
-    from bio_research.gate import require_doctor
+    from bionexus.gate import require_doctor
 
     require_doctor(require_spatial=True, skip=args.skip_doctor)
     cfg = merge_config(

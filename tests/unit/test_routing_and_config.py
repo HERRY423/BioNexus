@@ -13,8 +13,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 sys.path.insert(0, str(PROJECT_ROOT / "skills" / "single-cell-rna-qc" / "scripts"))
 
-from bio_research.agent_routing import DEFAULT_SKILLS, discoverable_skill_names
-from bio_research.pipeline_config import load_pipeline_config, merge_config
+from bionexus.agent_routing import DEFAULT_SKILLS, discoverable_skill_names
+from bionexus.pipeline_config import load_pipeline_config, merge_config
 
 
 def test_merge_config_cli_wins():
