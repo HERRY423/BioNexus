@@ -19,7 +19,8 @@ if _SRC.is_dir() and str(_SRC) not in sys.path:
 from spatial_io import load_spatial_anndata, resolve_spatial_key
 
 from bio_research.backends import require
-from bio_research.contracts import GRADE_A, GRADE_C, attach_meta
+from bio_research.contracts import GRADE_A, GRADE_B, GRADE_C, EvidenceCard, attach_meta
+from bio_research.integrity import audit_expression_matrix, audit_spatial_coordinates
 from bio_research.pipeline_config import load_pipeline_config, merge_config
 from bio_research.provenance import sidecar
 
@@ -39,8 +40,28 @@ def run_spatial_gold_chain(
     import squidpy as sq
 
     key = resolve_spatial_key(adata, preferred=spatial_key)
+    coords_grade, coords_notes, coords_stats = audit_spatial_coordinates(adata.obsm.get(key))
+
+    # Audit expression input integrity
+    input_counts_grade, input_counts_notes, input_stats = audit_expression_matrix(
+        adata.layers.get("counts", adata.X),
+        expected_type="counts"
+    )
+
+    limitations = [
+        "knn graph (not Delaunay). Moran ranking preferred over unadjusted p-values.",
+        "Expression Leiden is optional and is not a spatial domain model.",
+    ]
+
     if "counts" not in adata.layers:
-        adata.layers["counts"] = adata.X.copy()
+        if input_counts_grade == GRADE_A:
+            adata.layers["counts"] = adata.X.copy()
+        else:
+            adata.layers["counts"] = adata.X.copy()
+            limitations.append(
+                "layers['counts'] was missing and adata.X appears non-integer/log-normalized; "
+                "normalized expression was stored as counts fallback."
+            )
 
     knn = getattr(sq.gr, "spatial_neighbors_knn", None)
     if knn is not None:
@@ -104,14 +125,37 @@ def run_spatial_gold_chain(
             cluster_error = str(exc)
             cluster_key = None
 
-    limitations = [
-        "knn graph (not Delaunay). Moran ranking preferred over unadjusted p-values.",
-        "Expression Leiden is optional and is not a spatial domain model.",
-    ]
     if cluster_error:
         limitations.append(f"Leiden requested but failed: {cluster_error}")
     if x_log1p:
         limitations.append("X was log1p-normalized after Moran; raw counts remain in layers['counts'].")
+
+    # Evaluate statistical support from SVG significance
+    sig_svg = 0
+    if "fdr_q_value" in svg.columns and not svg["fdr_q_value"].isna().all():
+        sig_svg = int(np.sum(svg["fdr_q_value"] < 0.05))
+    elif "pval_norm" in svg.columns and not svg["pval_norm"].isna().all():
+        sig_svg = int(np.sum(svg["pval_norm"] < 0.05))
+    stat_grade = GRADE_A if sig_svg > 0 else GRADE_B
+
+    # Composite EvidenceCard
+    effective_input_grade = GRADE_C if (coords_grade == GRADE_C or input_counts_grade == GRADE_C) else (
+        GRADE_B if (coords_grade == GRADE_B or input_counts_grade == GRADE_B) else GRADE_A
+    )
+    card = EvidenceCard(
+        execution_fidelity=GRADE_A if not cluster_error else GRADE_C,
+        input_integrity=effective_input_grade,
+        assumption_validity=GRADE_A if effective_input_grade == GRADE_A else GRADE_B,
+        statistical_support=stat_grade,
+        parameter_robustness=GRADE_B,
+        details={
+            "spatial_coords_grade": coords_grade,
+            "expression_integrity_grade": input_counts_grade,
+            "input_notes": coords_notes + input_counts_notes,
+            "graph": graph_name,
+            "significant_svg_count": sig_svg,
+        }
+    )
 
     summary = attach_meta(
         {
@@ -141,6 +185,7 @@ def run_spatial_gold_chain(
         limitations=limitations,
         abstain=bool(cluster_error),
         abstain_reason=f"Leiden requested but failed: {cluster_error}" if cluster_error else None,
+        evidence_card=card,
     )
     adata.uns["spatial_pipeline_contract"] = summary
     return adata, svg.head(top_n), summary

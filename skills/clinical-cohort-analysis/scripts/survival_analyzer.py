@@ -7,11 +7,19 @@ and Cox Proportional Hazards Hazard Ratios (HR, 95% CI) for patient stratificati
 
 import argparse
 import logging
+import sys
+from pathlib import Path
 from typing import Any, Dict, Tuple
 
 import numpy as np
 import pandas as pd
 from scipy.stats import chi2
+
+_SRC = Path(__file__).resolve().parents[3] / "src"
+if _SRC.is_dir() and str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
+from bio_research.contracts import EvidenceCard  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
 logger = logging.getLogger("SurvivalAnalyzer")
@@ -149,23 +157,67 @@ def calculate_cox_hazard_ratio(
     else:
         prognosis = "No significant two-group survival difference at p<=0.05"
 
-    return {
-        "hazard_ratio": round(float(hr), 3) if method == "lifelines_coxph" else None,
-        "event_rate_ratio": None if method == "lifelines_coxph" else round(float(hr), 3),
-        "hazard_ratio_95_ci": [round(hr_lower, 3), round(hr_upper, 3)],
-        "log_rank_p_value": float(p_val),
-        "log_rank_chi2": round(float(chi2_stat), 2),
-        "median_survival_months_high": round(float(med_1), 1),
-        "median_survival_months_low": round(float(med_0), 1),
-        "clinical_prognosis_verdict": prognosis,
-        "method": method,
-        "backend": backend,
-        "evidence_grade": evidence_grade,
-        "limitations": [
-            "Cox PH requires lifelines; otherwise this is an event-rate ratio, not a partial-likelihood Cox model.",
-            "Research-use only.",
-        ],
-    }
+    stat_grade = "A" if p_val <= 0.05 and (hr > 1.5 or hr < 0.67) else ("B" if p_val <= 0.05 else "C")
+    sample_grade = "A" if (len(events_1) >= 20 and len(events_0) >= 20) else "B"
+
+    card = EvidenceCard(
+        execution_fidelity=evidence_grade,
+        input_integrity="A" if (np.all(times >= 0) and np.all(np.isin(events, [0, 1]))) else "C",
+        assumption_validity="A" if method == "lifelines_coxph" else "C",
+        statistical_support=stat_grade,
+        parameter_robustness="B",
+        details={
+            "method": method,
+            "sample_size_group1": int(len(events_1)),
+            "sample_size_group0": int(len(events_0)),
+            "events_group1": int(np.sum(events_1)),
+            "events_group0": int(np.sum(events_0)),
+            "sample_grade": sample_grade,
+        }
+    )
+
+    try:
+        from bio_research.contracts import attach_meta
+        return attach_meta(
+            {
+                "hazard_ratio": round(float(hr), 3) if method == "lifelines_coxph" else None,
+                "event_rate_ratio": None if method == "lifelines_coxph" else round(float(hr), 3),
+                "hazard_ratio_95_ci": [round(hr_lower, 3), round(hr_upper, 3)],
+                "log_rank_p_value": float(p_val),
+                "log_rank_chi2": round(float(chi2_stat), 2),
+                "median_survival_months_high": round(float(med_1), 1),
+                "median_survival_months_low": round(float(med_0), 1),
+                "clinical_prognosis_verdict": prognosis,
+            },
+            method=method,
+            backend=backend,
+            evidence_grade=evidence_grade,
+            limitations=[
+                "Cox PH requires lifelines; otherwise this is an event-rate ratio, not a partial-likelihood Cox model.",
+                "Research-use only.",
+            ],
+            evidence_card=card,
+        )
+    except ImportError:
+        return {
+            "hazard_ratio": round(float(hr), 3) if method == "lifelines_coxph" else None,
+            "event_rate_ratio": None if method == "lifelines_coxph" else round(float(hr), 3),
+            "hazard_ratio_95_ci": [round(hr_lower, 3), round(hr_upper, 3)],
+            "log_rank_p_value": float(p_val),
+            "log_rank_chi2": round(float(chi2_stat), 2),
+            "median_survival_months_high": round(float(med_1), 1),
+            "median_survival_months_low": round(float(med_0), 1),
+            "clinical_prognosis_verdict": prognosis,
+            "method": method,
+            "backend": backend,
+            "evidence_grade": evidence_grade,
+            "evidence_card": card.to_dict(),
+            "conclusion_status": card.synthesize_status(),
+            "limitations": [
+                "Cox PH requires lifelines; otherwise this is an event-rate ratio, not a partial-likelihood Cox model.",
+                "Research-use only.",
+            ],
+        }
 
 
 def main() -> None:

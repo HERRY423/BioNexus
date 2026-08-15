@@ -69,17 +69,24 @@ pip install -e ".[allotrope]"
 
 Heuristic skills are **not auto-discovered** (`SKILL.legacy.md`). Open them only if the user names that job and accepts grade C.
 
-## Shared kernel
+## Shared kernel & Evidence Operating Layer
 
 ```python
-from bio_research.contracts import attach_meta, refuse
+from bio_research.contracts import attach_meta, refuse, EvidenceCard, ConclusionStatus
+from bio_research.integrity import audit_expression_matrix, audit_spatial_coordinates
 from bio_research.backends import probe_all, require
 from bio_research.inventory import as_markdown_table
 from bio_research.pipeline_config import load_pipeline_config, merge_config
 from bio_research.provenance import sidecar
 ```
 
-Every analysis result should carry `method`, `backend`, `evidence_grade` (`A` gold / `B` simplified real / `C` heuristic / `abstain`), and `limitations`.
+BioNexus operates a multi-dimensional **Scientific Evidence Operating Layer** that separates **Execution Fidelity** (did the official method run?) from **Scientific Evidence Quality** (input integrity, assumption validity, statistical power, parameter robustness, cross-method concordance, and external validation).
+
+Every analysis result carries:
+- `evidence_card`: Detailed 7-dimensional evaluation card (`execution_fidelity`, `input_integrity`, `assumption_validity`, `statistical_support`, `parameter_robustness`, `cross_method_concordance`, `external_validation`).
+- `conclusion_status`: Synthesized certainty verdict (`SUPPORTED` / `TENTATIVE` / `FRAGILE` / `CONFLICTED` / `ABSTAIN`).
+- `evidence_grade`: Backward-compatible scalar grade (`A` gold / `B` simplified real / `C` heuristic / `abstain`).
+- `method`, `backend`, and `limitations`.
 
 ## Skills
 

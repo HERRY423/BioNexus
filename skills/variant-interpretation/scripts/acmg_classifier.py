@@ -8,9 +8,17 @@ Tavtigian Bayesian posterior probability evidence synthesis (Hum Mutat 2018).
 import argparse
 import logging
 import os
+import sys
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 import yaml
+
+_SRC = Path(__file__).resolve().parents[3] / "src"
+if _SRC.is_dir() and str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
+from bio_research.contracts import EvidenceCard, attach_meta  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
 logger = logging.getLogger("ACMGClassifier")
@@ -228,7 +236,7 @@ def evaluate_variant_acmg(
             "user_evidence": (evidence_details or {}).get(code, "Caller supplied this code; not independently verified")
         })
 
-    report = {
+    report_body = {
         "variant_id": variant_id,
         "gene_symbol": gene_symbol,
         "deterministic_classification": det_class,
@@ -239,17 +247,37 @@ def evaluate_variant_acmg(
         "criteria_breakdown": annotated_criteria,
         "logic_clauses": logic_clauses,
         "clinical_actionability": "Not a clinical actionability call; research combination only",
-        "method": "acmg2015_combination_plus_tavtigian_lr",
-        "backend": "local_combiner",
-        "evidence_grade": "B" if criteria_set else "abstain",
-        "abstain": len(criteria_set) == 0,
-        "limitations": [
+    }
+
+    evidence_grade = "B" if criteria_set else "abstain"
+    card = EvidenceCard(
+        execution_fidelity="B" if criteria_set else "abstain",
+        input_integrity="A" if (variant_id and gene_symbol) else "B",
+        assumption_validity="B",
+        statistical_support="A" if (post_prob >= 0.99 or post_prob <= 0.01) else "B",
+        parameter_robustness="B",
+        details={
+            "posterior_probability_pathogenic": post_prob,
+            "deterministic_classification": det_class,
+            "bayesian_classification": bayes_class,
+            "criteria_count": len(criteria_set),
+        }
+    )
+
+    return attach_meta(
+        report_body,
+        method="acmg2015_combination_plus_tavtigian_lr",
+        backend="local_combiner",
+        evidence_grade=evidence_grade,
+        limitations=[
             "Combines caller-supplied criteria only. Does not generate PVS1/PM2/PP3 from raw sequence.",
             "YAML implements a subset of Richards 2015 codes, not the full ClinGen SVI points system.",
             "Research-use only. Not CLIA/CAP and not a diagnostic interpretation.",
         ],
-    }
-    return report
+        abstain=len(criteria_set) == 0,
+        abstain_reason="No ACMG criteria supplied" if len(criteria_set) == 0 else None,
+        evidence_card=card,
+    )
 
 
 def main():

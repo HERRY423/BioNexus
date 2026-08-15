@@ -16,12 +16,15 @@ _SRC = Path(__file__).resolve().parents[3] / "src"
 if _SRC.is_dir() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
+from typing import Optional
+
 from scrna_markers import find_cluster_markers
 from scrna_preprocess import preprocess_scrna
 from scrna_reduce_cluster import reduce_and_cluster
 
 from bio_research.backends import require
-from bio_research.contracts import attach_meta
+from bio_research.contracts import GRADE_A, GRADE_B, EvidenceCard, attach_meta
+from bio_research.integrity import audit_expression_matrix
 from bio_research.provenance import sidecar
 
 
@@ -29,24 +32,41 @@ def run_scrna_gold_chain(
     adata,
     *,
     run_qc: bool = True,
-    n_top_genes: int = 2000,
+    skip_qc: Optional[bool] = None,
+    run_scrublet: bool = False,
     resolution: float = 0.5,
-    extra_resolutions: list[float] | None = None,
+    n_top_genes: int = 2000,
     n_marker_genes: int = 20,
+    extra_resolutions: Optional[list[float]] = None,
 ):
+    """Full gold chain: QC (MAD) → scrublet (opt) → norm/log1p → HVG/PCA/Neighbors → Leiden → markers."""
     require("scanpy", for_method="run_scrna_gold_chain")
     steps = []
-    if run_qc:
+    raw_counts_grade, raw_notes, raw_stats = audit_expression_matrix(
+        adata.layers.get("counts", adata.X),
+        expected_type="counts"
+    )
+
+    should_qc = (not skip_qc) if skip_qc is not None else run_qc
+    if should_qc:
         from qc_core import (
             apply_hard_threshold,
-            calculate_qc_metrics_fast,
+            calculate_qc_metrics,
             detect_outliers_mad,
             filter_cells,
             filter_genes,
         )
+        from scrna_scrublet import run_scrublet as run_scrublet_gold_chain
 
         n_before = int(adata.n_obs)
-        calculate_qc_metrics_fast(adata)
+        calculate_qc_metrics(adata, inplace=True)
+        if run_scrublet:
+            try:
+                adata, scr_c = run_scrublet_gold_chain(adata)
+                steps.append(scr_c)
+            except Exception as exc:
+                steps.append({"step": "scrublet", "error": str(exc), "skipped": True})
+
         keep = ~detect_outliers_mad(adata, "total_counts", n_mads=5, verbose=False)
         keep = keep & ~detect_outliers_mad(adata, "n_genes_by_counts", n_mads=5, verbose=False)
         if "pct_counts_mt" in adata.obs:
@@ -63,6 +83,21 @@ def run_scrna_gold_chain(
     steps.append(cl_c)
     markers, mk_c = find_cluster_markers(adata, n_genes=n_marker_genes)
     steps.append(mk_c)
+
+    card = EvidenceCard(
+        execution_fidelity=cl_c.get("evidence_grade", GRADE_A),
+        input_integrity=raw_counts_grade,
+        assumption_validity=GRADE_A if raw_counts_grade == GRADE_A else GRADE_B,
+        statistical_support=GRADE_A if mk_c.get("evidence_grade") == GRADE_A else GRADE_B,
+        parameter_robustness=GRADE_B,
+        details={
+            "input_integrity_grade": raw_counts_grade,
+            "input_notes": raw_notes,
+            "qc_cells_remaining": int(adata.n_obs),
+            "n_clusters": cl_c.get("n_clusters"),
+        }
+    )
+
     summary = attach_meta(
         {
             "n_cells": int(adata.n_obs),
@@ -85,6 +120,7 @@ def run_scrna_gold_chain(
         backend="scanpy",
         evidence_grade=cl_c.get("evidence_grade", "A"),
         limitations=["This plugin does not assign cell-type identity. Leiden/KMeans labels are numeric only."],
+        evidence_card=card,
     )
     adata.uns["pipeline_contract"] = summary
     return adata, markers, summary
