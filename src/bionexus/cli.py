@@ -776,13 +776,17 @@ def handle_route(args: argparse.Namespace) -> int:
 
 
 def handle_eval(args: argparse.Namespace) -> int:
-    """Handle the 'eval' command to run the BioNexus Agent Reliability Benchmark."""
+    """Handle the 'eval' command to run the BioNexus Agent Reliability Benchmark (BioNexus Eval 2.0)."""
     from evals.runner import format_benchmark_markdown, run_benchmark
 
     suite = getattr(args, "suite", None)
     if suite == "all":
         suite = None
-    report = run_benchmark(suite=suite)
+    level = getattr(args, "level", "all")
+    if level == "all":
+        level = None
+
+    report = run_benchmark(suite=suite, level=level)
 
     if getattr(args, "report", None):
         out_p = Path(args.report)
@@ -797,6 +801,39 @@ def handle_eval(args: argparse.Namespace) -> int:
         print(format_benchmark_markdown(report))
 
     return 0 if report.failed_cases == 0 else 1
+
+
+def handle_audit_claims(args: argparse.Namespace) -> int:
+    """Audit text or report artifact for prohibited scientific claims."""
+    from bionexus.claim_checker import audit_prohibited_claims
+
+    target = args.target
+    p = Path(target)
+    if p.exists() and p.is_file():
+        content = p.read_text(encoding="utf-8")
+    else:
+        content = target
+
+    res = audit_prohibited_claims(
+        content,
+        capability_id=getattr(args, "capability", None),
+    )
+
+    if getattr(args, "json", False):
+        print(json.dumps(res.to_dict(), indent=2))
+        return 0 if res.passed else 1
+
+    print("\n=== BioNexus Prohibited Claims Audit ===")
+    if res.passed:
+        print("[PASS] Zero prohibited scientific claims detected.")
+        return 0
+    else:
+        print(f"[FAIL] Detected {res.violation_count} prohibited claim violation(s):")
+        for i, v in enumerate(res.violations, start=1):
+            print(f"  {i}. [{v.violation_type.value}] Matched: \"{v.matched_text}\"")
+            print(f"     Rule: {v.rule_description}")
+            print(f"     Remedy: {v.remedy}")
+        return 1
 
 
 # ==============================================================================
@@ -910,10 +947,17 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_route.add_argument("--json", action="store_true", help="Output routing decision as JSON")
 
     # 8. eval (BioNexus Agent Behavior & Epistemic Benchmark)
-    p_eval = subparsers.add_parser("eval", help="Run BioNexus Agent Behavior & Scientific Reliability Benchmark")
-    p_eval.add_argument("--suite", choices=["all", "routing", "refusal", "capability_claim", "scientific_semantics", "backend_failure", "adversarial"], default="all", help="Benchmark evaluation suite")
+    p_eval = subparsers.add_parser("eval", help="Run BioNexus Agent Behavior & Scientific Reliability Benchmark (BioNexus Eval 2.0)")
+    p_eval.add_argument("--level", choices=["all", "L1", "L2", "L3"], default="all", help="Benchmark tier level (L1=Router, L2=Agent Claims, L3=Outcome)")
+    p_eval.add_argument("--suite", choices=["all", "routing", "refusal", "capability_claim", "scientific_semantics", "backend_failure", "adversarial", "l2_agent_claims", "l3_scientific_outcomes"], default="all", help="Benchmark evaluation suite")
     p_eval.add_argument("--report", default=None, help="Path to save Markdown evaluation report")
     p_eval.add_argument("--json", action="store_true", help="Output benchmark results as JSON")
+
+    # 9. audit-claims (Prohibited Claims & Hallucination Auditor)
+    p_claim = subparsers.add_parser("audit-claims", help="Audit text response or report artifact for prohibited scientific claims")
+    p_claim.add_argument("target", help="Response text or file path to evaluate")
+    p_claim.add_argument("--capability", default=None, help="Optional capability context ID")
+    p_claim.add_argument("--json", action="store_true", help="Output claim audit result as JSON")
 
     args = parser.parse_args(argv)
 
@@ -943,6 +987,8 @@ def main(argv: Optional[list[str]] = None) -> int:
         return handle_route(args)
     elif args.command == "eval":
         return handle_eval(args)
+    elif args.command == "audit-claims":
+        return handle_audit_claims(args)
 
     return 0
 

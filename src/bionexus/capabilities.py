@@ -257,8 +257,8 @@ class CapabilityContract:
             )
             status = "REFUSED"
         else:
-            exec_state = ExecutionState.EXECUTED.value
-            concl_maturity = ConclusionMaturity.PRELIMINARY.value
+            exec_state = ExecutionState.PERMITTED.value
+            concl_maturity = ConclusionMaturity.UNASSESSED.value
             card = EvidenceCard(
                 execution_state=exec_state,
                 input_integrity=DimensionGrade.GRADE_A.value if meta else DimensionGrade.UNTESTED.value,

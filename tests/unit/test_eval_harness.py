@@ -24,25 +24,33 @@ from evals.runner import format_benchmark_markdown, load_eval_cases, run_benchma
 
 
 def test_load_eval_cases():
-    """Verify all YAML benchmark suites load properly."""
+    """Verify all YAML benchmark suites load properly across L1, L2, L3."""
     cases = load_eval_cases()
-    assert len(cases) >= 25
+    assert len(cases) >= 35
 
     categories = {c.category.value for c in cases}
     assert "routing" in categories
     assert "refusal" in categories
     assert "capability_claim" in categories
-    assert "scientific_semantics" in categories
-    assert "backend_failure" in categories
-    assert "adversarial" in categories
+    assert "host_agent_claim" in categories
+    assert "scientific_outcome" in categories
+
+    levels = {c.level.value for c in cases}
+    assert "L1" in levels
+    assert "L2" in levels
+    assert "L3" in levels
 
 
 def test_run_benchmark_harness():
-    """Verify full benchmark run passes with high Composite Reliability Index."""
+    """Verify full multi-tier benchmark run passes with high Composite Reliability Index."""
     report = run_benchmark()
-    assert report.total_cases >= 25
+    assert report.total_cases >= 35
     assert report.failed_cases == 0
     assert report.overall_accuracy >= 0.95
+
+    assert "L1" in report.level_scores
+    assert "L2" in report.level_scores
+    assert "L3" in report.level_scores
 
     m = report.metrics
     assert m["unsafe_invocation_rate"] == 0.0
@@ -55,16 +63,17 @@ def test_format_benchmark_markdown():
     """Verify Markdown report generation."""
     report = run_benchmark()
     md = format_benchmark_markdown(report)
-    assert "[BioNexus Eval]" in md
+    assert "[BioNexus Eval 2.0]" in md
+    assert "Multi-Tier Benchmark Levels" in md
     assert "Core Scientific Reliability Metrics" in md
     assert "Category Breakdown" in md
     assert "Composite Reliability Index" in md
 
 
 def test_cli_eval_subcommand(capsys):
-    """Verify CLI 'bionexus eval' command."""
-    rc = cli_main(["eval"])
+    """Verify CLI 'bionexus eval' command with --level."""
+    rc = cli_main(["eval", "--level", "L2"])
     assert rc == 0
     captured = capsys.readouterr()
-    assert "[BioNexus Eval]" in captured.out
+    assert "[BioNexus Eval 2.0]" in captured.out
     assert "Overall Accuracy" in captured.out

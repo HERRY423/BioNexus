@@ -1,5 +1,10 @@
 """
-Schema definitions for BioNexus Agent Behavior & Scientific Epistemic Benchmark.
+Schema definitions for BioNexus Agent Behavior & Scientific Epistemic Benchmark (BioNexus Eval 2.0).
+
+Defines:
+- EvalLevel: L1 (Router & Precondition), L2 (Host-Agent & Claim Audit), L3 (Scientific Outcome & Ground Truth).
+- EvalCategory: Functional benchmark dimensions.
+- EvalCase, EvalResult, BenchmarkReport.
 """
 
 from __future__ import annotations
@@ -9,15 +14,26 @@ from enum import Enum
 from typing import Any, Dict, List, Optional
 
 
+class EvalLevel(str, Enum):
+    """Multi-tier benchmark hierarchy."""
+
+    L1_ROUTER = "L1"    # L1: Router & Precondition Contract Regression
+    L2_AGENT = "L2"     # L2: Host-Agent Claim & Anti-Hallucination Behavior
+    L3_OUTCOME = "L3"   # L3: Scientific Biological Outcome & Planted Truth Recovery
+    ALL = "ALL"
+
+
 class EvalCategory(str, Enum):
     """Benchmark evaluation categories."""
 
-    ROUTING = "routing"  # Intent recognition and capability matching
-    REFUSAL = "refusal"  # Deterministic refusal of invalid analyses (pseudoreplication, wrong distribution)
-    CAPABILITY_CLAIM = "capability_claim"  # Anti-hallucination of capabilities and cell types
-    SCIENTIFIC_SEMANTICS = "scientific_semantics"  # Data semantic distinction (raw vs log, cell vs sample, marker vs DE)
-    BACKEND_FAILURE = "backend_failure"  # Missing backend, degradation, and fallback honesty
-    ADVERSARIAL = "adversarial"  # Tricky/adversarial prompts attempting to bypass scientific invariants
+    ROUTING = "routing"                    # Intent recognition and capability matching (L1)
+    REFUSAL = "refusal"                    # Deterministic refusal of invalid analyses (L1)
+    CAPABILITY_CLAIM = "capability_claim"  # Anti-hallucination of capabilities and cell types (L1/L2)
+    SCIENTIFIC_SEMANTICS = "scientific_semantics"  # Data semantics: raw vs log, cell vs sample (L1)
+    BACKEND_FAILURE = "backend_failure"    # Missing backend degradation and fallback honesty (L1)
+    ADVERSARIAL = "adversarial"            # Adversarial prompts attempting invariant bypass (L1/L2)
+    HOST_AGENT_CLAIM = "host_agent_claim"  # L2 generated response prohibited claim audit
+    SCIENTIFIC_OUTCOME = "scientific_outcome"  # L3 biological ground truth & statistics recovery
 
 
 class ExpectedStatus(str, Enum):
@@ -37,10 +53,12 @@ class EvalCase:
     prompt: str
     category: EvalCategory
     expected_status: ExpectedStatus
+    level: EvalLevel = EvalLevel.L1_ROUTER
     expected_capability: Optional[str] = None
     expected_violations: List[str] = field(default_factory=list)
     prohibited_claims: List[str] = field(default_factory=list)
     required_remedies: List[str] = field(default_factory=list)
+    simulated_agent_response: Optional[str] = None
     data_metadata: Dict[str, Any] = field(default_factory=dict)
     allow_degraded: bool = False
     description: str = ""
@@ -48,6 +66,7 @@ class EvalCase:
     def to_dict(self) -> Dict[str, Any]:
         return {
             "id": self.id,
+            "level": self.level.value,
             "prompt": self.prompt,
             "category": self.category.value,
             "expected_status": self.expected_status.value,
@@ -55,6 +74,7 @@ class EvalCase:
             "expected_violations": self.expected_violations,
             "prohibited_claims": self.prohibited_claims,
             "required_remedies": self.required_remedies,
+            "simulated_agent_response": self.simulated_agent_response,
             "data_metadata": self.data_metadata,
             "allow_degraded": self.allow_degraded,
             "description": self.description,
@@ -70,9 +90,11 @@ class EvalResult:
     passed: bool
     expected_status: str
     actual_status: str
-    expected_capability: Optional[str]
-    actual_capability: Optional[str]
+    level: str = "L1"
+    expected_capability: Optional[str] = None
+    actual_capability: Optional[str] = None
     failure_reasons: List[str] = field(default_factory=list)
+    prohibited_claim_violations: List[Dict[str, Any]] = field(default_factory=list)
     execution_time_ms: float = 0.0
 
     def to_dict(self) -> Dict[str, Any]:
@@ -87,6 +109,7 @@ class BenchmarkReport:
     passed_cases: int
     failed_cases: int
     overall_accuracy: float
+    level_scores: Dict[str, Dict[str, Any]]
     metrics: Dict[str, float]
     category_scores: Dict[str, Dict[str, Any]]
     detailed_results: List[EvalResult]
@@ -98,8 +121,9 @@ class BenchmarkReport:
             "passed_cases": self.passed_cases,
             "failed_cases": self.failed_cases,
             "overall_accuracy": round(self.overall_accuracy, 4),
+            "level_scores": self.level_scores,
             "metrics": {k: round(v, 4) for k, v in self.metrics.items()},
             "category_scores": self.category_scores,
-            "detailed_results": [r.to_dict() for r in self.detailed_results],
             "timestamp": self.timestamp,
+            "detailed_results": [r.to_dict() for r in self.detailed_results],
         }

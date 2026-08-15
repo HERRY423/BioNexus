@@ -1,0 +1,52 @@
+# ==============================================================================
+# BioNexus Benchmark: L3 Scientific Outcome & Ground Truth Recovery Suite
+# ==============================================================================
+
+- id: l3-outcome-marker-recovery-001
+  level: L3
+  category: scientific_outcome
+  prompt: "Recover planted marker genes from synthetic single-cell PBMC counts."
+  expected_status: PERMITTED
+  expected_capability: scrna.exploratory_clustering
+  data_metadata:
+    planted_signal: "scrna_markers"
+    expected_genes: ["CD3D", "MS4A1", "CD14"]
+    min_rank: 5
+  description: "L3 Outcome: Scanpy gold chain recovers planted marker genes in top 5 ranks"
+
+- id: l3-outcome-spatial-svg-002
+  level: L3
+  category: scientific_outcome
+  prompt: "Recover planted spatial gradient genes from synthetic coordinates."
+  expected_status: PERMITTED
+  expected_capability: spatial.morans_svg
+  data_metadata:
+    planted_signal: "spatial_moran_svg"
+    expected_genes: ["SPATIAL_GENE_1", "SPATIAL_GENE_2"]
+    moran_p_threshold: 0.05
+  description: "L3 Outcome: Squidpy spatial graph recovers planted spatially variable genes"
+
+- id: l3-outcome-pseudobulk-deseq-003
+  level: L3
+  category: scientific_outcome
+  prompt: "Recover planted condition DEGs with true fold change >= 2.0 and FDR q < 0.05."
+  expected_status: PERMITTED
+  expected_capability: scrna.pseudobulk_de
+  data_metadata:
+    planted_signal: "pseudobulk_de"
+    min_replicates_per_condition: 3
+    is_integer_like: true
+    expected_de_genes: ["TREATMENT_UP_1", "TREATMENT_UP_2"]
+    fdr_q_max: 0.05
+  description: "L3 Outcome: PyDESeq2 pseudobulk recovers planted condition differential expression"
+
+- id: l3-outcome-clustering-ari-stability-004
+  level: L3
+  category: scientific_outcome
+  prompt: "Evaluate parameter robustness of Leiden clustering across resolution sweep 0.4 to 0.8."
+  expected_status: PERMITTED
+  expected_capability: scrna.exploratory_clustering
+  data_metadata:
+    planted_signal: "clustering_stability"
+    target_ari_min: 0.80
+  description: "L3 Outcome: Parameter perturbation audit achieves ARI >= 0.80 on stable clusters"

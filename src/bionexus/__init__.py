@@ -25,6 +25,12 @@ from .capabilities import (
     get_capability,
     list_capabilities,
 )
+from .claim_checker import (
+    ClaimAuditResult,
+    ClaimViolation,
+    ClaimViolationType,
+    audit_prohibited_claims,
+)
 from .contracts import (
     ABSTAIN,
     GRADE_A,
@@ -100,9 +106,13 @@ __all__ = [
     "attach_meta",
     "audit_expression_matrix",
     "audit_parameter_stability",
+    "audit_prohibited_claims",
     "audit_spatial_coordinates",
     "audit_statistical_significance",
     "canonical_skills",
+    "ClaimAuditResult",
+    "ClaimViolation",
+    "ClaimViolationType",
     "core_skills",
     "discoverable_skill_names",
     "evaluate_capability_preconditions",

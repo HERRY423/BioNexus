@@ -20,13 +20,14 @@ from typing import Any, Dict, Iterable, Optional
 class ExecutionState(str, Enum):
     """
     Layer 1: Execution State.
-    Answers: Did the computational method execute, and with what technical fidelity?
+    Answers: 'Did the method actually execute, or is it in preflight / refused / degraded state?'
     """
 
-    EXECUTED = "EXECUTED"  # Official gold-standard backend/code executed properly
-    DEGRADED = "DEGRADED"  # Heuristic fallback, partial stack, or approximate parameters
-    REFUSED = "REFUSED"    # Deterministically refused (missing required backend/hard gate)
-    FAILED = "FAILED"      # Runtime crash, exception, divergence, convergence failure
+    PERMITTED = "PERMITTED"  # Preflight preconditions satisfied, execution permitted but not yet run
+    EXECUTED = "EXECUTED"    # Official gold-standard backend/code executed properly
+    DEGRADED = "DEGRADED"    # Heuristic fallback, partial stack, or approximate parameters
+    REFUSED = "REFUSED"      # Deterministically refused (missing required backend/hard gate)
+    FAILED = "FAILED"        # Runtime crash, exception, divergence, convergence failure
 
 
 class DimensionGrade(str, Enum):
@@ -39,8 +40,9 @@ class DimensionGrade(str, Enum):
     GRADE_A = "A"               # Gold standard / Strong statistical support / Verified input
     GRADE_B = "B"               # Moderate / Plausible / Standard assumed distribution
     GRADE_C = "C"               # Marginal / Violated assumption / Suspect data scaling / Fragile
-    UNTESTED = "UNTESTED"       # Dimension was not evaluated in this execution run
-    NOT_APPLICABLE = "NOT_APPLICABLE"  # Dimension is not relevant for this analytical task
+    UNTESTED = "UNTESTED"              # Dimension was not evaluated in this run
+    UNASSESSED = "UNASSESSED"          # Preflight / unexecuted state
+    NOT_APPLICABLE = "NOT_APPLICABLE"  # Dimension does not apply to this method
     INSUFFICIENT = "INSUFFICIENT"      # Evaluated, but sample size or statistical power is inadequate
     CONFLICTED = "CONFLICTED"          # Evaluated across methods, results are contradictory
 
@@ -50,6 +52,7 @@ class ConclusionMaturity(str, Enum):
     Layer 3: Scientific Epistemic Maturity Model.
     Hierarchical maturity of the scientific finding:
 
+    - UNASSESSED: Preflight viability passed, but computational analysis and statistics have not executed.
     - ABSTAIN: Execution refused, runtime failed, or clinical claim refused without certification.
     - FRAGILE: Parameter sensitive, violated distribution assumptions, or suspect inputs.
     - CONFLICTED: Contradictory evidence across alternative methods or discordant benchmarks.
@@ -59,6 +62,7 @@ class ConclusionMaturity(str, Enum):
     - REPLICATED: ROBUST + verified by independent external datasets, orthogonal assays, or gold-standard truth sets.
     """
 
+    UNASSESSED = "UNASSESSED"
     ABSTAIN = "ABSTAIN"
     FRAGILE = "FRAGILE"
     CONFLICTED = "CONFLICTED"
@@ -77,6 +81,7 @@ GRADE_B = DimensionGrade.GRADE_B.value
 GRADE_C = DimensionGrade.GRADE_C.value
 ABSTAIN = "abstain"
 UNTESTED = DimensionGrade.UNTESTED.value
+UNASSESSED = DimensionGrade.UNASSESSED.value
 NOT_APPLICABLE = DimensionGrade.NOT_APPLICABLE.value
 INSUFFICIENT = DimensionGrade.INSUFFICIENT.value
 CONFLICTED = DimensionGrade.CONFLICTED.value
@@ -223,7 +228,11 @@ def synthesize_conclusion_maturity(
     ):
         return ConclusionMaturity.ABSTAIN.value
 
-    # 2. Conflicted across alternative methods
+    # 2. Preflight / Unexecuted Permitted State
+    if exec_state in (ExecutionState.PERMITTED.value, "PERMITTED"):
+        return ConclusionMaturity.UNASSESSED.value
+
+    # 3. Conflicted across alternative methods
     if concord in (DimensionGrade.CONFLICTED.value, GRADE_C, "conflicted"):
         return ConclusionMaturity.CONFLICTED.value
 

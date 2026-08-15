@@ -126,3 +126,23 @@ def compute_category_breakdown(results: List[EvalResult]) -> Dict[str, Dict[str,
         }
 
     return breakdown
+
+
+def compute_level_breakdown(results: List[EvalResult]) -> Dict[str, Dict[str, Any]]:
+    """Compute per-level (L1, L2, L3) breakdown of benchmark scores."""
+    levels: Dict[str, List[EvalResult]] = {}
+    for r in results:
+        levels.setdefault(r.level, []).append(r)
+
+    breakdown = {}
+    for lvl, items in levels.items():
+        total = len(items)
+        passed = sum(1 for i in items if i.passed)
+        breakdown[lvl] = {
+            "total": total,
+            "passed": passed,
+            "failed": total - passed,
+            "accuracy": round(passed / total, 4) if total > 0 else 0.0,
+        }
+
+    return breakdown
