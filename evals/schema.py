@@ -4,7 +4,7 @@ Schema definitions for BioNexus Agent Behavior & Scientific Epistemic Benchmark 
 Defines:
 - EvalLevel: L1 (Router & Precondition), L2 (Host-Agent & Claim Audit), L3 (Scientific Outcome & Ground Truth).
 - EvalCategory: Functional benchmark dimensions.
-- EvalCase, EvalResult, BenchmarkReport.
+- EvalCase, EvalResult, BenchmarkReport, EpistemicCalibrationReport.
 """
 
 from __future__ import annotations
@@ -55,6 +55,7 @@ class EvalCase:
     expected_status: ExpectedStatus
     level: EvalLevel = EvalLevel.L1_ROUTER
     expected_capability: Optional[str] = None
+    expected_maturity: Optional[str] = None
     expected_violations: List[str] = field(default_factory=list)
     prohibited_claims: List[str] = field(default_factory=list)
     required_remedies: List[str] = field(default_factory=list)
@@ -71,6 +72,7 @@ class EvalCase:
             "category": self.category.value,
             "expected_status": self.expected_status.value,
             "expected_capability": self.expected_capability,
+            "expected_maturity": self.expected_maturity,
             "expected_violations": self.expected_violations,
             "prohibited_claims": self.prohibited_claims,
             "required_remedies": self.required_remedies,
@@ -93,9 +95,31 @@ class EvalResult:
     level: str = "L1"
     expected_capability: Optional[str] = None
     actual_capability: Optional[str] = None
+    expected_maturity: Optional[str] = None
+    actual_maturity: Optional[str] = None
     failure_reasons: List[str] = field(default_factory=list)
     prohibited_claim_violations: List[Dict[str, Any]] = field(default_factory=list)
     execution_time_ms: float = 0.0
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
+class EpistemicCalibrationReport:
+    """Detailed scientific evidence maturity calibration statistics."""
+
+    total_evaluated: int
+    exact_accuracy: float
+    overconfidence_count: int
+    overconfidence_rate: float
+    underconfidence_count: int
+    underconfidence_rate: float
+    ordinal_calibration_error: float
+    brier_calibration_score: float
+    macro_f1: float
+    confusion_matrix: Dict[str, Dict[str, int]]
+    maturity_levels: List[str]
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -114,6 +138,7 @@ class BenchmarkReport:
     category_scores: Dict[str, Dict[str, Any]]
     detailed_results: List[EvalResult]
     timestamp: str
+    calibration: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -125,5 +150,6 @@ class BenchmarkReport:
             "metrics": {k: round(v, 4) for k, v in self.metrics.items()},
             "category_scores": self.category_scores,
             "timestamp": self.timestamp,
+            "calibration": self.calibration,
             "detailed_results": [r.to_dict() for r in self.detailed_results],
         }

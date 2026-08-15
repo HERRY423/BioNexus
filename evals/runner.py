@@ -335,6 +335,7 @@ def run_single_case(
         actual_status=actual_status,
         expected_capability=case.expected_capability,
         actual_capability=actual_cap,
+        expected_maturity=case.expected_maturity,
         failure_reasons=failure_reasons,
         prohibited_claim_violations=claim_violations,
         execution_time_ms=round(t_elapsed, 2),
@@ -352,6 +353,8 @@ def run_benchmark(
     cases = load_eval_cases(suite=suite, level=level, datasets_dir=datasets_dir)
     results = [run_single_case(c, provider=provider, model=model) for c in cases]
 
+    from evals.metrics import compute_epistemic_calibration
+    calib = compute_epistemic_calibration(results)
     metrics = compute_benchmark_metrics(results)
     categories = compute_category_breakdown(results)
     level_scores = compute_level_breakdown(results)
@@ -370,6 +373,7 @@ def run_benchmark(
         category_scores=categories,
         detailed_results=results,
         timestamp=datetime.now(timezone.utc).isoformat(),
+        calibration=calib.to_dict(),
     )
 
 
@@ -403,9 +407,36 @@ def format_benchmark_markdown(report: BenchmarkReport) -> str:
     lines.append(f"| **Capability Hallucination Rate** | `{m['capability_hallucination_rate'] * 100:.1f}%` | `0.0%` | Zero unverified cell-types/claims |")
     lines.append(f"| **Backend Fidelity** | `{m['backend_fidelity'] * 100:.1f}%` | `> 95.0%` | Accurate toolchain & degradation honesty |")
     lines.append(f"| **Scientific Semantic Error Rate** | `{m['scientific_semantic_error_rate'] * 100:.1f}%` | `0.0%` | Confusion of raw/log, cell/sample |")
-    lines.append(f"| **Evidence Calibration Score** | `{m['evidence_calibration_score'] * 100:.1f}%` | `> 90.0%` | Epistemic card alignment |")
+    lines.append(f"| **Evidence Calibration Score** | `{m['evidence_calibration_score'] * 100:.1f}%` | `> 90.0%` | Epistemic card alignment & OCE penalty |")
     lines.append(f"| **Composite Reliability Index (CRI)** | **`{m['composite_reliability_index'] * 100:.1f}%`** | `> 95.0%` | **Unified Scientific Quality Index** |")
     lines.append("\n---\n")
+
+    # Epistemic Calibration Section
+    if report.calibration:
+        c = report.calibration
+        lines.append("## Epistemic Evidence Maturity Calibration\n")
+        lines.append(f"- **Overconfidence Rate (Epistemic Hubris)**: `{c['overconfidence_rate'] * 100:.1f}%` (Target: 0.0%)")
+        lines.append(f"- **Underconfidence Rate (Epistemic Timidity)**: `{c['underconfidence_rate'] * 100:.1f}%`")
+        lines.append(f"- **Ordinal Calibration Error (OCE)**: `{c['ordinal_calibration_error']:.3f}` (Mean rank distance)")
+        lines.append(f"- **Brier Calibration Score**: `{c['brier_calibration_score'] * 100:.1f}%`")
+        lines.append(f"- **Maturity Macro-F1**: `{c['macro_f1'] * 100:.1f}%`\n")
+
+        # Confusion Matrix Table
+        cm = c.get("confusion_matrix", {})
+        active_levels = [lvl for lvl in c.get("maturity_levels", []) if sum(cm.get(lvl, {}).values()) > 0 or sum(cm.get(o, {}).get(lvl, 0) for o in c.get("maturity_levels", [])) > 0]
+        if active_levels:
+            lines.append("### Maturity Confusion Matrix (Rows: Expected Warrant | Cols: Predicted Warrant)\n")
+            header = "| Expected \\ Pred | " + " | ".join(active_levels) + " |"
+            sep = "|---|" + "|".join(["---"] * len(active_levels)) + "|"
+            lines.append(header)
+            lines.append(sep)
+            for true_lvl in active_levels:
+                row = [f"**{true_lvl}**"]
+                for pred_lvl in active_levels:
+                    val = cm.get(true_lvl, {}).get(pred_lvl, 0)
+                    row.append(str(val))
+                lines.append("| " + " | ".join(row) + " |")
+        lines.append("\n---\n")
 
     lines.append("## Category Breakdown\n")
     lines.append("| Category | Total | Passed | Failed | Accuracy |")
