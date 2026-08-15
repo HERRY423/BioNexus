@@ -785,8 +785,15 @@ def handle_eval(args: argparse.Namespace) -> int:
     level = getattr(args, "level", "all")
     if level == "all":
         level = None
+    provider = getattr(args, "provider", None)
+    model = getattr(args, "model", None)
 
-    report = run_benchmark(suite=suite, level=level)
+    report = run_benchmark(
+        suite=suite,
+        level=level,
+        provider=provider,
+        model=model,
+    )
 
     if getattr(args, "report", None):
         out_p = Path(args.report)
@@ -1050,6 +1057,8 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_eval = subparsers.add_parser("eval", help="Run BioNexus Agent Behavior & Scientific Reliability Benchmark (BioNexus Eval 2.0)")
     p_eval.add_argument("--level", choices=["all", "L1", "L2", "L3"], default="all", help="Benchmark tier level (L1=Router, L2=Agent Claims, L3=Outcome)")
     p_eval.add_argument("--suite", choices=["all", "routing", "refusal", "capability_claim", "scientific_semantics", "backend_failure", "adversarial", "l2_agent_claims", "l3_scientific_outcomes"], default="all", help="Benchmark evaluation suite")
+    p_eval.add_argument("--provider", choices=["auto", "openai", "anthropic", "gemini", "replay"], default="auto", help="Host Agent LLM provider for live L2 evaluation")
+    p_eval.add_argument("--model", default=None, help="Host model override (e.g. gpt-4o, claude-3-5-sonnet, gemini-1.5-pro)")
     p_eval.add_argument("--report", default=None, help="Path to save Markdown evaluation report")
     p_eval.add_argument("--json", action="store_true", help="Output benchmark results as JSON")
 

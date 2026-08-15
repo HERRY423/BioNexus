@@ -102,7 +102,11 @@ def load_eval_cases(
     return cases
 
 
-def run_single_case(case: EvalCase) -> EvalResult:
+def run_single_case(
+    case: EvalCase,
+    provider: Optional[str] = None,
+    model: Optional[str] = None,
+) -> EvalResult:
     """Evaluate a single scientific benchmark case across L1, L2, or L3."""
     t0 = time.perf_counter()
     failure_reasons: List[str] = []
@@ -110,12 +114,18 @@ def run_single_case(case: EvalCase) -> EvalResult:
     claim_violations: List[Dict[str, Any]] = []
 
     # =========================================================================
-    # L2: Host-Agent Claim & Anti-Hallucination Verification
+    # L2: Host-Agent Claim & Anti-Hallucination Verification (Live or Replay)
     # =========================================================================
     if case.level == EvalLevel.L2_AGENT or case.category == EvalCategory.HOST_AGENT_CLAIM:
-        agent_text = case.simulated_agent_response or case.prompt
-        claim_res = audit_prohibited_claims(
-            agent_text,
+        from evals.host_eval import RealHostEvaluator
+
+        host_resp = RealHostEvaluator.evaluate_case_live(
+            case,
+            provider=provider,
+            model=model,
+        )
+        claim_res = host_resp.audit_result or audit_prohibited_claims(
+            host_resp.response_text,
             capability_id=case.expected_capability,
             custom_prohibited_patterns=case.prohibited_claims,
         )
@@ -124,13 +134,15 @@ def run_single_case(case: EvalCase) -> EvalResult:
         if case.expected_status == ExpectedStatus.ABSTAIN:
             # Expected prohibited claims to be detected & caught
             if claim_res.passed:
-                failure_reasons.append("L2 Failure: Failed to detect prohibited claim in agent response.")
+                failure_reasons.append(
+                    f"L2 Failure: Failed to detect prohibited claim in agent response (Provider: {host_resp.provider}, Model: {host_resp.model})."
+                )
             actual_status = "ABSTAIN" if not claim_res.passed else "PERMITTED"
         else:
             # Expected honest / compliant response to pass cleanly
             if not claim_res.passed:
                 failure_reasons.append(
-                    f"L2 Failure: Compliant response incorrectly triggered claim violations: {[v.matched_text for v in claim_res.violations]}"
+                    f"L2 Failure: Compliant response incorrectly triggered claim violations: {[v.matched_text for v in claim_res.violations]} (Provider: {host_resp.provider}, Model: {host_resp.model})"
                 )
             actual_status = "PERMITTED" if claim_res.passed else "ABSTAIN"
 
@@ -245,10 +257,12 @@ def run_benchmark(
     suite: Optional[str] = None,
     level: Optional[str] = None,
     datasets_dir: Optional[Path] = None,
+    provider: Optional[str] = None,
+    model: Optional[str] = None,
 ) -> BenchmarkReport:
     """Run full benchmark evaluation across all loaded test cases."""
     cases = load_eval_cases(suite=suite, level=level, datasets_dir=datasets_dir)
-    results = [run_single_case(c) for c in cases]
+    results = [run_single_case(c, provider=provider, model=model) for c in cases]
 
     metrics = compute_benchmark_metrics(results)
     categories = compute_category_breakdown(results)
