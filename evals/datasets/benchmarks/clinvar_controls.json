@@ -1,0 +1,20 @@
+[
+  {
+    "rsid": "rs121913527",
+    "gene": "BRAF",
+    "variant": "V600E",
+    "significance": "Pathogenic"
+  },
+  {
+    "rsid": "rs1800562",
+    "gene": "HFE",
+    "variant": "C282Y",
+    "significance": "Pathogenic"
+  },
+  {
+    "rsid": "rs1801133",
+    "gene": "MTHFR",
+    "variant": "A222V",
+    "significance": "Benign"
+  }
+]

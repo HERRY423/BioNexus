@@ -58,6 +58,7 @@ ehthumbs.db
 !tests/fixtures/*.h5ad
 *.h5
 tests/_tmp_*
+evals/datasets/benchmarks/*.h5ad
 .coverage
 coverage.xml
 htmlcov/
