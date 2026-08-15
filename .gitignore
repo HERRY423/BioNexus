@@ -58,6 +58,9 @@ ehthumbs.db
 !tests/fixtures/*.h5ad
 *.h5
 tests/_tmp_*
+.coverage
+coverage.xml
+htmlcov/
 *.fastq
 *.fastq.gz
 *.bam

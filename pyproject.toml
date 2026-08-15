@@ -32,7 +32,7 @@ keywords = [
     "scvi-tools"
 ]
 dependencies = [
-    "numpy>=1.23.0,<3.0.0",
+    "numpy>=1.23.0,<2.0.0",
     "pandas>=2.0.0,<3.0.0",
     "scipy>=1.10.0,<2.0.0",
     "requests>=2.28.0,<3.0.0",
