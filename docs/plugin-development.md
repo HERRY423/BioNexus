@@ -62,34 +62,41 @@ backend: "<Primary execution engine>"  # Required: e.g. "scanpy", "squidpy", "sc
 
 BioNexus strictly decouples **Execution Fidelity** (whether an algorithm successfully computed) from **Scientific Evidence Quality** (statistical power, input validity, parameter sensitivity, and external replication).
 
-Every canonical pipeline must construct and attach a 7-dimensional `EvidenceCard`:
+Every canonical pipeline must construct and attach an `EvidenceCard` (v2.0) with three distinct layers:
 
 ```python
 from bionexus.contracts import (
     GRADE_A,
     GRADE_B,
     GRADE_C,
+    UNTESTED,
     EvidenceCard,
+    ExecutionState,
     attach_meta,
     refuse,
 )
 
+# Construct EvidenceCard 2.0
 card = EvidenceCard(
-    execution_fidelity=GRADE_A,   # A: official gold standard / B: simplified / C: heuristic / abstain
-    input_integrity=GRADE_A,      # A: verified raw/normalized scale / B: plausible / C: invalid scale or NaNs
-    assumption_validity=GRADE_A,  # A: verified distribution / B: standard assumed / C: violated
-    statistical_support=GRADE_A,  # A: FDR q < 0.05 / B: unadjusted p < 0.05 / C: marginal / INSUFFICIENT
-    parameter_robustness=GRADE_B, # A: stable across sweeps / B: moderate / C: fragile / UNTESTED
-    cross_method_concordance="UNTESTED", # A: unanimous / B: majority / C: conflicted / UNTESTED
-    external_validation="UNTESTED",      # A: recovers ground truth / B: partial / C: inconsistent / UNTESTED
+    # Layer 1: Execution State
+    execution_state=ExecutionState.EXECUTED.value,  # EXECUTED / DEGRADED / REFUSED / FAILED
+    
+    # Layer 2: Evidence Dimensions
+    input_integrity=GRADE_A,             # A: verified raw/normalized scale / B: plausible / C: invalid scale or NaNs
+    assumption_validity=GRADE_A,         # A: verified distribution / B: standard assumed / C: violated
+    statistical_support=GRADE_A,         # A: FDR q < 0.05 / B: unadjusted p < 0.05 / C: marginal / INSUFFICIENT
+    parameter_robustness=GRADE_A,        # A: stable across sweeps / B: moderate / C: fragile / UNTESTED
+    cross_method_concordance=UNTESTED,   # A: unanimous / B: majority / C: conflicted / UNTESTED
+    external_validation=UNTESTED,        # A: recovers ground truth / B: partial / C: inconsistent / UNTESTED
     details={
         "backend": "scanpy",
         "n_samples": 1200,
         "fdr_threshold": 0.05,
+        "robustness_notes": "ARI > 0.85 across Leiden resolution sweeps 0.4 - 1.2"
     }
 )
 
-# Synthesize overall ConclusionStatus and attach standard metadata
+# Synthesize overall ConclusionMaturity and attach standard metadata
 result = attach_meta(
     payload={
         "n_clusters": 5,
@@ -106,12 +113,14 @@ result = attach_meta(
 )
 ```
 
-### ConclusionStatus Hierarchy
-- `SUPPORTED`: Execution Fidelity `A` + Input Integrity `A` + Assumption Validity `A` + Statistical Support `A`.
-- `TENTATIVE`: High execution fidelity on plausible inputs, but single parameter run or unverified orthogonal methods.
-- `FRAGILE`: Parameter sensitivity, suspect input scaling, or marginal statistical power.
-- `CONFLICTED`: Contradictory findings across alternative algorithms or discordant with benchmark controls.
-- `ABSTAIN`: Missing required backend, violated hard constraints, or clinical refusal.
+### ConclusionMaturity Epistemic Hierarchy
+- `REPLICATED`: Validated against external independent benchmarks + robust under parameter sweeps + strong statistics.
+- `ROBUST`: Supported on current data AND verified stable under parameter sweeps/perturbations (`parameter_robustness: "A"`).
+- `SUPPORTED`: Current dataset directly supports hypothesis (Inputs `A`, Assumptions `A`/`B`, Statistics `A`).
+- `PRELIMINARY`: Baseline single-run execution with standard assumptions (Exploratory baseline).
+- `FRAGILE`: Parameter sensitivity (`parameter_robustness: "C"`), violated assumptions, or suspect input scaling.
+- `CONFLICTED`: Contradictory findings across alternative algorithms (`cross_method_concordance: "CONFLICTED"`).
+- `ABSTAIN`: Missing required backend, violated hard constraints, or clinical claim refusal.
 
 ---
 

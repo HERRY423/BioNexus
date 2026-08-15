@@ -223,3 +223,73 @@ def audit_statistical_significance(
     else:
         notes.append(f"No findings reached statistical threshold (alpha = {alpha:.2f}).")
         return "C", notes, stats
+
+
+def audit_parameter_stability(
+    runs: List[Any],
+    metric: str = "ari",
+    tolerance_threshold: float = 0.70,
+) -> Tuple[str, List[str], Dict[str, Any]]:
+    """
+    Audit parameter robustness across parameter sweeps, resolutions, or subsampling runs.
+
+    Parameters:
+        runs: List of clustering label arrays or top feature rank lists across parameter iterations.
+        metric: "ari" (Adjusted Rand Index for clusterings) or "jaccard" (for feature rank lists).
+        tolerance_threshold: Minimum mean pairwise similarity to earn Grade A robustness.
+
+    Returns:
+        (grade: "A" | "B" | "C" | "UNTESTED", notes: List[str], stats: Dict[str, Any])
+    """
+    notes: List[str] = []
+    stats: Dict[str, Any] = {
+        "n_runs": len(runs) if runs else 0,
+        "metric": metric,
+        "mean_similarity": 0.0,
+        "min_similarity": 0.0,
+    }
+
+    if not runs or len(runs) < 2:
+        return "UNTESTED", ["Fewer than 2 runs provided for parameter sweep."], stats
+
+    pairwise_scores: List[float] = []
+
+    if metric == "ari":
+        try:
+            from sklearn.metrics import adjusted_rand_score
+            for i in range(len(runs)):
+                for j in range(i + 1, len(runs)):
+                    score = adjusted_rand_score(runs[i], runs[j])
+                    pairwise_scores.append(float(score))
+        except Exception as e:
+            return "C", [f"Failed to compute Adjusted Rand Index: {e}"], stats
+
+    elif metric == "jaccard":
+        for i in range(len(runs)):
+            for j in range(i + 1, len(runs)):
+                set_i = set(runs[i])
+                set_j = set(runs[j])
+                union_len = len(set_i.union(set_j))
+                score = len(set_i.intersection(set_j)) / union_len if union_len > 0 else 1.0
+                pairwise_scores.append(float(score))
+    else:
+        return "C", [f"Unsupported parameter stability metric: {metric}"], stats
+
+    if not pairwise_scores:
+        return "UNTESTED", ["No pairwise comparisons could be formed."], stats
+
+    mean_score = float(np.mean(pairwise_scores))
+    min_score = float(np.min(pairwise_scores))
+    stats["mean_similarity"] = mean_score
+    stats["min_similarity"] = min_score
+
+    if mean_score >= tolerance_threshold and min_score >= (tolerance_threshold - 0.15):
+        notes.append(f"High parameter stability across {len(runs)} sweeps (mean {metric.upper()}={mean_score:.3f}).")
+        return "A", notes, stats
+    elif mean_score >= (tolerance_threshold - 0.25):
+        notes.append(f"Moderate parameter sensitivity across {len(runs)} sweeps (mean {metric.upper()}={mean_score:.3f}).")
+        return "B", notes, stats
+    else:
+        notes.append(f"Fragile parameter sensitivity across {len(runs)} sweeps (mean {metric.upper()}={mean_score:.3f} < {tolerance_threshold}).")
+        return "C", notes, stats
+

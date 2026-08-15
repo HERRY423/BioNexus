@@ -25,19 +25,26 @@ BioNexus is built on an uncompromising commitment to scientific veracity. Every 
 - Never substitute a simplified local heuristic under the name of a gold-standard community tool (e.g. do not call a BLOSUM lookup an "ESM-2 language model", and do not call a local NNLS deconvolution "SoupX" or "CellBender").
 - When a required backend library or binary is absent from the user's environment, the pipeline must **cleanly refuse** using `bionexus.contracts.refuse()` with `EvidenceGrade.ABSTAIN`.
 
-### 4. Mandatory 7-Dimensional EvidenceCard
-- Every numeric, classification, or predictive endpoint must return a structured `EvidenceCard` evaluating:
-  1. **Execution Fidelity** (`A` / `B` / `C` / `abstain`): Did the official gold-standard algorithm run?
-  2. **Input Integrity** (`A` / `B` / `C`): Were input matrices verified (raw counts vs log-scaled, NaN/Inf checks, non-negative)?
-  3. **Assumption Validity** (`A` / `B` / `C` / `UNKNOWN`): Are statistical distribution assumptions met?
-  4. **Statistical Support** (`A` / `B` / `C` / `INSUFFICIENT`): Are FDR-adjusted q-values and effect sizes significant?
-  5. **Parameter Robustness** (`A` / `B` / `C` / `UNTESTED`): Is the finding stable across hyperparameter sweeps?
-  6. **Cross-method Concordance** (`A` / `B` / `C` / `UNTESTED`): Do orthogonal methods agree?
-  7. **External Validation** (`A` / `B` / `C` / `UNTESTED`): Has the result been benchmarked against ground truth?
+### 4. Mandatory EvidenceCard 2.0 Three-Layer Epistemic Architecture
+- Every numeric, classification, or predictive endpoint must return a structured `EvidenceCard` structured into three distinct epistemic layers:
+  1. **Layer 1: Execution State** (`EXECUTED`, `DEGRADED`, `REFUSED`, `FAILED`): Answers "Did the computational method actually execute and with what technical fidelity?" Decoupled entirely from the scientific conclusion itself.
+  2. **Layer 2: Evidence Dimensions & Qualitative Status** (`A`, `B`, `C`, `UNTESTED`, `NOT_APPLICABLE`, `INSUFFICIENT`, `CONFLICTED`):
+     - **Input Integrity**: Were input matrices verified (raw counts vs log-scaled, NaN/Inf checks, non-negative)?
+     - **Assumption Validity**: Are statistical distribution assumptions met?
+     - **Statistical Support**: Are FDR-adjusted q-values and effect sizes significant?
+     - **Parameter Robustness**: Is the finding stable across hyperparameter sweeps (`audit_parameter_stability`)? (*UNTESTED $\neq$ Fragile*)
+     - **Cross-method Concordance**: Do orthogonal methods agree? (*UNTESTED $\neq$ Conflicted*)
+     - **External Validation**: Has the result been benchmarked against ground truth?
+  3. **Layer 3: Conclusion Epistemic Maturity** (`ABSTAIN` $\to$ `FRAGILE` $\to$ `CONFLICTED` $\to$ `PRELIMINARY` $\to$ `SUPPORTED` $\to$ `ROBUST` $\to$ `REPLICATED`):
+     - `PRELIMINARY`: Baseline single-run execution with standard assumptions.
+     - `SUPPORTED`: Current data directly supports hypothesis (Inputs A, Assumptions A/B, Stats A).
+     - `ROBUST`: Supported AND proven stable across parameter sweeps.
+     - `REPLICATED`: Robust AND validated against independent external datasets/benchmarks.
 
 ### 5. Decoupling Execution Fidelity from Scientific Evidence Quality
-- Successfully running an algorithm (`execution_fidelity: "A"`) does not prove a scientific hypothesis is true if input data was unverified (`input_integrity: "C"`) or sample size was inadequate (`statistical_support: "INSUFFICIENT"`).
-- The synthesized `ConclusionStatus` (`SUPPORTED`, `TENTATIVE`, `FRAGILE`, `CONFLICTED`, `ABSTAIN`) must reflect this nuance.
+- Successfully running an algorithm (`execution_state: "EXECUTED"`) does not prove a scientific hypothesis is true if input data was unverified (`input_integrity: "C"`), sample size was inadequate (`statistical_support: "INSUFFICIENT"`), or parameters are fragile.
+- The synthesized `ConclusionMaturity` must reflect this nuance.
+
 
 ### 6. Research Use Only (RUO) & Regulatory Disclaimers
 - BioNexus is strictly for research use. All clinical or genomic interpretation outputs must include non-negotiable disclaimers stating that the system is not a clinical diagnostic and not CLIA/CAP validated.
