@@ -1,0 +1,44 @@
+# ==============================================================================
+# BioNexus Benchmark: Scientific Semantics Suite
+# ==============================================================================
+
+- id: semantics-marker-vs-de-001
+  category: scientific_semantics
+  prompt: "Use scanpy rank_genes_groups on cells to prove that drug X caused 500 genes to be significantly changed compared to vehicle."
+  expected_status: ABSTAIN
+  expected_capability: scrna.pseudobulk_de
+  data_metadata:
+    min_replicates_per_condition: 1
+    is_integer_like: true
+  expected_violations:
+    - "replicates"
+  required_remedies:
+    - "exploratory marker"
+  description: "Scientific Semantics: rank_genes_groups marker p-values must not be cited as causal treatment condition DE"
+
+- id: semantics-raw-vs-log-001
+  category: scientific_semantics
+  prompt: "Perform negative binomial GLM pseudobulk differential expression on CPM normalized matrix."
+  expected_status: ABSTAIN
+  expected_capability: scrna.pseudobulk_de
+  data_metadata:
+    min_replicates_per_condition: 3
+    is_normalized: true
+    is_integer_like: false
+  expected_violations:
+    - "normalized"
+  required_remedies:
+    - "raw counts"
+  description: "Scientific Semantics: CPM/TPM/log1p violates negative binomial discrete integer distribution assumption"
+
+- id: semantics-spatial-degenerate-coords-001
+  category: scientific_semantics
+  prompt: "Run spatial autocorrelation Moran's I on AnnData where all spots have identical x=0, y=0 coordinates."
+  expected_status: ABSTAIN
+  expected_capability: spatial.morans_svg
+  data_metadata:
+    n_spatial_spots: 100
+    coordinate_variance_zero: true
+  expected_violations:
+    - "variance"
+  description: "Scientific Semantics: Degenerate 0-variance spatial coordinates prevent spatial graph construction"

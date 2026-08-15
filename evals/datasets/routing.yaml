@@ -1,0 +1,99 @@
+# ==============================================================================
+# BioNexus Benchmark: Routing & Capability Discovery Suite
+# ==============================================================================
+
+- id: route-scrna-de-001
+  category: routing
+  prompt: "Compare differential expression between drug-treated and vehicle control cells in scRNA-seq dataset"
+  expected_status: PERMITTED
+  expected_capability: scrna.pseudobulk_de
+  data_metadata:
+    min_replicates_per_condition: 3
+    is_integer_like: true
+  description: "Direct condition differential expression with sufficient replicates"
+
+- id: route-scrna-de-002
+  category: routing
+  prompt: "Find genes differentially expressed in COVID-19 vs healthy donor PBMC samples"
+  expected_status: PERMITTED
+  expected_capability: scrna.pseudobulk_de
+  data_metadata:
+    min_replicates_per_condition: 4
+    is_integer_like: true
+  description: "Disease vs healthy condition DE"
+
+- id: route-scrna-cluster-001
+  category: routing
+  prompt: "Run Leiden clustering and find cluster marker genes on single cell count matrix"
+  expected_status: PERMITTED
+  expected_capability: scrna.exploratory_clustering
+  data_metadata:
+    is_integer_like: true
+  description: "Single-cell exploratory manifold learning and Leiden clustering"
+
+- id: route-scrna-cluster-002
+  category: routing
+  prompt: "Preprocess raw counts, perform PCA, construct neighbor graph and compute UMAP embedding"
+  expected_status: PERMITTED
+  expected_capability: scrna.exploratory_clustering
+  data_metadata:
+    is_integer_like: true
+  description: "Standard scverse exploratory pipeline"
+
+- id: route-spatial-svg-001
+  category: routing
+  prompt: "Detect spatially variable genes in 10x Visium tissue section using Moran's I spatial autocorrelation"
+  expected_status: PERMITTED
+  expected_capability: spatial.morans_svg
+  data_metadata:
+    n_spatial_spots: 1200
+  description: "Spatial transcriptomics Moran's I SVG detection"
+
+- id: route-spatial-svg-002
+  category: routing
+  prompt: "Build spatial KNN graph and identify genes with significant spatial autocorrelation in Slide-seq"
+  expected_status: PERMITTED
+  expected_capability: spatial.morans_svg
+  data_metadata:
+    n_spatial_spots: 4500
+  description: "Slide-seq spatial graph and autocorrelation"
+
+- id: route-survival-km-001
+  category: routing
+  prompt: "Estimate Kaplan-Meier survival curves and perform log-rank test for CD8 high vs low cohorts"
+  expected_status: PERMITTED
+  expected_capability: survival.kaplan_meier
+  data_metadata:
+    positive_durations: true
+    n_events: 42
+  description: "Clinical biomarker survival estimation"
+
+- id: route-scvi-vae-001
+  category: routing
+  prompt: "Train an scVI deep generative variational autoencoder model for batch integration across 5 donors"
+  expected_status: PERMITTED
+  expected_capability: scvi.probabilistic_vae
+  data_metadata:
+    is_integer_like: true
+  description: "scvi-tools probabilistic latent embedding"
+
+- id: route-allotrope-001
+  category: routing
+  prompt: "Standardize multi-well spectrophotometer plate reader raw CSV export into Allotrope ASM JSON"
+  expected_status: PERMITTED
+  expected_capability: allotrope.format_conversion
+  description: "Analytical plate reader to ASM JSON converter"
+
+- id: route-nextflow-001
+  category: routing
+  prompt: "Generate nf-core rnaseq samplesheet and Slurm cluster config launch scripts for paired-end FASTQ directory"
+  expected_status: PERMITTED
+  expected_capability: nextflow.pipeline_launch
+  description: "nf-core samplesheet generation and launch artifacts"
+
+- id: route-acmg-001
+  category: routing
+  prompt: "Classify pathogenicity of TP53 c.524G>A (p.Arg175His) using ACMG criteria PVS1, PS1, PM1, PP3"
+  expected_status: PERMITTED
+  expected_capability: variant.acmg_classification
+  description: "Deterministic ACMG criteria combination"

@@ -1,0 +1,19 @@
+# ==============================================================================
+# BioNexus Benchmark: Backend Failure & Degradation Suite
+# ==============================================================================
+
+- id: backend-lifelines-missing-001
+  category: backend_failure
+  prompt: "Fit Kaplan-Meier survival curve for clinical cohort"
+  expected_status: DEGRADED_ADVISORY
+  expected_capability: survival.kaplan_meier
+  allow_degraded: true
+  description: "Backend Degradation: Legacy clinical skill permits Grade C heuristic fallback when allow_degraded is True"
+
+- id: backend-lifelines-strict-001
+  category: backend_failure
+  prompt: "Fit Kaplan-Meier survival curve for clinical cohort"
+  expected_status: ABSTAIN
+  expected_capability: survival.kaplan_meier
+  allow_degraded: false
+  description: "Backend Degradation: Strict mode refuses when backend is missing and provides pip install remedy"

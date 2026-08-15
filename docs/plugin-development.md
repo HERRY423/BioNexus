@@ -390,4 +390,38 @@ bionexus registry --generate
 bionexus registry --check
 ```
 
+---
+
+## 🏆 9. BioNexus Eval (Agent Behavior & Scientific Reliability Benchmark)
+
+BioNexus includes a comprehensive **Agent Behavior & Epistemic Reliability Benchmark** (`evals/`) evaluating AI agents on real scientific prompts across 8 core reliability pillars:
+
+| Metric | Target | Scientific Significance |
+|---|---|---|
+| **Routing Accuracy** | `> 95.0%` | Correct capability and toolchain selected |
+| **Unsafe Invocation Rate** | `0.0%` | Frequency of running invalid analyses (Target: zero) |
+| **Abstention Precision** | `> 95.0%` | Refusals are scientifically justified |
+| **Abstention Recall** | `> 95.0%` | Catches pseudoreplication, wrong distributions, etc. |
+| **Capability Hallucination Rate** | `0.0%` | Zero fabricated cell-types, methods, or regulatory claims |
+| **Backend Fidelity** | `> 95.0%` | Accurate toolchain declaration and degradation honesty |
+| **Scientific Semantic Error Rate** | `0.0%` | Zero confusion of raw/log, cell/sample, or marker/DE |
+| **Evidence Calibration Score** | `> 90.0%` | EvidenceCard maturity accurately reflects data quality |
+| **Composite Reliability Index (CRI)** | **`> 95.0%`** | Unified weighted scientific quality index |
+
+### Running the Benchmark
+```bash
+# Run full benchmark across all 6 test suites
+bionexus eval
+
+# Run a specific evaluation suite
+bionexus eval --suite refusal
+bionexus eval --suite routing
+bionexus eval --suite adversarial
+
+# Export structured JSON or Markdown report
+bionexus eval --report evals/reports/benchmark_report.md
+bionexus eval --json
+```
+
 Following this guide ensures your contributions seamlessly integrate into BioNexus, pass all CI checks, and provide dependable scientific results across AI coding platforms.
+

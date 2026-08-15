@@ -137,25 +137,7 @@ class CapabilityContract:
         triggered_refusals: List[RefusalTrigger] = []
         remedies: List[str] = []
 
-        # 1. Backend Probe Check
-        backend_name = self.backend.import_name
-        if backend_name and backend_name != "none":
-            status = probe(backend_name)
-            if not status.available:
-                trigger = next(
-                    (r for r in self.refusal_conditions if r.condition_id == "missing_backend"),
-                    RefusalTrigger(
-                        condition_id="missing_backend",
-                        description=f"Required gold-standard backend '{self.backend.canonical_name}' is not installed.",
-                        remedy=f"Install via `pip install bionexus[{self.backend.extra}]` or `pip install {self.backend.import_name}`.",
-                        violated_rule="Gold-standard backend requirement",
-                    ),
-                )
-                triggered_refusals.append(trigger)
-                violations.append(trigger.description)
-                remedies.append(trigger.remedy)
-
-        # 2. Input Semantic Check
+        # 1. Input Semantic Check
         for inp_name, inp_spec in self.inputs.items():
             if inp_spec.required:
                 present = meta.get(f"{inp_name}_present", True)
@@ -179,7 +161,7 @@ class CapabilityContract:
                         violations.append(trigger.description)
                         remedies.append(trigger.remedy)
 
-        # 3. Precondition Evaluation
+        # 2. Precondition Evaluation
         # Minimum replicates check
         min_reps = meta.get("min_replicates_per_condition")
         if min_reps is not None and min_reps < 2:
@@ -211,6 +193,51 @@ class CapabilityContract:
             triggered_refusals.append(trigger)
             violations.append(trigger.description)
             remedies.append(trigger.remedy)
+
+        # Spatial coordinate variance check
+        if meta.get("coordinate_variance_zero") is True:
+            trigger = RefusalTrigger(
+                condition_id="degenerate_spatial_coordinates",
+                description="Spatial coordinates have zero variance along spatial axes.",
+                remedy="Provide non-degenerate spatial coordinates with varied positions.",
+                violated_rule="Spatial geometry variance invariant",
+            )
+            triggered_refusals.append(trigger)
+            violations.append(trigger.description)
+            remedies.append(trigger.remedy)
+
+        # Survival zero events check
+        if meta.get("n_events") == 0:
+            trigger = next(
+                (r for r in self.refusal_conditions if r.condition_id == "all_censored"),
+                RefusalTrigger(
+                    condition_id="all_censored",
+                    description="Zero events observed in cohort (100% censoring).",
+                    remedy="Survival estimation requires at least one uncensored event.",
+                    violated_rule="Event observation requirement",
+                ),
+            )
+            triggered_refusals.append(trigger)
+            violations.append(trigger.description)
+            remedies.append(trigger.remedy)
+
+        # 3. Backend Probe Check
+        backend_name = self.backend.import_name
+        if backend_name and backend_name != "none":
+            status = probe(backend_name)
+            if not status.available:
+                trigger = next(
+                    (r for r in self.refusal_conditions if r.condition_id == "missing_backend"),
+                    RefusalTrigger(
+                        condition_id="missing_backend",
+                        description=f"Required gold-standard backend '{self.backend.canonical_name}' is not installed.",
+                        remedy=f"Install via `pip install bionexus[{self.backend.extra}]` or `pip install {self.backend.import_name}`.",
+                        violated_rule="Gold-standard backend requirement",
+                    ),
+                )
+                triggered_refusals.append(trigger)
+                violations.append(trigger.description)
+                remedies.append(trigger.remedy)
 
         # 4. Synthesize Evaluation
         permitted = len(triggered_refusals) == 0 and len(violations) == 0

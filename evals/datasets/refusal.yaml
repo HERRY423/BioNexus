@@ -1,0 +1,90 @@
+# ==============================================================================
+# BioNexus Benchmark: Deterministic Scientific Refusal & Invariant Suite
+# ==============================================================================
+
+- id: refuse-pseudorep-001
+  category: refusal
+  prompt: "Run DESeq2 condition DE comparing treatment vs control in 1 single-cell sample (n=1 per condition)"
+  expected_status: ABSTAIN
+  expected_capability: scrna.pseudobulk_de
+  data_metadata:
+    min_replicates_per_condition: 1
+    is_integer_like: true
+  expected_violations:
+    - "Fewer than 2 biological replicates per experimental condition."
+  required_remedies:
+    - "pseudoreplication"
+  description: "Refusal: Single-cell condition DE without biological replicates is pseudoreplication"
+
+- id: refuse-pseudorep-002
+  category: refusal
+  prompt: "Compute condition differential expression between tumor and normal with only 1 patient per group"
+  expected_status: ABSTAIN
+  expected_capability: scrna.pseudobulk_de
+  data_metadata:
+    min_replicates_per_condition: 1
+    is_integer_like: true
+  expected_violations:
+    - "replicates"
+  required_remedies:
+    - "replicate"
+  description: "Refusal: N=1 per group cannot estimate sample-level dispersion"
+
+- id: refuse-needs-data-001
+  category: refusal
+  prompt: "Help me compare treatment and control condition DE in my scRNA data"
+  expected_status: NEEDS_DATA
+  expected_capability: scrna.pseudobulk_de
+  description: "Needs Data: Prompt lacks biological replicate identifiers, agent must ask user"
+
+- id: refuse-normalized-counts-001
+  category: refusal
+  prompt: "My h5ad matrix is log1p normalized float expression. Run PyDESeq2 differential expression on it."
+  expected_status: ABSTAIN
+  expected_capability: scrna.pseudobulk_de
+  data_metadata:
+    min_replicates_per_condition: 3
+    is_normalized: true
+    is_integer_like: false
+  expected_violations:
+    - "normalized"
+  required_remedies:
+    - "raw counts"
+  description: "Refusal: Negative binomial GLM strictly requires raw integer counts, not normalized floats"
+
+- id: refuse-scvi-normalized-001
+  category: refusal
+  prompt: "Train an scVI generative model on scanpy log-normalized scaled float matrix"
+  expected_status: ABSTAIN
+  expected_capability: scvi.probabilistic_vae
+  data_metadata:
+    is_normalized: true
+    is_integer_like: false
+  expected_violations:
+    - "normalized"
+  required_remedies:
+    - "raw"
+  description: "Refusal: scVI models discrete likelihood (Negative Binomial) and refuses normalized floats"
+
+- id: refuse-spatial-degenerate-001
+  category: refusal
+  prompt: "Compute Moran's I spatial autocorrelation on an AnnData with only 2 spatial spots"
+  expected_status: ABSTAIN
+  expected_capability: spatial.morans_svg
+  data_metadata:
+    n_spatial_spots: 2
+  expected_violations:
+    - "spatial spots"
+  description: "Refusal: Spatial KNN graph construction requires at least 5 spatial coordinate points"
+
+- id: refuse-survival-all-censored-001
+  category: refusal
+  prompt: "Compute Kaplan-Meier curve for clinical trial cohort where 0 death events were observed (all censored)"
+  expected_status: ABSTAIN
+  expected_capability: survival.kaplan_meier
+  data_metadata:
+    positive_durations: true
+    n_events: 0
+  expected_violations:
+    - "zero events"
+  description: "Refusal: Kaplan-Meier curve cannot be computed when zero events occur"

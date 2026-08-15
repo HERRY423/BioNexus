@@ -93,19 +93,28 @@ _INTENT_PATTERNS: List[Tuple[List[str], str]] = [
     # 1. Single-cell condition differential expression
     (
         [
-            r"compare.*(?:condition|treatment|treated|group|tumor|control|disease|replicate)",
+            r"compare.*(?:condition|treatment|treated|group|tumor|control|disease|replicate|sample)",
             r"condition.*(?:de|differential expression)",
             r"pseudobulk.*(?:de|differential expression)",
+            r"differentially expressed",
+            r"differential expression",
             r"treated.*vs.*control",
             r"disease.*vs.*healthy",
-            r"differential expression between (?:conditions|groups)",
+            r"pydeseq2",
+            r"deseq2",
+            r"negative binomial.*glm",
+            r"glm.*pseudobulk",
+            r"rank_genes_groups.*(?:drug|treatment|vehicle|cause)",
         ],
         "scrna.pseudobulk_de",
     ),
     # 2. Single-cell clustering & exploratory markers
     (
         [
-            r"cluster.*(?:cell|single cell|scrna)",
+            r"cluster.*(?:cell|single cell|scrna|\d+)",
+            r"clusters \d+",
+            r"guess.*cell.*type",
+            r"cell.*type.*cluster",
             r"leiden.*clustering",
             r"marker.*(?:gene|identification)",
             r"umap.*(?:visualization|embedding)",
@@ -117,7 +126,7 @@ _INTENT_PATTERNS: List[Tuple[List[str], str]] = [
     # 3. Spatial transcriptomics Moran's I SVGs
     (
         [
-            r"spatial.*(?:transcriptomics|variable gene|svg|autocorrelation)",
+            r"spatial.*(?:transcriptomics|variable gene|svg|autocorrelation|spot|graph)",
             r"moran.*(?:i|spatial)",
             r"visium.*analysis",
             r"slide-seq.*analysis",
@@ -127,7 +136,7 @@ _INTENT_PATTERNS: List[Tuple[List[str], str]] = [
     # 4. Clinical Cohort Survival analysis
     (
         [
-            r"survival.*(?:analysis|curve|estimation)",
+            r"survival.*(?:analysis|curve|estimation|cohort)",
             r"kaplan[- ]meier",
             r"log[- ]rank.*test",
             r"prognostic.*biomarker",
@@ -150,8 +159,10 @@ _INTENT_PATTERNS: List[Tuple[List[str], str]] = [
         [
             r"allotrope.*(?:conversion|format|asm)",
             r"standardize.*instrument",
-            r"plate reader.*parser",
+            r"plate reader.*(?:parser|csv|export)",
             r"chromatography.*asm",
+            r"21 cfr part 11.*(?:audit|csv)",
+            r"audit log.*csv",
         ],
         "allotrope.format_conversion",
     ),
@@ -168,8 +179,12 @@ _INTENT_PATTERNS: List[Tuple[List[str], str]] = [
     (
         [
             r"acmg.*(?:classification|criteria|tiering)",
-            r"variant.*(?:pathogenicity|interpretation)",
+            r"variant.*(?:pathogenicity|interpretation|brca|tp53|c\.)",
+            r"patient variant",
+            r"brca\d+",
+            r"tp53",
             r"pathogenicity.*scoring",
+            r"pathology report.*variant",
         ],
         "variant.acmg_classification",
     ),
@@ -255,9 +270,13 @@ def route_scientific_intent(
 
     # 3. Check for Essential Missing Metadata (NEEDS_DATA state)
     if cap.id == "scrna.pseudobulk_de":
-        if "min_replicates_per_condition" not in meta:
+        if (
+            "min_replicates_per_condition" not in meta
+            and not meta.get("is_normalized")
+            and meta.get("is_integer_like", True)
+        ):
             # Check if user query mentions replicates or if we need to request them
-            if not re.search(r"\b(replicate|rep|n=\d+)\b", query.lower()) and "min_replicates_per_condition" not in meta:
+            if not re.search(r"\b(replicate|rep|n=\d+)\b", query.lower()):
                 # If replicates were neither stated nor found in meta
                 return RoutingDecision(
                     status=RoutingStatus.NEEDS_DATA,

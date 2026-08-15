@@ -775,6 +775,30 @@ def handle_route(args: argparse.Namespace) -> int:
     return 0
 
 
+def handle_eval(args: argparse.Namespace) -> int:
+    """Handle the 'eval' command to run the BioNexus Agent Reliability Benchmark."""
+    from evals.runner import format_benchmark_markdown, run_benchmark
+
+    suite = getattr(args, "suite", None)
+    if suite == "all":
+        suite = None
+    report = run_benchmark(suite=suite)
+
+    if getattr(args, "report", None):
+        out_p = Path(args.report)
+        out_p.parent.mkdir(parents=True, exist_ok=True)
+        with open(out_p, "w", encoding="utf-8") as f:
+            f.write(format_benchmark_markdown(report))
+        print(f"[OK] Benchmark report saved to: {out_p}")
+
+    if getattr(args, "json", False):
+        print(json.dumps(report.to_dict(), indent=2))
+    else:
+        print(format_benchmark_markdown(report))
+
+    return 0 if report.failed_cases == 0 else 1
+
+
 # ==============================================================================
 # Main Parser & Router
 # ==============================================================================
@@ -885,6 +909,12 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_route.add_argument("--allow-degraded", action="store_true", help="Allow fallback to Grade C heuristics")
     p_route.add_argument("--json", action="store_true", help="Output routing decision as JSON")
 
+    # 8. eval (BioNexus Agent Behavior & Epistemic Benchmark)
+    p_eval = subparsers.add_parser("eval", help="Run BioNexus Agent Behavior & Scientific Reliability Benchmark")
+    p_eval.add_argument("--suite", choices=["all", "routing", "refusal", "capability_claim", "scientific_semantics", "backend_failure", "adversarial"], default="all", help="Benchmark evaluation suite")
+    p_eval.add_argument("--report", default=None, help="Path to save Markdown evaluation report")
+    p_eval.add_argument("--json", action="store_true", help="Output benchmark results as JSON")
+
     args = parser.parse_args(argv)
 
     if not args.command:
@@ -911,6 +941,8 @@ def main(argv: Optional[list[str]] = None) -> int:
         return handle_capability(args)
     elif args.command == "route":
         return handle_route(args)
+    elif args.command == "eval":
+        return handle_eval(args)
 
     return 0
 
