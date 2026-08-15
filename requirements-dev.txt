@@ -14,3 +14,4 @@ leidenalg>=0.10.0
 igraph>=0.10.0
 harmonypy>=0.0.9
 pydeseq2>=0.4.0
+squidpy>=1.3.0
