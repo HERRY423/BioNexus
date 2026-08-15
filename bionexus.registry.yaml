@@ -140,8 +140,11 @@ clients:
   agent_plugins:
     plugin_manifest: "plugin.json"
     mcp_manifest: "mcp.json"
+    marketplace_manifest: "marketplace.json"
   claude:
     plugin_manifest: ".claude-plugin/plugin.json"
     mcp_manifest: ".mcp.json"
+    marketplace_manifest: ".claude-plugin/marketplace.json"
   codex:
     config_path: ".codex/config.json"
+    marketplace_manifest: ".agents/plugins/marketplace.json"

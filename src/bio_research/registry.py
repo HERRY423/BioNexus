@@ -232,6 +232,33 @@ def to_codex_config(registry: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def to_marketplace_json(registry: Dict[str, Any]) -> Dict[str, Any]:
+    """Generate Codex / Claude Marketplace registry manifest (marketplace.json)."""
+    pkg = registry["package"]
+    return {
+        "name": "bionexus-marketplace",
+        "owner": {
+            "name": pkg.get("author", {}).get("name", "BioNexus Team")
+        },
+        "plugins": [
+            {
+                "name": pkg["name"],
+                "description": pkg["description"],
+                "version": pkg["version"],
+                "source": {
+                    "source": "local",
+                    "path": "."
+                },
+                "policy": {
+                    "installation": "AVAILABLE",
+                    "authentication": "ON_INSTALL"
+                },
+                "category": "Science"
+            }
+        ]
+    }
+
+
 # --- Manifest Registry Mapping & Drift Detection ---
 
 def get_expected_manifests(registry: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
@@ -241,7 +268,11 @@ def get_expected_manifests(registry: Dict[str, Any]) -> Dict[str, Dict[str, Any]
         "mcp.json": to_agent_plugins_mcp_json(registry),
         ".claude-plugin/plugin.json": to_claude_plugin_json(registry),
         ".mcp.json": to_claude_mcp_json(registry),
-        ".codex/config.json": to_codex_config(registry)
+        ".codex/config.json": to_codex_config(registry),
+        ".agents/plugins/marketplace.json": to_marketplace_json(registry),
+        ".codex/marketplace.json": to_marketplace_json(registry),
+        ".claude-plugin/marketplace.json": to_marketplace_json(registry),
+        "marketplace.json": to_marketplace_json(registry)
     }
 
 
