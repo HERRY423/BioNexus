@@ -1,0 +1,72 @@
+name: drug_target_discovery
+version: "1.0.0"
+description: "End-to-end preclinical pipeline from disease hypothesis to prioritized, druggable therapeutic targets"
+
+inputs:
+  disease_name:
+    type: string
+    description: "Target disease or pathological condition (e.g. 'Non-Small Cell Lung Cancer', 'Alzheimer Disease')"
+  max_targets:
+    type: integer
+    default: 10
+    description: "Maximum candidate targets to rank"
+
+steps:
+  - id: literature_survey
+    name: "Literature & Prior Evidence Extraction"
+    tool: "search_pubmed"
+    arguments:
+      query: "{disease_name} therapeutic target AND mechanism"
+      max_results: 10
+    output_variable: "literature_evidence"
+
+  - id: target_disease_association
+    name: "Open Targets Genetic & Clinical Association"
+    tool: "search_opentargets"
+    depends_on: []
+    arguments:
+      query: "{disease_name}"
+      entity_types: ["target", "disease"]
+      limit: "{max_targets}"
+    output_variable: "target_associations"
+
+  - id: protein_characterization
+    name: "UniProt Structure & Biological Function Lookup"
+    tool: "search_uniprot"
+    depends_on: ["target_disease_association"]
+    arguments:
+      query: "{target_associations.0.name}"
+      organism: "human"
+      limit: 5
+    output_variable: "protein_metadata"
+
+  - id: chembl_druggability
+    name: "ChEMBL Bioactive Compound & Inhibitor Assessment"
+    tool: "search_chembl"
+    depends_on: ["target_disease_association"]
+    arguments:
+      query: "{target_associations.0.name}"
+      entity_type: "target"
+      limit: 5
+    output_variable: "bioactive_compounds"
+
+  - id: clinical_landscape
+    name: "ClinicalTrials.gov Active Trial Landscape"
+    tool: "search_clinical_trials"
+    depends_on: ["target_disease_association"]
+    arguments:
+      condition: "{disease_name}"
+      intervention: "{target_associations.0.name}"
+      limit: 5
+    output_variable: "clinical_trials"
+
+  - id: hypothesis_synthesis
+    name: "Evidence Weighting & Target Prioritization"
+    type: "synthesis"
+    depends_on: ["literature_survey", "target_disease_association", "protein_characterization", "chembl_druggability", "clinical_landscape"]
+    parameters:
+      weights:
+        genetic_association: 0.35
+        literature_density: 0.20
+        druggability: 0.25
+        clinical_tractability: 0.20

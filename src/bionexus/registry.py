@@ -147,16 +147,19 @@ def validate_endpoints(
 def to_agent_plugins_plugin_json(registry: Dict[str, Any]) -> Dict[str, Any]:
     """Generate Agent Plugins 1.0 plugin.json manifest."""
     pkg = registry["package"]
+    author_name = pkg["author"]["name"] if isinstance(pkg.get("author"), dict) else str(pkg.get("author", "BioNexus Team"))
     return {
         "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-        "name": pkg["name"],
+        "name": pkg["name"].lower(),
         "version": pkg["version"],
         "description": pkg["description"],
         "author": {
-            "name": pkg["author"]["name"]
+            "name": author_name
         },
-        "license": pkg["license"],
-        "keywords": list(pkg.get("keywords", []))
+        "license": pkg.get("license", "Apache-2.0"),
+        "keywords": list(pkg.get("keywords", [])),
+        "skills": "./skills/",
+        "mcpServers": "./mcp.json"
     }
 
 
@@ -192,12 +195,13 @@ def to_agent_plugins_mcp_json(registry: Dict[str, Any]) -> Dict[str, Any]:
 def to_claude_plugin_json(registry: Dict[str, Any]) -> Dict[str, Any]:
     """Generate Claude Desktop / Claude Code .claude-plugin/plugin.json manifest."""
     pkg = registry["package"]
+    author_name = pkg["author"]["name"] if isinstance(pkg.get("author"), dict) else str(pkg.get("author", "BioNexus Team"))
     return {
-        "name": pkg["name"],
+        "name": pkg["name"].lower(),
         "version": pkg["version"],
-        "description": "Agent skill pack that routes biomedical analyses to community tools or named local heuristics, with evidence grades and refusal when a gold-standard backend is missing.",
+        "description": pkg["description"],
         "author": {
-            "name": pkg["author"]["name"]
+            "name": author_name
         }
     }
 
@@ -225,7 +229,7 @@ def to_codex_config(registry: Dict[str, Any]) -> Dict[str, Any]:
     pkg = registry["package"]
     agent_mcp = to_agent_plugins_mcp_json(registry)
     return {
-        "name": pkg["name"],
+        "name": pkg["name"].lower(),
         "version": pkg["version"],
         "provider": "BioNexus",
         "mcpServers": agent_mcp.get("mcpServers", {})
@@ -233,31 +237,60 @@ def to_codex_config(registry: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def to_codex_plugin_json(registry: Dict[str, Any]) -> Dict[str, Any]:
-    """Generate Codex .codex-plugin/plugin.json manifest."""
+    """Generate Codex .codex-plugin/plugin.json manifest adhering strictly to Codex spec."""
     pkg = registry["package"]
-    mcp_data = to_agent_plugins_mcp_json(registry)
     author_name = pkg["author"]["name"] if isinstance(pkg.get("author"), dict) else str(pkg.get("author", "BioNexus Team"))
+    display_name = pkg.get("display_name", "BioNexus")
     return {
-        "name": pkg["name"],
+        "name": pkg["name"].lower(),
         "version": pkg["version"],
         "description": pkg["description"],
-        "author": author_name,
+        "author": {
+            "name": author_name,
+            "url": "https://github.com/HERRY423/BioNexus"
+        },
+        "homepage": "https://github.com/HERRY423/BioNexus",
+        "repository": "https://github.com/HERRY423/BioNexus",
         "license": pkg.get("license", "Apache-2.0"),
-        "mcpServers": mcp_data.get("mcpServers", {})
+        "keywords": list(pkg.get("keywords", [])),
+        "skills": "./skills/",
+        "mcpServers": "./.mcp.json",
+        "interface": {
+            "displayName": display_name,
+            "shortDescription": "The Scientific Reliability Layer for Agentic Biology",
+            "longDescription": pkg["description"],
+            "developerName": author_name,
+            "category": "Science",
+            "capabilities": [
+                "Interactive",
+                "Read",
+                "Write"
+            ],
+            "websiteURL": "https://github.com/HERRY423/BioNexus",
+            "defaultPrompt": [
+                "Inspect single-cell dataset and run QC",
+                "Query UniProt for TP53 protein details",
+                "Analyze spatial transcriptomics with squidpy"
+            ]
+        }
     }
 
 
 def to_marketplace_json(registry: Dict[str, Any]) -> Dict[str, Any]:
     """Generate Codex / Claude Marketplace registry manifest (marketplace.json)."""
     pkg = registry["package"]
+    author_name = pkg.get("author", {}).get("name", "BioNexus Team") if isinstance(pkg.get("author"), dict) else "BioNexus Team"
     return {
         "name": "bionexus-marketplace",
+        "interface": {
+            "displayName": "BioNexus Marketplace"
+        },
         "owner": {
-            "name": pkg.get("author", {}).get("name", "BioNexus Team")
+            "name": author_name
         },
         "plugins": [
             {
-                "name": pkg["name"],
+                "name": pkg["name"].lower(),
                 "description": pkg["description"],
                 "version": pkg["version"],
                 "source": {
@@ -280,15 +313,19 @@ def get_expected_manifests(registry: Dict[str, Any]) -> Dict[str, Dict[str, Any]
     """Return dictionary of relative file paths to their expected dictionary representations."""
     codex_plugin = to_codex_plugin_json(registry)
     mkt = to_marketplace_json(registry)
+    agent_plugin = to_agent_plugins_plugin_json(registry)
+    agent_mcp = to_agent_plugins_mcp_json(registry)
     return {
-        "plugin.json": to_agent_plugins_plugin_json(registry),
-        "mcp.json": to_agent_plugins_mcp_json(registry),
+        "plugin.json": agent_plugin,
+        "mcp.json": agent_mcp,
         ".claude-plugin/plugin.json": to_claude_plugin_json(registry),
         ".mcp.json": to_claude_mcp_json(registry),
         ".codex/config.json": to_codex_config(registry),
         ".codex-plugin/plugin.json": codex_plugin,
         "plugins/codex/.codex-plugin/plugin.json": codex_plugin,
         "plugins/bionexus/.codex-plugin/plugin.json": codex_plugin,
+        "plugins/bionexus/plugin.json": agent_plugin,
+        "plugins/bionexus/mcp.json": agent_mcp,
         ".agents/plugins/marketplace.json": mkt,
         ".codex/marketplace.json": mkt,
         ".claude-plugin/marketplace.json": mkt,

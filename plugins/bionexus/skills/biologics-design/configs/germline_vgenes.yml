@@ -1,0 +1,37 @@
+# Human Immunoglobulin Heavy/Light Chain Germline V-Gene Profiles & Developability Thresholds
+# Reference: IMGT (the international ImMunoGeneTics information system)
+
+germline_consensus_motifs:
+  heavy_chain:
+    fr1_start: "QVQL"
+    fr1_cys_anchor: 23
+    cdr1_start_imgt: 27
+    cdr1_end_imgt: 38
+    fr2_conserved_trp: "WVRQ"
+    cdr2_start_imgt: 56
+    cdr2_end_imgt: 65
+    fr3_conserved_cys: 104
+    cdr3_start_imgt: 105
+    cdr3_end_imgt: 117
+    fr4_conserved_trp_gly: "WGQG"
+  light_chain_kappa:
+    fr1_start: "DIQM"
+    cdr1_start_imgt: 27
+    cdr1_end_imgt: 38
+    cdr2_start_imgt: 56
+    cdr2_end_imgt: 65
+    cdr3_start_imgt: 105
+    cdr3_end_imgt: 117
+    fr4_conserved_phe_gly: "FGQG"
+
+developability_thresholds:
+  max_sap_hydrophobic_patch_score: 0.45
+  max_charge_asymmetry_fvr: 4.0
+  min_humanness_identity_score: 0.78
+  cdr3_max_polyreactivity_charge: 3.0
+  unpaired_cysteines_allowed: 0
+
+mrna_optimization_defaults:
+  target_gc_content: 0.54
+  min_codon_adaptation_index: 0.85
+  avoid_hairpin_stems_longer_than: 8

@@ -1,0 +1,55 @@
+name: single_cell_atlas
+version: "1.0.0"
+description: "High-throughput single-cell atlas assembly from raw fastqs to integrated cell state representations"
+
+inputs:
+  dataset_path:
+    type: path
+    description: "Path to raw FASTQs, 10X matrix, or .h5ad files"
+  batch_key:
+    type: string
+    default: "batch"
+    description: "Batch annotation column in obs"
+
+steps:
+  - id: sample_preprocessing
+    name: "Vectorized Sparse QC & Doublet Removal"
+    skill: "single-cell-rna-qc"
+    script: "qc_analysis.py"
+    arguments:
+      input_file: "{dataset_path}"
+      run_doublets: true
+      run_ambient: true
+    output_variable: "qc_filtered_adata"
+
+  - id: hyperparameter_tuning
+    name: "Optuna VAE Architecture Optimization"
+    skill: "scvi-tools"
+    script: "hyperparam_search.py"
+    depends_on: ["sample_preprocessing"]
+    arguments:
+      input: "{qc_filtered_adata}"
+      batch_key: "{batch_key}"
+      n_trials: 15
+    output_variable: "optimal_vae_params"
+
+  - id: latent_integration
+    name: "scVI Multi-Batch Latent Representation Learning"
+    skill: "scvi-tools"
+    script: "train_model.py"
+    depends_on: ["hyperparameter_tuning"]
+    arguments:
+      input: "{qc_filtered_adata}"
+      batch_key: "{batch_key}"
+      precision: "16-mixed"
+    output_variable: "integrated_adata"
+
+  - id: clustering_and_markers
+    name: "UMAP Projection, Leiden Clustering & Marker Extraction"
+    skill: "scvi-tools"
+    script: "cluster_embed.py"
+    depends_on: ["latent_integration"]
+    arguments:
+      adata_path: "{integrated_adata}"
+      resolution: 0.8
+    output_variable: "final_atlas"

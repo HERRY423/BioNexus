@@ -58,7 +58,7 @@ def test_generate_agent_plugins_manifests():
     mcp_json = to_agent_plugins_mcp_json(registry)
 
     assert plugin_json["$schema"] == "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
-    assert plugin_json["name"] == "BioNexus"
+    assert plugin_json["name"] == "bionexus"
     assert plugin_json["author"]["name"] == "BioNexus Team"
 
     assert mcp_json["$schema"] == "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json"
@@ -76,7 +76,7 @@ def test_generate_claude_manifests():
     c_plugin = to_claude_plugin_json(registry)
     c_mcp = to_claude_mcp_json(registry)
 
-    assert c_plugin["name"] == "BioNexus"
+    assert c_plugin["name"] == "bionexus"
     assert "mcpServers" in c_mcp
     servers = c_mcp["mcpServers"]
     assert "pubmed" in servers
@@ -91,7 +91,7 @@ def test_generate_codex_config():
     registry = load_canonical_registry(_REPO_ROOT / "bionexus.registry.yaml")
     codex_conf = to_codex_config(registry)
 
-    assert codex_conf["name"] == "BioNexus"
+    assert codex_conf["name"] == "bionexus"
     assert codex_conf["provider"] == "BioNexus"
     assert "bionexus-local-mcp" in codex_conf["mcpServers"]
     assert "pubmed" in codex_conf["mcpServers"]

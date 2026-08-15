@@ -1,11 +1,14 @@
 {
   "name": "bionexus-marketplace",
+  "interface": {
+    "displayName": "BioNexus Marketplace"
+  },
   "owner": {
     "name": "BioNexus Team"
   },
   "plugins": [
     {
-      "name": "BioNexus",
+      "name": "bionexus",
       "description": "Agent skill pack that routes biomedical analyses to community tools (scanpy, squidpy, scvi-tools, nf-core, allotropy) or named local heuristics, with explicit evidence grades and refusal when a gold-standard backend is missing.",
       "version": "2.7.0",
       "source": {

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "bionexus-local-mcp": {
+      "type": "stdio",
+      "command": "python",
+      "args": [
+        "${PLUGIN_ROOT}/scripts/local_mcp_server.py"
+      ],
+      "cwd": "${PLUGIN_ROOT}"
+    },
+    "pubmed": {
+      "type": "streamable-http",
+      "url": "https://pubmed.mcp.claude.com/mcp"
+    },
+    "biorender": {
+      "type": "streamable-http",
+      "url": "https://mcp.services.biorender.com/mcp"
+    },
+    "biorxiv": {
+      "type": "streamable-http",
+      "url": "https://hcls.mcp.claude.com/biorxiv/mcp"
+    },
+    "consensus": {
+      "type": "streamable-http",
+      "url": "https://mcp.consensus.app/mcp"
+    },
+    "c-trials": {
+      "type": "streamable-http",
+      "url": "https://hcls.mcp.claude.com/clinical_trials/mcp"
+    },
+    "chembl": {
+      "type": "streamable-http",
+      "url": "https://hcls.mcp.claude.com/chembl/mcp"
+    },
+    "synapse": {
+      "type": "streamable-http",
+      "url": "https://mcp.synapse.org/mcp"
+    },
+    "wiley": {
+      "type": "streamable-http",
+      "url": "https://connector.scholargateway.ai/mcp"
+    },
+    "owkin": {
+      "type": "streamable-http",
+      "url": "https://mcp.k.owkin.com/mcp"
+    },
+    "ot": {
+      "type": "streamable-http",
+      "url": "https://mcp.platform.opentargets.org/mcp"
+    }
+  }
+}

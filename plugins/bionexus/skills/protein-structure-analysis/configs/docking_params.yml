@@ -1,0 +1,41 @@
+# Protein Structure Analysis & Molecular Docking Configuration
+# AutoDock Vina / DiffDock parameter presets and drug-likeness rules
+
+docking_presets:
+  standard:
+    exhaustiveness: 8
+    num_modes: 9
+    energy_range: 3.0
+    grid_spacing_angstrom: 0.375
+    padding_angstrom: 4.0
+
+  high_precision:
+    exhaustiveness: 32
+    num_modes: 20
+    energy_range: 4.0
+    grid_spacing_angstrom: 0.375
+    padding_angstrom: 6.0
+
+  virtual_screening:
+    exhaustiveness: 4
+    num_modes: 3
+    energy_range: 2.0
+    grid_spacing_angstrom: 0.50
+    padding_angstrom: 3.0
+
+pocket_detection_defaults:
+  min_pocket_volume_a3: 150.0
+  probe_radius_angstrom: 1.4
+  alpha_sphere_min_radius: 3.0
+  alpha_sphere_max_radius: 6.0
+  druggability_threshold: 0.50
+
+drug_likeness_rules:
+  lipinski_rule_of_5:
+    max_molecular_weight: 500.0
+    max_logp: 5.0
+    max_hbd: 5
+    max_hba: 10
+  veber_rules:
+    max_rotatable_bonds: 10
+    max_polar_surface_area_a2: 140.0

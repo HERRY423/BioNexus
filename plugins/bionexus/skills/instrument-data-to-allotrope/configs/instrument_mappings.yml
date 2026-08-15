@@ -1,0 +1,137 @@
+# ==============================================================================
+# Declarative Laboratory Instrument Mapping Specifications for Allotrope ASM
+# ==============================================================================
+# Allows laboratory data engineers and scientists to define custom parsing rules
+# for proprietary plate readers, spectrophotometers, qPCR machines, and cell counters
+# without writing Python code.
+
+manifest: "http://purl.allotrope.org/manifests/plate-reader/BENCHMARK/V1.0"
+
+instruments:
+  # ---- Tecan Infinite Plate Readers ----
+  tecan_infinite_m200:
+    vendor: "Tecan"
+    model: "Infinite M200 Pro"
+    measurement_type: "ultraviolet absorbance"
+    file_patterns:
+      - ".*tecan.*\\.xlsx?$"
+      - ".*infinite.*\\.xlsx?$"
+    detection_keywords:
+      - "Tecan"
+      - "Infinite"
+      - "Magellan"
+    metadata_rules:
+      device_identifier:
+        strategy: "cell"
+        target: "B2"
+        default: "Tecan-Infinite-M200"
+      measurement_time:
+        strategy: "cell"
+        target: "B3"
+      operator:
+        strategy: "regex"
+        pattern: "^User:\\s*(.*)$"
+        default: "Laboratory Scientist"
+    data_table_rules:
+      header_row_detection: "auto"
+      start_keyword: "<>|Well|Pos"
+      well_column: "Well"
+      value_column: "Raw Data|OD|Signal|Abs"
+      wavelength: 450
+      unit: "mAU"
+
+  # ---- BioTek Synergy Plate Readers ----
+  biotek_synergy_h1:
+    vendor: "BioTek / Agilent"
+    model: "Synergy H1"
+    measurement_type: "fluorescence emission"
+    file_patterns:
+      - ".*synergy.*\\.xlsx?$"
+      - ".*biotek.*\\.txt$"
+    detection_keywords:
+      - "BioTek"
+      - "Gen5"
+      - "Synergy"
+    metadata_rules:
+      device_identifier:
+        strategy: "cell"
+        target: "B1"
+        default: "BioTek-Synergy-H1"
+      excitation_wavelength:
+        strategy: "regex"
+        pattern: "Excitation:\\s*(\\d+)"
+        default: 485
+      emission_wavelength:
+        strategy: "regex"
+        pattern: "Emission:\\s*(\\d+)"
+        default: 528
+    data_table_rules:
+      header_row_detection: "auto"
+      start_keyword: "Well|Results"
+      well_column: "Well"
+      value_column: "Fluorescence|Signal|RFU"
+      unit: "RFU"
+
+  # ---- Thermo Fisher NanoDrop ----
+  thermo_nanodrop_one:
+    vendor: "Thermo Fisher Scientific"
+    model: "NanoDrop One"
+    measurement_type: "spectrophotometry"
+    file_patterns:
+      - ".*nanodrop.*\\.csv$"
+      - ".*nanodrop.*\\.tsv$"
+    detection_keywords:
+      - "NanoDrop"
+      - "Nucleic Acid"
+      - "A260"
+    metadata_rules:
+      device_identifier:
+        strategy: "fixed"
+        value: "Thermo-NanoDrop-One"
+      application:
+        strategy: "regex"
+        pattern: "Application:\\s*(.*)"
+        default: "dsDNA"
+    data_table_rules:
+      header_row_detection: "header"
+      well_column: "Sample Name"
+      value_column: "Nucleic Acid(ng/uL)|Nucleic Acid Conc."
+      unit: "ng/uL"
+      additional_columns:
+        - name: "a260"
+          column: "A260"
+        - name: "a280"
+          column: "A280"
+        - name: "ratio_260_280"
+          column: "260/280"
+        - name: "ratio_260_230"
+          column: "260/230"
+
+  # ---- Bio-Rad CFX qPCR ----
+  biorad_cfx_qpcr:
+    vendor: "Bio-Rad"
+    model: "CFX96 / CFX Opus"
+    measurement_type: "quantitative pcr"
+    file_patterns:
+      - ".*cfx.*\\.csv$"
+      - ".*quantitation.*\\.csv$"
+    detection_keywords:
+      - "CFX Maestro"
+      - "Bio-Rad"
+      - "Cq"
+    metadata_rules:
+      device_identifier:
+        strategy: "fixed"
+        value: "Bio-Rad-CFX96"
+    data_table_rules:
+      header_row_detection: "header"
+      well_column: "Well"
+      value_column: "Cq|Cp|Ct"
+      unit: "cycles"
+      additional_columns:
+        - name: "target"
+          column: "Target"
+        - name: "fluorophore"
+          column: "Fluor"
+        - name: "starting_quantity"
+          column: "SQ"
