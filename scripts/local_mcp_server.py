@@ -33,6 +33,11 @@ import urllib.parse
 import urllib.request
 from typing import Any, Dict, List, Optional
 
+try:
+    from mcp.server.fastmcp import FastMCP
+except ImportError:
+    FastMCP = None  # type: ignore
+
 # --- Logging Configuration ---
 LOG_FILE = os.environ.get("BIONEXUS_MCP_LOG", os.path.join(os.path.dirname(os.path.abspath(__file__)), "local_mcp_server.log"))
 logger = logging.getLogger("BioNexusMCP")
@@ -1601,10 +1606,310 @@ PROMPTS_SCHEMA = [
 ]
 
 
-# --- Async JSON-RPC Dispatcher ---
+# --- BioNexus Tool Adapters & Dispatch Registry ---
+
+TOOL_ADAPTER_MAP = {
+    "search_pubmed": lambda args: tool_search_pubmed(
+        args.get("query", ""),
+        args.get("max_results", 5),
+        args.get("offset", 0),
+        args.get("sort", "pub_date"),
+        args.get("mindate"),
+        args.get("maxdate"),
+    ),
+    "get_pubmed_article": lambda args: tool_get_pubmed_article(args.get("pmid", "")),
+    "search_biorxiv": lambda args: tool_search_biorxiv(
+        args.get("query", ""),
+        args.get("server", "biorxiv"),
+        args.get("limit", 5),
+        args.get("page", 1),
+    ),
+    "search_chembl": lambda args: tool_search_chembl(
+        args.get("query", ""),
+        args.get("entity_type", "molecule"),
+        args.get("limit", 5),
+        args.get("offset", 0),
+    ),
+    "search_opentargets": lambda args: tool_search_opentargets(
+        args.get("query", ""),
+        args.get("entity_types"),
+        args.get("limit", 5),
+        args.get("page_index", 0),
+    ),
+    "search_clinical_trials": lambda args: tool_search_clinical_trials(
+        args.get("condition", ""),
+        args.get("intervention", ""),
+        args.get("status"),
+        args.get("limit", 5),
+        args.get("page_token"),
+    ),
+    "search_uniprot": lambda args: tool_search_uniprot(
+        args.get("query", ""),
+        args.get("organism", "human"),
+        args.get("limit", 5),
+    ),
+    "search_ensembl": lambda args: tool_search_ensembl(
+        args.get("symbol", ""),
+        args.get("species", "human"),
+    ),
+    "search_gnomad": lambda args: tool_search_gnomad(
+        args.get("gene_symbol"),
+        args.get("variant_id"),
+    ),
+    "search_pdb": lambda args: tool_search_pdb(
+        args.get("query", ""),
+        args.get("limit", 5),
+    ),
+    "search_alphafold": lambda args: tool_search_alphafold(
+        args.get("uniprot_id", ""),
+    ),
+    "search_reactome": lambda args: tool_search_reactome(
+        args.get("query", ""),
+        args.get("species", "Homo sapiens"),
+        args.get("limit", 5),
+    ),
+    "search_string": lambda args: tool_search_string(
+        args.get("gene_symbol", ""),
+        args.get("species", 9606),
+        args.get("limit", 10),
+        args.get("required_score", 400),
+    ),
+    "search_cosmic": lambda args: tool_search_cosmic(
+        args.get("gene_symbol", ""),
+    ),
+    "search_geo": lambda args: tool_search_geo(
+        args.get("query", ""),
+        args.get("max_results", 5),
+    ),
+    "get_gene_expression": lambda args: tool_get_gene_expression(
+        args.get("gene_symbol", ""),
+        args.get("tissue_site"),
+    ),
+}
+
+
+def get_resource_content(uri: str) -> str:
+    """Resolve and read local BioNexus resource files."""
+    resource_map = {
+        "bionexus://workflows/drug_target_discovery": os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "skills", "research-workflow-orchestrator", "templates", "drug_target_discovery.yml",
+        ),
+        "bionexus://workflows/single_cell_atlas": os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "skills", "research-workflow-orchestrator", "templates", "single_cell_atlas.yml",
+        ),
+        "bionexus://workflows/variant_interpretation": os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "skills", "research-workflow-orchestrator", "templates", "variant_interpretation.yml",
+        ),
+        "bionexus://configs/acmg_rules": os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "skills", "variant-interpretation", "configs", "acmg_rules.yml",
+        ),
+        "bionexus://configs/germline_vgenes": os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "skills", "biologics-design", "configs", "germline_vgenes.yml",
+        ),
+        "bionexus://configs/docking_params": os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "skills", "protein-structure-analysis", "configs", "docking_params.yml",
+        ),
+    }
+    path = resource_map.get(uri)
+    if path and os.path.isfile(path):
+        with open(path, "r", encoding="utf-8") as handle:
+            return handle.read()
+    return f"# Resource not found on disk\nuri: {uri}\nstatus: missing\n"
+
+
+def get_prompt_content(name: str, arguments: Optional[Dict[str, Any]] = None) -> str:
+    """Format prompt message template for BioNexus prompt."""
+    p_args = arguments or {}
+    if name == "drug_target_analysis":
+        disease = p_args.get("disease", "Unknown Disease")
+        target = p_args.get("target_gene", "Unknown Target")
+        return (
+            f"Research-use target scan for '{target}' in '{disease}'.\n"
+            f"1. If hosted Open Targets/ChEMBL/UniProt/ClinicalTrials tools are connected, query them.\n"
+            f"2. Record each score with its source. Do not invent missing values.\n"
+            f"3. Do not emit a Bayesian go/no-go unless the user supplied calibrated scores."
+        )
+    elif name == "variant_pathogenicity":
+        variant = p_args.get("variant", "Unknown Variant")
+        disease = p_args.get("disease", "Unknown Condition")
+        return (
+            f"Research-use ACMG combination for '{variant}' ({disease}).\n"
+            f"You are not a clinical laboratory and not board-certified.\n"
+            f"1. Parse the variant string.\n"
+            f"2. Query gnomAD/ClinVar only if those tools are connected; otherwise leave AF unknown.\n"
+            f"3. Do not apply PM2, PP3, or PVS1 unless the corresponding evidence field is present.\n"
+            f"4. Pass only supplied codes into evaluate_variant_acmg. Research-use only."
+        )
+    elif name == "antibody_developability_audit":
+        ab_name = p_args.get("antibody_name", "Unknown Antibody")
+        seq = p_args.get("sequence", "")
+        return f"Antibody developability and sequence liability audit for '{ab_name}' (Sequence: {seq})."
+    elif name == "survival_biomarker_screening":
+        biomarker = p_args.get("biomarker_gene", "Unknown Gene")
+        cohort = p_args.get("cancer_cohort", "Unknown Cohort")
+        return f"Pan-cancer clinical cohort survival screening for biomarker '{biomarker}' in cohort '{cohort}'."
+    elif name == "spatial_niche_discovery":
+        tissue = p_args.get("tissue_type", "Unknown Tissue")
+        return f"Spatial transcriptomics tumor microenvironment niche and ligand-receptor signaling analysis for '{tissue}'."
+    elif name == "single_cell_integration":
+        summary = p_args.get("dataset_summary", "Unknown Summary")
+        return f"Multi-batch scRNA-seq integration, VAE hyperparameter tuning, and marker gene analysis for dataset: {summary}."
+    return f"Expert bioinformatics prompt for {name}."
+
+
+# --- Official MCP Python SDK Server Factory ---
+
+def create_mcp_server():
+    """Create and configure the official FastMCP Server for BioNexus."""
+    if FastMCP is None:
+        raise ImportError("Official MCP Python SDK (`mcp`) is not installed. Install via `pip install mcp`.")
+
+    mcp = FastMCP("bio-research-local-mcp")
+
+    @mcp.tool(name="search_uniprot", description="Search UniProtKB for protein metadata, sequences, and functional annotations.")
+    async def search_uniprot(query: str, organism: str = "human", limit: int = 5) -> str:
+        res = await tool_search_uniprot(query=query, organism=organism, limit=limit)
+        return json.dumps(res, indent=2, ensure_ascii=False)
+
+    @mcp.tool(name="search_ensembl", description="Search Ensembl REST API for gene symbols, stable IDs, genomic coordinates, and transcripts.")
+    async def search_ensembl(symbol: str, species: str = "human") -> str:
+        res = await tool_search_ensembl(symbol=symbol, species=species)
+        return json.dumps(res, indent=2, ensure_ascii=False)
+
+    @mcp.tool(name="search_gnomad", description="Search gnomAD GraphQL API for gene constraint metrics (pLI, LOEUF) and variant population frequencies.")
+    async def search_gnomad(gene_symbol: Optional[str] = None, variant_id: Optional[str] = None) -> str:
+        res = await tool_search_gnomad(gene_symbol=gene_symbol, variant_id=variant_id)
+        return json.dumps(res, indent=2, ensure_ascii=False)
+
+    @mcp.tool(name="search_pdb", description="Search RCSB Protein Data Bank (PDB) for 3D macromolecular experimental structures.")
+    async def search_pdb(query: str, limit: int = 5) -> str:
+        res = await tool_search_pdb(query=query, limit=limit)
+        return json.dumps(res, indent=2, ensure_ascii=False)
+
+    @mcp.tool(name="search_alphafold", description="Search AlphaFold DB for AI-predicted 3D protein structures, global pLDDT confidence, and PDB download URLs.")
+    async def search_alphafold(uniprot_id: str) -> str:
+        res = await tool_search_alphafold(uniprot_id=uniprot_id)
+        return json.dumps(res, indent=2, ensure_ascii=False)
+
+    @mcp.tool(name="search_reactome", description="Search Reactome Pathway Knowledgebase for biological pathways and reaction networks.")
+    async def search_reactome(query: str, species: str = "Homo sapiens", limit: int = 5) -> str:
+        res = await tool_search_reactome(query=query, species=species, limit=limit)
+        return json.dumps(res, indent=2, ensure_ascii=False)
+
+    @mcp.tool(name="search_string", description="Search STRING database for functional and physical protein-protein interaction networks.")
+    async def search_string(gene_symbol: str, species: int = 9606, limit: int = 10, required_score: int = 400) -> str:
+        res = await tool_search_string(gene_symbol=gene_symbol, species=species, limit=limit, required_score=required_score)
+        return json.dumps(res, indent=2, ensure_ascii=False)
+
+    @mcp.tool(name="search_geo", description="Search NCBI Gene Expression Omnibus (GEO) for functional genomics datasets, expression microarrays, and RNA-seq studies.")
+    async def search_geo(query: str, max_results: int = 5) -> str:
+        res = await tool_search_geo(query=query, max_results=max_results)
+        return json.dumps(res, indent=2, ensure_ascii=False)
+
+    @mcp.tool(name="get_gene_expression", description="Query GTEx Portal for median RNA gene expression across 54 human non-diseased tissue sites.")
+    async def get_gene_expression(gene_symbol: str, tissue_site: Optional[str] = None) -> str:
+        res = await tool_get_gene_expression(gene_symbol=gene_symbol, tissue_site=tissue_site)
+        return json.dumps(res, indent=2, ensure_ascii=False)
+
+    @mcp.tool(name="search_pubmed", description="Search NCBI PubMed for biomedical literature with pagination and date filters.")
+    async def search_pubmed(query: str, max_results: int = 5, offset: int = 0, sort: str = "pub_date", mindate: Optional[str] = None, maxdate: Optional[str] = None) -> str:
+        res = await tool_search_pubmed(query=query, max_results=max_results, offset=offset, sort=sort, mindate=mindate, maxdate=maxdate)
+        return json.dumps(res, indent=2, ensure_ascii=False)
+
+    @mcp.tool(name="get_pubmed_article", description="Retrieve full metadata, abstract, and DOI/PMC links for a specific PubMed PMID.")
+    async def get_pubmed_article(pmid: str) -> str:
+        res = await tool_get_pubmed_article(pmid=pmid)
+        return json.dumps(res, indent=2, ensure_ascii=False)
+
+    @mcp.tool(name="search_biorxiv", description="Search Europe PMC for bioRxiv and medRxiv life science preprints.")
+    async def search_biorxiv(query: str, server: str = "biorxiv", limit: int = 5, page: int = 1) -> str:
+        res = await tool_search_biorxiv(query=query, server=server, limit=limit, page=page)
+        return json.dumps(res, indent=2, ensure_ascii=False)
+
+    @mcp.tool(name="search_chembl", description="Query ChEMBL database for bioactive molecules, drug targets, or bioactivity assays.")
+    async def search_chembl(query: str, entity_type: str = "molecule", limit: int = 5, offset: int = 0) -> str:
+        res = await tool_search_chembl(query=query, entity_type=entity_type, limit=limit, offset=offset)
+        return json.dumps(res, indent=2, ensure_ascii=False)
+
+    @mcp.tool(name="search_opentargets", description="Search Open Targets Platform GraphQL API for disease targets, evidence, and drug associations.")
+    async def search_opentargets(query: str, entity_types: Optional[List[str]] = None, limit: int = 5, page_index: int = 0) -> str:
+        res = await tool_search_opentargets(query=query, entity_types=entity_types, limit=limit, page_index=page_index)
+        return json.dumps(res, indent=2, ensure_ascii=False)
+
+    @mcp.tool(name="search_clinical_trials", description="Search ClinicalTrials.gov API v2 for active and completed interventional/observational clinical studies.")
+    async def search_clinical_trials(condition: str = "", intervention: str = "", status: Optional[str] = None, limit: int = 5, page_token: Optional[str] = None) -> str:
+        res = await tool_search_clinical_trials(condition=condition, intervention=intervention, status=status, limit=limit, page_token=page_token)
+        return json.dumps(res, indent=2, ensure_ascii=False)
+
+    @mcp.tool(name="search_cosmic", description="Search local CGC gene hint and Ensembl cross-reference (Research-use only; not the official COSMIC API).")
+    async def search_cosmic(gene_symbol: str) -> str:
+        res = await tool_search_cosmic(gene_symbol=gene_symbol)
+        return json.dumps(res, indent=2, ensure_ascii=False)
+
+    @mcp.resource("bionexus://workflows/drug_target_discovery")
+    def res_drug_target_discovery() -> str:
+        return get_resource_content("bionexus://workflows/drug_target_discovery")
+
+    @mcp.resource("bionexus://workflows/single_cell_atlas")
+    def res_single_cell_atlas() -> str:
+        return get_resource_content("bionexus://workflows/single_cell_atlas")
+
+    @mcp.resource("bionexus://workflows/variant_interpretation")
+    def res_variant_interpretation() -> str:
+        return get_resource_content("bionexus://workflows/variant_interpretation")
+
+    @mcp.resource("bionexus://configs/acmg_rules")
+    def res_acmg_rules() -> str:
+        return get_resource_content("bionexus://configs/acmg_rules")
+
+    @mcp.resource("bionexus://configs/germline_vgenes")
+    def res_germline_vgenes() -> str:
+        return get_resource_content("bionexus://configs/germline_vgenes")
+
+    @mcp.resource("bionexus://configs/docking_params")
+    def res_docking_params() -> str:
+        return get_resource_content("bionexus://configs/docking_params")
+
+    @mcp.prompt("drug_target_analysis")
+    def prompt_drug_target_analysis(target_gene: str = "Unknown Target", disease: str = "Unknown Disease") -> str:
+        return get_prompt_content("drug_target_analysis", {"target_gene": target_gene, "disease": disease})
+
+    @mcp.prompt("variant_pathogenicity")
+    def prompt_variant_pathogenicity(variant: str = "Unknown Variant", disease: str = "Unknown Condition") -> str:
+        return get_prompt_content("variant_pathogenicity", {"variant": variant, "disease": disease})
+
+    @mcp.prompt("antibody_developability_audit")
+    def prompt_antibody_developability_audit(antibody_name: str = "Unknown Antibody", sequence: str = "") -> str:
+        return get_prompt_content("antibody_developability_audit", {"antibody_name": antibody_name, "sequence": sequence})
+
+    @mcp.prompt("survival_biomarker_screening")
+    def prompt_survival_biomarker_screening(biomarker_gene: str = "Unknown Gene", cancer_cohort: str = "Unknown Cohort") -> str:
+        return get_prompt_content("survival_biomarker_screening", {"biomarker_gene": biomarker_gene, "cancer_cohort": cancer_cohort})
+
+    @mcp.prompt("spatial_niche_discovery")
+    def prompt_spatial_niche_discovery(tissue_type: str = "Unknown Tissue") -> str:
+        return get_prompt_content("spatial_niche_discovery", {"tissue_type": tissue_type})
+
+    @mcp.prompt("single_cell_integration")
+    def prompt_single_cell_integration(dataset_summary: str = "Unknown Summary") -> str:
+        return get_prompt_content("single_cell_integration", {"dataset_summary": dataset_summary})
+
+    return mcp
+
+
+# --- Compatibility Layer: Protocol Handshake & Dispatcher ---
 
 async def handle_rpc_request_async(req: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-    """Dispatch incoming JSON-RPC request asynchronously."""
+    """
+    Dispatch incoming JSON-RPC request asynchronously.
+    Supports modern discovery and legacy MCP JSON-RPC 2.0 handshake for backwards compatibility.
+    """
     msg_id = req.get("id")
     method = req.get("method")
     params = req.get("params", {})
@@ -1612,6 +1917,7 @@ async def handle_rpc_request_async(req: Dict[str, Any]) -> Optional[Dict[str, An
     logger.debug(f"Handling method: {method}, id: {msg_id}")
 
     if method == "initialize":
+        # Backward-compatibility handshake for legacy clients
         return {
             "jsonrpc": "2.0",
             "id": msg_id,
@@ -1620,72 +1926,62 @@ async def handle_rpc_request_async(req: Dict[str, Any]) -> Optional[Dict[str, An
                 "capabilities": {
                     "tools": {},
                     "resources": {},
-                    "prompts": {}
+                    "prompts": {},
                 },
                 "serverInfo": {
                     "name": "bio-research-local-mcp",
-                    "version": "2.0.0"
-                }
-            }
+                    "version": "2.0.0",
+                },
+            },
         }
     elif method in ("notifications/initialized", "initialized"):
         return None
+    elif method in ("server/discover", "discover"):
+        # Modern stateless discovery primitive
+        return {
+            "jsonrpc": "2.0",
+            "id": msg_id,
+            "result": {
+                "serverInfo": {
+                    "name": "bio-research-local-mcp",
+                    "version": "2.0.0",
+                    "sdk": "official-mcp-python-sdk",
+                },
+                "capabilities": {
+                    "tools": {"listChanged": False},
+                    "resources": {"subscribe": False, "listChanged": False},
+                    "prompts": {"listChanged": False},
+                },
+                "tools": public_tools_schema(),
+                "resources": RESOURCES_SCHEMA,
+                "prompts": PROMPTS_SCHEMA,
+            },
+        }
     elif method == "ping":
         return {
             "jsonrpc": "2.0",
             "id": msg_id,
-            "result": {}
+            "result": {},
         }
     elif method == "tools/list":
         return {
             "jsonrpc": "2.0",
             "id": msg_id,
             "result": {
-                "tools": public_tools_schema()
-            }
+                "tools": public_tools_schema(),
+            },
         }
     elif method == "resources/list":
         return {
             "jsonrpc": "2.0",
             "id": msg_id,
             "result": {
-                "resources": RESOURCES_SCHEMA
-            }
+                "resources": RESOURCES_SCHEMA,
+            },
         }
     elif method == "resources/read":
         uri = params.get("uri", "")
-        resource_map = {
-            "bionexus://workflows/drug_target_discovery": os.path.join(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                "skills", "research-workflow-orchestrator", "templates", "drug_target_discovery.yml",
-            ),
-            "bionexus://workflows/single_cell_atlas": os.path.join(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                "skills", "research-workflow-orchestrator", "templates", "single_cell_atlas.yml",
-            ),
-            "bionexus://workflows/variant_interpretation": os.path.join(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                "skills", "research-workflow-orchestrator", "templates", "variant_interpretation.yml",
-            ),
-            "bionexus://configs/acmg_rules": os.path.join(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                "skills", "variant-interpretation", "configs", "acmg_rules.yml",
-            ),
-            "bionexus://configs/germline_vgenes": os.path.join(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                "skills", "biologics-design", "configs", "germline_vgenes.yml",
-            ),
-            "bionexus://configs/docking_params": os.path.join(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                "skills", "protein-structure-analysis", "configs", "docking_params.yml",
-            ),
-        }
-        path = resource_map.get(uri)
-        if path and os.path.isfile(path):
-            with open(path, "r", encoding="utf-8") as handle:
-                content = handle.read()
-        else:
-            content = f"# Resource not found on disk\nuri: {uri}\nstatus: missing\n"
+        content = get_resource_content(uri)
         return {
             "jsonrpc": "2.0",
             "id": msg_id,
@@ -1694,45 +1990,23 @@ async def handle_rpc_request_async(req: Dict[str, Any]) -> Optional[Dict[str, An
                     {
                         "uri": uri,
                         "mimeType": "text/yaml",
-                        "text": content
+                        "text": content,
                     }
-                ]
-            }
+                ],
+            },
         }
     elif method == "prompts/list":
         return {
             "jsonrpc": "2.0",
             "id": msg_id,
             "result": {
-                "prompts": PROMPTS_SCHEMA
-            }
+                "prompts": PROMPTS_SCHEMA,
+            },
         }
     elif method == "prompts/get":
-        prompt_name = params.get("name")
+        prompt_name = params.get("name", "")
         p_args = params.get("arguments", {})
-        if prompt_name == "drug_target_analysis":
-            disease = p_args.get("disease", "Unknown Disease")
-            target = p_args.get("target_gene", "Unknown Target")
-            prompt_text = (
-                f"Research-use target scan for '{target}' in '{disease}'.\n"
-                f"1. If hosted Open Targets/ChEMBL/UniProt/ClinicalTrials tools are connected, query them.\n"
-                f"2. Record each score with its source. Do not invent missing values.\n"
-                f"3. Do not emit a Bayesian go/no-go unless the user supplied calibrated scores."
-            )
-        elif prompt_name == "variant_pathogenicity":
-            variant = p_args.get("variant", "Unknown Variant")
-            disease = p_args.get("disease", "Unknown Condition")
-            prompt_text = (
-                f"Research-use ACMG combination for '{variant}' ({disease}).\n"
-                f"You are not a clinical laboratory and not board-certified.\n"
-                f"1. Parse the variant string.\n"
-                f"2. Query gnomAD/ClinVar only if those tools are connected; otherwise leave AF unknown.\n"
-                f"3. Do not apply PM2, PP3, or PVS1 unless the corresponding evidence field is present.\n"
-                f"4. Pass only supplied codes into evaluate_variant_acmg. Research-use only."
-            )
-        else:
-            prompt_text = f"Expert bioinformatics prompt for {prompt_name}."
-
+        prompt_text = get_prompt_content(prompt_name, p_args)
         return {
             "jsonrpc": "2.0",
             "id": msg_id,
@@ -1743,120 +2017,27 @@ async def handle_rpc_request_async(req: Dict[str, Any]) -> Optional[Dict[str, An
                         "role": "user",
                         "content": {
                             "type": "text",
-                            "text": prompt_text
-                        }
+                            "text": prompt_text,
+                        },
                     }
-                ]
-            }
+                ],
+            },
         }
     elif method == "tools/call":
         tool_name = params.get("name")
         args = params.get("arguments", {})
         try:
-            # Core 8 Tools
-            if tool_name == "search_pubmed":
-                res = await tool_search_pubmed(
-                    args.get("query", ""),
-                    args.get("max_results", 5),
-                    args.get("offset", 0),
-                    args.get("sort", "pub_date"),
-                    args.get("mindate"),
-                    args.get("maxdate")
-                )
-            elif tool_name == "get_pubmed_article":
-                res = await tool_get_pubmed_article(args.get("pmid", ""))
-            elif tool_name == "search_biorxiv":
-                res = await tool_search_biorxiv(
-                    args.get("query", ""),
-                    args.get("server", "biorxiv"),
-                    args.get("limit", 5),
-                    args.get("page", 1)
-                )
-            elif tool_name == "search_chembl":
-                res = await tool_search_chembl(
-                    args.get("query", ""),
-                    args.get("entity_type", "molecule"),
-                    args.get("limit", 5),
-                    args.get("offset", 0)
-                )
-            elif tool_name == "search_opentargets":
-                res = await tool_search_opentargets(
-                    args.get("query", ""),
-                    args.get("entity_types"),
-                    args.get("limit", 5),
-                    args.get("page_index", 0)
-                )
-            elif tool_name == "search_clinical_trials":
-                res = await tool_search_clinical_trials(
-                    args.get("condition", ""),
-                    args.get("intervention", ""),
-                    args.get("status"),
-                    args.get("limit", 5),
-                    args.get("page_token")
-                )
-            elif tool_name == "search_uniprot":
-                res = await tool_search_uniprot(
-                    args.get("query", ""),
-                    args.get("organism", "human"),
-                    args.get("limit", 5)
-                )
-            elif tool_name == "search_ensembl":
-                res = await tool_search_ensembl(
-                    args.get("symbol", ""),
-                    args.get("species", "human")
-                )
-            # Phase 4 Extended 8 Tools
-            elif tool_name == "search_gnomad":
-                res = await tool_search_gnomad(
-                    args.get("gene_symbol"),
-                    args.get("variant_id")
-                )
-            elif tool_name == "search_pdb":
-                res = await tool_search_pdb(
-                    args.get("query", ""),
-                    args.get("limit", 5)
-                )
-            elif tool_name == "search_alphafold":
-                res = await tool_search_alphafold(
-                    args.get("uniprot_id", "")
-                )
-            elif tool_name == "search_reactome":
-                res = await tool_search_reactome(
-                    args.get("query", ""),
-                    args.get("species", "Homo sapiens"),
-                    args.get("limit", 5)
-                )
-            elif tool_name == "search_string":
-                res = await tool_search_string(
-                    args.get("gene_symbol", ""),
-                    args.get("species", 9606),
-                    args.get("limit", 10),
-                    args.get("required_score", 400)
-                )
-            elif tool_name == "search_cosmic":
-                res = await tool_search_cosmic(
-                    args.get("gene_symbol", "")
-                )
-            elif tool_name == "search_geo":
-                res = await tool_search_geo(
-                    args.get("query", ""),
-                    args.get("max_results", 5)
-                )
-            elif tool_name == "get_gene_expression":
-                res = await tool_get_gene_expression(
-                    args.get("gene_symbol", ""),
-                    args.get("tissue_site")
-                )
-            else:
+            if tool_name not in TOOL_ADAPTER_MAP:
                 return {
                     "jsonrpc": "2.0",
                     "id": msg_id,
                     "error": {
                         "code": -32601,
-                        "message": f"Unknown tool: {tool_name}"
-                    }
+                        "message": f"Unknown tool: {tool_name}",
+                    },
                 }
-
+            fn = TOOL_ADAPTER_MAP[tool_name]
+            res = await fn(args)
             return {
                 "jsonrpc": "2.0",
                 "id": msg_id,
@@ -1864,10 +2045,10 @@ async def handle_rpc_request_async(req: Dict[str, Any]) -> Optional[Dict[str, An
                     "content": [
                         {
                             "type": "text",
-                            "text": json.dumps(res, indent=2, ensure_ascii=False)
+                            "text": json.dumps(res, indent=2, ensure_ascii=False),
                         }
-                    ]
-                }
+                    ],
+                },
             }
         except Exception as e:
             logger.error(f"Error executing {tool_name}: {e}", exc_info=True)
@@ -1879,10 +2060,10 @@ async def handle_rpc_request_async(req: Dict[str, Any]) -> Optional[Dict[str, An
                     "content": [
                         {
                             "type": "text",
-                            "text": f"Error executing tool {tool_name}: {str(e)}"
+                            "text": f"Error executing tool {tool_name}: {str(e)}",
                         }
-                    ]
-                }
+                    ],
+                },
             }
     else:
         if msg_id is not None:
@@ -1891,13 +2072,13 @@ async def handle_rpc_request_async(req: Dict[str, Any]) -> Optional[Dict[str, An
                 "id": msg_id,
                 "error": {
                     "code": -32601,
-                    "message": f"Method not found: {method}"
-                }
+                    "message": f"Method not found: {method}",
+                },
             }
         return None
 
 
-# --- Async Stdio Main Loop ---
+# --- Async Stdio Main Loop & Entry Point ---
 
 async def async_stdio_reader():
     """Asynchronous stdin reader supporting standard input lines."""
@@ -1920,8 +2101,8 @@ async def async_stdio_reader():
                 "id": None,
                 "error": {
                     "code": -32700,
-                    "message": f"Parse error: {str(e)}"
-                }
+                    "message": f"Parse error: {str(e)}",
+                },
             }
             write_json_response(err_resp)
 
@@ -1947,20 +2128,33 @@ async def process_single_rpc(req: Dict[str, Any]):
                 "id": req.get("id"),
                 "error": {
                     "code": -32603,
-                    "message": f"Internal RPC error: {str(e)}"
-                }
+                    "message": f"Internal RPC error: {str(e)}",
+                },
             })
 
 
 def main():
     """Main process entry point."""
-    logger.info("BioNexus Local MCP Server v2.0.0 starting...")
-    try:
-        asyncio.run(async_stdio_reader())
-    except (KeyboardInterrupt, SystemExit):
-        logger.info("Server shutting down.")
-    except Exception as e:
-        logger.critical(f"Fatal server crash: {e}", exc_info=True)
+    logger.info("BioNexus Local MCP Server starting...")
+    if "--legacy" in sys.argv or os.environ.get("BIONEXUS_MCP_LEGACY_MODE") == "1" or FastMCP is None:
+        try:
+            asyncio.run(async_stdio_reader())
+        except (KeyboardInterrupt, SystemExit):
+            logger.info("Server shutting down.")
+        except Exception as e:
+            logger.critical(f"Fatal server crash: {e}", exc_info=True)
+    else:
+        try:
+            server = create_mcp_server()
+            server.run(transport="stdio")
+        except Exception as e:
+            logger.warning(f"Official FastMCP stdio transport fallback to async stdio reader: {e}")
+            try:
+                asyncio.run(async_stdio_reader())
+            except (KeyboardInterrupt, SystemExit):
+                logger.info("Server shutting down.")
+            except Exception as crash_err:
+                logger.critical(f"Fatal server crash: {crash_err}", exc_info=True)
 
 
 if __name__ == "__main__":

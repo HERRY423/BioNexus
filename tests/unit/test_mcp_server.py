@@ -11,11 +11,48 @@ from pathlib import Path
 # Ensure scripts dir is on sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
 
-from local_mcp_server import handle_rpc_request_async
+from local_mcp_server import create_mcp_server, handle_rpc_request_async
+
+
+def test_official_fastmcp_server_sdk():
+    """Verify official MCP Python SDK FastMCP server instance and tool registration."""
+    server = create_mcp_server()
+    assert server is not None
+    assert server.name == "bio-research-local-mcp"
+    tools = server._tool_manager.list_tools()
+    assert len(tools) == 16
+    tool_names = {t.name for t in tools}
+    assert "search_uniprot" in tool_names
+    assert "search_ensembl" in tool_names
+    assert "search_gnomad" in tool_names
+    assert "search_pdb" in tool_names
+    assert "search_alphafold" in tool_names
+
+
+def test_mcp_server_discover_modern():
+    """Verify modern stateless server/discover protocol response."""
+    async def _run():
+        req = {
+            "jsonrpc": "2.0",
+            "id": "discover-1",
+            "method": "server/discover",
+            "params": {}
+        }
+        return await handle_rpc_request_async(req)
+
+    resp = asyncio.run(_run())
+    assert resp is not None
+    assert resp["jsonrpc"] == "2.0"
+    assert resp["id"] == "discover-1"
+    res = resp["result"]
+    assert res["serverInfo"]["sdk"] == "official-mcp-python-sdk"
+    assert "tools" in res
+    assert "resources" in res
+    assert "prompts" in res
 
 
 def test_mcp_initialize():
-    """Verify standard initialize handshake response."""
+    """Verify standard legacy initialize handshake response for backward compatibility."""
     async def _run():
         req = {
             "jsonrpc": "2.0",
