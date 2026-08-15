@@ -16,7 +16,13 @@ from local_mcp_server import create_mcp_server, handle_rpc_request_async
 
 def test_official_fastmcp_server_sdk():
     """Verify official MCP Python SDK FastMCP server instance and tool registration."""
-    server = create_mcp_server()
+    import pytest
+
+    try:
+        server = create_mcp_server()
+    except (ImportError, ModuleNotFoundError):
+        pytest.skip("Official MCP Python SDK (`mcp`) not installed in test environment.")
+
     assert server is not None
     assert server.name == "bionexus-local-mcp"
     tools = server._tool_manager.list_tools()

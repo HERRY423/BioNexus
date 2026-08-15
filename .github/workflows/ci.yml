@@ -51,10 +51,10 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements-dev.txt
           pip install -e .
-      - name: Spatial extra (Ubuntu 3.11, required)
+      - name: Goldchain & Spatial extra (Ubuntu 3.11, required)
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
         shell: bash
-        run: pip install -e ".[spatial]"
+        run: pip install -e ".[goldchain,spatial]"
       - name: Run Pytest Test Suite
         shell: bash
         run: |
@@ -73,8 +73,10 @@ jobs:
         shell: bash
         run: python scripts/goldchain_smoke.py
       - name: Verify FastMCP SDK & Local MCP Server Protocol
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
         shell: bash
         run: |
+          pip install mcp
           python -c "
           import sys
           sys.path.insert(0, 'scripts')
