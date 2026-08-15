@@ -130,6 +130,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="scverse scRNA gold chain")
     parser.add_argument("input", help=".h5ad or 10x .h5")
     parser.add_argument("-o", "--output", default=None, help="Clustered .h5ad")
+    parser.add_argument("--run-dir", default=None, help="Standardized BioNexus Run Capsule output directory")
     parser.add_argument("--config", default=None, help="JSON config; CLI flags override keys")
     parser.add_argument("--markers-csv", default=None)
     parser.add_argument("--skip-qc", action="store_true")
@@ -140,6 +141,7 @@ def main() -> None:
     parser.add_argument("--extra-resolutions", nargs="*", type=float, default=None)
     parser.add_argument("--run-scrublet", action="store_true", help="Run scanpy.pp.scrublet after QC")
     args = parser.parse_args()
+    from bionexus.artifacts import RunBundle
     from bionexus.gate import require_doctor
     from bionexus.pipeline_config import load_pipeline_config, merge_config
 
@@ -148,6 +150,7 @@ def main() -> None:
         load_pipeline_config(args.config),
         {
             "output": args.output,
+            "run_dir": args.run_dir,
             "markers_csv": args.markers_csv,
             "resolution": args.resolution,
             "n_top_genes": args.n_top_genes,
@@ -156,8 +159,9 @@ def main() -> None:
         },
     )
     output = cfg.get("output")
-    if not output:
-        parser.error("--output is required (flag or config.output)")
+    run_dir = cfg.get("run_dir")
+    if not output and not run_dir:
+        parser.error("Either --output or --run-dir is required (flag or config)")
     run_qc = not args.skip_qc
     if "run_qc" in cfg and not args.skip_qc:
         run_qc = bool(cfg["run_qc"])
@@ -170,7 +174,7 @@ def main() -> None:
         adata = sc.read_10x_h5(path)
     else:
         adata = sc.read_h5ad(path)
-    out = Path(str(output))
+
     extra = cfg.get("extra_resolutions") or [0.3, 0.8]
     if args.run_scrublet or bool(cfg.get("run_scrublet")):
         from scrna_scrublet import run_scrublet
@@ -187,30 +191,75 @@ def main() -> None:
         extra_resolutions=[float(x) for x in extra],
         n_marker_genes=int(cfg.get("n_marker_genes", 20)),
     )
-    out.parent.mkdir(parents=True, exist_ok=True)
-    adata.write_h5ad(out)
-    markers_csv = cfg.get("markers_csv")
-    csv_path = Path(markers_csv) if markers_csv else out.with_name(out.stem + "_markers.csv")
-    markers.to_csv(csv_path, index=False)
-    out.with_suffix(".provenance.json").write_text(
-        json.dumps(
-            sidecar(
-                activity_name="scrna_gold_chain",
-                input_files=[args.input],
-                output_files=[str(out), str(csv_path)],
-                method="scanpy_gold_chain",
-                backend="scanpy",
-                parameters={
-                    "config": args.config,
-                    "run_qc": run_qc,
-                    "resolution": cfg.get("resolution", 0.5),
-                    "n_top_genes": cfg.get("n_top_genes", 2000),
-                },
+
+    if run_dir:
+        bundle = RunBundle.create(
+            run_dir=run_dir,
+            capability_id="scrna.exploratory_clustering",
+            skill_name="single-cell-rna-qc",
+        )
+        bundle.record_input(
+            name="expression_counts",
+            file_path=args.input,
+            semantic_type="raw_counts",
+            metadata={"n_cells": int(adata.n_obs), "n_genes": int(adata.n_vars)},
+        )
+        bundle.record_parameters(
+            run_qc=run_qc,
+            resolution=cfg.get("resolution", 0.5),
+            n_top_genes=cfg.get("n_top_genes", 2000),
+            n_marker_genes=cfg.get("n_marker_genes", 20),
+            extra_resolutions=extra,
+        )
+        res_h5ad = bundle.results_dir / "clustered.h5ad"
+        adata.write_h5ad(res_h5ad)
+        bundle.add_result("clustered_anndata", res_h5ad, semantic_type="clustered_counts", is_primary=True)
+
+        res_markers = bundle.results_dir / "cluster_markers.csv"
+        markers.to_csv(res_markers, index=False)
+        bundle.add_result("cluster_markers", res_markers, semantic_type="tabular_markers")
+
+        if summary.get("evidence_card"):
+            card_obj = EvidenceCard.from_dict(summary["evidence_card"])
+            bundle.attach_evidence_card(card_obj)
+
+        bundle.add_downstream_suggestion(
+            intent="differential_expression",
+            capability_id="scrna.pseudobulk_de",
+            input_artifact="results/clustered.h5ad",
+            recommended_command="python skills/single-cell-rna-qc/scripts/scrna_pseudobulk.py --input results/clustered.h5ad",
+            rationale="Perform pseudobulk sample aggregation with biological replicates for robust condition DE.",
+        )
+        bundle.finalize(status="COMPLETED")
+        print(f"[OK] BioNexus Run Capsule created at: {run_dir}")
+
+    if output:
+        out = Path(str(output))
+        out.parent.mkdir(parents=True, exist_ok=True)
+        adata.write_h5ad(out)
+        markers_csv = cfg.get("markers_csv")
+        csv_path = Path(markers_csv) if markers_csv else out.with_name(out.stem + "_markers.csv")
+        markers.to_csv(csv_path, index=False)
+        out.with_suffix(".provenance.json").write_text(
+            json.dumps(
+                sidecar(
+                    activity_name="scrna_gold_chain",
+                    input_files=[args.input],
+                    output_files=[str(out), str(csv_path)],
+                    method="scanpy_gold_chain",
+                    backend="scanpy",
+                    parameters={
+                        "config": args.config,
+                        "run_qc": run_qc,
+                        "resolution": cfg.get("resolution", 0.5),
+                        "n_top_genes": cfg.get("n_top_genes", 2000),
+                    },
+                ),
+                indent=2,
             ),
-            indent=2,
-        ),
-        encoding="utf-8",
-    )
+            encoding="utf-8",
+        )
+
     print(json.dumps(summary, indent=2, default=str))
 
 

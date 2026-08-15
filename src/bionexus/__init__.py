@@ -9,6 +9,16 @@ from .agent_routing import (
     is_default_skill,
     route_scientific_intent,
 )
+from .artifacts import (
+    BundleVerificationResult,
+    DownstreamSuggestion,
+    FigureArtifact,
+    InputArtifact,
+    OutputArtifact,
+    RunBundle,
+    load_run_bundle,
+    verify_run_bundle,
+)
 from .backends import BackendUnavailable, is_available, probe, probe_all, require
 from .capabilities import (
     CANONICAL_CAPABILITIES,
@@ -74,11 +84,17 @@ __version__ = PLUGIN_VERSION
 
 __all__ = [
     "ABSTAIN",
+    "BundleVerificationResult",
     "CANONICAL_CAPABILITIES",
+    "DownstreamSuggestion",
+    "FigureArtifact",
     "GRADE_A",
     "GRADE_B",
     "GRADE_C",
+    "InputArtifact",
+    "OutputArtifact",
     "RESEARCH_USE_ONLY",
+    "RunBundle",
     "BackendRequirement",
     "BackendUnavailable",
     "CapabilityContract",
@@ -124,6 +140,7 @@ __all__ = [
     "is_default_skill",
     "list_capabilities",
     "load_pipeline_config",
+    "load_run_bundle",
     "merge_config",
     "probe",
     "probe_all",
@@ -141,6 +158,7 @@ __all__ = [
     "skills_by_tier",
     "synthesize_conclusion_maturity",
     "synthesize_conclusion_status",
+    "verify_run_bundle",
     "write_doctor_report",
     "capture_environment",
 ]

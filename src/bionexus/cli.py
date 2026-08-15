@@ -836,6 +836,106 @@ def handle_audit_claims(args: argparse.Namespace) -> int:
         return 1
 
 
+def handle_run(args: argparse.Namespace) -> int:
+    """Handle 'run' subcommands (inspect, verify, list) for Run Capsule Artifact Contracts."""
+    from bionexus.artifacts import load_run_bundle, verify_run_bundle
+
+    action = getattr(args, "run_action", None)
+    if action == "inspect":
+        target = Path(args.path)
+        try:
+            data = load_run_bundle(target)
+        except Exception as e:
+            print(f"[ERROR] Failed to load run capsule: {e}")
+            return 1
+
+        if getattr(args, "json", False):
+            print(json.dumps(data, indent=2))
+            return 0
+
+        print("\n============================================================")
+        print(f"📦 BioNexus Run Capsule: {data.get('run_id')}")
+        print("============================================================")
+        print(f"• Capability ID:       {data.get('capability_id')}")
+        print(f"• Skill Name:          {data.get('skill_name')}")
+        print(f"• Status:              {data.get('status')} ({data.get('execution_state')})")
+        print(f"• Conclusion Maturity: {data.get('conclusion_maturity')}")
+        print(f"• Duration:            {data.get('duration_seconds')}s")
+        print(f"• Start Time:          {data.get('timestamp_start')}")
+
+        artifacts = data.get("artifacts", {})
+        print("\n📂 Core Descriptors:")
+        for k in ("inputs_manifest", "parameters_manifest", "evidence_card", "provenance_sidecar", "environment_snapshot", "execution_log"):
+            val = artifacts.get(k)
+            if val:
+                print(f"  - {k}: {val}")
+
+        results = artifacts.get("results", [])
+        print(f"\n📊 Result Artifacts ({len(results)}):")
+        for r in results:
+            prim = " [PRIMARY]" if r.get("path") == artifacts.get("primary_result") else ""
+            print(f"  - {r.get('name')}: {r.get('path')} ({r.get('semantic_type')}){prim}")
+
+        figures = artifacts.get("figures", [])
+        if figures:
+            print(f"\n📈 Visualizations ({len(figures)}):")
+            for fig in figures:
+                print(f"  - {fig.get('title')}: {fig.get('path')} ({fig.get('format')})")
+
+        suggestions = data.get("downstream_suggestions", [])
+        if suggestions:
+            print(f"\n🤖 Next Agent Actionable Suggestions ({len(suggestions)}):")
+            for i, sug in enumerate(suggestions, 1):
+                print(f"  {i}. Intent: {sug.get('intent')} -> {sug.get('capability_id')}")
+                print(f"     Input:   {sug.get('input_artifact')}")
+                print(f"     Command: {sug.get('recommended_command')}")
+                if sug.get("rationale"):
+                    print(f"     Why:     {sug.get('rationale')}")
+
+        print("============================================================\n")
+        return 0
+
+    elif action == "verify":
+        target = Path(args.path)
+        res = verify_run_bundle(target)
+        if getattr(args, "json", False):
+            print(json.dumps(res.to_dict(), indent=2))
+            return 0 if res.valid else 1
+
+        print(f"\n=== Verifying Run Capsule: {res.run_id} ===")
+        if res.valid:
+            print("[PASS] Run capsule is complete, structurally intact, and cryptographically verified.")
+            return 0
+        else:
+            print("[FAIL] Integrity verification failed:")
+            for m in res.missing_files:
+                print(f"  - MISSING: {m}")
+            for t in res.tampered_files:
+                print(f"  - TAMPERED: {t}")
+            for n in res.notes:
+                print(f"  - Note: {n}")
+            return 1
+
+    elif action == "list":
+        parent = Path(args.path or ".")
+        runs = sorted(parent.glob("**/run.json"))
+        if not runs:
+            print(f"No BioNexus run capsules found in '{parent}'.")
+            return 0
+
+        print(f"\nFound {len(runs)} BioNexus Run Capsule(s) in '{parent}':")
+        for r_file in runs:
+            r_dir = r_file.parent
+            try:
+                d = json.loads(r_file.read_text(encoding="utf-8"))
+                print(f"  • {d.get('run_id')} | Cap: {d.get('capability_id')} | Status: {d.get('status')} | Dir: {r_dir}")
+            except Exception:
+                print(f"  • [Invalid] Dir: {r_dir}")
+        return 0
+
+    return 0
+
+
 # ==============================================================================
 # Main Parser & Router
 # ==============================================================================
@@ -959,6 +1059,24 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_claim.add_argument("--capability", default=None, help="Optional capability context ID")
     p_claim.add_argument("--json", action="store_true", help="Output claim audit result as JSON")
 
+    # 10. run (Run Capsule Artifact Contract)
+    p_run = subparsers.add_parser("run", help="Manage and inspect standardized BioNexus Run Capsule Artifacts")
+    run_subs = p_run.add_subparsers(dest="run_action", help="Run capsule actions")
+
+    # run inspect <path>
+    p_run_inspect = run_subs.add_parser("inspect", help="Inspect a run.json capsule descriptor for agent handoff")
+    p_run_inspect.add_argument("path", help="Path to run/ directory or run.json file")
+    p_run_inspect.add_argument("--json", action="store_true", help="Output descriptor as JSON")
+
+    # run verify <path>
+    p_run_verify = run_subs.add_parser("verify", help="Verify cryptographic completeness and tamper integrity of run capsule")
+    p_run_verify.add_argument("path", help="Path to run/ directory or run.json file")
+    p_run_verify.add_argument("--json", action="store_true", help="Output verification as JSON")
+
+    # run list [path]
+    p_run_list = run_subs.add_parser("list", help="List all BioNexus run capsules in a directory")
+    p_run_list.add_argument("path", nargs="?", default=".", help="Parent directory to search (default: .)")
+
     args = parser.parse_args(argv)
 
     if not args.command:
@@ -989,6 +1107,11 @@ def main(argv: Optional[list[str]] = None) -> int:
         return handle_eval(args)
     elif args.command == "audit-claims":
         return handle_audit_claims(args)
+    elif args.command == "run":
+        if not getattr(args, "run_action", None):
+            p_run.print_help()
+            return 0
+        return handle_run(args)
 
     return 0
 
