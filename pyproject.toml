@@ -105,7 +105,11 @@ all = [
     "bionexus[goldchain,scverse,spatial,deseq,survival,plm,structure,allotrope,mcp,dev]"
 ]
 
+[project.scripts]
+bionexus = "bionexus.cli:main"
+
 [tool.setuptools.packages.find]
+
 where = ["src"]
 
 [tool.setuptools.package-dir]

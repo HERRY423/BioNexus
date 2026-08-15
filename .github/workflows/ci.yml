@@ -55,6 +55,14 @@ jobs:
         shell: bash
         run: |
           pytest tests/ -v
+      - name: Verify BioNexus CLI & Commands
+        shell: bash
+        run: |
+          bionexus --version
+          bionexus doctor
+          bionexus list-skills
+          bionexus registry --check
+
       - name: Fixture gold-chain smoke
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
         shell: bash

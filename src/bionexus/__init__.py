@@ -14,7 +14,16 @@ from .contracts import (
 )
 from .doctor import run_doctor
 from .gate import DoctorGateError, require_doctor, write_doctor_report
-from .inventory import SKILLS, as_markdown_table, core_skills, get_skill
+from .inventory import (
+    SKILLS,
+    active_skills,
+    as_markdown_table,
+    canonical_skills,
+    core_skills,
+    get_skill,
+    skills_by_status,
+    skills_by_tier,
+)
 from .pipeline_config import load_pipeline_config, merge_config
 from .provenance import capture_environment, sha256_file, sidecar
 from .versions import PINS, PITFALLS, PLUGIN_VERSION
@@ -35,8 +44,10 @@ __all__ = [
     "PINS",
     "PITFALLS",
     "__version__",
+    "active_skills",
     "as_markdown_table",
     "attach_meta",
+    "canonical_skills",
     "core_skills",
     "run_doctor",
     "require_doctor",
@@ -54,4 +65,7 @@ __all__ = [
     "require",
     "sha256_file",
     "sidecar",
+    "skills_by_status",
+    "skills_by_tier",
 ]
+
