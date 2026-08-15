@@ -37,12 +37,12 @@ def load_all_pipeline_configs() -> Dict[str, Dict]:
 def scan_directory(directory: str) -> Dict:
     """Scan directory and collect file information."""
     info = {
-        'fastq_count': 0,
-        'bam_count': 0,
-        'cram_count': 0,
-        'filenames': [],
-        'directories': [],
-        'total_size_gb': 0,
+        "fastq_count": 0,
+        "bam_count": 0,
+        "cram_count": 0,
+        "filenames": [],
+        "directories": [],
+        "total_size_gb": 0,
     }
 
     directory = os.path.abspath(directory)
@@ -50,27 +50,27 @@ def scan_directory(directory: str) -> Dict:
     for root, dirs, files in os.walk(directory):
         # Collect directory names
         rel_root = os.path.relpath(root, directory)
-        if rel_root != '.':
-            info['directories'].append(rel_root.lower())
+        if rel_root != ".":
+            info["directories"].append(rel_root.lower())
 
         for filename in files:
             filename_lower = filename.lower()
 
             # Count file types
-            if any(filename_lower.endswith(ext) for ext in ['.fastq.gz', '.fq.gz', '.fastq', '.fq']):
-                info['fastq_count'] += 1
-            elif filename_lower.endswith('.bam'):
-                info['bam_count'] += 1
-            elif filename_lower.endswith('.cram'):
-                info['cram_count'] += 1
+            if any(filename_lower.endswith(ext) for ext in [".fastq.gz", ".fq.gz", ".fastq", ".fq"]):
+                info["fastq_count"] += 1
+            elif filename_lower.endswith(".bam"):
+                info["bam_count"] += 1
+            elif filename_lower.endswith(".cram"):
+                info["cram_count"] += 1
 
             # Collect filenames for pattern matching
-            info['filenames'].append(filename_lower)
+            info["filenames"].append(filename_lower)
 
             # Sum file sizes
             try:
                 size = os.path.getsize(os.path.join(root, filename))
-                info['total_size_gb'] += size / (1024**3)
+                info["total_size_gb"] += size / (1024**3)
             except Exception:
                 pass
 
@@ -86,48 +86,48 @@ def calculate_pipeline_scores(scan_info: Dict, configs: Dict) -> Dict[str, Dict]
         matches = []
 
         # Check detection hints
-        hints = config.get('detection_hints', {})
+        hints = config.get("detection_hints", {})
 
         # Filename hints
-        filename_hints = hints.get('filename', [])
+        filename_hints = hints.get("filename", [])
         for hint in filename_hints:
             hint_lower = hint.lower()
-            for filename in scan_info['filenames']:
+            for filename in scan_info["filenames"]:
                 if hint_lower in filename:
                     score += 10
                     matches.append(f"Filename contains '{hint}'")
                     break
 
         # Directory hints
-        directory_hints = hints.get('directory', [])
+        directory_hints = hints.get("directory", [])
         for hint in directory_hints:
             hint_lower = hint.lower()
-            for dirname in scan_info['directories']:
+            for dirname in scan_info["directories"]:
                 if hint_lower in dirname:
                     score += 15
                     matches.append(f"Directory contains '{hint}'")
                     break
 
         # Check data type compatibility
-        config.get('data_types', [])
-        input_types = config.get('samplesheet', {}).get('input_types', ['fastq'])
+        config.get("data_types", [])
+        input_types = config.get("samplesheet", {}).get("input_types", ["fastq"])
 
         # Prefer pipelines that support the available file types
-        if 'fastq' in input_types and scan_info['fastq_count'] > 0:
+        if "fastq" in input_types and scan_info["fastq_count"] > 0:
             score += 5
-        if 'bam' in input_types and scan_info['bam_count'] > 0:
+        if "bam" in input_types and scan_info["bam_count"] > 0:
             score += 5
-        if 'cram' in input_types and scan_info['cram_count'] > 0:
+        if "cram" in input_types and scan_info["cram_count"] > 0:
             score += 5
 
         # Pipeline-specific boosts
-        if pipeline_name == 'sarek':
+        if pipeline_name == "sarek":
             # Check for tumor/normal indicators
-            tumor_indicators = ['tumor', 'tumour', 'cancer', 'met', 'primary']
-            normal_indicators = ['normal', 'germline', 'blood', 'control']
+            tumor_indicators = ["tumor", "tumour", "cancer", "met", "primary"]
+            normal_indicators = ["normal", "germline", "blood", "control"]
 
-            has_tumor = any(ind in ' '.join(scan_info['filenames']) for ind in tumor_indicators)
-            has_normal = any(ind in ' '.join(scan_info['filenames']) for ind in normal_indicators)
+            has_tumor = any(ind in " ".join(scan_info["filenames"]) for ind in tumor_indicators)
+            has_normal = any(ind in " ".join(scan_info["filenames"]) for ind in normal_indicators)
 
             if has_tumor or has_normal:
                 score += 20
@@ -137,36 +137,36 @@ def calculate_pipeline_scores(scan_info: Dict, configs: Dict) -> Dict[str, Dict]
                     matches.append("Found normal sample indicators")
 
             # DNA-related hints
-            dna_hints = ['wgs', 'wes', 'exome', 'dna', 'variant', 'snp', 'indel']
+            dna_hints = ["wgs", "wes", "exome", "dna", "variant", "snp", "indel"]
             for hint in dna_hints:
-                if hint in ' '.join(scan_info['filenames'] + scan_info['directories']):
+                if hint in " ".join(scan_info["filenames"] + scan_info["directories"]):
                     score += 10
                     matches.append(f"Found DNA/variant indicator: '{hint}'")
                     break
 
-        elif pipeline_name == 'rnaseq':
+        elif pipeline_name == "rnaseq":
             # RNA-related hints
-            rna_hints = ['rna', 'rnaseq', 'mrna', 'expression', 'transcript', 'counts']
+            rna_hints = ["rna", "rnaseq", "mrna", "expression", "transcript", "counts"]
             for hint in rna_hints:
-                if hint in ' '.join(scan_info['filenames'] + scan_info['directories']):
+                if hint in " ".join(scan_info["filenames"] + scan_info["directories"]):
                     score += 15
                     matches.append(f"Found RNA indicator: '{hint}'")
                     break
 
-        elif pipeline_name == 'atacseq':
+        elif pipeline_name == "atacseq":
             # ATAC-related hints
-            atac_hints = ['atac', 'atacseq', 'chromatin', 'accessibility', 'peak', 'macs']
+            atac_hints = ["atac", "atacseq", "chromatin", "accessibility", "peak", "macs"]
             for hint in atac_hints:
-                if hint in ' '.join(scan_info['filenames'] + scan_info['directories']):
+                if hint in " ".join(scan_info["filenames"] + scan_info["directories"]):
                     score += 20
                     matches.append(f"Found ATAC-seq indicator: '{hint}'")
                     break
 
         scores[pipeline_name] = {
-            'score': score,
-            'matches': matches,
-            'description': config.get('description', ''),
-            'version': config.get('version', 'unknown'),
+            "score": score,
+            "matches": matches,
+            "description": config.get("description", ""),
+            "version": config.get("version", "unknown"),
         }
 
     return scores
@@ -189,36 +189,30 @@ def detect_pipeline(directory: str) -> Tuple[str, Dict]:
     scan_info = scan_directory(directory)
 
     # Check if any sequencing files found
-    total_files = scan_info['fastq_count'] + scan_info['bam_count'] + scan_info['cram_count']
+    total_files = scan_info["fastq_count"] + scan_info["bam_count"] + scan_info["cram_count"]
     if total_files == 0:
         raise ValueError(f"No sequencing files (FASTQ/BAM/CRAM) found in {directory}")
 
     scores = calculate_pipeline_scores(scan_info, configs)
 
     # Find highest scoring pipeline
-    best_pipeline = max(scores.keys(), key=lambda k: scores[k]['score'])
+    best_pipeline = max(scores.keys(), key=lambda k: scores[k]["score"])
 
     return best_pipeline, scores
 
 
-def print_results(
-    directory: str,
-    recommended: str,
-    scores: Dict,
-    scan_info: Dict,
-    output_json: bool = False
-):
+def print_results(directory: str, recommended: str, scores: Dict, scan_info: Dict, output_json: bool = False):
     """Print detection results."""
     if output_json:
         result = {
-            'recommended': recommended,
-            'scores': scores,
-            'scan_info': {
-                'fastq_count': scan_info['fastq_count'],
-                'bam_count': scan_info['bam_count'],
-                'cram_count': scan_info['cram_count'],
-                'total_size_gb': round(scan_info['total_size_gb'], 2),
-            }
+            "recommended": recommended,
+            "scores": scores,
+            "scan_info": {
+                "fastq_count": scan_info["fastq_count"],
+                "bam_count": scan_info["bam_count"],
+                "cram_count": scan_info["cram_count"],
+                "total_size_gb": round(scan_info["total_size_gb"], 2),
+            },
         }
         print(json.dumps(result, indent=2))
         return
@@ -227,19 +221,20 @@ def print_results(
     print("  nf-core Pipeline Detection")
     print("=" * 50)
     print(f"\nDirectory: {directory}")
-    print(f"Files found: {scan_info['fastq_count']} FASTQ, "
-          f"{scan_info['bam_count']} BAM, {scan_info['cram_count']} CRAM")
+    print(
+        f"Files found: {scan_info['fastq_count']} FASTQ, {scan_info['bam_count']} BAM, {scan_info['cram_count']} CRAM"
+    )
     print(f"Total size: {scan_info['total_size_gb']:.1f} GB")
 
     print("\n--- Pipeline Scores ---")
-    sorted_pipelines = sorted(scores.keys(), key=lambda k: scores[k]['score'], reverse=True)
+    sorted_pipelines = sorted(scores.keys(), key=lambda k: scores[k]["score"], reverse=True)
 
     for pipeline in sorted_pipelines:
         info = scores[pipeline]
         indicator = "→" if pipeline == recommended else " "
         print(f"\n{indicator} {pipeline} (score: {info['score']})")
         print(f"  {info['description']}")
-        if info['matches']:
+        if info["matches"]:
             print(f"  Matches: {', '.join(info['matches'][:3])}")
 
     print(f"\n{'=' * 50}")
@@ -252,7 +247,7 @@ def print_results(
     print("   python scripts/check_environment.py")
     print("\n2. Run test profile:")
     config = load_all_pipeline_configs().get(recommended, {})
-    test_cmd = config.get('test_profile', {}).get('command', '')
+    test_cmd = config.get("test_profile", {}).get("command", "")
     if test_cmd:
         print(f"   {test_cmd}")
     print("\n3. Generate samplesheet:")
@@ -261,17 +256,17 @@ def print_results(
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Detect appropriate nf-core pipeline for data',
+        description="Detect appropriate nf-core pipeline for data",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
     %(prog)s ./data
     %(prog)s ./fastqs --json
-        """
+        """,
     )
 
-    parser.add_argument('directory', help='Directory containing sequencing data')
-    parser.add_argument('--json', action='store_true', help='Output as JSON')
+    parser.add_argument("directory", help="Directory containing sequencing data")
+    parser.add_argument("--json", action="store_true", help="Output as JSON")
 
     args = parser.parse_args()
 
@@ -283,18 +278,18 @@ Examples:
 
     except ValueError as e:
         if args.json:
-            print(json.dumps({'error': str(e)}))
+            print(json.dumps({"error": str(e)}))
         else:
             print(f"Error: {e}")
         sys.exit(1)
 
     except Exception as e:
         if args.json:
-            print(json.dumps({'error': str(e)}))
+            print(json.dumps({"error": str(e)}))
         else:
             print(f"Error: {e}")
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

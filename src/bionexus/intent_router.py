@@ -191,7 +191,9 @@ _INTENT_PATTERNS: List[Tuple[List[str], str]] = [
 ]
 
 
-def extract_scientific_capability(query: str, explicit_intents: Optional[List[str]] = None) -> Optional[CapabilityContract]:
+def extract_scientific_capability(
+    query: str, explicit_intents: Optional[List[str]] = None
+) -> Optional[CapabilityContract]:
     """Identify the most specific matching canonical capability contract."""
     # 1. Check explicit intents first
     if explicit_intents:
@@ -214,6 +216,7 @@ def extract_scientific_capability(query: str, explicit_intents: Optional[List[st
 # ==============================================================================
 # The Scientific Invariant Router
 # ==============================================================================
+
 
 def route_scientific_intent(
     query: str,
@@ -246,7 +249,9 @@ def route_scientific_intent(
             recommended_script=None,
             recommended_command="bionexus doctor",
             rationale="No specific scientific analytical intent could be resolved from query. Defaulting to session orientation.",
-            missing_data_requests=["Clarify specific scientific analytical intent (e.g. differential expression, clustering, survival analysis, spatial transcriptomics)."],
+            missing_data_requests=[
+                "Clarify specific scientific analytical intent (e.g. differential expression, clustering, survival analysis, spatial transcriptomics)."
+            ],
         )
 
     skill_name = cap.skill_name
@@ -258,6 +263,7 @@ def route_scientific_intent(
         if p.exists() and p.suffix == ".h5ad":
             try:
                 import anndata as ad
+
                 adata = ad.read_h5ad(p, backed="r")
                 grade, notes, stats = audit_expression_matrix(adata.X, expected_type="counts")
                 meta["is_integer_like"] = stats.get("is_integer_like", False)
@@ -288,7 +294,9 @@ def route_scientific_intent(
                     missing_data_requests=[
                         "Please provide biological replicate identifiers in `adata.obs` (e.g. `sample_id`, `donor_id`, `batch`) and the experimental condition factor (`condition`).",
                     ],
-                    remedies=["Condition DE is valid only when biological replicates (n >= 2 per condition) are available."],
+                    remedies=[
+                        "Condition DE is valid only when biological replicates (n >= 2 per condition) are available."
+                    ],
                 )
 
     # 4. Check Scientific Preconditions & Refusal Triggers
@@ -349,7 +357,9 @@ def route_scientific_intent(
                         recommended_command=f"pip install bionexus[{cap.backend.extra or 'all'}]",
                         rationale=f"Canonical backend '{cap.backend.canonical_name}' is not installed ({b_status.state.value}). Executing via Grade C heuristic fallback for legacy skill '{skill_name}'.",
                         violations=[f"Backend '{cap.backend.canonical_name}' is not installed."],
-                        remedies=[f"Install required backend via `pip install bionexus[{cap.backend.extra}]` or `pip install {cap.backend.import_name}`."],
+                        remedies=[
+                            f"Install required backend via `pip install bionexus[{cap.backend.extra}]` or `pip install {cap.backend.import_name}`."
+                        ],
                         evidence_card_template=EvidenceCard(
                             execution_state=ExecutionState.DEGRADED.value,
                             details={"missing_backend": cap.backend.canonical_name},
@@ -364,7 +374,9 @@ def route_scientific_intent(
                         recommended_command=f"pip install bionexus[{cap.backend.extra or 'all'}]",
                         rationale=f"Strict mode refusal: Canonical backend '{cap.backend.canonical_name}' for legacy skill '{skill_name}' is missing.",
                         violations=[f"Backend '{cap.backend.canonical_name}' is not installed."],
-                        remedies=[f"Install required backend via `pip install bionexus[{cap.backend.extra}]` or `pip install {cap.backend.import_name}`."],
+                        remedies=[
+                            f"Install required backend via `pip install bionexus[{cap.backend.extra}]` or `pip install {cap.backend.import_name}`."
+                        ],
                         evidence_card_template=EvidenceCard(
                             execution_state=ExecutionState.REFUSED.value,
                             details={"missing_backend": cap.backend.canonical_name},

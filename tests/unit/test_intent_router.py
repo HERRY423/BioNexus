@@ -82,6 +82,7 @@ def test_route_pseudobulk_de_lifecycle():
 
     # 4. PERMITTED (if pydeseq2 backend available)
     from bionexus.backends import is_available
+
     dec_perm = route_scientific_intent(
         "Compare drug treated vs control in scRNA",
         data_metadata={"min_replicates_per_condition": 3, "is_integer_like": True},
@@ -100,6 +101,7 @@ def test_route_spatial_moran_svg():
         data_metadata={"n_spatial_spots": 500},
     )
     from bionexus.backends import is_available
+
     if is_available("squidpy"):
         assert dec.status == RoutingStatus.PERMITTED
         assert dec.target_skill == "spatial-transcriptomics"
@@ -110,6 +112,7 @@ def test_route_spatial_moran_svg():
 def test_route_legacy_degraded_advisory():
     """Verify legacy skill routing with and without explicit degradation permission."""
     from bionexus.backends import is_available
+
     if not is_available("lifelines"):
         # Without allow_degraded: ABSTAIN
         dec_abstain = route_scientific_intent(

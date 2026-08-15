@@ -49,6 +49,7 @@ def get_pandas():
 def get_polars():
     try:
         import polars as pl
+
         return pl
     except ImportError:
         return None
@@ -59,8 +60,11 @@ DETECTION_PATTERNS = {
     # ---- Cell Counting ----
     "BECKMAN_VI_CELL_BLU": {
         "columns": [
-            "Sample ID", "Viable cells", "Viability",
-            "Total cells", "Average diameter",
+            "Sample ID",
+            "Viable cells",
+            "Viability",
+            "Total cells",
+            "Average diameter",
         ],
         "keywords": ["Vi-CELL BLU", "Beckman Coulter"],
         "file_patterns": [r".*\.csv$"],
@@ -216,7 +220,7 @@ DETECTION_PATTERNS = {
         "keywords": ["FACSDiva", "BD Biosciences", "LSRFortessa", "FACSCanto"],
         "file_patterns": [r".*\.(csv|txt)$"],
         "confidence_boost": 15,
-    }
+    },
 }
 
 
@@ -252,25 +256,16 @@ def detect_instrument_type(file_path: str) -> Tuple[str, int]:
         score = 0
 
         # Check file pattern
-        file_match = any(
-            re.match(fp, file_name, re.IGNORECASE)
-            for fp in pattern.get("file_patterns", [])
-        )
+        file_match = any(re.match(fp, file_name, re.IGNORECASE) for fp in pattern.get("file_patterns", []))
         if file_match:
             score += 10
 
         # Check column matches
-        col_matches = sum(
-            1 for col in pattern.get("columns", [])
-            if col.lower() in content.lower()
-        )
+        col_matches = sum(1 for col in pattern.get("columns", []) if col.lower() in content.lower())
         score += col_matches * 15
 
         # Check keyword matches
-        kw_matches = sum(
-            1 for kw in pattern.get("keywords", [])
-            if kw.lower() in content.lower()
-        )
+        kw_matches = sum(1 for kw in pattern.get("keywords", []) if kw.lower() in content.lower())
         score += kw_matches * pattern.get("confidence_boost", 15)
 
         scores[vendor] = score
@@ -345,12 +340,7 @@ def flexible_parse(file_path: str, vendor_hint: Optional[str] = None) -> Optiona
 
 
 def add_provenance_metadata(
-    asm: Dict[str, Any],
-    input_file: str,
-    vendor: str,
-    confidence: int,
-    used_fallback: bool,
-    warnings: List[str]
+    asm: Dict[str, Any], input_file: str, vendor: str, confidence: int, used_fallback: bool, warnings: List[str]
 ) -> Dict[str, Any]:
     """Attach data lineage and parser execution metadata."""
     if "custom metadata" not in asm:
@@ -375,7 +365,7 @@ def convert_single_file(
     flatten: bool = False,
     allow_fallback: bool = True,
     skip_validation: bool = False,
-    force: bool = False
+    force: bool = False,
 ) -> Dict[str, Any]:
     """Worker function to convert a single instrument file."""
     start_time = time.time()
@@ -387,7 +377,7 @@ def convert_single_file(
         "output": "",
         "used_fallback": False,
         "error": None,
-        "duration_s": 0.0
+        "duration_s": 0.0,
     }
 
     try:
@@ -413,6 +403,7 @@ def convert_single_file(
         if asm is None:
             try:
                 from yaml_mapping_engine import parse_with_yaml_mapping
+
                 asm = parse_with_yaml_mapping(str(input_path))
                 if asm is not None:
                     warnings.append("Parsed via declarative YAML mapping engine")
@@ -448,6 +439,7 @@ def convert_single_file(
         if flatten:
             try:
                 from flatten_asm import flatten_asm_to_csv
+
                 flat_path = input_path.with_suffix(".flat.csv")
                 flatten_asm_to_csv(asm, str(flat_path))
             except Exception:
@@ -462,18 +454,19 @@ def convert_single_file(
 
 
 def convert_batch_directory(
-    batch_dir: Path,
-    workers: int = 4,
-    pattern: str = "*",
-    flatten: bool = False,
-    allow_fallback: bool = True
+    batch_dir: Path, workers: int = 4, pattern: str = "*", flatten: bool = False, allow_fallback: bool = True
 ) -> List[Dict[str, Any]]:
     """Execute multi-process parallel conversion across a directory of instrument files."""
     valid_exts = {".csv", ".xlsx", ".xls", ".tsv", ".txt", ".pdf"}
     files_to_process = []
 
     for p in batch_dir.rglob(pattern):
-        if p.is_file() and p.suffix.lower() in valid_exts and not p.name.endswith(".asm.json") and not p.name.endswith(".flat.csv"):
+        if (
+            p.is_file()
+            and p.suffix.lower() in valid_exts
+            and not p.name.endswith(".asm.json")
+            and not p.name.endswith(".flat.csv")
+        ):
             files_to_process.append(p)
 
     total_files = len(files_to_process)
@@ -488,23 +481,17 @@ def convert_batch_directory(
 
     with ProcessPoolExecutor(max_workers=workers) as executor:
         futures = {
-            executor.submit(
-                convert_single_file,
-                fp,
-                None,
-                None,
-                flatten,
-                allow_fallback,
-                True,
-                True
-            ): fp for fp in files_to_process
+            executor.submit(convert_single_file, fp, None, None, flatten, allow_fallback, True, True): fp
+            for fp in files_to_process
         }
 
         for idx, fut in enumerate(as_completed(futures), 1):
             res = fut.result()
             results.append(res)
             status_tag = "[OK]" if res["success"] else "[FAILED]"
-            print(f"  [{idx}/{total_files}] {status_tag} {Path(res['file']).name} -> {res['vendor']} ({res['duration_s']}s)")
+            print(
+                f"  [{idx}/{total_files}] {status_tag} {Path(res['file']).name} -> {res['vendor']} ({res['duration_s']}s)"
+            )
 
     total_time = round(time.time() - start_batch, 2)
     success_count = sum(1 for r in results if r["success"])
@@ -537,7 +524,9 @@ def main():
     )
     parser.add_argument("input", nargs="?", help="Input file path or directory")
     parser.add_argument("--batch-dir", "-d", help="Directory of instrument files for parallel batch processing")
-    parser.add_argument("--workers", "-w", type=int, default=os.cpu_count() or 4, help="Number of parallel worker processes")
+    parser.add_argument(
+        "--workers", "-w", type=int, default=os.cpu_count() or 4, help="Number of parallel worker processes"
+    )
     parser.add_argument("--vendor", help="Vendor enum name (auto-detected if omitted)")
     parser.add_argument("--output", "-o", help="Output file path")
     parser.add_argument("--flatten", action="store_true", help="Also generate flattened 2D CSV")
@@ -559,10 +548,7 @@ def main():
             print(f"Error: Directory not found: {target_dir}", file=sys.stderr)
             sys.exit(1)
         convert_batch_directory(
-            target_dir,
-            workers=args.workers,
-            flatten=args.flatten,
-            allow_fallback=args.allow_fallback
+            target_dir, workers=args.workers, flatten=args.flatten, allow_fallback=args.allow_fallback
         )
         return
 
@@ -583,7 +569,7 @@ def main():
         flatten=args.flatten,
         allow_fallback=args.allow_fallback,
         skip_validation=args.skip_validation,
-        force=args.force
+        force=args.force,
     )
 
     if res["success"]:

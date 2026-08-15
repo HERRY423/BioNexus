@@ -55,7 +55,7 @@ def test_synthetic_lethality_mining():
     """Test DepMap CERES dependency correlation and synthetic lethal evaluation."""
     np.random.seed(42)
     ceres_mut = np.random.normal(-0.85, 0.15, size=15)  # Highly dependent (negative CERES)
-    ceres_wt = np.random.normal(-0.15, 0.15, size=20)   # Not dependent
+    ceres_wt = np.random.normal(-0.15, 0.15, size=20)  # Not dependent
 
     res = analyze_synthetic_lethal_interaction("KRAS", "CDK4", ceres_mut, ceres_wt)
     assert res["is_synthetic_lethal"] is True
@@ -71,9 +71,7 @@ def test_immune_microenvironment_deconvolution():
     gene_names = [f"Gene_{i}" for i in range(50)]
 
     signature = np.random.exponential(10.0, size=(50, 6))
-    deconv_df = deconvolve_immune_microenvironment(
-        bulk_tpm, gene_names, reference_signature_matrix=signature
-    )
+    deconv_df = deconvolve_immune_microenvironment(bulk_tpm, gene_names, reference_signature_matrix=signature)
     assert deconv_df.shape == (3, 6)
     # Check row sums equal 1.0 (normalized fractions)
     row_sums = deconv_df.sum(axis=1).values

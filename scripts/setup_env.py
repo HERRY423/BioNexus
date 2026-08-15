@@ -49,7 +49,7 @@ def detect_hardware_acceleration() -> Dict[str, Any]:
         "gpu_type": "CPU",
         "gpu_name": "None",
         "torch_index_url": "https://download.pytorch.org/whl/cpu",
-        "details": ""
+        "details": "",
     }
 
     # 1. Check Apple Silicon MPS
@@ -66,7 +66,9 @@ def detect_hardware_acceleration() -> Dict[str, Any]:
         try:
             res = subprocess.run(
                 [nvidia_smi, "--query-gpu=gpu_name,memory.total", "--format=csv,noheader,nounits"],
-                capture_output=True, text=True, timeout=5
+                capture_output=True,
+                text=True,
+                timeout=5,
             )
             if res.returncode == 0 and res.stdout.strip():
                 lines = res.stdout.strip().splitlines()
@@ -95,7 +97,7 @@ def detect_package_managers() -> Dict[str, Optional[str]]:
     return {
         "uv": shutil.which("uv"),
         "conda": shutil.which("conda") or shutil.which("mamba") or shutil.which("micromamba"),
-        "pip": shutil.which("pip") or sys.executable
+        "pip": shutil.which("pip") or sys.executable,
     }
 
 

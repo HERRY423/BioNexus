@@ -32,7 +32,7 @@ CURATED_LR_PAIRS = [
     ("TNF", "TNFRSF1A", "Inflammatory Signaling"),
     ("IL6", "IL6R", "IL-6 Pro-inflammatory"),
     ("TGFB1", "TGFBR1", "Fibrosis / Immunosuppression"),
-    ("IFNG", "IFNGR1", "Interferon-gamma Cytotoxicity")
+    ("IFNG", "IFNGR1", "Interferon-gamma Cytotoxicity"),
 ]
 
 
@@ -42,14 +42,16 @@ def identify_spatial_niches(
     spatial_key: str = "spatial",
     n_spatial_neighbors: int = 12,
     n_niches: int = 5,
-    random_state: int = 42
+    random_state: int = 42,
 ) -> Dict[str, Any]:
     """
     Identify cellular microenvironment niches by smoothing cell type proportions
     over local physical neighborhoods and clustering local composition profiles.
     """
     if proportions_key not in adata.obsm:
-        raise ValueError(f"Cell type proportions key '{proportions_key}' not found in adata.obsm. Run deconvolution first.")
+        raise ValueError(
+            f"Cell type proportions key '{proportions_key}' not found in adata.obsm. Run deconvolution first."
+        )
 
     proportions = adata.obsm[proportions_key]
     coords = adata.obsm.get(spatial_key)
@@ -66,14 +68,14 @@ def identify_spatial_niches(
     for i in range(n_cells):
         nbr_props = proportions[indices[i]]  # (k, n_types)
         # Distance-weighted neighborhood average
-        w = np.exp(- dists[i] / (np.median(dists[i]) + 1e-6))
+        w = np.exp(-dists[i] / (np.median(dists[i]) + 1e-6))
         w /= np.sum(w)
         niche_vectors[i] = np.sum(nbr_props * w[:, None], axis=0)
 
     # Cluster niche vectors
     kmeans = KMeans(n_clusters=n_niches, random_state=random_state, n_init=10)
     niche_labels = kmeans.fit_predict(niche_vectors)
-    niche_names = [f"Niche_{lbl+1}" for lbl in niche_labels]
+    niche_names = [f"Niche_{lbl + 1}" for lbl in niche_labels]
 
     adata.obs["spatial_niche"] = pd.Categorical(niche_names)
     adata.obsm["niche_composition_vectors"] = niche_vectors
@@ -82,22 +84,19 @@ def identify_spatial_niches(
     cell_types = adata.uns.get("cell_type_names", [f"Type_{j}" for j in range(proportions.shape[1])])
     niche_profiles = {}
     for niche_idx in range(n_niches):
-        mask = (niche_labels == niche_idx)
+        mask = niche_labels == niche_idx
         if np.sum(mask) > 0:
             mean_comp = np.mean(proportions[mask], axis=0)
             top_ct_idx = np.argsort(-mean_comp)[:2]
-            top_desc = ", ".join([f"{cell_types[idx]} ({mean_comp[idx]*100:.1f}%)" for idx in top_ct_idx])
-            niche_profiles[f"Niche_{niche_idx+1}"] = top_desc
+            top_desc = ", ".join([f"{cell_types[idx]} ({mean_comp[idx] * 100:.1f}%)" for idx in top_ct_idx])
+            niche_profiles[f"Niche_{niche_idx + 1}"] = top_desc
 
     adata.uns["niche_profiles"] = niche_profiles
     logger.info(f"Identified {n_niches} spatial niches: {niche_profiles}")
     return niche_profiles
 
 
-def compute_spatial_colocalization(
-    adata,
-    proportions_key: str = "cell_type_proportions"
-) -> pd.DataFrame:
+def compute_spatial_colocalization(adata, proportions_key: str = "cell_type_proportions") -> pd.DataFrame:
     """
     Compute pairwise spatial colocalization matrix (Pearson correlation)
     between all cell types across the tissue slice.
@@ -118,7 +117,7 @@ def evaluate_ligand_receptor_spatial_signaling(
     adata,
     spatial_key: str = "spatial",
     n_spatial_neighbors: int = 8,
-    lr_database: Optional[List[Tuple[str, str, str]]] = None
+    lr_database: Optional[List[Tuple[str, str, str]]] = None,
 ) -> pd.DataFrame:
     """
     Evaluate spatial ligand-receptor interaction potential:
@@ -156,22 +155,24 @@ def evaluate_ligand_receptor_spatial_signaling(
         for i in range(n_cells):
             nbr_indices = indices[i, 1:]
             nbr_dists = dists[i, 1:]
-            weights = np.exp(- (nbr_dists ** 2) / (2 * (sigma ** 2) + 1e-6))
+            weights = np.exp(-(nbr_dists**2) / (2 * (sigma**2) + 1e-6))
             interaction_scores[i] = l_expr[i] * np.sum(r_expr[nbr_indices] * weights)
 
         tot_potential = float(np.sum(interaction_scores))
         mean_potential = float(np.mean(interaction_scores))
         active_spots = int(np.sum(interaction_scores > 0))
 
-        lr_results.append({
-            "ligand": ligand,
-            "receptor": receptor,
-            "pathway": pathway,
-            "total_interaction_score": tot_potential,
-            "mean_spot_score": mean_potential,
-            "active_spots": active_spots,
-            "percent_active_spots": round((active_spots / n_cells) * 100.0, 2)
-        })
+        lr_results.append(
+            {
+                "ligand": ligand,
+                "receptor": receptor,
+                "pathway": pathway,
+                "total_interaction_score": tot_potential,
+                "mean_spot_score": mean_potential,
+                "active_spots": active_spots,
+                "percent_active_spots": round((active_spots / n_cells) * 100.0, 2),
+            }
+        )
 
     results_df = pd.DataFrame(lr_results)
     if not results_df.empty:
@@ -190,6 +191,7 @@ def main():
 
     args = parser.parse_args()
     import scanpy as sc
+
     adata = sc.read_h5ad(args.input)
     identify_spatial_niches(adata, n_niches=args.n_niches, n_spatial_neighbors=args.n_neighbors)
     compute_spatial_colocalization(adata)

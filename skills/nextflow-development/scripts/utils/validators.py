@@ -16,6 +16,7 @@ import yaml
 @dataclass
 class ValidationResult:
     """Result of samplesheet validation."""
+
     valid: bool
     errors: List[str] = field(default_factory=list)
     warnings: List[str] = field(default_factory=list)
@@ -55,11 +56,7 @@ def load_pipeline_config(pipeline: str) -> Optional[Dict]:
         return yaml.safe_load(f)
 
 
-def validate_samplesheet(
-    rows: List[Dict],
-    pipeline: str,
-    config: Optional[Dict] = None
-) -> ValidationResult:
+def validate_samplesheet(rows: List[Dict], pipeline: str, config: Optional[Dict] = None) -> ValidationResult:
     """
     Validate samplesheet rows against pipeline requirements.
 
@@ -126,10 +123,7 @@ def validate_samplesheet(
                 value = row[col_name]
                 allowed = col_config["allowed"]
                 if value not in allowed:
-                    errors.append(
-                        f"Row {row_num}: Invalid value '{value}' for '{col_name}'. "
-                        f"Allowed: {allowed}"
-                    )
+                    errors.append(f"Row {row_num}: Invalid value '{value}' for '{col_name}'. Allowed: {allowed}")
 
         # Check R1/R2 pairing consistency
         r1 = row.get("fastq_1", "")
@@ -147,8 +141,7 @@ def validate_samplesheet(
         if duplicates:
             warnings.append(f"Duplicate sample names: {duplicates}")
             suggestions.append(
-                "Duplicates may be intentional (multi-lane sequencing). "
-                "Verify sample grouping is correct."
+                "Duplicates may be intentional (multi-lane sequencing). Verify sample grouping is correct."
             )
 
     # Pipeline-specific validation
@@ -157,20 +150,10 @@ def validate_samplesheet(
     elif pipeline == "atacseq":
         _validate_atacseq_specific(rows, errors, warnings, suggestions)
 
-    return ValidationResult(
-        valid=len(errors) == 0,
-        errors=errors,
-        warnings=warnings,
-        suggestions=suggestions
-    )
+    return ValidationResult(valid=len(errors) == 0, errors=errors, warnings=warnings, suggestions=suggestions)
 
 
-def _validate_sarek_specific(
-    rows: List[Dict],
-    errors: List[str],
-    warnings: List[str],
-    suggestions: List[str]
-):
+def _validate_sarek_specific(rows: List[Dict], errors: List[str], warnings: List[str], suggestions: List[str]):
     """Sarek-specific validation for tumor/normal pairing."""
     # Group by patient
     patients = {}
@@ -195,9 +178,7 @@ def _validate_sarek_specific(
                 f"Patient '{patient}': Tumor sample(s) without matched normal. "
                 "Somatic calling works best with paired tumor-normal."
             )
-            suggestions.append(
-                f"For patient '{patient}': Add a normal sample or use tumor-only mode."
-            )
+            suggestions.append(f"For patient '{patient}': Add a normal sample or use tumor-only mode.")
 
         if counts["unknown"] > 0:
             warnings.append(
@@ -206,12 +187,7 @@ def _validate_sarek_specific(
             )
 
 
-def _validate_atacseq_specific(
-    rows: List[Dict],
-    errors: List[str],
-    warnings: List[str],
-    suggestions: List[str]
-):
+def _validate_atacseq_specific(rows: List[Dict], errors: List[str], warnings: List[str], suggestions: List[str]):
     """ATAC-seq specific validation for replicates."""
     # Group by sample (condition)
     samples = {}
@@ -227,24 +203,18 @@ def _validate_atacseq_specific(
     # Check replicates
     for sample, reps in samples.items():
         if len(reps) < 2:
-            warnings.append(
-                f"Sample '{sample}': Only {len(reps)} replicate(s). "
-                "Consensus peaks require 2+ replicates."
-            )
+            warnings.append(f"Sample '{sample}': Only {len(reps)} replicate(s). Consensus peaks require 2+ replicates.")
 
         # Check for duplicate replicate numbers
         if len(reps) != len(set(reps)):
             errors.append(
-                f"Sample '{sample}': Duplicate replicate numbers detected. "
-                "Each replicate must have a unique number."
+                f"Sample '{sample}': Duplicate replicate numbers detected. Each replicate must have a unique number."
             )
 
     # Check all samples have R2 (ATAC-seq requires paired-end)
     for i, row in enumerate(rows):
         if not row.get("fastq_2"):
-            errors.append(
-                f"Row {i+2}: ATAC-seq requires paired-end data. R2 file missing."
-            )
+            errors.append(f"Row {i + 2}: ATAC-seq requires paired-end data. R2 file missing.")
 
 
 def validate_file_exists(path: str) -> bool:

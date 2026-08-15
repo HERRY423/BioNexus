@@ -52,11 +52,7 @@ def inspect_adata(adata) -> dict:
     elif any(str(n).startswith("mt-") or str(n).startswith("ENSMUS") for n in adata.var_names.astype(str)[:80]):
         species = "mouse"
     x_stats = _matrix_stats(adata.X)
-    batch_keys = [
-        c
-        for c in ("batch", "sample", "donor", "orig.ident", "library_id", "chemistry")
-        if c in adata.obs
-    ]
+    batch_keys = [c for c in ("batch", "sample", "donor", "orig.ident", "library_id", "chemistry") if c in adata.obs]
     lib_stats = None
     try:
         import numpy as np

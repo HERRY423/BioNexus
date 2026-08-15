@@ -15,10 +15,7 @@ from typing import Dict, List, Optional, Tuple
 from urllib.request import Request, urlopen
 
 # Set up logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # NCBI rate limiting - track last request time
@@ -39,6 +36,7 @@ def _rate_limit_ncbi():
 # Try to import requests for better HTTP handling
 try:
     import requests
+
     HAS_REQUESTS = True
 except ImportError:
     HAS_REQUESTS = False
@@ -66,7 +64,7 @@ def check_network_access() -> Tuple[bool, str]:
                 response = requests.get(url, timeout=10)
                 success = response.status_code < 400
             else:
-                req = Request(url, headers={'User-Agent': 'geo-sra-skill/1.0'})
+                req = Request(url, headers={"User-Agent": "geo-sra-skill/1.0"})
                 with urlopen(req, timeout=10) as response:
                     success = True
             results.append((name, success, None))
@@ -95,7 +93,9 @@ def fetch_geo_metadata(geo_id: str) -> Optional[Dict]:
     """
     try:
         # Use esearch to get GEO UID
-        search_url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term={geo_id}[Accession]&retmode=json"
+        search_url = (
+            f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term={geo_id}[Accession]&retmode=json"
+        )
 
         _rate_limit_ncbi()
         if HAS_REQUESTS:
@@ -105,7 +105,7 @@ def fetch_geo_metadata(geo_id: str) -> Optional[Dict]:
             with urlopen(search_url, timeout=30) as response:
                 data = json.loads(response.read().decode())
 
-        id_list = data.get('esearchresult', {}).get('idlist', [])
+        id_list = data.get("esearchresult", {}).get("idlist", [])
         if not id_list:
             logger.warning(f"No GEO entry found for {geo_id}")
             return None
@@ -122,17 +122,17 @@ def fetch_geo_metadata(geo_id: str) -> Optional[Dict]:
             with urlopen(summary_url, timeout=30) as response:
                 data = json.loads(response.read().decode())
 
-        result = data.get('result', {}).get(uid, {})
+        result = data.get("result", {}).get(uid, {})
 
         return {
-            'geo_id': geo_id,
-            'title': result.get('title', 'N/A'),
-            'summary': result.get('summary', 'N/A'),
-            'organism': result.get('taxon', 'N/A'),
-            'n_samples': result.get('n_samples', 0),
-            'gpl': result.get('gpl', 'N/A'),
-            'entrytype': result.get('entrytype', 'N/A'),
-            'pubmed_ids': result.get('pubmedids', []),
+            "geo_id": geo_id,
+            "title": result.get("title", "N/A"),
+            "summary": result.get("summary", "N/A"),
+            "organism": result.get("taxon", "N/A"),
+            "n_samples": result.get("n_samples", 0),
+            "gpl": result.get("gpl", "N/A"),
+            "entrytype": result.get("entrytype", "N/A"),
+            "pubmed_ids": result.get("pubmedids", []),
         }
 
     except Exception as e:
@@ -152,7 +152,9 @@ def fetch_sra_study_accession(geo_id: str) -> Optional[str]:
     """
     try:
         # Search for SRA study linked to GEO
-        search_url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=sra&term={geo_id}[GEO]&retmode=json"
+        search_url = (
+            f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=sra&term={geo_id}[GEO]&retmode=json"
+        )
 
         _rate_limit_ncbi()
         if HAS_REQUESTS:
@@ -162,7 +164,7 @@ def fetch_sra_study_accession(geo_id: str) -> Optional[str]:
             with urlopen(search_url, timeout=30) as response:
                 data = json.loads(response.read().decode())
 
-        id_list = data.get('esearchresult', {}).get('idlist', [])
+        id_list = data.get("esearchresult", {}).get("idlist", [])
         if not id_list:
             return None
 
@@ -178,8 +180,8 @@ def fetch_sra_study_accession(geo_id: str) -> Optional[str]:
             with urlopen(summary_url, timeout=30) as response:
                 data = json.loads(response.read().decode())
 
-        result = data.get('result', {}).get(uid, {})
-        exp_xml = result.get('expxml', '')
+        result = data.get("result", {}).get(uid, {})
+        exp_xml = result.get("expxml", "")
 
         # Extract SRP from the XML
         srp_match = re.search(r'<Study acc="(SRP\d+)"', exp_xml)
@@ -218,7 +220,7 @@ def fetch_sra_run_info(geo_id: str, bioproject: Optional[str] = None) -> List[Di
             with urlopen(search_url, timeout=30) as response:
                 data = json.loads(response.read().decode())
 
-        id_list = data.get('esearchresult', {}).get('idlist', [])
+        id_list = data.get("esearchresult", {}).get("idlist", [])
 
         # If no results, try BioProject fallback
         if not id_list:
@@ -237,14 +239,14 @@ def fetch_sra_run_info(geo_id: str, bioproject: Optional[str] = None) -> List[Di
                     with urlopen(search_url, timeout=30) as response:
                         data = json.loads(response.read().decode())
 
-                id_list = data.get('esearchresult', {}).get('idlist', [])
+                id_list = data.get("esearchresult", {}).get("idlist", [])
 
         if not id_list:
             logger.warning(f"No SRA entries found for {geo_id}")
             return runs
 
         # Batch fetch summaries
-        ids_str = ','.join(id_list)
+        ids_str = ",".join(id_list)
         summary_url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=sra&id={ids_str}&retmode=json"
 
         _rate_limit_ncbi()
@@ -255,20 +257,20 @@ def fetch_sra_run_info(geo_id: str, bioproject: Optional[str] = None) -> List[Di
             with urlopen(summary_url, timeout=60) as response:
                 data = json.loads(response.read().decode())
 
-        result = data.get('result', {})
+        result = data.get("result", {})
 
         for uid in id_list:
             entry = result.get(uid, {})
             if not entry:
                 continue
 
-            exp_xml = entry.get('expxml', '')
-            runs_xml = entry.get('runs', '')
+            exp_xml = entry.get("expxml", "")
+            runs_xml = entry.get("runs", "")
 
             # Extract metadata from XML
-            layout_match = re.search(r'<LIBRARY_LAYOUT>\s*<(\w+)', exp_xml)
-            strategy_match = re.search(r'<LIBRARY_STRATEGY>(\w+)', exp_xml)
-            source_match = re.search(r'<LIBRARY_SOURCE>(\w+)', exp_xml)
+            layout_match = re.search(r"<LIBRARY_LAYOUT>\s*<(\w+)", exp_xml)
+            strategy_match = re.search(r"<LIBRARY_STRATEGY>(\w+)", exp_xml)
+            source_match = re.search(r"<LIBRARY_SOURCE>(\w+)", exp_xml)
             gsm_match = re.search(r'<Sample acc="(GSM\d+)"', exp_xml)
             srx_match = re.search(r'<Experiment acc="(SRX\d+)"', exp_xml)
 
@@ -276,16 +278,18 @@ def fetch_sra_run_info(geo_id: str, bioproject: Optional[str] = None) -> List[Di
             srr_matches = re.findall(r'<Run acc="(SRR\d+)"[^>]*total_spots="(\d+)"[^>]*total_bases="(\d+)"', runs_xml)
 
             for srr, spots, bases in srr_matches:
-                runs.append({
-                    'srr': srr,
-                    'srx': srx_match.group(1) if srx_match else '',
-                    'gsm': gsm_match.group(1) if gsm_match else '',
-                    'layout': layout_match.group(1).upper() if layout_match else 'UNKNOWN',
-                    'library_strategy': strategy_match.group(1) if strategy_match else 'UNKNOWN',
-                    'library_source': source_match.group(1) if source_match else 'UNKNOWN',
-                    'spots': int(spots),
-                    'bases': int(bases),
-                })
+                runs.append(
+                    {
+                        "srr": srr,
+                        "srx": srx_match.group(1) if srx_match else "",
+                        "gsm": gsm_match.group(1) if gsm_match else "",
+                        "layout": layout_match.group(1).upper() if layout_match else "UNKNOWN",
+                        "library_strategy": strategy_match.group(1) if strategy_match else "UNKNOWN",
+                        "library_source": source_match.group(1) if source_match else "UNKNOWN",
+                        "spots": int(spots),
+                        "bases": int(bases),
+                    }
+                )
 
         return runs
 
@@ -319,27 +323,27 @@ def fetch_ena_fastq_urls(study_accession: str) -> Dict[str, List[str]]:
             with urlopen(ena_url, timeout=60) as response:
                 content = response.read().decode()
 
-        lines = content.strip().split('\n')
+        lines = content.strip().split("\n")
         if len(lines) < 2:
             logger.warning(f"No FASTQ URLs found in ENA for {study_accession}")
             return fastq_urls
 
         # Parse TSV
-        header = lines[0].split('\t')
-        run_idx = header.index('run_accession') if 'run_accession' in header else 0
-        ftp_idx = header.index('fastq_ftp') if 'fastq_ftp' in header else 2
+        header = lines[0].split("\t")
+        run_idx = header.index("run_accession") if "run_accession" in header else 0
+        ftp_idx = header.index("fastq_ftp") if "fastq_ftp" in header else 2
 
         for line in lines[1:]:
             if not line.strip():
                 continue
-            fields = line.split('\t')
+            fields = line.split("\t")
             if len(fields) > max(run_idx, ftp_idx):
                 srr = fields[run_idx]
                 ftp_urls = fields[ftp_idx]
                 if ftp_urls:
                     # URLs are semicolon-separated, convert to HTTP URLs
                     # ENA supports both FTP and HTTP, HTTP is easier with requests
-                    urls = [f"http://{url}" for url in ftp_urls.split(';') if url]
+                    urls = [f"http://{url}" for url in ftp_urls.split(";") if url]
                     fastq_urls[srr] = urls
 
         return fastq_urls
@@ -369,24 +373,24 @@ def download_file(url: str, output_path: Path, timeout: int = 300, show_progress
             response = requests.get(url, stream=True, timeout=timeout)
             response.raise_for_status()
 
-            total_size = int(response.headers.get('content-length', 0))
+            total_size = int(response.headers.get("content-length", 0))
 
-            with open(output_path, 'wb') as f:
+            with open(output_path, "wb") as f:
                 downloaded = 0
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
                     downloaded += len(chunk)
                     if show_progress and total_size > 0:
                         pct = (downloaded / total_size) * 100
-                        print(f"\r  Progress: {pct:.1f}%", end='', flush=True)
+                        print(f"\r  Progress: {pct:.1f}%", end="", flush=True)
                 if show_progress:
                     print()  # New line after progress
             return True
         else:
             # Fallback to urllib
-            req = Request(url, headers={'User-Agent': 'geo-sra-skill/1.0'})
+            req = Request(url, headers={"User-Agent": "geo-sra-skill/1.0"})
             with urlopen(req, timeout=timeout) as response:
-                with open(output_path, 'wb') as f:
+                with open(output_path, "wb") as f:
                     shutil.copyfileobj(response, f)
             return True
 
@@ -418,16 +422,16 @@ def fetch_pubmed_metadata(pmid: str, max_retries: int = 3) -> Optional[Dict]:
                 with urlopen(url, timeout=30) as response:
                     data = json.loads(response.read().decode())
 
-            result = data.get('result', {}).get(pmid, {})
+            result = data.get("result", {}).get(pmid, {})
 
-            if not result or 'error' in result:
+            if not result or "error" in result:
                 if attempt < max_retries - 1:
                     time.sleep(1 * (attempt + 1))
                     continue
                 return None
 
             # Extract authors
-            authors_list = result.get('authors', [])
+            authors_list = result.get("authors", [])
             if not authors_list:
                 if attempt < max_retries - 1:
                     time.sleep(1 * (attempt + 1))
@@ -435,32 +439,26 @@ def fetch_pubmed_metadata(pmid: str, max_retries: int = 3) -> Optional[Dict]:
                 return None
 
             author_names = [f"{a.get('name', '')}" for a in authors_list[:3]]
-            authors = ', '.join(author_names)
+            authors = ", ".join(author_names)
             if len(authors_list) > 3:
-                authors += ', et al.'
+                authors += ", et al."
 
             # Extract year
-            pubdate = result.get('pubdate', '')
-            year_match = re.search(r'\b(20\d{2})\b', pubdate)
+            pubdate = result.get("pubdate", "")
+            year_match = re.search(r"\b(20\d{2})\b", pubdate)
             year = year_match.group(1) if year_match else "Unknown"
 
             # Extract journal
-            journal = result.get('source', 'Unknown')
+            journal = result.get("source", "Unknown")
 
             # Extract DOI
             doi = ""
-            for aid in result.get('articleids', []):
-                if aid.get('idtype') == 'doi':
-                    doi = aid.get('value', '')
+            for aid in result.get("articleids", []):
+                if aid.get("idtype") == "doi":
+                    doi = aid.get("value", "")
                     break
 
-            return {
-                'authors': authors,
-                'year': year,
-                'journal': journal,
-                'doi': doi,
-                'title': result.get('title', '')
-            }
+            return {"authors": authors, "year": year, "journal": journal, "doi": doi, "title": result.get("title", "")}
 
         except Exception as e:
             logger.debug(f"PubMed fetch error for PMID {pmid} (attempt {attempt + 1}): {e}")
@@ -493,7 +491,7 @@ def estimate_download_size(runs: List[Dict]) -> int:
     Returns:
         Estimated size in bytes (rough estimate based on bases)
     """
-    total_bases = sum(r.get('bases', 0) for r in runs)
+    total_bases = sum(r.get("bases", 0) for r in runs)
     # FASTQ is roughly 1 byte per base when compressed
     return total_bases // 4  # Rough compression ratio
 
@@ -510,7 +508,9 @@ def fetch_bioproject_from_geo(geo_id: str) -> Optional[str]:
     """
     try:
         # First get GDS UID
-        search_url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term={geo_id}[Accession]&retmode=json"
+        search_url = (
+            f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term={geo_id}[Accession]&retmode=json"
+        )
 
         _rate_limit_ncbi()
         if HAS_REQUESTS:
@@ -520,7 +520,7 @@ def fetch_bioproject_from_geo(geo_id: str) -> Optional[str]:
             with urlopen(search_url, timeout=30) as response:
                 data = json.loads(response.read().decode())
 
-        gds_ids = data.get('esearchresult', {}).get('idlist', [])
+        gds_ids = data.get("esearchresult", {}).get("idlist", [])
         if not gds_ids:
             return None
 
@@ -535,11 +535,11 @@ def fetch_bioproject_from_geo(geo_id: str) -> Optional[str]:
             with urlopen(elink_url, timeout=30) as response:
                 data = json.loads(response.read().decode())
 
-        linksets = data.get('linksets', [])
-        if linksets and linksets[0].get('linksetdbs'):
-            for linksetdb in linksets[0]['linksetdbs']:
-                if linksetdb.get('dbto') == 'bioproject':
-                    bp_ids = linksetdb.get('links', [])
+        linksets = data.get("linksets", [])
+        if linksets and linksets[0].get("linksetdbs"):
+            for linksetdb in linksets[0]["linksetdbs"]:
+                if linksetdb.get("dbto") == "bioproject":
+                    bp_ids = linksetdb.get("links", [])
                     if bp_ids:
                         # Get BioProject accession
                         summary_url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=bioproject&id={bp_ids[0]}&retmode=json"
@@ -551,8 +551,8 @@ def fetch_bioproject_from_geo(geo_id: str) -> Optional[str]:
                             with urlopen(summary_url, timeout=30) as response:
                                 data = json.loads(response.read().decode())
 
-                        result = data.get('result', {}).get(str(bp_ids[0]), {})
-                        return result.get('project_acc')
+                        result = data.get("result", {}).get(str(bp_ids[0]), {})
+                        return result.get("project_acc")
 
         return None
 
@@ -588,7 +588,7 @@ def fetch_sra_run_info_detailed(geo_id: str, bioproject: Optional[str] = None) -
             with urlopen(search_url, timeout=30) as response:
                 data = json.loads(response.read().decode())
 
-        id_list = data.get('esearchresult', {}).get('idlist', [])
+        id_list = data.get("esearchresult", {}).get("idlist", [])
 
         # If no results with GEO search, try BioProject
         if not id_list:
@@ -609,15 +609,17 @@ def fetch_sra_run_info_detailed(geo_id: str, bioproject: Optional[str] = None) -
                     with urlopen(search_url, timeout=30) as response:
                         data = json.loads(response.read().decode())
 
-                id_list = data.get('esearchresult', {}).get('idlist', [])
+                id_list = data.get("esearchresult", {}).get("idlist", [])
 
         if not id_list:
             logger.warning(f"No SRA entries found for {geo_id}")
             return runs
 
         # Fetch run info in CSV format using efetch
-        ids_str = ','.join(id_list)
-        efetch_url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=sra&id={ids_str}&rettype=runinfo&retmode=csv"
+        ids_str = ",".join(id_list)
+        efetch_url = (
+            f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=sra&id={ids_str}&rettype=runinfo&retmode=csv"
+        )
 
         _rate_limit_ncbi()
         if HAS_REQUESTS:
@@ -627,23 +629,60 @@ def fetch_sra_run_info_detailed(geo_id: str, bioproject: Optional[str] = None) -
             with urlopen(efetch_url, timeout=60) as response:
                 content = response.read().decode()
 
-        lines = content.strip().split('\n')
+        lines = content.strip().split("\n")
         if len(lines) < 1:
             return runs
 
         # NCBI efetch runinfo CSV doesn't include headers
         # Define the fixed column order for SRA runinfo format
         header = [
-            'Run', 'ReleaseDate', 'LoadDate', 'spots', 'bases', 'spots_with_mates',
-            'avgLength', 'size_MB', 'AssemblyName', 'download_path', 'Experiment',
-            'LibraryName', 'LibraryStrategy', 'LibrarySelection', 'LibrarySource',
-            'LibraryLayout', 'InsertSize', 'InsertDev', 'Platform', 'Model',
-            'SRAStudy', 'BioProject', 'Study_Pubmed_id', 'ProjectID', 'Sample',
-            'BioSample', 'SampleType', 'TaxID', 'ScientificName', 'SampleName',
-            'g1k_pop_code', 'source', 'g1k_analysis_group', 'Subject_ID', 'Sex',
-            'Disease', 'Tumor', 'Affection_Status', 'Analyte_Type', 'Histological_Type',
-            'Body_Site', 'CenterName', 'Submission', 'dbgap_study_accession', 'Consent',
-            'RunHash', 'ReadHash'
+            "Run",
+            "ReleaseDate",
+            "LoadDate",
+            "spots",
+            "bases",
+            "spots_with_mates",
+            "avgLength",
+            "size_MB",
+            "AssemblyName",
+            "download_path",
+            "Experiment",
+            "LibraryName",
+            "LibraryStrategy",
+            "LibrarySelection",
+            "LibrarySource",
+            "LibraryLayout",
+            "InsertSize",
+            "InsertDev",
+            "Platform",
+            "Model",
+            "SRAStudy",
+            "BioProject",
+            "Study_Pubmed_id",
+            "ProjectID",
+            "Sample",
+            "BioSample",
+            "SampleType",
+            "TaxID",
+            "ScientificName",
+            "SampleName",
+            "g1k_pop_code",
+            "source",
+            "g1k_analysis_group",
+            "Subject_ID",
+            "Sex",
+            "Disease",
+            "Tumor",
+            "Affection_Status",
+            "Analyte_Type",
+            "Histological_Type",
+            "Body_Site",
+            "CenterName",
+            "Submission",
+            "dbgap_study_accession",
+            "Consent",
+            "RunHash",
+            "ReadHash",
         ]
 
         # Map column names to indices
@@ -658,33 +697,33 @@ def fetch_sra_run_info_detailed(geo_id: str, bioproject: Optional[str] = None) -
             if len(fields) < len(header):
                 continue
 
-            def get_field(name, default=''):
+            def get_field(name, default=""):
                 idx = col_map.get(name, -1)
                 return fields[idx] if idx >= 0 and idx < len(fields) else default
 
             run = {
-                'srr': get_field('Run'),
-                'srx': get_field('Experiment'),
-                'gsm': get_field('SampleName'),  # Often GSM ID
-                'sample_name': get_field('SampleName'),
-                'library_name': get_field('LibraryName'),
-                'layout': get_field('LibraryLayout', 'UNKNOWN').upper(),
-                'library_strategy': get_field('LibraryStrategy', 'UNKNOWN'),
-                'library_source': get_field('LibrarySource', 'UNKNOWN'),
-                'library_selection': get_field('LibrarySelection', ''),
-                'platform': get_field('Platform'),
-                'model': get_field('Model'),
-                'organism': get_field('ScientificName', ''),
-                'spots': int(get_field('spots', 0) or 0),
-                'bases': int(get_field('bases', 0) or 0),
-                'size_mb': float(get_field('size_MB', 0) or 0),
-                'bioproject': get_field('BioProject'),
-                'biosample': get_field('BioSample'),
-                'sra_study': get_field('SRAStudy'),
+                "srr": get_field("Run"),
+                "srx": get_field("Experiment"),
+                "gsm": get_field("SampleName"),  # Often GSM ID
+                "sample_name": get_field("SampleName"),
+                "library_name": get_field("LibraryName"),
+                "layout": get_field("LibraryLayout", "UNKNOWN").upper(),
+                "library_strategy": get_field("LibraryStrategy", "UNKNOWN"),
+                "library_source": get_field("LibrarySource", "UNKNOWN"),
+                "library_selection": get_field("LibrarySelection", ""),
+                "platform": get_field("Platform"),
+                "model": get_field("Model"),
+                "organism": get_field("ScientificName", ""),
+                "spots": int(get_field("spots", 0) or 0),
+                "bases": int(get_field("bases", 0) or 0),
+                "size_mb": float(get_field("size_MB", 0) or 0),
+                "bioproject": get_field("BioProject"),
+                "biosample": get_field("BioSample"),
+                "sra_study": get_field("SRAStudy"),
             }
 
             # Only add if we have a valid SRR
-            if run['srr'].startswith('SRR'):
+            if run["srr"].startswith("SRR"):
                 runs.append(run)
 
         return runs
@@ -698,6 +737,7 @@ def _parse_csv_line(line: str) -> List[str]:
     """Parse a CSV line handling quoted fields."""
     import csv
     import io
+
     reader = csv.reader(io.StringIO(line))
     for row in reader:
         return row
@@ -723,40 +763,40 @@ def group_samples_by_type(runs: List[Dict]) -> Dict[str, Dict]:
     groups = {}
 
     for run in runs:
-        strategy = run.get('library_strategy', 'UNKNOWN')
-        layout = run.get('layout', 'UNKNOWN')
+        strategy = run.get("library_strategy", "UNKNOWN")
+        layout = run.get("layout", "UNKNOWN")
         key = f"{strategy}:{layout}"
 
         if key not in groups:
             groups[key] = {
-                'runs': [],
-                'gsm_ids': set(),
-                'total_bases': 0,
-                'strategy': strategy,
-                'layout': layout,
+                "runs": [],
+                "gsm_ids": set(),
+                "total_bases": 0,
+                "strategy": strategy,
+                "layout": layout,
             }
 
-        groups[key]['runs'].append(run)
-        gsm = run.get('gsm', '')
-        if gsm.startswith('GSM'):
-            groups[key]['gsm_ids'].add(gsm)
-        groups[key]['total_bases'] += run.get('bases', 0)
+        groups[key]["runs"].append(run)
+        gsm = run.get("gsm", "")
+        if gsm.startswith("GSM"):
+            groups[key]["gsm_ids"].add(gsm)
+        groups[key]["total_bases"] += run.get("bases", 0)
 
     # Post-process groups
     result = {}
     for key, info in groups.items():
-        gsm_list = sorted(info['gsm_ids'])
-        gsm_range = _format_gsm_range(gsm_list) if gsm_list else 'N/A'
+        gsm_list = sorted(info["gsm_ids"])
+        gsm_range = _format_gsm_range(gsm_list) if gsm_list else "N/A"
 
         result[key] = {
-            'runs': info['runs'],
-            'count': len(info['runs']),
-            'gsm_range': gsm_range,
-            'gsm_ids': gsm_list,
-            'size_estimate': info['total_bases'] // 4,  # Rough compressed size
-            'strategy': info['strategy'],
-            'layout': info['layout'],
-            'description': f"{info['strategy']} {info['layout'].lower()}",
+            "runs": info["runs"],
+            "count": len(info["runs"]),
+            "gsm_range": gsm_range,
+            "gsm_ids": gsm_list,
+            "size_estimate": info["total_bases"] // 4,  # Rough compressed size
+            "strategy": info["strategy"],
+            "layout": info["layout"],
+            "description": f"{info['strategy']} {info['layout'].lower()}",
         }
 
     return result
@@ -765,14 +805,14 @@ def group_samples_by_type(runs: List[Dict]) -> Dict[str, Dict]:
 def _format_gsm_range(gsm_list: List[str]) -> str:
     """Format list of GSM IDs as a range if consecutive."""
     if not gsm_list:
-        return 'N/A'
+        return "N/A"
 
     if len(gsm_list) == 1:
         return gsm_list[0]
 
     # Extract numbers and check if consecutive
     try:
-        numbers = [int(gsm.replace('GSM', '')) for gsm in gsm_list]
+        numbers = [int(gsm.replace("GSM", "")) for gsm in gsm_list]
         numbers.sort()
 
         if numbers[-1] - numbers[0] == len(numbers) - 1:
@@ -792,16 +832,15 @@ def format_sample_groups_table(groups: Dict[str, Dict]) -> str:
     lines.append(f"{'Sample Group':<20} {'Count':>6} {'Layout':<10} {'GSM Range':<25} {'Est. Size':>12}")
     lines.append("-" * 80)
 
-    for key, info in sorted(groups.items(), key=lambda x: -x[1]['count']):
-        size_str = format_file_size(info['size_estimate'])
+    for key, info in sorted(groups.items(), key=lambda x: -x[1]["count"]):
+        size_str = format_file_size(info["size_estimate"])
         lines.append(
-            f"{info['strategy']:<20} {info['count']:>6} {info['layout']:<10} "
-            f"{info['gsm_range']:<25} {size_str:>12}"
+            f"{info['strategy']:<20} {info['count']:>6} {info['layout']:<10} {info['gsm_range']:<25} {size_str:>12}"
         )
 
     lines.append("-" * 80)
-    total_runs = sum(g['count'] for g in groups.values())
-    total_size = sum(g['size_estimate'] for g in groups.values())
+    total_runs = sum(g["count"] for g in groups.values())
+    total_size = sum(g["size_estimate"] for g in groups.values())
     lines.append(f"{'TOTAL':<20} {total_runs:>6} {'':<10} {'':<25} {format_file_size(total_size):>12}")
 
-    return '\n'.join(lines)
+    return "\n".join(lines)

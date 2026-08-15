@@ -31,13 +31,9 @@ def test_official_fastmcp_server_sdk():
 
 def test_mcp_server_discover_modern():
     """Verify modern stateless server/discover protocol response."""
+
     async def _run():
-        req = {
-            "jsonrpc": "2.0",
-            "id": "discover-1",
-            "method": "server/discover",
-            "params": {}
-        }
+        req = {"jsonrpc": "2.0", "id": "discover-1", "method": "server/discover", "params": {}}
         return await handle_rpc_request_async(req)
 
     resp = asyncio.run(_run())
@@ -53,13 +49,9 @@ def test_mcp_server_discover_modern():
 
 def test_mcp_initialize():
     """Verify standard legacy initialize handshake response for backward compatibility."""
+
     async def _run():
-        req = {
-            "jsonrpc": "2.0",
-            "id": "test-init-1",
-            "method": "initialize",
-            "params": {}
-        }
+        req = {"jsonrpc": "2.0", "id": "test-init-1", "method": "initialize", "params": {}}
         return await handle_rpc_request_async(req)
 
     resp = asyncio.run(_run())
@@ -75,13 +67,9 @@ def test_mcp_initialize():
 
 def test_mcp_ping():
     """Verify ping response."""
+
     async def _run():
-        req = {
-            "jsonrpc": "2.0",
-            "id": 42,
-            "method": "ping",
-            "params": {}
-        }
+        req = {"jsonrpc": "2.0", "id": 42, "method": "ping", "params": {}}
         return await handle_rpc_request_async(req)
 
     resp = asyncio.run(_run())
@@ -90,13 +78,9 @@ def test_mcp_ping():
 
 def test_mcp_tools_list():
     """Verify tools/list exposes all required scientific tools."""
+
     async def _run():
-        req = {
-            "jsonrpc": "2.0",
-            "id": "list-tools-1",
-            "method": "tools/list",
-            "params": {}
-        }
+        req = {"jsonrpc": "2.0", "id": "list-tools-1", "method": "tools/list", "params": {}}
         return await handle_rpc_request_async(req)
 
     resp = asyncio.run(_run())
@@ -117,13 +101,9 @@ def test_mcp_tools_list():
 
 def test_mcp_unknown_method():
     """Verify proper error response for non-existent methods."""
+
     async def _run():
-        req = {
-            "jsonrpc": "2.0",
-            "id": "bad-method-1",
-            "method": "non_existent_method",
-            "params": {}
-        }
+        req = {"jsonrpc": "2.0", "id": "bad-method-1", "method": "non_existent_method", "params": {}}
         return await handle_rpc_request_async(req)
 
     resp = asyncio.run(_run())
@@ -134,15 +114,13 @@ def test_mcp_unknown_method():
 
 def test_mcp_unknown_tool():
     """Verify error response for unknown tool calls."""
+
     async def _run():
         req = {
             "jsonrpc": "2.0",
             "id": "bad-tool-1",
             "method": "tools/call",
-            "params": {
-                "name": "super_secret_unsupported_tool",
-                "arguments": {}
-            }
+            "params": {"name": "super_secret_unsupported_tool", "arguments": {}},
         }
         return await handle_rpc_request_async(req)
 
@@ -154,12 +132,9 @@ def test_mcp_unknown_tool():
 
 def test_mcp_notification_no_response():
     """Verify that JSON-RPC notifications (no id) return None without writing response."""
+
     async def _run():
-        req = {
-            "jsonrpc": "2.0",
-            "method": "notifications/initialized",
-            "params": {}
-        }
+        req = {"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}}
         return await handle_rpc_request_async(req)
 
     resp = asyncio.run(_run())

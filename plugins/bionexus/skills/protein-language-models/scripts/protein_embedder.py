@@ -113,7 +113,12 @@ def main() -> None:
         print(json.dumps(compute_protein_similarity(args.seq1, args.seq2), indent=2))
     else:
         emb = embed_protein_sequence(args.seq1)
-        print(json.dumps({"length": len(args.seq1), "embedding_dim": len(emb), "embedding_norm": float(np.linalg.norm(emb))}, indent=2))
+        print(
+            json.dumps(
+                {"length": len(args.seq1), "embedding_dim": len(emb), "embedding_norm": float(np.linalg.norm(emb))},
+                indent=2,
+            )
+        )
 
 
 if __name__ == "__main__":

@@ -42,8 +42,8 @@ def load_acmg_config(config_file: Optional[str] = None) -> Dict[str, Any]:
             "supporting": 2.08,
             "benign_supporting": 0.4807,
             "benign_strong": 0.0535,
-            "benign_stand_alone": 0.00286
-        }
+            "benign_stand_alone": 0.00286,
+        },
     }
 
 
@@ -153,8 +153,7 @@ def classify_acmg_deterministic(criteria_codes: Set[str]) -> Tuple[str, List[str
 
 
 def compute_bayesian_pathogenicity(
-    criteria_codes: Set[str],
-    config: Optional[Dict[str, Any]] = None
+    criteria_codes: Set[str], config: Optional[Dict[str, Any]] = None
 ) -> Tuple[float, float, str]:
     """
     Compute Bayesian posterior probability P(Pathogenic | Evidence) following Tavtigian et al. (2018).
@@ -212,10 +211,7 @@ def compute_bayesian_pathogenicity(
 
 
 def evaluate_variant_acmg(
-    variant_id: str,
-    gene_symbol: str,
-    criteria: List[str],
-    evidence_details: Optional[Dict[str, str]] = None
+    variant_id: str, gene_symbol: str, criteria: List[str], evidence_details: Optional[Dict[str, str]] = None
 ) -> Dict[str, Any]:
     """Comprehensive ACMG evaluation combining deterministic rules and Bayesian synthesis."""
     criteria_set = {c.upper().strip() for c in criteria}
@@ -229,12 +225,16 @@ def evaluate_variant_acmg(
     annotated_criteria = []
     for code in sorted(criteria_set):
         rule_info = rules_meta.get(code, {})
-        annotated_criteria.append({
-            "code": code,
-            "name": rule_info.get("name", code),
-            "strength": rule_info.get("strength", "Unknown"),
-            "user_evidence": (evidence_details or {}).get(code, "Caller supplied this code; not independently verified")
-        })
+        annotated_criteria.append(
+            {
+                "code": code,
+                "name": rule_info.get("name", code),
+                "strength": rule_info.get("strength", "Unknown"),
+                "user_evidence": (evidence_details or {}).get(
+                    code, "Caller supplied this code; not independently verified"
+                ),
+            }
+        )
 
     report_body = {
         "variant_id": variant_id,
@@ -261,7 +261,7 @@ def evaluate_variant_acmg(
             "deterministic_classification": det_class,
             "bayesian_classification": bayes_class,
             "criteria_count": len(criteria_set),
-        }
+        },
     )
 
     return attach_meta(
@@ -282,20 +282,27 @@ def evaluate_variant_acmg(
 
 def main():
     parser = argparse.ArgumentParser(description="ACMG/AMP Variant Pathogenicity Classifier")
-    parser.add_argument("--variant", "-v", required=True, help="Variant identifier (e.g. 'chr13:32315508:C:T' or 'c.5266dupC')")
+    parser.add_argument(
+        "--variant", "-v", required=True, help="Variant identifier (e.g. 'chr13:32315508:C:T' or 'c.5266dupC')"
+    )
     parser.add_argument("--gene", "-g", required=True, help="Gene symbol (e.g. 'BRCA1')")
-    parser.add_argument("--criteria", "-c", required=True, nargs="+", help="Satisfied ACMG criteria (e.g. PVS1 PM2 PP3)")
+    parser.add_argument(
+        "--criteria", "-c", required=True, nargs="+", help="Satisfied ACMG criteria (e.g. PVS1 PM2 PP3)"
+    )
     parser.add_argument("--output-json", "-o", help="Path to save JSON classification report")
 
     args = parser.parse_args()
     report = evaluate_variant_acmg(args.variant, args.gene, args.criteria)
-    logger.info(f"Classification Result: {report['deterministic_classification']} (Posterior: {report['posterior_probability_pathogenic']*100:.2f}%)")
+    logger.info(
+        f"Classification Result: {report['deterministic_classification']} (Posterior: {report['posterior_probability_pathogenic'] * 100:.2f}%)"
+    )
 
     print(yaml.dump(report, sort_keys=False))
 
     if args.output_json:
         os.makedirs(os.path.dirname(os.path.abspath(args.output_json)) or ".", exist_ok=True)
         import json
+
         with open(args.output_json, "w", encoding="utf-8") as f:
             json.dump(report, f, indent=2)
         logger.info(f"Saved report to {args.output_json}")

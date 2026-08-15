@@ -23,7 +23,7 @@ def detect_binding_pockets_grid(
     sequence: Optional[str] = None,
     grid_spacing: float = 1.5,
     probe_radius: float = 1.4,
-    min_pocket_points: int = 15
+    min_pocket_points: int = 15,
 ) -> List[Dict[str, Any]]:
     """
     Detect concave surface pockets using 3D spatial grid casting and spatial clustering.
@@ -86,7 +86,7 @@ def detect_binding_pockets_grid(
     for p_idx, pts in enumerate(clusters):
         center = np.mean(pts, axis=0)
         # Approximate volume: number of points * grid_spacing^3
-        volume_a3 = len(pts) * (grid_spacing ** 3)
+        volume_a3 = len(pts) * (grid_spacing**3)
 
         # Find lining residues (CA within 6.5 A of pocket center or cavity points)
         lining_idx = tree_atoms.query_ball_point(center, r=8.0)
@@ -101,24 +101,30 @@ def detect_binding_pockets_grid(
 
         # Druggability score (0.0 to 1.0)
         # Optimal druggable pocket volume ~ 300 to 1200 A^3 with good hydrophobicity
-        vol_score = min(1.0, volume_a3 / 600.0) if volume_a3 <= 1000.0 else max(0.5, 1.0 - (volume_a3 - 1000.0) / 2000.0)
+        vol_score = (
+            min(1.0, volume_a3 / 600.0) if volume_a3 <= 1000.0 else max(0.5, 1.0 - (volume_a3 - 1000.0) / 2000.0)
+        )
         druggability = 0.6 * vol_score + 0.4 * hydro_ratio
 
-        pockets.append({
-            "pocket_id": p_idx + 1,
-            "center_coordinates": [round(float(c), 2) for c in center],
-            "volume_angstrom3": round(float(volume_a3), 1),
-            "n_grid_points": len(pts),
-            "n_lining_residues": len(lining_idx),
-            "lining_residue_indices": [idx + 1 for idx in sorted(lining_idx)],
-            "hydrophobicity_ratio": round(float(hydro_ratio), 2),
-            "druggability_score": round(float(druggability), 3),
-            "is_druggable": bool(druggability >= 0.45 and volume_a3 >= 150.0)
-        })
+        pockets.append(
+            {
+                "pocket_id": p_idx + 1,
+                "center_coordinates": [round(float(c), 2) for c in center],
+                "volume_angstrom3": round(float(volume_a3), 1),
+                "n_grid_points": len(pts),
+                "n_lining_residues": len(lining_idx),
+                "lining_residue_indices": [idx + 1 for idx in sorted(lining_idx)],
+                "hydrophobicity_ratio": round(float(hydro_ratio), 2),
+                "druggability_score": round(float(druggability), 3),
+                "is_druggable": bool(druggability >= 0.45 and volume_a3 >= 150.0),
+            }
+        )
 
     # Sort descending by druggability score
     pockets.sort(key=lambda x: x["druggability_score"], reverse=True)
-    logger.info(f"Detected {len(pockets)} candidate binding pockets. Top volume: {pockets[0]['volume_angstrom3'] if pockets else 0} A^3")
+    logger.info(
+        f"Detected {len(pockets)} candidate binding pockets. Top volume: {pockets[0]['volume_angstrom3'] if pockets else 0} A^3"
+    )
     return pockets
 
 
@@ -129,11 +135,15 @@ def main():
 
     args = parser.parse_args()
     from structure_fetcher import parse_pdb_text
+
     with open(args.pdb, "r", encoding="utf-8") as f:
         content = f.read()
     parsed = parse_pdb_text(content)
-    pockets = detect_binding_pockets_grid(parsed["ca_coordinates"], sequence=parsed["sequence"], grid_spacing=args.spacing)
+    pockets = detect_binding_pockets_grid(
+        parsed["ca_coordinates"], sequence=parsed["sequence"], grid_spacing=args.spacing
+    )
     import json
+
     print(json.dumps(pockets, indent=2))
 
 

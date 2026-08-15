@@ -84,20 +84,12 @@ def validate_registry_structure(registry: Dict[str, Any]) -> List[str]:
     return errors
 
 
-def validate_endpoints(
-    registry: Dict[str, Any],
-    check_live: bool = False,
-    timeout: float = 3.0
-) -> Dict[str, Any]:
+def validate_endpoints(registry: Dict[str, Any], check_live: bool = False, timeout: float = 3.0) -> Dict[str, Any]:
     """
     Validate all configured hosted and local endpoints.
     Optionally checks live connectivity for enabled HTTP servers.
     """
-    results: Dict[str, Any] = {
-        "valid": True,
-        "checked_count": 0,
-        "servers": {}
-    }
+    results: Dict[str, Any] = {"valid": True, "checked_count": 0, "servers": {}}
 
     hosted = registry.get("mcp_servers", {}).get("hosted", {})
     url_pattern = re.compile(r"^https?://[a-zA-Z0-9\-._~:/?#\[\]@!$&'()*+,;=]+$")
@@ -111,7 +103,7 @@ def validate_endpoints(
             "url": url,
             "syntax_valid": True,
             "live_status": None,
-            "error": None
+            "error": None,
         }
 
         if enabled:
@@ -123,9 +115,7 @@ def validate_endpoints(
             elif check_live:
                 try:
                     req = urllib.request.Request(
-                        url,
-                        headers={"User-Agent": "BioNexus-RegistryValidator/1.0"},
-                        method="HEAD"
+                        url, headers={"User-Agent": "BioNexus-RegistryValidator/1.0"}, method="HEAD"
                     )
                     with urllib.request.urlopen(req, timeout=timeout) as resp:
                         status["live_status"] = resp.status
@@ -144,22 +134,23 @@ def validate_endpoints(
 
 # --- Platform Adapters ---
 
+
 def to_agent_plugins_plugin_json(registry: Dict[str, Any]) -> Dict[str, Any]:
     """Generate Agent Plugins 1.0 plugin.json manifest."""
     pkg = registry["package"]
-    author_name = pkg["author"]["name"] if isinstance(pkg.get("author"), dict) else str(pkg.get("author", "BioNexus Team"))
+    author_name = (
+        pkg["author"]["name"] if isinstance(pkg.get("author"), dict) else str(pkg.get("author", "BioNexus Team"))
+    )
     return {
         "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
         "name": pkg["name"].lower(),
         "version": pkg["version"],
         "description": pkg["description"],
-        "author": {
-            "name": author_name
-        },
+        "author": {"name": author_name},
         "license": pkg.get("license", "Apache-2.0"),
         "keywords": list(pkg.get("keywords", [])),
         "skills": "./skills/",
-        "mcpServers": "./mcp.json"
+        "mcpServers": "./mcp.json",
     }
 
 
@@ -175,34 +166,28 @@ def to_agent_plugins_mcp_json(registry: Dict[str, Any]) -> Dict[str, Any]:
                 "type": s_conf.get("type", "stdio"),
                 "command": s_conf.get("command", "python"),
                 "args": s_conf.get("args", []),
-                "cwd": s_conf.get("cwd", "${PLUGIN_ROOT}")
+                "cwd": s_conf.get("cwd", "${PLUGIN_ROOT}"),
             }
 
     # 2. Hosted streamable-http MCP servers
     for s_id, s_conf in mcp_data.get("hosted", {}).items():
         if s_conf.get("enabled", True) and s_conf.get("url"):
-            servers[s_id] = {
-                "type": s_conf.get("type", "streamable-http"),
-                "url": s_conf.get("url")
-            }
+            servers[s_id] = {"type": s_conf.get("type", "streamable-http"), "url": s_conf.get("url")}
 
-    return {
-        "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
-        "mcpServers": servers
-    }
+    return {"$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json", "mcpServers": servers}
 
 
 def to_claude_plugin_json(registry: Dict[str, Any]) -> Dict[str, Any]:
     """Generate Claude Desktop / Claude Code .claude-plugin/plugin.json manifest."""
     pkg = registry["package"]
-    author_name = pkg["author"]["name"] if isinstance(pkg.get("author"), dict) else str(pkg.get("author", "BioNexus Team"))
+    author_name = (
+        pkg["author"]["name"] if isinstance(pkg.get("author"), dict) else str(pkg.get("author", "BioNexus Team"))
+    )
     return {
         "name": pkg["name"].lower(),
         "version": pkg["version"],
         "description": pkg["description"],
-        "author": {
-            "name": author_name
-        }
+        "author": {"name": author_name},
     }
 
 
@@ -214,14 +199,9 @@ def to_claude_mcp_json(registry: Dict[str, Any]) -> Dict[str, Any]:
     # Hosted MCP servers (with Claude standard http type)
     for s_id, s_conf in mcp_data.get("hosted", {}).items():
         if s_conf.get("enabled", True) and s_conf.get("url"):
-            servers[s_id] = {
-                "type": s_conf.get("claude_type", "http"),
-                "url": s_conf.get("url")
-            }
+            servers[s_id] = {"type": s_conf.get("claude_type", "http"), "url": s_conf.get("url")}
 
-    return {
-        "mcpServers": servers
-    }
+    return {"mcpServers": servers}
 
 
 def to_codex_config(registry: Dict[str, Any]) -> Dict[str, Any]:
@@ -232,23 +212,22 @@ def to_codex_config(registry: Dict[str, Any]) -> Dict[str, Any]:
         "name": pkg["name"].lower(),
         "version": pkg["version"],
         "provider": "BioNexus",
-        "mcpServers": agent_mcp.get("mcpServers", {})
+        "mcpServers": agent_mcp.get("mcpServers", {}),
     }
 
 
 def to_codex_plugin_json(registry: Dict[str, Any]) -> Dict[str, Any]:
     """Generate Codex .codex-plugin/plugin.json manifest adhering strictly to Codex spec."""
     pkg = registry["package"]
-    author_name = pkg["author"]["name"] if isinstance(pkg.get("author"), dict) else str(pkg.get("author", "BioNexus Team"))
+    author_name = (
+        pkg["author"]["name"] if isinstance(pkg.get("author"), dict) else str(pkg.get("author", "BioNexus Team"))
+    )
     display_name = pkg.get("display_name", "BioNexus")
     return {
         "name": pkg["name"].lower(),
         "version": pkg["version"],
         "description": pkg["description"],
-        "author": {
-            "name": author_name,
-            "url": "https://github.com/HERRY423/BioNexus"
-        },
+        "author": {"name": author_name, "url": "https://github.com/HERRY423/BioNexus"},
         "homepage": "https://github.com/HERRY423/BioNexus",
         "repository": "https://github.com/HERRY423/BioNexus",
         "license": pkg.get("license", "Apache-2.0"),
@@ -261,53 +240,42 @@ def to_codex_plugin_json(registry: Dict[str, Any]) -> Dict[str, Any]:
             "longDescription": pkg["description"],
             "developerName": author_name,
             "category": "Science",
-            "capabilities": [
-                "Interactive",
-                "Read",
-                "Write"
-            ],
+            "capabilities": ["Interactive", "Read", "Write"],
             "websiteURL": "https://github.com/HERRY423/BioNexus",
             "defaultPrompt": [
                 "Inspect single-cell dataset and run QC",
                 "Query UniProt for TP53 protein details",
-                "Analyze spatial transcriptomics with squidpy"
-            ]
-        }
+                "Analyze spatial transcriptomics with squidpy",
+            ],
+        },
     }
 
 
 def to_marketplace_json(registry: Dict[str, Any]) -> Dict[str, Any]:
     """Generate Codex / Claude Marketplace registry manifest (marketplace.json)."""
     pkg = registry["package"]
-    author_name = pkg.get("author", {}).get("name", "BioNexus Team") if isinstance(pkg.get("author"), dict) else "BioNexus Team"
+    author_name = (
+        pkg.get("author", {}).get("name", "BioNexus Team") if isinstance(pkg.get("author"), dict) else "BioNexus Team"
+    )
     return {
         "name": "bionexus-marketplace",
-        "interface": {
-            "displayName": "BioNexus Marketplace"
-        },
-        "owner": {
-            "name": author_name
-        },
+        "interface": {"displayName": "BioNexus Marketplace"},
+        "owner": {"name": author_name},
         "plugins": [
             {
                 "name": pkg["name"].lower(),
                 "description": pkg["description"],
                 "version": pkg["version"],
-                "source": {
-                    "source": "local",
-                    "path": "."
-                },
-                "policy": {
-                    "installation": "AVAILABLE",
-                    "authentication": "ON_INSTALL"
-                },
-                "category": "Science"
+                "source": {"source": "local", "path": "."},
+                "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+                "category": "Science",
             }
-        ]
+        ],
     }
 
 
 # --- Manifest Registry Mapping & Drift Detection ---
+
 
 def get_expected_manifests(registry: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
     """Return dictionary of relative file paths to their expected dictionary representations."""
@@ -329,14 +297,11 @@ def get_expected_manifests(registry: Dict[str, Any]) -> Dict[str, Dict[str, Any]
         ".agents/plugins/marketplace.json": mkt,
         ".codex/marketplace.json": mkt,
         ".claude-plugin/marketplace.json": mkt,
-        "marketplace.json": mkt
+        "marketplace.json": mkt,
     }
 
 
-def check_manifest_drift(
-    repo_root: Path,
-    registry: Optional[Dict[str, Any]] = None
-) -> Tuple[bool, List[str]]:
+def check_manifest_drift(repo_root: Path, registry: Optional[Dict[str, Any]] = None) -> Tuple[bool, List[str]]:
     """
     Check if on-disk manifests differ from canonical registry compilation.
     Returns (in_sync: bool, diff_messages: List[str]).
@@ -370,10 +335,7 @@ def check_manifest_drift(
     return (len(diffs) == 0, diffs)
 
 
-def compile_and_write_all(
-    repo_root: Path,
-    registry: Optional[Dict[str, Any]] = None
-) -> List[str]:
+def compile_and_write_all(repo_root: Path, registry: Optional[Dict[str, Any]] = None) -> List[str]:
     """Compile canonical registry and write all platform manifests to disk."""
     if registry is None:
         registry = load_canonical_registry(repo_root / "bionexus.registry.yaml")

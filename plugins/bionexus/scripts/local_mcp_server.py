@@ -39,7 +39,9 @@ except ImportError:
     FastMCP = None  # type: ignore
 
 # --- Logging Configuration ---
-LOG_FILE = os.environ.get("BIONEXUS_MCP_LOG", os.path.join(os.path.dirname(os.path.abspath(__file__)), "local_mcp_server.log"))
+LOG_FILE = os.environ.get(
+    "BIONEXUS_MCP_LOG", os.path.join(os.path.dirname(os.path.abspath(__file__)), "local_mcp_server.log")
+)
 logger = logging.getLogger("BioNexusMCP")
 logger.setLevel(logging.INFO)
 
@@ -54,8 +56,10 @@ except Exception:
 
 # --- Proactive Token-Bucket Rate Limiter ---
 
+
 class TokenBucketRateLimiter:
     """Thread-safe token bucket rate limiter to prevent API 429 rate limit saturation."""
+
     def __init__(self, rate: float = 3.0, capacity: float = 5.0):
         self.rate = rate  # tokens added per second
         self.capacity = capacity
@@ -119,7 +123,7 @@ def get_api_key(key_name: str) -> Optional[str]:
     search_dirs = [
         os.getcwd(),
         os.path.dirname(os.path.abspath(__file__)),
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     ]
     for search_dir in search_dirs:
         env_path = os.path.join(search_dir, ".env")
@@ -137,6 +141,7 @@ def get_api_key(key_name: str) -> Optional[str]:
 
 # --- Async HTTP Engine with Exponential Backoff Retries ---
 
+
 async def async_http_request(
     url: str,
     method: str = "GET",
@@ -144,7 +149,7 @@ async def async_http_request(
     json_data: Optional[Dict[str, Any]] = None,
     timeout: int = 15,
     max_retries: int = 3,
-    backoff_factor: float = 1.5
+    backoff_factor: float = 1.5,
 ) -> Any:
     """
     Execute asynchronous HTTP request with non-blocking I/O and exponential backoff retry.
@@ -155,7 +160,7 @@ async def async_http_request(
 
     req_headers = {
         "User-Agent": "BioNexus-LocalMCP/2.0.0 (OpenScience; Contact: https://agent-plugins.org/)",
-        "Accept": "application/json"
+        "Accept": "application/json",
     }
     if headers:
         req_headers.update(headers)
@@ -184,7 +189,7 @@ async def async_http_request(
             last_exc = e
             logger.warning(f"HTTP {e.code} on {url} (attempt {attempt}/{max_retries})")
             if e.code in (429, 500, 502, 503, 504) and attempt < max_retries:
-                delay = backoff_factor ** attempt
+                delay = backoff_factor**attempt
                 await asyncio.sleep(delay)
             else:
                 raise
@@ -192,7 +197,7 @@ async def async_http_request(
             last_exc = e
             logger.warning(f"Network error on {url} (attempt {attempt}/{max_retries}): {e}")
             if attempt < max_retries:
-                delay = backoff_factor ** attempt
+                delay = backoff_factor**attempt
                 await asyncio.sleep(delay)
             else:
                 raise
@@ -202,13 +207,14 @@ async def async_http_request(
 
 # --- Tool Implementations (Core 8 Tools) ---
 
+
 async def tool_search_pubmed(
     query: str,
     max_results: int = 5,
     offset: int = 0,
     sort: str = "pub_date",
     mindate: Optional[str] = None,
-    maxdate: Optional[str] = None
+    maxdate: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Search NCBI PubMed for biomedical literature with pagination and date filters."""
     max_results = min(max(1, int(max_results)), 50)
@@ -221,7 +227,7 @@ async def tool_search_pubmed(
         "retmode": "json",
         "retstart": str(offset),
         "retmax": str(max_results),
-        "sort": sort
+        "sort": sort,
     }
     if mindate:
         params["mindate"] = mindate
@@ -239,23 +245,15 @@ async def tool_search_pubmed(
     total_found = int(esearch.get("count", 0))
 
     if not id_list:
-        return {
-            "query": query,
-            "total_found": total_found,
-            "offset": offset,
-            "limit": max_results,
-            "articles": []
-        }
+        return {"query": query, "total_found": total_found, "offset": offset, "limit": max_results, "articles": []}
 
-    summary_params = {
-        "db": "pubmed",
-        "id": ",".join(id_list),
-        "retmode": "json"
-    }
+    summary_params = {"db": "pubmed", "id": ",".join(id_list), "retmode": "json"}
     if api_key:
         summary_params["api_key"] = api_key
 
-    summary_url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?{urllib.parse.urlencode(summary_params)}"
+    summary_url = (
+        f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?{urllib.parse.urlencode(summary_params)}"
+    )
     summary_data = await async_http_request(summary_url)
     result_dict = summary_data.get("result", {})
 
@@ -268,15 +266,17 @@ async def tool_search_pubmed(
         pubdate = info.get("pubdate", "")
         doi = next((item.get("value") for item in info.get("articleids", []) if item.get("idtype") == "doi"), None)
 
-        articles.append({
-            "pmid": pmid,
-            "title": title,
-            "authors": authors[:5] + (["et al."] if len(authors) > 5 else []),
-            "journal": source,
-            "pub_date": pubdate,
-            "doi": doi,
-            "url": f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/"
-        })
+        articles.append(
+            {
+                "pmid": pmid,
+                "title": title,
+                "authors": authors[:5] + (["et al."] if len(authors) > 5 else []),
+                "journal": source,
+                "pub_date": pubdate,
+                "doi": doi,
+                "url": f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/",
+            }
+        )
 
     return {
         "query": query,
@@ -284,7 +284,7 @@ async def tool_search_pubmed(
         "offset": offset,
         "limit": max_results,
         "returned": len(articles),
-        "articles": articles
+        "articles": articles,
     }
 
 
@@ -293,11 +293,7 @@ async def tool_get_pubmed_article(pmid: str) -> Dict[str, Any]:
     pmid = str(pmid).strip()
     api_key = get_api_key("NCBI_API_KEY")
 
-    params = {
-        "db": "pubmed",
-        "id": pmid,
-        "retmode": "json"
-    }
+    params = {"db": "pubmed", "id": pmid, "retmode": "json"}
     if api_key:
         params["api_key"] = api_key
 
@@ -308,11 +304,7 @@ async def tool_get_pubmed_article(pmid: str) -> Dict[str, Any]:
     abstract_text = ""
     mesh_terms = []
     try:
-        fetch_params = {
-            "db": "pubmed",
-            "id": pmid,
-            "retmode": "xml"
-        }
+        fetch_params = {"db": "pubmed", "id": pmid, "retmode": "xml"}
         if api_key:
             fetch_params["api_key"] = api_key
         fetch_url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?{urllib.parse.urlencode(fetch_params)}"
@@ -324,6 +316,7 @@ async def tool_get_pubmed_article(pmid: str) -> Dict[str, Any]:
 
         xml_bytes = await asyncio.to_thread(_fetch_xml)
         import xml.etree.ElementTree as ET
+
         root = ET.fromstring(xml_bytes)
         abstract_elem = root.findall(".//AbstractText")
         abstract_text = " ".join([elem.text or "" for elem in abstract_elem if elem.text])
@@ -347,29 +340,18 @@ async def tool_get_pubmed_article(pmid: str) -> Dict[str, Any]:
         "doi": doi,
         "abstract": abstract_text,
         "mesh_terms": mesh_terms,
-        "url": f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/"
+        "url": f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/",
     }
 
 
-async def tool_search_biorxiv(
-    query: str,
-    server: str = "biorxiv",
-    limit: int = 5,
-    page: int = 1
-) -> Dict[str, Any]:
+async def tool_search_biorxiv(query: str, server: str = "biorxiv", limit: int = 5, page: int = 1) -> Dict[str, Any]:
     """Search preprints on bioRxiv or medRxiv with pagination."""
     limit = min(max(1, int(limit)), 50)
     page = max(1, int(page))
     server = "medrxiv" if server.lower() == "medrxiv" else "biorxiv"
 
     epmc_query = f"{query} (SRC:PPR OR PUBLISHER:{server})"
-    params = {
-        "query": epmc_query,
-        "format": "json",
-        "pageSize": str(limit),
-        "page": str(page),
-        "resultType": "lite"
-    }
+    params = {"query": epmc_query, "format": "json", "pageSize": str(limit), "page": str(page), "resultType": "lite"}
     url = f"https://www.ebi.ac.uk/europepmc/webservices/rest/search?{urllib.parse.urlencode(params)}"
     data = await async_http_request(url)
 
@@ -377,15 +359,17 @@ async def tool_search_biorxiv(
     results = data.get("resultList", {}).get("result", [])
     papers = []
     for r in results:
-        papers.append({
-            "title": r.get("title", ""),
-            "author_string": r.get("authorString", ""),
-            "journal_title": r.get("journalTitle", server.upper()),
-            "pub_year": r.get("pubYear", ""),
-            "doi": r.get("doi", ""),
-            "abstract_snippet": r.get("abstractText", ""),
-            "url": f"https://doi.org/{r.get('doi')}" if r.get("doi") else ""
-        })
+        papers.append(
+            {
+                "title": r.get("title", ""),
+                "author_string": r.get("authorString", ""),
+                "journal_title": r.get("journalTitle", server.upper()),
+                "pub_year": r.get("pubYear", ""),
+                "doi": r.get("doi", ""),
+                "abstract_snippet": r.get("abstractText", ""),
+                "url": f"https://doi.org/{r.get('doi')}" if r.get("doi") else "",
+            }
+        )
 
     return {
         "query": query,
@@ -393,15 +377,12 @@ async def tool_search_biorxiv(
         "total_hits": hit_count,
         "page": page,
         "limit": limit,
-        "preprints": papers
+        "preprints": papers,
     }
 
 
 async def tool_search_chembl(
-    query: str,
-    entity_type: str = "molecule",
-    limit: int = 5,
-    offset: int = 0
+    query: str, entity_type: str = "molecule", limit: int = 5, offset: int = 0
 ) -> Dict[str, Any]:
     """Query ChEMBL database for bioactive molecules, targets, or assays with pagination."""
     limit = min(max(1, int(limit)), 50)
@@ -413,13 +394,15 @@ async def tool_search_chembl(
         data = await async_http_request(url)
         targets = []
         for t in data.get("targets", []):
-            targets.append({
-                "chembl_id": t.get("target_chembl_id"),
-                "pref_name": t.get("pref_name"),
-                "target_type": t.get("target_type"),
-                "organism": t.get("organism"),
-                "target_components": [c.get("component_type") for c in t.get("target_components", [])]
-            })
+            targets.append(
+                {
+                    "chembl_id": t.get("target_chembl_id"),
+                    "pref_name": t.get("pref_name"),
+                    "target_type": t.get("target_type"),
+                    "organism": t.get("organism"),
+                    "target_components": [c.get("component_type") for c in t.get("target_components", [])],
+                }
+            )
         total = data.get("page_meta", {}).get("total_count", len(targets))
         return {"query": query, "entity_type": "target", "total_found": total, "offset": offset, "results": targets}
 
@@ -428,12 +411,14 @@ async def tool_search_chembl(
         data = await async_http_request(url)
         assays = []
         for a in data.get("assays", []):
-            assays.append({
-                "assay_chembl_id": a.get("assay_chembl_id"),
-                "description": a.get("description"),
-                "assay_type": a.get("assay_type"),
-                "assay_organism": a.get("assay_organism")
-            })
+            assays.append(
+                {
+                    "assay_chembl_id": a.get("assay_chembl_id"),
+                    "description": a.get("description"),
+                    "assay_type": a.get("assay_type"),
+                    "assay_organism": a.get("assay_organism"),
+                }
+            )
         total = data.get("page_meta", {}).get("total_count", len(assays))
         return {"query": query, "entity_type": "assay", "total_found": total, "offset": offset, "results": assays}
 
@@ -444,27 +429,26 @@ async def tool_search_chembl(
         for m in data.get("molecules", []):
             props = m.get("molecule_properties") or {}
             structures = m.get("molecule_structures") or {}
-            molecules.append({
-                "chembl_id": m.get("molecule_chembl_id"),
-                "pref_name": m.get("pref_name"),
-                "max_phase": m.get("max_phase"),
-                "molecule_type": m.get("molecule_type"),
-                "molecular_weight": props.get("full_mwt"),
-                "alogp": props.get("alogp"),
-                "hba": props.get("hba"),
-                "hbd": props.get("hbd"),
-                "psa": props.get("psa"),
-                "canonical_smiles": structures.get("canonical_smiles")
-            })
+            molecules.append(
+                {
+                    "chembl_id": m.get("molecule_chembl_id"),
+                    "pref_name": m.get("pref_name"),
+                    "max_phase": m.get("max_phase"),
+                    "molecule_type": m.get("molecule_type"),
+                    "molecular_weight": props.get("full_mwt"),
+                    "alogp": props.get("alogp"),
+                    "hba": props.get("hba"),
+                    "hbd": props.get("hbd"),
+                    "psa": props.get("psa"),
+                    "canonical_smiles": structures.get("canonical_smiles"),
+                }
+            )
         total = data.get("page_meta", {}).get("total_count", len(molecules))
         return {"query": query, "entity_type": "molecule", "total_found": total, "offset": offset, "results": molecules}
 
 
 async def tool_search_opentargets(
-    query: str,
-    entity_types: Optional[List[str]] = None,
-    limit: int = 5,
-    page_index: int = 0
+    query: str, entity_types: Optional[List[str]] = None, limit: int = 5, page_index: int = 0
 ) -> Dict[str, Any]:
     """Query Open Targets Platform GraphQL API for disease-target associations."""
     limit = min(max(1, int(limit)), 50)
@@ -488,12 +472,7 @@ async def tool_search_opentargets(
     """
     payload = {
         "query": gql_query,
-        "variables": {
-            "queryString": query,
-            "entityNames": entity_types,
-            "size": limit,
-            "index": page_index
-        }
+        "variables": {"queryString": query, "entityNames": entity_types, "size": limit, "index": page_index},
     }
     url = "https://api.platform.opentargets.org/api/v4/graphql"
     data = await async_http_request(url, method="POST", json_data=payload)
@@ -507,7 +486,7 @@ async def tool_search_opentargets(
         "total_hits": total,
         "page_index": page_index,
         "limit": limit,
-        "results": hits
+        "results": hits,
     }
 
 
@@ -516,14 +495,11 @@ async def tool_search_clinical_trials(
     intervention: str = "",
     status: Optional[str] = None,
     limit: int = 5,
-    page_token: Optional[str] = None
+    page_token: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Query ClinicalTrials.gov API v2 with status filter and cursor pagination."""
     limit = min(max(1, int(limit)), 50)
-    params = {
-        "query.cond": condition,
-        "pageSize": str(limit)
-    }
+    params = {"query.cond": condition, "pageSize": str(limit)}
     if intervention:
         params["query.intr"] = intervention
     if status:
@@ -548,14 +524,16 @@ async def tool_search_clinical_trials(
         phases = design_module.get("phases", [])
         cond_list = conditions_module.get("conditions", [])
 
-        studies.append({
-            "nct_id": nct_id,
-            "title": brief_title,
-            "status": overall_status,
-            "phases": phases,
-            "conditions": cond_list,
-            "url": f"https://clinicaltrials.gov/study/{nct_id}" if nct_id else ""
-        })
+        studies.append(
+            {
+                "nct_id": nct_id,
+                "title": brief_title,
+                "status": overall_status,
+                "phases": phases,
+                "conditions": cond_list,
+                "url": f"https://clinicaltrials.gov/study/{nct_id}" if nct_id else "",
+            }
+        )
 
     next_page_token = data.get("nextPageToken")
     total_count = data.get("totalCount", len(studies))
@@ -565,15 +543,11 @@ async def tool_search_clinical_trials(
         "intervention": intervention,
         "total_count": total_count,
         "next_page_token": next_page_token,
-        "studies": studies
+        "studies": studies,
     }
 
 
-async def tool_search_uniprot(
-    query: str,
-    organism: Optional[str] = "human",
-    limit: int = 5
-) -> Dict[str, Any]:
+async def tool_search_uniprot(query: str, organism: Optional[str] = "human", limit: int = 5) -> Dict[str, Any]:
     """Query UniProtKB for protein functions, gene names, sequences, and accessions."""
     limit = min(max(1, int(limit)), 50)
     search_term = query
@@ -588,7 +562,7 @@ async def tool_search_uniprot(
         "query": search_term,
         "format": "json",
         "size": str(limit),
-        "fields": "accession,id,gene_names,protein_name,organism_name,length,cc_function"
+        "fields": "accession,id,gene_names,protein_name,organism_name,length,cc_function",
     }
     url = f"https://rest.uniprot.org/uniprotkb/search?{urllib.parse.urlencode(params)}"
     data = await async_http_request(url)
@@ -613,29 +587,23 @@ async def tool_search_uniprot(
                 for text_obj in comment.get("texts", []):
                     functions.append(text_obj.get("value", ""))
 
-        results.append({
-            "accession": primary_acc,
-            "id": entry_name,
-            "protein_name": recommended_name,
-            "genes": genes,
-            "organism": organism_name,
-            "sequence_length": entry.get("sequence", {}).get("length"),
-            "function": " ".join(functions)[:500],
-            "url": f"https://www.uniprot.org/uniprotkb/{primary_acc}"
-        })
+        results.append(
+            {
+                "accession": primary_acc,
+                "id": entry_name,
+                "protein_name": recommended_name,
+                "genes": genes,
+                "organism": organism_name,
+                "sequence_length": entry.get("sequence", {}).get("length"),
+                "function": " ".join(functions)[:500],
+                "url": f"https://www.uniprot.org/uniprotkb/{primary_acc}",
+            }
+        )
 
-    return {
-        "query": query,
-        "organism": organism,
-        "total_results": len(results),
-        "proteins": results
-    }
+    return {"query": query, "organism": organism, "total_results": len(results), "proteins": results}
 
 
-async def tool_search_ensembl(
-    symbol: str,
-    species: str = "human"
-) -> Dict[str, Any]:
+async def tool_search_ensembl(symbol: str, species: str = "human") -> Dict[str, Any]:
     """Query Ensembl REST API for gene metadata, coordinates, biotype, and transcript structures."""
     species = "homo_sapiens" if species.lower() in ("human", "homo_sapiens") else species
     url = f"https://rest.ensembl.org/lookup/symbol/{species}/{symbol}?expand=1"
@@ -644,12 +612,14 @@ async def tool_search_ensembl(
         data = await async_http_request(url, headers=headers)
         transcripts = []
         for t in data.get("Transcript", [])[:10]:
-            transcripts.append({
-                "id": t.get("id"),
-                "biotype": t.get("biotype"),
-                "is_canonical": bool(t.get("is_canonical")),
-                "length": t.get("length")
-            })
+            transcripts.append(
+                {
+                    "id": t.get("id"),
+                    "biotype": t.get("biotype"),
+                    "is_canonical": bool(t.get("is_canonical")),
+                    "length": t.get("length"),
+                }
+            )
         return {
             "symbol": symbol,
             "species": species,
@@ -660,7 +630,7 @@ async def tool_search_ensembl(
             "start": data.get("start"),
             "end": data.get("end"),
             "strand": data.get("strand"),
-            "transcripts": transcripts
+            "transcripts": transcripts,
         }
     except Exception as e:
         logger.error(f"Ensembl lookup failed for {symbol}: {e}")
@@ -669,10 +639,8 @@ async def tool_search_ensembl(
 
 # --- Tool Implementations (Phase 4 Extended 8 Tools) ---
 
-async def tool_search_gnomad(
-    gene_symbol: Optional[str] = None,
-    variant_id: Optional[str] = None
-) -> Dict[str, Any]:
+
+async def tool_search_gnomad(gene_symbol: Optional[str] = None, variant_id: Optional[str] = None) -> Dict[str, Any]:
     """
     Query gnomAD GraphQL API for population allele frequencies, pLI loss-of-function constraint,
     LOEUF scores, and missense z-scores.
@@ -707,7 +675,7 @@ async def tool_search_gnomad(
                 "symbol": gene_symbol,
                 "gene_id": gene_info.get("gene_id"),
                 "name": gene_info.get("name"),
-                "constraint": gene_info.get("gnomad_constraint", {})
+                "constraint": gene_info.get("gnomad_constraint", {}),
             }
         except Exception as e:
             logger.error(f"gnomAD gene constraint query failed for {gene_symbol}: {e}")
@@ -741,11 +709,7 @@ async def tool_search_gnomad(
         try:
             data = await async_http_request(url, method="POST", json_data=payload)
             var_info = data.get("data", {}).get("variant", {})
-            return {
-                "query_type": "variant_frequency",
-                "variant_id": variant_id,
-                "variant": var_info
-            }
+            return {"query_type": "variant_frequency", "variant_id": variant_id, "variant": var_info}
         except Exception as e:
             logger.error(f"gnomAD variant frequency query failed for {variant_id}: {e}")
             return {"variant_id": variant_id, "error": str(e)}
@@ -753,10 +717,7 @@ async def tool_search_gnomad(
         return {"error": "Must provide either gene_symbol or variant_id"}
 
 
-async def tool_search_pdb(
-    query: str,
-    limit: int = 5
-) -> Dict[str, Any]:
+async def tool_search_pdb(query: str, limit: int = 5) -> Dict[str, Any]:
     """
     Search RCSB Protein Data Bank (PDB) for experimentally solved 3D structures,
     experimental method, resolution, and bound ligands.
@@ -764,20 +725,9 @@ async def tool_search_pdb(
     limit = min(max(1, int(limit)), 50)
     search_url = "https://search.rcsb.org/rcsbsearch/v2/query"
     search_payload = {
-        "query": {
-            "type": "terminal",
-            "service": "full_text",
-            "parameters": {
-                "value": query
-            }
-        },
+        "query": {"type": "terminal", "service": "full_text", "parameters": {"value": query}},
         "return_type": "entry",
-        "request_options": {
-            "paginate": {
-                "start": 0,
-                "rows": limit
-            }
-        }
+        "request_options": {"paginate": {"start": 0, "rows": limit}},
     }
     try:
         search_data = await async_http_request(search_url, method="POST", json_data=search_payload)
@@ -799,37 +749,30 @@ async def tool_search_pdb(
                 resolution = rcsb_entry.get("resolution_combined", [None])[0]
                 release_date = detail_data.get("rcsb_accession_info", {}).get("initial_release_date", "")
 
-                entries.append({
-                    "pdb_id": pdb_id,
-                    "title": title,
-                    "method": method,
-                    "resolution_angstrom": resolution,
-                    "release_date": release_date,
-                    "relevance_score": score,
-                    "pdb_url": f"https://www.rcsb.org/structure/{pdb_id}",
-                    "cif_download_url": f"https://files.rcsb.org/download/{pdb_id}.cif"
-                })
+                entries.append(
+                    {
+                        "pdb_id": pdb_id,
+                        "title": title,
+                        "method": method,
+                        "resolution_angstrom": resolution,
+                        "release_date": release_date,
+                        "relevance_score": score,
+                        "pdb_url": f"https://www.rcsb.org/structure/{pdb_id}",
+                        "cif_download_url": f"https://files.rcsb.org/download/{pdb_id}.cif",
+                    }
+                )
             except Exception:
-                entries.append({
-                    "pdb_id": pdb_id,
-                    "relevance_score": score,
-                    "pdb_url": f"https://www.rcsb.org/structure/{pdb_id}"
-                })
+                entries.append(
+                    {"pdb_id": pdb_id, "relevance_score": score, "pdb_url": f"https://www.rcsb.org/structure/{pdb_id}"}
+                )
 
-        return {
-            "query": query,
-            "total_found": total_count,
-            "limit": limit,
-            "structures": entries
-        }
+        return {"query": query, "total_found": total_count, "limit": limit, "structures": entries}
     except Exception as e:
         logger.error(f"PDB search failed for {query}: {e}")
         return {"query": query, "error": str(e)}
 
 
-async def tool_search_alphafold(
-    uniprot_id: str
-) -> Dict[str, Any]:
+async def tool_search_alphafold(uniprot_id: str) -> Dict[str, Any]:
     """
     Query AlphaFold Protein Structure Database API for predicted 3D structures,
     per-residue pLDDT confidence metrics, and download links.
@@ -856,29 +799,20 @@ async def tool_search_alphafold(
             "cif_url": entry.get("cifUrl"),
             "pae_image_url": entry.get("paeImageUrl"),
             "pae_doc_url": entry.get("paeDocUrl"),
-            "model_created_date": entry.get("modelCreatedDate")
+            "model_created_date": entry.get("modelCreatedDate"),
         }
     except Exception as e:
         logger.error(f"AlphaFold lookup failed for {uniprot_id}: {e}")
         return {"uniprot_id": uniprot_id, "error": str(e)}
 
 
-async def tool_search_reactome(
-    query: str,
-    species: str = "Homo sapiens",
-    limit: int = 5
-) -> Dict[str, Any]:
+async def tool_search_reactome(query: str, species: str = "Homo sapiens", limit: int = 5) -> Dict[str, Any]:
     """
     Query Reactome Content Service for biological pathways, reactions,
     pathway hierarchies, and participating molecules.
     """
     limit = min(max(1, int(limit)), 50)
-    params = {
-        "query": query,
-        "species": species,
-        "types": "Pathway",
-        "rows": str(limit)
-    }
+    params = {"query": query, "species": species, "types": "Pathway", "rows": str(limit)}
     url = f"https://reactome.org/ContentService/search/query?{urllib.parse.urlencode(params)}"
     try:
         data = await async_http_request(url)
@@ -887,29 +821,25 @@ async def tool_search_reactome(
         for r in results:
             entries = r.get("entries", [])
             for e in entries[:limit]:
-                pathways.append({
-                    "stId": e.get("stId"),
-                    "name": e.get("name"),
-                    "species": e.get("species", [species])[0] if isinstance(e.get("species"), list) else e.get("species"),
-                    "type": e.get("exactType"),
-                    "url": f"https://reactome.org/PathwayBrowser/#/{e.get('stId')}"
-                })
-        return {
-            "query": query,
-            "species": species,
-            "total_found": len(pathways),
-            "pathways": pathways[:limit]
-        }
+                pathways.append(
+                    {
+                        "stId": e.get("stId"),
+                        "name": e.get("name"),
+                        "species": e.get("species", [species])[0]
+                        if isinstance(e.get("species"), list)
+                        else e.get("species"),
+                        "type": e.get("exactType"),
+                        "url": f"https://reactome.org/PathwayBrowser/#/{e.get('stId')}",
+                    }
+                )
+        return {"query": query, "species": species, "total_found": len(pathways), "pathways": pathways[:limit]}
     except Exception as e:
         logger.error(f"Reactome search failed for {query}: {e}")
         return {"query": query, "error": str(e)}
 
 
 async def tool_search_string(
-    gene_symbol: str,
-    species: int = 9606,
-    limit: int = 10,
-    required_score: int = 400
+    gene_symbol: str, species: int = 9606, limit: int = 10, required_score: int = 400
 ) -> Dict[str, Any]:
     """
     Query STRING DB API v12 for protein-protein physical and functional interaction networks
@@ -921,7 +851,7 @@ async def tool_search_string(
         "species": str(species),
         "limit": str(limit),
         "required_score": str(required_score),
-        "caller_identity": "bionexus_plugin"
+        "caller_identity": "bionexus_plugin",
     }
     url = f"https://string-db.org/api/json/interaction_partners?{urllib.parse.urlencode(params)}"
     try:
@@ -929,20 +859,22 @@ async def tool_search_string(
         interactions = []
         if isinstance(data, list):
             for row in data:
-                interactions.append({
-                    "preferred_name_a": row.get("preferredName_A"),
-                    "preferred_name_b": row.get("preferredName_B"),
-                    "combined_score": row.get("score"),
-                    "experimental_score": row.get("escore"),
-                    "database_score": row.get("dscore"),
-                    "coexpression_score": row.get("ascore"),
-                    "textmining_score": row.get("tscore")
-                })
+                interactions.append(
+                    {
+                        "preferred_name_a": row.get("preferredName_A"),
+                        "preferred_name_b": row.get("preferredName_B"),
+                        "combined_score": row.get("score"),
+                        "experimental_score": row.get("escore"),
+                        "database_score": row.get("dscore"),
+                        "coexpression_score": row.get("ascore"),
+                        "textmining_score": row.get("tscore"),
+                    }
+                )
         return {
             "gene_symbol": gene_symbol,
             "species": species,
             "interaction_count": len(interactions),
-            "interactions": interactions[:limit]
+            "interactions": interactions[:limit],
         }
     except Exception as e:
         logger.error(f"STRING search failed for {gene_symbol}: {e}")
@@ -951,14 +883,27 @@ async def tool_search_string(
 
 # Small well-known CGC subset for local hints only. Not the COSMIC API.
 _LOCAL_CGC_HINTS = {
-    "TP53", "KRAS", "BRAF", "EGFR", "PIK3CA", "PTEN", "BRCA1", "BRCA2",
-    "MYC", "ALK", "ABL1", "BCR", "APC", "RB1", "VHL", "NF1", "IDH1",
+    "TP53",
+    "KRAS",
+    "BRAF",
+    "EGFR",
+    "PIK3CA",
+    "PTEN",
+    "BRCA1",
+    "BRCA2",
+    "MYC",
+    "ALK",
+    "ABL1",
+    "BCR",
+    "APC",
+    "RB1",
+    "VHL",
+    "NF1",
+    "IDH1",
 }
 
 
-async def tool_search_cosmic(
-    gene_symbol: str
-) -> Dict[str, Any]:
+async def tool_search_cosmic(gene_symbol: str) -> Dict[str, Any]:
     """Ensembl lookup plus a local CGC hint. This is not the COSMIC REST API."""
     gene = gene_symbol.strip().upper()
     url = f"https://rest.ensembl.org/lookup/symbol/homo_sapiens/{gene}?expand=1"
@@ -989,22 +934,14 @@ async def tool_search_cosmic(
         return {"gene_symbol": gene_symbol, "error": str(e), "cgc_tier_check": None}
 
 
-async def tool_search_geo(
-    query: str,
-    max_results: int = 5
-) -> Dict[str, Any]:
+async def tool_search_geo(query: str, max_results: int = 5) -> Dict[str, Any]:
     """
     Search NCBI Gene Expression Omnibus (GEO) datasets (GSE) and samples (GSM) via E-utilities.
     """
     max_results = min(max(1, int(max_results)), 50)
     api_key = get_api_key("NCBI_API_KEY")
     term = f"{query} AND gds[Entry Type]"
-    params = {
-        "db": "gds",
-        "term": term,
-        "retmode": "json",
-        "retmax": str(max_results)
-    }
+    params = {"db": "gds", "term": term, "retmode": "json", "retmax": str(max_results)}
     if api_key:
         params["api_key"] = api_key
 
@@ -1017,15 +954,13 @@ async def tool_search_geo(
         if not id_list:
             return {"query": query, "total_found": total_found, "datasets": []}
 
-        summary_params = {
-            "db": "gds",
-            "id": ",".join(id_list),
-            "retmode": "json"
-        }
+        summary_params = {"db": "gds", "id": ",".join(id_list), "retmode": "json"}
         if api_key:
             summary_params["api_key"] = api_key
 
-        summary_url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?{urllib.parse.urlencode(summary_params)}"
+        summary_url = (
+            f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?{urllib.parse.urlencode(summary_params)}"
+        )
         summary_data = await async_http_request(summary_url)
         results = summary_data.get("result", {})
 
@@ -1038,30 +973,24 @@ async def tool_search_geo(
             taxon = info.get("taxon", "")
             n_samples = info.get("nsamples", 0)
 
-            datasets.append({
-                "accession": accession,
-                "title": title,
-                "organism": taxon,
-                "sample_count": n_samples,
-                "summary": summary[:300] + ("..." if len(summary) > 300 else ""),
-                "url": f"https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={accession}"
-            })
+            datasets.append(
+                {
+                    "accession": accession,
+                    "title": title,
+                    "organism": taxon,
+                    "sample_count": n_samples,
+                    "summary": summary[:300] + ("..." if len(summary) > 300 else ""),
+                    "url": f"https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={accession}",
+                }
+            )
 
-        return {
-            "query": query,
-            "total_found": total_found,
-            "returned": len(datasets),
-            "datasets": datasets
-        }
+        return {"query": query, "total_found": total_found, "returned": len(datasets), "datasets": datasets}
     except Exception as e:
         logger.error(f"GEO search failed for {query}: {e}")
         return {"query": query, "error": str(e)}
 
 
-async def tool_get_gene_expression(
-    gene_symbol: str,
-    tissue_site: Optional[str] = None
-) -> Dict[str, Any]:
+async def tool_get_gene_expression(gene_symbol: str, tissue_site: Optional[str] = None) -> Dict[str, Any]:
     """
     Retrieve tissue-specific RNA expression (median TPM) and eQTL associations across
     54 non-diseased human tissues from GTEx Portal.
@@ -1078,20 +1007,16 @@ async def tool_get_gene_expression(
             unit = rec.get("unit", "TPM")
             if tissue_site and tissue_site.lower() not in str(tissue).lower():
                 continue
-            expression_profiles.append({
-                "tissue": tissue,
-                "median_tpm": median_tpm,
-                "unit": unit
-            })
+            expression_profiles.append({"tissue": tissue, "median_tpm": median_tpm, "unit": unit})
 
-        expression_profiles.sort(key=lambda x: (x["median_tpm"] or 0), reverse=True)
+        expression_profiles.sort(key=lambda x: x["median_tpm"] or 0, reverse=True)
 
         return {
             "gene_symbol": symbol,
             "filtered_tissue": tissue_site,
             "tissue_count": len(expression_profiles),
             "expression": expression_profiles[:20],
-            "gtex_url": f"https://gtexportal.org/home/gene/{symbol}"
+            "gtex_url": f"https://gtexportal.org/home/gene/{symbol}",
         }
     except Exception as e:
         logger.error(f"GTEx expression query failed for {gene_symbol}: {e}")
@@ -1118,49 +1043,41 @@ TOOLS_SCHEMA = [
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "Search keywords, gene symbols, disease names, or MeSH terms (e.g. 'KRAS G12D inhibitor', 'scRNA-seq batch correction')."
+                    "description": "Search keywords, gene symbols, disease names, or MeSH terms (e.g. 'KRAS G12D inhibitor', 'scRNA-seq batch correction').",
                 },
                 "max_results": {
                     "type": "integer",
                     "description": "Maximum articles to return (1-50, default 5).",
-                    "default": 5
+                    "default": 5,
                 },
                 "offset": {
                     "type": "integer",
                     "description": "Pagination offset / starting index (default: 0).",
-                    "default": 0
+                    "default": 0,
                 },
                 "sort": {
                     "type": "string",
                     "enum": ["pub_date", "relevance"],
                     "description": "Sort order ('pub_date' or 'relevance'). Default is 'pub_date'.",
-                    "default": "pub_date"
+                    "default": "pub_date",
                 },
                 "mindate": {
                     "type": "string",
-                    "description": "Earliest publication date (YYYY/MM/DD or YYYY, optional)."
+                    "description": "Earliest publication date (YYYY/MM/DD or YYYY, optional).",
                 },
-                "maxdate": {
-                    "type": "string",
-                    "description": "Latest publication date (YYYY/MM/DD or YYYY, optional)."
-                }
+                "maxdate": {"type": "string", "description": "Latest publication date (YYYY/MM/DD or YYYY, optional)."},
             },
-            "required": ["query"]
-        }
+            "required": ["query"],
+        },
     },
     {
         "name": "get_pubmed_article",
         "description": "Fetch complete abstract, author affiliations, MeSH terms, and citation metadata for a specific PubMed PMID.",
         "inputSchema": {
             "type": "object",
-            "properties": {
-                "pmid": {
-                    "type": "string",
-                    "description": "PubMed Identifier (PMID, e.g. '37123456')."
-                }
-            },
-            "required": ["pmid"]
-        }
+            "properties": {"pmid": {"type": "string", "description": "PubMed Identifier (PMID, e.g. '37123456')."}},
+            "required": ["pmid"],
+        },
     },
     {
         "name": "search_biorxiv",
@@ -1168,29 +1085,22 @@ TOOLS_SCHEMA = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "query": {
-                    "type": "string",
-                    "description": "Preprint search keywords or topics."
-                },
+                "query": {"type": "string", "description": "Preprint search keywords or topics."},
                 "server": {
                     "type": "string",
                     "enum": ["biorxiv", "medrxiv"],
                     "description": "Preprint server ('biorxiv' or 'medrxiv'). Default is 'biorxiv'.",
-                    "default": "biorxiv"
+                    "default": "biorxiv",
                 },
                 "limit": {
                     "type": "integer",
                     "description": "Maximum preprints to return (1-50, default 5).",
-                    "default": 5
+                    "default": 5,
                 },
-                "page": {
-                    "type": "integer",
-                    "description": "Page number (default 1).",
-                    "default": 1
-                }
+                "page": {"type": "integer", "description": "Page number (default 1).", "default": 1},
             },
-            "required": ["query"]
-        }
+            "required": ["query"],
+        },
     },
     {
         "name": "search_chembl",
@@ -1200,27 +1110,23 @@ TOOLS_SCHEMA = [
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "Molecule name, SMILES string, or target name (e.g. 'Aspirin', 'EGFR', 'Gefitinib')."
+                    "description": "Molecule name, SMILES string, or target name (e.g. 'Aspirin', 'EGFR', 'Gefitinib').",
                 },
                 "entity_type": {
                     "type": "string",
                     "enum": ["molecule", "target", "assay"],
                     "description": "Entity category to query ('molecule', 'target', or 'assay'). Default is 'molecule'.",
-                    "default": "molecule"
+                    "default": "molecule",
                 },
                 "limit": {
                     "type": "integer",
                     "description": "Maximum records to return (1-50, default 5).",
-                    "default": 5
+                    "default": 5,
                 },
-                "offset": {
-                    "type": "integer",
-                    "description": "Pagination offset (default 0).",
-                    "default": 0
-                }
+                "offset": {"type": "integer", "description": "Pagination offset (default 0).", "default": 0},
             },
-            "required": ["query"]
-        }
+            "required": ["query"],
+        },
     },
     {
         "name": "search_opentargets",
@@ -1230,27 +1136,23 @@ TOOLS_SCHEMA = [
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "Disease name, gene target, or drug (e.g. 'lung adenocarcinoma', 'BRAF', 'Imatinib')."
+                    "description": "Disease name, gene target, or drug (e.g. 'lung adenocarcinoma', 'BRAF', 'Imatinib').",
                 },
                 "entity_types": {
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "Entity types to include ('target', 'disease', 'drug'). Default is all.",
-                    "default": ["target", "disease", "drug"]
+                    "default": ["target", "disease", "drug"],
                 },
                 "limit": {
                     "type": "integer",
                     "description": "Maximum results to return (1-50, default 5).",
-                    "default": 5
+                    "default": 5,
                 },
-                "page_index": {
-                    "type": "integer",
-                    "description": "Page index (default 0).",
-                    "default": 0
-                }
+                "page_index": {"type": "integer", "description": "Page index (default 0).", "default": 0},
             },
-            "required": ["query"]
-        }
+            "required": ["query"],
+        },
     },
     {
         "name": "search_clinical_trials",
@@ -1260,29 +1162,26 @@ TOOLS_SCHEMA = [
             "properties": {
                 "condition": {
                     "type": "string",
-                    "description": "Disease or medical condition (e.g. 'Melanoma', 'Triple Negative Breast Cancer')."
+                    "description": "Disease or medical condition (e.g. 'Melanoma', 'Triple Negative Breast Cancer').",
                 },
                 "intervention": {
                     "type": "string",
                     "description": "Optional drug or therapy intervention (e.g. 'Pembrolizumab').",
-                    "default": ""
+                    "default": "",
                 },
                 "status": {
                     "type": "string",
-                    "description": "Recruitment status filter (e.g. 'RECRUITING', 'COMPLETED', 'ACTIVE_NOT_RECRUITING')."
+                    "description": "Recruitment status filter (e.g. 'RECRUITING', 'COMPLETED', 'ACTIVE_NOT_RECRUITING').",
                 },
                 "limit": {
                     "type": "integer",
                     "description": "Maximum trials to return (1-50, default 5).",
-                    "default": 5
+                    "default": 5,
                 },
-                "page_token": {
-                    "type": "string",
-                    "description": "Next page token for cursor pagination."
-                }
+                "page_token": {"type": "string", "description": "Next page token for cursor pagination."},
             },
-            "required": ["condition"]
-        }
+            "required": ["condition"],
+        },
     },
     {
         "name": "search_uniprot",
@@ -1292,21 +1191,21 @@ TOOLS_SCHEMA = [
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "Protein name, gene symbol, or accession ID (e.g. 'TP53', 'P04637', 'EGFR')."
+                    "description": "Protein name, gene symbol, or accession ID (e.g. 'TP53', 'P04637', 'EGFR').",
                 },
                 "organism": {
                     "type": "string",
                     "description": "Organism filter ('human', 'mouse', or scientific name). Default is 'human'.",
-                    "default": "human"
+                    "default": "human",
                 },
                 "limit": {
                     "type": "integer",
                     "description": "Maximum proteins to return (1-50, default 5).",
-                    "default": 5
-                }
+                    "default": 5,
+                },
             },
-            "required": ["query"]
-        }
+            "required": ["query"],
+        },
     },
     {
         "name": "search_ensembl",
@@ -1314,18 +1213,15 @@ TOOLS_SCHEMA = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "symbol": {
-                    "type": "string",
-                    "description": "Gene symbol (e.g. 'BRCA1', 'GAPDH', 'TNF')."
-                },
+                "symbol": {"type": "string", "description": "Gene symbol (e.g. 'BRCA1', 'GAPDH', 'TNF')."},
                 "species": {
                     "type": "string",
                     "description": "Species name ('human', 'mouse', 'rat', etc.). Default is 'human'.",
-                    "default": "human"
-                }
+                    "default": "human",
+                },
             },
-            "required": ["symbol"]
-        }
+            "required": ["symbol"],
+        },
     },
     {
         "name": "search_gnomad",
@@ -1335,14 +1231,14 @@ TOOLS_SCHEMA = [
             "properties": {
                 "gene_symbol": {
                     "type": "string",
-                    "description": "Gene symbol to query constraint metrics for (e.g. 'BRCA1', 'SCN1A')."
+                    "description": "Gene symbol to query constraint metrics for (e.g. 'BRCA1', 'SCN1A').",
                 },
                 "variant_id": {
                     "type": "string",
-                    "description": "Variant coordinate ID in chr-pos-ref-alt format (e.g. '13-32315508-C-T')."
-                }
-            }
-        }
+                    "description": "Variant coordinate ID in chr-pos-ref-alt format (e.g. '13-32315508-C-T').",
+                },
+            },
+        },
     },
     {
         "name": "search_pdb",
@@ -1352,16 +1248,16 @@ TOOLS_SCHEMA = [
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "Protein name, PDB ID, macromolecule name, or ligand (e.g. 'CRISPR Cas9', '7K43', 'Kinase')."
+                    "description": "Protein name, PDB ID, macromolecule name, or ligand (e.g. 'CRISPR Cas9', '7K43', 'Kinase').",
                 },
                 "limit": {
                     "type": "integer",
                     "description": "Maximum structures to return (1-50, default 5).",
-                    "default": 5
-                }
+                    "default": 5,
+                },
             },
-            "required": ["query"]
-        }
+            "required": ["query"],
+        },
     },
     {
         "name": "search_alphafold",
@@ -1371,11 +1267,11 @@ TOOLS_SCHEMA = [
             "properties": {
                 "uniprot_id": {
                     "type": "string",
-                    "description": "UniProt Accession ID (e.g. 'P04637', 'Q9BYF1', 'P38398')."
+                    "description": "UniProt Accession ID (e.g. 'P04637', 'Q9BYF1', 'P38398').",
                 }
             },
-            "required": ["uniprot_id"]
-        }
+            "required": ["uniprot_id"],
+        },
     },
     {
         "name": "search_reactome",
@@ -1385,21 +1281,21 @@ TOOLS_SCHEMA = [
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "Pathway name, gene symbol, or biological process (e.g. 'Apoptosis', 'EGFR signaling', 'Glycolysis')."
+                    "description": "Pathway name, gene symbol, or biological process (e.g. 'Apoptosis', 'EGFR signaling', 'Glycolysis').",
                 },
                 "species": {
                     "type": "string",
                     "description": "Species name (default: 'Homo sapiens').",
-                    "default": "Homo sapiens"
+                    "default": "Homo sapiens",
                 },
                 "limit": {
                     "type": "integer",
                     "description": "Maximum pathways to return (1-50, default 5).",
-                    "default": 5
-                }
+                    "default": 5,
+                },
             },
-            "required": ["query"]
-        }
+            "required": ["query"],
+        },
     },
     {
         "name": "search_string",
@@ -1409,26 +1305,26 @@ TOOLS_SCHEMA = [
             "properties": {
                 "gene_symbol": {
                     "type": "string",
-                    "description": "Gene symbol or protein identifier (e.g. 'TP53', 'CDK4', 'MDM2')."
+                    "description": "Gene symbol or protein identifier (e.g. 'TP53', 'CDK4', 'MDM2').",
                 },
                 "species": {
                     "type": "integer",
                     "description": "NCBI taxonomy ID (default 9606 for Homo sapiens).",
-                    "default": 9606
+                    "default": 9606,
                 },
                 "limit": {
                     "type": "integer",
                     "description": "Maximum interaction partners to return (1-50, default 10).",
-                    "default": 10
+                    "default": 10,
                 },
                 "required_score": {
                     "type": "integer",
                     "description": "Minimum interaction confidence score (0-1000, default 400 for medium confidence).",
-                    "default": 400
-                }
+                    "default": 400,
+                },
             },
-            "required": ["gene_symbol"]
-        }
+            "required": ["gene_symbol"],
+        },
     },
     {
         "name": "search_cosmic",
@@ -1436,13 +1332,10 @@ TOOLS_SCHEMA = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "gene_symbol": {
-                    "type": "string",
-                    "description": "Gene symbol (e.g. 'KRAS', 'PIK3CA', 'PTEN')."
-                }
+                "gene_symbol": {"type": "string", "description": "Gene symbol (e.g. 'KRAS', 'PIK3CA', 'PTEN')."}
             },
-            "required": ["gene_symbol"]
-        }
+            "required": ["gene_symbol"],
+        },
     },
     {
         "name": "search_geo",
@@ -1452,16 +1345,16 @@ TOOLS_SCHEMA = [
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "Genomics study keywords, disease condition, or cell type (e.g. 'Glioblastoma scRNA-seq', 'Immunotherapy resistance')."
+                    "description": "Genomics study keywords, disease condition, or cell type (e.g. 'Glioblastoma scRNA-seq', 'Immunotherapy resistance').",
                 },
                 "max_results": {
                     "type": "integer",
                     "description": "Maximum datasets to return (1-50, default 5).",
-                    "default": 5
-                }
+                    "default": 5,
+                },
             },
-            "required": ["query"]
-        }
+            "required": ["query"],
+        },
     },
     {
         "name": "get_gene_expression",
@@ -1469,18 +1362,15 @@ TOOLS_SCHEMA = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "gene_symbol": {
-                    "type": "string",
-                    "description": "Gene symbol (e.g. 'INS', 'GAPDH', 'HER2')."
-                },
+                "gene_symbol": {"type": "string", "description": "Gene symbol (e.g. 'INS', 'GAPDH', 'HER2')."},
                 "tissue_site": {
                     "type": "string",
-                    "description": "Optional tissue filter (e.g. 'Liver', 'Brain', 'Lung', 'Pancreas')."
-                }
+                    "description": "Optional tissue filter (e.g. 'Liver', 'Brain', 'Lung', 'Pancreas').",
+                },
             },
-            "required": ["gene_symbol"]
-        }
-    }
+            "required": ["gene_symbol"],
+        },
+    },
 ]
 
 
@@ -1522,38 +1412,38 @@ RESOURCES_SCHEMA = [
         "uri": "bionexus://workflows/drug_target_discovery",
         "name": "Drug Target Discovery Workflow Template",
         "description": "Production YAML DAG for multi-criteria drug target ranking and validation.",
-        "mimeType": "text/yaml"
+        "mimeType": "text/yaml",
     },
     {
         "uri": "bionexus://workflows/single_cell_atlas",
         "name": "Single Cell Atlas Workflow Template",
         "description": "Production YAML DAG for single-cell preprocessing, VAE training, and clustering.",
-        "mimeType": "text/yaml"
+        "mimeType": "text/yaml",
     },
     {
         "uri": "bionexus://workflows/variant_interpretation",
         "name": "Variant Interpretation Workflow Template",
         "description": "Production YAML DAG for ACMG/AMP clinical variant interpretation.",
-        "mimeType": "text/yaml"
+        "mimeType": "text/yaml",
     },
     {
         "uri": "bionexus://configs/acmg_rules",
         "name": "ACMG Classification Rules Configuration",
         "description": "28 ACMG/AMP evidence rules with likelihood ratios and Bayesian priors.",
-        "mimeType": "text/yaml"
+        "mimeType": "text/yaml",
     },
     {
         "uri": "bionexus://configs/germline_vgenes",
         "name": "Human Germline V-Gene Consensus Configuration",
         "description": "Human immunoglobulin heavy and light chain framework anchors and developability criteria.",
-        "mimeType": "text/yaml"
+        "mimeType": "text/yaml",
     },
     {
         "uri": "bionexus://configs/docking_params",
         "name": "Molecular Docking Parameters Configuration",
         "description": "AutoDock Vina and DiffDock parameter presets and drug-likeness rules.",
-        "mimeType": "text/yaml"
-    }
+        "mimeType": "text/yaml",
+    },
 ]
 
 PROMPTS_SCHEMA = [
@@ -1561,48 +1451,56 @@ PROMPTS_SCHEMA = [
         "name": "drug_target_analysis",
         "description": "Comprehensive drug target identification, tractability, and druggability evaluation prompt.",
         "arguments": [
-            {"name": "disease", "description": "Target disease indication (e.g. 'Non-small cell lung cancer')", "required": True},
-            {"name": "target_gene", "description": "Candidate target gene symbol (e.g. 'EGFR')", "required": True}
-        ]
+            {
+                "name": "disease",
+                "description": "Target disease indication (e.g. 'Non-small cell lung cancer')",
+                "required": True,
+            },
+            {"name": "target_gene", "description": "Candidate target gene symbol (e.g. 'EGFR')", "required": True},
+        ],
     },
     {
         "name": "variant_pathogenicity",
         "description": "Clinical genomic variant pathogenicity assessment adhering to ACMG/AMP guidelines.",
         "arguments": [
             {"name": "variant", "description": "Genomic variant in HGVS or chr-pos-ref-alt format", "required": True},
-            {"name": "disease", "description": "Associated clinical phenotype / condition", "required": True}
-        ]
+            {"name": "disease", "description": "Associated clinical phenotype / condition", "required": True},
+        ],
     },
     {
         "name": "antibody_developability_audit",
         "description": "Biophysical developability, CDR-H3 aggregation propensity, and humanness audit prompt for therapeutic antibodies.",
         "arguments": [
             {"name": "antibody_name", "description": "Antibody or clone identifier", "required": True},
-            {"name": "target_antigen", "description": "Target antigen symbol", "required": True}
-        ]
+            {"name": "target_antigen", "description": "Target antigen symbol", "required": True},
+        ],
     },
     {
         "name": "survival_biomarker_screening",
         "description": "Pan-cancer clinical cohort survival analysis, Kaplan-Meier stratification, and Cox HR modeling prompt.",
         "arguments": [
             {"name": "biomarker_gene", "description": "Candidate biomarker gene symbol", "required": True},
-            {"name": "cancer_cohort", "description": "Cancer cohort (e.g. 'TCGA-LUAD')", "required": True}
-        ]
+            {"name": "cancer_cohort", "description": "Cancer cohort (e.g. 'TCGA-LUAD')", "required": True},
+        ],
     },
     {
         "name": "spatial_niche_discovery",
         "description": "Spatial transcriptomics tumor microenvironment niche and ligand-receptor analysis prompt.",
         "arguments": [
-            {"name": "tissue_type", "description": "Tissue sample type (e.g. 'Colorectal tumor slice')", "required": True}
-        ]
+            {
+                "name": "tissue_type",
+                "description": "Tissue sample type (e.g. 'Colorectal tumor slice')",
+                "required": True,
+            }
+        ],
     },
     {
         "name": "single_cell_integration",
         "description": "Multi-batch scRNA-seq integration, VAE hyperparameter tuning, and marker gene analysis prompt.",
         "arguments": [
             {"name": "dataset_summary", "description": "Summary of batches, cell count, and platform", "required": True}
-        ]
-    }
+        ],
+    },
 ]
 
 
@@ -1693,27 +1591,45 @@ def get_resource_content(uri: str) -> str:
     resource_map = {
         "bionexus://workflows/drug_target_discovery": os.path.join(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            "skills", "research-workflow-orchestrator", "templates", "drug_target_discovery.yml",
+            "skills",
+            "research-workflow-orchestrator",
+            "templates",
+            "drug_target_discovery.yml",
         ),
         "bionexus://workflows/single_cell_atlas": os.path.join(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            "skills", "research-workflow-orchestrator", "templates", "single_cell_atlas.yml",
+            "skills",
+            "research-workflow-orchestrator",
+            "templates",
+            "single_cell_atlas.yml",
         ),
         "bionexus://workflows/variant_interpretation": os.path.join(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            "skills", "research-workflow-orchestrator", "templates", "variant_interpretation.yml",
+            "skills",
+            "research-workflow-orchestrator",
+            "templates",
+            "variant_interpretation.yml",
         ),
         "bionexus://configs/acmg_rules": os.path.join(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            "skills", "variant-interpretation", "configs", "acmg_rules.yml",
+            "skills",
+            "variant-interpretation",
+            "configs",
+            "acmg_rules.yml",
         ),
         "bionexus://configs/germline_vgenes": os.path.join(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            "skills", "biologics-design", "configs", "germline_vgenes.yml",
+            "skills",
+            "biologics-design",
+            "configs",
+            "germline_vgenes.yml",
         ),
         "bionexus://configs/docking_params": os.path.join(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            "skills", "protein-structure-analysis", "configs", "docking_params.yml",
+            "skills",
+            "protein-structure-analysis",
+            "configs",
+            "docking_params.yml",
         ),
     }
     path = resource_map.get(uri)
@@ -1765,6 +1681,7 @@ def get_prompt_content(name: str, arguments: Optional[Dict[str, Any]] = None) ->
 
 # --- Official MCP Python SDK Server Factory ---
 
+
 def create_mcp_server():
     """Create and configure the official FastMCP Server for BioNexus."""
     if FastMCP is None:
@@ -1772,57 +1689,101 @@ def create_mcp_server():
 
     mcp = FastMCP("bionexus-local-mcp")
 
-    @mcp.tool(name="search_uniprot", description="Search UniProtKB for protein metadata, sequences, and functional annotations.")
+    @mcp.tool(
+        name="search_uniprot",
+        description="Search UniProtKB for protein metadata, sequences, and functional annotations.",
+    )
     async def search_uniprot(query: str, organism: str = "human", limit: int = 5) -> str:
         res = await tool_search_uniprot(query=query, organism=organism, limit=limit)
         return json.dumps(res, indent=2, ensure_ascii=False)
 
-    @mcp.tool(name="search_ensembl", description="Search Ensembl REST API for gene symbols, stable IDs, genomic coordinates, and transcripts.")
+    @mcp.tool(
+        name="search_ensembl",
+        description="Search Ensembl REST API for gene symbols, stable IDs, genomic coordinates, and transcripts.",
+    )
     async def search_ensembl(symbol: str, species: str = "human") -> str:
         res = await tool_search_ensembl(symbol=symbol, species=species)
         return json.dumps(res, indent=2, ensure_ascii=False)
 
-    @mcp.tool(name="search_gnomad", description="Search gnomAD GraphQL API for gene constraint metrics (pLI, LOEUF) and variant population frequencies.")
+    @mcp.tool(
+        name="search_gnomad",
+        description="Search gnomAD GraphQL API for gene constraint metrics (pLI, LOEUF) and variant population frequencies.",
+    )
     async def search_gnomad(gene_symbol: Optional[str] = None, variant_id: Optional[str] = None) -> str:
         res = await tool_search_gnomad(gene_symbol=gene_symbol, variant_id=variant_id)
         return json.dumps(res, indent=2, ensure_ascii=False)
 
-    @mcp.tool(name="search_pdb", description="Search RCSB Protein Data Bank (PDB) for 3D macromolecular experimental structures.")
+    @mcp.tool(
+        name="search_pdb",
+        description="Search RCSB Protein Data Bank (PDB) for 3D macromolecular experimental structures.",
+    )
     async def search_pdb(query: str, limit: int = 5) -> str:
         res = await tool_search_pdb(query=query, limit=limit)
         return json.dumps(res, indent=2, ensure_ascii=False)
 
-    @mcp.tool(name="search_alphafold", description="Search AlphaFold DB for AI-predicted 3D protein structures, global pLDDT confidence, and PDB download URLs.")
+    @mcp.tool(
+        name="search_alphafold",
+        description="Search AlphaFold DB for AI-predicted 3D protein structures, global pLDDT confidence, and PDB download URLs.",
+    )
     async def search_alphafold(uniprot_id: str) -> str:
         res = await tool_search_alphafold(uniprot_id=uniprot_id)
         return json.dumps(res, indent=2, ensure_ascii=False)
 
-    @mcp.tool(name="search_reactome", description="Search Reactome Pathway Knowledgebase for biological pathways and reaction networks.")
+    @mcp.tool(
+        name="search_reactome",
+        description="Search Reactome Pathway Knowledgebase for biological pathways and reaction networks.",
+    )
     async def search_reactome(query: str, species: str = "Homo sapiens", limit: int = 5) -> str:
         res = await tool_search_reactome(query=query, species=species, limit=limit)
         return json.dumps(res, indent=2, ensure_ascii=False)
 
-    @mcp.tool(name="search_string", description="Search STRING database for functional and physical protein-protein interaction networks.")
+    @mcp.tool(
+        name="search_string",
+        description="Search STRING database for functional and physical protein-protein interaction networks.",
+    )
     async def search_string(gene_symbol: str, species: int = 9606, limit: int = 10, required_score: int = 400) -> str:
-        res = await tool_search_string(gene_symbol=gene_symbol, species=species, limit=limit, required_score=required_score)
+        res = await tool_search_string(
+            gene_symbol=gene_symbol, species=species, limit=limit, required_score=required_score
+        )
         return json.dumps(res, indent=2, ensure_ascii=False)
 
-    @mcp.tool(name="search_geo", description="Search NCBI Gene Expression Omnibus (GEO) for functional genomics datasets, expression microarrays, and RNA-seq studies.")
+    @mcp.tool(
+        name="search_geo",
+        description="Search NCBI Gene Expression Omnibus (GEO) for functional genomics datasets, expression microarrays, and RNA-seq studies.",
+    )
     async def search_geo(query: str, max_results: int = 5) -> str:
         res = await tool_search_geo(query=query, max_results=max_results)
         return json.dumps(res, indent=2, ensure_ascii=False)
 
-    @mcp.tool(name="get_gene_expression", description="Query GTEx Portal for median RNA gene expression across 54 human non-diseased tissue sites.")
+    @mcp.tool(
+        name="get_gene_expression",
+        description="Query GTEx Portal for median RNA gene expression across 54 human non-diseased tissue sites.",
+    )
     async def get_gene_expression(gene_symbol: str, tissue_site: Optional[str] = None) -> str:
         res = await tool_get_gene_expression(gene_symbol=gene_symbol, tissue_site=tissue_site)
         return json.dumps(res, indent=2, ensure_ascii=False)
 
-    @mcp.tool(name="search_pubmed", description="Search NCBI PubMed for biomedical literature with pagination and date filters.")
-    async def search_pubmed(query: str, max_results: int = 5, offset: int = 0, sort: str = "pub_date", mindate: Optional[str] = None, maxdate: Optional[str] = None) -> str:
-        res = await tool_search_pubmed(query=query, max_results=max_results, offset=offset, sort=sort, mindate=mindate, maxdate=maxdate)
+    @mcp.tool(
+        name="search_pubmed",
+        description="Search NCBI PubMed for biomedical literature with pagination and date filters.",
+    )
+    async def search_pubmed(
+        query: str,
+        max_results: int = 5,
+        offset: int = 0,
+        sort: str = "pub_date",
+        mindate: Optional[str] = None,
+        maxdate: Optional[str] = None,
+    ) -> str:
+        res = await tool_search_pubmed(
+            query=query, max_results=max_results, offset=offset, sort=sort, mindate=mindate, maxdate=maxdate
+        )
         return json.dumps(res, indent=2, ensure_ascii=False)
 
-    @mcp.tool(name="get_pubmed_article", description="Retrieve full metadata, abstract, and DOI/PMC links for a specific PubMed PMID.")
+    @mcp.tool(
+        name="get_pubmed_article",
+        description="Retrieve full metadata, abstract, and DOI/PMC links for a specific PubMed PMID.",
+    )
     async def get_pubmed_article(pmid: str) -> str:
         res = await tool_get_pubmed_article(pmid=pmid)
         return json.dumps(res, indent=2, ensure_ascii=False)
@@ -1832,22 +1793,44 @@ def create_mcp_server():
         res = await tool_search_biorxiv(query=query, server=server, limit=limit, page=page)
         return json.dumps(res, indent=2, ensure_ascii=False)
 
-    @mcp.tool(name="search_chembl", description="Query ChEMBL database for bioactive molecules, drug targets, or bioactivity assays.")
+    @mcp.tool(
+        name="search_chembl",
+        description="Query ChEMBL database for bioactive molecules, drug targets, or bioactivity assays.",
+    )
     async def search_chembl(query: str, entity_type: str = "molecule", limit: int = 5, offset: int = 0) -> str:
         res = await tool_search_chembl(query=query, entity_type=entity_type, limit=limit, offset=offset)
         return json.dumps(res, indent=2, ensure_ascii=False)
 
-    @mcp.tool(name="search_opentargets", description="Search Open Targets Platform GraphQL API for disease targets, evidence, and drug associations.")
-    async def search_opentargets(query: str, entity_types: Optional[List[str]] = None, limit: int = 5, page_index: int = 0) -> str:
+    @mcp.tool(
+        name="search_opentargets",
+        description="Search Open Targets Platform GraphQL API for disease targets, evidence, and drug associations.",
+    )
+    async def search_opentargets(
+        query: str, entity_types: Optional[List[str]] = None, limit: int = 5, page_index: int = 0
+    ) -> str:
         res = await tool_search_opentargets(query=query, entity_types=entity_types, limit=limit, page_index=page_index)
         return json.dumps(res, indent=2, ensure_ascii=False)
 
-    @mcp.tool(name="search_clinical_trials", description="Search ClinicalTrials.gov API v2 for active and completed interventional/observational clinical studies.")
-    async def search_clinical_trials(condition: str = "", intervention: str = "", status: Optional[str] = None, limit: int = 5, page_token: Optional[str] = None) -> str:
-        res = await tool_search_clinical_trials(condition=condition, intervention=intervention, status=status, limit=limit, page_token=page_token)
+    @mcp.tool(
+        name="search_clinical_trials",
+        description="Search ClinicalTrials.gov API v2 for active and completed interventional/observational clinical studies.",
+    )
+    async def search_clinical_trials(
+        condition: str = "",
+        intervention: str = "",
+        status: Optional[str] = None,
+        limit: int = 5,
+        page_token: Optional[str] = None,
+    ) -> str:
+        res = await tool_search_clinical_trials(
+            condition=condition, intervention=intervention, status=status, limit=limit, page_token=page_token
+        )
         return json.dumps(res, indent=2, ensure_ascii=False)
 
-    @mcp.tool(name="search_cosmic", description="Search local CGC gene hint and Ensembl cross-reference (Research-use only; not the official COSMIC API).")
+    @mcp.tool(
+        name="search_cosmic",
+        description="Search local CGC gene hint and Ensembl cross-reference (Research-use only; not the official COSMIC API).",
+    )
     async def search_cosmic(gene_symbol: str) -> str:
         res = await tool_search_cosmic(gene_symbol=gene_symbol)
         return json.dumps(res, indent=2, ensure_ascii=False)
@@ -1886,11 +1869,17 @@ def create_mcp_server():
 
     @mcp.prompt("antibody_developability_audit")
     def prompt_antibody_developability_audit(antibody_name: str = "Unknown Antibody", sequence: str = "") -> str:
-        return get_prompt_content("antibody_developability_audit", {"antibody_name": antibody_name, "sequence": sequence})
+        return get_prompt_content(
+            "antibody_developability_audit", {"antibody_name": antibody_name, "sequence": sequence}
+        )
 
     @mcp.prompt("survival_biomarker_screening")
-    def prompt_survival_biomarker_screening(biomarker_gene: str = "Unknown Gene", cancer_cohort: str = "Unknown Cohort") -> str:
-        return get_prompt_content("survival_biomarker_screening", {"biomarker_gene": biomarker_gene, "cancer_cohort": cancer_cohort})
+    def prompt_survival_biomarker_screening(
+        biomarker_gene: str = "Unknown Gene", cancer_cohort: str = "Unknown Cohort"
+    ) -> str:
+        return get_prompt_content(
+            "survival_biomarker_screening", {"biomarker_gene": biomarker_gene, "cancer_cohort": cancer_cohort}
+        )
 
     @mcp.prompt("spatial_niche_discovery")
     def prompt_spatial_niche_discovery(tissue_type: str = "Unknown Tissue") -> str:
@@ -1904,6 +1893,7 @@ def create_mcp_server():
 
 
 # --- Compatibility Layer: Protocol Handshake & Dispatcher ---
+
 
 async def handle_rpc_request_async(req: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     """
@@ -2080,6 +2070,7 @@ async def handle_rpc_request_async(req: Dict[str, Any]) -> Optional[Dict[str, An
 
 # --- Async Stdio Main Loop & Entry Point ---
 
+
 async def async_stdio_reader():
     """Asynchronous stdin reader supporting standard input lines."""
     loop = asyncio.get_running_loop()
@@ -2123,14 +2114,16 @@ async def process_single_rpc(req: Dict[str, Any]):
     except Exception as e:
         logger.error(f"Unexpected error processing RPC request: {e}")
         if "id" in req:
-            write_json_response({
-                "jsonrpc": "2.0",
-                "id": req.get("id"),
-                "error": {
-                    "code": -32603,
-                    "message": f"Internal RPC error: {str(e)}",
-                },
-            })
+            write_json_response(
+                {
+                    "jsonrpc": "2.0",
+                    "id": req.get("id"),
+                    "error": {
+                        "code": -32603,
+                        "message": f"Internal RPC error: {str(e)}",
+                    },
+                }
+            )
 
 
 def main():

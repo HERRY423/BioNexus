@@ -57,11 +57,13 @@ def test_peak_gene_cis_linking(synthetic_multiome_data):
     """Test peak-to-gene correlation calculation."""
     rna, atac, gene_names = synthetic_multiome_data
     gene_annot = [{"name": g, "chrom": "chr1", "tss": 10000 + i * 5000, "index": i} for i, g in enumerate(gene_names)]
-    peak_annot = [{"peak_id": f"chr1:{10000+j*5000}", "chrom": "chr1", "center": 10200 + j * 5000, "index": j} for j in range(30)]
+    peak_annot = [
+        {"peak_id": f"chr1:{10000 + j * 5000}", "chrom": "chr1", "center": 10200 + j * 5000, "index": j}
+        for j in range(30)
+    ]
 
     links_df = calculate_peak_gene_correlations(
-        rna, atac, gene_annot, peak_annot,
-        max_distance_bp=50000, min_correlation=0.20, max_p_value=0.05
+        rna, atac, gene_annot, peak_annot, max_distance_bp=50000, min_correlation=0.20, max_p_value=0.05
     )
     assert isinstance(links_df, pd.DataFrame)
     if not links_df.empty:
@@ -98,10 +100,9 @@ def test_grn_inference_and_aucell(synthetic_multiome_data):
     if not coexpr_df.empty:
         assert "importance" in coexpr_df.columns
 
-    dummy_peaks_df = pd.DataFrame([
-        {"gene_symbol": "CDK4", "peak_id": "peak_1"},
-        {"gene_symbol": "MDM2", "peak_id": "peak_2"}
-    ])
+    dummy_peaks_df = pd.DataFrame(
+        [{"gene_symbol": "CDK4", "peak_id": "peak_1"}, {"gene_symbol": "MDM2", "peak_id": "peak_2"}]
+    )
     regulons = prune_grn_with_cis_motifs(coexpr_df, dummy_peaks_df, {"TP53": ["peak_1", "peak_2"]})
     assert isinstance(regulons, dict)
 
@@ -111,8 +112,8 @@ def test_grn_inference_and_aucell(synthetic_multiome_data):
             "targets": ["CDK4", "MDM2"],
             "target_details": [
                 {"target_gene": "CDK4", "importance": 0.3, "mode": "Activator (+)"},
-                {"target_gene": "MDM2", "importance": 0.25, "mode": "Activator (+)"}
-            ]
+                {"target_gene": "MDM2", "importance": 0.25, "mode": "Activator (+)"},
+            ],
         }
     }
     auc_df = calculate_aucell_activity(rna, gene_names, sample_regulons)

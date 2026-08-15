@@ -14,14 +14,7 @@ import os
 import sys
 
 
-def integrate_datasets(
-    adatas,
-    batch_names=None,
-    labels_key=None,
-    n_top_genes=2000,
-    n_latent=30,
-    max_epochs=200
-):
+def integrate_datasets(adatas, batch_names=None, labels_key=None, n_top_genes=2000, n_latent=30, max_epochs=200):
     """
     Integrate multiple datasets.
 
@@ -79,13 +72,7 @@ def integrate_datasets(
 
     # HVG selection
     print(f"Selecting {n_top_genes} HVGs...")
-    sc.pp.highly_variable_genes(
-        adata,
-        n_top_genes=n_top_genes,
-        flavor="seurat_v3",
-        batch_key="batch",
-        layer="counts"
-    )
+    sc.pp.highly_variable_genes(adata, n_top_genes=n_top_genes, flavor="seurat_v3", batch_key="batch", layer="counts")
     adata = adata[:, adata.var["highly_variable"]].copy()
 
     # Train model
@@ -98,11 +85,7 @@ def integrate_datasets(
         scvi_model.train(max_epochs=max_epochs, early_stopping=True)
 
         # Then scANVI
-        model = scvi.model.SCANVI.from_scvi_model(
-            scvi_model,
-            labels_key=labels_key,
-            unlabeled_category="Unknown"
-        )
+        model = scvi.model.SCANVI.from_scvi_model(scvi_model, labels_key=labels_key, unlabeled_category="Unknown")
         model.train(max_epochs=max_epochs // 4)
 
         adata.obsm["X_scANVI"] = model.get_latent_representation()
@@ -133,10 +116,7 @@ def plot_integration(adata, output_dir, labels_key=None):
     import matplotlib.pyplot as plt
     import scanpy as sc
 
-    plots = [
-        ("batch", "By Batch"),
-        ("leiden", "Clusters")
-    ]
+    plots = [("batch", "By Batch"), ("leiden", "Clusters")]
 
     if labels_key is not None and labels_key in adata.obs.columns:
         plots.append((labels_key, f"Cell Types ({labels_key})"))
@@ -173,7 +153,7 @@ Examples:
 
     # With cell type labels (uses scANVI)
     python integrate_datasets.py results/ *.h5ad --labels-key cell_type
-        """
+        """,
     )
     parser.add_argument("output_dir", help="Output directory")
     parser.add_argument("inputs", nargs="+", help="Input h5ad files")
@@ -214,7 +194,7 @@ Examples:
         labels_key=args.labels_key,
         n_top_genes=args.n_hvgs,
         n_latent=args.n_latent,
-        max_epochs=args.max_epochs
+        max_epochs=args.max_epochs,
     )
 
     # Save results

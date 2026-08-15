@@ -14,12 +14,7 @@ import os
 import sys
 
 
-def transfer_labels(
-    reference_model,
-    adata_query,
-    max_epochs=100,
-    confidence_threshold=0.5
-):
+def transfer_labels(reference_model, adata_query, max_epochs=100, confidence_threshold=0.5):
     """
     Transfer labels from reference to query.
 
@@ -48,7 +43,7 @@ def transfer_labels(
     query_genes = adata_query.var_names
     common = ref_genes.intersection(query_genes)
     print(f"Query genes: {len(query_genes)}")
-    print(f"Common genes: {len(common)} ({len(common)/len(ref_genes)*100:.1f}%)")
+    print(f"Common genes: {len(common)} ({len(common) / len(ref_genes) * 100:.1f}%)")
 
     if len(common) < len(ref_genes) * 0.5:
         print("Warning: Less than 50% gene overlap. Results may be unreliable.")
@@ -67,17 +62,11 @@ def transfer_labels(
 
     # Create query model
     print("Creating query model...")
-    query_model = scvi.model.SCANVI.load_query_data(
-        adata_query,
-        reference_model
-    )
+    query_model = scvi.model.SCANVI.load_query_data(adata_query, reference_model)
 
     # Fine-tune
     print(f"Fine-tuning ({max_epochs} epochs)...")
-    query_model.train(
-        max_epochs=max_epochs,
-        plan_kwargs={"weight_decay": 0.0}
-    )
+    query_model.train(max_epochs=max_epochs, plan_kwargs={"weight_decay": 0.0})
 
     # Get predictions
     print("Getting predictions...")
@@ -95,7 +84,7 @@ def transfer_labels(
     n_confident = adata_query.obs["confident_prediction"].sum()
     print("\nPrediction summary:")
     print(f"  Total cells: {adata_query.n_obs}")
-    print(f"  Confident (>= {confidence_threshold}): {n_confident} ({n_confident/adata_query.n_obs*100:.1f}%)")
+    print(f"  Confident (>= {confidence_threshold}): {n_confident} ({n_confident / adata_query.n_obs * 100:.1f}%)")
     print(f"  Mean confidence: {adata_query.obs['prediction_confidence'].mean():.3f}")
 
     print("\nPredicted cell types:")
@@ -117,12 +106,11 @@ def plot_predictions(adata, output_dir):
     # Plot
     fig, axes = plt.subplots(1, 3, figsize=(15, 4))
 
-    sc.pl.umap(adata, color="predicted_cell_type", ax=axes[0], show=False,
-               title="Predicted Cell Type")
-    sc.pl.umap(adata, color="prediction_confidence", ax=axes[1], show=False,
-               title="Prediction Confidence", cmap="viridis")
-    sc.pl.umap(adata, color="confident_prediction", ax=axes[2], show=False,
-               title="Confident Predictions")
+    sc.pl.umap(adata, color="predicted_cell_type", ax=axes[0], show=False, title="Predicted Cell Type")
+    sc.pl.umap(
+        adata, color="prediction_confidence", ax=axes[1], show=False, title="Prediction Confidence", cmap="viridis"
+    )
+    sc.pl.umap(adata, color="confident_prediction", ax=axes[2], show=False, title="Confident Predictions")
 
     plt.tight_layout()
     plot_path = os.path.join(output_dir, "predictions.png")
@@ -145,16 +133,14 @@ Examples:
 
     # More fine-tuning
     python transfer_labels.py reference_model/ query.h5ad results/ --max-epochs 200
-        """
+        """,
     )
     parser.add_argument("model_dir", help="Directory containing reference scANVI model")
     parser.add_argument("query", help="Query h5ad file to annotate")
     parser.add_argument("output_dir", help="Output directory")
     parser.add_argument("--reference-adata", help="Reference adata used for training (if not saved with model)")
-    parser.add_argument("--max-epochs", type=int, default=100,
-                        help="Fine-tuning epochs (default: 100)")
-    parser.add_argument("--confidence", type=float, default=0.5,
-                        help="Confidence threshold (default: 0.5)")
+    parser.add_argument("--max-epochs", type=int, default=100, help="Fine-tuning epochs (default: 100)")
+    parser.add_argument("--confidence", type=float, default=0.5, help="Confidence threshold (default: 0.5)")
 
     args = parser.parse_args()
 
@@ -191,10 +177,7 @@ Examples:
 
     # Transfer labels
     adata_annotated, query_model = transfer_labels(
-        reference_model,
-        adata_query,
-        max_epochs=args.max_epochs,
-        confidence_threshold=args.confidence
+        reference_model, adata_query, max_epochs=args.max_epochs, confidence_threshold=args.confidence
     )
 
     # Save results

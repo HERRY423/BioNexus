@@ -49,7 +49,9 @@ def test_causal_de_overclaim_detection():
     assert any(v.violation_type == ClaimViolationType.CAUSAL_TREATMENT_DE_OVERCLAIM for v in res.violations)
 
     # Good text stating cannot prove
-    good_text = "Marker p-values from rank_genes_groups cannot prove causal treatment effects without biological replicates."
+    good_text = (
+        "Marker p-values from rank_genes_groups cannot prove causal treatment effects without biological replicates."
+    )
     res_good = audit_prohibited_claims(good_text)
     assert res_good.passed is True
 

@@ -35,7 +35,7 @@ def synthesize_multimodal_evidence(
         "chemogenomics": 0.90 if has_potent_ligands else 0.30,
         "single_cell_specificity": 0.85 if single_cell_enriched else 0.40,
         "spatial_microenvironment": 0.85 if spatial_niche_active else 0.45,
-        "clinical_genomics": 0.95 if clinical_variants_pathogenic else 0.50
+        "clinical_genomics": 0.95 if clinical_variants_pathogenic else 0.50,
     }
 
     # Weights: Genetics (25%), Structure (20%), Chemistry (15%), scRNA (15%), Spatial (15%), Clinical (10%)
@@ -45,7 +45,7 @@ def synthesize_multimodal_evidence(
         "chemogenomics": 0.15,
         "single_cell_specificity": 0.15,
         "spatial_microenvironment": 0.15,
-        "clinical_genomics": 0.10
+        "clinical_genomics": 0.10,
     }
 
     composite_score = sum(evidence_scores[k] * weights[k] for k in weights)
@@ -93,6 +93,7 @@ def main():
     args = parser.parse_args()
     res = synthesize_multimodal_evidence(args.target, args.disease)
     import json
+
     print(json.dumps(res, indent=2))
 
 

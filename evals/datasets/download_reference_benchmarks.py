@@ -67,9 +67,11 @@ def download_benchmark(dataset_name: str, dest_dir: Path) -> Path:
     # Fallback to deterministic local gold standard generation
     if dataset_name == "pbmc3k_scrna":
         from tests.fixtures.make_tiny import write_tiny_scrna
+
         write_tiny_scrna(out_path, n_per=100, n_genes=500)
     elif dataset_name == "visium_mouse_brain":
         from tests.fixtures.make_tiny import write_tiny_spatial
+
         write_tiny_spatial(out_path, n_side=16, n_genes=200)
     elif dataset_name == "clinvar_controls":
         controls = [

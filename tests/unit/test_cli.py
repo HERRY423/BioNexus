@@ -59,7 +59,6 @@ def test_cli_doctor_json(capsys):
     assert "backends" in data
 
 
-
 def test_cli_list_skills(capsys):
     """Test bionexus list-skills."""
     ret = main(["list-skills"])

@@ -151,20 +151,14 @@ def test_registry_compiler_cli():
 
     # Test --check
     proc_check = subprocess.run(
-        [sys.executable, str(cli_path), "--check"],
-        capture_output=True,
-        text=True,
-        cwd=str(_REPO_ROOT)
+        [sys.executable, str(cli_path), "--check"], capture_output=True, text=True, cwd=str(_REPO_ROOT)
     )
     assert proc_check.returncode == 0
     assert "strictly in sync" in proc_check.stdout
 
     # Test --validate-endpoints
     proc_val = subprocess.run(
-        [sys.executable, str(cli_path), "--validate-endpoints"],
-        capture_output=True,
-        text=True,
-        cwd=str(_REPO_ROOT)
+        [sys.executable, str(cli_path), "--validate-endpoints"], capture_output=True, text=True, cwd=str(_REPO_ROOT)
     )
     assert proc_val.returncode == 0
     assert "Endpoint syntax validated successfully" in proc_val.stdout

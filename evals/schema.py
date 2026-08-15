@@ -17,21 +17,21 @@ from typing import Any, Dict, List, Optional
 class EvalLevel(str, Enum):
     """Multi-tier benchmark hierarchy."""
 
-    L1_ROUTER = "L1"    # L1: Router & Precondition Contract Regression
-    L2_AGENT = "L2"     # L2: Host-Agent Claim & Anti-Hallucination Behavior
-    L3_OUTCOME = "L3"   # L3: Scientific Biological Outcome & Planted Truth Recovery
+    L1_ROUTER = "L1"  # L1: Router & Precondition Contract Regression
+    L2_AGENT = "L2"  # L2: Host-Agent Claim & Anti-Hallucination Behavior
+    L3_OUTCOME = "L3"  # L3: Scientific Biological Outcome & Planted Truth Recovery
     ALL = "ALL"
 
 
 class EvalCategory(str, Enum):
     """Benchmark evaluation categories."""
 
-    ROUTING = "routing"                    # Intent recognition and capability matching (L1)
-    REFUSAL = "refusal"                    # Deterministic refusal of invalid analyses (L1)
+    ROUTING = "routing"  # Intent recognition and capability matching (L1)
+    REFUSAL = "refusal"  # Deterministic refusal of invalid analyses (L1)
     CAPABILITY_CLAIM = "capability_claim"  # Anti-hallucination of capabilities and cell types (L1/L2)
     SCIENTIFIC_SEMANTICS = "scientific_semantics"  # Data semantics: raw vs log, cell vs sample (L1)
-    BACKEND_FAILURE = "backend_failure"    # Missing backend degradation and fallback honesty (L1)
-    ADVERSARIAL = "adversarial"            # Adversarial prompts attempting invariant bypass (L1/L2)
+    BACKEND_FAILURE = "backend_failure"  # Missing backend degradation and fallback honesty (L1)
+    ADVERSARIAL = "adversarial"  # Adversarial prompts attempting invariant bypass (L1/L2)
     HOST_AGENT_CLAIM = "host_agent_claim"  # L2 generated response prohibited claim audit
     SCIENTIFIC_OUTCOME = "scientific_outcome"  # L3 biological ground truth & statistics recovery
 

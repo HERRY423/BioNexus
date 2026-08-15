@@ -57,8 +57,11 @@ def load_spatial_anndata(file_path: str, platform: str = "visium"):
     if "spatial" not in adata.obsm:
         # Check alternative coordinate columns in obs
         coord_cols = [
-            ("x", "y"), ("X", "Y"), ("imagecol", "imagerow"),
-            ("array_col", "array_row"), ("spatial_x", "spatial_y")
+            ("x", "y"),
+            ("X", "Y"),
+            ("imagecol", "imagerow"),
+            ("array_col", "array_row"),
+            ("spatial_x", "spatial_y"),
         ]
         found = False
         for x_col, y_col in coord_cols:
@@ -68,19 +71,12 @@ def load_spatial_anndata(file_path: str, platform: str = "visium"):
                 found = True
                 break
         if not found:
-            raise ValueError(
-                "No spatial coordinates in obsm['spatial'] or obs x/y columns. "
-                "Refusing to invent a grid."
-            )
+            raise ValueError("No spatial coordinates in obsm['spatial'] or obs x/y columns. Refusing to invent a grid.")
 
     return adata
 
 
-def calculate_spatial_qc_metrics(
-    adata,
-    spatial_key: str = "spatial",
-    n_spatial_neighbors: int = 6
-) -> Dict[str, Any]:
+def calculate_spatial_qc_metrics(adata, spatial_key: str = "spatial", n_spatial_neighbors: int = 6) -> Dict[str, Any]:
     """
     Calculate comprehensive spatial transcriptomics quality control metrics:
       - Library size (total counts per spot/cell)
@@ -134,7 +130,7 @@ def calculate_spatial_qc_metrics(
         "median_counts": float(np.median(total_counts)),
         "median_genes": float(np.median(n_genes_by_counts)),
         "median_pct_mt": float(np.median(pct_counts_mt)),
-        "n_spatial_outliers": int(np.sum(adata.obs["is_spatial_outlier"]))
+        "n_spatial_outliers": int(np.sum(adata.obs["is_spatial_outlier"])),
     }
     return summary
 
@@ -145,34 +141,36 @@ def filter_spatial_spots(
     min_genes: int = 200,
     max_pct_mt: float = 25.0,
     in_tissue_only: bool = True,
-    remove_spatial_outliers: bool = False
+    remove_spatial_outliers: bool = False,
 ):
     """Filter spots/cells according to spatial transcriptomics criteria."""
     n_init = adata.n_obs
     mask = np.ones(n_init, dtype=bool)
 
     if in_tissue_only and "in_tissue" in adata.obs:
-        mask &= (adata.obs["in_tissue"].astype(int) == 1)
+        mask &= adata.obs["in_tissue"].astype(int) == 1
 
     if "total_counts" in adata.obs:
-        mask &= (adata.obs["total_counts"] >= min_counts)
+        mask &= adata.obs["total_counts"] >= min_counts
 
     if "n_genes_by_counts" in adata.obs:
-        mask &= (adata.obs["n_genes_by_counts"] >= min_genes)
+        mask &= adata.obs["n_genes_by_counts"] >= min_genes
 
     if "pct_counts_mt" in adata.obs:
-        mask &= (adata.obs["pct_counts_mt"] <= max_pct_mt)
+        mask &= adata.obs["pct_counts_mt"] <= max_pct_mt
 
     if remove_spatial_outliers and "is_spatial_outlier" in adata.obs:
-        mask &= (~adata.obs["is_spatial_outlier"])
+        mask &= ~adata.obs["is_spatial_outlier"]
 
     adata_filtered = adata[mask].copy()
     n_retained = adata_filtered.n_obs
-    logger.info(f"Spatial filtering: {n_init} -> {n_retained} spots ({n_retained/n_init*100:.1f}% retained).")
+    logger.info(f"Spatial filtering: {n_init} -> {n_retained} spots ({n_retained / n_init * 100:.1f}% retained).")
     return adata_filtered
 
 
-def normalize_spatial_coordinates(adata, spatial_key: str = "spatial", target_range: Tuple[float, float] = (0.0, 1000.0)):
+def normalize_spatial_coordinates(
+    adata, spatial_key: str = "spatial", target_range: Tuple[float, float] = (0.0, 1000.0)
+):
     """Min-max normalize spatial coordinates into standard coordinate frame."""
     coords = adata.obsm[spatial_key].copy().astype(float)
     c_min = coords.min(axis=0)
@@ -189,7 +187,9 @@ def main():
     parser = argparse.ArgumentParser(description="Spatial Transcriptomics Preprocessing & QC")
     parser.add_argument("--input", "-i", required=True, help="Input AnnData .h5ad or 10X .h5 file")
     parser.add_argument("--output", "-o", required=True, help="Output filtered .h5ad file")
-    parser.add_argument("--platform", default="visium", choices=["visium", "visium_hd", "xenium", "merfish", "cosmx", "stereoseq"])
+    parser.add_argument(
+        "--platform", default="visium", choices=["visium", "visium_hd", "xenium", "merfish", "cosmx", "stereoseq"]
+    )
     parser.add_argument("--min-counts", type=int, default=300, help="Minimum total UMI counts per spot")
     parser.add_argument("--min-genes", type=int, default=200, help="Minimum detected genes per spot")
     parser.add_argument("--max-mt", type=float, default=20.0, help="Maximum mitochondrial count percentage")
@@ -202,7 +202,10 @@ def main():
     spatial_key = platform_cfg.get("default_spatial_key", "spatial")
     logger.info(
         "Platform %s: min_counts=%s min_genes=%s n_neighbors=%s (from platform_configs.yml when present).",
-        args.platform, min_counts, min_genes, n_neighbors,
+        args.platform,
+        min_counts,
+        min_genes,
+        n_neighbors,
     )
     adata = load_spatial_anndata(args.input, platform=args.platform)
     if "platform" not in adata.uns:
@@ -211,12 +214,7 @@ def main():
     summary = calculate_spatial_qc_metrics(adata, spatial_key=spatial_key, n_spatial_neighbors=n_neighbors)
     logger.info(f"Initial QC Summary: {summary}")
 
-    adata_filtered = filter_spatial_spots(
-        adata,
-        min_counts=min_counts,
-        min_genes=min_genes,
-        max_pct_mt=args.max_mt
-    )
+    adata_filtered = filter_spatial_spots(adata, min_counts=min_counts, min_genes=min_genes, max_pct_mt=args.max_mt)
     normalize_spatial_coordinates(adata_filtered)
 
     os.makedirs(os.path.dirname(os.path.abspath(args.output)) or ".", exist_ok=True)

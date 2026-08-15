@@ -24,10 +24,10 @@ class ExecutionState(str, Enum):
     """
 
     PERMITTED = "PERMITTED"  # Preflight preconditions satisfied, execution permitted but not yet run
-    EXECUTED = "EXECUTED"    # Official gold-standard backend/code executed properly
-    DEGRADED = "DEGRADED"    # Heuristic fallback, partial stack, or approximate parameters
-    REFUSED = "REFUSED"      # Deterministically refused (missing required backend/hard gate)
-    FAILED = "FAILED"        # Runtime crash, exception, divergence, convergence failure
+    EXECUTED = "EXECUTED"  # Official gold-standard backend/code executed properly
+    DEGRADED = "DEGRADED"  # Heuristic fallback, partial stack, or approximate parameters
+    REFUSED = "REFUSED"  # Deterministically refused (missing required backend/hard gate)
+    FAILED = "FAILED"  # Runtime crash, exception, divergence, convergence failure
 
 
 class DimensionGrade(str, Enum):
@@ -37,14 +37,14 @@ class DimensionGrade(str, Enum):
     CRITICAL: UNTESTED != GRADE_C (tested and fragile/violated).
     """
 
-    GRADE_A = "A"               # Gold standard / Strong statistical support / Verified input
-    GRADE_B = "B"               # Moderate / Plausible / Standard assumed distribution
-    GRADE_C = "C"               # Marginal / Violated assumption / Suspect data scaling / Fragile
-    UNTESTED = "UNTESTED"              # Dimension was not evaluated in this run
-    UNASSESSED = "UNASSESSED"          # Preflight / unexecuted state
+    GRADE_A = "A"  # Gold standard / Strong statistical support / Verified input
+    GRADE_B = "B"  # Moderate / Plausible / Standard assumed distribution
+    GRADE_C = "C"  # Marginal / Violated assumption / Suspect data scaling / Fragile
+    UNTESTED = "UNTESTED"  # Dimension was not evaluated in this run
+    UNASSESSED = "UNASSESSED"  # Preflight / unexecuted state
     NOT_APPLICABLE = "NOT_APPLICABLE"  # Dimension does not apply to this method
-    INSUFFICIENT = "INSUFFICIENT"      # Evaluated, but sample size or statistical power is inadequate
-    CONFLICTED = "CONFLICTED"          # Evaluated across methods, results are contradictory
+    INSUFFICIENT = "INSUFFICIENT"  # Evaluated, but sample size or statistical power is inadequate
+    CONFLICTED = "CONFLICTED"  # Evaluated across methods, results are contradictory
 
 
 class ConclusionMaturity(str, Enum):
@@ -87,8 +87,7 @@ INSUFFICIENT = DimensionGrade.INSUFFICIENT.value
 CONFLICTED = DimensionGrade.CONFLICTED.value
 
 RESEARCH_USE_ONLY = (
-    "Research-use only. Not a clinical diagnostic, not CLIA/CAP validated, "
-    "and not an authorized medical device."
+    "Research-use only. Not a clinical diagnostic, not CLIA/CAP validated, and not an authorized medical device."
 )
 
 
@@ -174,10 +173,7 @@ class EvidenceCard:
         return "\n".join(lines)
 
 
-def synthesize_conclusion_maturity(
-    card: EvidenceCard | Dict[str, Any],
-    abstain: bool = False
-) -> str:
+def synthesize_conclusion_maturity(card: EvidenceCard | Dict[str, Any], abstain: bool = False) -> str:
     """
     Synthesize Layer 3 ConclusionMaturity from Layer 1 ExecutionState and Layer 2 Dimensions.
 
@@ -280,10 +276,7 @@ def synthesize_conclusion_maturity(
     return ConclusionMaturity.PRELIMINARY.value
 
 
-def synthesize_conclusion_status(
-    card: EvidenceCard | Dict[str, Any],
-    abstain: bool = False
-) -> str:
+def synthesize_conclusion_status(card: EvidenceCard | Dict[str, Any], abstain: bool = False) -> str:
     """Backward compatibility alias for synthesize_conclusion_maturity."""
     maturity = synthesize_conclusion_maturity(card, abstain=abstain)
     # If legacy callers expect TENTATIVE for PRELIMINARY
@@ -332,7 +325,7 @@ def attach_meta(
             input_integrity=GRADE_A if evidence_grade in (GRADE_A, GRADE_B) else GRADE_C,
             assumption_validity=GRADE_B if evidence_grade == GRADE_A else GRADE_C,
             statistical_support=GRADE_B if evidence_grade == GRADE_A else GRADE_C,
-            details={"execution_backend": backend, "method": method}
+            details={"execution_backend": backend, "method": method},
         )
     elif isinstance(evidence_card, EvidenceCard):
         card = evidence_card
@@ -366,7 +359,7 @@ def refuse(
         parameter_robustness=DimensionGrade.UNTESTED.value,
         cross_method_concordance=DimensionGrade.UNTESTED.value,
         external_validation=DimensionGrade.UNTESTED.value,
-        details={"refusal_reason": reason}
+        details={"refusal_reason": reason},
     )
     return attach_meta(
         payload,

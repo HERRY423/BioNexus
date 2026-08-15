@@ -438,9 +438,7 @@ def generate_notebook(vendor: str, output_path: str) -> None:
 def main():
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Export parser code for data engineers"
-    )
+    parser = argparse.ArgumentParser(description="Export parser code for data engineers")
     parser.add_argument("--vendor", help="Vendor enum name (e.g., VI_CELL_BLU)")
     parser.add_argument("--output", "-o", help="Output file path")
     parser.add_argument(
@@ -449,9 +447,7 @@ def main():
         default="script",
         help="Output format (default: script)",
     )
-    parser.add_argument(
-        "--list-vendors", action="store_true", help="List supported vendors"
-    )
+    parser.add_argument("--list-vendors", action="store_true", help="List supported vendors")
 
     args = parser.parse_args()
 

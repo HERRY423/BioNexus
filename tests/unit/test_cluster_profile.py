@@ -15,7 +15,7 @@ def test_generate_slurm_profile():
         qos="high",
         max_memory="512.GB",
         max_cpus=128,
-        container_engine="singularity"
+        container_engine="singularity",
     )
 
     assert "executor = 'slurm'" in config_str
@@ -32,7 +32,7 @@ def test_generate_aws_batch_profile():
     config_str = generate_cloud_profile(
         provider="aws",
         queue_or_region="arn:aws:batch:us-east-1:123456789:job-queue/bio-queue",
-        work_bucket="s3://my-lab-bucket/work"
+        work_bucket="s3://my-lab-bucket/work",
     )
 
     assert "executor = 'awsbatch'" in config_str
@@ -46,7 +46,7 @@ def test_generate_google_batch_profile():
         provider="google",
         queue_or_region="us-central1",
         project="bionexus-gcp-prod",
-        work_bucket="gs://bionexus-bucket/work"
+        work_bucket="gs://bionexus-bucket/work",
     )
 
     assert "executor = 'google-batch'" in config_str

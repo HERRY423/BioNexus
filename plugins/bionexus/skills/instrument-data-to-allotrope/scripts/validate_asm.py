@@ -402,9 +402,7 @@ class ValidationResult:
             else:
                 print("PASSED - No issues found")
         else:
-            print(
-                f"FAILED - {len(self.errors)} error(s), {len(self.warnings)} warning(s)"
-            )
+            print(f"FAILED - {len(self.errors)} error(s), {len(self.warnings)} warning(s)")
         print("=" * 60 + "\n")
 
 
@@ -476,8 +474,7 @@ def validate_technique(asm: Dict, result: ValidationResult, content_str: str):
 
     if suggested_technique:
         result.add_warning(
-            f"Content suggests '{suggested_technique}' but ASM uses '{technique}' - "
-            "verify correct technique selection"
+            f"Content suggests '{suggested_technique}' but ASM uses '{technique}' - verify correct technique selection"
         )
 
 
@@ -546,10 +543,7 @@ def validate_statistics(asm: Dict, content_str: str, result: ValidationResult):
     """Check for statistics documents where expected."""
     technique, _ = detect_technique(asm)
 
-    has_stats = (
-        "statistics aggregate document" in content_str.lower()
-        or "statistics-aggregate-document" in content_str
-    )
+    has_stats = "statistics aggregate document" in content_str.lower() or "statistics-aggregate-document" in content_str
 
     result.metrics["has_statistics"] = has_stats
 
@@ -609,10 +603,7 @@ def validate_metadata(content_str: str, result: ValidationResult):
 
     missing = []
     for _, field in required_fields:
-        if (
-            field not in content_str.lower()
-            and field.replace(" ", "-") not in content_str
-        ):
+        if field not in content_str.lower() and field.replace(" ", "-") not in content_str:
             missing.append(field)
 
     if missing:
@@ -623,13 +614,9 @@ def validate_calculated_data(content_str: str, result: ValidationResult):
     """Check calculated data has proper traceability."""
     content_lower = content_str.lower()
 
-    has_calculated = (
-        "calculated data document" in content_lower
-        or "calculated-data-document" in content_str
-    )
+    has_calculated = "calculated data document" in content_lower or "calculated-data-document" in content_str
     has_data_source = (
-        "data source aggregate document" in content_lower
-        or "data-source-aggregate-document" in content_str
+        "data source aggregate document" in content_lower or "data-source-aggregate-document" in content_str
     )
 
     result.metrics["has_calculated_data"] = has_calculated
@@ -658,45 +645,31 @@ def validate_calculated_data(content_str: str, result: ValidationResult):
     if misplaced:
         result.add_warning(
             f"Fields that should likely be in calculated-data-document: {misplaced[:5]}"
-            + (f" ... and {len(misplaced)-5} more" if len(misplaced) > 5 else "")
+            + (f" ... and {len(misplaced) - 5} more" if len(misplaced) > 5 else "")
         )
 
 
 def validate_unique_identifiers(content_str: str, result: ValidationResult):
     """Validate that entities have unique identifiers for traceability."""
     # Count different identifier types
-    measurement_ids = len(
-        re.findall(r'"measurement identifier":\s*"[^"]+"', content_str)
-    )
+    measurement_ids = len(re.findall(r'"measurement identifier":\s*"[^"]+"', content_str))
     if measurement_ids == 0:
-        measurement_ids = len(
-            re.findall(r'"measurement-identifier":\s*"[^"]+"', content_str)
-        )
+        measurement_ids = len(re.findall(r'"measurement-identifier":\s*"[^"]+"', content_str))
 
-    calculated_ids = len(
-        re.findall(r'"calculated data identifier":\s*"[^"]+"', content_str)
-    )
+    calculated_ids = len(re.findall(r'"calculated data identifier":\s*"[^"]+"', content_str))
     if calculated_ids == 0:
-        calculated_ids = len(
-            re.findall(r'"calculated-data-identifier":\s*"[^"]+"', content_str)
-        )
+        calculated_ids = len(re.findall(r'"calculated-data-identifier":\s*"[^"]+"', content_str))
 
-    data_source_ids = len(
-        re.findall(r'"data source identifier":\s*"[^"]+"', content_str)
-    )
+    data_source_ids = len(re.findall(r'"data source identifier":\s*"[^"]+"', content_str))
     if data_source_ids == 0:
-        data_source_ids = len(
-            re.findall(r'"data-source-identifier":\s*"[^"]+"', content_str)
-        )
+        data_source_ids = len(re.findall(r'"data-source-identifier":\s*"[^"]+"', content_str))
 
     result.metrics["measurement_identifiers"] = measurement_ids
     result.metrics["calculated_data_identifiers"] = calculated_ids
     result.metrics["data_source_identifiers"] = data_source_ids
 
     if measurement_ids == 0:
-        result.add_warning(
-            "No measurement identifiers found - required for traceability"
-        )
+        result.add_warning("No measurement identifiers found - required for traceability")
 
     # If we have calculated data but no data source identifiers, that's a problem
     if calculated_ids > 0 and data_source_ids == 0:
@@ -711,9 +684,7 @@ def validate_unique_identifiers(content_str: str, result: ValidationResult):
 # =============================================================================
 
 
-def validate_nested_document_structure(
-    asm: Dict, content_str: str, result: ValidationResult
-):
+def validate_nested_document_structure(asm: Dict, content_str: str, result: ValidationResult):
     """
     Validate that fields are properly nested in their correct documents.
 
@@ -725,16 +696,12 @@ def validate_nested_document_structure(
     content_lower = content_str.lower()
 
     # Check if proper nested documents exist
-    has_sample_doc = (
-        '"sample document"' in content_lower or '"sample-document"' in content_str
-    )
+    has_sample_doc = '"sample document"' in content_lower or '"sample-document"' in content_str
     has_device_control_doc = (
-        '"device control aggregate document"' in content_lower
-        or '"device-control-aggregate-document"' in content_str
+        '"device control aggregate document"' in content_lower or '"device-control-aggregate-document"' in content_str
     )
     has_custom_info_doc = (
-        '"custom information document"' in content_lower
-        or '"custom-information-document"' in content_str
+        '"custom information document"' in content_lower or '"custom-information-document"' in content_str
     )
 
     result.metrics["has_sample_document"] = has_sample_doc
@@ -748,18 +715,10 @@ def validate_nested_document_structure(
 
         if isinstance(obj, dict):
             # Check if we're inside a measurement document
-            in_measurement = (
-                "measurement document" in path.lower() or "measurement-document" in path
-            )
-            in_sample_doc = (
-                "sample document" in path.lower() or "sample-document" in path
-            )
-            in_device_control = (
-                "device control" in path.lower() or "device-control" in path
-            )
-            in_custom_info = (
-                "custom information" in path.lower() or "custom-information" in path
-            )
+            in_measurement = "measurement document" in path.lower() or "measurement-document" in path
+            in_sample_doc = "sample document" in path.lower() or "sample-document" in path
+            in_device_control = "device control" in path.lower() or "device-control" in path
+            in_custom_info = "custom information" in path.lower() or "custom-information" in path
 
             for key, value in obj.items():
                 key_normalized = key.lower().replace("-", " ")
@@ -767,21 +726,15 @@ def validate_nested_document_structure(
 
                 # Check if this key should be nested but isn't
                 if in_measurement and not in_sample_doc:
-                    if key_normalized in [
-                        f.lower().replace("-", " ") for f in SAMPLE_DOCUMENT_FIELDS
-                    ]:
+                    if key_normalized in [f.lower().replace("-", " ") for f in SAMPLE_DOCUMENT_FIELDS]:
                         issues["sample"].append(key)
 
                 if in_measurement and not in_device_control:
-                    if key_normalized in [
-                        f.lower().replace("-", " ") for f in DEVICE_CONTROL_FIELDS
-                    ]:
+                    if key_normalized in [f.lower().replace("-", " ") for f in DEVICE_CONTROL_FIELDS]:
                         issues["device_control"].append(key)
 
                 if in_measurement and not in_custom_info:
-                    if key_normalized in [
-                        f.lower().replace("-", " ") for f in CUSTOM_INFO_FIELDS
-                    ]:
+                    if key_normalized in [f.lower().replace("-", " ") for f in CUSTOM_INFO_FIELDS]:
                         issues["custom"].append(key)
 
                 # Recurse
@@ -791,9 +744,7 @@ def validate_nested_document_structure(
 
         elif isinstance(obj, list):
             for i, item in enumerate(obj):
-                child_issues = find_flattened_fields_in_measurements(
-                    item, f"{path}[{i}]"
-                )
+                child_issues = find_flattened_fields_in_measurements(item, f"{path}[{i}]")
                 for k in issues:
                     issues[k].extend(child_issues[k])
 
@@ -809,22 +760,16 @@ def validate_nested_document_structure(
         result.add_error(
             f"Fields that should be nested in 'sample document' are flattened on measurement: "
             f"{flattened_sample_fields[:5]}"
-            + (
-                f" ... and {len(flattened_sample_fields)-5} more"
-                if len(flattened_sample_fields) > 5
-                else ""
-            )
+            + (f" ... and {len(flattened_sample_fields) - 5} more" if len(flattened_sample_fields) > 5 else "")
         )
-        result.add_info(
-            "Tip: Wrap sample fields in a 'sample document' object inside each measurement"
-        )
+        result.add_info("Tip: Wrap sample fields in a 'sample document' object inside each measurement")
 
     if flattened_device_control_fields:
         result.add_error(
             f"Fields that should be nested in 'device control aggregate document' are flattened: "
             f"{flattened_device_control_fields[:5]}"
             + (
-                f" ... and {len(flattened_device_control_fields)-5} more"
+                f" ... and {len(flattened_device_control_fields) - 5} more"
                 if len(flattened_device_control_fields) > 5
                 else ""
             )
@@ -837,17 +782,11 @@ def validate_nested_document_structure(
         result.add_warning(
             f"Vendor-specific fields that should be in 'custom information document': "
             f"{flattened_custom_fields[:5]}"
-            + (
-                f" ... and {len(flattened_custom_fields)-5} more"
-                if len(flattened_custom_fields) > 5
-                else ""
-            )
+            + (f" ... and {len(flattened_custom_fields) - 5} more" if len(flattened_custom_fields) > 5 else "")
         )
 
 
-def validate_liquid_handler_structure(
-    asm: Dict, content_str: str, result: ValidationResult
-):
+def validate_liquid_handler_structure(asm: Dict, content_str: str, result: ValidationResult):
     """
     Specific validation for liquid handler ASM documents.
 
@@ -862,10 +801,7 @@ def validate_liquid_handler_structure(
     if "liquid" not in technique.lower() and "handler" not in technique.lower():
         # Also check content for liquid handler indicators
         content_lower = content_str.lower()
-        if not any(
-            kw in content_lower
-            for kw in ["aspirate", "dispense", "liquid handler", "biomek"]
-        ):
+        if not any(kw in content_lower for kw in ["aspirate", "dispense", "liquid handler", "biomek"]):
             return
 
     result.add_info("Liquid handler specific validation...")
@@ -873,17 +809,9 @@ def validate_liquid_handler_structure(
     content_lower = content_str.lower()
 
     # Check for proper volume field structure
-    has_aspiration_volume = (
-        "aspiration volume" in content_lower or "aspiration-volume" in content_str
-    )
-    has_transfer_volume = (
-        "transfer volume" in content_lower or "transfer-volume" in content_str
-    )
-    has_single_volume = (
-        '"volume"' in content_str
-        and not has_aspiration_volume
-        and not has_transfer_volume
-    )
+    has_aspiration_volume = "aspiration volume" in content_lower or "aspiration-volume" in content_str
+    has_transfer_volume = "transfer volume" in content_lower or "transfer-volume" in content_str
+    has_single_volume = '"volume"' in content_str and not has_aspiration_volume and not has_transfer_volume
 
     if has_single_volume and not has_aspiration_volume:
         result.add_warning(
@@ -895,15 +823,11 @@ def validate_liquid_handler_structure(
         result.add_info("Volume fields: Proper aspiration/transfer volume structure")
 
     # Check for source/destination pairing
-    has_source_dest = (
-        "source location" in content_lower or "source-location" in content_str
-    ) and (
+    has_source_dest = ("source location" in content_lower or "source-location" in content_str) and (
         "destination location" in content_lower or "destination-location" in content_str
     )
 
-    has_separate_transfer_type = (
-        "transfer type" in content_lower or "transfer-type" in content_str
-    )
+    has_separate_transfer_type = "transfer type" in content_lower or "transfer-type" in content_str
 
     if has_separate_transfer_type and not has_source_dest:
         result.add_warning(
@@ -911,23 +835,16 @@ def validate_liquid_handler_structure(
             "proper ASM pairs source→destination in single measurement with 'source location identifier' "
             "and 'destination location identifier'"
         )
-        result.add_info(
-            "Tip: Pair aspirate+dispense operations by probe number into single transfer measurements"
-        )
+        result.add_info("Tip: Pair aspirate+dispense operations by probe number into single transfer measurements")
 
     if has_source_dest:
         result.add_info("Source/destination: Proper paired transfer structure")
 
     # Check for labware name fields in custom information document
-    has_labware_names = (
-        "source labware name" in content_lower
-        or "destination labware name" in content_lower
-    )
+    has_labware_names = "source labware name" in content_lower or "destination labware name" in content_lower
 
     if has_labware_names:
-        result.add_info(
-            "Labware names: Present (should be in custom information document)"
-        )
+        result.add_info("Labware names: Present (should be in custom information document)")
 
 
 def compare_to_reference(
@@ -945,9 +862,7 @@ def compare_to_reference(
     ref_tech, _ = detect_technique(reference)
 
     if gen_tech.replace("-", " ") != ref_tech.replace("-", " "):
-        result.add_error(
-            f"Technique mismatch: generated '{gen_tech}' vs reference '{ref_tech}'"
-        )
+        result.add_error(f"Technique mismatch: generated '{gen_tech}' vs reference '{ref_tech}'")
 
     # Compare measurement counts
     gen_count = count_measurements(content_str)
@@ -958,13 +873,9 @@ def compare_to_reference(
     if gen_count != ref_count:
         diff = ref_count - gen_count
         if diff > 0:
-            result.add_error(
-                f"Missing {diff} measurements: generated {gen_count} vs reference {ref_count}"
-            )
+            result.add_error(f"Missing {diff} measurements: generated {gen_count} vs reference {ref_count}")
         else:
-            result.add_warning(
-                f"Extra {-diff} measurements: generated {gen_count} vs reference {ref_count}"
-            )
+            result.add_warning(f"Extra {-diff} measurements: generated {gen_count} vs reference {ref_count}")
 
     # Compare sample roles
     gen_roles = set(re.findall(r'"sample.role.type":\s*"([^"]+)"', content_str))
@@ -976,43 +887,32 @@ def compare_to_reference(
 
     # Compare nested document presence
     ref_has_sample_doc = '"sample document"' in ref_content.lower()
-    gen_has_sample_doc = (
-        '"sample document"' in content_str.lower() or '"sample-document"' in content_str
-    )
+    gen_has_sample_doc = '"sample document"' in content_str.lower() or '"sample-document"' in content_str
 
     if ref_has_sample_doc and not gen_has_sample_doc:
         result.add_error(
             "Reference has 'sample document' but generated ASM does not - fields may be incorrectly flattened"
         )
 
-    ref_has_device_control = (
-        '"device control aggregate document"' in ref_content.lower()
-    )
+    ref_has_device_control = '"device control aggregate document"' in ref_content.lower()
     gen_has_device_control = (
         '"device control aggregate document"' in content_str.lower()
         or '"device-control-aggregate-document"' in content_str
     )
 
     if ref_has_device_control and not gen_has_device_control:
-        result.add_error(
-            "Reference has 'device control aggregate document' but generated ASM does not"
-        )
+        result.add_error("Reference has 'device control aggregate document' but generated ASM does not")
 
     ref_has_custom_info = '"custom information document"' in ref_content.lower()
     gen_has_custom_info = (
-        '"custom information document"' in content_str.lower()
-        or '"custom-information-document"' in content_str
+        '"custom information document"' in content_str.lower() or '"custom-information-document"' in content_str
     )
 
     if ref_has_custom_info and not gen_has_custom_info:
-        result.add_warning(
-            "Reference has 'custom information document' for vendor fields but generated ASM does not"
-        )
+        result.add_warning("Reference has 'custom information document' for vendor fields but generated ASM does not")
 
 
-def validate_asm(
-    filepath: str, reference_path: Optional[str] = None, strict: bool = False
-) -> ValidationResult:
+def validate_asm(filepath: str, reference_path: Optional[str] = None, strict: bool = False) -> ValidationResult:
     """
     Validate ASM JSON file.
 
@@ -1078,9 +978,7 @@ def main():
     parser = argparse.ArgumentParser(description="Validate ASM JSON output")
     parser.add_argument("input", help="ASM JSON file to validate")
     parser.add_argument("--reference", "-r", help="Reference ASM file for comparison")
-    parser.add_argument(
-        "--strict", "-s", action="store_true", help="Treat warnings as errors"
-    )
+    parser.add_argument("--strict", "-s", action="store_true", help="Treat warnings as errors")
     parser.add_argument("--quiet", "-q", action="store_true", help="Only show errors")
 
     args = parser.parse_args()

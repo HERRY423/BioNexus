@@ -14,9 +14,7 @@ import numpy as np
 
 
 def audit_expression_matrix(
-    X: Any,
-    expected_type: str = "counts",
-    sample_size: int = 2000
+    X: Any, expected_type: str = "counts", sample_size: int = 2000
 ) -> Tuple[str, List[str], Dict[str, Any]]:
     """
     Audit expression matrix data semantics and numeric health.
@@ -53,6 +51,7 @@ def audit_expression_matrix(
     # Fast sampling
     try:
         import scipy.sparse as sp
+
         if sp.issparse(X):
             stats["is_sparse"] = True
             data = X.data
@@ -126,10 +125,7 @@ def audit_expression_matrix(
     return "B", notes, stats
 
 
-def audit_spatial_coordinates(
-    coords: Any,
-    min_spots: int = 5
-) -> Tuple[str, List[str], Dict[str, Any]]:
+def audit_spatial_coordinates(coords: Any, min_spots: int = 5) -> Tuple[str, List[str], Dict[str, Any]]:
     """
     Audit spatial coordinate matrix for geometric validity.
 
@@ -186,7 +182,7 @@ def audit_statistical_significance(
     pvals: Optional[np.ndarray | List[float]] = None,
     fdr_q: Optional[np.ndarray | List[float]] = None,
     effect_sizes: Optional[np.ndarray | List[float]] = None,
-    alpha: float = 0.05
+    alpha: float = 0.05,
 ) -> Tuple[str, List[str], Dict[str, Any]]:
     """
     Audit statistical findings power and effect size significance.
@@ -257,6 +253,7 @@ def audit_parameter_stability(
     if metric == "ari":
         try:
             from sklearn.metrics import adjusted_rand_score
+
             for i in range(len(runs)):
                 for j in range(i + 1, len(runs)):
                     score = adjusted_rand_score(runs[i], runs[j])
@@ -287,9 +284,12 @@ def audit_parameter_stability(
         notes.append(f"High parameter stability across {len(runs)} sweeps (mean {metric.upper()}={mean_score:.3f}).")
         return "A", notes, stats
     elif mean_score >= (tolerance_threshold - 0.25):
-        notes.append(f"Moderate parameter sensitivity across {len(runs)} sweeps (mean {metric.upper()}={mean_score:.3f}).")
+        notes.append(
+            f"Moderate parameter sensitivity across {len(runs)} sweeps (mean {metric.upper()}={mean_score:.3f})."
+        )
         return "B", notes, stats
     else:
-        notes.append(f"Fragile parameter sensitivity across {len(runs)} sweeps (mean {metric.upper()}={mean_score:.3f} < {tolerance_threshold}).")
+        notes.append(
+            f"Fragile parameter sensitivity across {len(runs)} sweeps (mean {metric.upper()}={mean_score:.3f} < {tolerance_threshold})."
+        )
         return "C", notes, stats
-

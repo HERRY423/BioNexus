@@ -17,10 +17,7 @@ logger = logging.getLogger("SyntheticLethality")
 
 
 def analyze_synthetic_lethal_interaction(
-    driver_gene: str,
-    target_gene: str,
-    ceres_scores_mutant: np.ndarray,
-    ceres_scores_wt: np.ndarray
+    driver_gene: str, target_gene: str, ceres_scores_mutant: np.ndarray, ceres_scores_wt: np.ndarray
 ) -> Dict[str, Any]:
     """
     Evaluate synthetic lethality between a driver mutation and a candidate target gene.

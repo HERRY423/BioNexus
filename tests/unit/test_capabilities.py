@@ -85,6 +85,7 @@ def test_pseudobulk_de_precondition_replicates_refusal():
         input_metadata={"min_replicates_per_condition": 3, "is_integer_like": True},
     )
     from bionexus.backends import is_available
+
     if is_available("pydeseq2"):
         assert eval_valid.permitted is True
         assert eval_valid.status == "PERMITTED"
@@ -168,4 +169,3 @@ def test_preflight_vs_postexecution_evidence_distinction():
     assert card.parameter_robustness == "UNTESTED"
     assert card.external_validation == "UNTESTED"
     assert card.details["evaluation_stage"] == "preflight_viability"
-

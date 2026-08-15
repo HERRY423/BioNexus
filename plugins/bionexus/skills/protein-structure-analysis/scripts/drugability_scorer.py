@@ -19,7 +19,7 @@ def evaluate_target_tractability(
     mean_plddt: float = 85.0,
     has_chembl_ligands: bool = True,
     open_targets_score: float = 0.65,
-    is_extracellular: bool = False
+    is_extracellular: bool = False,
 ) -> Dict[str, Any]:
     """
     Compute multi-modal target tractability & druggability assessment.
@@ -44,39 +44,49 @@ def evaluate_target_tractability(
     # Modality Feasibility Assessment
     modalities = []
     if pocket_druggability >= 0.50 and pocket_volume >= 250.0:
-        modalities.append({
-            "modality": "Small Molecule (SMOL)",
-            "feasibility": "High",
-            "rationale": f"High-confidence druggable pocket detected (Volume: {pocket_volume:.1f} A^3, Score: {pocket_druggability:.2f})."
-        })
+        modalities.append(
+            {
+                "modality": "Small Molecule (SMOL)",
+                "feasibility": "High",
+                "rationale": f"High-confidence druggable pocket detected (Volume: {pocket_volume:.1f} A^3, Score: {pocket_druggability:.2f}).",
+            }
+        )
     elif pocket_druggability >= 0.35:
-        modalities.append({
-            "modality": "Small Molecule (SMOL)",
-            "feasibility": "Moderate",
-            "rationale": "Shallow or moderately enclosed pocket; may require covalent or fragment-based screening."
-        })
+        modalities.append(
+            {
+                "modality": "Small Molecule (SMOL)",
+                "feasibility": "Moderate",
+                "rationale": "Shallow or moderately enclosed pocket; may require covalent or fragment-based screening.",
+            }
+        )
     else:
-        modalities.append({
-            "modality": "Small Molecule (SMOL)",
-            "feasibility": "Low / Undruggable Pocket",
-            "rationale": "Lack of well-defined concave binding cavity."
-        })
+        modalities.append(
+            {
+                "modality": "Small Molecule (SMOL)",
+                "feasibility": "Low / Undruggable Pocket",
+                "rationale": "Lack of well-defined concave binding cavity.",
+            }
+        )
 
     # PROTAC / Targeted Protein Degradation
     if struct_score >= 0.50:
-        modalities.append({
-            "modality": "PROTAC / Molecular Glue",
-            "feasibility": "High",
-            "rationale": "Accessible surface binder pocket suitable for bifunctional degrader conjugation."
-        })
+        modalities.append(
+            {
+                "modality": "PROTAC / Molecular Glue",
+                "feasibility": "High",
+                "rationale": "Accessible surface binder pocket suitable for bifunctional degrader conjugation.",
+            }
+        )
 
     # Biologics / Antibodies
     if is_extracellular:
-        modalities.append({
-            "modality": "Monoclonal Antibody / ADC",
-            "feasibility": "High",
-            "rationale": "Target possesses extracellular topological domain accessible to therapeutic antibodies."
-        })
+        modalities.append(
+            {
+                "modality": "Monoclonal Antibody / ADC",
+                "feasibility": "High",
+                "rationale": "Target possesses extracellular topological domain accessible to therapeutic antibodies.",
+            }
+        )
 
     # Overall Tractability Tier
     if composite_score >= 0.75:
@@ -95,7 +105,7 @@ def evaluate_target_tractability(
         "genetic_score": round(float(gen_score), 3),
         "top_pocket_volume_a3": pocket_volume,
         "top_pocket_druggability": pocket_druggability,
-        "modality_recommendations": modalities
+        "modality_recommendations": modalities,
     }
 
 
@@ -108,6 +118,7 @@ def main():
     sample_pocket = [{"pocket_id": 1, "druggability_score": 0.78, "volume_angstrom3": 450.0}]
     res = evaluate_target_tractability(args.gene, sample_pocket, mean_plddt=args.plddt)
     import json
+
     print(json.dumps(res, indent=2))
 
 

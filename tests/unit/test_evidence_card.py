@@ -214,11 +214,7 @@ def test_audit_parameter_stability():
 
 def test_audit_expression_matrix_raw_counts():
     """Verify integer count matrix is recognized as Grade A counts."""
-    dense_counts = np.array([
-        [0, 5, 12, 0],
-        [3, 0, 1, 100],
-        [0, 0, 0, 2]
-    ])
+    dense_counts = np.array([[0, 5, 12, 0], [3, 0, 1, 100], [0, 0, 0, 2]])
     grade, notes, stats = audit_expression_matrix(dense_counts, expected_type="counts")
     assert grade == GRADE_A
     assert stats["is_integer_like"] is True
@@ -233,11 +229,7 @@ def test_audit_expression_matrix_raw_counts():
 
 def test_audit_expression_matrix_detects_log_normalized():
     """Verify pre-log-normalized matrix is flagged when counts expected."""
-    log_data = np.array([
-        [0.0, 1.791, 2.564, 0.0],
-        [1.386, 0.0, 0.693, 4.615],
-        [0.0, 0.0, 0.0, 1.098]
-    ])
+    log_data = np.array([[0.0, 1.791, 2.564, 0.0], [1.386, 0.0, 0.693, 4.615], [0.0, 0.0, 0.0, 1.098]])
     grade, notes, stats = audit_expression_matrix(log_data, expected_type="counts")
     assert grade == GRADE_B
     assert stats["is_integer_like"] is False
@@ -259,13 +251,15 @@ def test_audit_expression_matrix_detects_nans_and_negatives():
 
 def test_audit_spatial_coordinates_validation():
     """Verify spatial coordinate validation and degeneracy detection."""
-    valid_coords = np.array([
-        [10.0, 20.0],
-        [15.0, 25.0],
-        [30.0, 40.0],
-        [50.0, 60.0],
-        [70.0, 80.0],
-    ])
+    valid_coords = np.array(
+        [
+            [10.0, 20.0],
+            [15.0, 25.0],
+            [30.0, 40.0],
+            [50.0, 60.0],
+            [70.0, 80.0],
+        ]
+    )
     grade, notes, stats = audit_spatial_coordinates(valid_coords)
     assert grade == GRADE_A
     assert stats["n_points"] == 5

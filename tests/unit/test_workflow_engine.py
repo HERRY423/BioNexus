@@ -16,7 +16,13 @@ from workflow_engine import WorkflowEngine
 
 def test_workflow_dag_validation():
     """Verify topological sorting and DAG validation for workflow templates."""
-    template_path = Path(__file__).parent.parent.parent / "skills" / "research-workflow-orchestrator" / "templates" / "drug_target_discovery.yml"
+    template_path = (
+        Path(__file__).parent.parent.parent
+        / "skills"
+        / "research-workflow-orchestrator"
+        / "templates"
+        / "drug_target_discovery.yml"
+    )
     assert template_path.exists()
 
     engine = WorkflowEngine(str(template_path))
@@ -29,12 +35,15 @@ def test_workflow_dag_validation():
 
 def test_workflow_parameter_interpolation():
     """Verify variable interpolation inside workflow arguments."""
-    template_path = Path(__file__).parent.parent.parent / "skills" / "research-workflow-orchestrator" / "templates" / "drug_target_discovery.yml"
+    template_path = (
+        Path(__file__).parent.parent.parent
+        / "skills"
+        / "research-workflow-orchestrator"
+        / "templates"
+        / "drug_target_discovery.yml"
+    )
     engine = WorkflowEngine(str(template_path))
-    engine.context = {
-        "disease_name": "Melanoma",
-        "target_associations": [{"name": "BRAF", "id": "ENSG00000157764"}]
-    }
+    engine.context = {"disease_name": "Melanoma", "target_associations": [{"name": "BRAF", "id": "ENSG00000157764"}]}
 
     interpolated = engine.interpolate_params("{disease_name} therapeutic target")
     assert interpolated == "Melanoma therapeutic target"
@@ -48,7 +57,9 @@ def test_hypothesis_tracker_bayesian_evaluation():
     tracker = HypothesisTracker("Inhibition of BRAF V600E leads to melanoma regression", prior_probability=0.5)
     tracker.add_evidence("Genetic association", score=0.9, weight=0.35, direction="support", source="ClinVar")
     tracker.add_evidence("Dabrafenib bioactivity", score=0.85, weight=0.30, direction="support", source="ChEMBL")
-    tracker.add_evidence("Clinical trial efficacy", score=0.80, weight=0.25, direction="support", source="ClinicalTrials.gov")
+    tracker.add_evidence(
+        "Clinical trial efficacy", score=0.80, weight=0.25, direction="support", source="ClinicalTrials.gov"
+    )
 
     report = tracker.evaluate()
     assert report["status"] == "SUPPORTED"

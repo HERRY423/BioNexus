@@ -20,11 +20,20 @@ PGX_CATALOG = {
         "guideline_source": "CPIC Level 1A",
         "phenotype": "Dihydropyrimidine Dehydrogenase (DPD) Deficiency",
         "variants": {
-            "c.1905+1G>A": {"activity_score": 0.0, "recommendation": "Complete DPD deficiency (*2A). Strongly avoid 5-FU or decrease dose by >= 50% with TDM."},
-            "c.1679T>G": {"activity_score": 0.0, "recommendation": "Non-functional *13 allele. High risk of life-threatening neutropenia and mucositis. Dose reduce 50%."},
-            "c.2846A>T": {"activity_score": 0.5, "recommendation": "Decreased function allele. Reduce starting dose by 25-50%."}
+            "c.1905+1G>A": {
+                "activity_score": 0.0,
+                "recommendation": "Complete DPD deficiency (*2A). Strongly avoid 5-FU or decrease dose by >= 50% with TDM.",
+            },
+            "c.1679T>G": {
+                "activity_score": 0.0,
+                "recommendation": "Non-functional *13 allele. High risk of life-threatening neutropenia and mucositis. Dose reduce 50%.",
+            },
+            "c.2846A>T": {
+                "activity_score": 0.5,
+                "recommendation": "Decreased function allele. Reduce starting dose by 25-50%.",
+            },
         },
-        "default_recommendation": "Consult CPIC DPYD guideline. If activity score < 1.0, initiate dose reduction."
+        "default_recommendation": "Consult CPIC DPYD guideline. If activity score < 1.0, initiate dose reduction.",
     },
     "CYP2C19": {
         "drug": "Clopidogrel (Plavix)",
@@ -32,11 +41,20 @@ PGX_CATALOG = {
         "guideline_source": "CPIC Level 1A",
         "phenotype": "CYP2C19 Intermediate / Poor Metabolizer",
         "variants": {
-            "*2": {"activity_score": 0.0, "recommendation": "Loss of function. Impaired bioactivation of clopidogrel. Use alternative antiplatelet (Prasugrel or Ticagrelor)."},
-            "*3": {"activity_score": 0.0, "recommendation": "Loss of function. Avoid clopidogrel; prescribe Prasugrel or Ticagrelor."},
-            "*17": {"activity_score": 2.0, "recommendation": "Ultra-rapid metabolizer. Standard clopidogrel dose with bleeding surveillance."}
+            "*2": {
+                "activity_score": 0.0,
+                "recommendation": "Loss of function. Impaired bioactivation of clopidogrel. Use alternative antiplatelet (Prasugrel or Ticagrelor).",
+            },
+            "*3": {
+                "activity_score": 0.0,
+                "recommendation": "Loss of function. Avoid clopidogrel; prescribe Prasugrel or Ticagrelor.",
+            },
+            "*17": {
+                "activity_score": 2.0,
+                "recommendation": "Ultra-rapid metabolizer. Standard clopidogrel dose with bleeding surveillance.",
+            },
         },
-        "default_recommendation": "Evaluate CYP2C19 star allele diplotype for antiplatelet selection."
+        "default_recommendation": "Evaluate CYP2C19 star allele diplotype for antiplatelet selection.",
     },
     "TPMT": {
         "drug": "Azathioprine / 6-Mercaptopurine / Thioguanine",
@@ -44,10 +62,13 @@ PGX_CATALOG = {
         "guideline_source": "CPIC Level 1A",
         "phenotype": "Thiopurine S-Methyltransferase Deficiency",
         "variants": {
-            "*3A": {"activity_score": 0.0, "recommendation": "Poor metabolizer. High risk of fatal myelosuppression. Reduce thiopurine starting dose by 90%."},
-            "*3C": {"activity_score": 0.0, "recommendation": "Reduced activity. Reduce dose by 30-50%."}
+            "*3A": {
+                "activity_score": 0.0,
+                "recommendation": "Poor metabolizer. High risk of fatal myelosuppression. Reduce thiopurine starting dose by 90%.",
+            },
+            "*3C": {"activity_score": 0.0, "recommendation": "Reduced activity. Reduce dose by 30-50%."},
         },
-        "default_recommendation": "Adjust thiopurine dosing based on combined TPMT / NUDT15 genotype."
+        "default_recommendation": "Adjust thiopurine dosing based on combined TPMT / NUDT15 genotype.",
     },
     "SLCO1B1": {
         "drug": "Simvastatin",
@@ -55,10 +76,13 @@ PGX_CATALOG = {
         "guideline_source": "CPIC Level 1A",
         "phenotype": "OATP1B1 Transporter Decreased Function",
         "variants": {
-            "c.521T>C": {"activity_score": 0.5, "recommendation": "High risk of simvastatin-induced myopathy / rhabdomyolysis (*5 allele). Prescribe lower dose or Rosuvastatin / Pravastatin."}
+            "c.521T>C": {
+                "activity_score": 0.5,
+                "recommendation": "High risk of simvastatin-induced myopathy / rhabdomyolysis (*5 allele). Prescribe lower dose or Rosuvastatin / Pravastatin.",
+            }
         },
-        "default_recommendation": "Select alternative statin (e.g. Pravastatin) if SLCO1B1 function is impaired."
-    }
+        "default_recommendation": "Select alternative statin (e.g. Pravastatin) if SLCO1B1 function is impaired.",
+    },
 }
 
 
@@ -71,7 +95,7 @@ def lookup_pharmacogenomics(gene_symbol: str, variant_str: Optional[str] = None)
         return {
             "gene": gene,
             "has_cpic_guideline": False,
-            "status": "No CPIC Level 1A actionable PGx guideline registered."
+            "status": "No CPIC Level 1A actionable PGx guideline registered.",
         }
 
     matched_variant = None
@@ -92,7 +116,7 @@ def lookup_pharmacogenomics(gene_symbol: str, variant_str: Optional[str] = None)
         "guideline_level": entry["guideline_source"],
         "phenotype": entry["phenotype"],
         "matched_variant": matched_variant,
-        "clinical_recommendation": rec_text
+        "clinical_recommendation": rec_text,
     }
 
 
@@ -104,6 +128,7 @@ def main():
     args = parser.parse_args()
     res = lookup_pharmacogenomics(args.gene, variant_str=args.variant)
     import json
+
     print(json.dumps(res, indent=2))
 
 

@@ -33,7 +33,7 @@ def analyze_plddt_confidence(plddt_scores: np.ndarray) -> Dict[str, Any]:
     very_low = np.sum(plddt_scores < 50.0)
 
     # Detect structured core domain segments (stretches of >= 15 residues with pLDDT >= 70)
-    is_structured = (plddt_scores >= 70.0)
+    is_structured = plddt_scores >= 70.0
     domains = []
     in_domain = False
     start_idx = 0
@@ -55,12 +55,16 @@ def analyze_plddt_confidence(plddt_scores: np.ndarray) -> Dict[str, Any]:
         "percent_confident": round((confident / n_res) * 100.0, 1),
         "percent_low": round((low / n_res) * 100.0, 1),
         "percent_disordered_very_low": round((very_low / n_res) * 100.0, 1),
-        "overall_structural_quality": "High-Confidence Fold" if (very_high + confident) / n_res > 0.70 else "Partially Disordered / Flexible",
-        "structured_core_domains": domains
+        "overall_structural_quality": "High-Confidence Fold"
+        if (very_high + confident) / n_res > 0.70
+        else "Partially Disordered / Flexible",
+        "structured_core_domains": domains,
     }
 
 
-def compute_contact_map(ca_coords: np.ndarray, contact_threshold_angstrom: float = 8.0) -> Tuple[np.ndarray, np.ndarray]:
+def compute_contact_map(
+    ca_coords: np.ndarray, contact_threshold_angstrom: float = 8.0
+) -> Tuple[np.ndarray, np.ndarray]:
     """
     Compute pairwise CA distance matrix and binary contact map.
     Returns (distance_matrix, binary_contact_map).
@@ -70,8 +74,8 @@ def compute_contact_map(ca_coords: np.ndarray, contact_threshold_angstrom: float
         return np.zeros((0, 0)), np.zeros((0, 0), dtype=bool)
 
     diff = ca_coords[:, np.newaxis, :] - ca_coords[np.newaxis, :, :]  # (N, N, 3)
-    dist_matrix = np.sqrt(np.sum(diff ** 2, axis=-1))  # (N, N)
-    contact_map = (dist_matrix <= contact_threshold_angstrom)
+    dist_matrix = np.sqrt(np.sum(diff**2, axis=-1))  # (N, N)
+    contact_map = dist_matrix <= contact_threshold_angstrom
     return dist_matrix, contact_map
 
 
@@ -98,9 +102,9 @@ def estimate_secondary_structure(ca_coords: np.ndarray) -> Dict[str, Any]:
     strand_count = 0
 
     for i in range(n - 4):
-        d_i3 = np.linalg.norm(ca_coords[i] - ca_coords[i+3])
-        d_i4 = np.linalg.norm(ca_coords[i] - ca_coords[i+4])
-        d_i2 = np.linalg.norm(ca_coords[i] - ca_coords[i+2])
+        d_i3 = np.linalg.norm(ca_coords[i] - ca_coords[i + 3])
+        d_i4 = np.linalg.norm(ca_coords[i] - ca_coords[i + 4])
+        d_i2 = np.linalg.norm(ca_coords[i] - ca_coords[i + 2])
 
         if 4.5 <= d_i3 <= 6.0 and 5.5 <= d_i4 <= 7.0:
             helix_count += 1
@@ -115,9 +119,9 @@ def estimate_secondary_structure(ca_coords: np.ndarray) -> Dict[str, Any]:
         "helix_percentage": round(helix_frac * 100.0, 1),
         "strand_percentage": round(strand_frac * 100.0, 1),
         "coil_percentage": round(coil_frac * 100.0, 1),
-        "structural_class": "All-Alpha" if helix_frac > 0.45 and strand_frac < 0.1 else (
-            "All-Beta" if strand_frac > 0.35 and helix_frac < 0.1 else "Alpha/Beta Mixed"
-        )
+        "structural_class": "All-Alpha"
+        if helix_frac > 0.45 and strand_frac < 0.1
+        else ("All-Beta" if strand_frac > 0.35 and helix_frac < 0.1 else "Alpha/Beta Mixed"),
     }
 
 
@@ -140,7 +144,7 @@ def analyze_protein_structure_full(structure_data: Dict[str, Any]) -> Dict[str, 
         "total_contacts": total_contacts,
         "contact_density_per_residue": round(contact_order, 2),
         "confidence_metrics": confidence_analysis,
-        "secondary_structure": sec_struct
+        "secondary_structure": sec_struct,
     }
 
 
@@ -150,11 +154,13 @@ def main():
 
     args = parser.parse_args()
     from structure_fetcher import parse_pdb_text
+
     with open(args.pdb_file, "r", encoding="utf-8") as f:
         content = f.read()
     parsed = parse_pdb_text(content)
     analysis = analyze_protein_structure_full(parsed)
     import json
+
     print(json.dumps(analysis, indent=2))
 
 

@@ -24,6 +24,7 @@ NEXTFLOW_CONFIG_HEADER = """/*
 */
 """
 
+
 def generate_hpc_profile(
     executor: str = "slurm",
     partition: Optional[str] = None,
@@ -34,13 +35,14 @@ def generate_hpc_profile(
     max_time: str = "72.h",
     container_engine: str = "singularity",
     singularity_cache: Optional[str] = None,
-    module_load: Optional[str] = None
+    module_load: Optional[str] = None,
 ) -> str:
     """Generate Nextflow configuration for HPC workload managers."""
     lines = [NEXTFLOW_CONFIG_HEADER]
 
     # Global resource limits function
-    lines.append("""
+    lines.append(
+        """
 // Global resource limits helper function
 def check_max(obj, type) {
     if (type == 'memory') {
@@ -74,11 +76,18 @@ def check_max(obj, type) {
 }
 
 params {
-    max_memory = '""" + max_memory + """'
-    max_cpus   = """ + str(max_cpus) + """
-    max_time   = '""" + max_time + """'
+    max_memory = '"""
+        + max_memory
+        + """'
+    max_cpus   = """
+        + str(max_cpus)
+        + """
+    max_time   = '"""
+        + max_time
+        + """'
 }
-""")
+"""
+    )
 
     # Container engine configuration
     lines.append("// Container engine settings")
@@ -186,7 +195,7 @@ def generate_cloud_profile(
     provider: str = "aws",
     queue_or_region: Optional[str] = None,
     project: Optional[str] = None,
-    work_bucket: Optional[str] = None
+    work_bucket: Optional[str] = None,
 ) -> str:
     """Generate configuration for AWS Batch or Google Cloud Batch."""
     lines = [NEXTFLOW_CONFIG_HEADER]
@@ -244,10 +253,14 @@ Examples:
 
   # Generate Google Cloud Batch profile
   python cluster_profile_generator.py --executor googlebatch --google-project my-proj --google-region us-central1
-        """
+        """,
     )
-    parser.add_argument("--executor", choices=["slurm", "pbs", "sge", "lsf", "awsbatch", "googlebatch"], default="slurm")
-    parser.add_argument("--output", "-o", default="nextflow_cluster.config", help="Output file name (default: nextflow_cluster.config)")
+    parser.add_argument(
+        "--executor", choices=["slurm", "pbs", "sge", "lsf", "awsbatch", "googlebatch"], default="slurm"
+    )
+    parser.add_argument(
+        "--output", "-o", default="nextflow_cluster.config", help="Output file name (default: nextflow_cluster.config)"
+    )
     parser.add_argument("--partition", "-p", help="HPC queue/partition name")
     parser.add_argument("--account", "-a", help="HPC allocation account")
     parser.add_argument("--qos", help="Quality of Service (Slurm)")
@@ -256,7 +269,9 @@ Examples:
     parser.add_argument("--max-time", default="72.h", help="Max allowed execution walltime (default: 72.h)")
     parser.add_argument("--container", choices=["singularity", "apptainer", "docker", "conda"], default="singularity")
     parser.add_argument("--singularity-cache", help="Custom cache directory for Singularity/Apptainer images")
-    parser.add_argument("--module-load", help="HPC environment module to load before execution (e.g. 'singularity/3.8.0')")
+    parser.add_argument(
+        "--module-load", help="HPC environment module to load before execution (e.g. 'singularity/3.8.0')"
+    )
     parser.add_argument("--aws-queue", help="AWS Batch job queue ARN")
     parser.add_argument("--aws-region", default="us-east-1", help="AWS region")
     parser.add_argument("--google-project", help="Google Cloud project ID")
@@ -267,16 +282,14 @@ Examples:
 
     if args.executor == "awsbatch":
         config_text = generate_cloud_profile(
-            provider="aws",
-            queue_or_region=args.aws_queue or args.aws_region,
-            work_bucket=args.work_bucket
+            provider="aws", queue_or_region=args.aws_queue or args.aws_region, work_bucket=args.work_bucket
         )
     elif args.executor == "googlebatch":
         config_text = generate_cloud_profile(
             provider="google",
             queue_or_region=args.google_region,
             project=args.google_project,
-            work_bucket=args.work_bucket
+            work_bucket=args.work_bucket,
         )
     else:
         config_text = generate_hpc_profile(
@@ -289,7 +302,7 @@ Examples:
             max_time=args.max_time,
             container_engine=args.container,
             singularity_cache=args.singularity_cache,
-            module_load=args.module_load
+            module_load=args.module_load,
         )
 
     with open(args.output, "w", encoding="utf-8") as f:
@@ -297,7 +310,9 @@ Examples:
 
     print(f"Generated Nextflow cluster configuration: {args.output}")
     print(f"  Executor: {args.executor}")
-    print(f"  Container Engine: {args.container if args.executor not in ('awsbatch', 'googlebatch') else 'Cloud Native'}")
+    print(
+        f"  Container Engine: {args.container if args.executor not in ('awsbatch', 'googlebatch') else 'Cloud Native'}"
+    )
     print(f"To run your pipeline: nextflow run nf-core/rnaseq -c {args.output} -profile {args.container} ...")
 
 

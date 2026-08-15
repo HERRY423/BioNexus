@@ -25,10 +25,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(
 logger = logging.getLogger("SurvivalAnalyzer")
 
 
-def compute_kaplan_meier(
-    times: np.ndarray,
-    events: np.ndarray
-) -> Tuple[np.ndarray, np.ndarray, float]:
+def compute_kaplan_meier(times: np.ndarray, events: np.ndarray) -> Tuple[np.ndarray, np.ndarray, float]:
     """
     Compute Kaplan-Meier survival probability curve S(t) = prod(1 - d_i / n_i).
     Returns (unique_times, survival_probabilities, median_survival_time).
@@ -48,7 +45,7 @@ def compute_kaplan_meier(
         d_i = np.sum(sorted_events[sorted_times == t])
         n_i = np.sum(sorted_times >= t)
         if n_i > 0:
-            survival_prob *= (1.0 - (d_i / n_i))
+            survival_prob *= 1.0 - (d_i / n_i)
         km_times.append(t)
         km_probs.append(survival_prob)
 
@@ -62,8 +59,7 @@ def compute_kaplan_meier(
 
 
 def log_rank_test(
-    times_a: np.ndarray, events_a: np.ndarray,
-    times_b: np.ndarray, events_b: np.ndarray
+    times_a: np.ndarray, events_a: np.ndarray, times_b: np.ndarray, events_b: np.ndarray
 ) -> Tuple[float, float]:
     """
     Perform 2-sample Log-Rank test for comparing survival distributions.
@@ -87,7 +83,7 @@ def log_rank_test(
 
         if n_total > 1 and d_total > 0:
             e_a = (n_a * d_total) / n_total
-            v = (n_a * n_b * d_total * (n_total - d_total)) / (n_total ** 2 * (n_total - 1))
+            v = (n_a * n_b * d_total * (n_total - d_total)) / (n_total**2 * (n_total - 1))
 
             obs_a += d_a
             exp_a += e_a
@@ -95,7 +91,7 @@ def log_rank_test(
 
     if var_a > 0:
         z = (obs_a - exp_a) / np.sqrt(var_a)
-        chi2_stat = float(z ** 2)
+        chi2_stat = float(z**2)
         p_val = float(1.0 - chi2.cdf(chi2_stat, df=1))
     else:
         chi2_stat = 0.0
@@ -104,18 +100,14 @@ def log_rank_test(
     return chi2_stat, p_val
 
 
-def calculate_cox_hazard_ratio(
-    times: np.ndarray,
-    events: np.ndarray,
-    group_labels: np.ndarray
-) -> Dict[str, Any]:
+def calculate_cox_hazard_ratio(times: np.ndarray, events: np.ndarray, group_labels: np.ndarray) -> Dict[str, Any]:
     """
     Compute Cox Proportional Hazards regression coefficient (beta) and Hazard Ratio (HR = exp(beta)).
     group_labels: binary array (1 = High Risk / Biomarker Positive, 0 = Control).
     """
     # Analytical approximation using weighted log-rank statistics
-    mask_1 = (group_labels == 1)
-    mask_0 = (group_labels == 0)
+    mask_1 = group_labels == 1
+    mask_0 = group_labels == 0
 
     times_1, events_1 = times[mask_1], events[mask_1]
     times_0, events_0 = times[mask_0], events[mask_0]
@@ -173,11 +165,12 @@ def calculate_cox_hazard_ratio(
             "events_group1": int(np.sum(events_1)),
             "events_group0": int(np.sum(events_0)),
             "sample_grade": sample_grade,
-        }
+        },
     )
 
     try:
         from bionexus.contracts import attach_meta
+
         return attach_meta(
             {
                 "hazard_ratio": round(float(hr), 3) if method == "lifelines_coxph" else None,
@@ -233,6 +226,7 @@ def main() -> None:
     groups = frame[args.group_col].to_numpy(dtype=int)
     result = calculate_cox_hazard_ratio(times, events, groups)
     import json
+
     print(json.dumps(result, indent=2))
 
 

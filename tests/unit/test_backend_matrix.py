@@ -72,6 +72,7 @@ ALL_EXTERNAL_BINARIES = [
 # 1. INSTALLED STATE TESTS
 # ============================================================================
 
+
 def test_version_compatibility_helper():
     """Verify semver comparison works across standard version strings."""
     assert is_version_compatible("1.10.0", "1.10.0") is True
@@ -94,8 +95,10 @@ def test_installed_real_base_backend(pkg_name):
 
 def test_installed_state_mocked():
     """Verify probe reports INSTALLED when module is found and version meets constraint."""
-    with patch("bionexus.backends.is_module_available", return_value=True), \
-         patch("bionexus.backends.get_package_version", return_value="2.5.0"):
+    with (
+        patch("bionexus.backends.is_module_available", return_value=True),
+        patch("bionexus.backends.get_package_version", return_value="2.5.0"),
+    ):
         status = probe("scanpy")
         assert status.available is True
         assert status.state == BackendState.INSTALLED
@@ -108,11 +111,14 @@ def test_installed_state_mocked():
 # 2. MISSING STATE TESTS
 # ============================================================================
 
+
 @pytest.mark.parametrize("pkg_name", ALL_OPTIONAL_PACKAGES)
 def test_missing_backend_state(pkg_name):
     """Verify missing packages report MISSING state and require() raises BackendUnavailable."""
-    with patch("bionexus.backends.is_module_available", return_value=False), \
-         patch("bionexus.backends.shutil.which", return_value=None):
+    with (
+        patch("bionexus.backends.is_module_available", return_value=False),
+        patch("bionexus.backends.shutil.which", return_value=None),
+    ):
         status = probe(pkg_name)
         assert status.available is False
         assert status.state in (BackendState.MISSING, BackendState.MISSING_WEIGHTS)
@@ -127,8 +133,10 @@ def test_missing_backend_state(pkg_name):
 # 3. PARTIAL STACK TESTS
 # ============================================================================
 
+
 def test_partial_scvi_stack():
     """Verify scvi reports PARTIAL state when torch is present but scvi is missing."""
+
     def fake_module_available(mod_name):
         return mod_name == "torch"
 
@@ -141,6 +149,7 @@ def test_partial_scvi_stack():
 
 def test_partial_spatial_stack():
     """Verify squidpy reports PARTIAL state when anndata is present but squidpy is missing."""
+
     def fake_module_available(mod_name):
         return mod_name == "anndata"
 
@@ -152,6 +161,7 @@ def test_partial_spatial_stack():
 
 def test_partial_leiden_stack():
     """Verify leidenalg reports PARTIAL state when igraph is present but leidenalg is missing."""
+
     def fake_module_available(mod_name):
         return mod_name == "igraph"
 
@@ -165,19 +175,25 @@ def test_partial_leiden_stack():
 # 4. INCOMPATIBLE VERSION TESTS
 # ============================================================================
 
-@pytest.mark.parametrize("pkg_name,old_ver", [
-    ("scanpy", "1.8.0"),       # min is 1.10.0
-    ("anndata", "0.8.0"),      # min is 0.9.0
-    ("squidpy", "1.1.0"),      # min is 1.3.0
-    ("scvi", "0.19.0"),        # min is 1.0.0
-    ("pydeseq2", "0.2.0"),     # min is 0.4.0
-    ("abnumber", "0.1.0"),     # min is 0.3.0
-    ("allotropy", "0.1.10"),   # min is 0.1.30
-])
+
+@pytest.mark.parametrize(
+    "pkg_name,old_ver",
+    [
+        ("scanpy", "1.8.0"),  # min is 1.10.0
+        ("anndata", "0.8.0"),  # min is 0.9.0
+        ("squidpy", "1.1.0"),  # min is 1.3.0
+        ("scvi", "0.19.0"),  # min is 1.0.0
+        ("pydeseq2", "0.2.0"),  # min is 0.4.0
+        ("abnumber", "0.1.0"),  # min is 0.3.0
+        ("allotropy", "0.1.10"),  # min is 0.1.30
+    ],
+)
 def test_incompatible_version_state(pkg_name, old_ver):
     """Verify outdated installed packages are flagged as INCOMPATIBLE_VERSION."""
-    with patch("bionexus.backends.is_module_available", return_value=True), \
-         patch("bionexus.backends.get_package_version", return_value=old_ver):
+    with (
+        patch("bionexus.backends.is_module_available", return_value=True),
+        patch("bionexus.backends.get_package_version", return_value=old_ver),
+    ):
         status = probe(pkg_name)
         assert status.available is False
         assert status.state == BackendState.INCOMPATIBLE_VERSION
@@ -193,10 +209,13 @@ def test_incompatible_version_state(pkg_name, old_ver):
 # 5. MISSING MODEL WEIGHTS & GATING TESTS
 # ============================================================================
 
+
 def test_esm_model_weights_gate_disabled():
     """Verify ESM probe reports MISSING_WEIGHTS when environment gate is closed."""
-    with patch.dict("os.environ", {"BIONEXUS_ALLOW_ESM": "0"}), \
-         patch("bionexus.backends.is_module_available", return_value=True):
+    with (
+        patch.dict("os.environ", {"BIONEXUS_ALLOW_ESM": "0"}),
+        patch("bionexus.backends.is_module_available", return_value=True),
+    ):
         status = probe("esm")
         assert status.available is False
         assert status.state == BackendState.MISSING_WEIGHTS
@@ -213,9 +232,11 @@ def test_esm_model_weights_gate_disabled():
 
 def test_esm_model_weights_gate_enabled():
     """Verify ESM probe reports INSTALLED when gate is open and transformers is available."""
-    with patch.dict("os.environ", {"BIONEXUS_ALLOW_ESM": "1"}), \
-         patch("bionexus.backends.is_module_available", return_value=True), \
-         patch("bionexus.backends.get_package_version", return_value="4.40.0"):
+    with (
+        patch.dict("os.environ", {"BIONEXUS_ALLOW_ESM": "1"}),
+        patch("bionexus.backends.is_module_available", return_value=True),
+        patch("bionexus.backends.get_package_version", return_value="4.40.0"),
+    ):
         status = probe("esm")
         assert status.available is True
         assert status.state == BackendState.INSTALLED
@@ -225,6 +246,7 @@ def test_esm_model_weights_gate_enabled():
 # ============================================================================
 # 6. MISSING EXTERNAL BINARY TESTS
 # ============================================================================
+
 
 @pytest.mark.parametrize("binary_name", ALL_EXTERNAL_BINARIES)
 def test_missing_external_binary_state(binary_name):

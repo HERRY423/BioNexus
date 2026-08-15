@@ -67,13 +67,7 @@ def test_plddt_confidence_analysis():
 
 def test_contact_map_and_radius_of_gyration():
     """Test contact map and compactness calculations."""
-    coords = np.array([
-        [0.0, 0.0, 0.0],
-        [3.8, 0.0, 0.0],
-        [7.6, 0.0, 0.0],
-        [0.0, 3.8, 0.0],
-        [0.0, 0.0, 3.8]
-    ])
+    coords = np.array([[0.0, 0.0, 0.0], [3.8, 0.0, 0.0], [7.6, 0.0, 0.0], [0.0, 3.8, 0.0], [0.0, 0.0, 3.8]])
     dist_mat, contact_map = compute_contact_map(coords, contact_threshold_angstrom=5.0)
     assert dist_mat.shape == (5, 5)
     assert contact_map.shape == (5, 5)
@@ -120,13 +114,7 @@ def test_molecular_docking_and_kinetics():
 
 def test_kabsch_superposition_and_tm_score():
     """Test structural rigid-body alignment and TM-score."""
-    coords_a = np.array([
-        [0.0, 0.0, 0.0],
-        [3.8, 0.0, 0.0],
-        [7.6, 0.0, 0.0],
-        [11.4, 0.0, 0.0],
-        [15.2, 0.0, 0.0]
-    ])
+    coords_a = np.array([[0.0, 0.0, 0.0], [3.8, 0.0, 0.0], [7.6, 0.0, 0.0], [11.4, 0.0, 0.0], [15.2, 0.0, 0.0]])
     # Translated and slightly perturbed copy
     coords_b = coords_a + np.array([5.0, 10.0, -3.0]) + np.random.normal(0, 0.05, coords_a.shape)
 
@@ -140,17 +128,9 @@ def test_kabsch_superposition_and_tm_score():
 
 def test_target_tractability_scoring():
     """Test composite druggability and tractability evaluation."""
-    sample_pockets = [{
-        "pocket_id": 1,
-        "druggability_score": 0.82,
-        "volume_angstrom3": 550.0
-    }]
+    sample_pockets = [{"pocket_id": 1, "druggability_score": 0.82, "volume_angstrom3": 550.0}]
     tract = evaluate_target_tractability(
-        gene_symbol="EGFR",
-        pockets=sample_pockets,
-        mean_plddt=92.0,
-        has_chembl_ligands=True,
-        open_targets_score=0.90
+        gene_symbol="EGFR", pockets=sample_pockets, mean_plddt=92.0, has_chembl_ligands=True, open_targets_score=0.90
     )
     assert tract["composite_tractability_score"] > 0.70
     assert "Tier 1" in tract["tractability_tier"]

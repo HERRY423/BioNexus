@@ -20,9 +20,7 @@ logger = logging.getLogger("JointRNAATAC")
 
 
 def compute_modality_weights(
-    X_pca_rna: np.ndarray,
-    X_lsi_atac: np.ndarray,
-    k_neighbors: int = 15
+    X_pca_rna: np.ndarray, X_lsi_atac: np.ndarray, k_neighbors: int = 15
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
     Compute cell-specific modality affinity weights based on cross-modality prediction accuracy (WNN).
@@ -56,13 +54,15 @@ def integrate_rna_atac_wnn(
     n_rna_pcs: int = 20,
     n_atac_lsi: int = 20,
     k_neighbors: int = 15,
-    n_clusters: int = 6
+    n_clusters: int = 6,
 ) -> Dict[str, Any]:
     """
     Perform Weighted Nearest Neighbor (WNN) multi-omics joint integration.
     """
     n_cells = rna_counts.shape[0]
-    logger.info(f"Integrating {n_cells} cells across RNA ({rna_counts.shape[1]} genes) and ATAC ({atac_counts.shape[1]} peaks)...")
+    logger.info(
+        f"Integrating {n_cells} cells across RNA ({rna_counts.shape[1]} genes) and ATAC ({atac_counts.shape[1]} peaks)..."
+    )
 
     # 1. RNA Normalization + PCA
     rna_cpm = np.log1p(rna_counts / (np.sum(rna_counts, axis=1, keepdims=True) + 1e-6) * 1e4)
@@ -98,7 +98,9 @@ def integrate_rna_atac_wnn(
     joint_latent = np.hstack([X_pca_rna * w_rna[:, None], X_lsi_atac * w_atac[:, None]])
 
     # 5. Joint Clustering
-    clustering = SpectralClustering(n_clusters=n_clusters, affinity="precomputed", assign_labels="kmeans", random_state=42)
+    clustering = SpectralClustering(
+        n_clusters=n_clusters, affinity="precomputed", assign_labels="kmeans", random_state=42
+    )
     clusters = clustering.fit_predict(W_fused)
 
     return {
@@ -109,7 +111,7 @@ def integrate_rna_atac_wnn(
         "atac_lsi": X_lsi_atac,
         "joint_latent": joint_latent,
         "fused_graph": W_fused,
-        "joint_clusters": np.array([f"Multiome_Cluster_{c+1}" for c in clusters])
+        "joint_clusters": np.array([f"Multiome_Cluster_{c + 1}" for c in clusters]),
     }
 
 

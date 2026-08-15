@@ -15,13 +15,7 @@ import os
 import sys
 
 
-def cluster_and_embed(
-    adata,
-    use_rep=None,
-    n_neighbors=15,
-    resolution=1.0,
-    min_dist=0.3
-):
+def cluster_and_embed(adata, use_rep=None, n_neighbors=15, resolution=1.0, min_dist=0.3):
     """
     Cluster and compute UMAP embedding.
 
@@ -74,7 +68,7 @@ def cluster_and_embed(
     print(f"Computing Leiden clustering (resolution={resolution})...")
     sc.tl.leiden(adata, resolution=resolution)
 
-    n_clusters = adata.obs['leiden'].nunique()
+    n_clusters = adata.obs["leiden"].nunique()
     print(f"Found {n_clusters} clusters")
 
     return adata
@@ -101,9 +95,9 @@ def plot_results(adata, output_dir, batch_key=None, labels_key=None):
     # Check for common columns
     for col in adata.obs.columns:
         if col not in [p[0] for p in plots]:
-            if 'cell' in col.lower() and 'type' in col.lower():
+            if "cell" in col.lower() and "type" in col.lower():
                 plots.append((col, col))
-            elif 'predict' in col.lower():
+            elif "predict" in col.lower():
                 plots.append((col, col))
 
     # Limit to 6 plots
@@ -138,7 +132,7 @@ def plot_results(adata, output_dir, batch_key=None, labels_key=None):
     print(f"UMAP plot saved to {plot_path}")
 
     # Save cluster counts
-    cluster_counts = adata.obs['leiden'].value_counts().sort_index()
+    cluster_counts = adata.obs["leiden"].value_counts().sort_index()
     counts_path = os.path.join(output_dir, "cluster_counts.csv")
     cluster_counts.to_csv(counts_path)
     print(f"Cluster counts saved to {counts_path}")
@@ -161,7 +155,7 @@ Examples:
 
     # Include batch and label columns in plots
     python cluster_embed.py adata_trained.h5ad results/ --batch-key batch --labels-key cell_type
-        """
+        """,
     )
     parser.add_argument("input", help="Input h5ad file with latent representation")
     parser.add_argument("output_dir", help="Output directory")
@@ -190,11 +184,7 @@ Examples:
 
     # Cluster and embed
     adata = cluster_and_embed(
-        adata,
-        use_rep=args.use_rep,
-        n_neighbors=args.n_neighbors,
-        resolution=args.resolution,
-        min_dist=args.min_dist
+        adata, use_rep=args.use_rep, n_neighbors=args.n_neighbors, resolution=args.resolution, min_dist=args.min_dist
     )
 
     # Save results

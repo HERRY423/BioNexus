@@ -22,7 +22,7 @@ def prepare_data(
     max_genes=5000,
     max_mito_pct=20.0,
     min_cells=3,
-    skip_filter=False
+    skip_filter=False,
 ):
     """
     Prepare AnnData for scvi-tools.
@@ -58,14 +58,14 @@ def prepare_data(
 
     if not skip_filter:
         # Calculate QC metrics
-        adata.var['mt'] = get_mito_genes(adata)
-        sc.pp.calculate_qc_metrics(adata, qc_vars=['mt'], inplace=True)
+        adata.var["mt"] = get_mito_genes(adata)
+        sc.pp.calculate_qc_metrics(adata, qc_vars=["mt"], inplace=True)
 
         # Filter cells
         n_before = adata.n_obs
-        adata = adata[adata.obs['n_genes_by_counts'] >= min_genes].copy()
-        adata = adata[adata.obs['n_genes_by_counts'] <= max_genes].copy()
-        adata = adata[adata.obs['pct_counts_mt'] < max_mito_pct].copy()
+        adata = adata[adata.obs["n_genes_by_counts"] >= min_genes].copy()
+        adata = adata[adata.obs["n_genes_by_counts"] <= max_genes].copy()
+        adata = adata[adata.obs["pct_counts_mt"] < max_mito_pct].copy()
         print(f"Filtered cells: {n_before} → {adata.n_obs}")
 
         # Filter genes
@@ -80,11 +80,7 @@ def prepare_data(
     if batch_key is not None and batch_key in adata.obs.columns:
         print(f"Selecting {n_top_genes} HVGs (batch-aware: {batch_key})")
         sc.pp.highly_variable_genes(
-            adata,
-            n_top_genes=n_top_genes,
-            flavor="seurat_v3",
-            batch_key=batch_key,
-            layer="counts"
+            adata, n_top_genes=n_top_genes, flavor="seurat_v3", batch_key=batch_key, layer="counts"
         )
     else:
         print(f"Selecting {n_top_genes} HVGs")
@@ -96,8 +92,8 @@ def prepare_data(
         adata.X = adata.layers["counts"].copy()
 
     # Subset to HVGs
-    n_hvg = adata.var['highly_variable'].sum()
-    adata = adata[:, adata.var['highly_variable']].copy()
+    n_hvg = adata.var["highly_variable"].sum()
+    adata = adata[:, adata.var["highly_variable"]].copy()
     print(f"Selected {n_hvg} highly variable genes")
 
     print(f"Output: {adata.shape[0]} cells, {adata.shape[1]} genes")
@@ -122,7 +118,7 @@ Examples:
 
     # Skip filtering (data already QC'd)
     python prepare_data.py filtered.h5ad prepared.h5ad --no-filter
-        """
+        """,
     )
     parser.add_argument("input", help="Input h5ad file")
     parser.add_argument("output", help="Output h5ad file")
@@ -155,7 +151,7 @@ Examples:
         max_genes=args.max_genes,
         max_mito_pct=args.max_mito,
         min_cells=args.min_cells,
-        skip_filter=args.no_filter
+        skip_filter=args.no_filter,
     )
 
     # Save

@@ -229,4 +229,3 @@ def as_markdown_table(skills: Optional[List[SkillRecord]] = None) -> str:
             f"| `{rec['name']}` | {rec['tier']} | {status_val} | {rec['grade']} | {rec['does']} | {rec['does_not']} | `{rec['backend']}` |"
         )
     return "\n".join(lines)
-

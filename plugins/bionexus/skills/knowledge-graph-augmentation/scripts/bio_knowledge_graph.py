@@ -25,17 +25,19 @@ class BioKnowledgeGraph:
         """Add or update a node in the knowledge graph."""
         node_id = str(node_id).strip()
         if node_id not in self.nodes:
-            self.nodes[node_id] = {
-                "id": node_id,
-                "type": node_type,
-                "label": label,
-                "properties": properties or {}
-            }
+            self.nodes[node_id] = {"id": node_id, "type": node_type, "label": label, "properties": properties or {}}
         else:
             if properties:
                 self.nodes[node_id]["properties"].update(properties)
 
-    def add_edge(self, source_id: str, target_id: str, relation: str, weight: float = 1.0, properties: Optional[Dict[str, Any]] = None):
+    def add_edge(
+        self,
+        source_id: str,
+        target_id: str,
+        relation: str,
+        weight: float = 1.0,
+        properties: Optional[Dict[str, Any]] = None,
+    ):
         """Add a directed or undirected edge between two nodes."""
         source_id = str(source_id).strip()
         target_id = str(target_id).strip()
@@ -51,7 +53,7 @@ class BioKnowledgeGraph:
             "target": target_id,
             "relation": relation,
             "weight": float(weight),
-            "properties": properties or {}
+            "properties": properties or {},
         }
         self.edges.append(edge_data)
 
@@ -65,17 +67,19 @@ class BioKnowledgeGraph:
             entity_name = h.get("name", h.get("id"))
             entity_id = f"{entity_type.lower()}:{h.get('id')}"
 
-            self.add_node(entity_id, entity_type.capitalize(), entity_name, {
-                "description": h.get("description", ""),
-                "score": h.get("score", 1.0)
-            })
+            self.add_node(
+                entity_id,
+                entity_type.capitalize(),
+                entity_name,
+                {"description": h.get("description", ""), "score": h.get("score", 1.0)},
+            )
 
             self.add_edge(
                 source_id=entity_id,
                 target_id=disease_node_id,
                 relation="ASSOCIATED_WITH",
                 weight=float(h.get("score", 1.0) or 1.0),
-                properties={"source": "OpenTargets"}
+                properties={"source": "OpenTargets"},
             )
 
     def ingest_uniprot_protein(self, protein_info: Dict[str, Any]):
@@ -85,12 +89,17 @@ class BioKnowledgeGraph:
             return
 
         prot_id = f"target:{acc}"
-        self.add_node(prot_id, "Target", protein_info.get("protein_name", acc), {
-            "accession": acc,
-            "organism": protein_info.get("organism"),
-            "function": protein_info.get("function"),
-            "sequence_length": protein_info.get("sequence_length")
-        })
+        self.add_node(
+            prot_id,
+            "Target",
+            protein_info.get("protein_name", acc),
+            {
+                "accession": acc,
+                "organism": protein_info.get("organism"),
+                "function": protein_info.get("function"),
+                "sequence_length": protein_info.get("sequence_length"),
+            },
+        )
 
         # Connect genes
         for g in protein_info.get("genes", []):
@@ -105,12 +114,17 @@ class BioKnowledgeGraph:
             return
 
         mol_id = f"drug:{chembl_id}"
-        self.add_node(mol_id, "Drug", molecule_info.get("pref_name") or chembl_id, {
-            "chembl_id": chembl_id,
-            "max_phase": molecule_info.get("max_phase"),
-            "molecular_weight": molecule_info.get("molecular_weight"),
-            "canonical_smiles": molecule_info.get("canonical_smiles")
-        })
+        self.add_node(
+            mol_id,
+            "Drug",
+            molecule_info.get("pref_name") or chembl_id,
+            {
+                "chembl_id": chembl_id,
+                "max_phase": molecule_info.get("max_phase"),
+                "molecular_weight": molecule_info.get("molecular_weight"),
+                "canonical_smiles": molecule_info.get("canonical_smiles"),
+            },
+        )
 
         target_id = f"target:{target_name}"
         self.add_edge(mol_id, target_id, "INHIBITS", weight=0.9, properties={"source": "ChEMBL"})
@@ -160,7 +174,7 @@ class BioKnowledgeGraph:
             "total_nodes": len(self.nodes),
             "total_edges": len(self.edges),
             "node_types": type_counts,
-            "edge_relations": rel_counts
+            "edge_relations": rel_counts,
         }
 
     def to_json(self) -> Dict[str, Any]:
@@ -170,7 +184,7 @@ class BioKnowledgeGraph:
             "created_at": self.created_at,
             "nodes": list(self.nodes.values()),
             "edges": self.edges,
-            "summary": self.get_summary_statistics()
+            "summary": self.get_summary_statistics(),
         }
 
     def export_graphml(self, output_path: str):
@@ -182,23 +196,23 @@ class BioKnowledgeGraph:
             '  <key id="label" for="node" attr.name="label" attr.type="string"/>',
             '  <key id="relation" for="edge" attr.name="relation" attr.type="string"/>',
             '  <key id="weight" for="edge" attr.name="weight" attr.type="double"/>',
-            f'  <graph id="{self.name}" edgedefault="directed">'
+            f'  <graph id="{self.name}" edgedefault="directed">',
         ]
 
         for n_id, n_data in self.nodes.items():
             lines.append(f'    <node id="{n_id}">')
             lines.append(f'      <data key="type">{n_data.get("type", "")}</data>')
             lines.append(f'      <data key="label">{n_data.get("label", n_id)}</data>')
-            lines.append('    </node>')
+            lines.append("    </node>")
 
         for idx, e in enumerate(self.edges):
-            lines.append(f'    <edge id="e{idx}" source="{e["source"]}" target="{e["target"]}">' )
+            lines.append(f'    <edge id="e{idx}" source="{e["source"]}" target="{e["target"]}">')
             lines.append(f'      <data key="relation">{e["relation"]}</data>')
             lines.append(f'      <data key="weight">{e["weight"]}</data>')
-            lines.append('    </edge>')
+            lines.append("    </edge>")
 
-        lines.append('  </graph>')
-        lines.append('</graphml>')
+        lines.append("  </graph>")
+        lines.append("</graphml>")
 
         with open(output_path, "w", encoding="utf-8") as f:
             f.write("\n".join(lines))

@@ -21,13 +21,9 @@ from local_mcp_server import (
 
 def test_mcp_server_v2_initialize():
     """Verify v2.0.0 initialization returns tools, resources, and prompts capabilities."""
+
     async def _run():
-        req = {
-            "jsonrpc": "2.0",
-            "id": 1,
-            "method": "initialize",
-            "params": {}
-        }
+        req = {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}}
         return await handle_rpc_request_async(req)
 
     resp = asyncio.run(_run())
@@ -43,21 +39,23 @@ def test_mcp_server_v2_initialize():
 
 def test_mcp_tools_list_count():
     """Verify all 16 scientific tools are registered."""
+
     async def _run():
-        req = {
-            "jsonrpc": "2.0",
-            "id": 2,
-            "method": "tools/list",
-            "params": {}
-        }
+        req = {"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}
         return await handle_rpc_request_async(req)
 
     resp = asyncio.run(_run())
     tools = resp["result"]["tools"]
     tool_names = {t["name"] for t in tools}
     expected_unique = {
-        "search_uniprot", "search_ensembl", "search_gnomad", "search_pdb",
-        "search_alphafold", "search_reactome", "search_string", "search_geo",
+        "search_uniprot",
+        "search_ensembl",
+        "search_gnomad",
+        "search_pdb",
+        "search_alphafold",
+        "search_reactome",
+        "search_string",
+        "search_geo",
         "get_gene_expression",
     }
     assert expected_unique == tool_names
@@ -77,6 +75,7 @@ def test_mcp_hosted_fallbacks_opt_in(monkeypatch):
 
 def test_mcp_resources_primitives():
     """Verify resources/list and resources/read."""
+
     async def _run():
         list_req = {"jsonrpc": "2.0", "id": 3, "method": "resources/list", "params": {}}
         list_resp = await handle_rpc_request_async(list_req)
@@ -89,7 +88,7 @@ def test_mcp_resources_primitives():
             "jsonrpc": "2.0",
             "id": 4,
             "method": "resources/read",
-            "params": {"uri": "bionexus://workflows/drug_target_discovery"}
+            "params": {"uri": "bionexus://workflows/drug_target_discovery"},
         }
         read_resp = await handle_rpc_request_async(read_req)
         contents = read_resp["result"]["contents"]
@@ -101,6 +100,7 @@ def test_mcp_resources_primitives():
 
 def test_mcp_prompts_primitives():
     """Verify prompts/list and prompts/get."""
+
     async def _run():
         list_req = {"jsonrpc": "2.0", "id": 5, "method": "prompts/list", "params": {}}
         list_resp = await handle_rpc_request_async(list_req)
@@ -116,10 +116,7 @@ def test_mcp_prompts_primitives():
             "jsonrpc": "2.0",
             "id": 6,
             "method": "prompts/get",
-            "params": {
-                "name": "drug_target_analysis",
-                "arguments": {"disease": "Melanoma", "target_gene": "BRAF"}
-            }
+            "params": {"name": "drug_target_analysis", "arguments": {"disease": "Melanoma", "target_gene": "BRAF"}},
         }
         get_resp = await handle_rpc_request_async(get_req)
         msgs = get_resp["result"]["messages"]
@@ -132,6 +129,7 @@ def test_mcp_prompts_primitives():
 
 def test_token_bucket_rate_limiter():
     """Verify token bucket permits burst and then throttles."""
+
     async def _run():
         limiter = TokenBucketRateLimiter(rate=100.0, capacity=2.0)
         t0 = asyncio.get_event_loop().time()
@@ -146,6 +144,7 @@ def test_token_bucket_rate_limiter():
 @patch("local_mcp_server.async_http_request")
 def test_tool_search_gnomad_mock(mock_http):
     """Test gnomAD gene constraint tool parsing."""
+
     async def _run():
         mock_http.return_value = {
             "data": {
@@ -153,11 +152,7 @@ def test_tool_search_gnomad_mock(mock_http):
                     "gene_id": "ENSG00000012048",
                     "symbol": "BRCA1",
                     "name": "BRCA1 DNA repair associated",
-                    "gnomad_constraint": {
-                        "pLI": 0.999,
-                        "loeuf": 0.12,
-                        "mis_z": 2.45
-                    }
+                    "gnomad_constraint": {"pLI": 0.999, "loeuf": 0.12, "mis_z": 2.45},
                 }
             }
         }
@@ -172,6 +167,7 @@ def test_tool_search_gnomad_mock(mock_http):
 @patch("local_mcp_server.async_http_request")
 def test_tool_search_pdb_mock(mock_http):
     """Test RCSB PDB structure tool."""
+
     async def _run():
         mock_http.side_effect = [
             {"result_set": [{"identifier": "7K43", "score": 1.0}], "total_count": 1},
@@ -179,8 +175,8 @@ def test_tool_search_pdb_mock(mock_http):
                 "struct": {"title": "Structure of SARS-CoV-2 Spike"},
                 "exptl": [{"method": "ELECTRON MICROSCOPY"}],
                 "rcsb_entry_info": {"resolution_combined": [2.6]},
-                "rcsb_accession_info": {"initial_release_date": "2020-10-14"}
-            }
+                "rcsb_accession_info": {"initial_release_date": "2020-10-14"},
+            },
         ]
         res = await tool_search_pdb(query="Spike", limit=1)
         assert res["total_found"] == 1
@@ -194,15 +190,18 @@ def test_tool_search_pdb_mock(mock_http):
 @patch("local_mcp_server.async_http_request")
 def test_tool_search_alphafold_mock(mock_http):
     """Test AlphaFold DB prediction lookup."""
+
     async def _run():
-        mock_http.return_value = [{
-            "entryId": "AF-P04637-F1",
-            "gene": "TP53",
-            "organismScientificName": "Homo sapiens",
-            "uniprotSequenceLength": 393,
-            "globalPlddt": 68.4,
-            "pdbUrl": "https://alphafold.ebi.ac.uk/files/AF-P04637-F1-model_v4.pdb"
-        }]
+        mock_http.return_value = [
+            {
+                "entryId": "AF-P04637-F1",
+                "gene": "TP53",
+                "organismScientificName": "Homo sapiens",
+                "uniprotSequenceLength": 393,
+                "globalPlddt": 68.4,
+                "pdbUrl": "https://alphafold.ebi.ac.uk/files/AF-P04637-F1-model_v4.pdb",
+            }
+        ]
         res = await tool_search_alphafold("P04637")
         assert res["uniprot_id"] == "P04637"
         assert res["global_plddt"] == 68.4

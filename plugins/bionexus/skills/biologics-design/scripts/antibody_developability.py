@@ -43,46 +43,58 @@ def evaluate_antibody_developability(
     liabilities: List[Dict[str, Any]] = []
 
     if seq.count("C") % 2 != 0:
-        liabilities.append({
-            "type": "Unpaired Cysteine",
-            "severity": "HIGH",
-            "description": f"Odd cysteine count ({seq.count('C')}); disulfide scrambling risk.",
-        })
+        liabilities.append(
+            {
+                "type": "Unpaired Cysteine",
+                "severity": "HIGH",
+                "description": f"Odd cysteine count ({seq.count('C')}); disulfide scrambling risk.",
+            }
+        )
 
     hydro_matches = re.findall(r"[LIVFWMY]{3,}", cdr3)
     if hydro_matches:
-        liabilities.append({
-            "type": "Hydrophobic Patch in CDR3",
-            "severity": "HIGH" if len(hydro_matches[0]) >= 4 else "MEDIUM",
-            "description": f"Contiguous hydrophobic stretch '{hydro_matches[0]}' in CDR3.",
-        })
+        liabilities.append(
+            {
+                "type": "Hydrophobic Patch in CDR3",
+                "severity": "HIGH" if len(hydro_matches[0]) >= 4 else "MEDIUM",
+                "description": f"Contiguous hydrophobic stretch '{hydro_matches[0]}' in CDR3.",
+            }
+        )
 
     cdr3_charge = calculate_net_charge(cdr3)
     if abs(cdr3_charge) >= 3.0:
-        liabilities.append({
-            "type": "Extreme CDR3 Net Charge",
-            "severity": "MEDIUM",
-            "description": f"CDR3 net charge {cdr3_charge} (count-based, not pKa).",
-        })
+        liabilities.append(
+            {
+                "type": "Extreme CDR3 Net Charge",
+                "severity": "MEDIUM",
+                "description": f"CDR3 net charge {cdr3_charge} (count-based, not pKa).",
+            }
+        )
 
     for match in re.finditer(r"N[GST]", seq):
-        liabilities.append({
-            "type": "Asn Deamidation Motif",
-            "severity": "MEDIUM" if match.group(0) == "NG" else "LOW",
-            "description": f"Motif '{match.group(0)}' at position {match.start() + 1}.",
-        })
+        liabilities.append(
+            {
+                "type": "Asn Deamidation Motif",
+                "severity": "MEDIUM" if match.group(0) == "NG" else "LOW",
+                "description": f"Motif '{match.group(0)}' at position {match.start() + 1}.",
+            }
+        )
     for match in re.finditer(r"D[GST]", seq):
-        liabilities.append({
-            "type": "Asp Isomerization Motif",
-            "severity": "MEDIUM" if match.group(0) == "DG" else "LOW",
-            "description": f"Motif '{match.group(0)}' at position {match.start() + 1}.",
-        })
+        liabilities.append(
+            {
+                "type": "Asp Isomerization Motif",
+                "severity": "MEDIUM" if match.group(0) == "DG" else "LOW",
+                "description": f"Motif '{match.group(0)}' at position {match.start() + 1}.",
+            }
+        )
     for match in re.finditer(r"N[^P][ST]", seq):
-        liabilities.append({
-            "type": "Fv N-Glycosylation Motif",
-            "severity": "HIGH",
-            "description": f"Sequon '{match.group(0)}' at position {match.start() + 1}.",
-        })
+        liabilities.append(
+            {
+                "type": "Fv N-Glycosylation Motif",
+                "severity": "HIGH",
+                "description": f"Sequon '{match.group(0)}' at position {match.start() + 1}.",
+            }
+        )
 
     high_count = sum(1 for item in liabilities if item["severity"] == "HIGH")
     med_count = sum(1 for item in liabilities if item["severity"] == "MEDIUM")

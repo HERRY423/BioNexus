@@ -109,15 +109,11 @@ class CapabilityContract:
     inputs: Dict[str, InputSpecification] = field(default_factory=dict)
     preconditions: List[Precondition] = field(default_factory=list)
     backend: BackendRequirement = field(
-        default_factory=lambda: BackendRequirement(
-            canonical_name="none", import_name="none"
-        )
+        default_factory=lambda: BackendRequirement(canonical_name="none", import_name="none")
     )
     refusal_conditions: List[RefusalTrigger] = field(default_factory=list)
     outputs: List[str] = field(default_factory=list)
-    evidence_requirements: EvidenceRequirement = field(
-        default_factory=EvidenceRequirement
-    )
+    evidence_requirements: EvidenceRequirement = field(default_factory=EvidenceRequirement)
 
     def to_dict(self) -> Dict[str, Any]:
         """Serialize contract to dictionary."""
@@ -237,7 +233,9 @@ class CapabilityContract:
             concl_maturity = ConclusionMaturity.ABSTAIN.value
             card = EvidenceCard(
                 execution_state=exec_state,
-                input_integrity=DimensionGrade.GRADE_C.value if any("normalized" in v.lower() for v in violations) else DimensionGrade.UNTESTED.value,
+                input_integrity=DimensionGrade.GRADE_C.value
+                if any("normalized" in v.lower() for v in violations)
+                else DimensionGrade.UNTESTED.value,
                 assumption_validity=DimensionGrade.GRADE_C.value,
                 statistical_support=DimensionGrade.UNTESTED.value,
                 details={
@@ -899,17 +897,17 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
 # Helper Query Functions
 # ==============================================================================
 
+
 def get_capability(capability_id: str) -> CapabilityContract:
     """Retrieve capability contract by ID."""
     if capability_id not in CANONICAL_CAPABILITIES:
-        raise KeyError(f"Unknown capability contract ID: '{capability_id}'. Available: {list(CANONICAL_CAPABILITIES.keys())}")
+        raise KeyError(
+            f"Unknown capability contract ID: '{capability_id}'. Available: {list(CANONICAL_CAPABILITIES.keys())}"
+        )
     return CANONICAL_CAPABILITIES[capability_id]
 
 
-def list_capabilities(
-    intent: Optional[str] = None,
-    skill_name: Optional[str] = None
-) -> List[CapabilityContract]:
+def list_capabilities(intent: Optional[str] = None, skill_name: Optional[str] = None) -> List[CapabilityContract]:
     """Filter and list capability contracts by intent or skill."""
     caps = list(CANONICAL_CAPABILITIES.values())
     if skill_name:

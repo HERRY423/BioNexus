@@ -66,9 +66,7 @@ def test_no_default_pm2_or_pp3():
 
 def test_pvs1_requires_lof_mechanism_flag():
     parsed = parse_variant_string("p.Glu1818Ter")
-    codes, _ = propose_acmg_criteria(
-        parsed, gene_info={"symbol": "BRCA1"}, lof_is_known_mechanism=True
-    )
+    codes, _ = propose_acmg_criteria(parsed, gene_info={"symbol": "BRCA1"}, lof_is_known_mechanism=True)
     assert "PVS1" in codes
 
 

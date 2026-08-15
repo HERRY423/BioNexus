@@ -24,14 +24,14 @@ def calculate_peak_gene_correlations(
     peak_annotations: List[Dict[str, Any]],
     max_distance_bp: int = 250000,
     min_correlation: float = 0.25,
-    max_p_value: float = 0.05
+    max_p_value: float = 0.05,
 ) -> pd.DataFrame:
     """
     Correlate peak accessibility with gene expression for nearby genomic pairs.
     gene_annotations: [{'name': 'EGFR', 'chrom': 'chr7', 'tss': 55019017, 'index': 0}, ...]
     peak_annotations: [{'peak_id': 'chr7:55000000-55000500', 'chrom': 'chr7', 'center': 55000250, 'index': 0}, ...]
     """
-    logger.info(f"Screening candidate peak-gene regulatory links within +/- {max_distance_bp//1000} kb window...")
+    logger.info(f"Screening candidate peak-gene regulatory links within +/- {max_distance_bp // 1000} kb window...")
     links = []
 
     # Organize peaks by chromosome
@@ -66,15 +66,17 @@ def calculate_peak_gene_correlations(
                 r, p_val = pearsonr(p_access, g_expr)
                 if r >= min_correlation and p_val <= max_p_value:
                     regulatory_type = "Promoter-Proximal" if dist <= 2000 else "Distal-Enhancer"
-                    links.append({
-                        "gene_symbol": g_name,
-                        "peak_id": peak.get("peak_id", f"{g_chrom}:{p_center}"),
-                        "chromosome": g_chrom,
-                        "distance_to_tss_bp": dist,
-                        "regulatory_type": regulatory_type,
-                        "correlation_r": round(float(r), 3),
-                        "p_value": float(p_val)
-                    })
+                    links.append(
+                        {
+                            "gene_symbol": g_name,
+                            "peak_id": peak.get("peak_id", f"{g_chrom}:{p_center}"),
+                            "chromosome": g_chrom,
+                            "distance_to_tss_bp": dist,
+                            "regulatory_type": regulatory_type,
+                            "correlation_r": round(float(r), 3),
+                            "p_value": float(p_val),
+                        }
+                    )
 
     results_df = pd.DataFrame(links)
     if not results_df.empty:

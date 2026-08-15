@@ -20,10 +20,7 @@ from bio_knowledge_graph import BioKnowledgeGraph
 
 
 def validate_target_disease_hypothesis(
-    kg: BioKnowledgeGraph,
-    target_id: str,
-    disease_id: str,
-    max_hops: int = 3
+    kg: BioKnowledgeGraph, target_id: str, disease_id: str, max_hops: int = 3
 ) -> Dict[str, Any]:
     """
     Validate whether a target-disease link is topologically supported in the knowledge graph.
@@ -77,14 +74,12 @@ def validate_target_disease_hypothesis(
         "num_connecting_paths": len(paths),
         "confidence_score": round(confidence, 3),
         "reasoning": reasoning,
-        "path_traces": formatted_paths
+        "path_traces": formatted_paths,
     }
 
 
 def build_graphrag_context(
-    kg: BioKnowledgeGraph,
-    focus_entities: Optional[List[str]] = None,
-    max_nodes: int = 30
+    kg: BioKnowledgeGraph, focus_entities: Optional[List[str]] = None, max_nodes: int = 30
 ) -> str:
     """
     Compile a structured GraphRAG factual context block for LLM prompt augmentation.
@@ -93,7 +88,7 @@ def build_graphrag_context(
     lines = [
         "### Grounded Biological Knowledge Subgraph (GraphRAG Context)",
         f"Knowledge Graph: {kg.name} | Total Entities: {len(kg.nodes)} | Verified Relations: {len(kg.edges)}\n",
-        "#### Key Biological Entities:"
+        "#### Key Biological Entities:",
     ]
 
     nodes_to_include = list(kg.nodes.values())[:max_nodes]
@@ -101,7 +96,7 @@ def build_graphrag_context(
         lines.append(f"- **{n['label']}** ({n['type']}): {n['properties'].get('description', '')[:100]}")
 
     lines.append("\n#### Verified Biological Relationships & Triples:")
-    for e in kg.edges[:max_nodes * 2]:
+    for e in kg.edges[: max_nodes * 2]:
         src_label = kg.nodes.get(e["source"], {}).get("label", e["source"])
         tgt_label = kg.nodes.get(e["target"], {}).get("label", e["target"])
         lines.append(f"- `{src_label}` **{e['relation']}** `{tgt_label}` (weight: {e['weight']:.2f})")

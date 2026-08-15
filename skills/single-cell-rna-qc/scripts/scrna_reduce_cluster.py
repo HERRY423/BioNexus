@@ -104,7 +104,9 @@ def reduce_and_cluster(
         backend="scanpy" if grade == GRADE_A else "sklearn",
         evidence_grade=grade,
         limitations=[
-            "KMeans fallback is not Leiden." if grade == GRADE_C else "Leiden resolution is a granularity knob, not a biological truth.",
+            "KMeans fallback is not Leiden."
+            if grade == GRADE_C
+            else "Leiden resolution is a granularity knob, not a biological truth.",
         ],
         abstain=grade == GRADE_C,
         abstain_reason="leidenalg/igraph missing; clusters are KMeans on PCA." if grade == GRADE_C else None,

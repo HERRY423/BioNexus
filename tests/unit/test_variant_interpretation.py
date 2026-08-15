@@ -95,11 +95,7 @@ def test_splice_site_disruption_prediction():
 
 def test_population_genetics_popmax():
     """Test gnomAD subpopulation frequency evaluation."""
-    subpops = {
-        "nfe": 0.00002,
-        "afr": 0.000005,
-        "eas": 0.0
-    }
+    subpops = {"nfe": 0.00002, "afr": 0.000005, "eas": 0.0}
     res = evaluate_population_frequencies(subpops)
     assert res["popmax_af"] == 0.00002
     assert "PM2" not in res["activated_acmg_criteria"]
@@ -123,11 +119,7 @@ def test_pharmacogenomics_lookup():
 
 def test_clinical_report_markdown_generation():
     """Test clinical report markdown compilation."""
-    eval_res = evaluate_variant_acmg(
-        variant_id="c.5266dupC",
-        gene_symbol="BRCA1",
-        criteria=["PVS1", "PM2", "PP3"]
-    )
+    eval_res = evaluate_variant_acmg(variant_id="c.5266dupC", gene_symbol="BRCA1", criteria=["PVS1", "PM2", "PP3"])
     md = generate_clinical_report_markdown(eval_res, patient_id="PT-TEST-01")
     assert "# RESEARCH VARIANT INTERPRETATION SUMMARY" in md
     assert "BRCA1" in md

@@ -15,11 +15,12 @@ from scipy.optimize import nnls
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
 logger = logging.getLogger("ImmuneDeconvolution")
 
+
 def deconvolve_immune_microenvironment(
     bulk_tpm: np.ndarray,
     gene_names: List[str],
     reference_signature_matrix: Optional[np.ndarray] = None,
-    cell_type_names: Optional[List[str]] = None
+    cell_type_names: Optional[List[str]] = None,
 ) -> pd.DataFrame:
     """
     Deconvolve bulk RNA mixture expression vector/matrix into immune cell fractions.
@@ -37,18 +38,14 @@ def deconvolve_immune_microenvironment(
         )
     ref_matrix = np.asarray(reference_signature_matrix, dtype=float)
     if ref_matrix.shape[0] != n_genes:
-        raise ValueError(
-            f"Signature matrix has {ref_matrix.shape[0]} genes but bulk has {n_genes}."
-        )
+        raise ValueError(f"Signature matrix has {ref_matrix.shape[0]} genes but bulk has {n_genes}.")
     if cell_type_names is None:
         cell_names = [f"component_{i}" for i in range(ref_matrix.shape[1])]
     else:
         cell_names = list(cell_type_names)
     k_types = len(cell_names)
     if ref_matrix.shape[1] != k_types:
-        raise ValueError(
-            f"Signature has {ref_matrix.shape[1]} columns but {k_types} cell-type names."
-        )
+        raise ValueError(f"Signature has {ref_matrix.shape[1]} columns but {k_types} cell-type names.")
 
     proportions = []
     for s_idx in range(n_samples):

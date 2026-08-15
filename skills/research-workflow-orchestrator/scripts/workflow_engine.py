@@ -109,7 +109,7 @@ class WorkflowEngine:
             "name": step_name,
             "status": "RUNNING",
             "start_time": datetime.now(timezone.utc).isoformat(),
-            "arguments": interpolated_args
+            "arguments": interpolated_args,
         }
 
         print(f"  [RUNNING] Step: {step_name} ({step_id})...")
@@ -120,6 +120,7 @@ class WorkflowEngine:
             if tool_name:
                 # Dispatch to local_mcp_server tool function
                 import local_mcp_server as mcp
+
                 handler_map = {
                     "search_pubmed": mcp.tool_search_pubmed,
                     "get_pubmed_article": mcp.tool_get_pubmed_article,
@@ -141,17 +142,13 @@ class WorkflowEngine:
                     "synthesis_type": "evidence_weighted_ranking",
                     "weights_applied": weights,
                     "timestamp": datetime.now(timezone.utc).isoformat(),
-                    "summary": f"Synthesized multi-source evidence across {len(step.get('depends_on', []))} prerequisite steps."
+                    "summary": f"Synthesized multi-source evidence across {len(step.get('depends_on', []))} prerequisite steps.",
                 }
             else:
                 result = {"status": "completed", "params": interpolated_args}
 
             elapsed = round(time.time() - t0, 3)
-            self.step_status[step_id].update({
-                "status": "COMPLETED",
-                "duration_s": elapsed,
-                "output": result
-            })
+            self.step_status[step_id].update({"status": "COMPLETED", "duration_s": elapsed, "output": result})
 
             # Store in context if output_variable specified
             out_var = step.get("output_variable")
@@ -163,11 +160,7 @@ class WorkflowEngine:
 
         except Exception as e:
             elapsed = round(time.time() - t0, 3)
-            self.step_status[step_id].update({
-                "status": "FAILED",
-                "duration_s": elapsed,
-                "error": str(e)
-            })
+            self.step_status[step_id].update({"status": "FAILED", "duration_s": elapsed, "error": str(e)})
             print(f"  [FAILED] Step: {step_name} failed: {e}")
             raise
 
@@ -197,7 +190,7 @@ class WorkflowEngine:
             "inputs": initial_inputs,
             "total_duration_s": total_duration,
             "execution_timestamp": datetime.now(timezone.utc).isoformat(),
-            "step_results": self.step_status
+            "step_results": self.step_status,
         }
 
         if output_dir:
@@ -221,11 +214,15 @@ def main():
         epilog="""
 Examples:
   python workflow_engine.py drug_target_discovery.yml --param disease_name="Melanoma" -o ./results
-        """
+        """,
     )
     parser.add_argument("template", help="Path or name of workflow template YAML")
-    parser.add_argument("-p", "--param", action="append", help="Input parameters in key=value format (can be specified multiple times)")
-    parser.add_argument("-o", "--output-dir", default="./workflow_output", help="Directory for output report and artifacts")
+    parser.add_argument(
+        "-p", "--param", action="append", help="Input parameters in key=value format (can be specified multiple times)"
+    )
+    parser.add_argument(
+        "-o", "--output-dir", default="./workflow_output", help="Directory for output report and artifacts"
+    )
 
     args = parser.parse_args()
 

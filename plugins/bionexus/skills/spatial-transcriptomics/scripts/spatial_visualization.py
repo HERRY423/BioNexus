@@ -28,7 +28,7 @@ def plot_spatial_discrete(
     spatial_key: str = "spatial",
     output_path: str = "spatial_domains.png",
     spot_size: float = 30.0,
-    title: Optional[str] = None
+    title: Optional[str] = None,
 ):
     """Plot discrete spatial annotations (domains, niches, or cell types)."""
     coords = adata.obsm.get(spatial_key)
@@ -53,7 +53,7 @@ def plot_spatial_discrete(
             label=cat,
             s=spot_size,
             alpha=0.85,
-            edgecolors="none"
+            edgecolors="none",
         )
 
     ax.set_aspect("equal")
@@ -76,7 +76,7 @@ def plot_spatial_continuous(
     spatial_key: str = "spatial",
     output_path: str = "spatial_feature.png",
     cmap_name: str = "viridis",
-    spot_size: float = 30.0
+    spot_size: float = 30.0,
 ):
     """Plot continuous feature (gene expression, total counts, or cell type proportion)."""
     coords = adata.obsm.get(spatial_key)
@@ -94,15 +94,7 @@ def plot_spatial_continuous(
         raise ValueError(f"Feature '{feature_name}' not found in adata.obs or adata.var_names.")
 
     fig, ax = plt.subplots(figsize=(8, 8), dpi=300)
-    sc = ax.scatter(
-        coords[:, 0],
-        coords[:, 1],
-        c=values,
-        cmap=cmap_name,
-        s=spot_size,
-        alpha=0.9,
-        edgecolors="none"
-    )
+    sc = ax.scatter(coords[:, 0], coords[:, 1], c=values, cmap=cmap_name, s=spot_size, alpha=0.9, edgecolors="none")
     cbar = plt.colorbar(sc, ax=ax, fraction=0.046, pad=0.04)
     cbar.set_label(feature_name, fontsize=11)
 
@@ -119,11 +111,7 @@ def plot_spatial_continuous(
     logger.info(f"Saved continuous spatial plot to {output_path}")
 
 
-def generate_interactive_html(
-    adata,
-    output_path: str = "spatial_atlas.html",
-    spatial_key: str = "spatial"
-):
+def generate_interactive_html(adata, output_path: str = "spatial_atlas.html", spatial_key: str = "spatial"):
     """Generate standalone HTML tissue slice viewer with hover tooltip metadata."""
     coords = adata.obsm.get(spatial_key, np.zeros((adata.n_obs, 2)))
     n_spots = min(adata.n_obs, 5000)  # Cap for lightweight browser rendering
@@ -140,7 +128,7 @@ def generate_interactive_html(
             "id": str(adata.obs_names[i]),
             "domain": str(domains[i]),
             "niche": str(niches[i]),
-            "counts": float(counts[i])
+            "counts": float(counts[i]),
         }
         spots_data.append(spot_dict)
 
@@ -261,15 +249,22 @@ def main():
 
     args = parser.parse_args()
     import scanpy as sc
+
     adata = sc.read_h5ad(args.input)
     os.makedirs(args.output_dir, exist_ok=True)
 
     if "spatial_domain" in adata.obs:
-        plot_spatial_discrete(adata, color_key="spatial_domain", output_path=os.path.join(args.output_dir, "spatial_domains.png"))
+        plot_spatial_discrete(
+            adata, color_key="spatial_domain", output_path=os.path.join(args.output_dir, "spatial_domains.png")
+        )
     if "spatial_niche" in adata.obs:
-        plot_spatial_discrete(adata, color_key="spatial_niche", output_path=os.path.join(args.output_dir, "spatial_niches.png"))
+        plot_spatial_discrete(
+            adata, color_key="spatial_niche", output_path=os.path.join(args.output_dir, "spatial_niches.png")
+        )
     if args.feature:
-        plot_spatial_continuous(adata, feature_name=args.feature, output_path=os.path.join(args.output_dir, f"spatial_{args.feature}.png"))
+        plot_spatial_continuous(
+            adata, feature_name=args.feature, output_path=os.path.join(args.output_dir, f"spatial_{args.feature}.png")
+        )
 
     generate_interactive_html(adata, output_path=os.path.join(args.output_dir, "spatial_atlas.html"))
 

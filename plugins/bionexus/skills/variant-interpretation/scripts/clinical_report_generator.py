@@ -75,7 +75,7 @@ Criteria below are **exactly those provided by the caller**. This tool does not 
     md += f"""
 ## Combiner arithmetic
 
-- Odds of pathogenicity = {variant_eval.get('odds_of_pathogenicity', 1.0):.2f}
+- Odds of pathogenicity = {variant_eval.get("odds_of_pathogenicity", 1.0):.2f}
 - Posterior uses prior 0.10 (Tavtigian et al. 2018) on the supplied codes only.
 
 ## Limitations

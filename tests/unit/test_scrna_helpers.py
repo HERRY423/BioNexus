@@ -40,9 +40,7 @@ def test_inspect_guesses_human_mt():
 
 
 def test_subset_and_clear_embeddings():
-    view, contract = subset_adata(
-        _tiny(), obs_key="leiden", keep_values=["0"], clear_embeddings=True
-    )
+    view, contract = subset_adata(_tiny(), obs_key="leiden", keep_values=["0"], clear_embeddings=True)
     assert view.n_obs == 2
     assert "X_umap" not in view.obsm
     assert contract["method"] == "anndata_subset"

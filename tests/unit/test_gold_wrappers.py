@@ -29,7 +29,9 @@ def test_default_scrna_skill_does_not_recommend_soupx():
 
 def test_skip_doctor_still_enforces_scverse():
     with pytest.raises(DoctorGateError, match="scanpy"):
-        _enforce_ready({"tier": "degraded", "ready": {"scverse_ready": False}}, require_scverse=True, require_spatial=False)
+        _enforce_ready(
+            {"tier": "degraded", "ready": {"scverse_ready": False}}, require_scverse=True, require_spatial=False
+        )
     with pytest.raises(DoctorGateError, match="squidpy"):
         _enforce_ready({"tier": "full", "ready": {"spatial_ready": False}}, require_scverse=False, require_spatial=True)
 

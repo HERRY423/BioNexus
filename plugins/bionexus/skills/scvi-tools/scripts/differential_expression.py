@@ -14,14 +14,7 @@ import argparse
 import sys
 
 
-def run_de_analysis(
-    model,
-    adata,
-    groupby,
-    group1=None,
-    group2=None,
-    n_genes=None
-):
+def run_de_analysis(model, adata, groupby, group1=None, group2=None, n_genes=None):
     """
     Run differential expression analysis.
 
@@ -49,11 +42,7 @@ def run_de_analysis(
     if group1 is not None:
         # Specific comparison
         print(f"Comparing {group1} vs {group2 or 'rest'}...")
-        de_results = model.differential_expression(
-            groupby=groupby,
-            group1=group1,
-            group2=group2
-        )
+        de_results = model.differential_expression(groupby=groupby, group1=group1, group2=group2)
 
         # Add comparison info
         de_results["comparison"] = f"{group1}_vs_{group2 or 'rest'}"
@@ -67,10 +56,7 @@ def run_de_analysis(
         for group in groups:
             print(f"  Processing {group}...")
             try:
-                de = model.differential_expression(
-                    groupby=groupby,
-                    group1=group
-                )
+                de = model.differential_expression(groupby=groupby, group1=group)
                 de["group"] = group
                 all_results.append(de)
             except Exception as e:
@@ -87,9 +73,9 @@ def run_de_analysis(
     if n_genes is not None and "lfc_mean" in de_results.columns:
         if "group" in de_results.columns:
             # Top N per group
-            de_results = de_results.groupby("group").apply(
-                lambda x: x.nlargest(n_genes, "lfc_mean")
-            ).reset_index(drop=True)
+            de_results = (
+                de_results.groupby("group").apply(lambda x: x.nlargest(n_genes, "lfc_mean")).reset_index(drop=True)
+            )
         else:
             de_results = de_results.nlargest(n_genes, "lfc_mean")
 
@@ -158,7 +144,7 @@ Examples:
     # Top 50 genes per cluster
     python differential_expression.py model/ adata.h5ad de_results.csv \\
         --groupby leiden --n-genes 50
-        """
+        """,
     )
     parser.add_argument("model_dir", help="Directory containing saved model")
     parser.add_argument("input", help="Input h5ad file (same as training)")
@@ -167,8 +153,9 @@ Examples:
     parser.add_argument("--group1", help="First group for comparison")
     parser.add_argument("--group2", help="Second group (default: rest)")
     parser.add_argument("--n-genes", type=int, help="Limit to top N genes per group")
-    parser.add_argument("--model-type", choices=["scvi", "scanvi", "totalvi"],
-                        default="scvi", help="Model type (default: scvi)")
+    parser.add_argument(
+        "--model-type", choices=["scvi", "scanvi", "totalvi"], default="scvi", help="Model type (default: scvi)"
+    )
     parser.add_argument("--plot", action="store_true", help="Generate volcano plot")
 
     args = parser.parse_args()
@@ -195,12 +182,7 @@ Examples:
 
     # Run DE
     de_results = run_de_analysis(
-        model,
-        adata,
-        groupby=args.groupby,
-        group1=args.group1,
-        group2=args.group2,
-        n_genes=args.n_genes
+        model, adata, groupby=args.groupby, group1=args.group1, group2=args.group2, n_genes=args.n_genes
     )
 
     # Save results

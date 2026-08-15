@@ -142,9 +142,7 @@ def flatten_asm_to_csv(asm: Dict[str, Any], output_path: str) -> None:
         output_path: Path for output CSV
     """
     if not PANDAS_AVAILABLE:
-        raise ImportError(
-            "pandas is required for CSV output. Install with: pip install pandas"
-        )
+        raise ImportError("pandas is required for CSV output. Install with: pip install pandas")
 
     rows = flatten_asm(asm)
 
@@ -203,9 +201,7 @@ def main():
 
     parser = argparse.ArgumentParser(description="Flatten ASM JSON to CSV")
     parser.add_argument("input", help="Input ASM JSON file")
-    parser.add_argument(
-        "--output", "-o", help="Output CSV path (default: input_flat.csv)"
-    )
+    parser.add_argument("--output", "-o", help="Output CSV path (default: input_flat.csv)")
     parser.add_argument(
         "--format",
         choices=["csv", "json"],

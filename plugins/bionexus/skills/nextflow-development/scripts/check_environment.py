@@ -27,6 +27,7 @@ from typing import List, Optional
 @dataclass
 class CheckResult:
     """Result of a single environment check."""
+
     name: str
     passed: bool
     message: str
@@ -37,6 +38,7 @@ class CheckResult:
 @dataclass
 class EnvironmentReport:
     """Complete environment validation report."""
+
     ready: bool
     checks: List[CheckResult] = field(default_factory=list)
     recommendations: List[str] = field(default_factory=list)
@@ -52,8 +54,8 @@ class EnvironmentReport:
 # ---- Platform helpers ----------------------------------------------------
 
 _IS_WINDOWS = platform.system() == "Windows"
-_IS_MACOS   = platform.system() == "Darwin"
-_IS_LINUX   = platform.system() == "Linux"
+_IS_MACOS = platform.system() == "Darwin"
+_IS_LINUX = platform.system() == "Linux"
 
 
 def _get_memory_gb() -> float:
@@ -72,10 +74,12 @@ def _get_memory_gb() -> float:
         try:
             result = subprocess.run(
                 ["sysctl", "-n", "hw.memsize"],
-                capture_output=True, text=True, timeout=5,
+                capture_output=True,
+                text=True,
+                timeout=5,
             )
             if result.returncode == 0:
-                return int(result.stdout.strip()) / (1024 ** 3)
+                return int(result.stdout.strip()) / (1024**3)
         except Exception:
             pass
         return 0.0
@@ -83,24 +87,27 @@ def _get_memory_gb() -> float:
     if _IS_WINDOWS:
         try:
             result = subprocess.run(
-                ["powershell", "-NoProfile", "-Command",
-                 "(Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory"],
-                capture_output=True, text=True, timeout=10,
+                ["powershell", "-NoProfile", "-Command", "(Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory"],
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
             if result.returncode == 0:
-                return int(result.stdout.strip()) / (1024 ** 3)
+                return int(result.stdout.strip()) / (1024**3)
         except Exception:
             pass
         # Fallback: wmic
         try:
             result = subprocess.run(
                 ["wmic", "computersystem", "get", "TotalPhysicalMemory"],
-                capture_output=True, text=True, timeout=10,
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
             for line in result.stdout.strip().splitlines():
                 val = line.strip()
                 if val.isdigit():
-                    return int(val) / (1024 ** 3)
+                    return int(val) / (1024**3)
         except Exception:
             pass
         return 0.0
@@ -113,74 +120,90 @@ def _get_disk_gb() -> float:
     try:
         if _IS_WINDOWS:
             import ctypes
+
             free_bytes = ctypes.c_ulonglong(0)
             ctypes.windll.kernel32.GetDiskFreeSpaceExW(
-                ctypes.c_wchar_p(os.getcwd()), None, None,
+                ctypes.c_wchar_p(os.getcwd()),
+                None,
+                None,
                 ctypes.pointer(free_bytes),
             )
-            return free_bytes.value / (1024 ** 3)
+            return free_bytes.value / (1024**3)
         else:
             statvfs = os.statvfs(".")
-            return (statvfs.f_frsize * statvfs.f_bavail) / (1024 ** 3)
+            return (statvfs.f_frsize * statvfs.f_bavail) / (1024**3)
     except Exception:
         return 0.0
 
 
 # ---- Individual checks ---------------------------------------------------
 
+
 def check_docker() -> CheckResult:
     if not shutil.which("docker"):
         return CheckResult(
-            name="Docker", passed=False,
+            name="Docker",
+            passed=False,
             message="Docker not found in PATH",
             fix="Install Docker: https://docs.docker.com/get-docker/",
         )
 
     try:
         result = subprocess.run(
-            ["docker", "info"], capture_output=True, text=True, timeout=15,
+            ["docker", "info"],
+            capture_output=True,
+            text=True,
+            timeout=15,
         )
 
         if result.returncode != 0:
             stderr_lower = result.stderr.lower()
             if "permission denied" in stderr_lower:
                 return CheckResult(
-                    name="Docker", passed=False,
+                    name="Docker",
+                    passed=False,
                     message="Docker permission denied",
                     details="Cannot connect to Docker daemon",
                     fix="sudo usermod -aG docker $USER && newgrp docker",
                 )
             elif "cannot connect" in stderr_lower or "is the docker daemon running" in stderr_lower:
                 return CheckResult(
-                    name="Docker", passed=False,
+                    name="Docker",
+                    passed=False,
                     message="Docker daemon not running",
                     details=result.stderr[:200] if result.stderr else None,
-                    fix=("Start Docker Desktop from the system tray" if _IS_WINDOWS
-                         else "sudo systemctl start docker"),
+                    fix=("Start Docker Desktop from the system tray" if _IS_WINDOWS else "sudo systemctl start docker"),
                 )
             else:
                 return CheckResult(
-                    name="Docker", passed=False,
+                    name="Docker",
+                    passed=False,
                     message="Docker error",
                     details=result.stderr[:200] if result.stderr else None,
                     fix="Check Docker installation and daemon status",
                 )
 
         return CheckResult(
-            name="Docker", passed=True,
+            name="Docker",
+            passed=True,
             message="Docker is available and running",
         )
 
     except subprocess.TimeoutExpired:
         return CheckResult(
-            name="Docker", passed=False,
+            name="Docker",
+            passed=False,
             message="Docker command timed out",
-            fix=("Check Docker Desktop status" if _IS_WINDOWS
-                 else "Check Docker daemon status: sudo systemctl status docker"),
+            fix=(
+                "Check Docker Desktop status"
+                if _IS_WINDOWS
+                else "Check Docker daemon status: sudo systemctl status docker"
+            ),
         )
     except Exception as e:
         return CheckResult(
-            name="Docker", passed=False,
+            name="Docker",
+            passed=False,
             message=f"Docker check failed: {str(e)}",
         )
 
@@ -188,19 +211,24 @@ def check_docker() -> CheckResult:
 def check_nextflow() -> CheckResult:
     if not shutil.which("nextflow"):
         return CheckResult(
-            name="Nextflow", passed=False,
+            name="Nextflow",
+            passed=False,
             message="Nextflow not found in PATH",
             fix="curl -s https://get.nextflow.io | bash && mv nextflow ~/bin/ && export PATH=$HOME/bin:$PATH",
         )
 
     try:
         result = subprocess.run(
-            ["nextflow", "-version"], capture_output=True, text=True, timeout=30,
+            ["nextflow", "-version"],
+            capture_output=True,
+            text=True,
+            timeout=30,
         )
         output = result.stdout + result.stderr
         version_line = output.strip().split("\n")[0] if output else ""
 
         import re
+
         match = re.search(r"(\d+)\.(\d+)\.(\d+)", version_line)
 
         if match:
@@ -209,49 +237,62 @@ def check_nextflow() -> CheckResult:
 
             if major > 23 or (major == 23 and minor >= 4):
                 return CheckResult(
-                    name="Nextflow", passed=True,
-                    message=f"Nextflow {version_str} installed", details=version_line,
+                    name="Nextflow",
+                    passed=True,
+                    message=f"Nextflow {version_str} installed",
+                    details=version_line,
                 )
             else:
                 return CheckResult(
-                    name="Nextflow", passed=False,
+                    name="Nextflow",
+                    passed=False,
                     message=f"Nextflow {version_str} is outdated (requires >= 23.04)",
-                    details=version_line, fix="nextflow self-update",
+                    details=version_line,
+                    fix="nextflow self-update",
                 )
 
         return CheckResult(
-            name="Nextflow", passed=True,
-            message="Nextflow installed (version unknown)", details=version_line,
+            name="Nextflow",
+            passed=True,
+            message="Nextflow installed (version unknown)",
+            details=version_line,
         )
 
     except subprocess.TimeoutExpired:
         return CheckResult(
-            name="Nextflow", passed=False,
-            message="Nextflow command timed out", fix="Check Nextflow installation",
+            name="Nextflow",
+            passed=False,
+            message="Nextflow command timed out",
+            fix="Check Nextflow installation",
         )
     except Exception as e:
         return CheckResult(
-            name="Nextflow", passed=False,
+            name="Nextflow",
+            passed=False,
             message=f"Nextflow check failed: {str(e)}",
         )
 
 
 def check_java() -> CheckResult:
     if not shutil.which("java"):
-        fix_msg = ("winget install Microsoft.OpenJDK.11" if _IS_WINDOWS
-                   else "sudo apt install openjdk-11-jdk")
+        fix_msg = "winget install Microsoft.OpenJDK.11" if _IS_WINDOWS else "sudo apt install openjdk-11-jdk"
         return CheckResult(
-            name="Java", passed=False,
+            name="Java",
+            passed=False,
             message="Java not found in PATH",
             fix=f"Install Java 11+: {fix_msg}",
         )
 
     try:
         result = subprocess.run(
-            ["java", "-version"], capture_output=True, text=True, timeout=10,
+            ["java", "-version"],
+            capture_output=True,
+            text=True,
+            timeout=10,
         )
         output = result.stderr or result.stdout
         import re
+
         match = re.search(r'version "(\d+)', output)
 
         if match:
@@ -260,26 +301,31 @@ def check_java() -> CheckResult:
 
             if version >= 11:
                 return CheckResult(
-                    name="Java", passed=True,
-                    message=f"Java {version} installed", details=version_line,
+                    name="Java",
+                    passed=True,
+                    message=f"Java {version} installed",
+                    details=version_line,
                 )
             else:
                 return CheckResult(
-                    name="Java", passed=False,
+                    name="Java",
+                    passed=False,
                     message=f"Java {version} is too old (requires >= 11)",
                     details=version_line,
                     fix="Install Java 11+: sudo apt install openjdk-11-jdk",
                 )
 
         return CheckResult(
-            name="Java", passed=True,
+            name="Java",
+            passed=True,
             message="Java installed",
             details=output.strip().split("\n")[0] if output else None,
         )
 
     except Exception as e:
         return CheckResult(
-            name="Java", passed=False,
+            name="Java",
+            passed=False,
             message=f"Java check failed: {str(e)}",
         )
 
@@ -305,14 +351,18 @@ def check_resources() -> CheckResult:
 
         if warnings:
             return CheckResult(
-                name="Resources", passed=True,
+                name="Resources",
+                passed=True,
                 message="Resources available (with warnings)",
-                details=details, fix="; ".join(warnings),
+                details=details,
+                fix="; ".join(warnings),
             )
 
         return CheckResult(
-            name="Resources", passed=True,
-            message="Sufficient resources available", details=details,
+            name="Resources",
+            passed=True,
+            message="Sufficient resources available",
+            details=details,
         )
 
     except Exception as e:
@@ -326,6 +376,7 @@ def check_resources() -> CheckResult:
 def check_network() -> CheckResult:
     try:
         import urllib.request
+
         headers = {"User-Agent": "nf-core-helper/1.0"}
 
         def _reachable(url):
@@ -341,25 +392,29 @@ def check_network() -> CheckResult:
 
         if docker_hub_ok and nfcore_ok:
             return CheckResult(
-                name="Network", passed=True,
+                name="Network",
+                passed=True,
                 message="Network connectivity OK (Docker Hub & nf-core reachable)",
             )
         elif docker_hub_ok:
             return CheckResult(
-                name="Network", passed=True,
+                name="Network",
+                passed=True,
                 message="Docker Hub reachable (nf-core.re not reachable)",
                 details="Pipeline downloads may still work via GitHub",
             )
         else:
             return CheckResult(
-                name="Network", passed=False,
+                name="Network",
+                passed=False,
                 message="Cannot reach Docker Hub",
                 fix="Check network connection. Containers require Docker Hub access.",
             )
 
     except Exception as e:
         return CheckResult(
-            name="Network", passed=False,
+            name="Network",
+            passed=False,
             message=f"Network check failed: {str(e)}",
             fix="Check network connection and proxy settings",
         )
@@ -496,11 +551,10 @@ def main():
         description="Check environment for nf-core pipeline execution",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="Examples:\n"
-               "    python check_environment.py           # Human-readable output\n"
-               "    python check_environment.py --json    # JSON output for parsing\n",
+        "    python check_environment.py           # Human-readable output\n"
+        "    python check_environment.py --json    # JSON output for parsing\n",
     )
-    parser.add_argument("--json", action="store_true",
-                        help="Output results as JSON")
+    parser.add_argument("--json", action="store_true", help="Output results as JSON")
     parser.add_argument("--samplesheet", default=None, help="Optional nf-core samplesheet to validate")
     parser.add_argument("--config", default=None, help="Optional nextflow.config to validate")
     parser.add_argument("--skip-network", action="store_true")

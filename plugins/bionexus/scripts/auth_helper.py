@@ -21,50 +21,50 @@ SUPPORTED_CREDENTIALS = {
         "provider": "NCBI / PubMed",
         "purpose": "Raises E-utilities rate limit from 3 req/sec to 10 req/sec",
         "optional": True,
-        "signup_url": "https://www.ncbi.nlm.nih.gov/account/settings/"
+        "signup_url": "https://www.ncbi.nlm.nih.gov/account/settings/",
     },
     "BENCHLING_API_KEY": {
         "provider": "Benchling LIMS / ELN",
         "purpose": "Connects to internal lab notebook, sample registry, and workflows",
         "optional": True,
-        "signup_url": "https://benchling.com/"
+        "signup_url": "https://benchling.com/",
     },
     "BENCHLING_TENANT": {
         "provider": "Benchling LIMS / ELN",
         "purpose": "Your organization's Benchling subdomain (e.g. 'mycompany.benchling.com')",
         "optional": True,
-        "signup_url": "https://benchling.com/"
+        "signup_url": "https://benchling.com/",
     },
     "SYNAPSE_AUTH_TOKEN": {
         "provider": "Sage Bionetworks Synapse",
         "purpose": "Access collaborative research datasets, DREAM challenges, and open science data",
         "optional": True,
-        "signup_url": "https://www.synapse.org/#!PersonalAccessTokens:"
+        "signup_url": "https://www.synapse.org/#!PersonalAccessTokens:",
     },
     "WILEY_API_KEY": {
         "provider": "Wiley Scholar Gateway",
         "purpose": "Access academic research and full-text publications",
         "optional": True,
-        "signup_url": "https://scholargateway.ai/"
+        "signup_url": "https://scholargateway.ai/",
     },
     "CONSENSUS_API_KEY": {
         "provider": "Consensus AI",
         "purpose": "AI-powered scientific research synthesis",
         "optional": True,
-        "signup_url": "https://consensus.app/"
+        "signup_url": "https://consensus.app/",
     },
     "OWKIN_API_KEY": {
         "provider": "Owkin",
         "purpose": "AI for biology and precision drug discovery",
         "optional": True,
-        "signup_url": "https://owkin.com/"
+        "signup_url": "https://owkin.com/",
     },
     "BIORENDER_API_KEY": {
         "provider": "BioRender",
         "purpose": "Export and integrate scientific illustrations",
         "optional": True,
-        "signup_url": "https://biorender.com/"
-    }
+        "signup_url": "https://biorender.com/",
+    },
 }
 
 
@@ -75,11 +75,13 @@ def load_env_file(filepath: Optional[str] = None) -> Dict[str, str]:
         candidates.append(filepath)
     else:
         root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        candidates.extend([
-            os.path.join(os.getcwd(), ".env"),
-            os.path.join(root_dir, ".env"),
-            os.path.expanduser("~/.gemini/config/.env")
-        ])
+        candidates.extend(
+            [
+                os.path.join(os.getcwd(), ".env"),
+                os.path.join(root_dir, ".env"),
+                os.path.expanduser("~/.gemini/config/.env"),
+            ]
+        )
 
     loaded = {}
     for cand in candidates:

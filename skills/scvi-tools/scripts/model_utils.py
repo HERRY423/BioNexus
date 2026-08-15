@@ -26,9 +26,9 @@ def get_mito_genes(adata) -> np.ndarray:
     Boolean array indicating mitochondrial genes
     """
     return (
-        adata.var_names.str.startswith('MT-') |
-        adata.var_names.str.startswith('mt-') |
-        adata.var_names.str.startswith('Mt-')
+        adata.var_names.str.startswith("MT-")
+        | adata.var_names.str.startswith("mt-")
+        | adata.var_names.str.startswith("Mt-")
     )
 
 
@@ -40,7 +40,7 @@ def prepare_adata(
     max_genes: int = 5000,
     max_mito_pct: float = 20.0,
     min_cells: int = 3,
-    copy: bool = True
+    copy: bool = True,
 ):
     """
     Prepare AnnData for scvi-tools models.
@@ -72,13 +72,13 @@ def prepare_adata(
         adata = adata.copy()
 
     # Calculate QC metrics
-    adata.var['mt'] = get_mito_genes(adata)
-    sc.pp.calculate_qc_metrics(adata, qc_vars=['mt'], inplace=True)
+    adata.var["mt"] = get_mito_genes(adata)
+    sc.pp.calculate_qc_metrics(adata, qc_vars=["mt"], inplace=True)
 
     # Filter cells
-    adata = adata[adata.obs['n_genes_by_counts'] >= min_genes].copy()
-    adata = adata[adata.obs['n_genes_by_counts'] <= max_genes].copy()
-    adata = adata[adata.obs['pct_counts_mt'] < max_mito_pct].copy()
+    adata = adata[adata.obs["n_genes_by_counts"] >= min_genes].copy()
+    adata = adata[adata.obs["n_genes_by_counts"] <= max_genes].copy()
+    adata = adata[adata.obs["pct_counts_mt"] < max_mito_pct].copy()
 
     # Filter genes
     sc.pp.filter_genes(adata, min_cells=min_cells)
@@ -89,11 +89,7 @@ def prepare_adata(
     # HVG selection
     if batch_key and batch_key in adata.obs.columns:
         sc.pp.highly_variable_genes(
-            adata,
-            n_top_genes=n_top_genes,
-            flavor="seurat_v3",
-            batch_key=batch_key,
-            layer="counts"
+            adata, n_top_genes=n_top_genes, flavor="seurat_v3", batch_key=batch_key, layer="counts"
         )
     else:
         # Need to normalize for non-seurat_v3 flavor
@@ -104,7 +100,7 @@ def prepare_adata(
         adata.X = adata.layers["counts"].copy()
 
     # Subset to HVGs
-    adata = adata[:, adata.var['highly_variable']].copy()
+    adata = adata[:, adata.var["highly_variable"]].copy()
 
     print(f"Prepared AnnData: {adata.shape}")
     if batch_key:
@@ -125,7 +121,7 @@ def train_scvi(
     batch_size: Optional[int] = None,
     precision: Optional[str] = None,
     num_workers: int = 0,
-    early_stopping_patience: int = 15
+    early_stopping_patience: int = 15,
 ):
     """
     Train scVI or scANVI model with high-performance acceleration.
@@ -181,57 +177,41 @@ def train_scvi(
         datasplitter_kwargs["num_workers"] = num_workers
 
     # Setup AnnData
-    scvi.model.SCVI.setup_anndata(
-        adata,
-        layer="counts",
-        batch_key=batch_key
-    )
+    scvi.model.SCVI.setup_anndata(adata, layer="counts", batch_key=batch_key)
 
     if labels_key and labels_key in adata.obs.columns:
         # Train scVI first
-        scvi_model = scvi.model.SCVI(
-            adata,
-            n_latent=n_latent,
-            n_layers=n_layers
-        )
+        scvi_model = scvi.model.SCVI(adata, n_latent=n_latent, n_layers=n_layers)
         scvi_model.train(
             max_epochs=max_epochs,
             early_stopping=early_stopping,
             early_stopping_patience=early_stopping_patience,
             batch_size=batch_size,
             datasplitter_kwargs=datasplitter_kwargs if datasplitter_kwargs else None,
-            **trainer_kwargs
+            **trainer_kwargs,
         )
 
         # Initialize scANVI
-        model = scvi.model.SCANVI.from_scvi_model(
-            scvi_model,
-            labels_key=labels_key,
-            unlabeled_category="Unknown"
-        )
+        model = scvi.model.SCANVI.from_scvi_model(scvi_model, labels_key=labels_key, unlabeled_category="Unknown")
         model.train(
             max_epochs=max_epochs // 4,
             batch_size=batch_size,
             datasplitter_kwargs=datasplitter_kwargs if datasplitter_kwargs else None,
-            **trainer_kwargs
+            **trainer_kwargs,
         )
 
         # Store representation
         adata.obsm["X_scANVI"] = model.get_latent_representation()
     else:
         # Train scVI only
-        model = scvi.model.SCVI(
-            adata,
-            n_latent=n_latent,
-            n_layers=n_layers
-        )
+        model = scvi.model.SCVI(adata, n_latent=n_latent, n_layers=n_layers)
         model.train(
             max_epochs=max_epochs,
             early_stopping=early_stopping,
             early_stopping_patience=early_stopping_patience,
             batch_size=batch_size,
             datasplitter_kwargs=datasplitter_kwargs if datasplitter_kwargs else None,
-            **trainer_kwargs
+            **trainer_kwargs,
         )
 
         # Store representation
@@ -240,12 +220,7 @@ def train_scvi(
     return model
 
 
-def evaluate_integration(
-    adata,
-    batch_key: str,
-    label_key: str,
-    embedding_key: str = "X_scVI"
-) -> Dict[str, float]:
+def evaluate_integration(adata, batch_key: str, label_key: str, embedding_key: str = "X_scVI") -> Dict[str, float]:
     """
     Evaluate integration quality using basic metrics.
 
@@ -302,12 +277,7 @@ def evaluate_integration(
     return metrics
 
 
-def get_marker_genes(
-    model,
-    adata,
-    groupby: str,
-    n_genes: int = 10
-) -> Dict[str, List[str]]:
+def get_marker_genes(model, adata, groupby: str, n_genes: int = 10) -> Dict[str, List[str]]:
     """
     Get marker genes using scVI differential expression.
 
@@ -331,16 +301,12 @@ def get_marker_genes(
 
     for group in groups:
         # Get DE results for this group vs rest
-        de_results = model.differential_expression(
-            groupby=groupby,
-            group1=group
-        )
+        de_results = model.differential_expression(groupby=groupby, group1=group)
 
         # Filter and sort
-        de_sig = de_results[
-            (de_results["is_de_fdr_0.05"]) &
-            (de_results["lfc_mean"] > 0.5)
-        ].sort_values("lfc_mean", ascending=False)
+        de_sig = de_results[(de_results["is_de_fdr_0.05"]) & (de_results["lfc_mean"] > 0.5)].sort_values(
+            "lfc_mean", ascending=False
+        )
 
         markers[group] = de_sig.index[:n_genes].tolist()
 
@@ -391,12 +357,7 @@ def plot_training_history(model, save_path: Optional[str] = None):
 
 
 def save_results(
-    model,
-    adata,
-    output_dir: str,
-    save_model: bool = True,
-    save_adata: bool = True,
-    plot_umap: bool = True
+    model, adata, output_dir: str, save_model: bool = True, save_adata: bool = True, plot_umap: bool = True
 ):
     """
     Save model, processed data, and visualization.
@@ -455,7 +416,7 @@ def save_results(
             fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
             # Plot by batch if available
-            batch_cols = [c for c in adata.obs.columns if 'batch' in c.lower()]
+            batch_cols = [c for c in adata.obs.columns if "batch" in c.lower()]
             if batch_cols:
                 sc.pl.umap(adata, color=batch_cols[0], ax=axes[0], show=False, title="By Batch")
 
@@ -487,58 +448,50 @@ def auto_select_model(adata) -> str:
     suggestions = []
 
     # Check for multi-modal data
-    if 'protein_expression' in adata.obsm:
-        suggestions.append({
-            'model': 'totalVI',
-            'reason': 'CITE-seq data detected (protein + RNA)',
-            'priority': 1
-        })
+    if "protein_expression" in adata.obsm:
+        suggestions.append({"model": "totalVI", "reason": "CITE-seq data detected (protein + RNA)", "priority": 1})
 
-    if 'spliced' in adata.layers and 'unspliced' in adata.layers:
-        suggestions.append({
-            'model': 'veloVI',
-            'reason': 'RNA velocity data detected (spliced + unspliced)',
-            'priority': 1
-        })
+    if "spliced" in adata.layers and "unspliced" in adata.layers:
+        suggestions.append(
+            {"model": "veloVI", "reason": "RNA velocity data detected (spliced + unspliced)", "priority": 1}
+        )
 
     # Check for ATAC data indicators
     if adata.n_vars > 100000:  # Many peaks suggest ATAC
-        suggestions.append({
-            'model': 'PeakVI',
-            'reason': f'Large number of features ({adata.n_vars}) suggests ATAC-seq peaks',
-            'priority': 2
-        })
+        suggestions.append(
+            {
+                "model": "PeakVI",
+                "reason": f"Large number of features ({adata.n_vars}) suggests ATAC-seq peaks",
+                "priority": 2,
+            }
+        )
 
     # Check for labels
-    label_cols = [c for c in adata.obs.columns if 'cell' in c.lower() or 'type' in c.lower() or 'label' in c.lower()]
+    label_cols = [c for c in adata.obs.columns if "cell" in c.lower() or "type" in c.lower() or "label" in c.lower()]
     has_labels = len(label_cols) > 0
 
     # Check for batch info
-    batch_cols = [c for c in adata.obs.columns if 'batch' in c.lower() or 'sample' in c.lower()]
+    batch_cols = [c for c in adata.obs.columns if "batch" in c.lower() or "sample" in c.lower()]
     has_batch = len(batch_cols) > 0
 
     if has_batch:
         if has_labels:
-            suggestions.append({
-                'model': 'scANVI',
-                'reason': f'Batch info ({batch_cols[0]}) + labels ({label_cols[0]}) available',
-                'priority': 1
-            })
+            suggestions.append(
+                {
+                    "model": "scANVI",
+                    "reason": f"Batch info ({batch_cols[0]}) + labels ({label_cols[0]}) available",
+                    "priority": 1,
+                }
+            )
         else:
-            suggestions.append({
-                'model': 'scVI',
-                'reason': f'Batch info ({batch_cols[0]}) available, no labels',
-                'priority': 1
-            })
+            suggestions.append(
+                {"model": "scVI", "reason": f"Batch info ({batch_cols[0]}) available, no labels", "priority": 1}
+            )
     else:
-        suggestions.append({
-            'model': 'scVI',
-            'reason': 'Standard scRNA-seq analysis',
-            'priority': 2
-        })
+        suggestions.append({"model": "scVI", "reason": "Standard scRNA-seq analysis", "priority": 2})
 
     # Sort by priority
-    suggestions.sort(key=lambda x: x['priority'])
+    suggestions.sort(key=lambda x: x["priority"])
 
     # Format output
     lines = ["Recommended models (in order of priority):"]
@@ -549,10 +502,7 @@ def auto_select_model(adata) -> str:
 
 
 def compare_integrations(
-    adata,
-    batch_key: str,
-    label_key: str,
-    embedding_keys: List[str] = None
+    adata, batch_key: str, label_key: str, embedding_keys: List[str] = None
 ) -> Dict[str, Dict[str, float]]:
     """
     Compare multiple integration methods using standard metrics.
@@ -576,8 +526,7 @@ def compare_integrations(
 
     # Auto-detect embeddings
     if embedding_keys is None:
-        embedding_keys = [k for k in adata.obsm.keys()
-                         if k.startswith('X_') and 'umap' not in k.lower()]
+        embedding_keys = [k for k in adata.obsm.keys() if k.startswith("X_") and "umap" not in k.lower()]
 
     results = {}
 
@@ -607,12 +556,7 @@ def compare_integrations(
     return results
 
 
-def quick_clustering(
-    adata,
-    use_rep: str = None,
-    resolution: float = 1.0,
-    n_neighbors: int = 15
-):
+def quick_clustering(adata, use_rep: str = None, resolution: float = 1.0, n_neighbors: int = 15):
     """
     Quick clustering pipeline on latent representation.
 

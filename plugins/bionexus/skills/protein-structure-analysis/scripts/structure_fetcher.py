@@ -31,10 +31,26 @@ def parse_pdb_text(pdb_text: str) -> Dict[str, Any]:
 
     # Map 3-letter AA to 1-letter
     aa_3to1 = {
-        "ALA": "A", "CYS": "C", "ASP": "D", "GLU": "E", "PHE": "F",
-        "GLY": "G", "HIS": "H", "ILE": "I", "LYS": "K", "LEU": "L",
-        "MET": "M", "ASN": "N", "PRO": "P", "GLN": "Q", "ARG": "R",
-        "SER": "S", "THR": "T", "VAL": "V", "TRP": "W", "TYR": "Y"
+        "ALA": "A",
+        "CYS": "C",
+        "ASP": "D",
+        "GLU": "E",
+        "PHE": "F",
+        "GLY": "G",
+        "HIS": "H",
+        "ILE": "I",
+        "LYS": "K",
+        "LEU": "L",
+        "MET": "M",
+        "ASN": "N",
+        "PRO": "P",
+        "GLN": "Q",
+        "ARG": "R",
+        "SER": "S",
+        "THR": "T",
+        "VAL": "V",
+        "TRP": "W",
+        "TYR": "Y",
     }
 
     for line in pdb_text.splitlines():
@@ -62,11 +78,7 @@ def parse_pdb_text(pdb_text: str) -> Dict[str, Any]:
                 x = float(line[30:38].strip())
                 y = float(line[38:46].strip())
                 z = float(line[46:54].strip())
-                hetero_atoms.append({
-                    "atom": atom_name,
-                    "residue": res_name,
-                    "coords": [x, y, z]
-                })
+                hetero_atoms.append({"atom": atom_name, "residue": res_name, "coords": [x, y, z]})
 
     coords_arr = np.array(ca_coords, dtype=float) if ca_coords else np.zeros((0, 3))
     b_factors_arr = np.array(b_factors, dtype=float) if b_factors else np.zeros(0)
@@ -79,7 +91,7 @@ def parse_pdb_text(pdb_text: str) -> Dict[str, Any]:
         "b_factors_or_plddt": b_factors_arr,
         "mean_b_factor": float(np.mean(b_factors_arr)) if len(b_factors_arr) > 0 else 0.0,
         "hetero_atoms_count": len(hetero_atoms),
-        "bound_ligands": list({h["residue"] for h in hetero_atoms})
+        "bound_ligands": list({h["residue"] for h in hetero_atoms}),
     }
 
 

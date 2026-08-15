@@ -16,9 +16,7 @@ logger = logging.getLogger("TFFootprinting")
 
 
 def compute_tf_footprint_profile(
-    cut_frequencies: np.ndarray,
-    window_size: int = 100,
-    core_flank: int = 10
+    cut_frequencies: np.ndarray, window_size: int = 100, core_flank: int = 10
 ) -> Dict[str, Any]:
     """
     Calculate footprint depth and chromatin protection index from aggregation profile.
@@ -45,7 +43,9 @@ def compute_tf_footprint_profile(
         "mean_core_cuts": round(mean_core, 2),
         "mean_flank_cuts": round(mean_flank, 2),
         "chromatin_protection_index": round(float(protection_score), 3),
-        "binding_status": "Active Chromatin Binding (Occupied Footprint)" if protection_score >= 0.35 else "Unoccupied Motif / Transient Binding"
+        "binding_status": "Active Chromatin Binding (Occupied Footprint)"
+        if protection_score >= 0.35
+        else "Unoccupied Motif / Transient Binding",
     }
 
 

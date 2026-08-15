@@ -37,9 +37,7 @@ def load_mapping_configs(config_path: Optional[str] = None) -> Dict[str, Any]:
 
     if config_path is None:
         config_path = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            "configs",
-            "instrument_mappings.yml"
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "configs", "instrument_mappings.yml"
         )
 
     if not os.path.exists(config_path):
@@ -49,7 +47,9 @@ def load_mapping_configs(config_path: Optional[str] = None) -> Dict[str, Any]:
         return yaml.safe_load(f) or {}
 
 
-def match_instrument_rule(file_path: str, raw_text: str, config: Dict[str, Any]) -> Optional[Tuple[str, Dict[str, Any]]]:
+def match_instrument_rule(
+    file_path: str, raw_text: str, config: Dict[str, Any]
+) -> Optional[Tuple[str, Dict[str, Any]]]:
     """Match a file against defined YAML instrument rules."""
     instruments = config.get("instruments", {})
     file_name = Path(file_path).name.lower()
@@ -95,7 +95,7 @@ def extract_metadata_from_rules(lines: List[str], rules: Dict[str, Any]) -> Dict
             target = rule.get("target", "A1").upper()
             col_letter = target[0]
             row_idx = int(target[1:]) - 1
-            col_idx = ord(col_letter) - ord('A')
+            col_idx = ord(col_letter) - ord("A")
 
             if row_idx < len(lines):
                 parts = re.split(r"[,;\t]+", lines[row_idx].strip())
@@ -202,15 +202,14 @@ def parse_with_yaml_mapping(file_path: str, config_path: Optional[str] = None) -
                     meas_doc = {
                         "location identifier": well_id,
                         "sample identifier": f"Sample_{well_id}",
-                        meas_type: {
-                            "value": fval,
-                            "unit": unit
-                        }
+                        meas_type: {"value": fval, "unit": unit},
                     }
                     measurements.append(meas_doc)
     else:
         # 1D long table format
-        matched_well_col = next((c for c in df.columns if any(w.lower() in str(c).lower() for w in well_cols)), df.columns[0])
+        matched_well_col = next(
+            (c for c in df.columns if any(w.lower() in str(c).lower() for w in well_cols)), df.columns[0]
+        )
         matched_val_col = next((c for c in df.columns if any(v.lower() in str(c).lower() for v in val_cols)), None)
 
         for _, row in df.iterrows():
@@ -225,10 +224,7 @@ def parse_with_yaml_mapping(file_path: str, config_path: Optional[str] = None) -
 
             if matched_val_col and pd.notna(row[matched_val_col]):
                 try:
-                    meas_doc[meas_type] = {
-                        "value": float(row[matched_val_col]),
-                        "unit": unit
-                    }
+                    meas_doc[meas_type] = {"value": float(row[matched_val_col]), "unit": unit}
                 except (ValueError, TypeError):
                     meas_doc[meas_type] = str(row[matched_val_col])
 
@@ -258,9 +254,9 @@ def parse_with_yaml_mapping(file_path: str, config_path: Optional[str] = None) -
             "device system document": {
                 "device identifier": extracted_meta.get("device_identifier", f"{vendor}-{model}"),
                 "model number": model,
-                "equipment serial number": extracted_meta.get("serial_number", "UNKNOWN")
+                "equipment serial number": extracted_meta.get("serial_number", "UNKNOWN"),
             },
-            "measurement document": measurements
+            "measurement document": measurements,
         },
         "custom metadata": {
             "conversion provenance": {
@@ -270,9 +266,9 @@ def parse_with_yaml_mapping(file_path: str, config_path: Optional[str] = None) -
                 "source_file": Path(file_path).name,
                 "source_sha256": file_sha256,
                 "num_measurements": len(measurements),
-                "timestamp": now_iso
+                "timestamp": now_iso,
             }
-        }
+        },
     }
 
     return asm

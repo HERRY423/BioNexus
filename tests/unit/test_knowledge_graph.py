@@ -22,26 +22,25 @@ def test_knowledge_graph_ingestion_and_topology():
     kg = BioKnowledgeGraph("Oncology Subgraph")
 
     # Ingest Open Targets hits
-    kg.ingest_opentargets_hits("Non-Small Cell Lung Cancer", [
-        {"id": "ENSG00000146648", "name": "EGFR", "entity": "target", "score": 0.94}
-    ])
+    kg.ingest_opentargets_hits(
+        "Non-Small Cell Lung Cancer", [{"id": "ENSG00000146648", "name": "EGFR", "entity": "target", "score": 0.94}]
+    )
 
     # Ingest UniProt
-    kg.ingest_uniprot_protein({
-        "accession": "P00533",
-        "protein_name": "Epidermal growth factor receptor",
-        "genes": ["EGFR"],
-        "organism": "Homo sapiens",
-        "function": "Receptor tyrosine kinase binding ligands of the EGF family."
-    })
+    kg.ingest_uniprot_protein(
+        {
+            "accession": "P00533",
+            "protein_name": "Epidermal growth factor receptor",
+            "genes": ["EGFR"],
+            "organism": "Homo sapiens",
+            "function": "Receptor tyrosine kinase binding ligands of the EGF family.",
+        }
+    )
 
     # Ingest ChEMBL
-    kg.ingest_chembl_molecule("EGFR", {
-        "chembl_id": "CHEMBL3989912",
-        "pref_name": "Osimertinib",
-        "max_phase": 4,
-        "molecular_weight": 499.6
-    })
+    kg.ingest_chembl_molecule(
+        "EGFR", {"chembl_id": "CHEMBL3989912", "pref_name": "Osimertinib", "max_phase": 4, "molecular_weight": 499.6}
+    )
 
     stats = kg.get_summary_statistics()
     assert stats["total_nodes"] >= 4

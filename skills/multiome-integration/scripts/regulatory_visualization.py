@@ -22,10 +22,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(
 logger = logging.getLogger("RegulatoryVisualization")
 
 
-def export_grn_to_cytoscape_json(
-    regulons: Dict[str, Any],
-    output_path: str = "grn_network.json"
-) -> Dict[str, Any]:
+def export_grn_to_cytoscape_json(regulons: Dict[str, Any], output_path: str = "grn_network.json") -> Dict[str, Any]:
     """Export regulon network into Cytoscape.js compatible JSON format."""
     elements = {"nodes": [], "edges": []}
     nodes_seen = set()
@@ -43,27 +40,29 @@ def export_grn_to_cytoscape_json(
                 nodes_seen.add(target)
 
             edge_id = f"{tf}_{target}"
-            elements["edges"].append({
-                "data": {
-                    "id": edge_id,
-                    "source": tf,
-                    "target": target,
-                    "importance": detail.get("importance", 0.1),
-                    "mode": detail.get("mode", "Activator (+)")
+            elements["edges"].append(
+                {
+                    "data": {
+                        "id": edge_id,
+                        "source": tf,
+                        "target": target,
+                        "importance": detail.get("importance", 0.1),
+                        "mode": detail.get("mode", "Activator (+)"),
+                    }
                 }
-            })
+            )
 
     os.makedirs(os.path.dirname(os.path.abspath(output_path)) or ".", exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(elements, f, indent=2)
-    logger.info(f"Exported GRN Cytoscape JSON to {output_path} ({len(elements['nodes'])} nodes, {len(elements['edges'])} edges).")
+    logger.info(
+        f"Exported GRN Cytoscape JSON to {output_path} ({len(elements['nodes'])} nodes, {len(elements['edges'])} edges)."
+    )
     return elements
 
 
 def plot_regulon_activity_heatmap(
-    aucell_df: pd.DataFrame,
-    cluster_labels: np.ndarray,
-    output_path: str = "regulon_heatmap.png"
+    aucell_df: pd.DataFrame, cluster_labels: np.ndarray, output_path: str = "regulon_heatmap.png"
 ):
     """Plot mean overlap-activity heatmap across clusters. Not AUCell."""
     df = aucell_df.copy()

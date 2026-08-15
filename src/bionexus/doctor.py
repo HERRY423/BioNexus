@@ -34,11 +34,7 @@ def run_doctor() -> Dict[str, Any]:
     """Return a structured capability report (also used as agent decision input)."""
     backends = {name: vars(status) for name, status in probe_all().items()}
     ready = {
-        "core_ready": (
-            is_module_available("numpy")
-            and is_module_available("pandas")
-            and probe("sklearn").available
-        ),
+        "core_ready": (is_module_available("numpy") and is_module_available("pandas") and probe("sklearn").available),
         "scverse_ready": probe("scanpy").available and probe("anndata").available,
         "scvi_ready": probe("scvi").available,
         "spatial_ready": probe("squidpy").available,
@@ -56,18 +52,14 @@ def run_doctor() -> Dict[str, Any]:
     tier = _tier(ready)
     next_actions: List[str] = ["read skills/start/SKILL.md"]
     if ready["scverse_ready"]:
-        next_actions.append(
-            "run skills/single-cell-rna-qc/scripts/scrna_pipeline.py on an .h5ad"
-        )
+        next_actions.append("run skills/single-cell-rna-qc/scripts/scrna_pipeline.py on an .h5ad")
         next_actions.append("stop at numeric clusters + markers; do not invent cell types")
     else:
         next_actions.append("pip install 'bionexus[goldchain]' before scRNA work")
     if ready["scvi_ready"]:
         next_actions.append("use skills/scvi-tools for batch integration after the gold chain")
     if ready["spatial_ready"]:
-        next_actions.append(
-            "run skills/spatial-transcriptomics/scripts/spatial_pipeline.py on SpatialData/.h5ad"
-        )
+        next_actions.append("run skills/spatial-transcriptomics/scripts/spatial_pipeline.py on SpatialData/.h5ad")
     else:
         next_actions.append("pip install 'bionexus[spatial]' before spatial gold-chain work")
 

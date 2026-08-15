@@ -34,9 +34,7 @@ def test_provenance_tracking_and_w3c_provo():
     dummy_output.write_text("filtered counts data")
 
     tracker = ProvenanceTracker(
-        activity_name="Single-Cell QC Analysis",
-        operator="Test Scientist",
-        notes="Automated unit test"
+        activity_name="Single-Cell QC Analysis", operator="Test Scientist", notes="Automated unit test"
     )
 
     tracker.record_input_file(str(dummy_input), role="raw_matrix")

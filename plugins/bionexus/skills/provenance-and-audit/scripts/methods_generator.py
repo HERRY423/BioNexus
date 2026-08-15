@@ -43,9 +43,7 @@ def generate_methods_text(manifest: Dict[str, Any]) -> str:
         f"on {env.get('os_name', 'Linux')} ({env.get('architecture', 'x86_64')}). ",
     ]
     if env.get("cuda_available"):
-        lines.append(
-            f"GPU: {env.get('cuda_device_name')} (CUDA {env.get('cuda_version', 'N/A')}).\n"
-        )
+        lines.append(f"GPU: {env.get('cuda_device_name')} (CUDA {env.get('cuda_version', 'N/A')}).\n")
     else:
         lines.append("No CUDA device was recorded.\n")
 
@@ -62,9 +60,7 @@ def generate_methods_text(manifest: Dict[str, Any]) -> str:
             f"hard cutoff = {params.get('mt_threshold', 'not set')}%). "
         )
         if params.get("run_doublets"):
-            lines.append(
-                "Doublets were scored with the local kNN simulation heuristic, not scDblFinder. "
-            )
+            lines.append("Doublets were scored with the local kNN simulation heuristic, not scDblFinder. ")
         if params.get("run_ambient"):
             lines.append(
                 "Ambient RNA was estimated from empty-droplet profiles when provided; this is not SoupX/CellBender. "
@@ -95,12 +91,14 @@ def generate_methods_text(manifest: Dict[str, Any]) -> str:
             f"backend={manifest.get('backend', 'unspecified')}."
         )
 
-    lines.extend([
-        "\n### Data lineage",
-        "SHA-256 Checksum hashes were recorded for files that existed on disk. This is not 21 CFR Part 11 evidence.",
-        "| Artifact Name | Role | SHA-256 Checksum |",
-        "|---|---|---|",
-    ])
+    lines.extend(
+        [
+            "\n### Data lineage",
+            "SHA-256 Checksum hashes were recorded for files that existed on disk. This is not 21 CFR Part 11 evidence.",
+            "| Artifact Name | Role | SHA-256 Checksum |",
+            "|---|---|---|",
+        ]
+    )
     for item in inputs + outputs:
         digest = item.get("sha256") or "missing"
         short = digest[:24] + "..." if isinstance(digest, str) and len(digest) > 24 else digest

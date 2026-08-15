@@ -21,10 +21,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(
 logger = logging.getLogger("SpatialVariableGenes")
 
 
-def compute_spatial_weights_matrix(
-    coords: np.ndarray,
-    n_neighbors: int = 6
-) -> sparse.csr_matrix:
+def compute_spatial_weights_matrix(coords: np.ndarray, n_neighbors: int = 6) -> sparse.csr_matrix:
     """Build row-standardized k-nearest spatial neighbor adjacency matrix."""
     n_cells = len(coords)
     k = min(n_neighbors + 1, n_cells)
@@ -46,8 +43,7 @@ def compute_spatial_weights_matrix(
 
 
 def calculate_morans_i_vectorized(
-    X_mat: np.ndarray,
-    W_norm: sparse.csr_matrix
+    X_mat: np.ndarray, W_norm: sparse.csr_matrix
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Vectorized computation of Moran's I, analytical z-scores, and p-values
@@ -59,7 +55,7 @@ def calculate_morans_i_vectorized(
     Z = X_mat - means  # (N, G)
 
     # Denominator: sum of squared deviations
-    sum_sq = np.sum(Z ** 2, axis=0)  # (G,)
+    sum_sq = np.sum(Z**2, axis=0)  # (G,)
     sum_sq[sum_sq == 0] = 1e-12
 
     # Numerator: Z.T * (W_norm * Z) diagonal elements
@@ -83,11 +79,7 @@ def calculate_morans_i_vectorized(
 
 
 def detect_spatially_variable_genes(
-    adata,
-    spatial_key: str = "spatial",
-    n_neighbors: int = 6,
-    min_cells: int = 10,
-    top_n: int = 500
+    adata, spatial_key: str = "spatial", n_neighbors: int = 6, min_cells: int = 10, top_n: int = 500
 ) -> pd.DataFrame:
     """
     Detect spatially variable genes using vectorized Moran's I.
@@ -105,9 +97,7 @@ def detect_spatially_variable_genes(
         if knn is not None:
             knn(adata, spatial_key=spatial_key, n_neighs=n_neighbors)
         else:
-            sq.gr.spatial_neighbors(
-                adata, coord_type="generic", spatial_key=spatial_key, n_neighs=n_neighbors
-            )
+            sq.gr.spatial_neighbors(adata, coord_type="generic", spatial_key=spatial_key, n_neighs=n_neighbors)
         sq.gr.spatial_autocorr(adata, mode="moran")
         moran = adata.uns.get("moranI")
         if moran is not None:
@@ -166,13 +156,9 @@ def detect_spatially_variable_genes(
         cum_min = min(cum_min, val)
         fdr[idx] = min(1.0, cum_min)
 
-    results_df = pd.DataFrame({
-        "gene": genes_filtered,
-        "morans_i": morans_i,
-        "z_score": z_scores,
-        "p_value": p_values,
-        "fdr_q_value": fdr
-    })
+    results_df = pd.DataFrame(
+        {"gene": genes_filtered, "morans_i": morans_i, "z_score": z_scores, "p_value": p_values, "fdr_q_value": fdr}
+    )
     results_df = results_df.sort_values(by="morans_i", ascending=False).reset_index(drop=True)
     results_df["svg_rank"] = np.arange(1, len(results_df) + 1)
     results_df.attrs["method"] = "morans_i_row_standardized_knn"
@@ -205,6 +191,7 @@ def main():
 
     args = parser.parse_args()
     import scanpy as sc
+
     adata = sc.read_h5ad(args.input)
     svg_df = detect_spatially_variable_genes(adata, top_n=args.top_n)
 

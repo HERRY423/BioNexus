@@ -63,4 +63,3 @@ __all__ = [
     "is_default_skill",
     "route_scientific_intent",
 ]
-

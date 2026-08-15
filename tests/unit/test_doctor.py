@@ -44,4 +44,8 @@ def test_mcp_marks_hosted_tools_as_fallback():
     uniprot = by_name["search_uniprot"]
     assert uniprot["annotations"]["bionexus_role"] == "local_unique"
     cosmic = by_name["search_cosmic"]
-    assert "COSMIC API" in cosmic["description"] or "not the COSMIC" in cosmic["description"].lower() or "Not the COSMIC" in cosmic["description"]
+    assert (
+        "COSMIC API" in cosmic["description"]
+        or "not the COSMIC" in cosmic["description"].lower()
+        or "Not the COSMIC" in cosmic["description"]
+    )

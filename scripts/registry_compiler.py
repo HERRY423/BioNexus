@@ -33,34 +33,26 @@ from bionexus.registry import (  # noqa: E402
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="BioNexus Canonical Registry Compiler and Multi-Platform Sync Tool"
-    )
+    parser = argparse.ArgumentParser(description="BioNexus Canonical Registry Compiler and Multi-Platform Sync Tool")
     parser.add_argument(
         "--generate",
         action="store_true",
-        help="Compile bionexus.registry.yaml into target platform manifests (plugin.json, mcp.json, etc.)"
+        help="Compile bionexus.registry.yaml into target platform manifests (plugin.json, mcp.json, etc.)",
     )
     parser.add_argument(
         "--check",
         action="store_true",
-        help="Verify on-disk manifests match canonical registry (fails with exit code 1 if drift detected)"
+        help="Verify on-disk manifests match canonical registry (fails with exit code 1 if drift detected)",
     )
     parser.add_argument(
-        "--validate-endpoints",
-        action="store_true",
-        help="Validate syntax of all configured MCP server URLs"
+        "--validate-endpoints", action="store_true", help="Validate syntax of all configured MCP server URLs"
     )
-    parser.add_argument(
-        "--live-check",
-        action="store_true",
-        help="Probe live connectivity for enabled HTTP endpoints"
-    )
+    parser.add_argument("--live-check", action="store_true", help="Probe live connectivity for enabled HTTP endpoints")
     parser.add_argument(
         "--registry-path",
         type=Path,
         default=_REPO_ROOT / "bionexus.registry.yaml",
-        help="Path to bionexus.registry.yaml (default: root)"
+        help="Path to bionexus.registry.yaml (default: root)",
     )
 
     args = parser.parse_args()
@@ -101,7 +93,9 @@ def main() -> int:
             print("[DRIFT DETECTED] The following files do not match bionexus.registry.yaml:", file=sys.stderr)
             for d in diffs:
                 print(f" - {d}", file=sys.stderr)
-            print("\nRun `python scripts/registry_compiler.py --generate` to synchronize all manifests.", file=sys.stderr)
+            print(
+                "\nRun `python scripts/registry_compiler.py --generate` to synchronize all manifests.", file=sys.stderr
+            )
             exit_code = 1
 
     if args.generate:

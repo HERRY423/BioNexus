@@ -23,7 +23,7 @@ def generate_vina_grid_box(
     num_modes: int = 9,
     energy_range: float = 3.0,
     receptor_pdbqt: str = "receptor.pdbqt",
-    ligand_pdbqt: str = "ligand.pdbqt"
+    ligand_pdbqt: str = "ligand.pdbqt",
 ) -> str:
     """Generate AutoDock Vina configuration file content."""
     cx, cy, cz = pocket_center
@@ -51,10 +51,7 @@ energy_range = {energy_range}
     return config_str
 
 
-def calculate_dissociation_constant(
-    delta_g_kcal_mol: float,
-    temperature_k: float = 298.15
-) -> Dict[str, Any]:
+def calculate_dissociation_constant(delta_g_kcal_mol: float, temperature_k: float = 298.15) -> Dict[str, Any]:
     """
     Calculate estimated dissociation constant (Kd) from binding free energy Delta G:
       Delta G = R * T * ln(Kd)  =>  Kd = exp(Delta G / (R * T))
@@ -85,7 +82,7 @@ def calculate_dissociation_constant(
         "delta_g_kcal_mol": round(delta_g_kcal_mol, 2),
         "kd_molar": float(kd_molar),
         "kd_formatted": kd_formatted,
-        "potency_tier": potency
+        "potency_tier": potency,
     }
 
 
@@ -110,14 +107,16 @@ def parse_vina_log(log_text: str) -> List[Dict[str, Any]]:
                 rmsd_ub = float(parts[3]) if len(parts) > 3 else 0.0
 
                 kd_info = calculate_dissociation_constant(affinity)
-                modes.append({
-                    "mode": mode_num,
-                    "affinity_kcal_mol": affinity,
-                    "rmsd_lower_bound": rmsd_lb,
-                    "rmsd_upper_bound": rmsd_ub,
-                    "estimated_kd": kd_info["kd_formatted"],
-                    "potency": kd_info["potency_tier"]
-                })
+                modes.append(
+                    {
+                        "mode": mode_num,
+                        "affinity_kcal_mol": affinity,
+                        "rmsd_lower_bound": rmsd_lb,
+                        "rmsd_upper_bound": rmsd_ub,
+                        "estimated_kd": kd_info["kd_formatted"],
+                        "potency": kd_info["potency_tier"],
+                    }
+                )
         elif in_table and not line:
             break
 
@@ -130,7 +129,7 @@ def check_lipinski_rule_of_5(
     hbd: int,
     hba: int,
     rotatable_bonds: Optional[int] = None,
-    psa: Optional[float] = None
+    psa: Optional[float] = None,
 ) -> Dict[str, Any]:
     """Check Lipinski's Rule of 5 and Veber's rule for drug-likeness."""
     violations = []
@@ -157,7 +156,7 @@ def check_lipinski_rule_of_5(
         "lipinski_violations": violations,
         "veber_violations_count": len(veber_violations),
         "veber_violations": veber_violations,
-        "verdict": "Passes Drug-Likeness Criteria" if is_druglike else "Violates Drug-Likeness Criteria"
+        "verdict": "Passes Drug-Likeness Criteria" if is_druglike else "Violates Drug-Likeness Criteria",
     }
 
 

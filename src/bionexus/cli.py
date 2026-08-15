@@ -385,6 +385,7 @@ def test_{snake_name}_backend_refusal():
 # CLI Implementation Handlers
 # ==============================================================================
 
+
 def handle_create_plugin(args: argparse.Namespace) -> int:
     """Scaffold a new BioNexus skill / plugin."""
     kebab_name = _to_kebab_case(args.name)
@@ -519,7 +520,6 @@ def handle_doctor(args: argparse.Namespace) -> int:
     return 0 if report.get("tier") != "refuse" else 1
 
 
-
 def handle_list_skills(args: argparse.Namespace) -> int:
     """Display skill inventory table or JSON."""
     records = SKILLS
@@ -604,6 +604,7 @@ def handle_audit(args: argparse.Namespace) -> int:
     if path.suffix == ".h5ad":
         try:
             import anndata as ad
+
             adata = ad.read_h5ad(path)
             grade, notes, stats = audit_expression_matrix(adata.X, expected_type=args.expected_type)
             print(f" [MATRIX AUDIT] Grade: {grade}")
@@ -617,6 +618,7 @@ def handle_audit(args: argparse.Namespace) -> int:
     else:
         print(f"[NOTE] Reading text/csv matrix: {path}")
         import numpy as np
+
         data = np.genfromtxt(path, delimiter=",")
         grade, notes, stats = audit_expression_matrix(data, expected_type=args.expected_type)
         print(f" [MATRIX AUDIT] Grade: {grade}")
@@ -640,7 +642,9 @@ def handle_capability(args: argparse.Namespace) -> int:
         print("|---|---|---|---|---|")
         for c in caps:
             intents_str = ", ".join(c.intent[:3])
-            print(f"| `{c.id}` | **{c.display_name}** | `{c.skill_name}` | `{c.backend.canonical_name}` | {intents_str} |")
+            print(
+                f"| `{c.id}` | **{c.display_name}** | `{c.skill_name}` | `{c.backend.canonical_name}` | {intents_str} |"
+            )
         print()
         return 0
 
@@ -655,7 +659,9 @@ def handle_capability(args: argparse.Namespace) -> int:
             print(f"**{contract.display_name}** (`{contract.skill_name}`)\n")
             print(f"> {contract.summary}\n")
             print(f"- **Intents**: {', '.join(contract.intent)}")
-            print(f"- **Canonical Backend**: `{contract.backend.canonical_name}` (min version: {contract.backend.minimum_version or 'any'})")
+            print(
+                f"- **Canonical Backend**: `{contract.backend.canonical_name}` (min version: {contract.backend.minimum_version or 'any'})"
+            )
             print("\n#### Input Semantic Specifications:")
             for name, spec in contract.inputs.items():
                 print(f"- `{name}` ({spec.semantic_type}, required={spec.required}): {spec.description}")
@@ -736,10 +742,12 @@ def handle_route(args: argparse.Namespace) -> int:
         return 0 if decision.status == RoutingStatus.PERMITTED else 1
 
     print("\n=== BioNexus Scientific Intent Routing Decision ===")
-    print(f"**Query**: \"{args.query}\"")
+    print(f'**Query**: "{args.query}"')
     print(f"**Routing Status**: `{decision.status.value}`")
     if decision.matched_capability:
-        print(f"**Matched Capability**: `{decision.matched_capability.id}` ({decision.matched_capability.display_name})")
+        print(
+            f"**Matched Capability**: `{decision.matched_capability.id}` ({decision.matched_capability.display_name})"
+        )
         print(f"**Target Skill**: `{decision.target_skill}`")
     print(f"**Rationale**: {decision.rationale}\n")
 
@@ -837,7 +845,7 @@ def handle_audit_claims(args: argparse.Namespace) -> int:
     else:
         print(f"[FAIL] Detected {res.violation_count} prohibited claim violation(s):")
         for i, v in enumerate(res.violations, start=1):
-            print(f"  {i}. [{v.violation_type.value}] Matched: \"{v.matched_text}\"")
+            print(f'  {i}. [{v.violation_type.value}] Matched: "{v.matched_text}"')
             print(f"     Rule: {v.rule_description}")
             print(f"     Remedy: {v.remedy}")
         return 1
@@ -872,7 +880,14 @@ def handle_run(args: argparse.Namespace) -> int:
 
         artifacts = data.get("artifacts", {})
         print("\n📂 Core Descriptors:")
-        for k in ("inputs_manifest", "parameters_manifest", "evidence_card", "provenance_sidecar", "environment_snapshot", "execution_log"):
+        for k in (
+            "inputs_manifest",
+            "parameters_manifest",
+            "evidence_card",
+            "provenance_sidecar",
+            "environment_snapshot",
+            "execution_log",
+        ):
             val = artifacts.get(k)
             if val:
                 print(f"  - {k}: {val}")
@@ -935,7 +950,9 @@ def handle_run(args: argparse.Namespace) -> int:
             r_dir = r_file.parent
             try:
                 d = json.loads(r_file.read_text(encoding="utf-8"))
-                print(f"  • {d.get('run_id')} | Cap: {d.get('capability_id')} | Status: {d.get('status')} | Dir: {r_dir}")
+                print(
+                    f"  • {d.get('run_id')} | Cap: {d.get('capability_id')} | Status: {d.get('status')} | Dir: {r_dir}"
+                )
             except Exception:
                 print(f"  • [Invalid] Dir: {r_dir}")
         return 0
@@ -947,13 +964,15 @@ def handle_run(args: argparse.Namespace) -> int:
 # Main Parser & Router
 # ==============================================================================
 
+
 def main(argv: Optional[list[str]] = None) -> int:
     parser = argparse.ArgumentParser(
         prog="bionexus",
         description="BioNexus: The Scientific Reliability Layer for Agentic Biology",
     )
     parser.add_argument(
-        "-v", "--version",
+        "-v",
+        "--version",
         action="version",
         version=f"%(prog)s {PLUGIN_VERSION}",
         help="Show BioNexus version and exit",
@@ -1005,8 +1024,12 @@ def main(argv: Optional[list[str]] = None) -> int:
         p_skills = subparsers.add_parser(cmd_name, help="Display canonical skill inventory and capability tiers")
         p_skills.add_argument("--json", action="store_true", help="Output inventory as JSON")
         p_skills.add_argument("--tier", choices=["core", "wrapper", "heuristic", "outline"], default=None)
-        p_skills.add_argument("--status", choices=["canonical", "active", "heuristic", "outline", "deprecated"], default=None)
-        p_skills.add_argument("--grade", choices=["A", "B", "C", "gold-wrapper", "heuristic", "refuse", "outline"], default=None)
+        p_skills.add_argument(
+            "--status", choices=["canonical", "active", "heuristic", "outline", "deprecated"], default=None
+        )
+        p_skills.add_argument(
+            "--grade", choices=["A", "B", "C", "gold-wrapper", "heuristic", "refuse", "outline"], default=None
+        )
 
     # 4. registry
     p_registry = subparsers.add_parser("registry", help="Compile and validate multi-platform registry manifests")
@@ -1022,7 +1045,9 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_audit.add_argument("--expected-type", choices=["counts", "normalized"], default="counts")
 
     # 6. capability
-    p_cap = subparsers.add_parser("capability", help="Query and validate machine-readable scientific capability contracts")
+    p_cap = subparsers.add_parser(
+        "capability", help="Query and validate machine-readable scientific capability contracts"
+    )
     cap_subs = p_cap.add_subparsers(dest="capability_action", help="Capability actions")
 
     # capability list
@@ -1045,25 +1070,62 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_cap_check.add_argument("--json", action="store_true", help="Output evaluation as JSON")
 
     # 7. route (Validated Scientific Intent Router)
-    p_route = subparsers.add_parser("route", help="Route scientific queries to validated capabilities with invariant checks")
+    p_route = subparsers.add_parser(
+        "route", help="Route scientific queries to validated capabilities with invariant checks"
+    )
     p_route.add_argument("query", help="User scientific query / intent string")
     p_route.add_argument("--data", default=None, help="Optional path to dataset file (.h5ad, .csv)")
-    p_route.add_argument("--min-replicates", type=int, default=None, help="Number of biological replicates per condition")
-    p_route.add_argument("--is-normalized", action="store_true", help="Flag if input matrix is normalized continuous floats")
+    p_route.add_argument(
+        "--min-replicates", type=int, default=None, help="Number of biological replicates per condition"
+    )
+    p_route.add_argument(
+        "--is-normalized", action="store_true", help="Flag if input matrix is normalized continuous floats"
+    )
     p_route.add_argument("--allow-degraded", action="store_true", help="Allow fallback to Grade C heuristics")
     p_route.add_argument("--json", action="store_true", help="Output routing decision as JSON")
 
     # 8. eval (BioNexus Agent Behavior & Epistemic Benchmark)
-    p_eval = subparsers.add_parser("eval", help="Run BioNexus Agent Behavior & Scientific Reliability Benchmark (BioNexus Eval 2.0)")
-    p_eval.add_argument("--level", choices=["all", "L1", "L2", "L3"], default="all", help="Benchmark tier level (L1=Router, L2=Agent Claims, L3=Outcome)")
-    p_eval.add_argument("--suite", choices=["all", "routing", "refusal", "capability_claim", "scientific_semantics", "backend_failure", "adversarial", "l2_agent_claims", "l3_scientific_outcomes"], default="all", help="Benchmark evaluation suite")
-    p_eval.add_argument("--provider", choices=["auto", "openai", "anthropic", "gemini", "replay"], default="auto", help="Host Agent LLM provider for live L2 evaluation")
-    p_eval.add_argument("--model", default=None, help="Host model override (e.g. gpt-4o, claude-3-5-sonnet, gemini-1.5-pro)")
+    p_eval = subparsers.add_parser(
+        "eval", help="Run BioNexus Agent Behavior & Scientific Reliability Benchmark (BioNexus Eval 2.0)"
+    )
+    p_eval.add_argument(
+        "--level",
+        choices=["all", "L1", "L2", "L3"],
+        default="all",
+        help="Benchmark tier level (L1=Router, L2=Agent Claims, L3=Outcome)",
+    )
+    p_eval.add_argument(
+        "--suite",
+        choices=[
+            "all",
+            "routing",
+            "refusal",
+            "capability_claim",
+            "scientific_semantics",
+            "backend_failure",
+            "adversarial",
+            "l2_agent_claims",
+            "l3_scientific_outcomes",
+        ],
+        default="all",
+        help="Benchmark evaluation suite",
+    )
+    p_eval.add_argument(
+        "--provider",
+        choices=["auto", "openai", "anthropic", "gemini", "replay"],
+        default="auto",
+        help="Host Agent LLM provider for live L2 evaluation",
+    )
+    p_eval.add_argument(
+        "--model", default=None, help="Host model override (e.g. gpt-4o, claude-3-5-sonnet, gemini-1.5-pro)"
+    )
     p_eval.add_argument("--report", default=None, help="Path to save Markdown evaluation report")
     p_eval.add_argument("--json", action="store_true", help="Output benchmark results as JSON")
 
     # 9. audit-claims (Prohibited Claims & Hallucination Auditor)
-    p_claim = subparsers.add_parser("audit-claims", help="Audit text response or report artifact for prohibited scientific claims")
+    p_claim = subparsers.add_parser(
+        "audit-claims", help="Audit text response or report artifact for prohibited scientific claims"
+    )
     p_claim.add_argument("target", help="Response text or file path to evaluate")
     p_claim.add_argument("--capability", default=None, help="Optional capability context ID")
     p_claim.add_argument("--json", action="store_true", help="Output claim audit result as JSON")
@@ -1078,7 +1140,9 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_run_inspect.add_argument("--json", action="store_true", help="Output descriptor as JSON")
 
     # run verify <path>
-    p_run_verify = run_subs.add_parser("verify", help="Verify cryptographic completeness and tamper integrity of run capsule")
+    p_run_verify = run_subs.add_parser(
+        "verify", help="Verify cryptographic completeness and tamper integrity of run capsule"
+    )
     p_run_verify.add_argument("path", help="Path to run/ directory or run.json file")
     p_run_verify.add_argument("--json", action="store_true", help="Output verification as JSON")
 
@@ -1127,4 +1191,3 @@ def main(argv: Optional[list[str]] = None) -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

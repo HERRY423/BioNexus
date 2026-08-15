@@ -44,8 +44,7 @@ def run_spatial_gold_chain(
 
     # Audit expression input integrity
     input_counts_grade, input_counts_notes, input_stats = audit_expression_matrix(
-        adata.layers.get("counts", adata.X),
-        expected_type="counts"
+        adata.layers.get("counts", adata.X), expected_type="counts"
     )
 
     limitations = [
@@ -139,8 +138,10 @@ def run_spatial_gold_chain(
     stat_grade = GRADE_A if sig_svg > 0 else GRADE_B
 
     # Composite EvidenceCard
-    effective_input_grade = GRADE_C if (coords_grade == GRADE_C or input_counts_grade == GRADE_C) else (
-        GRADE_B if (coords_grade == GRADE_B or input_counts_grade == GRADE_B) else GRADE_A
+    effective_input_grade = (
+        GRADE_C
+        if (coords_grade == GRADE_C or input_counts_grade == GRADE_C)
+        else (GRADE_B if (coords_grade == GRADE_B or input_counts_grade == GRADE_B) else GRADE_A)
     )
     card = EvidenceCard(
         execution_fidelity=GRADE_A if not cluster_error else GRADE_C,
@@ -154,7 +155,7 @@ def run_spatial_gold_chain(
             "input_notes": coords_notes + input_counts_notes,
             "graph": graph_name,
             "significant_svg_count": sig_svg,
-        }
+        },
     )
 
     summary = attach_meta(

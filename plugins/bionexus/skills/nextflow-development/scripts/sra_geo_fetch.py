@@ -44,10 +44,7 @@ from utils.ncbi_utils import (
 )
 
 # Set up logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(message)s'
-)
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 # Load genome mapping
@@ -58,6 +55,7 @@ GENOMES_FILE = SCRIPT_DIR / "config" / "genomes.yaml"
 @dataclass
 class StudyInfo:
     """Information about a GEO study."""
+
     geo_id: str
     title: str
     organism: str
@@ -75,9 +73,10 @@ def load_genome_mapping() -> Dict:
 
     try:
         import yaml
+
         with open(GENOMES_FILE) as f:
             config = yaml.safe_load(f)
-        return config.get('organisms', {})
+        return config.get("organisms", {})
     except ImportError:
         # Fallback: parse YAML manually for simple cases
         mapping = {}
@@ -87,7 +86,7 @@ def load_genome_mapping() -> Dict:
             # Simple regex parsing for organism blocks
             pattern = r'"([^"]+)":\s*\n\s*genome:\s*"([^"]+)"'
             for match in re.finditer(pattern, content):
-                mapping[match.group(1)] = {'genome': match.group(2)}
+                mapping[match.group(1)] = {"genome": match.group(2)}
         except Exception:
             pass
         return mapping
@@ -99,52 +98,52 @@ def suggest_genome(organism: str) -> Optional[str]:
 
     # Direct match
     if organism in genome_map:
-        return genome_map[organism].get('genome')
+        return genome_map[organism].get("genome")
 
     # Case-insensitive search
     organism_lower = organism.lower()
     for org_name, info in genome_map.items():
         if org_name.lower() == organism_lower:
-            return info.get('genome')
+            return info.get("genome")
         # Check aliases
-        aliases = info.get('aliases', [])
+        aliases = info.get("aliases", [])
         if any(alias.lower() == organism_lower for alias in aliases):
-            return info.get('genome')
+            return info.get("genome")
 
     # Common fallbacks
     fallbacks = {
-        'homo sapiens': 'GRCh38',
-        'human': 'GRCh38',
-        'mus musculus': 'GRCm39',
-        'mouse': 'GRCm39',
-        'saccharomyces cerevisiae': 'R64-1-1',
-        'yeast': 'R64-1-1',
-        'drosophila melanogaster': 'BDGP6',
-        'caenorhabditis elegans': 'WBcel235',
-        'danio rerio': 'GRCz11',
-        'arabidopsis thaliana': 'TAIR10',
-        'rattus norvegicus': 'Rnor_6.0',
+        "homo sapiens": "GRCh38",
+        "human": "GRCh38",
+        "mus musculus": "GRCm39",
+        "mouse": "GRCm39",
+        "saccharomyces cerevisiae": "R64-1-1",
+        "yeast": "R64-1-1",
+        "drosophila melanogaster": "BDGP6",
+        "caenorhabditis elegans": "WBcel235",
+        "danio rerio": "GRCz11",
+        "arabidopsis thaliana": "TAIR10",
+        "rattus norvegicus": "Rnor_6.0",
     }
 
     return fallbacks.get(organism_lower)
 
 
-def suggest_pipeline(library_strategy: str, library_source: str = '') -> str:
+def suggest_pipeline(library_strategy: str, library_source: str = "") -> str:
     """Suggest nf-core pipeline based on library strategy."""
     strategy = library_strategy.upper()
 
     pipeline_map = {
-        'RNA-SEQ': 'rnaseq',
-        'ATAC-SEQ': 'atacseq',
-        'CHIP-SEQ': 'chipseq',
-        'WGS': 'sarek',
-        'WXS': 'sarek',
-        'AMPLICON': 'ampliseq',
-        'BISULFITE-SEQ': 'methylseq',
-        'HI-C': 'hic',
+        "RNA-SEQ": "rnaseq",
+        "ATAC-SEQ": "atacseq",
+        "CHIP-SEQ": "chipseq",
+        "WGS": "sarek",
+        "WXS": "sarek",
+        "AMPLICON": "ampliseq",
+        "BISULFITE-SEQ": "methylseq",
+        "HI-C": "hic",
     }
 
-    return pipeline_map.get(strategy, 'rnaseq')
+    return pipeline_map.get(strategy, "rnaseq")
 
 
 def cmd_info(args):
@@ -178,14 +177,14 @@ def cmd_info(args):
     groups = group_samples_by_type(runs) if runs else {}
 
     # Suggest genome and pipeline
-    organism = metadata.get('organism', 'Unknown')
+    organism = metadata.get("organism", "Unknown")
     genome = suggest_genome(organism)
 
     # Determine primary data type
-    primary_strategy = 'RNA-SEQ'
+    primary_strategy = "RNA-SEQ"
     if groups:
-        primary_group = max(groups.items(), key=lambda x: x[1]['count'])
-        primary_strategy = primary_group[1]['strategy']
+        primary_group = max(groups.items(), key=lambda x: x[1]["count"])
+        primary_strategy = primary_group[1]["strategy"]
     pipeline = suggest_pipeline(primary_strategy)
 
     # Estimate download size
@@ -207,8 +206,8 @@ def cmd_info(args):
     if groups:
         print(format_sample_groups_table(groups))
 
-    if metadata.get('summary'):
-        summary = metadata['summary']
+    if metadata.get("summary"):
+        summary = metadata["summary"]
         if len(summary) > 300:
             summary = summary[:297] + "..."
         print(f"\nSummary:\n  {summary}")
@@ -219,24 +218,24 @@ def cmd_info(args):
     if len(groups) > 1:
         print("\n💡 To download a specific subset, use:")
         for key in sorted(groups.keys()):
-            print(f"   --subset \"{key}\"")
+            print(f'   --subset "{key}"')
 
     # Save study info JSON
     if args.output_json:
         info = {
-            'geo_id': geo_id,
-            'title': metadata.get('title'),
-            'organism': organism,
-            'n_samples': metadata.get('n_samples'),
-            'sra_study': sra_study,
-            'n_runs': len(runs),
-            'groups': {k: {**v, 'runs': None, 'gsm_ids': list(v.get('gsm_ids', []))} for k, v in groups.items()},
-            'suggested_genome': genome,
-            'suggested_pipeline': pipeline,
-            'summary': metadata.get('summary'),
+            "geo_id": geo_id,
+            "title": metadata.get("title"),
+            "organism": organism,
+            "n_samples": metadata.get("n_samples"),
+            "sra_study": sra_study,
+            "n_runs": len(runs),
+            "groups": {k: {**v, "runs": None, "gsm_ids": list(v.get("gsm_ids", []))} for k, v in groups.items()},
+            "suggested_genome": genome,
+            "suggested_pipeline": pipeline,
+            "summary": metadata.get("summary"),
         }
         output_path = Path(args.output_json)
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             json.dump(info, f, indent=2)
         print(f"\n📄 Study info saved to: {output_path}")
 
@@ -265,28 +264,25 @@ def cmd_groups(args):
 
     # Output for interactive selection
     print("\n📋 Available groups for --subset option:")
-    for i, (key, info) in enumerate(sorted(groups.items(), key=lambda x: -x[1]['count']), 1):
-        size_str = format_file_size(info['size_estimate'])
-        print(f"  {i}. \"{key}\" - {info['count']} samples (~{size_str})")
+    for i, (key, info) in enumerate(sorted(groups.items(), key=lambda x: -x[1]["count"]), 1):
+        size_str = format_file_size(info["size_estimate"])
+        print(f'  {i}. "{key}" - {info["count"]} samples (~{size_str})')
 
     # Save to JSON if requested
     if args.output:
         output_path = Path(args.output)
-        output_data = {
-            'geo_id': geo_id,
-            'groups': {}
-        }
+        output_data = {"geo_id": geo_id, "groups": {}}
         for key, info in groups.items():
-            output_data['groups'][key] = {
-                'count': info['count'],
-                'gsm_range': info['gsm_range'],
-                'gsm_ids': info.get('gsm_ids', []),
-                'size_estimate': info['size_estimate'],
-                'strategy': info['strategy'],
-                'layout': info['layout'],
-                'srr_ids': [r['srr'] for r in info['runs']],
+            output_data["groups"][key] = {
+                "count": info["count"],
+                "gsm_range": info["gsm_range"],
+                "gsm_ids": info.get("gsm_ids", []),
+                "size_estimate": info["size_estimate"],
+                "strategy": info["strategy"],
+                "layout": info["layout"],
+                "srr_ids": [r["srr"] for r in info["runs"]],
             }
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             json.dump(output_data, f, indent=2)
         print(f"\n📄 Groups saved to: {output_path}")
 
@@ -306,15 +302,15 @@ def cmd_list(args):
 
     # Apply filter if specified
     if args.filter:
-        filter_parts = args.filter.split(':')
+        filter_parts = args.filter.split(":")
         strategy_filter = filter_parts[0].upper() if filter_parts else None
         layout_filter = filter_parts[1].upper() if len(filter_parts) > 1 else None
 
         filtered = []
         for run in runs:
-            if strategy_filter and run.get('library_strategy', '').upper() != strategy_filter:
+            if strategy_filter and run.get("library_strategy", "").upper() != strategy_filter:
                 continue
-            if layout_filter and run.get('layout', '').upper() != layout_filter:
+            if layout_filter and run.get("layout", "").upper() != layout_filter:
                 continue
             filtered.append(run)
         runs = filtered
@@ -323,20 +319,24 @@ def cmd_list(args):
     print("-" * 60)
 
     for run in runs:
-        size = format_file_size(run.get('bases', 0) // 4)
-        print(f"{run['srr']:<15} {run.get('gsm', 'N/A'):<12} {run.get('layout', 'N/A'):<8} "
-              f"{run.get('library_strategy', 'N/A'):<12} {size:>10}")
+        size = format_file_size(run.get("bases", 0) // 4)
+        print(
+            f"{run['srr']:<15} {run.get('gsm', 'N/A'):<12} {run.get('layout', 'N/A'):<8} "
+            f"{run.get('library_strategy', 'N/A'):<12} {size:>10}"
+        )
 
     print(f"\nTotal: {len(runs)} runs")
 
     # Output as TSV if requested
     if args.output:
         output_path = Path(args.output)
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             f.write("run_accession\tgsm\tlayout\tlibrary_strategy\tbases\n")
             for run in runs:
-                f.write(f"{run['srr']}\t{run.get('gsm', '')}\t{run.get('layout', '')}\t"
-                        f"{run.get('library_strategy', '')}\t{run.get('bases', 0)}\n")
+                f.write(
+                    f"{run['srr']}\t{run.get('gsm', '')}\t{run.get('layout', '')}\t"
+                    f"{run.get('library_strategy', '')}\t{run.get('bases', 0)}\n"
+                )
         print(f"\n📄 Run list saved to: {output_path}")
 
     return 0
@@ -361,10 +361,10 @@ def interactive_select_group(groups: Dict[str, Dict]) -> Optional[str]:
     print("  SELECT SAMPLE GROUP TO DOWNLOAD")
     print("=" * 60)
 
-    sorted_groups = sorted(groups.items(), key=lambda x: -x[1]['count'])
+    sorted_groups = sorted(groups.items(), key=lambda x: -x[1]["count"])
 
     for i, (key, info) in enumerate(sorted_groups, 1):
-        size_str = format_file_size(info['size_estimate'])
+        size_str = format_file_size(info["size_estimate"])
         print(f"\n  [{i}] {info['strategy']} ({info['layout'].lower()})")
         print(f"      Samples: {info['count']}")
         print(f"      GSM: {info['gsm_range']}")
@@ -410,7 +410,7 @@ def cmd_download(args):
         return 1
 
     # Collect all unique SRA studies from runs (SuperSeries may have multiple)
-    sra_studies = set(r.get('sra_study', '') for r in runs if r.get('sra_study'))
+    sra_studies = set(r.get("sra_study", "") for r in runs if r.get("sra_study"))
     if not sra_studies:
         print(f"❌ Could not find any SRA studies for {geo_id}")
         return 1
@@ -450,20 +450,20 @@ def cmd_download(args):
 
     # Apply filter if specified
     if selected_subset:
-        filter_parts = selected_subset.split(':')
+        filter_parts = selected_subset.split(":")
         strategy_filter = filter_parts[0].upper() if filter_parts else None
         layout_filter = filter_parts[1].upper() if len(filter_parts) > 1 else None
 
         filtered_srrs = set()
         for run in runs:
-            if strategy_filter and run.get('library_strategy', '').upper() != strategy_filter:
+            if strategy_filter and run.get("library_strategy", "").upper() != strategy_filter:
                 continue
-            if layout_filter and run.get('layout', '').upper() != layout_filter:
+            if layout_filter and run.get("layout", "").upper() != layout_filter:
                 continue
-            filtered_srrs.add(run['srr'])
+            filtered_srrs.add(run["srr"])
 
         fastq_urls = {srr: urls for srr, urls in fastq_urls.items() if srr in filtered_srrs}
-        print(f"\n📦 Filtered to {len(fastq_urls)} runs matching \"{selected_subset}\"")
+        print(f'\n📦 Filtered to {len(fastq_urls)} runs matching "{selected_subset}"')
 
     # Count files to download
     total_files = sum(len(urls) for urls in fastq_urls.values())
@@ -474,7 +474,7 @@ def cmd_download(args):
     downloads_needed = []
     for srr, urls in fastq_urls.items():
         for url in urls:
-            filename = url.split('/')[-1]
+            filename = url.split("/")[-1]
             filepath = output_dir / filename
             if filepath.exists():
                 existing += 1
@@ -499,8 +499,7 @@ def cmd_download(args):
         # Parallel download
         with ThreadPoolExecutor(max_workers=args.parallel) as executor:
             futures = {
-                executor.submit(download_fastq_file, url, filepath): filepath
-                for url, filepath in downloads_needed
+                executor.submit(download_fastq_file, url, filepath): filepath for url, filepath in downloads_needed
             }
 
             for i, future in enumerate(as_completed(futures), 1):
@@ -540,13 +539,13 @@ def cmd_download(args):
     # Save metadata
     metadata_path = output_dir / "download_metadata.json"
     metadata = {
-        'geo_id': geo_id,
-        'sra_studies': sorted(sra_studies),
-        'n_runs': len(fastq_urls),
-        'n_files': total_files,
-        'output_dir': str(output_dir.absolute()),
+        "geo_id": geo_id,
+        "sra_studies": sorted(sra_studies),
+        "n_runs": len(fastq_urls),
+        "n_files": total_files,
+        "output_dir": str(output_dir.absolute()),
     }
-    with open(metadata_path, 'w') as f:
+    with open(metadata_path, "w") as f:
         json.dump(metadata, f, indent=2)
 
     return 0
@@ -568,34 +567,36 @@ def cmd_samplesheet(args):
 
     # Get GEO metadata for sample naming
     metadata = fetch_geo_metadata(geo_id)
-    organism = metadata.get('organism', 'Unknown') if metadata else 'Unknown'
+    organism = metadata.get("organism", "Unknown") if metadata else "Unknown"
     genome = suggest_genome(organism)
 
     # Detect pipeline from data
-    strategies = set(r.get('library_strategy', 'RNA-SEQ') for r in runs)
-    primary_strategy = list(strategies)[0] if strategies else 'RNA-SEQ'
+    strategies = set(r.get("library_strategy", "RNA-SEQ") for r in runs)
+    primary_strategy = list(strategies)[0] if strategies else "RNA-SEQ"
     pipeline = args.pipeline or suggest_pipeline(primary_strategy)
 
     # Map SRR to local FASTQ files
     samples = []
     for run in runs:
-        srr = run['srr']
-        layout = run.get('layout', 'PAIRED')
+        srr = run["srr"]
+        layout = run.get("layout", "PAIRED")
 
         # Find FASTQ files
-        if layout == 'PAIRED':
+        if layout == "PAIRED":
             r1 = fastq_dir / f"{srr}_1.fastq.gz"
             r2 = fastq_dir / f"{srr}_2.fastq.gz"
             if not r1.exists() or not r2.exists():
                 logger.warning(f"FASTQ files not found for {srr}")
                 continue
-            samples.append({
-                'srr': srr,
-                'gsm': run.get('gsm', ''),
-                'fastq_1': str(r1.absolute()),
-                'fastq_2': str(r2.absolute()),
-                'layout': 'PAIRED',
-            })
+            samples.append(
+                {
+                    "srr": srr,
+                    "gsm": run.get("gsm", ""),
+                    "fastq_1": str(r1.absolute()),
+                    "fastq_2": str(r2.absolute()),
+                    "layout": "PAIRED",
+                }
+            )
         else:
             r1 = fastq_dir / f"{srr}.fastq.gz"
             if not r1.exists():
@@ -603,13 +604,15 @@ def cmd_samplesheet(args):
             if not r1.exists():
                 logger.warning(f"FASTQ file not found for {srr}")
                 continue
-            samples.append({
-                'srr': srr,
-                'gsm': run.get('gsm', ''),
-                'fastq_1': str(r1.absolute()),
-                'fastq_2': '',
-                'layout': 'SINGLE',
-            })
+            samples.append(
+                {
+                    "srr": srr,
+                    "gsm": run.get("gsm", ""),
+                    "fastq_1": str(r1.absolute()),
+                    "fastq_2": "",
+                    "layout": "SINGLE",
+                }
+            )
 
     if not samples:
         print(f"❌ No FASTQ files found in {fastq_dir}")
@@ -620,25 +623,25 @@ def cmd_samplesheet(args):
     sample_names = {}
     for sample in samples:
         # Default to SRR accession
-        sample_names[sample['srr']] = sample['srr']
+        sample_names[sample["srr"]] = sample["srr"]
 
     # Write samplesheet
-    with open(output_path, 'w') as f:
-        if pipeline == 'rnaseq':
+    with open(output_path, "w") as f:
+        if pipeline == "rnaseq":
             f.write("sample,fastq_1,fastq_2,strandedness\n")
             for sample in samples:
-                name = sample_names[sample['srr']]
+                name = sample_names[sample["srr"]]
                 f.write(f"{name},{sample['fastq_1']},{sample['fastq_2']},auto\n")
-        elif pipeline == 'atacseq':
+        elif pipeline == "atacseq":
             f.write("sample,fastq_1,fastq_2,replicate\n")
             for i, sample in enumerate(samples, 1):
-                name = sample_names[sample['srr']]
+                name = sample_names[sample["srr"]]
                 f.write(f"{name},{sample['fastq_1']},{sample['fastq_2']},1\n")
         else:
             # Generic format
             f.write("sample,fastq_1,fastq_2\n")
             for sample in samples:
-                name = sample_names[sample['srr']]
+                name = sample_names[sample["srr"]]
                 f.write(f"{name},{sample['fastq_1']},{sample['fastq_2']}\n")
 
     print(f"\n✅ Generated samplesheet: {output_path}")
@@ -671,43 +674,44 @@ Examples:
   %(prog)s download GSE110004 -o ./fastq --subset "RNA-Seq:PAIRED"
   %(prog)s samplesheet GSE110004 \\
       --fastq-dir ./fastq -o samplesheet.csv # Generate samplesheet
-        """
+        """,
     )
 
-    subparsers = parser.add_subparsers(dest='command', help='Commands')
+    subparsers = parser.add_subparsers(dest="command", help="Commands")
 
     # info command
-    info_parser = subparsers.add_parser('info', help='Display study information with sample groups')
-    info_parser.add_argument('geo_id', help='GEO accession (e.g., GSE110004)')
-    info_parser.add_argument('--output-json', '-o', help='Save info to JSON file')
+    info_parser = subparsers.add_parser("info", help="Display study information with sample groups")
+    info_parser.add_argument("geo_id", help="GEO accession (e.g., GSE110004)")
+    info_parser.add_argument("--output-json", "-o", help="Save info to JSON file")
 
     # groups command
-    groups_parser = subparsers.add_parser('groups', help='Show sample groups for interactive selection')
-    groups_parser.add_argument('geo_id', help='GEO accession')
-    groups_parser.add_argument('--output', '-o', help='Save groups to JSON file')
+    groups_parser = subparsers.add_parser("groups", help="Show sample groups for interactive selection")
+    groups_parser.add_argument("geo_id", help="GEO accession")
+    groups_parser.add_argument("--output", "-o", help="Save groups to JSON file")
 
     # list command
-    list_parser = subparsers.add_parser('list', help='List samples and runs')
-    list_parser.add_argument('geo_id', help='GEO accession')
-    list_parser.add_argument('--filter', '-f', help='Filter by strategy:layout (e.g., RNA-Seq:PAIRED)')
-    list_parser.add_argument('--output', '-o', help='Save to TSV file')
+    list_parser = subparsers.add_parser("list", help="List samples and runs")
+    list_parser.add_argument("geo_id", help="GEO accession")
+    list_parser.add_argument("--filter", "-f", help="Filter by strategy:layout (e.g., RNA-Seq:PAIRED)")
+    list_parser.add_argument("--output", "-o", help="Save to TSV file")
 
     # download command
-    dl_parser = subparsers.add_parser('download', help='Download FASTQ files')
-    dl_parser.add_argument('geo_id', help='GEO accession')
-    dl_parser.add_argument('--output', '-o', required=True, help='Output directory')
-    dl_parser.add_argument('--subset', '-s', help='Filter subset (e.g., RNA-Seq:PAIRED)')
-    dl_parser.add_argument('--interactive', '-i', action='store_true',
-                           help='Interactively select sample group to download')
-    dl_parser.add_argument('--parallel', '-p', type=int, default=4, help='Parallel downloads')
-    dl_parser.add_argument('--timeout', '-t', type=int, default=600, help='Download timeout (sec)')
+    dl_parser = subparsers.add_parser("download", help="Download FASTQ files")
+    dl_parser.add_argument("geo_id", help="GEO accession")
+    dl_parser.add_argument("--output", "-o", required=True, help="Output directory")
+    dl_parser.add_argument("--subset", "-s", help="Filter subset (e.g., RNA-Seq:PAIRED)")
+    dl_parser.add_argument(
+        "--interactive", "-i", action="store_true", help="Interactively select sample group to download"
+    )
+    dl_parser.add_argument("--parallel", "-p", type=int, default=4, help="Parallel downloads")
+    dl_parser.add_argument("--timeout", "-t", type=int, default=600, help="Download timeout (sec)")
 
     # samplesheet command
-    ss_parser = subparsers.add_parser('samplesheet', help='Generate samplesheet')
-    ss_parser.add_argument('geo_id', help='GEO accession')
-    ss_parser.add_argument('--fastq-dir', '-f', required=True, help='Directory with FASTQ files')
-    ss_parser.add_argument('--output', '-o', default='samplesheet.csv', help='Output samplesheet')
-    ss_parser.add_argument('--pipeline', '-p', help='Target pipeline (auto-detected if not specified)')
+    ss_parser = subparsers.add_parser("samplesheet", help="Generate samplesheet")
+    ss_parser.add_argument("geo_id", help="GEO accession")
+    ss_parser.add_argument("--fastq-dir", "-f", required=True, help="Directory with FASTQ files")
+    ss_parser.add_argument("--output", "-o", default="samplesheet.csv", help="Output samplesheet")
+    ss_parser.add_argument("--pipeline", "-p", help="Target pipeline (auto-detected if not specified)")
 
     args = parser.parse_args()
 
@@ -716,15 +720,15 @@ Examples:
         return 1
 
     commands = {
-        'info': cmd_info,
-        'groups': cmd_groups,
-        'list': cmd_list,
-        'download': cmd_download,
-        'samplesheet': cmd_samplesheet,
+        "info": cmd_info,
+        "groups": cmd_groups,
+        "list": cmd_list,
+        "download": cmd_download,
+        "samplesheet": cmd_samplesheet,
     }
 
     return commands[args.command](args)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

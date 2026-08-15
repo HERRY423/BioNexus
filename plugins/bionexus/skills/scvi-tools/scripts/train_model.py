@@ -26,14 +26,15 @@ from model_utils import (
 MODELS = ["scvi", "scanvi", "totalvi", "peakvi", "velovi", "multivi"]
 
 
-def train_totalvi(adata, batch_key=None, protein_key="protein_expression",
-                  n_latent=20, max_epochs=200):
+def train_totalvi(adata, batch_key=None, protein_key="protein_expression", n_latent=20, max_epochs=200):
     """Train totalVI model for CITE-seq data."""
     import numpy as np
     import scvi
 
     scvi.model.TOTALVI.setup_anndata(
-        adata, layer="counts", batch_key=batch_key,
+        adata,
+        layer="counts",
+        batch_key=batch_key,
         protein_expression_obsm_key=protein_key,
     )
     model = scvi.model.TOTALVI(adata, n_latent=n_latent)
@@ -42,8 +43,7 @@ def train_totalvi(adata, batch_key=None, protein_key="protein_expression",
 
     _, protein_denoised = model.get_normalized_expression(return_mean=True)
     adata.obsm["protein_denoised"] = (
-        protein_denoised.values if hasattr(protein_denoised, "values")
-        else np.array(protein_denoised)
+        protein_denoised.values if hasattr(protein_denoised, "values") else np.array(protein_denoised)
     )
     return model, "X_totalVI"
 
@@ -78,9 +78,7 @@ def train_velovi(adata, max_epochs=500):
         scv.pp.moments(adata, n_pcs=30, n_neighbors=30)
         print(f"After preprocessing: {adata.shape}")
 
-    scvi.external.VELOVI.setup_anndata(
-        adata, spliced_layer="Ms", unspliced_layer="Mu"
-    )
+    scvi.external.VELOVI.setup_anndata(adata, spliced_layer="Ms", unspliced_layer="Mu")
     model = scvi.external.VELOVI(adata)
     model.train(max_epochs=max_epochs, early_stopping=True)
 
@@ -103,15 +101,14 @@ def train_multivi(adata, batch_key=None, n_latent=20, max_epochs=300):
 
     if isinstance(adata, md.MuData):
         scvi.model.MULTIVI.setup_mudata(
-            adata, rna_layer="counts", atac_layer="counts",
+            adata,
+            rna_layer="counts",
+            atac_layer="counts",
             batch_key=batch_key,
-            modalities={"rna_layer": "rna", "batch_key": "rna",
-                        "atac_layer": "atac"},
+            modalities={"rna_layer": "rna", "batch_key": "rna", "atac_layer": "atac"},
         )
     else:
-        raise ValueError(
-            "MultiVI requires MuData format with 'rna' and 'atac' modalities"
-        )
+        raise ValueError("MultiVI requires MuData format with 'rna' and 'atac' modalities")
 
     model = scvi.model.MULTIVI(adata, n_latent=n_latent)
     model.train(max_epochs=max_epochs, early_stopping=True)
@@ -135,26 +132,32 @@ Examples:
     )
     parser.add_argument("input", help="Input h5ad file (prepared)")
     parser.add_argument("output_dir", help="Output directory for model and results")
-    parser.add_argument("--model", choices=MODELS, default="scvi",
-                        help="Model type (default: scvi)")
+    parser.add_argument("--model", choices=MODELS, default="scvi", help="Model type (default: scvi)")
     parser.add_argument("--batch-key", help="Batch column in obs")
     parser.add_argument("--labels-key", help="Labels column (required for scanvi)")
-    parser.add_argument("--protein-key", default="protein_expression",
-                        help="Protein obsm key for totalvi")
-    parser.add_argument("--n-latent", type=int, default=30,
-                        help="Latent dimensions (default: 30)")
-    parser.add_argument("--n-layers", type=int, default=2,
-                        help="Encoder/decoder layers (default: 2)")
-    parser.add_argument("--max-epochs", type=int, default=200,
-                        help="Max training epochs (default: 200)")
-    parser.add_argument("--batch-size", type=int, default=None,
-                        help="Mini-batch size (default: auto, 128 for <50k cells, 512 for 100k+ cells)")
-    parser.add_argument("--precision", choices=["16-mixed", "bf16-mixed", "32"], default=None,
-                        help="PyTorch Lightning mixed precision mode (16-mixed or bf16-mixed for GPU/MPS acceleration)")
-    parser.add_argument("--num-workers", type=int, default=0,
-                        help="Number of DataLoader worker processes for multi-threaded data loading (default: 0)")
-    parser.add_argument("--patience", type=int, default=15,
-                        help="Early stopping patience epochs (default: 15)")
+    parser.add_argument("--protein-key", default="protein_expression", help="Protein obsm key for totalvi")
+    parser.add_argument("--n-latent", type=int, default=30, help="Latent dimensions (default: 30)")
+    parser.add_argument("--n-layers", type=int, default=2, help="Encoder/decoder layers (default: 2)")
+    parser.add_argument("--max-epochs", type=int, default=200, help="Max training epochs (default: 200)")
+    parser.add_argument(
+        "--batch-size",
+        type=int,
+        default=None,
+        help="Mini-batch size (default: auto, 128 for <50k cells, 512 for 100k+ cells)",
+    )
+    parser.add_argument(
+        "--precision",
+        choices=["16-mixed", "bf16-mixed", "32"],
+        default=None,
+        help="PyTorch Lightning mixed precision mode (16-mixed or bf16-mixed for GPU/MPS acceleration)",
+    )
+    parser.add_argument(
+        "--num-workers",
+        type=int,
+        default=0,
+        help="Number of DataLoader worker processes for multi-threaded data loading (default: 0)",
+    )
+    parser.add_argument("--patience", type=int, default=15, help="Early stopping patience epochs (default: 15)")
 
     args = parser.parse_args()
 
@@ -166,8 +169,7 @@ Examples:
         import scanpy as sc
         import scvi  # noqa: F401
     except ImportError:
-        print("Error: scvi-tools and scanpy required. "
-              "Install: pip install scvi-tools scanpy")
+        print("Error: scvi-tools and scanpy required. Install: pip install scvi-tools scanpy")
         sys.exit(1)
 
     os.makedirs(args.output_dir, exist_ok=True)
@@ -177,6 +179,7 @@ Examples:
     if args.input.endswith(".h5mu") or args.model == "multivi":
         try:
             import mudata as md
+
             adata = md.read(args.input)
             print(f"MuData: {adata.n_obs} cells")
             for mod_name, mod in adata.mod.items():
@@ -193,7 +196,9 @@ Examples:
         adata.layers["counts"] = adata.X.copy()
 
     # ---- Train -----------------------------------------------------------
-    print(f"\nTraining {args.model.upper()} (Acceleration: precision={args.precision or '32'}, batch_size={args.batch_size or 'auto'}, workers={args.num_workers})...")
+    print(
+        f"\nTraining {args.model.upper()} (Acceleration: precision={args.precision or '32'}, batch_size={args.batch_size or 'auto'}, workers={args.num_workers})..."
+    )
 
     if args.model in ("scvi", "scanvi"):
         model, rep_key = train_scvi(
@@ -210,18 +215,27 @@ Examples:
         )
     elif args.model == "totalvi":
         model, rep_key = train_totalvi(
-            adata, args.batch_key, args.protein_key,
-            args.n_latent, args.max_epochs,
+            adata,
+            args.batch_key,
+            args.protein_key,
+            args.n_latent,
+            args.max_epochs,
         )
     elif args.model == "peakvi":
         model, rep_key = train_peakvi(
-            adata, args.batch_key, args.n_latent, args.max_epochs,
+            adata,
+            args.batch_key,
+            args.n_latent,
+            args.max_epochs,
         )
     elif args.model == "velovi":
         model, rep_key = train_velovi(adata, args.max_epochs)
     elif args.model == "multivi":
         model, rep_key = train_multivi(
-            adata, args.batch_key, args.n_latent, args.max_epochs,
+            adata,
+            args.batch_key,
+            args.n_latent,
+            args.max_epochs,
         )
 
     print("Training complete!")
@@ -238,6 +252,7 @@ Examples:
     # Training history plot
     try:
         import matplotlib.pyplot as plt
+
         fig, ax = plt.subplots(figsize=(8, 4))
         if "elbo_train" in model.history:
             ax.plot(model.history["elbo_train"], label="Train")

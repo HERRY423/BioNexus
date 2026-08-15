@@ -162,4 +162,3 @@ __all__ = [
     "write_doctor_report",
     "capture_environment",
 ]
-

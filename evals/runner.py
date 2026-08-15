@@ -19,9 +19,7 @@ import yaml
 from bionexus.agent_routing import route_scientific_intent
 from bionexus.claim_checker import audit_prohibited_claims
 from bionexus.integrity import (
-    audit_expression_matrix,
     audit_parameter_stability,
-    audit_statistical_significance,
 )
 from evals.metrics import (
     compute_benchmark_metrics,
@@ -157,6 +155,7 @@ def run_single_case(
 
         repo_root = Path(__file__).resolve().parents[1]
         import sys
+
         for p in [
             str(repo_root / "src"),
             str(repo_root / "skills" / "single-cell-rna-qc" / "scripts"),
@@ -168,8 +167,8 @@ def run_single_case(
 
         if signal_type == "scrna_markers":
             # 1. Run actual Scanpy gold chain pipeline on planted dataset
-            from make_tiny import write_tiny_scrna
             import anndata as ad
+            from make_tiny import write_tiny_scrna
             from scrna_pipeline import run_scrna_gold_chain
 
             fixture_path = repo_root / "tests" / "fixtures" / "tiny_scrna.h5ad"
@@ -181,7 +180,9 @@ def run_single_case(
                 adata, run_qc=False, n_top_genes=60, resolution=1.2, n_marker_genes=15
             )
             expected = set(case.data_metadata.get("expected_genes", ["CD3D", "MS4A1", "CD14"]))
-            name_col = "names" if "names" in markers.columns else ("gene" if "gene" in markers.columns else markers.columns[1])
+            name_col = (
+                "names" if "names" in markers.columns else ("gene" if "gene" in markers.columns else markers.columns[1])
+            )
             top_markers = set(markers[name_col].astype(str))
             recovered = expected.intersection(top_markers)
             recall = len(recovered) / len(expected) if expected else 1.0
@@ -194,8 +195,8 @@ def run_single_case(
 
         elif signal_type == "spatial_moran_svg":
             # 2. Run actual Squidpy spatial gold chain pipeline on planted dataset
-            from make_tiny import write_tiny_spatial
             import anndata as ad
+            from make_tiny import write_tiny_spatial
             from spatial_pipeline import run_spatial_gold_chain
 
             fixture_path = repo_root / "tests" / "fixtures" / "tiny_spatial.h5ad"
@@ -207,16 +208,12 @@ def run_single_case(
             top_svgs = set(svg.head(5)["gene"].astype(str))
             expected = set(case.data_metadata.get("expected_genes", ["SVG_LEFT"]))
             if not expected.issubset(top_svgs):
-                failure_reasons.append(
-                    f"L3 Failure: Expected SVGs {expected} not recovered in top 5: {top_svgs}"
-                )
+                failure_reasons.append(f"L3 Failure: Expected SVGs {expected} not recovered in top 5: {top_svgs}")
             if "SVG_LEFT" in set(svg["gene"]):
                 left_i = float(svg.loc[svg["gene"] == "SVG_LEFT", "morans_i"].iloc[0])
                 min_i = case.data_metadata.get("moran_i_min", 0.30)
                 if left_i < min_i:
-                    failure_reasons.append(
-                        f"L3 Failure: Moran's I {left_i:.3f} < threshold {min_i:.3f}"
-                    )
+                    failure_reasons.append(f"L3 Failure: Moran's I {left_i:.3f} < threshold {min_i:.3f}")
             actual_status = "PERMITTED"
 
         elif signal_type == "pseudobulk_de":
@@ -239,7 +236,9 @@ def run_single_case(
             expected_de = case.data_metadata.get("expected_de_genes", ["g0"])
             for g in expected_de:
                 if g not in top_degs:
-                    failure_reasons.append(f"L3 Failure: Planted DEG '{g}' not found in top PyDESeq2 findings: {top_degs}")
+                    failure_reasons.append(
+                        f"L3 Failure: Planted DEG '{g}' not found in top PyDESeq2 findings: {top_degs}"
+                    )
             actual_status = "PERMITTED"
 
         elif signal_type == "clustering_stability":
@@ -316,9 +315,7 @@ def run_single_case(
             actual_rem_text = " ".join(decision.remedies).lower()
             for er in case.required_remedies:
                 if er.lower() not in actual_rem_text:
-                    failure_reasons.append(
-                        f"Missing required remedy keyword: '{er}' (Actual: {decision.remedies})"
-                    )
+                    failure_reasons.append(f"Missing required remedy keyword: '{er}' (Actual: {decision.remedies})")
 
     t_elapsed = (time.perf_counter() - t0) * 1000.0
     passed = len(failure_reasons) == 0
@@ -351,6 +348,7 @@ def run_benchmark(
     results = [run_single_case(c, provider=provider, model=model) for c in cases]
 
     from evals.metrics import compute_epistemic_calibration
+
     calib = compute_epistemic_calibration(results)
     metrics = compute_benchmark_metrics(results)
     categories = compute_category_breakdown(results)
@@ -378,7 +376,9 @@ def format_benchmark_markdown(report: BenchmarkReport) -> str:
     """Format benchmark report as a structured Multi-Tier Markdown document (BioNexus Eval 2.0)."""
     lines: List[str] = []
     lines.append("# [BioNexus Eval 2.0] Multi-Tier Scientific Agent Benchmark")
-    lines.append(f"**Timestamp**: `{report.timestamp}` | **Total Cases**: `{report.total_cases}` | **Overall Accuracy**: `{report.overall_accuracy * 100:.1f}%`\n")
+    lines.append(
+        f"**Timestamp**: `{report.timestamp}` | **Total Cases**: `{report.total_cases}` | **Overall Accuracy**: `{report.overall_accuracy * 100:.1f}%`\n"
+    )
 
     lines.append("## Multi-Tier Benchmark Levels\n")
     lines.append("| Tier Level | Evaluation Scope | Total | Passed | Failed | Accuracy |")
@@ -390,37 +390,66 @@ def format_benchmark_markdown(report: BenchmarkReport) -> str:
     }
     for lvl, score in report.level_scores.items():
         desc = level_desc.get(lvl, f"Level {lvl}")
-        lines.append(f"| **{lvl}** | {desc} | {score['total']} | {score['passed']} | {score['failed']} | `{score['accuracy'] * 100:.1f}%` |")
+        lines.append(
+            f"| **{lvl}** | {desc} | {score['total']} | {score['passed']} | {score['failed']} | `{score['accuracy'] * 100:.1f}%` |"
+        )
 
     lines.append("\n---\n")
     lines.append("## Core Scientific Reliability Metrics (8 Pillars)\n")
     lines.append("| Metric | Score | Target | Interpretation |")
     lines.append("|---|---|---|---|")
     m = report.metrics
-    lines.append(f"| **Routing Accuracy** | `{m['routing_accuracy'] * 100:.1f}%` | `> 95.0%` | Correct scientific capability matched |")
-    lines.append(f"| **Unsafe Invocation Rate** | `{m['unsafe_invocation_rate'] * 100:.1f}%` | `0.0%` | Frequency of running invalid analyses |")
-    lines.append(f"| **Abstention Precision** | `{m['abstention_precision'] * 100:.1f}%` | `> 95.0%` | Justified scientific refusals |")
-    lines.append(f"| **Abstention Recall** | `{m['abstention_recall'] * 100:.1f}%` | `> 95.0%` | Catching required refusal conditions |")
-    lines.append(f"| **Capability Hallucination Rate** | `{m['capability_hallucination_rate'] * 100:.1f}%` | `0.0%` | Zero unverified cell-types/claims |")
-    lines.append(f"| **Backend Fidelity** | `{m['backend_fidelity'] * 100:.1f}%` | `> 95.0%` | Accurate toolchain & degradation honesty |")
-    lines.append(f"| **Scientific Semantic Error Rate** | `{m['scientific_semantic_error_rate'] * 100:.1f}%` | `0.0%` | Confusion of raw/log, cell/sample |")
-    lines.append(f"| **Evidence Calibration Score** | `{m['evidence_calibration_score'] * 100:.1f}%` | `> 90.0%` | Epistemic card alignment & OCE penalty |")
-    lines.append(f"| **Composite Reliability Index (CRI)** | **`{m['composite_reliability_index'] * 100:.1f}%`** | `> 95.0%` | **Unified Scientific Quality Index** |")
+    lines.append(
+        f"| **Routing Accuracy** | `{m['routing_accuracy'] * 100:.1f}%` | `> 95.0%` | Correct scientific capability matched |"
+    )
+    lines.append(
+        f"| **Unsafe Invocation Rate** | `{m['unsafe_invocation_rate'] * 100:.1f}%` | `0.0%` | Frequency of running invalid analyses |"
+    )
+    lines.append(
+        f"| **Abstention Precision** | `{m['abstention_precision'] * 100:.1f}%` | `> 95.0%` | Justified scientific refusals |"
+    )
+    lines.append(
+        f"| **Abstention Recall** | `{m['abstention_recall'] * 100:.1f}%` | `> 95.0%` | Catching required refusal conditions |"
+    )
+    lines.append(
+        f"| **Capability Hallucination Rate** | `{m['capability_hallucination_rate'] * 100:.1f}%` | `0.0%` | Zero unverified cell-types/claims |"
+    )
+    lines.append(
+        f"| **Backend Fidelity** | `{m['backend_fidelity'] * 100:.1f}%` | `> 95.0%` | Accurate toolchain & degradation honesty |"
+    )
+    lines.append(
+        f"| **Scientific Semantic Error Rate** | `{m['scientific_semantic_error_rate'] * 100:.1f}%` | `0.0%` | Confusion of raw/log, cell/sample |"
+    )
+    lines.append(
+        f"| **Evidence Calibration Score** | `{m['evidence_calibration_score'] * 100:.1f}%` | `> 90.0%` | Epistemic card alignment & OCE penalty |"
+    )
+    lines.append(
+        f"| **Composite Reliability Index (CRI)** | **`{m['composite_reliability_index'] * 100:.1f}%`** | `> 95.0%` | **Unified Scientific Quality Index** |"
+    )
     lines.append("\n---\n")
 
     # Epistemic Calibration Section
     if report.calibration:
         c = report.calibration
         lines.append("## Epistemic Evidence Maturity Calibration\n")
-        lines.append(f"- **Overconfidence Rate (Epistemic Hubris)**: `{c['overconfidence_rate'] * 100:.1f}%` (Target: 0.0%)")
+        lines.append(
+            f"- **Overconfidence Rate (Epistemic Hubris)**: `{c['overconfidence_rate'] * 100:.1f}%` (Target: 0.0%)"
+        )
         lines.append(f"- **Underconfidence Rate (Epistemic Timidity)**: `{c['underconfidence_rate'] * 100:.1f}%`")
-        lines.append(f"- **Ordinal Calibration Error (OCE)**: `{c['ordinal_calibration_error']:.3f}` (Mean rank distance)")
+        lines.append(
+            f"- **Ordinal Calibration Error (OCE)**: `{c['ordinal_calibration_error']:.3f}` (Mean rank distance)"
+        )
         lines.append(f"- **Brier Calibration Score**: `{c['brier_calibration_score'] * 100:.1f}%`")
         lines.append(f"- **Maturity Macro-F1**: `{c['macro_f1'] * 100:.1f}%`\n")
 
         # Confusion Matrix Table
         cm = c.get("confusion_matrix", {})
-        active_levels = [lvl for lvl in c.get("maturity_levels", []) if sum(cm.get(lvl, {}).values()) > 0 or sum(cm.get(o, {}).get(lvl, 0) for o in c.get("maturity_levels", [])) > 0]
+        active_levels = [
+            lvl
+            for lvl in c.get("maturity_levels", [])
+            if sum(cm.get(lvl, {}).values()) > 0
+            or sum(cm.get(o, {}).get(lvl, 0) for o in c.get("maturity_levels", [])) > 0
+        ]
         if active_levels:
             lines.append("### Maturity Confusion Matrix (Rows: Expected Warrant | Cols: Predicted Warrant)\n")
             header = "| Expected \\ Pred | " + " | ".join(active_levels) + " |"
@@ -439,7 +468,9 @@ def format_benchmark_markdown(report: BenchmarkReport) -> str:
     lines.append("| Category | Total | Passed | Failed | Accuracy |")
     lines.append("|---|---|---|---|---|")
     for cat, score in report.category_scores.items():
-        lines.append(f"| `{cat}` | {score['total']} | {score['passed']} | {score['failed']} | `{score['accuracy'] * 100:.1f}%` |")
+        lines.append(
+            f"| `{cat}` | {score['total']} | {score['passed']} | {score['failed']} | `{score['accuracy'] * 100:.1f}%` |"
+        )
 
     if report.failed_cases > 0:
         lines.append("\n---\n")

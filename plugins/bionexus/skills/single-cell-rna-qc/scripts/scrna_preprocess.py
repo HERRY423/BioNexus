@@ -62,7 +62,16 @@ def main() -> None:
     adata.write_h5ad(args.output)
     sidecar_path = Path(args.output).with_suffix(".provenance.json")
     sidecar_path.write_text(
-        json.dumps(sidecar(activity_name="scrna_preprocess", input_files=[args.input], output_files=[args.output], method=contract["method"], backend="scanpy"), indent=2),
+        json.dumps(
+            sidecar(
+                activity_name="scrna_preprocess",
+                input_files=[args.input],
+                output_files=[args.output],
+                method=contract["method"],
+                backend="scanpy",
+            ),
+            indent=2,
+        ),
         encoding="utf-8",
     )
     print(json.dumps(contract, indent=2))

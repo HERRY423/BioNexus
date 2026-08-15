@@ -38,8 +38,7 @@ def _table_from_spatialdata(sdata: Any, table_key: Optional[str] = None):
         raise ValueError("SpatialData object has no table/AnnData to analyze.")
     if len(names) > 1 and not table_key:
         raise ValueError(
-            f"SpatialData has multiple tables {names}. Pass --table <name>. "
-            "Refusing to silently pick the first table."
+            f"SpatialData has multiple tables {names}. Pass --table <name>. Refusing to silently pick the first table."
         )
     key = table_key or names[0]
     tables = getattr(sdata, "tables", None)

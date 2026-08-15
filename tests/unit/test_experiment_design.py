@@ -32,9 +32,7 @@ def test_entity_extraction_and_skill_routing():
 def test_5_phase_research_plan_generation():
     """Test generation of structured 5-phase preclinical master plan."""
     plan = create_preclinical_research_plan(
-        target_gene="BRAF",
-        disease_indication="Melanoma",
-        modality="Kinase Inhibitor"
+        target_gene="BRAF", disease_indication="Melanoma", modality="Kinase Inhibitor"
     )
     assert plan["target_gene"] == "BRAF"
     assert plan["total_phases"] == 5
@@ -52,7 +50,7 @@ def test_multimodal_evidence_synthesis():
         disease_indication="Lung Cancer",
         genetic_association_score=0.90,
         druggability_score=0.85,
-        has_potent_ligands=True
+        has_potent_ligands=True,
     )
     assert "GO" in ev_strong["recommendation"]
     assert ev_strong["bayesian_posterior_success"] > 0.60
@@ -64,7 +62,7 @@ def test_multimodal_evidence_synthesis():
         genetic_association_score=0.10,
         druggability_score=0.20,
         has_potent_ligands=False,
-        single_cell_enriched=False
+        single_cell_enriched=False,
     )
     assert "NO-GO" in ev_weak["recommendation"]
 

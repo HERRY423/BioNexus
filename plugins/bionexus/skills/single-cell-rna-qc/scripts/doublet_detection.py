@@ -26,7 +26,7 @@ def simulate_doublets(
     count_matrix: sp.spmatrix,
     sim_doublet_ratio: float = 2.0,
     synthetic_doublet_umi_subsampling: float = 1.0,
-    random_state: int = 42
+    random_state: int = 42,
 ) -> Tuple[sp.csr_matrix, np.ndarray]:
     """
     Simulate synthetic doublets by pairing observed cells and summing their count profiles.
@@ -78,7 +78,7 @@ def compute_doublet_scores_native(
     sim_doublet_ratio: float = 2.0,
     n_neighbors: int = 30,
     n_prin_comps: int = 30,
-    random_state: int = 42
+    random_state: int = 42,
 ) -> Tuple[np.ndarray, np.ndarray, float]:
     """
     Compute doublet scores using k-nearest neighbors in PCA embedding space.
@@ -135,6 +135,7 @@ def compute_doublet_scores_native(
     # Automatic threshold estimation (Percentile or GMM)
     try:
         from sklearn.mixture import GaussianMixture
+
         gmm = GaussianMixture(n_components=2, random_state=random_state)
         gmm.fit(scores_sim.reshape(-1, 1))
         # Threshold near the intersection or lower component bound
@@ -158,7 +159,7 @@ def run_doublet_detection(
     expected_doublet_rate: Optional[float] = None,
     threshold: Optional[float] = None,
     inplace: bool = True,
-    method: str = "native"
+    method: str = "native",
 ) -> Tuple["ad.AnnData", Dict[str, Any]]:
     """
     Run doublet detection on AnnData and record metrics.
@@ -191,10 +192,7 @@ def run_doublet_detection(
 
     X = adata.layers["counts"] if "counts" in adata.layers else adata.X
 
-    scores_obs, scores_sim, auto_thresh = compute_doublet_scores_native(
-        X,
-        expected_doublet_rate=expected_doublet_rate
-    )
+    scores_obs, scores_sim, auto_thresh = compute_doublet_scores_native(X, expected_doublet_rate=expected_doublet_rate)
 
     final_thresh = threshold if threshold is not None else auto_thresh
     predicted_doublets = scores_obs >= final_thresh
@@ -210,7 +208,7 @@ def run_doublet_detection(
         "doublet_percentage": round((n_doublets / n_cells) * 100, 2),
         "doublet_score_mean": round(float(np.mean(scores_obs)), 4),
         "doublet_threshold": round(final_thresh, 4),
-        "expected_rate": round(expected_doublet_rate, 4)
+        "expected_rate": round(expected_doublet_rate, 4),
     }
 
     return adata, summary

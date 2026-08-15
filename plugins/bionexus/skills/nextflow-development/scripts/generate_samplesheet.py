@@ -55,7 +55,7 @@ def generate_samplesheet(
     output_file: Optional[str] = None,
     input_type: str = "auto",
     single_end: bool = False,
-    interactive: bool = True
+    interactive: bool = True,
 ) -> Tuple[Optional[str], ValidationResult]:
     """
     Generate samplesheet for specified pipeline.
@@ -83,8 +83,7 @@ def generate_samplesheet(
     if input_type not in supported_types:
         return None, ValidationResult(
             valid=False,
-            errors=[f"Pipeline '{pipeline}' does not support {input_type.upper()} input. "
-                    f"Supported: {supported_types}"]
+            errors=[f"Pipeline '{pipeline}' does not support {input_type.upper()} input. Supported: {supported_types}"],
         )
 
     # Discover files
@@ -100,8 +99,8 @@ def generate_samplesheet(
             suggestions=[
                 "Check directory path is correct",
                 "Verify file extensions (.fastq.gz, .fq.gz, .bam, .cram)",
-                f"Run: ls {input_dir}"
-            ]
+                f"Run: ls {input_dir}",
+            ],
         )
 
     print(f"Found {len(files)} {input_type.upper()} files")
@@ -113,10 +112,7 @@ def generate_samplesheet(
         rows = _process_alignment_files(files, config, input_type)
 
     if not rows:
-        return None, ValidationResult(
-            valid=False,
-            errors=["Could not generate any samplesheet rows from files"]
-        )
+        return None, ValidationResult(valid=False, errors=["Could not generate any samplesheet rows from files"])
 
     print(f"Generated {len(rows)} samplesheet rows")
 
@@ -136,7 +132,7 @@ def generate_samplesheet(
 
         if interactive:
             response = input("\nProceed anyway? [y/N]: ").strip().lower()
-            if response != 'y':
+            if response != "y":
                 return None, validation
     elif validation.warnings:
         print("\nWarnings:")
@@ -168,7 +164,7 @@ def _process_fastq_files(files, config: Dict, single_end: bool) -> List[Dict]:
         return []
 
     # Check for unpaired files
-    unpaired = [k for k, v in pairs.items() if v.get('r1') and not v.get('r2')]
+    unpaired = [k for k, v in pairs.items() if v.get("r1") and not v.get("r2")]
     if unpaired and not single_end:
         print(f"\nNote: {len(unpaired)} samples appear to be single-end (no R2)")
 
@@ -176,28 +172,28 @@ def _process_fastq_files(files, config: Dict, single_end: bool) -> List[Dict]:
     columns = config.get("samplesheet", {}).get("columns", [])
 
     for sample_key, pair_info in sorted(pairs.items()):
-        if not pair_info.get('r1'):
+        if not pair_info.get("r1"):
             continue  # Skip entries with only R2
 
-        info = pair_info.get('info', {})
+        info = pair_info.get("info", {})
 
         row = {
-            'sample': info.get('sample', sample_key),
-            'fastq_1': str(Path(pair_info['r1']).absolute()),
-            'fastq_2': str(Path(pair_info['r2']).absolute()) if pair_info.get('r2') else '',
+            "sample": info.get("sample", sample_key),
+            "fastq_1": str(Path(pair_info["r1"]).absolute()),
+            "fastq_2": str(Path(pair_info["r2"]).absolute()) if pair_info.get("r2") else "",
         }
 
         # Add additional info from filename
-        if 'patient' in [c['name'] for c in columns]:
-            row['patient'] = info.get('patient', info.get('sample', sample_key))
+        if "patient" in [c["name"] for c in columns]:
+            row["patient"] = info.get("patient", info.get("sample", sample_key))
 
-        if 'lane' in [c['name'] for c in columns]:
-            row['lane'] = info.get('lane', 'L001')
+        if "lane" in [c["name"] for c in columns]:
+            row["lane"] = info.get("lane", "L001")
 
         # Apply defaults from config
         for col in columns:
-            if col['name'] not in row and 'default' in col:
-                row[col['name']] = col['default']
+            if col["name"] not in row and "default" in col:
+                row[col["name"]] = col["default"]
 
         rows.append(row)
 
@@ -216,19 +212,19 @@ def _process_alignment_files(files, config: Dict, input_type: str) -> List[Dict]
         info = extract_sample_info(file_info.path)
 
         row = {
-            'sample': info.get('sample', file_info.stem),
-            'bam': str(Path(file_info.path).absolute()),
-            'bai': str(Path(index_path).absolute()) if index_path else '',
+            "sample": info.get("sample", file_info.stem),
+            "bam": str(Path(file_info.path).absolute()),
+            "bai": str(Path(index_path).absolute()) if index_path else "",
         }
 
         # Add patient for sarek
-        if 'patient' in [c['name'] for c in columns]:
-            row['patient'] = info.get('patient', info.get('sample', file_info.stem))
+        if "patient" in [c["name"] for c in columns]:
+            row["patient"] = info.get("patient", info.get("sample", file_info.stem))
 
         # Apply defaults
         for col in columns:
-            if col['name'] not in row and 'default' in col:
-                row[col['name']] = col['default']
+            if col["name"] not in row and "default" in col:
+                row[col["name"]] = col["default"]
 
         # Warn if no index found
         if not index_path:
@@ -243,15 +239,15 @@ def _process_sarek_samples(rows: List[Dict], interactive: bool) -> List[Dict]:
     """Process sarek samples: infer and confirm tumor/normal status."""
     # Auto-infer status from sample names
     for row in rows:
-        sample_name = row.get('sample', '')
+        sample_name = row.get("sample", "")
         inferred = infer_tumor_normal_status(sample_name)
         if inferred is not None:
-            row['status'] = inferred
+            row["status"] = inferred
 
     # Report inference results
-    inferred_tumor = [r for r in rows if r.get('status') == 1]
-    inferred_normal = [r for r in rows if r.get('status') == 0]
-    unknown = [r for r in rows if 'status' not in r]
+    inferred_tumor = [r for r in rows if r.get("status") == 1]
+    inferred_normal = [r for r in rows if r.get("status") == 0]
+    unknown = [r for r in rows if "status" not in r]
 
     if inferred_tumor or inferred_normal:
         print("\nTumor/normal inference:")
@@ -267,15 +263,15 @@ def _process_sarek_samples(rows: List[Dict], interactive: bool) -> List[Dict]:
         print("\nSpecify status for each (0=normal, 1=tumor, Enter=skip):")
         for r in unknown:
             response = input(f"  {r.get('sample')} [0/1/Enter]: ").strip()
-            if response in ['0', '1']:
-                r['status'] = int(response)
+            if response in ["0", "1"]:
+                r["status"] = int(response)
             else:
-                r['status'] = 0  # Default to normal
+                r["status"] = 0  # Default to normal
                 print("    Defaulting to normal (0)")
     elif unknown:
         # Non-interactive: default to normal
         for r in unknown:
-            r['status'] = 0
+            r["status"] = 0
 
     return rows
 
@@ -285,7 +281,7 @@ def _process_atacseq_samples(rows: List[Dict]) -> List[Dict]:
     # Group by sample name
     sample_counts = {}
     for row in rows:
-        sample = row.get('sample', '')
+        sample = row.get("sample", "")
         if sample not in sample_counts:
             sample_counts[sample] = 0
         sample_counts[sample] += 1
@@ -293,19 +289,19 @@ def _process_atacseq_samples(rows: List[Dict]) -> List[Dict]:
     # Assign replicate numbers if not present
     sample_rep = {}
     for row in rows:
-        sample = row.get('sample', '')
+        sample = row.get("sample", "")
 
-        if 'replicate' not in row or not row['replicate']:
+        if "replicate" not in row or not row["replicate"]:
             # Try to extract from filename
-            extracted = extract_replicate_number(row.get('fastq_1', ''))
+            extracted = extract_replicate_number(row.get("fastq_1", ""))
             if extracted:
-                row['replicate'] = extracted
+                row["replicate"] = extracted
             else:
                 # Auto-assign sequential
                 if sample not in sample_rep:
                     sample_rep[sample] = 0
                 sample_rep[sample] += 1
-                row['replicate'] = sample_rep[sample]
+                row["replicate"] = sample_rep[sample]
 
     return rows
 
@@ -313,13 +309,13 @@ def _process_atacseq_samples(rows: List[Dict]) -> List[Dict]:
 def _write_samplesheet(rows: List[Dict], config: Dict, output_path: str):
     """Write samplesheet to CSV file."""
     columns = config.get("samplesheet", {}).get("columns", [])
-    column_names = [c['name'] for c in columns]
+    column_names = [c["name"] for c in columns]
 
     # Filter to columns that have data
     active_columns = [c for c in column_names if any(c in row and row[c] for row in rows)]
 
     # Ensure fastq_1/fastq_2 or bam/bai are included
-    for required in ['fastq_1', 'bam']:
+    for required in ["fastq_1", "bam"]:
         if required in column_names and required not in active_columns:
             if any(required in row for row in rows):
                 active_columns.append(required)
@@ -327,24 +323,24 @@ def _write_samplesheet(rows: List[Dict], config: Dict, output_path: str):
     # Maintain original column order
     active_columns = [c for c in column_names if c in active_columns]
 
-    with open(output_path, 'w') as f:
-        f.write(','.join(active_columns) + '\n')
+    with open(output_path, "w") as f:
+        f.write(",".join(active_columns) + "\n")
         for row in rows:
-            values = [str(row.get(col, '')) for col in active_columns]
-            f.write(','.join(values) + '\n')
+            values = [str(row.get(col, "")) for col in active_columns]
+            f.write(",".join(values) + "\n")
 
 
 def _print_preview(rows: List[Dict], config: Dict):
     """Print preview of generated samplesheet."""
     columns = config.get("samplesheet", {}).get("columns", [])
-    column_names = [c['name'] for c in columns]
+    column_names = [c["name"] for c in columns]
     active_columns = [c for c in column_names if any(c in row for row in rows)]
 
     print("\nPreview (first 3 rows):")
-    print(','.join(active_columns))
+    print(",".join(active_columns))
     for row in rows[:3]:
-        values = [str(row.get(col, ''))[:40] for col in active_columns]  # Truncate long paths
-        print(','.join(values))
+        values = [str(row.get(col, ""))[:40] for col in active_columns]  # Truncate long paths
+        print(",".join(values))
     if len(rows) > 3:
         print(f"... ({len(rows) - 3} more rows)")
 
@@ -357,7 +353,7 @@ def validate_existing_samplesheet(csv_path: str, pipeline: str) -> ValidationRes
         return ValidationResult(valid=False, errors=[f"File not found: {csv_path}"])
 
     try:
-        with open(csv_path, 'r') as f:
+        with open(csv_path, "r") as f:
             reader = csv.DictReader(f)
             rows = list(reader)
     except Exception as e:
@@ -372,7 +368,7 @@ def validate_existing_samplesheet(csv_path: str, pipeline: str) -> ValidationRes
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Generate nf-core samplesheet from data directory',
+        description="Generate nf-core samplesheet from data directory",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -386,20 +382,23 @@ Examples:
     %(prog)s --validate samplesheet.csv rnaseq
 
 Supported pipelines: rnaseq, sarek, atacseq
-        """
+        """,
     )
 
-    parser.add_argument('input', help='Directory with data files, or CSV path for --validate')
-    parser.add_argument('pipeline', help='Pipeline name (rnaseq, sarek, atacseq)')
-    parser.add_argument('-o', '--output', help='Output CSV filename')
-    parser.add_argument('--input-type', choices=['auto', 'fastq', 'bam', 'cram'],
-                        default='auto', help='Input file type (default: auto-detect)')
-    parser.add_argument('--single-end', action='store_true',
-                        help='Treat as single-end data (suppress pairing warnings)')
-    parser.add_argument('--validate', action='store_true',
-                        help='Validate existing samplesheet instead of generating')
-    parser.add_argument('--no-interactive', action='store_true',
-                        help='Non-interactive mode (use defaults)')
+    parser.add_argument("input", help="Directory with data files, or CSV path for --validate")
+    parser.add_argument("pipeline", help="Pipeline name (rnaseq, sarek, atacseq)")
+    parser.add_argument("-o", "--output", help="Output CSV filename")
+    parser.add_argument(
+        "--input-type",
+        choices=["auto", "fastq", "bam", "cram"],
+        default="auto",
+        help="Input file type (default: auto-detect)",
+    )
+    parser.add_argument(
+        "--single-end", action="store_true", help="Treat as single-end data (suppress pairing warnings)"
+    )
+    parser.add_argument("--validate", action="store_true", help="Validate existing samplesheet instead of generating")
+    parser.add_argument("--no-interactive", action="store_true", help="Non-interactive mode (use defaults)")
 
     args = parser.parse_args()
 
@@ -430,7 +429,7 @@ Supported pipelines: rnaseq, sarek, atacseq
                 args.output,
                 args.input_type,
                 args.single_end,
-                interactive=not args.no_interactive
+                interactive=not args.no_interactive,
             )
 
             if output_path is None:
@@ -451,5 +450,5 @@ Supported pipelines: rnaseq, sarek, atacseq
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

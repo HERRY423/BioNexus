@@ -18,10 +18,26 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(
 logger = logging.getLogger("mRNAEngineer")
 
 HUMAN_OPTIMAL_CODONS = {
-    "A": "GCC", "C": "TGC", "D": "GAC", "E": "GAG", "F": "TTC",
-    "G": "GGC", "H": "CAC", "I": "ATC", "K": "AAG", "L": "CTG",
-    "M": "ATG", "N": "AAC", "P": "CCC", "Q": "CAG", "R": "CGG",
-    "S": "AGC", "T": "ACC", "V": "GTG", "W": "TGG", "Y": "TAC",
+    "A": "GCC",
+    "C": "TGC",
+    "D": "GAC",
+    "E": "GAG",
+    "F": "TTC",
+    "G": "GGC",
+    "H": "CAC",
+    "I": "ATC",
+    "K": "AAG",
+    "L": "CTG",
+    "M": "ATG",
+    "N": "AAC",
+    "P": "CCC",
+    "Q": "CAG",
+    "R": "CGG",
+    "S": "AGC",
+    "T": "ACC",
+    "V": "GTG",
+    "W": "TGG",
+    "Y": "TAC",
     "*": "TGA",
 }
 
@@ -100,7 +116,9 @@ def optimize_mrna_sequence(protein_sequence: str) -> Dict[str, Any]:
         evidence_grade=mfe_block["mfe_grade"],
         limitations=[
             "Does not optimize MFE, codon pair bias, or cryptic splice sites.",
-            "Pair-count MFE is not Nussinov DP and not RNAfold." if mfe_block["mfe_method"] != "viennarna_rnafold" else "MFE from ViennaRNA RNAfold.",
+            "Pair-count MFE is not Nussinov DP and not RNAfold."
+            if mfe_block["mfe_method"] != "viennarna_rnafold"
+            else "MFE from ViennaRNA RNAfold.",
         ],
     )
 

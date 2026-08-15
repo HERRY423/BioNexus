@@ -54,9 +54,7 @@ def test_mad_filters_injected_outlier():
 
 def test_gold_chain_recovers_planted_markers():
     adata = _planted_scrna()
-    out, markers, summary = run_scrna_gold_chain(
-        adata, run_qc=False, n_top_genes=80, resolution=1.2, n_marker_genes=15
-    )
+    out, markers, summary = run_scrna_gold_chain(adata, run_qc=False, n_top_genes=80, resolution=1.2, n_marker_genes=15)
     assert out.n_obs == 120
     assert "X_pca" in out.obsm
     assert "X_umap" in out.obsm

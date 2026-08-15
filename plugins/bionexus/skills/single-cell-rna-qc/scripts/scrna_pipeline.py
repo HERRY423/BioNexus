@@ -43,8 +43,7 @@ def run_scrna_gold_chain(
     require("scanpy", for_method="run_scrna_gold_chain")
     steps = []
     raw_counts_grade, raw_notes, raw_stats = audit_expression_matrix(
-        adata.layers.get("counts", adata.X),
-        expected_type="counts"
+        adata.layers.get("counts", adata.X), expected_type="counts"
     )
 
     should_qc = (not skip_qc) if skip_qc is not None else run_qc
@@ -77,9 +76,7 @@ def run_scrna_gold_chain(
 
     adata, pre_c = preprocess_scrna(adata, n_top_genes=n_top_genes)
     steps.append(pre_c)
-    adata, cl_c = reduce_and_cluster(
-        adata, resolution=resolution, extra_resolutions=extra_resolutions or [0.3, 0.8]
-    )
+    adata, cl_c = reduce_and_cluster(adata, resolution=resolution, extra_resolutions=extra_resolutions or [0.3, 0.8])
     steps.append(cl_c)
     markers, mk_c = find_cluster_markers(adata, n_genes=n_marker_genes)
     steps.append(mk_c)
@@ -95,7 +92,7 @@ def run_scrna_gold_chain(
             "input_notes": raw_notes,
             "qc_cells_remaining": int(adata.n_obs),
             "n_clusters": cl_c.get("n_clusters"),
-        }
+        },
     )
 
     summary = attach_meta(

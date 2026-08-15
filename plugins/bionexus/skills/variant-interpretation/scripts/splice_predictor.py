@@ -19,7 +19,7 @@ DONOR_PWM = {
     "A": [0.34, 0.60, 0.10, 0.00, 0.00, 0.52, 0.71, 0.08, 0.16],
     "C": [0.36, 0.13, 0.04, 0.00, 0.00, 0.03, 0.08, 0.06, 0.17],
     "G": [0.18, 0.13, 0.80, 1.00, 0.00, 0.42, 0.12, 0.81, 0.21],
-    "T": [0.12, 0.14, 0.06, 0.00, 1.00, 0.03, 0.09, 0.05, 0.46]
+    "T": [0.12, 0.14, 0.06, 0.00, 1.00, 0.03, 0.09, 0.05, 0.46],
 }
 
 # Human 3' Acceptor Splice Site Consensus PWM (Positions -14 to +1, cleavage between -1 and +1)
@@ -28,7 +28,7 @@ ACCEPTOR_CORE_PWM = {
     "A": [0.20, 0.01, 0.99, 0.00, 0.23],
     "C": [0.45, 0.75, 0.00, 0.00, 0.14],
     "G": [0.10, 0.01, 0.01, 1.00, 0.52],
-    "T": [0.25, 0.23, 0.00, 0.00, 0.11]
+    "T": [0.25, 0.23, 0.00, 0.00, 0.11],
 }
 
 
@@ -48,11 +48,7 @@ def score_sequence_pwm(seq: str, pwm: Dict[str, list]) -> float:
     return float(score)
 
 
-def predict_splice_disruption(
-    ref_seq: str,
-    alt_seq: str,
-    splice_type: str = "donor"
-) -> Dict[str, Any]:
+def predict_splice_disruption(ref_seq: str, alt_seq: str, splice_type: str = "donor") -> Dict[str, Any]:
     """
     Predict impact of variant on splice site strength.
     Computes reference score, mutant score, and Delta Score.
@@ -102,13 +98,16 @@ def predict_splice_disruption(
 
 def main():
     parser = argparse.ArgumentParser(description="Splice Site Disruption Predictor")
-    parser.add_argument("--ref", "-r", required=True, help="Wild-type reference sequence across splice motif (e.g. 'CAGGTGAGT')")
+    parser.add_argument(
+        "--ref", "-r", required=True, help="Wild-type reference sequence across splice motif (e.g. 'CAGGTGAGT')"
+    )
     parser.add_argument("--alt", "-a", required=True, help="Mutant sequence across splice motif (e.g. 'CAGATGAGT')")
     parser.add_argument("--type", "-t", default="donor", choices=["donor", "acceptor"], help="Splice site type")
 
     args = parser.parse_args()
     res = predict_splice_disruption(args.ref, args.alt, splice_type=args.type)
     import json
+
     print(json.dumps(res, indent=2))
 
 

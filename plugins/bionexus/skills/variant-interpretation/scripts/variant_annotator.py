@@ -26,7 +26,7 @@ def parse_variant_string(variant_str: str) -> Dict[str, Any]:
         "alt": None,
         "cdna": None,
         "protein": None,
-        "predicted_consequence": "unknown"
+        "predicted_consequence": "unknown",
     }
 
     # Format 1: chr17:41245466:G:A or 17-41245466-G-A
@@ -113,10 +113,10 @@ def propose_acmg_criteria(
     if gnomad_af is not None:
         if gnomad_af >= 0.05:
             proposed_codes.append("BA1")
-            rationale["BA1"] = f"Provided AF {gnomad_af*100:.2f}% >= 5% (stand-alone benign threshold)."
+            rationale["BA1"] = f"Provided AF {gnomad_af * 100:.2f}% >= 5% (stand-alone benign threshold)."
         elif gnomad_af >= 0.01:
             proposed_codes.append("BS1")
-            rationale["BS1"] = f"Provided AF {gnomad_af*100:.2f}% >= 1%."
+            rationale["BS1"] = f"Provided AF {gnomad_af * 100:.2f}% >= 1%."
         elif gnomad_af < 0.00001:
             proposed_codes.append("PM2")
             rationale["PM2"] = f"Provided AF {gnomad_af:.2e} < 1e-5."
@@ -129,7 +129,9 @@ def propose_acmg_criteria(
 
     if in_silico_damaging is True and consequence not in ("synonymous", "benign"):
         proposed_codes.append("PP3")
-        rationale["PP3"] = "Caller supplied a calibrated in-silico damaging call. BLOSUM/heuristic scores are not valid PP3."
+        rationale["PP3"] = (
+            "Caller supplied a calibrated in-silico damaging call. BLOSUM/heuristic scores are not valid PP3."
+        )
     elif in_silico_damaging is False:
         proposed_codes.append("BP4")
         rationale["BP4"] = "Caller supplied a calibrated in-silico tolerated call."
@@ -221,13 +223,16 @@ def annotate_variant_full(
 
 def main():
     parser = argparse.ArgumentParser(description="Multi-Source Variant Annotator")
-    parser.add_argument("--variant", "-v", required=True, help="Variant string (e.g. 'c.5266dupC' or 'chr13:32315508:C:T')")
+    parser.add_argument(
+        "--variant", "-v", required=True, help="Variant string (e.g. 'c.5266dupC' or 'chr13:32315508:C:T')"
+    )
     parser.add_argument("--gene", "-g", required=True, help="Gene symbol (e.g. 'BRCA1')")
     parser.add_argument("--gnomad-af", type=float, default=None, help="gnomAD allele frequency (e.g. 0.000005)")
 
     args = parser.parse_args()
     res = annotate_variant_full(args.variant, args.gene, gnomad_af=args.gnomad_af)
     import json
+
     print(json.dumps(res, indent=2))
 
 

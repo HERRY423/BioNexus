@@ -14,6 +14,7 @@ from typing import Dict, List, Optional
 @dataclass
 class FileInfo:
     """Information about a discovered file."""
+
     path: str
     name: str
     stem: str
@@ -39,11 +40,7 @@ INDEX_EXTENSIONS = {
 }
 
 
-def discover_files(
-    directory: str,
-    file_type: str = "fastq",
-    follow_symlinks: bool = True
-) -> List[FileInfo]:
+def discover_files(directory: str, file_type: str = "fastq", follow_symlinks: bool = True) -> List[FileInfo]:
     """
     Recursively discover files of specified type.
 
@@ -92,17 +89,14 @@ def discover_files(
                     stem = filename
                     for e in extensions:
                         if stem.lower().endswith(e.lower()):
-                            stem = stem[:-len(e)]
+                            stem = stem[: -len(e)]
                             break
 
-                    files.append(FileInfo(
-                        path=full_path,
-                        name=filename,
-                        stem=stem,
-                        extension=ext,
-                        size=size,
-                        file_type=file_type
-                    ))
+                    files.append(
+                        FileInfo(
+                            path=full_path, name=filename, stem=stem, extension=ext, size=size, file_type=file_type
+                        )
+                    )
                     break  # Found matching extension, no need to check others
 
     return sorted(files, key=lambda f: f.path)

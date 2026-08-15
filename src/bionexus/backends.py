@@ -200,7 +200,7 @@ def probe(name: str) -> BackendStatus:
             extra=None,
             note=note,
             state=state,
-            diagnostics={"binary_path": path}
+            diagnostics={"binary_path": path},
         )
 
     # 2. ML / PLM Model Backends
@@ -243,7 +243,7 @@ def probe(name: str) -> BackendStatus:
             state=state,
             version=get_package_version(import_name) if pkg_present else None,
             min_version=min_ver,
-            diagnostics={"weights_ready": weights_ready, "esm_gate": _esm_gate_open()}
+            diagnostics={"weights_ready": weights_ready, "esm_gate": _esm_gate_open()},
         )
 
     # 3. Standard Python Packages
@@ -337,9 +337,7 @@ def require(name: str, *, for_method: str, min_version: Optional[str] = None) ->
                 "Ensure it is installed and added to PATH."
             )
         elif status.state == BackendState.MISSING_WEIGHTS:
-            raise BackendUnavailable(
-                f"{for_method} requires model weights for '{name}' ({status.note})."
-            )
+            raise BackendUnavailable(f"{for_method} requires model weights for '{name}' ({status.note}).")
         else:
             raise BackendUnavailable(
                 f"{for_method} requires backend '{name}' ({status.note}).{extra_hint} "
@@ -348,6 +346,5 @@ def require(name: str, *, for_method: str, min_version: Optional[str] = None) ->
     if min_version and status.version:
         if not is_version_compatible(status.version, min_version):
             raise IncompatibleVersion(
-                f"{for_method} requires backend '{name}' >= {min_version}, "
-                f"but version {status.version} was found."
+                f"{for_method} requires backend '{name}' >= {min_version}, but version {status.version} was found."
             )

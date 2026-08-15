@@ -15,10 +15,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(
 logger = logging.getLogger("StructuralAlignment")
 
 
-def kabsch_superposition(
-    coords_p: np.ndarray,
-    coords_q: np.ndarray
-) -> Tuple[np.ndarray, np.ndarray, float]:
+def kabsch_superposition(coords_p: np.ndarray, coords_q: np.ndarray) -> Tuple[np.ndarray, np.ndarray, float]:
     """
     Perform optimal rigid body superposition of P onto Q using Kabsch algorithm (SVD).
     Returns (P_rotated_translated, Rotation_matrix, RMSD).
@@ -55,11 +52,7 @@ def kabsch_superposition(
     return p_rotated, R, rmsd
 
 
-def compute_tm_score(
-    p_superposed: np.ndarray,
-    q_target: np.ndarray,
-    target_length: Optional[int] = None
-) -> float:
+def compute_tm_score(p_superposed: np.ndarray, q_target: np.ndarray, target_length: Optional[int] = None) -> float:
     """
     Calculate TM-score fold similarity:
       TM = (1 / L_target) * sum( 1 / (1 + (d_i / d0)^2) )
@@ -80,10 +73,7 @@ def compute_tm_score(
 
 
 def align_two_structures(
-    coords_mobile: np.ndarray,
-    coords_target: np.ndarray,
-    target_name: str = "Target",
-    mobile_name: str = "Mobile"
+    coords_mobile: np.ndarray, coords_target: np.ndarray, target_name: str = "Target", mobile_name: str = "Mobile"
 ) -> Dict[str, Any]:
     """Align mobile structure onto target structure and evaluate fold conservation."""
     # Truncate to common length for CA superposition
@@ -107,7 +97,7 @@ def align_two_structures(
         "aligned_residues": n_common,
         "rmsd_angstrom": round(rmsd, 3),
         "tm_score": round(tm, 4),
-        "fold_classification": fold_similarity
+        "fold_classification": fold_similarity,
     }
 
 
@@ -118,18 +108,17 @@ def main():
 
     args = parser.parse_args()
     from structure_fetcher import parse_pdb_text
+
     with open(args.mobile, "r", encoding="utf-8") as f:
         mob_parsed = parse_pdb_text(f.read())
     with open(args.target, "r", encoding="utf-8") as f:
         tgt_parsed = parse_pdb_text(f.read())
 
     res = align_two_structures(
-        mob_parsed["ca_coordinates"],
-        tgt_parsed["ca_coordinates"],
-        mobile_name=args.mobile,
-        target_name=args.target
+        mob_parsed["ca_coordinates"], tgt_parsed["ca_coordinates"], mobile_name=args.mobile, target_name=args.target
     )
     import json
+
     print(json.dumps(res, indent=2))
 
 

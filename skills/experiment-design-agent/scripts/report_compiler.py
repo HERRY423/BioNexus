@@ -15,9 +15,7 @@ logger = logging.getLogger("ReportCompiler")
 
 
 def compile_research_monograph(
-    plan: Dict[str, Any],
-    evidence: Dict[str, Any],
-    report_title: Optional[str] = None
+    plan: Dict[str, Any], evidence: Dict[str, Any], report_title: Optional[str] = None
 ) -> str:
     """Compile comprehensive preclinical research monograph in Markdown."""
     now_str = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -35,9 +33,9 @@ def compile_research_monograph(
 ## Executive Summary & Milestone Decision
 
 ### **Strategic Recommendation**: `{rec}`
-- **Composite Preclinical Score**: `{evidence.get('composite_evidence_score', 0.0):.3f}`
-- **Bayesian Posterior Success Probability**: `{evidence.get('bayesian_posterior_success', 0.0)*100:.1f}%`
-- **Strategic Rationale**: {evidence.get('rationale', 'Comprehensive target validation completed.')}
+- **Composite Preclinical Score**: `{evidence.get("composite_evidence_score", 0.0):.3f}`
+- **Bayesian Posterior Success Probability**: `{evidence.get("bayesian_posterior_success", 0.0) * 100:.1f}%`
+- **Strategic Rationale**: {evidence.get("rationale", "Comprehensive target validation completed.")}
 
 ---
 
@@ -45,12 +43,12 @@ def compile_research_monograph(
 
 | Evidence Dimension | Score (0.0 - 1.0) | Weight | Status / Summary |
 | :--- | :---: | :---: | :--- |
-| **Genetics** | `{evidence.get('evidence_breakdown', {}).get('genetics', 0.0):.2f}` | 25% | Caller-supplied placeholder |
-| **Structural tractability** | `{evidence.get('evidence_breakdown', {}).get('structural_druggability', 0.0):.2f}` | 20% | Caller-supplied placeholder |
-| **Chemogenomics** | `{evidence.get('evidence_breakdown', {}).get('chemogenomics', 0.0):.2f}` | 15% | Caller-supplied placeholder |
-| **Single-cell** | `{evidence.get('evidence_breakdown', {}).get('single_cell_specificity', 0.0):.2f}` | 15% | Caller-supplied placeholder |
-| **Spatial** | `{evidence.get('evidence_breakdown', {}).get('spatial_microenvironment', 0.0):.2f}` | 15% | Caller-supplied placeholder |
-| **Clinical genomics** | `{evidence.get('evidence_breakdown', {}).get('clinical_genomics', 0.0):.2f}` | 10% | Caller-supplied placeholder |
+| **Genetics** | `{evidence.get("evidence_breakdown", {}).get("genetics", 0.0):.2f}` | 25% | Caller-supplied placeholder |
+| **Structural tractability** | `{evidence.get("evidence_breakdown", {}).get("structural_druggability", 0.0):.2f}` | 20% | Caller-supplied placeholder |
+| **Chemogenomics** | `{evidence.get("evidence_breakdown", {}).get("chemogenomics", 0.0):.2f}` | 15% | Caller-supplied placeholder |
+| **Single-cell** | `{evidence.get("evidence_breakdown", {}).get("single_cell_specificity", 0.0):.2f}` | 15% | Caller-supplied placeholder |
+| **Spatial** | `{evidence.get("evidence_breakdown", {}).get("spatial_microenvironment", 0.0):.2f}` | 15% | Caller-supplied placeholder |
+| **Clinical genomics** | `{evidence.get("evidence_breakdown", {}).get("clinical_genomics", 0.0):.2f}` | 10% | Caller-supplied placeholder |
 
 ---
 
@@ -69,8 +67,8 @@ def compile_research_monograph(
 
 ## Risk Assessment & Critical Mitigation
 
-> **Critical Vulnerability**: {plan.get('risk_assessment', {}).get('critical_risk', 'On-target toxicity')}
-> **Mitigation Strategy**: {plan.get('risk_assessment', {}).get('mitigation_strategy', 'Select prodrug or targeted delivery')}
+> **Critical Vulnerability**: {plan.get("risk_assessment", {}).get("critical_risk", "On-target toxicity")}
+> **Mitigation Strategy**: {plan.get("risk_assessment", {}).get("mitigation_strategy", "Select prodrug or targeted delivery")}
 
 ---
 

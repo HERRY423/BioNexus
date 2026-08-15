@@ -22,7 +22,7 @@ def infer_tf_target_coexpression(
     gene_names: List[str],
     tf_names: List[str],
     top_n_targets_per_tf: int = 50,
-    min_importance: float = 0.01
+    min_importance: float = 0.01,
 ) -> pd.DataFrame:
     """
     Infer candidate TF -> Target co-expression links using tree-based regression feature importances.
@@ -55,13 +55,15 @@ def infer_tf_target_coexpression(
             if imp >= min_importance:
                 tf_name = valid_tfs[local_tf_idx]
                 r, _ = pearsonr(X_tf[:, local_tf_idx], y)
-                all_links.append({
-                    "tf": tf_name,
-                    "target": g_name,
-                    "importance": float(imp),
-                    "correlation_r": float(r),
-                    "regulation_mode": "Activator (+)" if r >= 0 else "Repressor (-)"
-                })
+                all_links.append(
+                    {
+                        "tf": tf_name,
+                        "target": g_name,
+                        "importance": float(imp),
+                        "correlation_r": float(r),
+                        "regulation_mode": "Activator (+)" if r >= 0 else "Repressor (-)",
+                    }
+                )
 
     df = pd.DataFrame(all_links)
     if not df.empty:
@@ -70,9 +72,7 @@ def infer_tf_target_coexpression(
 
 
 def prune_grn_with_cis_motifs(
-    coexpression_links: pd.DataFrame,
-    peak_gene_links: pd.DataFrame,
-    tf_motif_map: Dict[str, List[str]]
+    coexpression_links: pd.DataFrame, peak_gene_links: pd.DataFrame, tf_motif_map: Dict[str, List[str]]
 ) -> Dict[str, Any]:
     """
     Prune co-expression links by requiring direct cis-regulatory evidence:
@@ -98,30 +98,28 @@ def prune_grn_with_cis_motifs(
             linked_peaks = gene_to_peaks.get(target_gene, [])
             # If peak-gene links exist or high importance, confirm regulon membership
             if linked_peaks or row["importance"] > 0.05:
-                targets.append({
-                    "target_gene": target_gene,
-                    "importance": row["importance"],
-                    "correlation": row["correlation_r"],
-                    "mode": row["regulation_mode"]
-                })
+                targets.append(
+                    {
+                        "target_gene": target_gene,
+                        "importance": row["importance"],
+                        "correlation": row["correlation_r"],
+                        "mode": row["regulation_mode"],
+                    }
+                )
 
         if len(targets) >= 3:
             pruned_regulons[f"{tf}(+)"] = {
                 "tf": tf,
                 "target_count": len(targets),
                 "targets": [t["target_gene"] for t in targets],
-                "target_details": targets
+                "target_details": targets,
             }
 
     logger.info("Kept %s ExtraTrees regulon sketches after optional peak-gene prune.", len(pruned_regulons))
     return pruned_regulons
 
 
-def calculate_aucell_activity(
-    rna_matrix: np.ndarray,
-    gene_names: List[str],
-    regulons: Dict[str, Any]
-) -> pd.DataFrame:
+def calculate_aucell_activity(rna_matrix: np.ndarray, gene_names: List[str], regulons: Dict[str, Any]) -> pd.DataFrame:
     """
     Per-cell overlap fraction of regulon genes in the top 5% expressed genes.
     This is not AUCell (no recovery-curve AUC).

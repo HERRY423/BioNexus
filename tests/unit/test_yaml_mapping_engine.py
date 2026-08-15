@@ -21,12 +21,12 @@ def test_extract_metadata_from_rules():
         "Tecan Magellan Data Export",
         "Device: Tecan-Infinite-M200-SN1234",
         "User: Dr. Alice Smith",
-        "Date: 2026-08-14"
+        "Date: 2026-08-14",
     ]
     rules = {
         "device": {"strategy": "cell", "target": "A2"},
         "operator": {"strategy": "regex", "pattern": "^User:\\s*(.*)$"},
-        "version": {"strategy": "fixed", "value": "1.0"}
+        "version": {"strategy": "fixed", "value": "1.0"},
     }
     extracted = extract_metadata_from_rules(lines, rules)
     assert extracted["operator"] == "Dr. Alice Smith"

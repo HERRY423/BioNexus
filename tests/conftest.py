@@ -60,11 +60,7 @@ def synthetic_anndata(synthetic_sparse_counts):
     obs = {"batch": batches, "cell_type": cell_types}
     var = {"gene_symbol": gene_names}
 
-    adata = ad.AnnData(
-        X=synthetic_sparse_counts,
-        obs=obs,
-        var=var
-    )
+    adata = ad.AnnData(X=synthetic_sparse_counts, obs=obs, var=var)
     adata.obs_names = cell_names
     adata.var_names = gene_names
     adata.layers["counts"] = synthetic_sparse_counts.copy()

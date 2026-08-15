@@ -27,14 +27,12 @@ CORE_TF_MOTIFS = {
     "MYC": {"name": "c-Myc", "motif": "CACGTG", "length": 6},
     "RUNX1": {"name": "RUNX1", "motif": "AACCACA", "length": 7},
     "FOXA1": {"name": "FOXA1", "motif": "TGTTTRY", "length": 7},
-    "CTCF": {"name": "CTCF", "motif": "CCACCAGGGGGCG", "length": 13}
+    "CTCF": {"name": "CTCF", "motif": "CCACCAGGGGGCG", "length": 13},
 }
 
 
 def calculate_motif_enrichment_in_peaks(
-    peak_motif_matrix: np.ndarray,
-    target_peak_indices: np.ndarray,
-    tf_names: List[str]
+    peak_motif_matrix: np.ndarray, target_peak_indices: np.ndarray, tf_names: List[str]
 ) -> pd.DataFrame:
     """
     Perform Fisher's exact test for TF motif enrichment in target peaks vs background peaks.
@@ -51,10 +49,10 @@ def calculate_motif_enrichment_in_peaks(
     enrichment_results = []
     for m_idx, tf in enumerate(tf_names):
         col = peak_motif_matrix[:, m_idx]
-        a = int(np.sum(col[target_mask]))      # Target with motif
-        b = int(n_target - a)                 # Target without motif
-        c = int(np.sum(col[bg_mask]))          # Background with motif
-        d = int(n_background - c)              # Background without motif
+        a = int(np.sum(col[target_mask]))  # Target with motif
+        b = int(n_target - a)  # Target without motif
+        c = int(np.sum(col[bg_mask]))  # Background with motif
+        d = int(n_background - c)  # Background without motif
 
         table = [[a, b], [c, d]]
         odds_ratio, p_val = fisher_exact(table, alternative="greater")
@@ -62,15 +60,17 @@ def calculate_motif_enrichment_in_peaks(
         target_pct = (a / n_target) * 100.0 if n_target > 0 else 0.0
         bg_pct = (c / n_background) * 100.0 if n_background > 0 else 0.0
 
-        enrichment_results.append({
-            "transcription_factor": tf,
-            "motif_target_count": a,
-            "target_percent": round(target_pct, 1),
-            "background_percent": round(bg_pct, 1),
-            "odds_ratio": round(float(odds_ratio), 2),
-            "p_value": float(p_val),
-            "minus_log10_p": round(-np.log10(max(p_val, 1e-300)), 2)
-        })
+        enrichment_results.append(
+            {
+                "transcription_factor": tf,
+                "motif_target_count": a,
+                "target_percent": round(target_pct, 1),
+                "background_percent": round(bg_pct, 1),
+                "odds_ratio": round(float(odds_ratio), 2),
+                "p_value": float(p_val),
+                "minus_log10_p": round(-np.log10(max(p_val, 1e-300)), 2),
+            }
+        )
 
     results_df = pd.DataFrame(enrichment_results)
     results_df = results_df.sort_values(by="minus_log10_p", ascending=False).reset_index(drop=True)
@@ -78,9 +78,7 @@ def calculate_motif_enrichment_in_peaks(
 
 
 def compute_per_cell_motif_deviation(
-    atac_matrix: np.ndarray,
-    peak_motif_matrix: np.ndarray,
-    tf_names: List[str]
+    atac_matrix: np.ndarray, peak_motif_matrix: np.ndarray, tf_names: List[str]
 ) -> pd.DataFrame:
     """
     Simple depth z-score: (observed - expected) / sqrt(expected). Not chromVAR.

@@ -172,7 +172,9 @@ def audit_prohibited_claims(
                 matched = match.group(0)
                 # Ignore if explicitly qualified with candidate / putative / unverified
                 surrounding = text[max(0, match.start() - 30) : min(len(text), match.end() + 30)].lower()
-                if any(q in surrounding for q in ("candidate", "putative", "unverified", "hypothesized", "exploratory")):
+                if any(
+                    q in surrounding for q in ("candidate", "putative", "unverified", "hypothesized", "exploratory")
+                ):
                     continue
 
                 violations.append(
@@ -189,7 +191,10 @@ def audit_prohibited_claims(
         for match in pat.finditer(text):
             matched = match.group(0)
             surrounding = text[max(0, match.start() - 30) : min(len(text), match.end() + 30)].lower()
-            if any(neg in surrounding for neg in ("cannot", "can not", "does not", "do not", "never", "not prove", "unable")):
+            if any(
+                neg in surrounding
+                for neg in ("cannot", "can not", "does not", "do not", "never", "not prove", "unable")
+            ):
                 continue
 
             violations.append(

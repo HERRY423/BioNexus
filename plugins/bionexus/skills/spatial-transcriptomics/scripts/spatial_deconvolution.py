@@ -20,10 +20,7 @@ logger = logging.getLogger("SpatialDeconvolution")
 
 
 def build_reference_signature(
-    sc_adata,
-    cell_type_col: str = "cell_type",
-    n_top_markers: int = 50,
-    min_expr: float = 0.1
+    sc_adata, cell_type_col: str = "cell_type", n_top_markers: int = 50, min_expr: float = 0.1
 ) -> Tuple[pd.DataFrame, List[str]]:
     """
     Build reference cell-type expression signature matrix S (genes x cell_types)
@@ -60,7 +57,9 @@ def build_reference_signature(
 
     sig_df = pd.DataFrame(profiles, index=genes)
     marker_gene_list = list(selected_genes)
-    logger.info(f"Built reference signature for {len(cell_types)} cell types using {len(marker_gene_list)} marker genes.")
+    logger.info(
+        f"Built reference signature for {len(cell_types)} cell types using {len(marker_gene_list)} marker genes."
+    )
     return sig_df, marker_gene_list
 
 
@@ -68,7 +67,7 @@ def deconvolve_spatial_spots(
     spatial_adata,
     reference_sig: pd.DataFrame,
     marker_genes: Optional[List[str]] = None,
-    min_prop_threshold: float = 0.02
+    min_prop_threshold: float = 0.02,
 ) -> pd.DataFrame:
     """
     Deconvolve each spatial spot into cell type proportions using Non-Negative Least Squares (NNLS).
@@ -144,6 +143,7 @@ def main():
 
     args = parser.parse_args()
     import scanpy as sc
+
     spatial_adata = sc.read_h5ad(args.spatial_input)
     sc_adata = sc.read_h5ad(args.sc_reference)
 

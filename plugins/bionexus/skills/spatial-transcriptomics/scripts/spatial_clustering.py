@@ -28,7 +28,7 @@ def build_fused_spatial_graph(
     n_spatial_neighbors: int = 6,
     n_expression_neighbors: int = 15,
     spatial_weight: float = 0.35,
-    spatial_key: str = "spatial"
+    spatial_key: str = "spatial",
 ) -> sparse.csr_matrix:
     """
     Construct a fused affinity graph:
@@ -50,7 +50,7 @@ def build_fused_spatial_graph(
     # Gaussian kernel on physical distances
     spatial_dists = dists[:, 1:].flatten()
     sigma_sp = np.median(spatial_dists) if np.median(spatial_dists) > 0 else 1.0
-    sp_weights = np.exp(- (spatial_dists ** 2) / (2 * sigma_sp ** 2 + 1e-8))
+    sp_weights = np.exp(-(spatial_dists**2) / (2 * sigma_sp**2 + 1e-8))
 
     W_spatial = sparse.csr_matrix((sp_weights, (row_ind, col_ind)), shape=(n_cells, n_cells))
     # Symmetrize spatial graph
@@ -79,10 +79,7 @@ def build_fused_spatial_graph(
 
 
 def smooth_spatial_domains(
-    domain_labels: np.ndarray,
-    spatial_coords: np.ndarray,
-    n_neighbors: int = 6,
-    iterations: int = 2
+    domain_labels: np.ndarray, spatial_coords: np.ndarray, n_neighbors: int = 6, iterations: int = 2
 ) -> np.ndarray:
     """
     Markov Random Field / majority-vote smoothing to reduce salt-and-pepper noise
@@ -113,7 +110,7 @@ def run_spatial_clustering(
     n_expression_neighbors: int = 15,
     smooth_iterations: int = 2,
     spatial_key: str = "spatial",
-    random_state: int = 42
+    random_state: int = 42,
 ) -> Dict[str, Any]:
     """
     Perform end-to-end spatial-aware clustering on AnnData.
@@ -125,15 +122,12 @@ def run_spatial_clustering(
         n_spatial_neighbors=n_spatial_neighbors,
         n_expression_neighbors=n_expression_neighbors,
         spatial_weight=spatial_weight,
-        spatial_key=spatial_key
+        spatial_key=spatial_key,
     )
 
     # Spectral clustering on fused graph
     clustering = SpectralClustering(
-        n_clusters=n_clusters,
-        affinity="precomputed",
-        assign_labels="kmeans",
-        random_state=random_state
+        n_clusters=n_clusters, affinity="precomputed", assign_labels="kmeans", random_state=random_state
     )
     raw_labels = clustering.fit_predict(W_fused)
 
@@ -141,10 +135,7 @@ def run_spatial_clustering(
     spatial_coords = adata.obsm[spatial_key]
     if smooth_iterations > 0:
         refined_labels = smooth_spatial_domains(
-            raw_labels,
-            spatial_coords,
-            n_neighbors=n_spatial_neighbors,
-            iterations=smooth_iterations
+            raw_labels, spatial_coords, n_neighbors=n_spatial_neighbors, iterations=smooth_iterations
         )
     else:
         refined_labels = raw_labels
@@ -160,7 +151,7 @@ def run_spatial_clustering(
         "n_clusters": int(n_clusters),
         "spatial_weight": float(spatial_weight),
         "domain_counts": {d: int(c) for d, c in zip(unique_domains, counts)},
-        "smooth_iterations": int(smooth_iterations)
+        "smooth_iterations": int(smooth_iterations),
     }
     logger.info(f"Spatial clustering completed. Domain breakdown: {summary['domain_counts']}")
     return summary
@@ -171,17 +162,17 @@ def main():
     parser.add_argument("--input", "-i", required=True, help="Input AnnData .h5ad file")
     parser.add_argument("--output", "-o", required=True, help="Output clustered .h5ad file")
     parser.add_argument("--n-clusters", "-k", type=int, default=8, help="Number of spatial domains")
-    parser.add_argument("--spatial-weight", type=float, default=0.35, help="Weight for spatial vs expression graph (0.0 to 1.0)")
+    parser.add_argument(
+        "--spatial-weight", type=float, default=0.35, help="Weight for spatial vs expression graph (0.0 to 1.0)"
+    )
     parser.add_argument("--smooth-iter", type=int, default=2, help="MRF smoothing iterations")
 
     args = parser.parse_args()
     import scanpy as sc
+
     adata = sc.read_h5ad(args.input)
     run_spatial_clustering(
-        adata,
-        n_clusters=args.n_clusters,
-        spatial_weight=args.spatial_weight,
-        smooth_iterations=args.smooth_iter
+        adata, n_clusters=args.n_clusters, spatial_weight=args.spatial_weight, smooth_iterations=args.smooth_iter
     )
     os.makedirs(os.path.dirname(os.path.abspath(args.output)) or ".", exist_ok=True)
     adata.write_h5ad(args.output)

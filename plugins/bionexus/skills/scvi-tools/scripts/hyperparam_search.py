@@ -22,11 +22,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 
 def evaluate_trial_model(
-    adata,
-    model,
-    rep_key: str,
-    batch_key: Optional[str] = None,
-    labels_key: Optional[str] = None
+    adata, model, rep_key: str, batch_key: Optional[str] = None, labels_key: Optional[str] = None
 ) -> Dict[str, float]:
     """Calculate validation metrics for a trained trial model."""
     metrics: Dict[str, float] = {}
@@ -44,6 +40,7 @@ def evaluate_trial_model(
     # Latent space metrics (Silhouette score)
     try:
         from sklearn.metrics import silhouette_score
+
         latent = model.get_latent_representation()
         sample_size = min(2000, adata.n_obs)
         sub_indices = np.random.choice(adata.n_obs, size=sample_size, replace=False)
@@ -74,17 +71,16 @@ def run_optuna_search(
     max_epochs_per_trial: int = 40,
     batch_key: Optional[str] = None,
     labels_key: Optional[str] = None,
-    study_name: str = "scvi_tuning"
+    study_name: str = "scvi_tuning",
 ) -> Tuple[Dict[str, Any], Any]:
     """Execute Bayesian hyperparameter search using Optuna."""
     try:
         import optuna
+
         optuna.logging.set_verbosity(optuna.logging.WARNING)
     except ImportError:
         print("Optuna not installed. Running native grid/random search fallback.")
-        return run_fallback_search(
-            adata, model_type, output_dir, n_trials, max_epochs_per_trial, batch_key, labels_key
-        )
+        return run_fallback_search(adata, model_type, output_dir, n_trials, max_epochs_per_trial, batch_key, labels_key)
 
     import scvi
 
@@ -99,15 +95,19 @@ def run_optuna_search(
         gene_likelihood = trial.suggest_categorical("gene_likelihood", ["nb", "zinb"])
         lr = trial.suggest_float("lr", 1e-4, 5e-3, log=True)
 
-        print(f"\n[Trial {trial.number+1}/{n_trials}] Config: n_latent={n_latent}, n_layers={n_layers}, "
-              f"n_hidden={n_hidden}, likelihood={gene_likelihood}, lr={lr:.5f}")
+        print(
+            f"\n[Trial {trial.number + 1}/{n_trials}] Config: n_latent={n_latent}, n_layers={n_layers}, "
+            f"n_hidden={n_hidden}, likelihood={gene_likelihood}, lr={lr:.5f}"
+        )
 
         # Setup AnnData
         if model_type == "scanvi":
             scvi.model.SCANVI.setup_anndata(
-                adata, layer="counts" if "counts" in adata.layers else None,
-                batch_key=batch_key, labels_key=labels_key,
-                unlabeled_category="Unknown"
+                adata,
+                layer="counts" if "counts" in adata.layers else None,
+                batch_key=batch_key,
+                labels_key=labels_key,
+                unlabeled_category="Unknown",
             )
             model = scvi.model.SCANVI(
                 adata,
@@ -115,12 +115,11 @@ def run_optuna_search(
                 n_layers=n_layers,
                 n_hidden=n_hidden,
                 dropout_rate=dropout_rate,
-                gene_likelihood=gene_likelihood
+                gene_likelihood=gene_likelihood,
             )
         else:
             scvi.model.SCVI.setup_anndata(
-                adata, layer="counts" if "counts" in adata.layers else None,
-                batch_key=batch_key
+                adata, layer="counts" if "counts" in adata.layers else None, batch_key=batch_key
             )
             model = scvi.model.SCVI(
                 adata,
@@ -128,26 +127,18 @@ def run_optuna_search(
                 n_layers=n_layers,
                 n_hidden=n_hidden,
                 dropout_rate=dropout_rate,
-                gene_likelihood=gene_likelihood
+                gene_likelihood=gene_likelihood,
             )
 
         # Train model with early stopping
         model.train(
-            max_epochs=max_epochs_per_trial,
-            plan_kwargs={"lr": lr},
-            early_stopping=True,
-            early_stopping_patience=10
+            max_epochs=max_epochs_per_trial, plan_kwargs={"lr": lr}, early_stopping=True, early_stopping_patience=10
         )
 
         metrics = evaluate_trial_model(adata, model, "X_scVI", batch_key, labels_key)
         val_elbo = metrics.get("val_elbo", 1e8)
 
-        record = {
-            "trial_id": trial.number,
-            "params": trial.params,
-            "val_elbo": val_elbo,
-            "metrics": metrics
-        }
+        record = {"trial_id": trial.number, "params": trial.params, "val_elbo": val_elbo, "metrics": metrics}
         trial_records.append(record)
 
         print(f"  -> Validation ELBO: {val_elbo:.2f}")
@@ -170,11 +161,7 @@ def run_optuna_search(
     # Save summary
     summary_file = os.path.join(output_dir, "hyperparam_tuning_summary.json")
     with open(summary_file, "w", encoding="utf-8") as f:
-        json.dump({
-            "best_params": best_params,
-            "best_val_elbo": best_value,
-            "trials": trial_records
-        }, f, indent=2)
+        json.dump({"best_params": best_params, "best_val_elbo": best_value, "trials": trial_records}, f, indent=2)
     print(f"Tuning summary saved to: {summary_file}")
 
     return best_params, trial_records
@@ -187,7 +174,7 @@ def run_fallback_search(
     n_trials: int = 5,
     max_epochs_per_trial: int = 30,
     batch_key: Optional[str] = None,
-    labels_key: Optional[str] = None
+    labels_key: Optional[str] = None,
 ) -> Tuple[Dict[str, Any], Any]:
     """Deterministic grid/random search fallback when Optuna is not available."""
     import scvi
@@ -205,23 +192,16 @@ def run_fallback_search(
     best_params = candidate_params[0]
 
     for idx, params in enumerate(candidate_params):
-        print(f"\n[Trial {idx+1}/{len(candidate_params)}] Running params: {params}")
-        scvi.model.SCVI.setup_anndata(
-            adata, layer="counts" if "counts" in adata.layers else None,
-            batch_key=batch_key
-        )
+        print(f"\n[Trial {idx + 1}/{len(candidate_params)}] Running params: {params}")
+        scvi.model.SCVI.setup_anndata(adata, layer="counts" if "counts" in adata.layers else None, batch_key=batch_key)
         model = scvi.model.SCVI(
             adata,
             n_latent=params["n_latent"],
             n_layers=params["n_layers"],
             n_hidden=params["n_hidden"],
-            gene_likelihood=params["gene_likelihood"]
+            gene_likelihood=params["gene_likelihood"],
         )
-        model.train(
-            max_epochs=max_epochs_per_trial,
-            plan_kwargs={"lr": params["lr"]},
-            early_stopping=True
-        )
+        model.train(max_epochs=max_epochs_per_trial, plan_kwargs={"lr": params["lr"]}, early_stopping=True)
         metrics = evaluate_trial_model(adata, model, "X_scVI", batch_key, labels_key)
         elbo = metrics.get("val_elbo", 1e8)
 
@@ -235,11 +215,7 @@ def run_fallback_search(
 
     summary_file = os.path.join(output_dir, "hyperparam_tuning_summary.json")
     with open(summary_file, "w", encoding="utf-8") as f:
-        json.dump({
-            "best_params": best_params,
-            "best_val_elbo": best_elbo,
-            "trials": trial_records
-        }, f, indent=2)
+        json.dump({"best_params": best_params, "best_val_elbo": best_elbo, "trials": trial_records}, f, indent=2)
 
     return best_params, trial_records
 
@@ -252,16 +228,20 @@ def main():
 Examples:
     python hyperparam_search.py prepared.h5ad results/ --model scvi --n-trials 15 --batch-key batch
     python hyperparam_search.py prepared.h5ad results/ --model scanvi --batch-key batch --labels-key cell_type
-        """
+        """,
     )
     parser.add_argument("input", help="Input preprocessed .h5ad dataset")
     parser.add_argument("output_dir", help="Output directory for tuning summary and optimal model")
-    parser.add_argument("--model", choices=["scvi", "scanvi"], default="scvi", help="Model type to optimize (default: scvi)")
+    parser.add_argument(
+        "--model", choices=["scvi", "scanvi"], default="scvi", help="Model type to optimize (default: scvi)"
+    )
     parser.add_argument("--n-trials", type=int, default=15, help="Number of search trials (default: 15)")
     parser.add_argument("--epochs-per-trial", type=int, default=35, help="Max training epochs per trial (default: 35)")
     parser.add_argument("--batch-key", help="Batch column name in adata.obs")
     parser.add_argument("--labels-key", help="Cell type labels column name in adata.obs (for scANVI)")
-    parser.add_argument("--retrain-best", action="store_true", default=True, help="Retrain full model with optimal hyperparameters")
+    parser.add_argument(
+        "--retrain-best", action="store_true", default=True, help="Retrain full model with optimal hyperparameters"
+    )
     parser.add_argument("--full-epochs", type=int, default=200, help="Epochs for final retraining (default: 200)")
 
     args = parser.parse_args()
@@ -286,34 +266,35 @@ Examples:
         n_trials=args.n_trials,
         max_epochs_per_trial=args.epochs_per_trial,
         batch_key=args.batch_key,
-        labels_key=args.labels_key
+        labels_key=args.labels_key,
     )
 
     if args.retrain_best:
         print(f"\nRetraining optimal {args.model.upper()} model for {args.full_epochs} epochs with best parameters...")
         if args.model == "scanvi":
             scvi.model.SCANVI.setup_anndata(
-                adata, layer="counts" if "counts" in adata.layers else None,
-                batch_key=args.batch_key, labels_key=args.labels_key
+                adata,
+                layer="counts" if "counts" in adata.layers else None,
+                batch_key=args.batch_key,
+                labels_key=args.labels_key,
             )
             final_model = scvi.model.SCANVI(
                 adata,
                 n_latent=best_params.get("n_latent", 30),
                 n_layers=best_params.get("n_layers", 2),
                 n_hidden=best_params.get("n_hidden", 128),
-                gene_likelihood=best_params.get("gene_likelihood", "nb")
+                gene_likelihood=best_params.get("gene_likelihood", "nb"),
             )
         else:
             scvi.model.SCVI.setup_anndata(
-                adata, layer="counts" if "counts" in adata.layers else None,
-                batch_key=args.batch_key
+                adata, layer="counts" if "counts" in adata.layers else None, batch_key=args.batch_key
             )
             final_model = scvi.model.SCVI(
                 adata,
                 n_latent=best_params.get("n_latent", 30),
                 n_layers=best_params.get("n_layers", 2),
                 n_hidden=best_params.get("n_hidden", 128),
-                gene_likelihood=best_params.get("gene_likelihood", "nb")
+                gene_likelihood=best_params.get("gene_likelihood", "nb"),
             )
 
         final_model.train(max_epochs=args.full_epochs, early_stopping=True)

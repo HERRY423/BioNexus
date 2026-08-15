@@ -25,17 +25,26 @@ def test_scaffold_create_plugin_end_to_end():
         test_dir = tmp_path / "tests"
 
         # Run scaffolding
-        ret = main([
-            "create-plugin",
-            "demo-pathway-scorer",
-            "--display-name", "Demo Pathway Scorer",
-            "--tier", "core",
-            "--grade", "A",
-            "--backend", "scanpy",
-            "--description", "Automated pathway activity scoring test plugin.",
-            "--output-dir", str(skill_dir),
-            "--test-dir", str(test_dir),
-        ])
+        ret = main(
+            [
+                "create-plugin",
+                "demo-pathway-scorer",
+                "--display-name",
+                "Demo Pathway Scorer",
+                "--tier",
+                "core",
+                "--grade",
+                "A",
+                "--backend",
+                "scanpy",
+                "--description",
+                "Automated pathway activity scoring test plugin.",
+                "--output-dir",
+                str(skill_dir),
+                "--test-dir",
+                str(test_dir),
+            ]
+        )
         assert ret == 0
 
         # Verify created artifacts
@@ -53,7 +62,7 @@ def test_scaffold_create_plugin_end_to_end():
         assert "tier: core" in skill_md
         assert "grade: A" in skill_md
         assert "status: canonical" in skill_md
-        assert "backend: \"scanpy\"" in skill_md
+        assert 'backend: "scanpy"' in skill_md
 
         # Run pytest on the generated test file
         proc = subprocess.run(
@@ -72,12 +81,15 @@ def test_scaffold_create_skill_alias():
     with tempfile.TemporaryDirectory() as tmp_dir:
         tmp_path = Path(tmp_dir)
         skill_dir = tmp_path / "skills" / "alias-skill"
-        ret = main([
-            "create-skill",
-            "alias-skill",
-            "--no-test",
-            "--output-dir", str(skill_dir),
-        ])
+        ret = main(
+            [
+                "create-skill",
+                "alias-skill",
+                "--no-test",
+                "--output-dir",
+                str(skill_dir),
+            ]
+        )
         assert ret == 0
         assert (skill_dir / "SKILL.md").is_file()
         assert (skill_dir / "scripts" / "alias_skill_pipeline.py").is_file()

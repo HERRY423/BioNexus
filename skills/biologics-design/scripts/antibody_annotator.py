@@ -76,7 +76,9 @@ def _annotate_regex_heuristic(sequence: str, chain_type: Optional[str]) -> Dict[
 
     cys_matches = [m.start() for m in re.finditer(r"C", seq)]
     cys1_pos = next((c for c in cys_matches if 15 <= c <= 30), cys_matches[0] if cys_matches else -1)
-    cys2_pos = next((c for c in reversed(cys_matches) if 80 <= c <= 115), cys_matches[-1] if len(cys_matches) >= 2 else -1)
+    cys2_pos = next(
+        (c for c in reversed(cys_matches) if 80 <= c <= 115), cys_matches[-1] if len(cys_matches) >= 2 else -1
+    )
 
     if chain == "Heavy":
         fr4_match = re.search(r"W[GA]QG", seq)

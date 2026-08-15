@@ -24,7 +24,7 @@ class HypothesisTracker:
         self.evidence_list: List[Dict[str, Any]] = []
         self.metadata: Dict[str, Any] = {
             "created_at": datetime.now(timezone.utc).isoformat(),
-            "status": "UNDER_EVALUATION"
+            "status": "UNDER_EVALUATION",
         }
 
     def add_evidence(
@@ -34,7 +34,7 @@ class HypothesisTracker:
         weight: float = 1.0,
         direction: str = "support",
         source: str = "unspecified",
-        notes: str = ""
+        notes: str = "",
     ):
         """
         Add a piece of scientific evidence.
@@ -58,15 +58,17 @@ class HypothesisTracker:
         weight = max(0.1, float(weight))
         direction = direction.lower() if direction.lower() in ("support", "refute") else "support"
 
-        self.evidence_list.append({
-            "name": name,
-            "score": score,
-            "weight": weight,
-            "direction": direction,
-            "source": source,
-            "notes": notes,
-            "timestamp": datetime.now(timezone.utc).isoformat()
-        })
+        self.evidence_list.append(
+            {
+                "name": name,
+                "score": score,
+                "weight": weight,
+                "direction": direction,
+                "source": source,
+                "notes": notes,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            }
+        )
 
     def calculate_weighted_evidence_score(self) -> float:
         """Calculate aggregate evidence score (-1.0 to +1.0)."""
@@ -139,7 +141,7 @@ class HypothesisTracker:
             "recommendation": recommendation,
             "num_evidence_items": len(self.evidence_list),
             "evidence_details": self.evidence_list,
-            "evaluation_timestamp": datetime.now(timezone.utc).isoformat()
+            "evaluation_timestamp": datetime.now(timezone.utc).isoformat(),
         }
         return report
 
@@ -154,10 +156,12 @@ class HypothesisTracker:
             f"- **Recommendation**: {eval_res['recommendation']}\n",
             "## Evidence Log\n",
             "| Direction | Source | Evidence | Strength | Weight | Notes |",
-            "|---|---|---|---|---|---|"
+            "|---|---|---|---|---|---|",
         ]
         for ev in self.evidence_list:
             dir_icon = "🟢 Support" if ev["direction"] == "support" else "🔴 Refute"
-            md.append(f"| {dir_icon} | {ev['source']} | {ev['name']} | {ev['score']:.2f} | {ev['weight']:.1f} | {ev['notes']} |")
+            md.append(
+                f"| {dir_icon} | {ev['source']} | {ev['name']} | {ev['score']:.2f} | {ev['weight']:.1f} | {ev['notes']} |"
+            )
 
         return "\n".join(md)

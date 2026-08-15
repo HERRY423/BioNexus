@@ -43,14 +43,25 @@ def capture_environment_snapshot() -> Dict[str, Any]:
         "architecture": platform.machine(),
         "python_version": sys.version.split()[0],
         "python_executable": sys.executable,
-        "packages": {}
+        "packages": {},
     }
 
     # Record key package versions using standard importlib.metadata
     import importlib.metadata
+
     key_packages = [
-        "numpy", "scipy", "pandas", "scanpy", "anndata", "torch",
-        "scvi", "optuna", "allotropy", "polars", "jsonschema", "yaml"
+        "numpy",
+        "scipy",
+        "pandas",
+        "scanpy",
+        "anndata",
+        "torch",
+        "scvi",
+        "optuna",
+        "allotropy",
+        "polars",
+        "jsonschema",
+        "yaml",
     ]
     for pkg in key_packages:
         try:
@@ -65,6 +76,7 @@ def capture_environment_snapshot() -> Dict[str, Any]:
     # Record GPU hardware if available
     try:
         import torch
+
         snapshot["cuda_available"] = torch.cuda.is_available()
         if torch.cuda.is_available():
             snapshot["cuda_device_count"] = torch.cuda.device_count()
@@ -101,7 +113,7 @@ class ProvenanceTracker:
             "sha256": sha256,
             "size_bytes": size,
             "role": role,
-            "recorded_at": datetime.now(timezone.utc).isoformat()
+            "recorded_at": datetime.now(timezone.utc).isoformat(),
         }
         self.input_files.append(record)
         return record
@@ -123,7 +135,7 @@ class ProvenanceTracker:
             "sha256": sha256,
             "size_bytes": size,
             "role": role,
-            "recorded_at": datetime.now(timezone.utc).isoformat()
+            "recorded_at": datetime.now(timezone.utc).isoformat(),
         }
         self.output_files.append(record)
         return record
@@ -137,7 +149,7 @@ class ProvenanceTracker:
             "@context": {
                 "prov": "http://www.w3.org/ns/prov#",
                 "xsd": "http://www.w3.org/2001/XMLSchema#",
-                "bionexus": "https://agent-plugins.org/bionexus/prov#"
+                "bionexus": "https://agent-plugins.org/bionexus/prov#",
             },
             "@graph": [
                 {
@@ -148,39 +160,39 @@ class ProvenanceTracker:
                     "prov:wasAssociatedWith": {"@id": agent_id},
                     "bionexus:activityName": self.activity_name,
                     "bionexus:parameters": json.dumps(self.parameters),
-                    "bionexus:environment": self.environment
+                    "bionexus:environment": self.environment,
                 },
-                {
-                    "@id": agent_id,
-                    "@type": "prov:Agent",
-                    "prov:label": self.operator
-                }
-            ]
+                {"@id": agent_id, "@type": "prov:Agent", "prov:label": self.operator},
+            ],
         }
 
         # Add input entities
         for inp in self.input_files:
-            prov_doc["@graph"].append({
-                "@id": inp["entity_id"],
-                "@type": "prov:Entity",
-                "prov:label": inp["file_name"],
-                "bionexus:sha256": inp["sha256"],
-                "bionexus:sizeBytes": inp["size_bytes"],
-                "bionexus:role": inp["role"]
-            })
+            prov_doc["@graph"].append(
+                {
+                    "@id": inp["entity_id"],
+                    "@type": "prov:Entity",
+                    "prov:label": inp["file_name"],
+                    "bionexus:sha256": inp["sha256"],
+                    "bionexus:sizeBytes": inp["size_bytes"],
+                    "bionexus:role": inp["role"],
+                }
+            )
             prov_doc["@graph"][0].setdefault("prov:used", []).append({"@id": inp["entity_id"]})
 
         # Add output entities
         for out in self.output_files:
-            prov_doc["@graph"].append({
-                "@id": out["entity_id"],
-                "@type": "prov:Entity",
-                "prov:label": out["file_name"],
-                "prov:wasGeneratedBy": {"@id": self.activity_id},
-                "bionexus:sha256": out["sha256"],
-                "bionexus:sizeBytes": out["size_bytes"],
-                "bionexus:role": out["role"]
-            })
+            prov_doc["@graph"].append(
+                {
+                    "@id": out["entity_id"],
+                    "@type": "prov:Entity",
+                    "prov:label": out["file_name"],
+                    "prov:wasGeneratedBy": {"@id": self.activity_id},
+                    "bionexus:sha256": out["sha256"],
+                    "bionexus:sizeBytes": out["size_bytes"],
+                    "bionexus:role": out["role"],
+                }
+            )
 
         return prov_doc
 
@@ -189,9 +201,7 @@ class ProvenanceTracker:
         now = datetime.now(timezone.utc).isoformat()
         prov_data = {
             "provenance_version": "1.1.0-research-sidecar",
-            "compliance_note": (
-                "SHA-256 + environment snapshot. Not 21 CFR Part 11, GxP, ALCOA+, or CLIA."
-            ),
+            "compliance_note": ("SHA-256 + environment snapshot. Not 21 CFR Part 11, GxP, ALCOA+, or CLIA."),
             "activity_id": self.activity_id,
             "activity_name": self.activity_name,
             "operator": self.operator,
@@ -202,7 +212,7 @@ class ProvenanceTracker:
             "input_files": self.input_files,
             "output_files": self.output_files,
             "environment_snapshot": self.environment,
-            "w3c_prov_o": self.generate_w3c_provo()
+            "w3c_prov_o": self.generate_w3c_provo(),
         }
 
         if output_dir:

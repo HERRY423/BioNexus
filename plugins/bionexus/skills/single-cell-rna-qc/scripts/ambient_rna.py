@@ -22,9 +22,7 @@ except ImportError:
 
 
 def estimate_ambient_profile(
-    raw_counts: sp.spmatrix,
-    empty_droplet_mask: Optional[np.ndarray] = None,
-    empty_droplet_umi_max: int = 100
+    raw_counts: sp.spmatrix, empty_droplet_mask: Optional[np.ndarray] = None, empty_droplet_umi_max: int = 100
 ) -> np.ndarray:
     """
     Estimate the background ambient RNA profile across all genes.
@@ -72,7 +70,7 @@ def estimate_contamination_fraction(
     cell_counts: sp.spmatrix,
     ambient_profile: np.ndarray,
     non_expressed_gene_indices: Optional[List[int]] = None,
-    default_contamination_rate: float = 0.05
+    default_contamination_rate: float = 0.05,
 ) -> np.ndarray:
     """
     Estimate per-cell contamination fraction (rho) based on marker / non-expressed genes
@@ -122,7 +120,7 @@ def correct_ambient_rna(
     empty_droplets: Optional[sp.spmatrix] = None,
     contamination_rate: Optional[float] = None,
     layer_name: str = "ambient_corrected",
-    inplace: bool = True
+    inplace: bool = True,
 ) -> Tuple["ad.AnnData", Dict[str, Any]]:
     """
     Correct AnnData count matrix by subtracting estimated ambient RNA background.
@@ -198,7 +196,7 @@ def correct_ambient_rna(
         "max_contamination": round(float(np.max(rho)), 4),
         "total_umi_removed": int(total_umi_subtracted),
         "pct_umi_removed": round((total_umi_subtracted / max(1.0, float(np.sum(X_dense)))) * 100, 2),
-        "output_layer": layer_name
+        "output_layer": layer_name,
     }
 
     return adata, summary

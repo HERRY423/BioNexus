@@ -84,7 +84,7 @@ def validate_for_scvi(
     layer: Optional[str] = None,
     batch_key: Optional[str] = None,
     labels_key: Optional[str] = None,
-    check_hvg: bool = True
+    check_hvg: bool = True,
 ) -> ValidationResult:
     """
     Validate AnnData for scvi-tools compatibility.
@@ -150,12 +150,10 @@ def validate_for_scvi(
 
         if not is_integer:
             result.add_error(
-                "Data does not contain integers (raw counts required). "
-                "Found float values - data may be normalized."
+                "Data does not contain integers (raw counts required). Found float values - data may be normalized."
             )
             result.add_recommendation(
-                "Use adata.raw.to_adata() to recover raw counts, "
-                "or specify a layer with raw counts"
+                "Use adata.raw.to_adata() to recover raw counts, or specify a layer with raw counts"
             )
 
     # Check for negative values
@@ -181,10 +179,7 @@ def validate_for_scvi(
     result.info["value_range"] = f"[{min_val}, {max_val}]"
 
     if max_val < 10:
-        result.add_warning(
-            f"Maximum value is {max_val}, which is very low. "
-            "Data may be log-transformed or normalized."
-        )
+        result.add_warning(f"Maximum value is {max_val}, which is very low. Data may be log-transformed or normalized.")
 
     # Check sparsity
     if issparse(X):
@@ -192,42 +187,32 @@ def validate_for_scvi(
         result.info["sparsity"] = f"{sparsity:.1%}"
 
         if sparsity < 0.5:
-            result.add_warning(
-                f"Data is only {sparsity:.1%} sparse. "
-                "Consider if this is expected for your data type."
-            )
+            result.add_warning(f"Data is only {sparsity:.1%} sparse. Consider if this is expected for your data type.")
 
     # Check batch key
     if batch_key is not None:
         if batch_key not in adata.obs.columns:
-            result.add_error(
-                f"batch_key '{batch_key}' not found in obs. "
-                f"Available columns: {list(adata.obs.columns)}"
-            )
+            result.add_error(f"batch_key '{batch_key}' not found in obs. Available columns: {list(adata.obs.columns)}")
         else:
             n_batches = adata.obs[batch_key].nunique()
             result.info["n_batches"] = n_batches
 
             if n_batches == 1:
-                result.add_warning(
-                    "Only 1 batch found. Batch correction may not be needed."
-                )
+                result.add_warning("Only 1 batch found. Batch correction may not be needed.")
 
             # Check for small batches
             batch_counts = adata.obs[batch_key].value_counts()
             small_batches = batch_counts[batch_counts < 50]
             if len(small_batches) > 0:
                 result.add_warning(
-                    f"{len(small_batches)} batches have fewer than 50 cells. "
-                    "Consider merging small batches."
+                    f"{len(small_batches)} batches have fewer than 50 cells. Consider merging small batches."
                 )
 
     # Check labels key
     if labels_key is not None:
         if labels_key not in adata.obs.columns:
             result.add_error(
-                f"labels_key '{labels_key}' not found in obs. "
-                f"Available columns: {list(adata.obs.columns)}"
+                f"labels_key '{labels_key}' not found in obs. Available columns: {list(adata.obs.columns)}"
             )
         else:
             n_labels = adata.obs[labels_key].nunique()
@@ -238,47 +223,37 @@ def validate_for_scvi(
             rare_labels = label_counts[label_counts < 30]
             if len(rare_labels) > 0:
                 result.add_warning(
-                    f"{len(rare_labels)} cell types have fewer than 30 cells. "
-                    "Rare types may not be well learned."
+                    f"{len(rare_labels)} cell types have fewer than 30 cells. Rare types may not be well learned."
                 )
 
     # Check HVG
     if check_hvg:
-        if 'highly_variable' not in adata.var.columns:
+        if "highly_variable" not in adata.var.columns:
             result.add_recommendation(
                 "No highly variable genes found. Run sc.pp.highly_variable_genes() "
                 "and subset to HVGs for better performance."
             )
         else:
-            n_hvg = adata.var['highly_variable'].sum()
+            n_hvg = adata.var["highly_variable"].sum()
             result.info["n_hvg"] = n_hvg
 
             if n_hvg < 1000:
-                result.add_warning(
-                    f"Only {n_hvg} HVGs selected. Consider using 2000-4000 for best results."
-                )
+                result.add_warning(f"Only {n_hvg} HVGs selected. Consider using 2000-4000 for best results.")
             elif n_hvg > 5000:
-                result.add_warning(
-                    f"{n_hvg} HVGs selected. Consider reducing to 2000-4000 "
-                    "for efficiency."
-                )
+                result.add_warning(f"{n_hvg} HVGs selected. Consider reducing to 2000-4000 for efficiency.")
 
     # Check gene count
     if adata.n_vars > 30000:
         result.add_recommendation(
-            f"Dataset has {adata.n_vars} genes. Subset to HVGs (2000-4000) "
-            "for faster training and better results."
+            f"Dataset has {adata.n_vars} genes. Subset to HVGs (2000-4000) for faster training and better results."
         )
 
     # Check cell count
     if adata.n_obs < 1000:
-        result.add_warning(
-            f"Dataset has only {adata.n_obs} cells. "
-            "Deep learning models work best with >5000 cells."
-        )
+        result.add_warning(f"Dataset has only {adata.n_obs} cells. Deep learning models work best with >5000 cells.")
 
     # Check for counts layer
-    if layer is None and 'counts' not in adata.layers:
+    if layer is None and "counts" not in adata.layers:
         result.add_recommendation(
             "Store raw counts in adata.layers['counts'] before any normalization. "
             "This preserves the original data for scvi-tools."
@@ -288,8 +263,7 @@ def validate_for_scvi(
     if adata.raw is not None:
         result.info["has_raw"] = True
         result.add_recommendation(
-            "adata.raw exists. If X is normalized, use adata.raw.to_adata() "
-            "to recover raw counts."
+            "adata.raw exists. If X is normalized, use adata.raw.to_adata() to recover raw counts."
         )
     else:
         result.info["has_raw"] = False
@@ -315,29 +289,23 @@ def suggest_model(adata, result: ValidationResult) -> str:
     suggestions = []
 
     # Check for multi-modal data
-    if 'protein_expression' in adata.obsm:
+    if "protein_expression" in adata.obsm:
         suggestions.append("totalVI: CITE-seq data detected (protein + RNA)")
 
-    if 'spliced' in adata.layers and 'unspliced' in adata.layers:
+    if "spliced" in adata.layers and "unspliced" in adata.layers:
         suggestions.append("veloVI: RNA velocity data detected (spliced + unspliced)")
 
     # Check for labels
-    has_labels = result.info.get('n_labels', 0) > 0
-    has_batches = result.info.get('n_batches', 0) > 1
+    has_labels = result.info.get("n_labels", 0) > 0
+    has_batches = result.info.get("n_batches", 0) > 1
 
     if has_batches:
         if has_labels:
-            suggestions.append(
-                "scANVI: Integration with cell type labels (recommended for label transfer)"
-            )
+            suggestions.append("scANVI: Integration with cell type labels (recommended for label transfer)")
         else:
-            suggestions.append(
-                "scVI: Unsupervised batch integration"
-            )
+            suggestions.append("scVI: Unsupervised batch integration")
     else:
-        suggestions.append(
-            "scVI: Dimensionality reduction and differential expression"
-        )
+        suggestions.append("scVI: Dimensionality reduction and differential expression")
 
     if not suggestions:
         suggestions.append("scVI: General-purpose single-cell analysis")
@@ -347,9 +315,7 @@ def suggest_model(adata, result: ValidationResult) -> str:
 
 def main():
     """Command-line interface."""
-    parser = argparse.ArgumentParser(
-        description="Validate AnnData for scvi-tools compatibility"
-    )
+    parser = argparse.ArgumentParser(description="Validate AnnData for scvi-tools compatibility")
     parser.add_argument("file", help="Path to h5ad file")
     parser.add_argument("--layer", help="Layer to check (default: X)")
     parser.add_argument("--batch-key", help="Batch column to check")
@@ -373,12 +339,7 @@ def main():
         sys.exit(1)
 
     # Validate
-    result = validate_for_scvi(
-        adata,
-        layer=args.layer,
-        batch_key=args.batch_key,
-        labels_key=args.labels_key
-    )
+    result = validate_for_scvi(adata, layer=args.layer, batch_key=args.batch_key, labels_key=args.labels_key)
 
     # Print report
     print(result.summary())

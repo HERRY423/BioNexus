@@ -54,10 +54,9 @@ def synthetic_spatial_adata():
     gene_names[2] = "CD274"  # Ligand (PD-L1)
     gene_names[3] = "PDCD1"  # Receptor (PD-1)
 
-    obs = pd.DataFrame({
-        "in_tissue": [1] * n_spots,
-        "sample_id": ["slice_1"] * n_spots
-    }, index=[f"spot_{i}" for i in range(n_spots)])
+    obs = pd.DataFrame(
+        {"in_tissue": [1] * n_spots, "sample_id": ["slice_1"] * n_spots}, index=[f"spot_{i}" for i in range(n_spots)]
+    )
 
     var = pd.DataFrame(index=gene_names)
 
@@ -81,9 +80,9 @@ def synthetic_sc_reference():
     cell_types = ["Tumor_cell"] * 30 + ["T_cell"] * 30 + ["Macrophage"] * 30
 
     # Marker gene enrichment
-    counts[:30, 4] += 30.0   # Tumor marker
-    counts[30:60, 3] += 30.0 # T cell marker (PDCD1)
-    counts[60:90, 5] += 30.0 # Macrophage marker
+    counts[:30, 4] += 30.0  # Tumor marker
+    counts[30:60, 3] += 30.0  # T cell marker (PDCD1)
+    counts[60:90, 5] += 30.0  # Macrophage marker
 
     obs = pd.DataFrame({"cell_type": cell_types}, index=[f"cell_{i}" for i in range(n_cells)])
     var = pd.DataFrame(index=gene_names)
@@ -107,12 +106,7 @@ def test_spatial_preprocessing_and_qc(synthetic_spatial_adata):
 def test_spatial_clustering(synthetic_spatial_adata):
     """Test fused spatial-transcriptomic graph clustering and MRF smoothing."""
     calculate_spatial_qc_metrics(synthetic_spatial_adata)
-    summary = run_spatial_clustering(
-        synthetic_spatial_adata,
-        n_clusters=4,
-        spatial_weight=0.4,
-        smooth_iterations=1
-    )
+    summary = run_spatial_clustering(synthetic_spatial_adata, n_clusters=4, spatial_weight=0.4, smooth_iterations=1)
     assert summary["n_clusters"] == 4
     assert "spatial_domain" in synthetic_spatial_adata.obs
     assert len(synthetic_spatial_adata.obs["spatial_domain"].cat.categories) <= 4
