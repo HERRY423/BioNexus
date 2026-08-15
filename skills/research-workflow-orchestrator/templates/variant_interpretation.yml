@@ -1,0 +1,44 @@
+name: variant_interpretation
+version: "1.0.0"
+description: "Clinical variant effect interpretation pipeline integrating Ensembl, ClinVar, gnomAD, and UniProt functional annotations"
+
+inputs:
+  gene_symbol:
+    type: string
+    description: "Gene symbol (e.g. 'BRCA1', 'EGFR', 'TP53')"
+  variant_hgvs:
+    type: string
+    description: "HGVS variant notation (e.g. 'c.5266dupC', 'p.Leu858Arg')"
+
+steps:
+  - id: ensembl_coordinates
+    name: "Ensembl Transcript & Exon Architecture Lookup"
+    tool: "search_ensembl"
+    arguments:
+      symbol: "{gene_symbol}"
+      species: "human"
+    output_variable: "gene_coords"
+
+  - id: protein_domains
+    name: "UniProt Functional Domain Mapping"
+    tool: "search_uniprot"
+    depends_on: ["ensembl_coordinates"]
+    arguments:
+      query: "{gene_symbol}"
+      organism: "human"
+    output_variable: "protein_domains"
+
+  - id: literature_case_reports
+    name: "PubMed Functional & Clinical Case Reports"
+    tool: "search_pubmed"
+    arguments:
+      query: "{gene_symbol} {variant_hgvs} pathogenicity"
+      max_results: 5
+    output_variable: "variant_literature"
+
+  - id: clinical_pathogenicity_synthesis
+    name: "ACMG/AMP Evidence Weighting & Pathogenicity Scoring"
+    type: "synthesis"
+    depends_on: ["ensembl_coordinates", "protein_domains", "literature_case_reports"]
+    parameters:
+      criteria: ["PVS1", "PS1", "PM1", "PM2", "PP3"]

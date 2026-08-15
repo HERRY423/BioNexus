@@ -1,0 +1,82 @@
+# Spatial Transcriptomics Platform Configuration Catalog
+# Supported technologies and hardware parameters
+
+platforms:
+  visium:
+    name: "10x Genomics Visium"
+    technology: "Sequencing-based NGS"
+    resolution_type: "Spot-level"
+    spot_diameter_um: 55.0
+    spot_pitch_um: 100.0
+    total_spots: 4992
+    image_modalities: ["H&E", "Immunofluorescence"]
+    coordinate_format: "pixel_and_array"
+    recommended_min_counts: 500
+    recommended_min_genes: 300
+    default_spatial_key: "spatial"
+
+  visium_hd:
+    name: "10x Genomics Visium HD"
+    technology: "Sequencing-based NGS"
+    resolution_type: "Sub-cellular bin (2um / 8um / 16um)"
+    spot_diameter_um: 2.0
+    spot_pitch_um: 2.0
+    image_modalities: ["H&E", "IF"]
+    coordinate_format: "binned_grid"
+    recommended_min_counts: 50
+    recommended_min_genes: 30
+    default_spatial_key: "spatial"
+
+  xenium:
+    name: "10x Genomics Xenium In Situ"
+    technology: "Targeted single-molecule imaging"
+    resolution_type: "Single-cell and subcellular transcripts"
+    spot_diameter_um: 0.0
+    image_modalities: ["DAPI", "Morphology"]
+    coordinate_format: "micrometer_coordinates"
+    recommended_min_counts: 10
+    recommended_min_genes: 5
+    default_spatial_key: "spatial"
+
+  merfish:
+    name: "Vizgen MERSCOPE / MERFISH"
+    technology: "Multiplexed Error-Robust FISH"
+    resolution_type: "Sub-cellular & single-cell segmentation"
+    spot_diameter_um: 0.0
+    image_modalities: ["DAPI", "PolyT", "CellBound"]
+    coordinate_format: "micrometer_coordinates"
+    recommended_min_counts: 10
+    recommended_min_genes: 5
+    default_spatial_key: "spatial"
+
+  cosmx:
+    name: "NanoString CosMx SMI"
+    technology: "Spatial Molecular Imager"
+    resolution_type: "Single-cell & sub-cellular"
+    spot_diameter_um: 0.0
+    image_modalities: ["Morphology", "DAPI"]
+    coordinate_format: "micrometer_coordinates"
+    recommended_min_counts: 15
+    recommended_min_genes: 10
+    default_spatial_key: "spatial"
+
+  stereoseq:
+    name: "BGI Stereo-seq"
+    technology: "DNB patterned nano-array"
+    resolution_type: "Sub-cellular nano-grid"
+    spot_diameter_um: 0.5
+    spot_pitch_um: 0.715
+    coordinate_format: "nanogrid_bins"
+    recommended_min_counts: 20
+    recommended_min_genes: 15
+    default_spatial_key: "spatial"
+
+deconvolution_defaults:
+  min_cell_type_fraction: 0.03
+  max_iterations: 200
+  convergence_tol: 1e-5
+
+clustering_defaults:
+  n_spatial_neighbors: 6
+  spatial_regularization_weight: 0.35
+  n_clusters: 8

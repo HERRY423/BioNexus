@@ -1,0 +1,151 @@
+# ACMG/AMP 2015 Standards and Guidelines for the Interpretation of Sequence Variants
+# Richards et al., Genet Med 2015; Tavtigian et al., Hum Mutat 2018 (Bayesian formulation)
+
+bayesian_prior: 0.10  # Standard clinical pre-test probability P(Pathogenic)
+
+likelihood_ratios:
+  very_strong: 350.0
+  strong: 18.7
+  moderate: 4.33
+  supporting: 2.08
+  benign_supporting: 0.4807   # 1 / 2.08
+  benign_strong: 0.0535       # 1 / 18.7
+  benign_stand_alone: 0.00286 # 1 / 350.0
+
+pathogenicity_thresholds:
+  pathogenic: 0.99
+  likely_pathogenic: 0.90
+  likely_benign: 0.10
+  benign: 0.001
+
+rules:
+  # --- Pathogenic: Very Strong ---
+  PVS1:
+    name: "Null variant in a gene where LOF is a known mechanism of disease"
+    strength: "very_strong"
+    category: "computational_and_predictive"
+    description: "Nonsense, frameshift, canonical +-1 or 2 splice sites, initiation codon, single or multi-exon deletion."
+    applicable_types: ["nonsense", "frameshift", "splice_acceptor", "splice_donor", "start_loss"]
+
+  # --- Pathogenic: Strong ---
+  PS1:
+    name: "Same amino acid change as a previously established pathogenic variant"
+    strength: "strong"
+    category: "functional_and_phenotypic"
+    description: "Identical amino acid change as a known pathogenic variant regardless of nucleotide change."
+
+  PS2:
+    name: "De novo variant (with confirmed paternity and maternity)"
+    strength: "strong"
+    category: "segregation_and_de_novo"
+    description: "De novo mutation confirmed in patient with no family history of disease."
+
+  PS3:
+    name: "Well-established in vitro or in vivo functional studies supportive of a damaging effect"
+    strength: "strong"
+    category: "functional_and_phenotypic"
+    description: "Functional assay demonstrates deleterious biological effect on gene/protein function."
+
+  PS4:
+    name: "Prevalence in affected individuals significantly increased compared to controls"
+    strength: "strong"
+    category: "population_and_allele_frequency"
+    description: "Odds ratio > 5.0 in case-control cohorts with statistical significance."
+
+  # --- Pathogenic: Moderate ---
+  PM1:
+    name: "Located in a mutational hot spot and/or critical and well-established functional domain"
+    strength: "moderate"
+    category: "computational_and_predictive"
+    description: "Variant lies in an active catalytic site, ligand binding pocket, or recurrent somatic hotspot."
+
+  PM2:
+    name: "Absent from controls (or at extremely low frequency) in gnomAD"
+    strength: "moderate"
+    category: "population_and_allele_frequency"
+    description: "Allele frequency < 0.00001 (0.001%) across all gnomAD ancestry subpopulations."
+    frequency_cutoff: 0.00001
+
+  PM4:
+    name: "Protein length changes due to in-frame indels or stop-loss variants"
+    strength: "moderate"
+    category: "computational_and_predictive"
+    description: "In-frame insertion/deletion or stop-loss altering functional repeat regions."
+
+  PM5:
+    name: "Novel missense change at an amino acid residue where a different missense is known pathogenic"
+    strength: "moderate"
+    category: "computational_and_predictive"
+    description: "Different missense substitution at the same codon as an established pathogenic variant."
+
+  # --- Pathogenic: Supporting ---
+  PP1:
+    name: "Co-segregation with disease in multiple affected family members"
+    strength: "supporting"
+    category: "segregation_and_de_novo"
+    description: "LOD score > 1.5 in segregation analysis."
+
+  PP2:
+    name: "Missense variant in a gene with a low rate of benign missense variation"
+    strength: "supporting"
+    category: "computational_and_predictive"
+    description: "gnomAD missense constraint Z-score > 2.0 and missense is a recognized disease mechanism."
+
+  PP3:
+    name: "Multiple lines of computational evidence support a deleterious effect"
+    strength: "supporting"
+    category: "computational_and_predictive"
+    description: "Concordant pathogenic in silico predictions (REVEL > 0.7, CADD > 25, AlphaMissense > 0.8, SpliceAI > 0.5)."
+
+  PP4:
+    name: "Patient's phenotype or family history is highly specific for a disease with a single genetic etiology"
+    strength: "supporting"
+    category: "functional_and_phenotypic"
+    description: "Clinical phenotype is distinctive and matches disease gene etiology."
+
+  PP5:
+    name: "Reputable source reports variant as pathogenic without current evidence availability"
+    strength: "supporting"
+    category: "other_evidence"
+    description: "ClinVar multiple submitters with no conflicting evidence."
+
+  # --- Benign: Stand-Alone ---
+  BA1:
+    name: "Allele frequency is > 5% in gnomAD"
+    strength: "benign_stand_alone"
+    category: "population_and_allele_frequency"
+    description: "Allele frequency >= 0.05 in any major continental subpopulation in gnomAD."
+    frequency_cutoff: 0.05
+
+  # --- Benign: Strong ---
+  BS1:
+    name: "Allele frequency is greater than expected for disorder"
+    strength: "benign_strong"
+    category: "population_and_allele_frequency"
+    description: "Allele frequency >= 0.01 (1%) for dominant or >= 0.02 (2%) for recessive conditions."
+    frequency_cutoff: 0.01
+
+  BS2:
+    name: "Observed in a healthy adult individual for a full-penetrance dominant condition"
+    strength: "benign_strong"
+    category: "population_and_allele_frequency"
+    description: "Homozygote/heterozygote observed in healthy adult controls with high disease penetrance."
+
+  # --- Benign: Supporting ---
+  BP1:
+    name: "Missense variant in a gene for which primarily truncating variants are known to cause disease"
+    strength: "benign_supporting"
+    category: "computational_and_predictive"
+    description: "Gene causes disease exclusively via loss-of-function truncation, not missense."
+
+  BP4:
+    name: "Multiple lines of computational evidence suggest no impact on gene or protein"
+    strength: "benign_supporting"
+    category: "computational_and_predictive"
+    description: "Concordant benign in silico predictions (REVEL < 0.2, CADD < 15, AlphaMissense < 0.3)."
+
+  BP7:
+    name: "A synonymous variant for which splicing prediction algorithms predict no impact"
+    strength: "benign_supporting"
+    category: "computational_and_predictive"
+    description: "Synonymous substitution with SpliceAI Delta < 0.1 and no evolutionary conservation."

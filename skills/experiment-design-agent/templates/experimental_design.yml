@@ -1,0 +1,52 @@
+# Preclinical Experimental Design Template
+template_name: "End-to-End Preclinical Target Discovery & Validation"
+version: "2.0.0"
+
+study_metadata:
+  target_gene: "{target_gene}"
+  indication: "{disease_indication}"
+  modality: "{modality}"
+
+workflow_phases:
+  - phase: 1
+    name: "In Silico Druggability & Structural Analysis"
+    tools:
+      - "search_opentargets"
+      - "search_chembl"
+      - "search_alphafold"
+      - "protein-structure-analysis/scripts/binding_pocket_detector.py"
+    deliverables: ["PDB coordinates", "Pocket Druggability Score", "Vina Grid Config"]
+
+  - phase: 2
+    name: "Single-Cell Genomics & Deep Phenotyping"
+    tools:
+      - "single-cell-rna-qc/scripts/qc_analysis.py"
+      - "scvi-tools/scripts/train_model.py"
+      - "scvi-tools/scripts/differential_expression.py"
+    deliverables: ["QC filtered AnnData", "scVI Latent Embedding", "DE Volcano Plot"]
+
+  - phase: 3
+    name: "Spatial Transcriptomics & Microenvironment Niche"
+    tools:
+      - "spatial-transcriptomics/scripts/spatial_preprocessing.py"
+      - "spatial-transcriptomics/scripts/spatial_clustering.py"
+      - "spatial-transcriptomics/scripts/spatial_deconvolution.py"
+      - "spatial-transcriptomics/scripts/spatial_niche_analysis.py"
+    deliverables: ["Spatial Domain Map", "Niche Composition Breakdown", "Interactive HTML Atlas"]
+
+  - phase: 4
+    name: "Multiome Cis-Regulatory Network & Master Regulons"
+    tools:
+      - "multiome-integration/scripts/joint_rna_atac.py"
+      - "multiome-integration/scripts/peak_gene_linking.py"
+      - "multiome-integration/scripts/grn_inference.py"
+    deliverables: ["Peak-Gene Links CSV", "ExtraTrees edge table", "overlap-activity heatmap"]
+
+  - phase: 5
+    name: "Clinical Genomics & Personalization"
+    tools:
+      - "search_gnomad"
+      - "variant-interpretation/scripts/acmg_classifier.py"
+      - "variant-interpretation/scripts/pharmacogenomics.py"
+      - "variant-interpretation/scripts/clinical_report_generator.py"
+    deliverables: ["research ACMG combination JSON", "CPIC lookup table hit if any"]

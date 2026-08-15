@@ -410,6 +410,16 @@ def convert_single_file(
         asm = convert_with_allotropy(str(input_path), detected_vendor)
         used_fallback = False
 
+        # Attempt declarative YAML mapping engine if allotropy returned None
+        if asm is None:
+            try:
+                from yaml_mapping_engine import parse_with_yaml_mapping
+                asm = parse_with_yaml_mapping(str(input_path))
+                if asm is not None:
+                    warnings.append("Parsed via declarative YAML mapping engine")
+            except Exception as e:
+                pass
+
         if asm is None:
             if not allow_fallback:
                 res["error"] = "Allotropy parser failed and fallback disallowed"

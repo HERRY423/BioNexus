@@ -1,79 +1,65 @@
 ---
 name: start
-description: Set up your bio-research environment and explore available tools. Use when first getting oriented with the plugin, checking which literature, drug-discovery, or visualization MCP servers are connected, or surveying available analysis skills before starting a new project.
+description: Orient a session on this plugin. Use first. Run scripts/doctor.py, then route only to core gold-chain skills unless the user names a heuristic job. Do not assign cell-type labels. Do not use this skill to run analyses.
 ---
 
-# Bio-Research Start
+# Bio-research start
 
-> If you see unfamiliar placeholders or need to check which tools are connected, see [CONNECTORS.md](../../CONNECTORS.md).
+This plugin is an **agent skill pack**. It stops at **numeric clusters + marker tables**. It does not annotate cell types.
 
-You are helping a biological researcher get oriented with the bio-research plugin. Walk through the following steps in order.
+## Mandatory first step
 
-## Step 1: Welcome
-
-Display this welcome message:
-
-```
-Bio-Research Plugin
-
-Your AI-powered research assistant for the life sciences. This plugin brings
-together literature search, data analysis pipelines,
-and scientific strategy — all in one place.
+```bash
+python scripts/doctor.py
 ```
 
-## Step 2: Check Available MCP Servers
+Honor `tier`, `ready.scverse_ready` / `scvi_ready` / `spatial_ready`, `allowed_next_actions`, and `forbidden_claims`.
 
-Test which MCP servers are connected by listing available tools. Group the results:
+Install: `pip install -e .` (kernel). scRNA gold chain: `pip install -e ".[goldchain]"`. Spatial: `pip install -e ".[spatial]"`. Full scVI: `pip install -e ".[scverse]"`.
 
-**Literature & Data Sources:**
-- ~~literature database — biomedical literature search
-- ~~literature database — preprint access (biology and medicine)
-- ~~journal access — academic publications
-- ~~data repository — collaborative research data (Sage Bionetworks)
+## Route by tier
 
-**Drug Discovery & Clinical:**
-- ~~chemical database — bioactive compound database
-- ~~drug target database — drug target discovery platform
-- ClinicalTrials.gov — clinical trial registry
-- ~~clinical data platform — clinical trial site ranking and platform help
+| Priority | Tier | Skills | When |
+|---|---|---|---|
+| 1 | **core** | `single-cell-rna-qc`, `spatial-transcriptomics` (squidpy), `scvi-tools`, `nextflow-development` | Default for real data |
+| 2 | wrapper | Allotrope, provenance | Named lab-ops jobs |
+| 3 | heuristic (not auto-discovered) | biologics, pLM, ACMG combiner, structure, multiome | Only if user asked **and** accepts grade C |
+| 4 | outline | start, problem-selection | Planning only |
 
-**Visualization & AI:**
-- ~~scientific illustration — create scientific figures and diagrams
-- ~~AI research platform — AI for biology (histopathology, drug discovery)
+Heuristic skills live as `SKILL.legacy.md`. Do **not** open them for a generic “analyze my data” request. To opt in, rename that file back to `SKILL.md`.
 
-Report which servers are connected and which are not yet set up.
+## Core scRNA gold chain
 
-## Step 3: Survey Available Skills
+```bash
+python scripts/doctor.py
+python skills/single-cell-rna-qc/scripts/scrna_inspect.py raw.h5ad
+python skills/single-cell-rna-qc/scripts/scrna_convert.py 10x_dir/ -o raw.h5ad
+python skills/single-cell-rna-qc/scripts/scrna_pipeline.py raw.h5ad -o clustered.h5ad
+python skills/single-cell-rna-qc/scripts/scrna_plot.py clustered.h5ad -o figures/
+python skills/single-cell-rna-qc/scripts/scrna_scrublet.py raw.h5ad -o raw_scrub.h5ad
+python skills/single-cell-rna-qc/scripts/scrna_pseudobulk.py clustered.h5ad -o pb.csv --by sample condition --design pb_design.tsv
+python skills/single-cell-rna-qc/scripts/scrna_deseq.py pb.csv --design pb_design.tsv --condition condition --reference control --contrast-level treated -o de.csv
+```
 
-List the analysis skills available in this plugin:
+## Core spatial gold chain (squidpy)
 
-| Skill | What It Does |
-|-------|-------------|
-| **Single-Cell RNA QC** | Quality control for scRNA-seq data with MAD-based filtering |
-| **scvi-tools** | Deep learning for single-cell omics (scVI, scANVI, totalVI, PeakVI, etc.) |
-| **Nextflow Pipelines** | Run nf-core pipelines (RNA-seq, WGS/WES, ATAC-seq) |
-| **Instrument Data Converter** | Convert lab instrument output to Allotrope ASM format |
-| **Scientific Problem Selection** | Systematic framework for choosing research problems |
+```bash
+python skills/spatial-transcriptomics/scripts/spatial_inspect.py visium.h5ad
+python skills/spatial-transcriptomics/scripts/spatial_pipeline.py visium.h5ad -o spatial_out.h5ad
+```
 
-## Step 4: Optional Setup — Binary MCP Servers
+Endpoint: clustered `.h5ad` + markers/SVG CSV. Clusters are numbers. Do not invent cell types.
 
-Mention that two additional MCP servers are available as separate installations:
+## When **not** to use a core skill
 
-- **~~genomics platform** — Access cloud analysis data and workflows
-  Install: Download `txg-node.mcpb` from https://github.com/10XGenomics/txg-mcp/releases
-- **~~tool database** (Harvard MIMS) — AI tools for scientific discovery
-  Install: Download `tooluniverse.mcpb` from https://github.com/mims-harvard/ToolUniverse/releases
+| User has | Do not use | Use instead |
+|---|---|---|
+| Only FASTQs / need nf-core | `scrna_pipeline.py` | `nextflow-development` |
+| Already-clustered object, just plots | full gold chain | `scrna_plot.py` / `spatial_inspect.py` |
+| Technical batch that Harmony cannot fix | Harmony-only | `scvi-tools` on **counts** |
+| Spatial without coordinates | spatial gold chain | refuse; do not invent `obsm['spatial']` |
+| “What cell type is this?” | this plugin | stop; clusters stay numeric |
 
-These require downloading binary files and are optional.
+## MCP
 
-## Step 5: Ask How to Help
-
-Ask the researcher what they're working on today. Suggest starting points based on common workflows:
-
-1. **Literature review** — "Search ~~literature database for recent papers on [topic]"
-2. **Analyze sequencing data** — "Run QC on my single-cell data" or "Set up an RNA-seq pipeline"
-3. **Drug discovery** — "Search ~~chemical database for compounds targeting [protein]" or "Find drug targets for [disease]"
-4. **Data standardization** — "Convert my instrument data to Allotrope format"
-5. **Research strategy** — "Help me evaluate a new project idea"
-
-Wait for the user's response and guide them to the appropriate tools and skills.
+Local server defaults to **unique** tools (UniProt, Ensembl, gnomAD, PDB, AF, Reactome, STRING, GEO, GTEx). Prefer hosted PubMed/ChEMBL/Open Targets/ClinicalTrials/bioRxiv. Set `BIONEXUS_LOCAL_HOSTED_FALLBACKS=1` only if hosted MCP is down.

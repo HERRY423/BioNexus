@@ -1,0 +1,111 @@
+name: BioNexus CI/CD
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+  schedule:
+    - cron: '0 2 * * *'
+
+jobs:
+  lint:
+    name: Code Quality & Linting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install ruff
+      - run: ruff check .
+
+  test:
+    name: Unit & Integration Tests (${{ matrix.os }}, Python ${{ matrix.python-version }})
+    needs: lint
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+          pip install -e ".[dev,goldchain]"
+      - name: Spatial extra (Ubuntu 3.11, required)
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
+        run: pip install -e ".[spatial]"
+      - name: Run Pytest with Coverage
+        run: |
+          pytest tests/ --cov=scripts --cov=skills --cov-report=xml --cov-report=term-missing
+      - name: Fixture gold-chain smoke
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
+        run: python scripts/goldchain_smoke.py
+      - name: Verify Local MCP Server JSON-RPC Protocol
+        shell: bash
+        run: |
+          python -c "
+          import subprocess, json
+          p = subprocess.Popen(['python', 'scripts/local_mcp_server.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+          req = {'jsonrpc': '2.0', 'id': 1, 'method': 'initialize', 'params': {}}
+          out, _ = p.communicate(json.dumps(req) + '\n', timeout=10)
+          resp = json.loads(out.strip())
+          assert resp['result']['serverInfo']['name'] == 'bio-research-local-mcp'
+          print('Local MCP Server initialization test PASSED.')
+          "
+
+  scvi-smoke:
+    name: scVI one-epoch smoke
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install scverse extra
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev,scverse]"
+      - name: Require scvi import
+        run: python -c "import scvi, torch; print(scvi.__version__, torch.__version__)"
+      - name: Run scVI smoke tests
+        run: pytest tests/unit/test_scvi_smoke.py -q --tb=short
+
+  nextflow-launch:
+    name: nf-core launch artifact
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -e ".[dev]"
+      - name: Write launch script only (does not claim preview)
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import sys
+          sys.path.insert(0, "skills/nextflow-development/scripts")
+          from nfcore_launch import build_launch_command, write_launch_script
+          sheet = Path("tests/_tmp_ci_samplesheet.csv")
+          sheet.write_text("sample,fastq_1\ns1,a.fq.gz\n", encoding="utf-8")
+          cmd = build_launch_command(pipeline="scrnaseq", samplesheet=str(sheet), outdir="results")
+          dest = Path("tests/_tmp_ci_run.sh")
+          write_launch_script(cmd, dest)
+          text = dest.read_text(encoding="utf-8")
+          assert "nf-core/scrnaseq" in text
+          print(text)
+          PY

@@ -2,16 +2,15 @@
 """
 Quality Control Analysis for Single-Cell RNA-seq Data
 High-Performance & Scalable Edition (Supporting 100k - 1M+ Cells)
+Comprehensive Pipeline: MAD-filtering, Doublet Detection, and Ambient RNA Correction.
 
-Following scverse best practices from:
+Following scverse & Bioconductor best practices:
 https://www.sc-best-practices.org/preprocessing_visualization/quality_control.html
-
-This is a convenience script that runs a complete QC workflow using the
-modular functions from qc_core.py and qc_plotting.py.
 """
 
 import anndata as ad
 import scanpy as sc
+import numpy as np
 import sys
 import os
 import time
@@ -32,12 +31,14 @@ from qc_plotting import (
     plot_filtering_thresholds,
     plot_qc_after_filtering
 )
+from doublet_detection import run_doublet_detection
+from ambient_rna import correct_ambient_rna
 
 print("=" * 80)
-print("Single-Cell RNA-seq Quality Control Analysis (High-Performance Engine)")
+print("Single-Cell RNA-seq Quality Control Analysis (High-Performance Engine v1.3.0)")
 print("=" * 80)
 
-# Default parameters (single source of truth)
+# Default parameters
 DEFAULT_MAD_COUNTS = 5
 DEFAULT_MAD_GENES = 5
 DEFAULT_MAD_MT = 3
@@ -49,15 +50,14 @@ DEFAULT_HB_PATTERN = '^Hb[^(p)]|^HB[^(P)]'
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser(
-    description='Quality Control Analysis for Single-Cell RNA-seq Data (High-Performance Engine)',
+    description='Comprehensive QC Analysis for Single-Cell RNA-seq Data (scverse best practices)',
     formatter_class=argparse.RawDescriptionHelpFormatter,
     epilog="""
 Examples:
   python3 qc_analysis.py data.h5ad
-  python3 qc_analysis.py raw_feature_bc_matrix.h5
+  python3 qc_analysis.py raw_feature_bc_matrix.h5 --run-doublets --run-ambient
   python3 qc_analysis.py data.h5ad --backed r --chunk-size 50000
-  python3 qc_analysis.py data.h5ad --mad-counts 4 --mad-genes 4 --mad-mt 2.5
-  python3 qc_analysis.py data.h5ad --mt-threshold 10 --min-cells 10
+  python3 qc_analysis.py data.h5ad --mad-counts 4 --mad-genes 4 --mad-mt 2.5 --run-doublets
     """
 )
 
@@ -73,8 +73,20 @@ parser.add_argument('--min-cells', type=int, default=DEFAULT_MIN_CELLS, help=f'M
 parser.add_argument('--mt-pattern', type=str, default=DEFAULT_MT_PATTERN, help=f'Comma-separated mitochondrial gene prefixes (default: "{DEFAULT_MT_PATTERN}")')
 parser.add_argument('--ribo-pattern', type=str, default=DEFAULT_RIBO_PATTERN, help=f'Comma-separated ribosomal gene prefixes (default: "{DEFAULT_RIBO_PATTERN}")')
 parser.add_argument('--hb-pattern', type=str, default=DEFAULT_HB_PATTERN, help=f'Hemoglobin gene regex pattern (default: "{DEFAULT_HB_PATTERN}")')
+parser.add_argument('--run-doublets', action='store_true', default=True, help='Local kNN doublet score (not scanpy.pp.scrublet; use scrna_scrublet.py)')
+parser.add_argument('--no-doublets', dest='run_doublets', action='store_false', help='Disable doublet detection')
+parser.add_argument('--doublet-rate', type=float, default=None, help='Expected doublet rate (default: auto-estimated based on cell count)')
+parser.add_argument('--run-ambient', action='store_true', help='Local ambient background estimate (not SoupX/CellBender)')
+parser.add_argument('--skip-doctor', action='store_true')
 
 args = parser.parse_args()
+
+_SRC = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "src"))
+if os.path.isdir(_SRC) and _SRC not in sys.path:
+    sys.path.insert(0, _SRC)
+from bio_research.gate import require_doctor
+
+require_doctor(require_scverse=True, skip=args.skip_doctor)
 
 # Verify input file exists
 if not os.path.exists(args.input_file):
@@ -99,13 +111,15 @@ print(f"  MAD thresholds: counts={args.mad_counts}, genes={args.mad_genes}, MT%=
 print(f"  MT hard threshold: {args.mt_threshold}%")
 print(f"  Min cells for gene filtering: {args.min_cells}")
 print(f"  Gene patterns: MT={args.mt_pattern}, Ribo={args.ribo_pattern}")
+print(f"  Doublet detection: {'Enabled' if args.run_doublets else 'Disabled'}")
+print(f"  Ambient RNA correction: {'Enabled' if args.run_ambient else 'Disabled'}")
 if args.backed:
     print(f"  Memory optimization: Backed mode '{args.backed}' (chunk size: {args.chunk_size})")
 
 total_start = time.time()
 
 # Load the data
-print("\n[1/5] Loading data...")
+print("\n[1/6] Loading data...")
 t0 = time.time()
 file_ext = os.path.splitext(input_file)[1].lower()
 
@@ -131,7 +145,7 @@ n_cells_original = adata.n_obs
 n_genes_original = adata.n_vars
 
 # Calculate QC metrics
-print("\n[2/5] Calculating QC metrics (vectorized acceleration)...")
+print("\n[2/6] Calculating QC metrics (vectorized acceleration)...")
 t0 = time.time()
 if args.backed or adata.n_obs > 200000:
     calculate_qc_metrics_chunked(
@@ -157,15 +171,43 @@ print(f"  QC calculation time: {time.time() - t0:.2f}s")
 
 print_qc_summary(adata, label='QC Metrics Summary (before filtering)')
 
+# Doublet Detection
+doublet_mask = np.zeros(adata.n_obs, dtype=bool)
+if args.run_doublets and not args.backed:
+    print("\n[3/6] Local kNN doublet score (not scanpy.pp.scrublet; not scDblFinder)...")
+    t0 = time.time()
+    try:
+        adata, doublet_summary = run_doublet_detection(adata, expected_doublet_rate=args.doublet_rate)
+        doublet_mask = adata.obs["predicted_doublet"].values
+        print(f"  Detected {doublet_summary['n_doublets_detected']} doublets ({doublet_summary['doublet_percentage']}%) "
+              f"with threshold {doublet_summary['doublet_threshold']} in {time.time() - t0:.2f}s")
+    except Exception as e:
+        print(f"  Warning: Doublet detection could not complete: {e}")
+else:
+    print("\n[3/6] Skipping doublet detection.")
+
+# Ambient RNA Correction
+if args.run_ambient and not args.backed:
+    print("\n[4/6] Estimating and correcting ambient RNA background...")
+    t0 = time.time()
+    try:
+        adata, ambient_summary = correct_ambient_rna(adata)
+        print(f"  Estimated mean ambient contamination: {ambient_summary['mean_contamination_fraction']*100:.1f}% "
+              f"({ambient_summary['pct_umi_removed']}% UMI corrected) in {time.time() - t0:.2f}s")
+    except Exception as e:
+        print(f"  Warning: Ambient RNA correction could not complete: {e}")
+else:
+    print("\n[4/6] Skipping ambient RNA correction.")
+
 # Create before-filtering visualizations
-print("\n[3/5] Creating QC visualizations...")
+print("\nCreating QC visualizations...")
 t0 = time.time()
 before_plot = os.path.join(output_dir, 'qc_metrics_before_filtering.png')
 plot_qc_distributions(adata, before_plot, title='Quality Control Metrics - Before Filtering')
 print(f"  Saved: {before_plot} ({time.time() - t0:.2f}s)")
 
 # Apply MAD-based filtering
-print("\n[4/5] Applying MAD-based filtering thresholds...")
+print("\n[5/6] Applying filtering thresholds (MAD + MT hard cutoff + Doublets)...")
 t0 = time.time()
 
 # Detect outliers for each metric
@@ -184,7 +226,8 @@ adata.obs['outlier_mt'] = adata.obs['outlier_mt'] | high_mt_mask
 adata.obs['pass_qc'] = ~(
     adata.obs['outlier_counts'] |
     adata.obs['outlier_genes'] |
-    adata.obs['outlier_mt']
+    adata.obs['outlier_mt'] |
+    doublet_mask
 )
 
 print(f"\n  Total cells failing QC: {(~adata.obs['pass_qc']).sum()} ({(~adata.obs['pass_qc']).sum()/adata.n_obs*100:.2f}%)")
@@ -208,7 +251,7 @@ plot_filtering_thresholds(adata, outlier_masks, thresholds, threshold_plot)
 print(f"\n  Saved: {threshold_plot}")
 
 # Apply filtering
-print("\n[5/5] Applying filters...")
+print("\n[6/6] Applying filters and writing cleaned dataset...")
 t0 = time.time()
 adata_filtered = filter_cells(adata, adata.obs['pass_qc'].values)
 print(f"  Cells after filtering: {adata_filtered.n_obs} (removed {n_cells_original - adata_filtered.n_obs})")

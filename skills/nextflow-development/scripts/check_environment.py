@@ -12,6 +12,7 @@ Usage:
     python check_environment.py --json
 """
 
+import csv
 import json
 import os
 import platform
@@ -19,6 +20,7 @@ import shutil
 import subprocess
 import sys
 from dataclasses import dataclass, field, asdict
+from pathlib import Path
 from typing import List, Optional
 
 
@@ -363,16 +365,87 @@ def check_network() -> CheckResult:
         )
 
 
-def run_all_checks() -> EnvironmentReport:
+def check_samplesheet(path: str) -> CheckResult:
+    """Validate an nf-core-style samplesheet exists and has required columns."""
+    if not path:
+        return CheckResult(
+            name="Samplesheet",
+            passed=False,
+            message="No samplesheet provided",
+            fix="Pass --samplesheet path/to/samplesheet.csv",
+        )
+    dest = Path(path)
+    if not dest.is_file():
+        return CheckResult(
+            name="Samplesheet",
+            passed=False,
+            message=f"Samplesheet not found: {dest}",
+            fix="Generate one with generate_samplesheet.py",
+        )
+    with dest.open(newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle)
+        fields = [f.strip() for f in (reader.fieldnames or [])]
+        rows = list(reader)
+    required_any = [{"sample", "fastq_1"}, {"sample", "bam"}]
+    ok = any(req.issubset(set(fields)) for req in required_any)
+    if not ok or not rows:
+        return CheckResult(
+            name="Samplesheet",
+            passed=False,
+            message="Samplesheet missing sample/fastq columns or has no rows",
+            details=f"columns={fields} n_rows={len(rows)}",
+            fix="Need at least 'sample' plus fastq_1 or bam",
+        )
+    return CheckResult(
+        name="Samplesheet",
+        passed=True,
+        message=f"{len(rows)} rows, columns={fields}",
+    )
+
+
+def check_pipeline_config(path: str) -> CheckResult:
+    dest = Path(path)
+    if not dest.is_file():
+        return CheckResult(
+            name="Config",
+            passed=False,
+            message=f"nextflow.config not found: {dest}",
+            fix="Generate one with cluster_profile_generator.py",
+        )
+    text = dest.read_text(encoding="utf-8", errors="replace")
+    has_profile = "profiles" in text or "process." in text or "executor" in text
+    return CheckResult(
+        name="Config",
+        passed=has_profile,
+        message="nextflow.config present" + ("" if has_profile else " but no profiles/executor block"),
+        details=str(dest),
+    )
+
+
+def run_all_checks(
+    *,
+    samplesheet: Optional[str] = None,
+    config: Optional[str] = None,
+    skip_network: bool = False,
+) -> EnvironmentReport:
     checks = [
         check_docker(),
         check_nextflow(),
         check_java(),
         check_resources(),
-        check_network(),
     ]
+    if not skip_network:
+        checks.append(check_network())
+    if samplesheet is not None:
+        checks.append(check_samplesheet(samplesheet))
+    if config is not None:
+        checks.append(check_pipeline_config(config))
 
     critical_checks = ["Docker", "Nextflow", "Java"]
+    if samplesheet is not None:
+        critical_checks.append("Samplesheet")
+    if config is not None:
+        critical_checks.append("Config")
     ready = all(c.passed for c in checks if c.name in critical_checks)
 
     recommendations = []
@@ -428,10 +501,17 @@ def main():
     )
     parser.add_argument("--json", action="store_true",
                         help="Output results as JSON")
+    parser.add_argument("--samplesheet", default=None, help="Optional nf-core samplesheet to validate")
+    parser.add_argument("--config", default=None, help="Optional nextflow.config to validate")
+    parser.add_argument("--skip-network", action="store_true")
 
     args = parser.parse_args()
 
-    report = run_all_checks()
+    report = run_all_checks(
+        samplesheet=args.samplesheet,
+        config=args.config,
+        skip_network=args.skip_network,
+    )
 
     if args.json:
         print(json.dumps(report.to_dict(), indent=2))

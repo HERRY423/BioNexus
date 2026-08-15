@@ -1,0 +1,100 @@
+name: methylseq
+version: "2.7.0"
+description: "DNA methylation and bisulfite sequencing data analysis using Bismark or bwa-meth"
+
+urls:
+  documentation: "https://nf-co.re/methylseq/{version}/"
+  parameters: "https://nf-co.re/methylseq/{version}/parameters/"
+  output_docs: "https://nf-co.re/methylseq/{version}/docs/output/"
+  github: "https://github.com/nf-core/methylseq"
+
+data_types:
+  - WGBS
+  - RRBS
+  - Bisulfite-seq
+  - DNA Methylation
+  - EM-seq
+
+detection_hints:
+  filename:
+    - wgbs
+    - rrbs
+    - bisulfite
+    - methyl
+    - emseq
+  directory:
+    - wgbs
+    - rrbs
+    - methylation
+
+samplesheet:
+  input_types:
+    - fastq
+
+  columns:
+    - name: sample
+      required: true
+      type: string
+      inference: filename
+      description: "Sample identifier"
+
+    - name: fastq_1
+      required: true
+      type: path
+      inference: auto
+      description: "Absolute path to R1 FASTQ"
+
+    - name: fastq_2
+      required: false
+      type: path
+      inference: auto
+      description: "Absolute path to R2 FASTQ"
+
+decision_points:
+  - parameter: aligner
+    prompt: "Which bisulfite aligner would you prefer?"
+    options:
+      - value: bismark
+        label: "Bismark (standard, highly validated)"
+        description: "Standard pipeline with Bowtie2 and methylation extractor"
+      - value: bwameth
+        label: "bwa-meth + MethylDackel (faster, lower memory)"
+        description: "BWA-based aligner optimized for high-depth whole-genome methylation"
+    default: bismark
+
+  - parameter: em_seq
+    prompt: "Is this enzymatic methyl-seq (EM-seq) or standard bisulfite conversion?"
+    options:
+      - value: false
+        label: "Standard Sodium Bisulfite conversion (WGBS/RRBS)"
+      - value: true
+        label: "NEBNext Enzymatic Methyl-seq (EM-seq)"
+    default: false
+
+test_profile:
+  command: "nextflow run nf-core/methylseq -r 2.7.0 -profile test,docker --outdir test_methylseq"
+  duration: "15 minutes"
+
+run_command:
+  template: |
+    nextflow run nf-core/methylseq \
+        -r 2.7.0 \
+        -profile docker \
+        --input {samplesheet} \
+        --outdir {outdir} \
+        --genome {genome} \
+        --aligner {aligner} \
+        -resume
+
+outputs:
+  primary:
+    - path: "bismark/methylation_calls/CpG_context/merged_CpG_evidence.cov.gz"
+      description: "CpG methylation context coverage table"
+    - path: "multiqc/bismark/multiqc_report.html"
+      description: "Bisulfite conversion efficiency and QC metrics"
+
+resources:
+  min_memory: "16.GB"
+  recommended_memory: "64.GB"
+  min_cpus: 8
+  recommended_cpus: 16

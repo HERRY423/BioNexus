@@ -1,0 +1,122 @@
+name: scrnaseq
+version: "2.7.2"
+description: "Single-cell RNA-seq quantification and quality control using STARsolo, Cell Ranger, Alevin, or Kallisto"
+
+urls:
+  documentation: "https://nf-co.re/scrnaseq/{version}/"
+  parameters: "https://nf-co.re/scrnaseq/{version}/parameters/"
+  output_docs: "https://nf-co.re/scrnaseq/{version}/docs/output/"
+  github: "https://github.com/nf-core/scrnaseq"
+
+data_types:
+  - scRNA-seq
+  - 10X Genomics
+  - Single-cell RNA
+  - Drop-seq
+  - Smart-seq
+
+detection_hints:
+  filename:
+    - scrna
+    - 10x
+    - singlecell
+    - 10xgenomics
+    - cellranger
+  directory:
+    - scrna
+    - singlecell
+    - 10x
+
+samplesheet:
+  input_types:
+    - fastq
+
+  columns:
+    - name: sample
+      required: true
+      type: string
+      inference: filename
+      description: "Sample identifier"
+
+    - name: fastq_1
+      required: true
+      type: path
+      inference: auto
+      description: "Absolute path to R1 FASTQ (cell barcode / UMI)"
+
+    - name: fastq_2
+      required: true
+      type: path
+      inference: auto
+      description: "Absolute path to R2 FASTQ (cDNA read)"
+
+    - name: expected_cells
+      required: false
+      type: integer
+      default: 3000
+      description: "Expected number of cells per sample"
+
+decision_points:
+  - parameter: aligner
+    prompt: "Which single-cell alignment/quantification engine do you want to use?"
+    options:
+      - value: starsolo
+        label: "STARsolo (recommended for speed and memory efficiency)"
+        description: "Open-source 10X Cell Ranger drop-in replacement"
+      - value: alevin
+        label: "Salmon Alevin"
+        description: "Ultra-fast pseudo-alignment with selective alignment"
+      - value: kallisto
+        label: "Kallisto | Bustools"
+        description: "Lightweight, ultra-fast modular quantification"
+      - value: cellranger
+        label: "10X Cell Ranger"
+        description: "Official 10X Genomics pipeline (requires proprietary binary)"
+    default: starsolo
+    recommendation: "Default to starsolo for robust and fast processing"
+
+  - parameter: type
+    prompt: "Which 10X protocol chemistry was used?"
+    options:
+      - value: 10XV3
+        label: "10X Genomics Chromium Single Cell 3' v3 / v3.1"
+      - value: 10XV2
+        label: "10X Genomics Chromium Single Cell 3' v2"
+      - value: 10XV1
+        label: "10X Genomics Chromium Single Cell 3' v1"
+      - value: 10X5P
+        label: "10X Genomics Chromium Single Cell 5'"
+    default: 10XV3
+
+test_profile:
+  command: "nextflow run nf-core/scrnaseq -r 2.7.2 -profile test,docker --outdir test_scrna"
+  duration: "20 minutes"
+  success_indicators:
+    - "test_scrna/multiqc/multiqc_report.html"
+
+run_command:
+  template: |
+    nextflow run nf-core/scrnaseq \
+        -r 2.7.2 \
+        -profile docker \
+        --input {samplesheet} \
+        --outdir {outdir} \
+        --genome {genome} \
+        --aligner {aligner} \
+        --type {type} \
+        -resume
+
+outputs:
+  primary:
+    - path: "starsolo/raw/matrix.mtx"
+      description: "Raw count matrix (compatible with single-cell-rna-qc skill)"
+    - path: "starsolo/filtered/matrix.mtx"
+      description: "Filtered count matrix"
+    - path: "multiqc/multiqc_report.html"
+      description: "Overall sequencing and cell quality report"
+
+resources:
+  min_memory: "32.GB"
+  recommended_memory: "64.GB"
+  min_cpus: 8
+  recommended_cpus: 16

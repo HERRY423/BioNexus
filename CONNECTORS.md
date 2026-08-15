@@ -4,7 +4,7 @@
 
 Plugin files use `~~category` as a placeholder for whatever tool the user connects in that category. For example, `~~literature` might mean PubMed, bioRxiv, or any other literature source with an MCP server.
 
-Plugins are **tool-agnostic** — they describe workflows in terms of categories (literature, clinical trials, chemical database, etc.) rather than specific products. The `mcp.json` pre-configures both a local direct-API fallback server (`local-bio-mcp`) and remote Streamable HTTP servers.
+Plugins are **tool-agnostic** — they describe workflows in terms of categories (literature, clinical trials, chemical database, etc.) rather than specific products. The `mcp.json` pre-configures both a local direct-API fallback server (`local-bio-mcp`) and remote Streamable HTTP servers. Prefer hosted PubMed/ChEMBL/Open Targets/ClinicalTrials/bioRxiv tools when they are connected. Local `tools/list` marks those five as `hosted_fallback`. Use the local server for **unique** tools: UniProt, Ensembl, gnomAD, PDB, AlphaFold DB, Reactome, STRING, GEO, and GTEx. `search_cosmic` is an Ensembl lookup plus a tiny local CGC hint, not the COSMIC API.
 
 ---
 

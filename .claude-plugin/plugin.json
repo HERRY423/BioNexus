@@ -1,8 +1,8 @@
 {
   "name": "bio-research",
-  "version": "1.2.0",
-  "description": "Connect to preclinical research tools and databases (literature search, genomics analysis, target prioritization) to accelerate early-stage life sciences R&D",
+  "version": "2.7.0",
+  "description": "Agent skill pack that routes biomedical analyses to community tools or named local heuristics, with evidence grades and refusal when a gold-standard backend is missing.",
   "author": {
-    "name": "Anthropic"
+    "name": "BioNexus Team"
   }
 }

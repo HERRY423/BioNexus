@@ -55,7 +55,9 @@ ehthumbs.db
 
 # Large temporary datasets & results
 *.h5ad
+!tests/fixtures/*.h5ad
 *.h5
+tests/_tmp_*
 *.fastq
 *.fastq.gz
 *.bam

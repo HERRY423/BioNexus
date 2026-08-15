@@ -1,0 +1,82 @@
+name: proteinfold
+version: "1.1.1"
+description: "Protein 3D structure prediction pipeline using AlphaFold2, ColabFold, or ESMFold"
+
+urls:
+  documentation: "https://nf-co.re/proteinfold/{version}/"
+  parameters: "https://nf-co.re/proteinfold/{version}/parameters/"
+  output_docs: "https://nf-co.re/proteinfold/{version}/docs/output/"
+  github: "https://github.com/nf-core/proteinfold"
+
+data_types:
+  - FASTA
+  - Protein sequence
+  - Amino acid sequences
+
+detection_hints:
+  filename:
+    - fasta
+    - faa
+    - protein
+    - structure
+    - pdb
+  directory:
+    - protein
+    - structures
+    - alphafold
+
+samplesheet:
+  input_types:
+    - fasta
+
+  columns:
+    - name: sequence
+      required: true
+      type: path
+      inference: filename
+      description: "Path to multi-FASTA or individual protein FASTA file"
+
+decision_points:
+  - parameter: mode
+    prompt: "Which 3D structure prediction engine do you want to run?"
+    options:
+      - value: colabfold
+        label: "ColabFold (fast MMseqs2 MSA + AlphaFold2 inference)"
+        description: "Recommended for high-throughput multi-protein structure prediction"
+      - value: alphafold2
+        label: "Standard AlphaFold2 (full genetic database search)"
+        description: "Full MSA search across UniRef90, BFD, MGnify (requires ~3TB database)"
+      - value: esmfold
+        label: "ESMFold (Meta AI language model inference)"
+        description: "Single-sequence prediction without MSA generation, ultra-fast"
+    default: colabfold
+
+test_profile:
+  command: "nextflow run nf-core/proteinfold -r 1.1.1 -profile test,docker --mode colabfold --outdir test_fold"
+  duration: "10 minutes"
+
+run_command:
+  template: |
+    nextflow run nf-core/proteinfold \
+        -r 1.1.1 \
+        -profile docker \
+        --input {samplesheet} \
+        --outdir {outdir} \
+        --mode {mode} \
+        -resume
+
+outputs:
+  primary:
+    - path: "colabfold/*_unrelaxed_rank_001_*.pdb"
+      description: "Top-ranked predicted 3D structure PDB files"
+    - path: "colabfold/*_scores_rank_001_*.json"
+      description: "pLDDT and predicted alignment error (PAE) matrices"
+    - path: "multiqc/multiqc_report.html"
+      description: "Structure prediction summary report"
+
+resources:
+  min_memory: "16.GB"
+  recommended_memory: "32.GB"
+  min_cpus: 4
+  recommended_cpus: 8
+  gpu_required: true

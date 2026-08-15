@@ -1,0 +1,9 @@
+{
+  "output": "clustered.h5ad",
+  "markers_csv": "clustered_markers.csv",
+  "run_qc": true,
+  "n_top_genes": 2000,
+  "resolution": 0.5,
+  "extra_resolutions": [0.3, 0.8],
+  "n_marker_genes": 20
+}

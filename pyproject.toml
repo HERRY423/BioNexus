@@ -1,12 +1,12 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "bio-research"
-version = "1.2.0"
-description = "A portable AI agent plugin for early-stage life sciences R&D, genomics, and preclinical research."
-authors = [{ name = "Anthropic" }]
+version = "2.7.0"
+description = "Agent skill pack that routes biomedical analyses to community tools or named local heuristics, with evidence grades and refusal when a gold-standard backend is missing."
+authors = [{ name = "BioNexus Team" }]
 license = { text = "Apache-2.0" }
 readme = "README.md"
 requires-python = ">=3.10"
@@ -15,43 +15,119 @@ keywords = [
     "biology",
     "bioinformatics",
     "genomics",
+    "biologics-design",
+    "antibody-engineering",
+    "protein-language-models",
+    "clinical-cohort-analysis",
     "single-cell",
+    "spatial-transcriptomics",
+    "variant-interpretation",
+    "protein-structure",
+    "alphafold",
+    "molecular-docking",
+    "multiome",
     "nextflow",
     "allotrope",
-    "mcp"
+    "mcp",
+    "scvi-tools"
 ]
 dependencies = [
-    "numpy>=1.23.0",
-    "pandas>=2.0.0",
-    "scipy>=1.10.0",
-    "requests>=2.28.0",
-    "pyyaml>=6.0",
-    "tqdm>=4.65.0",
-    "jsonschema>=4.17.0"
+    "numpy>=1.23.0,<3.0.0",
+    "pandas>=2.0.0,<3.0.0",
+    "scipy>=1.10.0,<2.0.0",
+    "requests>=2.28.0,<3.0.0",
+    "pyyaml>=6.0,<7.0",
+    "tqdm>=4.65.0,<5.0.0",
+    "jsonschema>=4.17.0,<5.0.0",
+    "scikit-learn>=1.2.0,<2.0.0"
 ]
 
 [project.optional-dependencies]
-singlecell = [
-    "scanpy>=1.9.0",
-    "anndata>=0.9.0",
-    "scvi-tools>=1.0.0",
+goldchain = [
+    "scanpy>=1.10.0,<2.0.0",
+    "anndata>=0.9.0,<0.12.0",
+    "matplotlib>=3.7.0,<4.0.0",
+    "seaborn>=0.12.0,<0.14.0",
+    "h5py>=3.8.0,<4.0.0",
+    "leidenalg>=0.10.0",
+    "igraph>=0.10.0",
+    "harmonypy>=0.0.9",
+    "pydeseq2>=0.4.0"
+]
+deseq = [
+    "pydeseq2>=0.4.0"
+]
+scverse = [
+    "bio-research[goldchain]",
+    "scvi-tools>=1.0.0,<2.0.0",
     "torch>=2.0.0",
-    "scikit-learn>=1.2.0",
-    "matplotlib>=3.7.0",
-    "seaborn>=0.12.0",
-    "h5py>=3.8.0"
+    "optuna>=3.0.0,<5.0.0"
+]
+singlecell = [
+    "bio-research[scverse]"
+]
+spatial = [
+    "squidpy>=1.3.0",
+    "anndata>=0.9.0,<0.12.0",
+    "spatialdata>=0.2.0"
+]
+survival = [
+    "lifelines>=0.27.0"
+]
+plm = [
+    "transformers>=4.36.0",
+    "torch>=2.0.0"
+]
+structure = [
+    "abnumber>=0.3.0",
+    "biotite>=0.39.0"
+]
+biologics = [
+    "ViennaRNA>=2.6.0"
 ]
 allotrope = [
     "allotropy>=0.1.30",
-    "polars>=0.20.0",
-    "openpyxl>=3.1.0",
-    "xlrd>=2.0.1",
-    "pypdf>=3.15.0"
-]
-all = [
-    "bio-research[singlecell,allotrope]"
+    "polars>=0.20.0,<2.0.0",
+    "openpyxl>=3.1.0,<4.0.0",
+    "xlrd>=2.0.1,<3.0.0",
+    "pypdf>=3.15.0,<6.0.0"
 ]
 dev = [
-    "pytest>=7.0.0",
-    "ruff>=0.1.0"
+    "pytest>=7.4.0,<10.0.0",
+    "pytest-cov>=4.1.0,<7.0.0",
+    "pytest-asyncio>=0.21.0,<1.0.0",
+    "ruff>=0.1.0,<1.0.0"
 ]
+all = [
+    "bio-research[goldchain,scverse,spatial,deseq,survival,plm,structure,allotrope,dev]"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+exclude = [".venv", "venv", "__pycache__", ".git", "build", "dist"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"skills/**/_common.py" = ["E402"]
+"skills/**/scripts/*.py" = ["E402"]
+"scripts/doctor.py" = ["E402"]
+"scripts/goldchain_smoke.py" = ["E402"]
+"tests/**/*.py" = ["E402"]

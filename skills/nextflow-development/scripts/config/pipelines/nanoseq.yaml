@@ -1,0 +1,106 @@
+name: nanoseq
+version: "3.1.0"
+description: "Demultiplexing, QC, alignment, and variant calling for Oxford Nanopore long-read sequencing data"
+
+urls:
+  documentation: "https://nf-co.re/nanoseq/{version}/"
+  parameters: "https://nf-co.re/nanoseq/{version}/parameters/"
+  output_docs: "https://nf-co.re/nanoseq/{version}/docs/output/"
+  github: "https://github.com/nf-core/nanoseq"
+
+data_types:
+  - ONT
+  - Nanopore
+  - Long-read sequencing
+  - Direct RNA-seq
+  - Direct cDNA
+
+detection_hints:
+  filename:
+    - ont
+    - nanopore
+    - minion
+    - promethion
+    - fast5
+    - pod5
+  directory:
+    - nanopore
+    - ont
+    - fast5
+    - pod5
+
+samplesheet:
+  input_types:
+    - fastq
+    - fast5
+    - pod5
+
+  columns:
+    - name: sample
+      required: true
+      type: string
+      inference: filename
+      description: "Sample identifier"
+
+    - name: input_file
+      required: true
+      type: path
+      inference: auto
+      description: "Absolute path to FASTQ, FAST5, or POD5 file/directory"
+
+    - name: barcode
+      required: false
+      type: string
+      default: ""
+      description: "Native or PCR barcode identifier"
+
+decision_points:
+  - parameter: protocol
+    prompt: "Which Nanopore sequencing protocol was run?"
+    options:
+      - value: dna
+        label: "Genomic DNA / Amplicon (WGS, targeted)"
+      - value: directRNA
+        label: "Direct RNA Sequencing (native polyA RNA)"
+      - value: cDNA
+        label: "cDNA Sequencing"
+    default: dna
+
+  - parameter: aligner
+    prompt: "Which long-read aligner would you prefer?"
+    options:
+      - value: minimap2
+        label: "Minimap2 (standard, versatile)"
+      - value: graphmap2
+        label: "GraphMap2"
+    default: minimap2
+
+test_profile:
+  command: "nextflow run nf-core/nanoseq -r 3.1.0 -profile test,docker --outdir test_nanoseq"
+  duration: "10 minutes"
+
+run_command:
+  template: |
+    nextflow run nf-core/nanoseq \
+        -r 3.1.0 \
+        -profile docker \
+        --input {samplesheet} \
+        --outdir {outdir} \
+        --genome {genome} \
+        --protocol {protocol} \
+        -resume
+
+outputs:
+  primary:
+    - path: "minimap2/*.bam"
+      description: "Sorted and indexed long-read BAM alignments"
+    - path: "sniffles/*_structural_variants.vcf.gz"
+      description: "Long-read structural variant calls (SV)"
+    - path: "multiqc/multiqc_report.html"
+      description: "Nanoplot and PycoQC long-read quality assessment report"
+
+resources:
+  min_memory: "16.GB"
+  recommended_memory: "64.GB"
+  min_cpus: 8
+  recommended_cpus: 16

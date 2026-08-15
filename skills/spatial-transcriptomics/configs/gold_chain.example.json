@@ -1,0 +1,8 @@
+{
+  "output": "spatial_clustered.h5ad",
+  "svg_csv": "spatial_svg.csv",
+  "spatial_key": "spatial",
+  "n_neighs": 6,
+  "top_n": 50,
+  "resolution": 0.5
+}
