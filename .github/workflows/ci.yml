@@ -17,7 +17,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install ruff pyyaml
+      - name: Install Lint & Package Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff pyyaml numpy
+          pip install -e .
       - name: Run Ruff Linter
         run: ruff check .
       - name: Check Canonical Registry Drift & Validate Endpoints
@@ -62,6 +66,7 @@ jobs:
           bionexus doctor
           bionexus list-skills
           bionexus registry --check
+          bionexus eval --level all --provider replay
 
       - name: Fixture gold-chain smoke
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
