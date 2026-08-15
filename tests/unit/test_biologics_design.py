@@ -3,25 +3,15 @@ Unit tests for Biologics & mRNA Design suite:
 Antibody Fv/CDR annotation, biophysical developability liability scoring, and mRNA codon/MFE optimization.
 """
 
-import pytest
-from pathlib import Path
 import sys
+from pathlib import Path
 
 # Add skill script directories to sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "skills" / "biologics-design" / "scripts"))
 
-from antibody_annotator import (
-    detect_chain_type,
-    annotate_variable_domain_imgt
-)
-from antibody_developability import (
-    calculate_net_charge,
-    evaluate_antibody_developability
-)
-from mrna_engineer import (
-    calculate_gc_content,
-    optimize_mrna_sequence
-)
+from antibody_annotator import annotate_variable_domain_imgt, detect_chain_type
+from antibody_developability import evaluate_antibody_developability
+from mrna_engineer import optimize_mrna_sequence
 
 # Trastuzumab (Herceptin) VH Sequence
 HERCEPTIN_VH = "EVQLVESGGGLVQPGGSLRLSCAASGFNIKDTYIHWVRQAPGKGLEWVARIYPTNGYTRYADSVKGRFTISADTSKNTAYLQMNSLRAEDTAVYYCSRWGGDGFYAMDYWGQGTLVTVSS"
@@ -61,7 +51,7 @@ def test_antibody_developability_audit():
     bad_seq = "EVQLVESGGGLVQPGGSLRLSCAASGFNIKDTYIHWVRQAPGKGLEWVARIYPTNGYTRYADSVKGRFTISADTSKNTAYLQMNSLRAEDTAVYYCSRLLLLCYYWGQGTLVTVSS"
     handle_bad = annotate_variable_domain_imgt(bad_seq)
     dev_bad = evaluate_antibody_developability(handle_bad)
-    liability_types = [l["type"] for l in dev_bad["liabilities"]]
+    liability_types = [liab["type"] for liab in dev_bad["liabilities"]]
     assert "Unpaired Cysteine" in liability_types or "Hydrophobic Patch in CDR3" in liability_types
 
 

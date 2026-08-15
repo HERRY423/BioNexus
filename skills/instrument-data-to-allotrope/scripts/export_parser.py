@@ -12,10 +12,8 @@ Usage:
 """
 
 import sys
-from pathlib import Path
 from datetime import datetime
-from typing import Optional
-
+from pathlib import Path
 
 # Template for standalone Python script
 SCRIPT_TEMPLATE = '''#!/usr/bin/env python3
@@ -63,16 +61,16 @@ except ImportError:
 def convert_to_asm(filepath: str) -> Optional[Dict[str, Any]]:
     """
     Convert {instrument_name} file to ASM format.
-    
+
     Args:
         filepath: Path to input file
-        
+
     Returns:
         ASM dictionary or None if conversion fails
     """
     if not ALLOTROPY_AVAILABLE:
         raise ImportError("allotropy library required. Install with: pip install allotropy")
-    
+
     try:
         asm = allotrope_from_file(filepath, Vendor.{vendor})
         return asm
@@ -84,36 +82,36 @@ def convert_to_asm(filepath: str) -> Optional[Dict[str, Any]]:
 def flatten_asm(asm: Dict[str, Any]) -> list:
     """
     Flatten ASM to list of row dictionaries for CSV export.
-    
+
     Args:
         asm: ASM dictionary
-        
+
     Returns:
         List of flattened row dictionaries
     """
     technique = "{technique}"
     rows = []
-    
+
     agg_key = f"{{technique}}-aggregate-document"
     agg_doc = asm.get(agg_key, {{}})
-    
+
     # Extract device info
     device = agg_doc.get("device-system-document", {{}})
     device_info = {{
         "instrument_serial_number": device.get("device-identifier"),
         "instrument_model": device.get("model-number"),
     }}
-    
+
     doc_key = f"{{technique}}-document"
     for doc in agg_doc.get(doc_key, []):
         meas_agg = doc.get("measurement-aggregate-document", {{}})
-        
+
         common = {{
             "analyst": meas_agg.get("analyst"),
             "measurement_time": meas_agg.get("measurement-time"),
             **device_info
         }}
-        
+
         for meas in meas_agg.get("measurement-document", []):
             row = {{**common}}
             for key, value in meas.items():
@@ -125,7 +123,7 @@ def flatten_asm(asm: Dict[str, Any]) -> list:
                 else:
                     row[clean_key] = value
             rows.append(row)
-    
+
     return rows
 
 
@@ -134,28 +132,28 @@ def main():
     parser.add_argument("input", help="Input file path")
     parser.add_argument("--output", "-o", help="Output JSON path")
     parser.add_argument("--flatten", action="store_true", help="Also generate CSV")
-    
+
     args = parser.parse_args()
-    
+
     input_path = Path(args.input)
     if not input_path.exists():
         print(f"Error: File not found: {{args.input}}")
         return 1
-    
+
     # Convert to ASM
     print(f"Converting {{args.input}}...")
     asm = convert_to_asm(str(input_path))
-    
+
     if asm is None:
         print("Conversion failed")
         return 1
-    
+
     # Write ASM JSON
     output_path = args.output or str(input_path.with_suffix('.asm.json'))
     with open(output_path, 'w') as f:
         json.dump(asm, f, indent=2, default=str)
     print(f"ASM written to: {{output_path}}")
-    
+
     # Optionally flatten
     if args.flatten and PANDAS_AVAILABLE:
         rows = flatten_asm(asm)
@@ -163,7 +161,7 @@ def main():
         flat_path = str(input_path.with_suffix('.flat.csv'))
         df.to_csv(flat_path, index=False)
         print(f"CSV written to: {{flat_path}}")
-    
+
     return 0
 
 

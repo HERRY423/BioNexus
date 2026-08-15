@@ -3,37 +3,22 @@ Unit tests for Multiome Integration & Gene Regulatory Network suite:
 WNN joint integration, peak-gene linking, motif enrichment, SCENIC+ regulons, AUCell, and TF footprinting.
 """
 
-import pytest
+import sys
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
-import sys
+import pytest
 
 # Add skill script directories to sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "skills" / "multiome-integration" / "scripts"))
 
-from joint_rna_atac import (
-    compute_modality_weights,
-    integrate_rna_atac_wnn
-)
-from peak_gene_linking import (
-    calculate_peak_gene_correlations
-)
-from motif_enrichment import (
-    calculate_motif_enrichment_in_peaks,
-    compute_per_cell_motif_deviation
-)
-from grn_inference import (
-    infer_tf_target_coexpression,
-    prune_grn_with_cis_motifs,
-    calculate_aucell_activity
-)
-from tf_footprinting import (
-    compute_tf_footprint_profile
-)
-from regulatory_visualization import (
-    export_grn_to_cytoscape_json
-)
+from grn_inference import calculate_aucell_activity, infer_tf_target_coexpression, prune_grn_with_cis_motifs
+from joint_rna_atac import integrate_rna_atac_wnn
+from motif_enrichment import calculate_motif_enrichment_in_peaks, compute_per_cell_motif_deviation
+from peak_gene_linking import calculate_peak_gene_correlations
+from regulatory_visualization import export_grn_to_cytoscape_json
+from tf_footprinting import compute_tf_footprint_profile
 
 
 @pytest.fixture

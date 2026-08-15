@@ -5,12 +5,12 @@ Implements the 28 ACMG/AMP rules with both deterministic classification and
 Tavtigian Bayesian posterior probability evidence synthesis (Hum Mutat 2018).
 """
 
-import os
-import sys
-import yaml
 import argparse
 import logging
-from typing import Dict, Any, List, Optional, Tuple, Set
+import os
+from typing import Any, Dict, List, Optional, Set, Tuple
+
+import yaml
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
 logger = logging.getLogger("ACMGClassifier")
@@ -59,7 +59,7 @@ def classify_acmg_deterministic(criteria_codes: Set[str]) -> Tuple[str, List[str
 
     # Check Stand-alone Benign
     if ba >= 1:
-        reasons.append(f"Stand-alone benign allele frequency (BA1)")
+        reasons.append("Stand-alone benign allele frequency (BA1)")
         return "Benign", reasons
 
     # Check Benign (>= 2 BS)

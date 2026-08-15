@@ -10,10 +10,10 @@ Features:
 - Generates contamination statistics and corrected layers in AnnData
 """
 
+from typing import Any, Dict, List, Optional, Tuple
+
 import numpy as np
 import scipy.sparse as sp
-from typing import Optional, Tuple, Dict, Any, List
-import warnings
 
 try:
     import anndata as ad

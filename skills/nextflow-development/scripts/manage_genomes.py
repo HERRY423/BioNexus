@@ -20,7 +20,6 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional
 
-
 # iGenomes reference configuration
 IGENOMES = {
     # Human
@@ -355,7 +354,7 @@ def download_genome(
     if success:
         print(f"\nGenome {genome_id} ready at: {genome_dir}")
     else:
-        print(f"\nSome components failed to download.")
+        print("\nSome components failed to download.")
 
     return success
 

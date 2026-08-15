@@ -5,11 +5,10 @@ Scans chromatin accessibility peak sets for TF Position Weight Matrices (JASPAR/
 and computes motif enrichment statistics and a simple depth z-score. Not chromVAR.
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, List, Tuple, Optional
+from typing import List
+
 import numpy as np
 import pandas as pd
 from scipy.stats import fisher_exact
@@ -87,8 +86,8 @@ def compute_per_cell_motif_deviation(
     Simple depth z-score: (observed - expected) / sqrt(expected). Not chromVAR.
     Measures per-cell chromatin accessibility across all peaks containing a specific TF motif.
     """
-    n_cells = atac_matrix.shape[0]
-    n_tfs = len(tf_names)
+    atac_matrix.shape[0]
+    len(tf_names)
 
     # Observed motif accessibility
     observed = atac_matrix @ peak_motif_matrix  # (n_cells, n_tfs)
@@ -110,7 +109,7 @@ def main():
     parser = argparse.ArgumentParser(description="TF Motif Enrichment and Deviation")
     parser.add_argument("--out", "-o", default="motif_enrichment.csv", help="Output CSV path")
 
-    args = parser.parse_args()
+    parser.parse_args()
     logger.info("Motif enrichment module loaded.")
 
 

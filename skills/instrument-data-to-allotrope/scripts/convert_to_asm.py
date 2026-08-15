@@ -14,17 +14,16 @@ Usage:
     python convert_to_asm.py --batch-dir /path/to/plates/ --workers 8 --flatten
 """
 
+import hashlib
 import json
-import sys
 import os
 import re
-import hashlib
+import sys
 import time
-import glob
-from pathlib import Path
-from typing import Optional, Tuple, Dict, Any, List
-from datetime import datetime
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
 
 
 # Lazy imports to avoid errors if not installed
@@ -417,7 +416,7 @@ def convert_single_file(
                 asm = parse_with_yaml_mapping(str(input_path))
                 if asm is not None:
                     warnings.append("Parsed via declarative YAML mapping engine")
-            except Exception as e:
+            except Exception:
                 pass
 
         if asm is None:

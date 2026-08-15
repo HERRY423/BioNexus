@@ -3,48 +3,32 @@ Unit tests for Spatial Transcriptomics analysis suite:
 preprocessing, spatial-aware clustering, spot deconvolution, niche analysis, and Moran's I SVGs.
 """
 
-import pytest
-import numpy as np
-import pandas as pd
-import anndata as ad
-from scipy import sparse
-from pathlib import Path
+import os
 import sys
 import tempfile
-import os
+from pathlib import Path
+
+import anndata as ad
+import numpy as np
+import pandas as pd
+import pytest
+from scipy import sparse
 
 # Add skill script directories to sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "skills" / "spatial-transcriptomics" / "scripts"))
 
-from spatial_preprocessing import (
-    calculate_spatial_qc_metrics,
-    filter_spatial_spots,
-    normalize_spatial_coordinates
-)
-from spatial_clustering import (
-    build_fused_spatial_graph,
-    smooth_spatial_domains,
-    run_spatial_clustering
-)
-from spatial_deconvolution import (
-    build_reference_signature,
-    deconvolve_spatial_spots
-)
+from spatial_clustering import run_spatial_clustering
+from spatial_deconvolution import build_reference_signature, deconvolve_spatial_spots
 from spatial_niche_analysis import (
-    identify_spatial_niches,
     compute_spatial_colocalization,
-    evaluate_ligand_receptor_spatial_signaling
+    evaluate_ligand_receptor_spatial_signaling,
+    identify_spatial_niches,
 )
+from spatial_preprocessing import calculate_spatial_qc_metrics, filter_spatial_spots, normalize_spatial_coordinates
 from spatial_variable_genes import (
-    compute_spatial_weights_matrix,
-    calculate_morans_i_vectorized,
-    detect_spatially_variable_genes
+    detect_spatially_variable_genes,
 )
-from spatial_visualization import (
-    plot_spatial_discrete,
-    plot_spatial_continuous,
-    generate_interactive_html
-)
+from spatial_visualization import generate_interactive_html, plot_spatial_continuous, plot_spatial_discrete
 
 
 @pytest.fixture

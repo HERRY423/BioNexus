@@ -23,15 +23,14 @@ from model_utils import (
     train_scvi,
 )
 
-
 MODELS = ["scvi", "scanvi", "totalvi", "peakvi", "velovi", "multivi"]
 
 
 def train_totalvi(adata, batch_key=None, protein_key="protein_expression",
                   n_latent=20, max_epochs=200):
     """Train totalVI model for CITE-seq data."""
-    import scvi
     import numpy as np
+    import scvi
 
     scvi.model.TOTALVI.setup_anndata(
         adata, layer="counts", batch_key=batch_key,
@@ -51,8 +50,8 @@ def train_totalvi(adata, batch_key=None, protein_key="protein_expression",
 
 def train_peakvi(adata, batch_key=None, n_latent=20, max_epochs=200):
     """Train PeakVI model for scATAC-seq data."""
-    import scvi
     import numpy as np
+    import scvi
 
     if adata.X.max() > 1:
         print("Binarizing ATAC data...")
@@ -70,8 +69,8 @@ def train_velovi(adata, max_epochs=500):
 
     If Ms/Mu layers are missing, runs scvelo preprocessing automatically.
     """
-    import scvi
     import scvelo as scv
+    import scvi
 
     if "Ms" not in adata.layers or "Mu" not in adata.layers:
         print("Preprocessing data for veloVI (scvelo moments)...")
@@ -164,8 +163,8 @@ Examples:
         sys.exit(1)
 
     try:
-        import scvi
         import scanpy as sc
+        import scvi  # noqa: F401
     except ImportError:
         print("Error: scvi-tools and scanpy required. "
               "Install: pip install scvi-tools scanpy")
@@ -244,7 +243,8 @@ Examples:
             ax.plot(model.history["elbo_train"], label="Train")
         if "elbo_validation" in model.history:
             ax.plot(model.history["elbo_validation"], label="Validation")
-        ax.set_xlabel("Epoch"); ax.set_ylabel("ELBO")
+        ax.set_xlabel("Epoch")
+        ax.set_ylabel("ELBO")
         ax.legend()
         ax.set_title(f"{args.model.upper()} Training History")
         plot_path = os.path.join(args.output_dir, "training_history.png")

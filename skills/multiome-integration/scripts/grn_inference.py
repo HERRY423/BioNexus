@@ -4,11 +4,10 @@ ExtraTrees co-expression links with optional peak-gene pruning.
 Not SCENIC+, not GRNBoost2, and not AUCell recovery-curve scoring.
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, List, Tuple, Optional
+from typing import Any, Dict, List
+
 import numpy as np
 import pandas as pd
 from scipy.stats import pearsonr
@@ -159,7 +158,7 @@ def main():
     parser = argparse.ArgumentParser(description="Gene Regulatory Network (GRN) Inference")
     parser.add_argument("--out", "-o", default="regulons.json", help="Output JSON path")
 
-    args = parser.parse_args()
+    parser.parse_args()
     logger.info("GRN inference module loaded.")
 
 

@@ -3,21 +3,16 @@ Unit tests for Protein Language Models (pLM) suite:
 Zero-shot variant effect Log-Likelihood Ratio (Delta LLR) and sequence embeddings.
 """
 
-import pytest
-import numpy as np
-from pathlib import Path
 import sys
+from pathlib import Path
+
+import numpy as np
 
 # Add skill script directories to sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "skills" / "protein-language-models" / "scripts"))
 
-from plm_fitness_scorer import (
-    score_variant_delta_llr
-)
-from protein_embedder import (
-    embed_protein_sequence,
-    compute_protein_similarity
-)
+from plm_fitness_scorer import score_variant_delta_llr
+from protein_embedder import compute_protein_similarity, embed_protein_sequence
 
 # KRAS protein sequence (first 30 residues)
 KRAS_WT = "MTEYKLVVVGAGGVGKSALTIQLIQNHFVD"

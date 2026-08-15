@@ -16,8 +16,8 @@ from bio_research.contracts import GRADE_A, attach_meta
 
 
 def _matrix_stats(matrix) -> dict:
-    from scipy import sparse
     import numpy as np
+    from scipy import sparse
 
     if sparse.issparse(matrix):
         sample = matrix.data if matrix.nnz else np.array([0.0])
@@ -59,8 +59,8 @@ def inspect_adata(adata) -> dict:
     ]
     lib_stats = None
     try:
-        from scipy import sparse
         import numpy as np
+        from scipy import sparse
 
         matrix = adata.X
         if sparse.issparse(matrix):

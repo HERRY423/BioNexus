@@ -5,11 +5,10 @@ Integrates literature, structural druggability, single-cell omics, and clinical 
 into unified Bayesian target validation scores and go/no-go recommendations.
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, List, Optional
+from typing import Any, Dict
+
 import numpy as np
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")

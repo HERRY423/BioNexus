@@ -5,11 +5,10 @@ Computes vectorized Kaplan-Meier survival curves, Log-rank test statistics,
 and Cox Proportional Hazards Hazard Ratios (HR, 95% CI) for patient stratification.
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, List, Tuple, Optional
+from typing import Any, Dict, Tuple
+
 import numpy as np
 import pandas as pd
 from scipy.stats import chi2
@@ -31,7 +30,7 @@ def compute_kaplan_meier(
     sorted_events = events[order]
 
     unique_times = np.unique(sorted_times)
-    n_at_risk = len(times)
+    len(times)
     survival_prob = 1.0
 
     km_times = [0.0]

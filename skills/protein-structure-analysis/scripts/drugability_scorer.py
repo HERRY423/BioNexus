@@ -5,11 +5,9 @@ Integrates 3D pocket geometry, AlphaFold confidence in active site residues,
 chemogenomic ChEMBL evidence, and modality feasibility (Small Molecule, PROTAC, Biologics).
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, List, Optional
+from typing import Any, Dict, List
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
 logger = logging.getLogger("DruggabilityScorer")

@@ -5,15 +5,16 @@ Exports multi-omics regulon topologies to GraphML and Cytoscape JSON formats
 and generates overlap-activity heatmaps. Not AUCell.
 """
 
-import os
-import sys
-import json
 import argparse
+import json
 import logging
-from typing import Dict, Any, List, Optional
+import os
+from typing import Any, Dict
+
+import matplotlib
 import numpy as np
 import pandas as pd
-import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
@@ -88,7 +89,7 @@ def plot_regulon_activity_heatmap(
 
 def main():
     parser = argparse.ArgumentParser(description="GRN Regulatory Network Visualizer")
-    args = parser.parse_args()
+    parser.parse_args()
     logger.info("Regulatory visualization module loaded.")
 
 

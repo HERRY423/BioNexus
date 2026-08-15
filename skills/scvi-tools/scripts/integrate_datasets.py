@@ -44,9 +44,8 @@ def integrate_datasets(
     -------
     Integrated AnnData and trained model
     """
-    import scvi
     import scanpy as sc
-    import numpy as np
+    import scvi
 
     # Assign batch names
     if batch_names is None:
@@ -131,8 +130,8 @@ def integrate_datasets(
 
 def plot_integration(adata, output_dir, labels_key=None):
     """Plot integration results."""
-    import scanpy as sc
     import matplotlib.pyplot as plt
+    import scanpy as sc
 
     plots = [
         ("batch", "By Batch"),
@@ -187,8 +186,8 @@ Examples:
     args = parser.parse_args()
 
     try:
-        import scvi
         import scanpy as sc
+        import scvi  # noqa: F401
     except ImportError:
         print("Error: scvi-tools and scanpy required")
         sys.exit(1)

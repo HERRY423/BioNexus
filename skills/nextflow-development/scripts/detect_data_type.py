@@ -15,7 +15,7 @@ import json
 import os
 import sys
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, Tuple
 
 import yaml
 
@@ -109,7 +109,7 @@ def calculate_pipeline_scores(scan_info: Dict, configs: Dict) -> Dict[str, Dict]
                     break
 
         # Check data type compatibility
-        data_types = config.get('data_types', [])
+        config.get('data_types', [])
         input_types = config.get('samplesheet', {}).get('input_types', ['fastq'])
 
         # Prefer pipelines that support the available file types
@@ -247,15 +247,15 @@ def print_results(
     print(f"Version: {scores[recommended]['version']}")
 
     # Print suggested next steps
-    print(f"\n--- Next Steps ---")
-    print(f"1. Run environment check:")
-    print(f"   python scripts/check_environment.py")
-    print(f"\n2. Run test profile:")
+    print("\n--- Next Steps ---")
+    print("1. Run environment check:")
+    print("   python scripts/check_environment.py")
+    print("\n2. Run test profile:")
     config = load_all_pipeline_configs().get(recommended, {})
     test_cmd = config.get('test_profile', {}).get('command', '')
     if test_cmd:
         print(f"   {test_cmd}")
-    print(f"\n3. Generate samplesheet:")
+    print("\n3. Generate samplesheet:")
     print(f"   python scripts/generate_samplesheet.py {directory} {recommended}")
 
 

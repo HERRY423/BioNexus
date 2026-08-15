@@ -2,18 +2,16 @@
 Unit tests for Scientific Research Workflow Engine and Hypothesis Tracker.
 """
 
-import pytest
-import os
-import asyncio
 from pathlib import Path
 
 # Add skill script directories to path
 SKILL_ROOT = Path(__file__).parent.parent.parent / "skills" / "research-workflow-orchestrator" / "scripts"
 import sys
+
 sys.path.insert(0, str(SKILL_ROOT))
 
-from workflow_engine import WorkflowEngine
 from hypothesis_tracker import HypothesisTracker
+from workflow_engine import WorkflowEngine
 
 
 def test_workflow_dag_validation():

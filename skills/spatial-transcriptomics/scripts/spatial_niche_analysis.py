@@ -5,11 +5,11 @@ Grade-C niche clustering and ligand×receptor products on neighbor spots.
 This is not CellChat and not COMMOT. Prefer squidpy gold chain for SVGs.
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, Optional, List, Tuple
+import os
+from typing import Any, Dict, List, Optional, Tuple
+
 import numpy as np
 import pandas as pd
 from scipy import sparse
@@ -73,7 +73,7 @@ def identify_spatial_niches(
     # Cluster niche vectors
     kmeans = KMeans(n_clusters=n_niches, random_state=random_state, n_init=10)
     niche_labels = kmeans.fit_predict(niche_vectors)
-    niche_names = [f"Niche_{l+1}" for l in niche_labels]
+    niche_names = [f"Niche_{lbl+1}" for lbl in niche_labels]
 
     adata.obs["spatial_niche"] = pd.Categorical(niche_names)
     adata.obsm["niche_composition_vectors"] = niche_vectors
@@ -81,13 +81,13 @@ def identify_spatial_niches(
     # Determine signature cell type for each niche
     cell_types = adata.uns.get("cell_type_names", [f"Type_{j}" for j in range(proportions.shape[1])])
     niche_profiles = {}
-    for l in range(n_niches):
-        mask = (niche_labels == l)
+    for niche_idx in range(n_niches):
+        mask = (niche_labels == niche_idx)
         if np.sum(mask) > 0:
             mean_comp = np.mean(proportions[mask], axis=0)
             top_ct_idx = np.argsort(-mean_comp)[:2]
             top_desc = ", ".join([f"{cell_types[idx]} ({mean_comp[idx]*100:.1f}%)" for idx in top_ct_idx])
-            niche_profiles[f"Niche_{l+1}"] = top_desc
+            niche_profiles[f"Niche_{niche_idx+1}"] = top_desc
 
     adata.uns["niche_profiles"] = niche_profiles
     logger.info(f"Identified {n_niches} spatial niches: {niche_profiles}")

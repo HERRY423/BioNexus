@@ -4,12 +4,10 @@ Writes AutoDock Vina config text and converts a supplied ΔG to Kd.
 Does not run Vina or DiffDock unless those binaries are invoked separately.
 """
 
-import os
-import sys
-import re
 import argparse
 import logging
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+
 import numpy as np
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")

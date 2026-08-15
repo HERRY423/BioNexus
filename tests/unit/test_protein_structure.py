@@ -4,36 +4,28 @@ PDB parser, pLDDT confidence analysis, binding pocket detector, Vina docking gen
 Kabsch superposition, TM-score, and target tractability scorer.
 """
 
-import pytest
-import numpy as np
-from pathlib import Path
 import sys
+from pathlib import Path
+
+import numpy as np
 
 # Add skill script directories to sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "skills" / "protein-structure-analysis" / "scripts"))
 
-from structure_fetcher import parse_pdb_text
+from binding_pocket_detector import detect_binding_pockets_grid
+from drugability_scorer import evaluate_target_tractability
+from molecular_docking import (
+    calculate_dissociation_constant,
+    check_lipinski_rule_of_5,
+    generate_vina_grid_box,
+)
+from structural_alignment import compute_tm_score, kabsch_superposition
 from structure_analyzer import (
     analyze_plddt_confidence,
     compute_contact_map,
     compute_radius_of_gyration,
-    estimate_secondary_structure,
-    analyze_protein_structure_full
 )
-from binding_pocket_detector import detect_binding_pockets_grid
-from molecular_docking import (
-    generate_vina_grid_box,
-    calculate_dissociation_constant,
-    parse_vina_log,
-    check_lipinski_rule_of_5
-)
-from structural_alignment import (
-    kabsch_superposition,
-    compute_tm_score,
-    align_two_structures
-)
-from drugability_scorer import evaluate_target_tractability
-
+from structure_fetcher import parse_pdb_text
 
 # Sample PDB formatted string for a 5-residue helical peptide
 SAMPLE_PDB_TEXT = """

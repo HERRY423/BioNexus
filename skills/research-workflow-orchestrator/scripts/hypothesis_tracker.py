@@ -13,10 +13,8 @@ Usage:
     report = tracker.evaluate()
 """
 
-import json
-import math
 from datetime import datetime, timezone
-from typing import Dict, Any, List, Optional
+from typing import Any, Dict, List
 
 
 class HypothesisTracker:

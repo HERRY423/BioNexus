@@ -6,11 +6,11 @@ This is not SpatialDE, SPARK, or Seurat FindSpatiallyVariableFeatures.
 Prefer spatial_pipeline.py (refuses without squidpy).
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, Optional, List, Tuple
+import os
+from typing import Tuple
+
 import numpy as np
 import pandas as pd
 from scipy import sparse

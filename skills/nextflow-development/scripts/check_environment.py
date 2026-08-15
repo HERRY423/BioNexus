@@ -19,7 +19,7 @@ import platform
 import shutil
 import subprocess
 import sys
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import List, Optional
 

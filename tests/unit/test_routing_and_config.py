@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -71,6 +71,7 @@ def test_plot_writes_stable_names():
 
     matplotlib.use("Agg")
     import shutil
+
     import anndata as ad
     from scrna_plot import plot_processed
 

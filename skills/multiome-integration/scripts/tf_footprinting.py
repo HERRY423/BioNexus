@@ -5,11 +5,10 @@ Measures high-resolution Tn5 transposase cleavage protection profiles around TF 
 to quantify in vivo transcription factor chromatin binding occupancy.
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, List, Tuple
+from typing import Any, Dict
+
 import numpy as np
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
@@ -52,7 +51,7 @@ def compute_tf_footprint_profile(
 
 def main():
     parser = argparse.ArgumentParser(description="TF Footprinting Analyzer")
-    args = parser.parse_args()
+    parser.parse_args()
     logger.info("TF Footprinting analyzer loaded.")
 
 

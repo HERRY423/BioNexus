@@ -5,11 +5,10 @@ Identifies concave, solvent-accessible ligand-binding pockets on protein surface
 computes pocket volumes, bounding box centers, and estimates druggability scores.
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, List, Tuple, Optional
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 from scipy.spatial import cKDTree
 
@@ -91,11 +90,10 @@ def detect_binding_pockets_grid(
 
         # Find lining residues (CA within 6.5 A of pocket center or cavity points)
         lining_idx = tree_atoms.query_ball_point(center, r=8.0)
-        lining_res_str = ""
         hydrophobic_count = 0
         if sequence and len(sequence) == n_atoms:
             lining_aas = [sequence[idx] for idx in lining_idx if idx < len(sequence)]
-            lining_res_str = "".join(lining_aas)
+            "".join(lining_aas)
             hydrophobic_count = sum(1 for aa in lining_aas if aa in HYDROPHOBIC_AAS)
             hydro_ratio = (hydrophobic_count / len(lining_aas)) if lining_aas else 0.0
         else:

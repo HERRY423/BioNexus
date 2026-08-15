@@ -82,8 +82,8 @@ def cluster_and_embed(
 
 def plot_results(adata, output_dir, batch_key=None, labels_key=None):
     """Generate and save visualization plots."""
-    import scanpy as sc
     import matplotlib.pyplot as plt
+    import scanpy as sc
 
     plots = []
 

@@ -5,12 +5,10 @@ Parses HGVS, VCF coordinates, and protein changes; resolves molecular consequenc
 aggregates population frequencies, ClinVar submissions, and automated ACMG evidence proposals.
 """
 
-import os
-import sys
-import re
 import argparse
 import logging
-from typing import Dict, Any, List, Optional, Tuple
+import re
+from typing import Any, Dict, List, Optional, Tuple
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
 logger = logging.getLogger("VariantAnnotator")
@@ -69,7 +67,7 @@ def parse_variant_string(variant_str: str) -> Dict[str, Any]:
         res["format"] = "hgvs_protein"
         res["protein"] = v
         ref_aa = prot_match.group(1)
-        pos_aa = prot_match.group(2)
+        prot_match.group(2)
         alt_aa = prot_match.group(3)
         if alt_aa in ("*", "Ter", "X"):
             res["predicted_consequence"] = "nonsense"

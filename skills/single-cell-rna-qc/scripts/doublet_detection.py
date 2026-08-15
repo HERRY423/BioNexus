@@ -11,10 +11,10 @@ Features:
 - Generates doublet scores and boolean outlier masks in adata.obs
 """
 
+from typing import Any, Dict, Optional, Tuple
+
 import numpy as np
 import scipy.sparse as sp
-from typing import Optional, Tuple, Dict, Any
-import warnings
 
 try:
     import anndata as ad
@@ -97,7 +97,7 @@ def compute_doublet_scores_native(
 
     n_obs = count_matrix.shape[0]
     sim_matrix, _ = simulate_doublets(count_matrix, sim_doublet_ratio=sim_doublet_ratio, random_state=random_state)
-    n_sim = sim_matrix.shape[0]
+    sim_matrix.shape[0]
 
     # Stack observed and simulated matrices
     combined_matrix = sp.vstack([count_matrix, sim_matrix]).tocsr()

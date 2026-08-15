@@ -26,11 +26,11 @@ Usage:
     python validate_asm.py output.json --strict
 """
 
+import argparse
 import json
 import re
 import sys
-import argparse
-from typing import Dict, List, Tuple, Any, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 # Validation metadata
 ASM_SPEC_VERSION = "2024-12"

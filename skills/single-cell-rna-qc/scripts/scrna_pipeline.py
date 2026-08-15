@@ -16,12 +16,13 @@ _SRC = Path(__file__).resolve().parents[3] / "src"
 if _SRC.is_dir() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from bio_research.backends import require
-from bio_research.contracts import attach_meta
-from bio_research.provenance import sidecar
 from scrna_markers import find_cluster_markers
 from scrna_preprocess import preprocess_scrna
 from scrna_reduce_cluster import reduce_and_cluster
+
+from bio_research.backends import require
+from bio_research.contracts import attach_meta
+from bio_research.provenance import sidecar
 
 
 def run_scrna_gold_chain(

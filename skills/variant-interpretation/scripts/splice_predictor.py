@@ -4,12 +4,11 @@ Donor/acceptor PWM log-odds scorer.
 Not MaxEntScan or SpliceAI. Does not assign ACMG PVS1/PP3/BP7.
 """
 
-import os
-import sys
 import argparse
 import logging
+from typing import Any, Dict
+
 import numpy as np
-from typing import Dict, Any, Tuple, Optional
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
 logger = logging.getLogger("SplicePredictor")

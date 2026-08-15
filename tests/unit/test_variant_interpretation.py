@@ -4,37 +4,18 @@ ACMG classification engine, Bayesian posteriors, variant annotation, splice pred
 population genetics, and pharmacogenomics.
 """
 
-import pytest
-from pathlib import Path
 import sys
+from pathlib import Path
 
 # Add skill script directories to sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "skills" / "variant-interpretation" / "scripts"))
 
-from acmg_classifier import (
-    classify_acmg_deterministic,
-    compute_bayesian_pathogenicity,
-    evaluate_variant_acmg
-)
-from variant_annotator import (
-    parse_variant_string,
-    propose_acmg_criteria,
-    annotate_variant_full
-)
-from splice_predictor import (
-    predict_splice_disruption,
-    score_sequence_pwm,
-    DONOR_PWM
-)
-from population_genetics import (
-    evaluate_population_frequencies
-)
-from pharmacogenomics import (
-    lookup_pharmacogenomics
-)
-from clinical_report_generator import (
-    generate_clinical_report_markdown
-)
+from acmg_classifier import classify_acmg_deterministic, compute_bayesian_pathogenicity, evaluate_variant_acmg
+from clinical_report_generator import generate_clinical_report_markdown
+from pharmacogenomics import lookup_pharmacogenomics
+from population_genetics import evaluate_population_frequencies
+from splice_predictor import DONOR_PWM, predict_splice_disruption, score_sequence_pwm
+from variant_annotator import parse_variant_string
 
 
 def test_acmg_deterministic_pathogenic_rules():

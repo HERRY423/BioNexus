@@ -11,7 +11,6 @@ Usage:
 """
 
 import argparse
-import os
 import sys
 
 
@@ -175,8 +174,8 @@ Examples:
     args = parser.parse_args()
 
     try:
-        import scvi
         import scanpy as sc
+        import scvi
     except ImportError:
         print("Error: scvi-tools and scanpy required")
         sys.exit(1)

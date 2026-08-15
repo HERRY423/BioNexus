@@ -16,11 +16,12 @@ _SRC = Path(__file__).resolve().parents[3] / "src"
 if _SRC.is_dir() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
+from spatial_io import load_spatial_anndata, resolve_spatial_key
+
 from bio_research.backends import require
 from bio_research.contracts import GRADE_A, GRADE_C, attach_meta
 from bio_research.pipeline_config import load_pipeline_config, merge_config
 from bio_research.provenance import sidecar
-from spatial_io import load_spatial_anndata, resolve_spatial_key
 
 
 def run_spatial_gold_chain(

@@ -13,8 +13,9 @@ if _SRC.is_dir() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 from _common import attach_meta
-from bio_research.contracts import GRADE_A
 from spatial_io import load_spatial_anndata, resolve_spatial_key, spatial_load_contract
+
+from bio_research.contracts import GRADE_A
 
 
 def inspect_spatial(adata, *, spatial_key: str | None = None) -> dict:

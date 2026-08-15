@@ -8,31 +8,28 @@ Following scverse & Bioconductor best practices:
 https://www.sc-best-practices.org/preprocessing_visualization/quality_control.html
 """
 
-import anndata as ad
-import scanpy as sc
-import numpy as np
-import sys
-import os
-import time
 import argparse
+import os
+import sys
+import time
+
+import anndata as ad
+import numpy as np
+import scanpy as sc
+from ambient_rna import correct_ambient_rna
+from doublet_detection import run_doublet_detection
 
 # Import our modular utilities
 from qc_core import (
+    apply_hard_threshold,
     calculate_qc_metrics,
     calculate_qc_metrics_chunked,
     detect_outliers_mad,
-    apply_hard_threshold,
     filter_cells,
     filter_genes,
-    print_qc_summary
+    print_qc_summary,
 )
-from qc_plotting import (
-    plot_qc_distributions,
-    plot_filtering_thresholds,
-    plot_qc_after_filtering
-)
-from doublet_detection import run_doublet_detection
-from ambient_rna import correct_ambient_rna
+from qc_plotting import plot_filtering_thresholds, plot_qc_after_filtering, plot_qc_distributions
 
 print("=" * 80)
 print("Single-Cell RNA-seq Quality Control Analysis (High-Performance Engine v1.3.0)")
@@ -106,7 +103,7 @@ os.makedirs(output_dir, exist_ok=True)
 print(f"\nOutput directory: {output_dir}")
 
 # Display parameters
-print(f"\nParameters:")
+print("\nParameters:")
 print(f"  MAD thresholds: counts={args.mad_counts}, genes={args.mad_genes}, MT%={args.mad_mt}")
 print(f"  MT hard threshold: {args.mt_threshold}%")
 print(f"  Min cells for gene filtering: {args.min_cells}")

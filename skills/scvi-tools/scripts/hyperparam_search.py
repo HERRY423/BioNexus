@@ -9,12 +9,12 @@ Usage:
     python hyperparam_search.py prepared.h5ad output_dir/ --model scanvi --batch-key batch --labels-key cell_type --n-trials 15
 """
 
-import os
-import sys
 import argparse
 import json
-import time
-from typing import Dict, Any, Optional, List, Tuple
+import os
+import sys
+from typing import Any, Dict, Optional, Tuple
+
 import numpy as np
 
 # Ensure scripts directory is in path

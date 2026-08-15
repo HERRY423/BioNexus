@@ -2,10 +2,7 @@
 Unit tests for Nextflow cluster profile generator and pipeline catalog.
 """
 
-import pytest
-import yaml
-from pathlib import Path
-from cluster_profile_generator import generate_hpc_profile, generate_cloud_profile
+from cluster_profile_generator import generate_cloud_profile, generate_hpc_profile
 from generate_samplesheet import load_pipeline_config
 
 

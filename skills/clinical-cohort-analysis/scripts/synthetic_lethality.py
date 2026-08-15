@@ -5,13 +5,11 @@ Correlates cancer cell line CRISPR-Cas9 knockout dependency scores (CERES)
 with primary oncogenic driver mutations to discover synthetic lethal therapeutic targets.
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, List, Tuple
+from typing import Any, Dict
+
 import numpy as np
-import pandas as pd
 from scipy.stats import ttest_ind
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
@@ -85,7 +83,7 @@ def analyze_synthetic_lethal_interaction(
 
 def main():
     parser = argparse.ArgumentParser(description="Synthetic Lethality Miner")
-    args = parser.parse_args()
+    parser.parse_args()
     logger.info("Synthetic lethality module loaded.")
 
 

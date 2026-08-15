@@ -5,12 +5,10 @@ Compiles executive summaries, multi-omics analyses, 3D structural assessments,
 into a research outline. Not a GxP or diagnostic document.
 """
 
-import os
-import sys
 import argparse
-import logging
 import datetime
-from typing import Dict, Any, Optional
+import logging
+from typing import Any, Dict, Optional
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
 logger = logging.getLogger("ReportCompiler")
@@ -29,7 +27,7 @@ def compile_research_monograph(
     rec = evidence.get("recommendation", "GO")
 
     md = f"""# {title}
-**BioNexus Preclinical Discovery & Translational Intelligence**  
+**BioNexus Preclinical Discovery & Translational Intelligence**
 *Date: {now_str} | Target: {target} | Indication: {disease}*
 
 ---
@@ -71,7 +69,7 @@ def compile_research_monograph(
 
 ## Risk Assessment & Critical Mitigation
 
-> **Critical Vulnerability**: {plan.get('risk_assessment', {}).get('critical_risk', 'On-target toxicity')}  
+> **Critical Vulnerability**: {plan.get('risk_assessment', {}).get('critical_risk', 'On-target toxicity')}
 > **Mitigation Strategy**: {plan.get('risk_assessment', {}).get('mitigation_strategy', 'Select prodrug or targeted delivery')}
 
 ---
@@ -90,8 +88,8 @@ def main():
     parser.add_argument("--out", "-o", default="research_monograph.md", help="Output Markdown path")
 
     args = parser.parse_args()
-    from research_planner import create_preclinical_research_plan
     from evidence_synthesizer import synthesize_multimodal_evidence
+    from research_planner import create_preclinical_research_plan
 
     plan = create_preclinical_research_plan(args.target, args.disease)
     evidence = synthesize_multimodal_evidence(args.target, args.disease)

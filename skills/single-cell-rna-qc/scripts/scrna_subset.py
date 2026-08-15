@@ -15,7 +15,6 @@ if _SRC.is_dir() and str(_SRC) not in sys.path:
 from bio_research.backends import require
 from bio_research.contracts import GRADE_A, attach_meta
 
-
 STALE_OBSM = ("X_pca", "X_umap", "X_tsne")
 
 

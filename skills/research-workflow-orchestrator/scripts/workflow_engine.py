@@ -8,17 +8,18 @@ Usage:
     python workflow_engine.py drug_target_discovery.yml --param disease_name="Melanoma" -o ./workflow_results
 """
 
-import os
-import sys
-import json
-import yaml
-import re
 import argparse
 import asyncio
+import json
+import os
+import re
+import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Set
+from typing import Any, Dict, List, Optional
+
+import yaml
 
 # Add scripts directory for local MCP tools
 SCRIPTS_DIR = Path(__file__).parent.parent.parent.parent / "scripts"

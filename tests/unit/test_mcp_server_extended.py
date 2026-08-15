@@ -2,30 +2,20 @@
 Unit tests for extended MCP Server v2.0.0 tools, resources, prompts, and rate limiting.
 """
 
-import pytest
 import asyncio
-import json
-from pathlib import Path
 import sys
+from pathlib import Path
 from unittest.mock import patch
 
 # Ensure scripts dir is on sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
 
 from local_mcp_server import (
-    handle_rpc_request_async,
     TokenBucketRateLimiter,
-    TOOLS_SCHEMA,
-    RESOURCES_SCHEMA,
-    PROMPTS_SCHEMA,
+    handle_rpc_request_async,
+    tool_search_alphafold,
     tool_search_gnomad,
     tool_search_pdb,
-    tool_search_alphafold,
-    tool_search_reactome,
-    tool_search_string,
-    tool_search_cosmic,
-    tool_search_geo,
-    tool_get_gene_expression
 )
 
 

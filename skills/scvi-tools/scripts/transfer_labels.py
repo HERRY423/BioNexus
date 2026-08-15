@@ -39,7 +39,6 @@ def transfer_labels(
     AnnData with predictions
     """
     import scvi
-    import numpy as np
 
     # Get reference genes
     ref_genes = reference_model.adata.var_names
@@ -94,7 +93,7 @@ def transfer_labels(
 
     # Stats
     n_confident = adata_query.obs["confident_prediction"].sum()
-    print(f"\nPrediction summary:")
+    print("\nPrediction summary:")
     print(f"  Total cells: {adata_query.n_obs}")
     print(f"  Confident (>= {confidence_threshold}): {n_confident} ({n_confident/adata_query.n_obs*100:.1f}%)")
     print(f"  Mean confidence: {adata_query.obs['prediction_confidence'].mean():.3f}")
@@ -107,8 +106,8 @@ def transfer_labels(
 
 def plot_predictions(adata, output_dir):
     """Plot prediction results."""
-    import scanpy as sc
     import matplotlib.pyplot as plt
+    import scanpy as sc
 
     # Compute UMAP if needed
     if "X_umap" not in adata.obsm:
@@ -160,8 +159,8 @@ Examples:
     args = parser.parse_args()
 
     try:
-        import scvi
         import scanpy as sc
+        import scvi
     except ImportError:
         print("Error: scvi-tools and scanpy required")
         sys.exit(1)

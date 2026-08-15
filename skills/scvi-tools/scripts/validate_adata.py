@@ -14,8 +14,7 @@ Usage:
 import argparse
 import sys
 from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Any
-import warnings
+from typing import Any, Dict, List, Optional
 
 
 @dataclass

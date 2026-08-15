@@ -2,19 +2,19 @@
 Unit tests for Biological Knowledge Subgraph and GraphRAG hypothesis validation.
 """
 
-import pytest
 import os
-import tempfile
 import shutil
+import tempfile
 from pathlib import Path
 
 # Add skill script directories to path
 SKILL_ROOT = Path(__file__).parent.parent.parent / "skills" / "knowledge-graph-augmentation" / "scripts"
 import sys
+
 sys.path.insert(0, str(SKILL_ROOT))
 
 from bio_knowledge_graph import BioKnowledgeGraph
-from hypothesis_validator import validate_target_disease_hypothesis, build_graphrag_context
+from hypothesis_validator import build_graphrag_context, validate_target_disease_hypothesis
 
 
 def test_knowledge_graph_ingestion_and_topology():

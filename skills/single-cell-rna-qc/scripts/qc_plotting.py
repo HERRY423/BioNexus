@@ -5,8 +5,8 @@ Visualization functions for single-cell RNA-seq quality control.
 This module provides plotting utilities for QC metrics and filtering thresholds.
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.stats import median_abs_deviation
 
 

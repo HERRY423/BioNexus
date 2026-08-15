@@ -5,12 +5,11 @@ Generates comprehensive 5-phase end-to-end scientific study designs integrating
 Target Discovery, Single-Cell Genomics, Spatial Microenvironments, Multiome GRNs, and Clinical Genetics.
 """
 
-import os
-import sys
-import yaml
 import argparse
 import logging
-from typing import Dict, Any, List, Optional
+from typing import Any, Dict
+
+import yaml
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
 logger = logging.getLogger("ResearchPlanner")
@@ -38,7 +37,7 @@ def create_preclinical_research_plan(
                 "AlphaFold DB structure fetch and per-residue pLDDT confidence profiling",
                 "Grid-based 3D binding pocket detection and druggability scoring"
             ],
-            "milestone_go_no_go": f"Target possesses genetic association score > 0.40 and a druggable pocket (Volume > 300 A^3, Score > 0.50)."
+            "milestone_go_no_go": "Target possesses genetic association score > 0.40 and a druggable pocket (Volume > 300 A^3, Score > 0.50)."
         },
         {
             "phase_number": 2,

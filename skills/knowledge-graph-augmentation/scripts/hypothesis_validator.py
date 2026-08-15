@@ -14,8 +14,8 @@ Usage:
     rag_context = build_graphrag_context(kg, focus_entities=["target:kras", "disease:pancreatic_cancer"])
 """
 
-import json
-from typing import Dict, Any, List, Optional
+from typing import Any, Dict, List, Optional
+
 from bio_knowledge_graph import BioKnowledgeGraph
 
 

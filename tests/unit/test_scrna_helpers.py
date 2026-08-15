@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -14,7 +14,6 @@ sys.path.insert(0, str(PROJECT_ROOT / "skills" / "single-cell-rna-qc" / "scripts
 
 pytest.importorskip("anndata")
 import anndata as ad
-
 from scrna_convert import convert_to_h5ad
 from scrna_inspect import inspect_adata
 from scrna_pseudobulk import pseudobulk_counts

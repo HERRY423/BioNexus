@@ -4,16 +4,14 @@ Validates JSON-RPC 2.0 protocol handling, tool registry, and dispatch mechanisms
 Uses native asyncio.run() for universal compatibility without requiring external test plugins.
 """
 
-import pytest
 import asyncio
-import json
-from pathlib import Path
 import sys
+from pathlib import Path
 
 # Ensure scripts dir is on sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
 
-from local_mcp_server import handle_rpc_request_async, TOOLS_SCHEMA, get_api_key
+from local_mcp_server import handle_rpc_request_async
 
 
 def test_mcp_initialize():

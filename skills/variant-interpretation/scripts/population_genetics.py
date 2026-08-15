@@ -5,11 +5,9 @@ Evaluates continental ancestry frequencies, calculates PopMax thresholds,
 and determines ACMG population frequency criteria (BA1 / BS1 / PM2).
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Any, Dict
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
 logger = logging.getLogger("PopulationGenetics")

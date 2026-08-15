@@ -22,16 +22,16 @@ Provides direct, non-blocking, rate-limit resilient access to:
 Supports complete MCP primitives: Tools, Resources, and Prompts.
 """
 
-import sys
-import json
-import os
 import asyncio
+import json
 import logging
-import urllib.request
-import urllib.parse
-import urllib.error
+import os
+import sys
 import time
-from typing import Dict, Any, List, Optional, Tuple, Union
+import urllib.error
+import urllib.parse
+import urllib.request
+from typing import Any, Dict, List, Optional
 
 # --- Logging Configuration ---
 LOG_FILE = os.environ.get("BIONEXUS_MCP_LOG", os.path.join(os.path.dirname(os.path.abspath(__file__)), "local_mcp_server.log"))
@@ -311,7 +311,7 @@ async def tool_get_pubmed_article(pmid: str) -> Dict[str, Any]:
         if api_key:
             fetch_params["api_key"] = api_key
         fetch_url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?{urllib.parse.urlencode(fetch_params)}"
-        
+
         def _fetch_xml():
             req = urllib.request.Request(fetch_url, headers={"User-Agent": "BioNexus-LocalMCP/2.0.0"})
             with urllib.request.urlopen(req, timeout=15) as resp:
@@ -593,7 +593,7 @@ async def tool_search_uniprot(
         primary_acc = entry.get("primaryAccession")
         entry_name = entry.get("uniProtkbId")
         organism_name = entry.get("organism", {}).get("scientificName")
-        
+
         desc = entry.get("proteinDescription", {})
         recommended_name = desc.get("recommendedName", {}).get("fullName", {}).get("value", "Unknown")
 
@@ -778,7 +778,7 @@ async def tool_search_pdb(
         search_data = await async_http_request(search_url, method="POST", json_data=search_payload)
         result_set = search_data.get("result_set", [])
         total_count = search_data.get("total_count", len(result_set))
-        
+
         entries = []
         for item in result_set:
             pdb_id = item.get("identifier")
@@ -1902,7 +1902,7 @@ async def handle_rpc_request_async(req: Dict[str, Any]) -> Optional[Dict[str, An
 async def async_stdio_reader():
     """Asynchronous stdin reader supporting standard input lines."""
     loop = asyncio.get_running_loop()
-    
+
     while True:
         line = await loop.run_in_executor(None, sys.stdin.readline)
         if not line:

@@ -5,11 +5,9 @@ Translates genomic variants into actionable drug response recommendations
 based on CPIC (Clinical Pharmacogenetics Implementation Consortium) Level 1A/1B guidelines.
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, List, Optional
+from typing import Any, Dict, Optional
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
 logger = logging.getLogger("Pharmacogenomics")

@@ -13,7 +13,6 @@ import time
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from urllib.request import Request, urlopen
-from urllib.error import URLError, HTTPError
 
 # Set up logging
 logging.basicConfig(

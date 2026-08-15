@@ -5,12 +5,10 @@ Analyzes scientific research queries, extracts biological entities (genes, varia
 and constructs multi-skill execution workflows across all BioNexus skills and MCP tools.
 """
 
-import os
-import sys
-import re
 import argparse
 import logging
-from typing import Dict, Any, List, Optional
+import re
+from typing import Any, Dict, List
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
 logger = logging.getLogger("SkillRouter")

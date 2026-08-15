@@ -3,20 +3,10 @@ Unit tests for Single-Cell RNA-seq QC module.
 Tests vectorized sparse calculations, MAD outlier filtering, doublet detection, and ambient RNA correction.
 """
 
-import pytest
 import numpy as np
-import scipy.sparse as sp
-
-from qc_core import (
-    calculate_qc_metrics_fast,
-    calculate_qc_metrics_chunked,
-    detect_outliers_mad,
-    apply_hard_threshold,
-    filter_cells,
-    filter_genes
-)
-from doublet_detection import simulate_doublets, compute_doublet_scores_native, run_doublet_detection
-from ambient_rna import estimate_ambient_profile, estimate_contamination_fraction, correct_ambient_rna
+from ambient_rna import correct_ambient_rna
+from doublet_detection import run_doublet_detection, simulate_doublets
+from qc_core import apply_hard_threshold, calculate_qc_metrics_chunked, calculate_qc_metrics_fast, detect_outliers_mad
 
 
 def test_calculate_qc_metrics_fast(synthetic_anndata):
@@ -58,7 +48,7 @@ def test_detect_outliers_mad(synthetic_anndata):
 
     mask = detect_outliers_mad(adata, "total_counts", n_mads=3, verbose=False)
     assert isinstance(mask, np.ndarray)
-    assert mask[0] == True  # The injected outlier should be detected
+    assert mask[0]  # The injected outlier should be detected
 
 
 def test_apply_hard_threshold(synthetic_anndata):

@@ -5,11 +5,11 @@ Grade-C NNLS spot proportion fit against a caller-supplied signature matrix.
 This is not Cell2location and not RCTD. Dominant labels are argmax proportions, not identities.
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, Optional, List, Tuple
+import os
+from typing import List, Optional, Tuple
+
 import numpy as np
 import pandas as pd
 from scipy import sparse
@@ -113,7 +113,7 @@ def deconvolve_spatial_spots(
             proportions[i] = np.ones(n_types) / n_types
 
     prop_df = pd.DataFrame(proportions, index=spatial_adata.obs_names, columns=cell_types)
-    
+
     # Store in spatial AnnData
     spatial_adata.obsm["cell_type_proportions"] = prop_df.to_numpy()
     spatial_adata.uns["cell_type_names"] = cell_types

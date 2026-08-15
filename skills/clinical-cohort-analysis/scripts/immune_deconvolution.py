@@ -4,11 +4,10 @@ NNLS mixture deconvolution. Requires a caller-supplied signature matrix.
 This is not CIBERSORT/LM22 unless that matrix is the published LM22 matrix.
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, List, Tuple, Optional
+from typing import List, Optional
+
 import numpy as np
 import pandas as pd
 from scipy.optimize import nnls

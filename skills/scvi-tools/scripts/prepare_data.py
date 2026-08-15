@@ -51,7 +51,6 @@ def prepare_data(
     AnnData prepared for scvi-tools
     """
     import scanpy as sc
-    import numpy as np
     from model_utils import get_mito_genes
 
     adata = adata.copy()

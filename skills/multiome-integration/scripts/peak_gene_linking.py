@@ -5,11 +5,10 @@ Calculates distance-constrained Pearson correlations between ATAC-seq peak acces
 and RNA-seq gene expression to identify enhancer-promoter regulatory loops (ArchR / Signac style).
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, List, Tuple, Optional
+from typing import Any, Dict, List
+
 import numpy as np
 import pandas as pd
 from scipy.stats import pearsonr
@@ -88,7 +87,7 @@ def main():
     parser = argparse.ArgumentParser(description="Peak-to-Gene Cis-Regulatory Linking")
     parser.add_argument("--out", "-o", default="peak_gene_links.csv", help="Output CSV path")
 
-    args = parser.parse_args()
+    parser.parse_args()
     logger.info("Executed peak-gene linking.")
 
 

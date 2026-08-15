@@ -5,17 +5,17 @@ Grade-C fused kNN + expression graph + spectral/KMeans clustering.
 This is not BayesSpace and not SpaGCN. Prefer spatial_pipeline.py (squidpy).
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, Optional, Tuple
+import os
+from typing import Any, Dict
+
 import numpy as np
 import pandas as pd
 from scipy import sparse
 from scipy.spatial import cKDTree
+from sklearn.cluster import SpectralClustering
 from sklearn.decomposition import PCA
-from sklearn.cluster import SpectralClustering, KMeans
 from sklearn.neighbors import kneighbors_graph
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
@@ -44,14 +44,14 @@ def build_fused_spatial_graph(
     k_sp = min(n_spatial_neighbors, n_cells - 1)
     tree = cKDTree(spatial_coords)
     dists, indices = tree.query(spatial_coords, k=k_sp + 1)
-    
+
     row_ind = np.repeat(np.arange(n_cells), k_sp)
     col_ind = indices[:, 1:].flatten()
     # Gaussian kernel on physical distances
     spatial_dists = dists[:, 1:].flatten()
     sigma_sp = np.median(spatial_dists) if np.median(spatial_dists) > 0 else 1.0
     sp_weights = np.exp(- (spatial_dists ** 2) / (2 * sigma_sp ** 2 + 1e-8))
-    
+
     W_spatial = sparse.csr_matrix((sp_weights, (row_ind, col_ind)), shape=(n_cells, n_cells))
     # Symmetrize spatial graph
     W_spatial = 0.5 * (W_spatial + W_spatial.T)
@@ -152,7 +152,7 @@ def run_spatial_clustering(
     # Store in adata
     domain_strings = np.array([f"Domain_{label}" for label in refined_labels])
     adata.obs["spatial_domain"] = pd.Categorical(domain_strings)
-    adata.obs["spatial_domain_raw"] = pd.Categorical([f"Domain_{l}" for l in raw_labels])
+    adata.obs["spatial_domain_raw"] = pd.Categorical([f"Domain_{lbl}" for lbl in raw_labels])
 
     # Compute domain summary statistics
     unique_domains, counts = np.unique(domain_strings, return_counts=True)
@@ -177,7 +177,7 @@ def main():
     args = parser.parse_args()
     import scanpy as sc
     adata = sc.read_h5ad(args.input)
-    summary = run_spatial_clustering(
+    run_spatial_clustering(
         adata,
         n_clusters=args.n_clusters,
         spatial_weight=args.spatial_weight,

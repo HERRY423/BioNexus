@@ -5,16 +5,16 @@ Generates publication-quality static figures (spatial domains, feature gradients
 and lightweight interactive HTML tissue slice explorers.
 """
 
-import os
-import sys
 import argparse
-import logging
 import json
-from typing import Dict, Any, Optional, List, Tuple
-import numpy as np
-import pandas as pd
-from scipy import sparse
+import logging
+import os
+from typing import Optional
+
 import matplotlib
+import numpy as np
+from scipy import sparse
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 

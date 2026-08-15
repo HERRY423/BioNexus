@@ -14,10 +14,7 @@ Usage:
 """
 
 import argparse
-import sys
-import os
-from typing import Dict, Any, Optional
-
+from typing import Optional
 
 NEXTFLOW_CONFIG_HEADER = """/*
 ========================================================================================

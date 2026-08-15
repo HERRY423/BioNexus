@@ -1,4 +1,4 @@
-# bio-research plugin v2.7.0
+# BioNexus v2.7.0
 
 [![Agent Plugins 1.0.0](https://img.shields.io/badge/Agent%20Plugins-1.0.0-blue.svg)](https://agent-plugins.org/)
 [![Model Context Protocol](https://img.shields.io/badge/MCP-2024--11--05-orange.svg)](https://modelcontextprotocol.io/)

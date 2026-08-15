@@ -4,10 +4,10 @@ Authentication & Credential Helper for Bio-Research Plugin.
 Loads, validates, and checks API credentials from environment variables or .env file.
 """
 
+import argparse
 import os
 import sys
-import argparse
-from typing import Dict, Any, Optional
+from typing import Dict, Optional
 
 if sys.platform == "win32":
     try:
@@ -80,7 +80,7 @@ def load_env_file(filepath: Optional[str] = None) -> Dict[str, str]:
             os.path.join(root_dir, ".env"),
             os.path.expanduser("~/.gemini/config/.env")
         ])
-    
+
     loaded = {}
     for cand in candidates:
         if os.path.exists(cand):
@@ -109,7 +109,7 @@ def check_status():
     print("=" * 75)
     print(f"{'Key Name':<22} | {'Provider':<24} | {'Status':<10} | {'Type'}")
     print("-" * 75)
-    
+
     configured_count = 0
     for key, meta in SUPPORTED_CREDENTIALS.items():
         val = os.environ.get(key)
@@ -118,10 +118,10 @@ def check_status():
             configured_count += 1
         else:
             status = "[--] Missing"
-        
+
         req_type = "Optional" if meta["optional"] else "Required"
         print(f"{key:<22} | {meta['provider']:<24} | {status:<16} | {req_type}")
-    
+
     print("-" * 75)
     print(f"Summary: {configured_count}/{len(SUPPORTED_CREDENTIALS)} credentials configured.")
     print("\nTips:")
@@ -134,5 +134,5 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Bio-Research Auth & Credential Helper")
     parser.add_argument("--status", "--check", action="store_true", help="Check credential configuration status")
     args = parser.parse_args()
-    
+
     check_status()

@@ -2,15 +2,7 @@
 Unit tests for Declarative YAML Instrument Mapping Engine.
 """
 
-import pytest
-import os
-from pathlib import Path
-from yaml_mapping_engine import (
-    load_mapping_configs,
-    match_instrument_rule,
-    extract_metadata_from_rules,
-    parse_with_yaml_mapping
-)
+from yaml_mapping_engine import extract_metadata_from_rules, load_mapping_configs, parse_with_yaml_mapping
 
 
 def test_load_mapping_configs():

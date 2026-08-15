@@ -5,12 +5,13 @@ Downloads experimental structures from RCSB PDB and AI predictions from AlphaFol
 parses atom coordinates, extracts CA backbones, and extracts per-residue pLDDT/B-factors.
 """
 
-import os
-import sys
 import argparse
 import logging
+import os
+import sys
 import urllib.request
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Any, Dict, Optional
+
 import numpy as np
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
@@ -41,7 +42,7 @@ def parse_pdb_text(pdb_text: str) -> Dict[str, Any]:
         if record_type == "ATOM":
             atom_name = line[12:16].strip()
             res_name = line[17:20].strip()
-            chain_id = line[21].strip()
+            line[21].strip()
             res_seq = int(line[22:26].strip())
             x = float(line[30:38].strip())
             y = float(line[38:46].strip())

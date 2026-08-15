@@ -3,26 +3,17 @@ Unit tests for Clinical Multi-Cohort Analysis suite:
 Kaplan-Meier survival estimator, Log-rank test, Cox Hazard Ratios, DepMap synthetic lethality, and immune deconvolution.
 """
 
-import pytest
-import numpy as np
-import pandas as pd
-from pathlib import Path
 import sys
+from pathlib import Path
+
+import numpy as np
 
 # Add skill script directories to sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "skills" / "clinical-cohort-analysis" / "scripts"))
 
-from survival_analyzer import (
-    compute_kaplan_meier,
-    log_rank_test,
-    calculate_cox_hazard_ratio
-)
-from synthetic_lethality import (
-    analyze_synthetic_lethal_interaction
-)
-from immune_deconvolution import (
-    deconvolve_immune_microenvironment
-)
+from immune_deconvolution import deconvolve_immune_microenvironment
+from survival_analyzer import calculate_cox_hazard_ratio, compute_kaplan_meier, log_rank_test
+from synthetic_lethality import analyze_synthetic_lethal_interaction
 
 
 def test_kaplan_meier_and_log_rank():

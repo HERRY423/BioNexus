@@ -8,12 +8,13 @@ sparse matrix vectorization, and MAD-based filtering following scverse best prac
 https://www.sc-best-practices.org/preprocessing_visualization/quality_control.html
 """
 
+from typing import Optional
+
 import anndata as ad
-import scanpy as sc
 import numpy as np
+import scanpy as sc
 import scipy.sparse as sp
 from scipy.stats import median_abs_deviation
-from typing import Optional, Tuple, Dict, Any, List
 
 
 def calculate_qc_metrics_fast(
@@ -67,7 +68,7 @@ def calculate_qc_metrics_fast(
 
         # Total counts per cell
         total_counts = np.asarray(X_csr.sum(axis=1)).ravel()
-        
+
         # Detected genes per cell (non-zero entries per row)
         n_genes_by_counts = np.diff(X_csr.indptr)
 

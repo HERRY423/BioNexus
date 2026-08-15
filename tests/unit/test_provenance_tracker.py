@@ -2,19 +2,18 @@
 Unit tests for FAIR Provenance Tracker and Publication Methods Generator.
 """
 
-import pytest
-import os
-import tempfile
 import shutil
+import tempfile
 from pathlib import Path
 
 # Add skill script directories to path
 SKILL_ROOT = Path(__file__).parent.parent.parent / "skills" / "provenance-and-audit" / "scripts"
 import sys
+
 sys.path.insert(0, str(SKILL_ROOT))
 
-from provenance_tracker import ProvenanceTracker, capture_environment_snapshot, compute_file_sha256
 from methods_generator import generate_methods_text
+from provenance_tracker import ProvenanceTracker, capture_environment_snapshot
 
 
 def test_environment_snapshot_capture():

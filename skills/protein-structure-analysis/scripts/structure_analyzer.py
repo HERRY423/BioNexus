@@ -5,11 +5,10 @@ Computes per-residue AlphaFold pLDDT confidence tiers, contact maps, radius of g
 secondary structure element estimation, and structural domain boundaries.
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, List, Tuple
+from typing import Any, Dict, Tuple
+
 import numpy as np
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")

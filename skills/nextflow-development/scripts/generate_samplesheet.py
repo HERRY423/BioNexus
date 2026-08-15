@@ -26,14 +26,14 @@ import yaml
 # Add parent directory to path for utils import
 sys.path.insert(0, str(Path(__file__).parent))
 
-from utils.file_discovery import discover_files, detect_input_type, find_index_file
+from utils.file_discovery import detect_input_type, discover_files, find_index_file
 from utils.sample_inference import (
+    extract_replicate_number,
     extract_sample_info,
     infer_tumor_normal_status,
     match_read_pairs,
-    extract_replicate_number
 )
-from utils.validators import validate_samplesheet, ValidationResult
+from utils.validators import ValidationResult, validate_samplesheet
 
 
 def load_pipeline_config(pipeline: str) -> Dict:
@@ -254,7 +254,7 @@ def _process_sarek_samples(rows: List[Dict], interactive: bool) -> List[Dict]:
     unknown = [r for r in rows if 'status' not in r]
 
     if inferred_tumor or inferred_normal:
-        print(f"\nTumor/normal inference:")
+        print("\nTumor/normal inference:")
         print(f"  Tumor samples: {len(inferred_tumor)}")
         print(f"  Normal samples: {len(inferred_normal)}")
 
@@ -271,7 +271,7 @@ def _process_sarek_samples(rows: List[Dict], interactive: bool) -> List[Dict]:
                 r['status'] = int(response)
             else:
                 r['status'] = 0  # Default to normal
-                print(f"    Defaulting to normal (0)")
+                print("    Defaulting to normal (0)")
     elif unknown:
         # Non-interactive: default to normal
         for r in unknown:
@@ -340,7 +340,7 @@ def _print_preview(rows: List[Dict], config: Dict):
     column_names = [c['name'] for c in columns]
     active_columns = [c for c in column_names if any(c in row for row in rows)]
 
-    print(f"\nPreview (first 3 rows):")
+    print("\nPreview (first 3 rows):")
     print(','.join(active_columns))
     for row in rows[:3]:
         values = [str(row.get(col, ''))[:40] for col in active_columns]  # Truncate long paths
@@ -415,7 +415,7 @@ Supported pipelines: rnaseq, sarek, atacseq
                         print(f"  - {w}")
                 sys.exit(0)
             else:
-                print(f"✗ Samplesheet validation failed")
+                print("✗ Samplesheet validation failed")
                 print(result.summary())
                 sys.exit(1)
         else:

@@ -5,11 +5,10 @@ Performs optimal 3D rigid-body rotation and translation via Kabsch SVD algorithm
 and computes sequence length-independent TM-score fold similarity.
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, Tuple, Optional
+from typing import Any, Dict, Optional, Tuple
+
 import numpy as np
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
@@ -27,7 +26,7 @@ def kabsch_superposition(
     if coords_p.shape != coords_q.shape or len(coords_p) == 0:
         raise ValueError(f"Coordinate dimensions must match: {coords_p.shape} vs {coords_q.shape}")
 
-    n_atoms = len(coords_p)
+    len(coords_p)
 
     # 1. Center coordinates at origin
     centroid_p = np.mean(coords_p, axis=0)

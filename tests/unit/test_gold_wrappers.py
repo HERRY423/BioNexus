@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -117,8 +117,9 @@ def test_spatial_scatter_writes_stable_name():
     import matplotlib
 
     matplotlib.use("Agg")
-    import anndata as ad
     import shutil
+
+    import anndata as ad
     from spatial_plot import plot_spatial
 
     n = 16

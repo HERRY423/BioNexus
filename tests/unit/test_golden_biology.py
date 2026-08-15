@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import numpy as np
 
@@ -15,12 +15,11 @@ sys.path.insert(0, str(PROJECT_ROOT / "skills" / "variant-interpretation" / "scr
 sys.path.insert(0, str(PROJECT_ROOT / "skills" / "spatial-transcriptomics" / "scripts"))
 sys.path.insert(0, str(PROJECT_ROOT / "skills" / "protein-structure-analysis" / "scripts"))
 
-from antibody_annotator import annotate_variable_domain_imgt, detect_chain_type
-from survival_analyzer import compute_kaplan_meier, log_rank_test
 from acmg_classifier import classify_acmg_deterministic, compute_bayesian_pathogenicity
+from antibody_annotator import annotate_variable_domain_imgt, detect_chain_type
 from spatial_variable_genes import calculate_morans_i_vectorized, compute_spatial_weights_matrix
 from structural_alignment import kabsch_superposition
-
+from survival_analyzer import compute_kaplan_meier, log_rank_test
 
 HERCEPTIN_VH = "EVQLVESGGGLVQPGGSLRLSCAASGFNIKDTYIHWVRQAPGKGLEWVARIYPTNGYTRYADSVKGRFTISADTSKNTAYLQMNSLRAEDTAVYYCSRWGGDGFYAMDYWGQGTLVTVSS"
 HERCEPTIN_VL = "DIQMTQSPSSLSASVGDRVTITCRASQDVNTAVAWYQQKPGKAPKLLIYSASFLYSGVPSRFSGSRSGTDFTLTISSLQPEDFATYYCQQHYTTPPTFGQGTKVEIK"

@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -18,7 +18,6 @@ pytest.importorskip("squidpy")
 pytest.importorskip("anndata")
 
 import anndata as ad
-
 from make_tiny import write_tiny_spatial
 from spatial_inspect import inspect_spatial
 from spatial_io import resolve_spatial_key

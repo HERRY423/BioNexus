@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -17,7 +17,6 @@ pytest.importorskip("scanpy")
 pytest.importorskip("anndata")
 
 import anndata as ad
-
 from qc_core import calculate_qc_metrics_fast, detect_outliers_mad, filter_cells
 from scrna_pipeline import run_scrna_gold_chain
 

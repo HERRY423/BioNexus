@@ -11,10 +11,8 @@ Usage:
 
 import json
 import sys
-import re
 from pathlib import Path
-from typing import Dict, Any, List, Optional
-from datetime import datetime
+from typing import Any, Dict, List
 
 try:
     import pandas as pd

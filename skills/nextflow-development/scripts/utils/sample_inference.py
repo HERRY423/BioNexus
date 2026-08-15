@@ -9,7 +9,6 @@ import os
 import re
 from typing import Dict, List, Optional, Tuple
 
-
 # R1/R2 patterns with priority scores (higher = more confident)
 R1_PATTERNS = [
     (r'_R1_\d{3}', 10),      # _R1_001 (Illumina standard)

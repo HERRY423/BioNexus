@@ -5,13 +5,12 @@ Handles coordinate normalization, tissue boundary filtering, spatial outlier det
 and spot/cell-level quality metrics for Visium, Xenium, MERFISH, and Stereo-seq platforms.
 """
 
-import sys
-import os
 import argparse
 import logging
-from typing import Dict, Any, Optional, Tuple
+import os
+from typing import Any, Dict, Tuple
+
 import numpy as np
-import pandas as pd
 from scipy import sparse
 from scipy.spatial import cKDTree
 
@@ -41,8 +40,8 @@ def load_platform_config(platform: str) -> Dict[str, Any]:
 def load_spatial_anndata(file_path: str, platform: str = "visium"):
     """Load spatial AnnData dataset and ensure spatial coordinates are accessible."""
     try:
+        import anndata as ad  # noqa: F401
         import scanpy as sc
-        import anndata as ad
     except ImportError:
         raise ImportError("scanpy and anndata are required for spatial preprocessing.")
 

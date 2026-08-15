@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -15,19 +15,20 @@ sys.path.insert(0, str(PROJECT_ROOT / "skills" / "clinical-cohort-analysis" / "s
 sys.path.insert(0, str(PROJECT_ROOT / "skills" / "protein-language-models" / "scripts"))
 sys.path.insert(0, str(PROJECT_ROOT / "skills" / "variant-interpretation" / "scripts"))
 
-from bio_research.contracts import GRADE_C, attach_meta, refuse
-from bio_research.inventory import SKILLS, get_skill
-from bio_research.backends import probe
+from acmg_classifier import evaluate_variant_acmg
+from clinical_report_generator import generate_clinical_report_markdown
+from immune_deconvolution import deconvolve_immune_microenvironment
+from plm_fitness_scorer import score_variant_delta_llr
 from variant_annotator import (
     annotate_variant_full,
     ingest_external_annotation,
     parse_variant_string,
     propose_acmg_criteria,
 )
-from immune_deconvolution import deconvolve_immune_microenvironment
-from plm_fitness_scorer import score_variant_delta_llr
-from clinical_report_generator import generate_clinical_report_markdown
-from acmg_classifier import evaluate_variant_acmg
+
+from bio_research.backends import probe
+from bio_research.contracts import GRADE_C, attach_meta, refuse
+from bio_research.inventory import SKILLS, get_skill
 
 
 def test_inventory_covers_seventeen_skills():

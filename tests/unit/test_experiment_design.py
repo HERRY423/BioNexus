@@ -4,26 +4,16 @@ Entity extraction, skill router, 5-phase research planner, multi-modal evidence 
 and research monograph compiler.
 """
 
-import pytest
-from pathlib import Path
 import sys
+from pathlib import Path
 
 # Add skill script directories to sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "skills" / "experiment-design-agent" / "scripts"))
 
-from skill_router import (
-    extract_biological_entities,
-    route_scientific_query
-)
-from research_planner import (
-    create_preclinical_research_plan
-)
-from evidence_synthesizer import (
-    synthesize_multimodal_evidence
-)
-from report_compiler import (
-    compile_research_monograph
-)
+from evidence_synthesizer import synthesize_multimodal_evidence
+from report_compiler import compile_research_monograph
+from research_planner import create_preclinical_research_plan
+from skill_router import extract_biological_entities, route_scientific_query
 
 
 def test_entity_extraction_and_skill_routing():

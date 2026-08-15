@@ -5,17 +5,15 @@ Constructs Weighted Nearest Neighbor (WNN) multimodal graphs, computes joint lat
 and performs unified multi-omics clustering (Seurat v4 WNN / MultiVI / MOFA+ style).
 """
 
-import os
-import sys
 import argparse
 import logging
-from typing import Dict, Any, Tuple, Optional
+from typing import Any, Dict, Tuple
+
 import numpy as np
-import pandas as pd
 from scipy import sparse
+from sklearn.cluster import SpectralClustering
 from sklearn.decomposition import PCA, TruncatedSVD
 from sklearn.neighbors import NearestNeighbors, kneighbors_graph
-from sklearn.cluster import SpectralClustering, KMeans
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
 logger = logging.getLogger("JointRNAATAC")
@@ -30,7 +28,7 @@ def compute_modality_weights(
     Compute cell-specific modality affinity weights based on cross-modality prediction accuracy (WNN).
     Returns (w_rna, w_atac) for each cell, where w_rna + w_atac = 1.0.
     """
-    n_cells = len(X_pca_rna)
+    len(X_pca_rna)
     # Estimate information content via local neighborhood preservation
     nn_rna = NearestNeighbors(n_neighbors=k_neighbors, metric="cosine").fit(X_pca_rna)
     nn_atac = NearestNeighbors(n_neighbors=k_neighbors, metric="cosine").fit(X_lsi_atac)

@@ -2,16 +2,17 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
+from local_mcp_server import TOOLS_SCHEMA
+
 from bio_research.doctor import run_doctor
 from bio_research.inventory import core_skills
-from local_mcp_server import TOOLS_SCHEMA
 
 
 def test_doctor_reports_tier_and_forbids_clia():

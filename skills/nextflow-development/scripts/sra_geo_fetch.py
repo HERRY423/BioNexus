@@ -20,29 +20,27 @@ Examples:
 import argparse
 import json
 import logging
-import os
 import re
-import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 # Add utils to path
 sys.path.insert(0, str(Path(__file__).parent))
 from utils.ncbi_utils import (
     check_network_access,
+    download_file,
+    estimate_download_size,
+    fetch_ena_fastq_urls,
     fetch_geo_metadata,
-    fetch_sra_study_accession,
     fetch_sra_run_info,
     fetch_sra_run_info_detailed,
-    fetch_ena_fastq_urls,
-    download_file,
+    fetch_sra_study_accession,
     format_file_size,
-    estimate_download_size,
-    group_samples_by_type,
     format_sample_groups_table,
+    group_samples_by_type,
 )
 
 # Set up logging
@@ -522,17 +520,17 @@ def cmd_download(args):
             success = download_file(url, filepath, timeout=args.timeout)
             if success:
                 successful += 1
-                print(f"    ✓ Done")
+                print("    ✓ Done")
             else:
                 failed.append(filename)
-                print(f"    ✗ Failed")
+                print("    ✗ Failed")
 
-    print(f"\n📊 Download summary:")
+    print("\n📊 Download summary:")
     print(f"  ✓ Successful: {successful + existing}")
     print(f"  ✗ Failed: {len(failed)}")
 
     if failed:
-        print(f"\nFailed downloads:")
+        print("\nFailed downloads:")
         for f in failed:
             print(f"  - {f}")
         return 1
@@ -649,13 +647,13 @@ def cmd_samplesheet(args):
     if genome:
         print(f"   Genome: {genome}")
 
-    print(f"\n💡 Suggested command:")
+    print("\n💡 Suggested command:")
     print(f"   nextflow run nf-core/{pipeline} \\")
     print(f"       --input {output_path} \\")
-    print(f"       --outdir results \\")
+    print("       --outdir results \\")
     if genome:
         print(f"       --genome {genome} \\")
-    print(f"       -profile docker")
+    print("       -profile docker")
 
     return 0
 
