@@ -10,15 +10,20 @@ on:
 
 jobs:
   lint:
-    name: Code Quality & Linting
+    name: Code Quality & Config Integrity
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install ruff
-      - run: ruff check .
+      - run: pip install ruff pyyaml
+      - name: Run Ruff Linter
+        run: ruff check .
+      - name: Check Canonical Registry Drift & Validate Endpoints
+        run: |
+          python scripts/registry_compiler.py --check
+          python scripts/registry_compiler.py --validate-endpoints
 
   test:
     name: Unit & Integration Tests (${{ matrix.os }}, Python ${{ matrix.python-version }})

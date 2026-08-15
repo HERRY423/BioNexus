@@ -1,0 +1,147 @@
+# ==============================================================================
+# BioNexus Canonical Platform & MCP Server Registry
+# Single Source of Truth (SSOT) for all client manifests & adapters
+# ==============================================================================
+
+package:
+  name: "bio-research"
+  display_name: "BioNexus"
+  version: "2.7.0"
+  description: "Agent skill pack that routes biomedical analyses to community tools (scanpy, squidpy, scvi-tools, nf-core, allotropy) or named local heuristics, with explicit evidence grades and refusal when a gold-standard backend is missing."
+  author:
+    name: "BioNexus Team"
+  license: "Apache-2.0"
+  keywords:
+    - "bio-research"
+    - "bioinformatics"
+    - "single-cell"
+    - "scanpy"
+    - "scvi-tools"
+    - "nextflow"
+    - "nf-core"
+    - "allotrope"
+    - "mcp"
+    - "variant-interpretation"
+    - "spatial-transcriptomics"
+    - "squidpy"
+
+mcp_servers:
+  local:
+    local-bio-mcp:
+      enabled: true
+      type: "stdio"
+      command: "python"
+      args:
+        - "${PLUGIN_ROOT}/scripts/local_mcp_server.py"
+      cwd: "${PLUGIN_ROOT}"
+      description: "BioNexus local fallback MCP server (UniProt, Ensembl, gnomAD, PDB, AlphaFold DB, Reactome, STRING, GEO, GTEx)"
+
+  hosted:
+    pubmed:
+      name: "NCBI PubMed"
+      url: "https://pubmed.mcp.claude.com/mcp"
+      type: "streamable-http"
+      claude_type: "http"
+      enabled: true
+      category: "literature"
+      description: "Biomedical literature citations and abstracts from PubMed"
+
+    biorender:
+      name: "BioRender"
+      url: "https://mcp.services.biorender.com/mcp"
+      type: "streamable-http"
+      claude_type: "http"
+      enabled: true
+      category: "visualization"
+      description: "Scientific illustration and diagram generation"
+
+    biorxiv:
+      name: "bioRxiv / medRxiv"
+      url: "https://hcls.mcp.claude.com/biorxiv/mcp"
+      type: "streamable-http"
+      claude_type: "http"
+      enabled: true
+      category: "preprints"
+      description: "Preprint servers for biology and medicine via Europe PMC"
+
+    consensus:
+      name: "Consensus"
+      url: "https://mcp.consensus.app/mcp"
+      type: "streamable-http"
+      claude_type: "http"
+      enabled: true
+      category: "literature"
+      description: "AI-powered scientific research consensus search"
+
+    c-trials:
+      name: "ClinicalTrials.gov"
+      url: "https://hcls.mcp.claude.com/clinical_trials/mcp"
+      type: "streamable-http"
+      claude_type: "http"
+      enabled: true
+      category: "clinical"
+      description: "Clinical study protocols and results registry from ClinicalTrials.gov"
+
+    chembl:
+      name: "ChEMBL"
+      url: "https://hcls.mcp.claude.com/chembl/mcp"
+      type: "streamable-http"
+      claude_type: "http"
+      enabled: true
+      category: "chemistry"
+      description: "Bioactive molecules, targets, and drug discovery bioactivities database"
+
+    synapse:
+      name: "Synapse Sage Bionetworks"
+      url: "https://mcp.synapse.org/mcp"
+      type: "streamable-http"
+      claude_type: "http"
+      enabled: true
+      category: "data_repository"
+      description: "Collaborative biomedical data sharing platform"
+
+    wiley:
+      name: "Wiley Online Library"
+      url: "https://connector.scholargateway.ai/mcp"
+      type: "streamable-http"
+      claude_type: "http"
+      enabled: true
+      category: "literature"
+      description: "Scientific literature connector for Wiley journals"
+
+    owkin:
+      name: "Owkin"
+      url: "https://mcp.k.owkin.com/mcp"
+      type: "streamable-http"
+      claude_type: "http"
+      enabled: true
+      category: "precision_medicine"
+      description: "AI platform for precision medicine and oncology"
+
+    ot:
+      name: "Open Targets"
+      url: "https://mcp.platform.opentargets.org/mcp"
+      type: "streamable-http"
+      claude_type: "http"
+      enabled: true
+      category: "target_discovery"
+      description: "Drug target discovery and validation platform"
+
+    benchling:
+      name: "Benchling"
+      url: ""
+      type: "streamable-http"
+      claude_type: "http"
+      enabled: false
+      category: "lims"
+      description: "Life sciences R&D informatics cloud platform (endpoint placeholder - disabled)"
+
+clients:
+  agent_plugins:
+    plugin_manifest: "plugin.json"
+    mcp_manifest: "mcp.json"
+  claude:
+    plugin_manifest: ".claude-plugin/plugin.json"
+    mcp_manifest: ".mcp.json"
+  codex:
+    config_path: ".codex/config.json"
