@@ -324,25 +324,6 @@ def route_scientific_intent(
 
     # 5. Check Gold Backend Presence
     backend_import = cap.backend.import_name
-    if backend_import and backend_import != "none":
-        b_status = probe(backend_import)
-        if not b_status.available:
-            return RoutingDecision(
-                status=RoutingStatus.ABSTAIN,
-                matched_capability=cap,
-                target_skill=skill_name,
-                recommended_script=None,
-                recommended_command=f"pip install bionexus[{cap.backend.extra or 'all'}]",
-                rationale=f"Required gold-standard backend '{cap.backend.canonical_name}' is missing ({b_status.lifecycle_state}).",
-                violations=[f"Backend '{cap.backend.canonical_name}' is not installed."],
-                remedies=[f"Install required backend via `pip install bionexus[{cap.backend.extra}]` or `pip install {cap.backend.import_name}`."],
-                evidence_card_template=EvidenceCard(
-                    execution_state=ExecutionState.REFUSED.value,
-                    details={"missing_backend": cap.backend.canonical_name},
-                ),
-            )
-
-    # 6. PERMITTED (Fully scientifically valid execution path)
     script_map = {
         "scrna.pseudobulk_de": "skills/single-cell-rna-qc/scripts/scrna_deseq.py",
         "scrna.exploratory_clustering": "skills/single-cell-rna-qc/scripts/scrna_pipeline.py",
@@ -355,6 +336,42 @@ def route_scientific_intent(
     }
     rec_script = script_map.get(cap.id)
 
+    if backend_import and backend_import != "none":
+        b_status = probe(backend_import)
+        if not b_status.available:
+            if not is_default:
+                if allow_degraded:
+                    return RoutingDecision(
+                        status=RoutingStatus.DEGRADED_ADVISORY,
+                        matched_capability=cap,
+                        target_skill=skill_name,
+                        recommended_script=rec_script,
+                        recommended_command=f"pip install bionexus[{cap.backend.extra or 'all'}]",
+                        rationale=f"Canonical backend '{cap.backend.canonical_name}' is not installed ({b_status.state.value}). Executing via Grade C heuristic fallback for legacy skill '{skill_name}'.",
+                        violations=[f"Backend '{cap.backend.canonical_name}' is not installed."],
+                        remedies=[f"Install required backend via `pip install bionexus[{cap.backend.extra}]` or `pip install {cap.backend.import_name}`."],
+                        evidence_card_template=EvidenceCard(
+                            execution_state=ExecutionState.DEGRADED.value,
+                            details={"missing_backend": cap.backend.canonical_name},
+                        ),
+                    )
+                else:
+                    return RoutingDecision(
+                        status=RoutingStatus.ABSTAIN,
+                        matched_capability=cap,
+                        target_skill=skill_name,
+                        recommended_script=None,
+                        recommended_command=f"pip install bionexus[{cap.backend.extra or 'all'}]",
+                        rationale=f"Strict mode refusal: Canonical backend '{cap.backend.canonical_name}' for legacy skill '{skill_name}' is missing.",
+                        violations=[f"Backend '{cap.backend.canonical_name}' is not installed."],
+                        remedies=[f"Install required backend via `pip install bionexus[{cap.backend.extra}]` or `pip install {cap.backend.import_name}`."],
+                        evidence_card_template=EvidenceCard(
+                            execution_state=ExecutionState.REFUSED.value,
+                            details={"missing_backend": cap.backend.canonical_name},
+                        ),
+                    )
+
+    # 6. PERMITTED (Fully scientifically valid execution path)
     return RoutingDecision(
         status=RoutingStatus.PERMITTED,
         matched_capability=cap,

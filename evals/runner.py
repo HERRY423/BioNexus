@@ -293,12 +293,9 @@ def run_single_case(
                 )
         else:
             if actual_status != case.expected_status.value:
-                if actual_status == "ABSTAIN" and any("backend" in v.lower() or "installed" in v.lower() or "not available" in v.lower() for v in decision.violations) and case.expected_status == ExpectedStatus.PERMITTED:
-                    pass
-                else:
-                    failure_reasons.append(
-                        f"Status mismatch: expected '{case.expected_status.value}', got '{actual_status}'"
-                    )
+                failure_reasons.append(
+                    f"Status mismatch: expected '{case.expected_status.value}', got '{actual_status}'"
+                )
 
             if case.expected_capability and actual_cap != case.expected_capability:
                 failure_reasons.append(

@@ -61,12 +61,13 @@
 - id: route-survival-km-001
   category: routing
   prompt: "Estimate Kaplan-Meier survival curves and perform log-rank test for CD8 high vs low cohorts"
-  expected_status: PERMITTED
+  expected_status: DEGRADED_ADVISORY
   expected_capability: survival.kaplan_meier
+  allow_degraded: true
   data_metadata:
     positive_durations: true
     n_events: 42
-  description: "Clinical biomarker survival estimation"
+  description: "Clinical biomarker survival estimation via heuristic fallback advisory"
 
 - id: route-scvi-vae-001
   category: routing

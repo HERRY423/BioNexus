@@ -221,23 +221,14 @@ class CapabilityContract:
             violations.append(trigger.description)
             remedies.append(trigger.remedy)
 
-        # 3. Backend Probe Check
+        # 3. Backend Availability Note
         backend_name = self.backend.import_name
         if backend_name and backend_name != "none":
             status = probe(backend_name)
             if not status.available:
-                trigger = next(
-                    (r for r in self.refusal_conditions if r.condition_id == "missing_backend"),
-                    RefusalTrigger(
-                        condition_id="missing_backend",
-                        description=f"Required gold-standard backend '{self.backend.canonical_name}' is not installed.",
-                        remedy=f"Install via `pip install bionexus[{self.backend.extra}]` or `pip install {self.backend.import_name}`.",
-                        violated_rule="Gold-standard backend requirement",
-                    ),
+                remedies.append(
+                    f"Recommended backend '{self.backend.canonical_name}' not detected. Install via `pip install {self.backend.import_name}` or `pip install bionexus[{self.backend.extra}]`."
                 )
-                triggered_refusals.append(trigger)
-                violations.append(trigger.description)
-                remedies.append(trigger.remedy)
 
         # 4. Synthesize Evaluation
         permitted = len(triggered_refusals) == 0 and len(violations) == 0

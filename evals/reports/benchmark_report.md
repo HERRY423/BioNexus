@@ -1,5 +1,5 @@
 # [BioNexus Eval 2.0] Multi-Tier Scientific Agent Benchmark
-**Timestamp**: `2026-08-15T16:37:04.603938+00:00` | **Total Cases**: `39` | **Overall Accuracy**: `100.0%`
+**Timestamp**: `2026-08-15T16:45:12.811301+00:00` | **Total Cases**: `39` | **Overall Accuracy**: `100.0%`
 
 ## Multi-Tier Benchmark Levels
 
@@ -17,13 +17,13 @@
 |---|---|---|---|
 | **Routing Accuracy** | `100.0%` | `> 95.0%` | Correct scientific capability matched |
 | **Unsafe Invocation Rate** | `0.0%` | `0.0%` | Frequency of running invalid analyses |
-| **Abstention Precision** | `78.9%` | `> 95.0%` | Justified scientific refusals |
+| **Abstention Precision** | `100.0%` | `> 95.0%` | Justified scientific refusals |
 | **Abstention Recall** | `100.0%` | `> 95.0%` | Catching required refusal conditions |
 | **Capability Hallucination Rate** | `0.0%` | `0.0%` | Zero unverified cell-types/claims |
 | **Backend Fidelity** | `100.0%` | `> 95.0%` | Accurate toolchain & degradation honesty |
 | **Scientific Semantic Error Rate** | `0.0%` | `0.0%` | Confusion of raw/log, cell/sample |
 | **Evidence Calibration Score** | `100.0%` | `> 90.0%` | Epistemic card alignment & OCE penalty |
-| **Composite Reliability Index (CRI)** | **`96.8%`** | `> 95.0%` | **Unified Scientific Quality Index** |
+| **Composite Reliability Index (CRI)** | **`100.0%`** | `> 95.0%` | **Unified Scientific Quality Index** |
 
 ---
 
@@ -33,16 +33,16 @@
 - **Underconfidence Rate (Epistemic Timidity)**: `0.0%`
 - **Ordinal Calibration Error (OCE)**: `0.000` (Mean rank distance)
 - **Brier Calibration Score**: `100.0%`
-- **Maturity Macro-F1**: `94.8%`
+- **Maturity Macro-F1**: `100.0%`
 
 ### Maturity Confusion Matrix (Rows: Expected Warrant | Cols: Predicted Warrant)
 
 | Expected \ Pred | ABSTAIN | UNASSESSED | PRELIMINARY | FRAGILE | SUPPORTED |
 |---|---|---|---|---|---|
 | **ABSTAIN** | 15 | 0 | 0 | 0 | 0 |
-| **UNASSESSED** | 4 | 12 | 0 | 0 | 0 |
+| **UNASSESSED** | 0 | 15 | 0 | 0 | 0 |
 | **PRELIMINARY** | 0 | 0 | 3 | 0 | 0 |
-| **FRAGILE** | 0 | 0 | 0 | 1 | 0 |
+| **FRAGILE** | 0 | 0 | 0 | 2 | 0 |
 | **SUPPORTED** | 0 | 0 | 0 | 0 | 4 |
 
 ---
