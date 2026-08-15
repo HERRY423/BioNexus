@@ -159,7 +159,7 @@ python scripts/doctor.py
 ==============================================================================
                           BioNexus Environment Doctor
 ==============================================================================
-Plugin Version:  2.7.0
+Plugin Version:  0.8.0
 Tier:            FULL (scverse ready, spatial ready)
 Python Runtime:  3.11.x (CPython)
 

@@ -1,4 +1,4 @@
-"""2.7.0 gold wrappers: scrublet, pydeseq2, spatial table, launch, narrative."""
+"""BioNexus gold wrappers: scrublet, pydeseq2, spatial table, launch, narrative."""
 
 from __future__ import annotations
 

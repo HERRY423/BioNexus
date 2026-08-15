@@ -10,7 +10,7 @@
     {
       "name": "bionexus",
       "description": "Agent skill pack that routes biomedical analyses to community tools (scanpy, squidpy, scvi-tools, nf-core, allotropy) or named local heuristics, with explicit evidence grades and refusal when a gold-standard backend is missing.",
-      "version": "2.7.0",
+      "version": "0.8.0",
       "source": {
         "source": "local",
         "path": "."
