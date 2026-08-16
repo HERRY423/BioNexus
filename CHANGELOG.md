@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### 🔒 Fixed (Single source of truth for the plugin mirror trees)
+- **Dual skill-tree drift eliminated**: `skills/single-cell-rna-qc/scripts/scrna_pipeline.py` had diverged by 49 lines between the canonical root tree and the `plugins/bionexus/skills/` copy (the mirror lacked `--run-dir` / Run Capsule support). The mirror is now regenerated from the root; both trees are byte-identical.
+- **Drift detection now covers code trees, not just JSON manifests**: `bionexus registry --check` and `scripts/registry_compiler.py --check` verify `skills/` and `scripts/` are byte-identical to their `plugins/bionexus/` mirrors (content edits, missing files, and stale mirror-only files all fail CI); `--generate` resynchronizes the mirrors automatically. Ignored artifacts (`__pycache__`, logs, doctor cache) are excluded.
+- **Rule**: edit only the canonical root `skills/` and `scripts/` trees — the `plugins/bionexus/` copies are compiler-generated.
+- **Removed the broken `plugins/codex/` scaffold**: its only manifest (`.codex-plugin/plugin.json`) declared `"skills": "./skills/"` pointing at a directory that never existed there; nothing in the repo referenced it.
+- **Completed the self-contained `plugins/bionexus/` plugin root**: added the missing `plugins/bionexus/.mcp.json` required by its `.codex-plugin/plugin.json` (`"mcpServers": "./.mcp.json"`), so every relative reference in the nested manifests now resolves.
+- New unit tests: repository-level mirror zero-drift, all three divergence classes (edited / missing / stale) plus sync repair, and self-containedness of the plugin-root manifests.
+
+---
+
 ## [0.8.0] - 2026-08-15
 
 ### 🚀 Added
