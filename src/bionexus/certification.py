@@ -1,0 +1,334 @@
+"""
+BioNexus Capability Certification Program (BNS-010).
+
+A skill is documentation; a **Certified Scientific Capability** is an
+executable contract that has survived a defined evidence program.
+
+Tiers:
+- CERTIFIED        all 14 criteria satisfied with recorded evidence
+- VALIDATED        all core criteria (backend, contract, invariants,
+                   failure modes, positive + negative tests) satisfied
+- EXPERIMENTAL     formal contract exists with at least one passing test class
+- CONNECTOR-ONLY   data-plane connector without scientific execution claims
+
+Tier assignment is COMPUTED from evidence records, never asserted by hand:
+a capability that lacks evidence for a criterion cannot reach the tier that
+requires it (structural honesty, mirroring the frontier track philosophy).
+The per-capability gap report is the certification roadmap.
+"""
+
+from __future__ import annotations
+
+from dataclasses import asdict, dataclass, field
+from enum import Enum
+from typing import Any, Dict, List
+
+from bionexus.abi import capability_abis
+from bionexus.capabilities import CANONICAL_CAPABILITIES
+from bionexus.failures import failure_modes_by_capability
+
+# ==============================================================================
+# The 14 Certification Criteria (BNS-010 §2)
+# ==============================================================================
+
+CERTIFICATION_CRITERIA: Dict[str, str] = {
+    "reference_backend": "Canonical community backend declared, versioned, and probed at runtime.",
+    "formal_input_contract": "Complete ABI input contract: allowed matrix states, coordinate types, required inputs.",
+    "invariants": "Machine-checkable preconditions and deterministic refusal triggers.",
+    "known_failure_modes": "Failure taxonomy modes (BN-Fxxx) linked, with detection rules.",
+    "positive_test": "Verified execution producing the expected scientific result.",
+    "negative_test": "Invalid inputs and invalid requests refused deterministically.",
+    "adversarial_test": "Coercion / jailbreak attempts to bypass invariants blocked.",
+    "public_reference_dataset": "Execution validated against a public dataset or truth set.",
+    "independent_ground_truth": "Ground truth independent of the implementation under test.",
+    "parameter_perturbation": "Stability audit across a declared parameter sweep.",
+    "degradation_test": "Missing-backend behavior tested (refuse or disclose-degrade).",
+    "provenance_test": "Provenance sidecar completeness and integrity tested.",
+    "cross_host_test": "L2 claim audit executed across >= 2 host providers with agreement reported.",
+    "external_reviewer": "Independent scientific review recorded (reviewer, date, findings).",
+}
+
+CORE_CRITERIA = [
+    "reference_backend",
+    "formal_input_contract",
+    "invariants",
+    "known_failure_modes",
+    "positive_test",
+    "negative_test",
+]
+
+
+class CertificationTier(str, Enum):
+    """Capability certification tiers (BNS-010 §1)."""
+
+    CERTIFIED = "CERTIFIED"
+    VALIDATED = "VALIDATED"
+    EXPERIMENTAL = "EXPERIMENTAL"
+    CONNECTOR_ONLY = "CONNECTOR-ONLY"
+
+
+@dataclass
+class CriterionEvidence:
+    """Evidence for one certification criterion."""
+
+    satisfied: bool
+    evidence: str = ""  # pointer: test file, eval case id, dataset, review record
+    note: str = ""
+
+
+@dataclass
+class CertificationRecord:
+    """Computed certification state for one capability."""
+
+    capability_id: str
+    criteria: Dict[str, CriterionEvidence] = field(default_factory=dict)
+    tier: CertificationTier = CertificationTier.EXPERIMENTAL
+    satisfied_count: int = 0
+    blocking_for_certified: List[str] = field(default_factory=list)
+    blocking_for_validated: List[str] = field(default_factory=list)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "capability_id": self.capability_id,
+            "tier": self.tier.value,
+            "satisfied_count": self.satisfied_count,
+            "total_criteria": len(CERTIFICATION_CRITERIA),
+            "blocking_for_certified": self.blocking_for_certified,
+            "blocking_for_validated": self.blocking_for_validated,
+            "criteria": {k: asdict(v) for k, v in self.criteria.items()},
+        }
+
+
+# ==============================================================================
+# Evidence records (honest, pointer-backed; gaps are the roadmap)
+# ==============================================================================
+
+_EVIDENCE: Dict[str, Dict[str, tuple[bool, str, str]]] = {
+    "scrna.pseudobulk_de": {
+        "reference_backend": (True, "pydeseq2 >= 0.4.0 (bionexus[deseq])", "ABI execution reference"),
+        "formal_input_contract": (True, "abi.get_capability_abi('scrna.pseudobulk_de')", "raw_counts only; sample_design required"),
+        "invariants": (True, "preconditions: min_replicates, raw_integer_counts", ""),
+        "known_failure_modes": (True, "BN-F001, BN-F002, BN-F006, BN-F011, BN-F012", ""),
+        "positive_test": (True, "l3-outcome-pseudobulk-deseq-003 (planted DEG g0 recovered)", "full-extras CI matrix"),
+        "negative_test": (True, "refuse-pseudorep-001/002, refuse-normalized-counts-001", ""),
+        "adversarial_test": (True, "adv-force-pseudorep-001, adv-log-as-raw-001", ""),
+        "public_reference_dataset": (False, "", "No public count matrix vendored; only synthetic planted fixtures"),
+        "independent_ground_truth": (True, "Planted DEG with known fold change (truth independent of PyDESeq2)", ""),
+        "parameter_perturbation": (False, "", "No declared parameter sweep audit for the DE model"),
+        "degradation_test": (False, "", "No dedicated missing-pydeseq2 behavior case in the eval suites"),
+        "provenance_test": (True, "tests/unit/test_provenance_tracker.py, test_artifacts.py", ""),
+        "cross_host_test": (False, "", "L2 replay only; no >= 2 provider agreement run recorded"),
+        "external_reviewer": (False, "", "No independent scientific review recorded"),
+    },
+    "scrna.exploratory_clustering": {
+        "reference_backend": (True, "scanpy >= 1.10.0 (bionexus[goldchain])", ""),
+        "formal_input_contract": (True, "abi.get_capability_abi('scrna.exploratory_clustering')", ""),
+        "invariants": (True, "preconditions: min_cells_and_genes", ""),
+        "known_failure_modes": (True, "BN-F001, BN-F003, BN-F005, BN-F007, BN-F011", ""),
+        "positive_test": (True, "l3-outcome-marker-recovery-001 (CD3D/MS4A1/CD14 planted markers)", ""),
+        "negative_test": (True, "refuse-forbidden-celltype-promotion-003 (claim-level refusal)", "no input-level refusal case for n_cells < 20 yet"),
+        "adversarial_test": (True, "adv-guess-celltypes-001 (coercion; claims audited)", ""),
+        "public_reference_dataset": (False, "", "Synthetic PBMC-like fixture; no vendored PBMC3K-class dataset"),
+        "independent_ground_truth": (True, "Planted canonical marker genes", ""),
+        "parameter_perturbation": (True, "l3-outcome-clustering-ari-stability-004 (resolution sweep, ARI >= 0.80)", ""),
+        "degradation_test": (True, "tests/unit/test_backend_matrix.py goldchain-missing honesty paths", "covers stack absence, not a dedicated eval case"),
+        "provenance_test": (True, "tests/unit/test_provenance_tracker.py", ""),
+        "cross_host_test": (False, "", "Single-host replay only"),
+        "external_reviewer": (False, "", "No independent scientific review recorded"),
+    },
+    "spatial.morans_svg": {
+        "reference_backend": (True, "squidpy >= 1.3.0 (bionexus[spatial])", ""),
+        "formal_input_contract": (True, "abi.get_capability_abi('spatial.morans_svg')", "coordinates required; physical | justified_spatial_embedding"),
+        "invariants": (True, "preconditions: spatial_coords_present, non_degenerate_geometry", ""),
+        "known_failure_modes": (True, "BN-F003, BN-F007, BN-F009, BN-F011", ""),
+        "positive_test": (True, "l3-outcome-spatial-svg-002 (planted SVG_LEFT gradient recovered)", ""),
+        "negative_test": (True, "refuse-spatial-degenerate-001, semantics-spatial-degenerate-coords-001", ""),
+        "adversarial_test": (False, "", "No spatial adversarial/jailbreak case in the suites"),
+        "public_reference_dataset": (False, "", "Synthetic coordinates only"),
+        "independent_ground_truth": (True, "Planted spatial gradient genes", ""),
+        "parameter_perturbation": (False, "", "No KNN-k sweep audit wired for Moran's I"),
+        "degradation_test": (False, "", "No dedicated missing-squidpy behavior case"),
+        "provenance_test": (True, "tests/unit/test_provenance_tracker.py", ""),
+        "cross_host_test": (False, "", "Single-host replay only"),
+        "external_reviewer": (False, "", "No independent scientific review recorded"),
+    },
+    "survival.kaplan_meier": {
+        "reference_backend": (True, "lifelines >= 0.27.0 (bionexus[survival])", ""),
+        "formal_input_contract": (True, "abi.get_capability_abi('survival.kaplan_meier')", ""),
+        "invariants": (True, "preconditions: positive_durations, non_zero_events", ""),
+        "known_failure_modes": (True, "BN-F006, BN-F010, BN-F011", ""),
+        "positive_test": (True, "tests/unit/test_clinical_cohort.py (KM estimation on fixtures)", ""),
+        "negative_test": (True, "refuse-survival-all-censored-001", ""),
+        "adversarial_test": (False, "", "No survival adversarial case"),
+        "public_reference_dataset": (False, "", "No public cohort vendored"),
+        "independent_ground_truth": (False, "", "Fixture truth generated alongside the analyzer; no independent truth set"),
+        "parameter_perturbation": (False, "", "Not applicable to non-parametric KM point estimation; no band-width/CI sensitivity audit"),
+        "degradation_test": (True, "backend-lifelines-missing-001 (degraded advisory), backend-lifelines-strict-001 (strict refusal)", ""),
+        "provenance_test": (True, "tests/unit/test_provenance_tracker.py", ""),
+        "cross_host_test": (False, "", "Single-host replay only"),
+        "external_reviewer": (False, "", "No independent scientific review recorded"),
+    },
+    "scvi.probabilistic_vae": {
+        "reference_backend": (True, "scvi-tools >= 1.0.0 (bionexus[scverse])", ""),
+        "formal_input_contract": (True, "abi.get_capability_abi('scvi.probabilistic_vae')", "raw_counts only"),
+        "invariants": (True, "preconditions: raw_counts_only", ""),
+        "known_failure_modes": (True, "BN-F001, BN-F003, BN-F007, BN-F011", ""),
+        "positive_test": (True, "tests/unit/test_gold_wrappers.py scvi smoke paths (full-extras matrix)", ""),
+        "negative_test": (True, "refuse-scvi-normalized-001", ""),
+        "adversarial_test": (False, "", "No scVI adversarial case"),
+        "public_reference_dataset": (False, "", "No public dataset vendored"),
+        "independent_ground_truth": (False, "", "No independent integration-quality truth set"),
+        "parameter_perturbation": (False, "", "No seed/architecture sweep audit"),
+        "degradation_test": (False, "", "No dedicated missing-scvi behavior case"),
+        "provenance_test": (True, "tests/unit/test_provenance_tracker.py", ""),
+        "cross_host_test": (False, "", "Single-host replay only"),
+        "external_reviewer": (False, "", "No independent scientific review recorded"),
+    },
+    "allotrope.format_conversion": {
+        "reference_backend": (True, "allotropy >= 0.1.30 (bionexus[allotrope])", ""),
+        "formal_input_contract": (True, "abi.get_capability_abi('allotrope.format_conversion')", ""),
+        "invariants": (True, "preconditions: supported_instrument_or_mapping", ""),
+        "known_failure_modes": (True, "BN-F010, BN-F011", ""),
+        "positive_test": (True, "tests/unit/test_yaml_mapping_engine.py + instrument conversion suites", ""),
+        "negative_test": (True, "claim-gxppart11-001 (compliance claim refused at routing)", "missing_mapping input-level case not in eval suites"),
+        "adversarial_test": (False, "", "No allotrope adversarial case"),
+        "public_reference_dataset": (False, "", "No public instrument record set vendored"),
+        "independent_ground_truth": (False, "", "Round-trip checks are self-referential; no external ASM truth set"),
+        "parameter_perturbation": (False, "", "Not applicable: deterministic syntactic mapping"),
+        "degradation_test": (False, "", "No dedicated missing-allotropy behavior case"),
+        "provenance_test": (True, "tests/unit/test_kernel_and_honesty.py::test_provenance_sidecar_disclaims_part11", ""),
+        "cross_host_test": (False, "", "Single-host replay only"),
+        "external_reviewer": (False, "", "No independent scientific review recorded"),
+    },
+    "nextflow.pipeline_launch": {
+        "reference_backend": (True, "local deterministic generator (nf-core schema)", ""),
+        "formal_input_contract": (True, "abi.get_capability_abi('nextflow.pipeline_launch')", ""),
+        "invariants": (True, "preconditions: valid_paired_reads", ""),
+        "known_failure_modes": (True, "BN-F004, BN-F011", ""),
+        "positive_test": (True, "tests/unit/test_nextflow_preflight.py (samplesheet validation)", ""),
+        "negative_test": (False, "Refusal trigger missing_fastq_files is contract-defined", "not exercised by any eval suite or unit test"),
+        "adversarial_test": (False, "", "No nextflow adversarial case"),
+        "public_reference_dataset": (False, "", "No public samplesheet corpus vendored"),
+        "independent_ground_truth": (False, "", "Launch artifacts are not analytical outcomes; no truth set applies"),
+        "parameter_perturbation": (False, "", "Not applicable: artifact generation"),
+        "degradation_test": (False, "", "Not exercised"),
+        "provenance_test": (True, "tests/unit/test_artifacts.py", ""),
+        "cross_host_test": (False, "", "Single-host replay only"),
+        "external_reviewer": (False, "", "No independent scientific review recorded"),
+    },
+    "variant.acmg_classification": {
+        "reference_backend": (True, "local deterministic Bayesian combiner (bionexus)", ""),
+        "formal_input_contract": (True, "abi.get_capability_abi('variant.acmg_classification')", ""),
+        "invariants": (True, "preconditions: no_auto_pvs1_without_mechanism", ""),
+        "known_failure_modes": (True, "BN-F004, BN-F006, BN-F008, BN-F011", ""),
+        "positive_test": (True, "tests/unit/test_golden_biology.py + test_kernel_and_honesty.py ACMG paths", ""),
+        "negative_test": (True, "claim-acmg-clinical-001 (clinical report request refused); PVS1 mechanism guard tests", ""),
+        "adversarial_test": (False, "", "No variant adversarial case"),
+        "public_reference_dataset": (True, "evals/datasets/benchmarks/clinvar_controls.json (vendored ClinVar-derived controls)", ""),
+        "independent_ground_truth": (True, "ClinVar expert-reviewed classifications (independent of the combiner)", ""),
+        "parameter_perturbation": (False, "", "Deterministic rule combination; no probabilistic sweep applicable"),
+        "degradation_test": (False, "", "No dedicated behavior case"),
+        "provenance_test": (True, "tests/unit/test_provenance_tracker.py", ""),
+        "cross_host_test": (False, "", "Single-host replay only"),
+        "external_reviewer": (False, "", "No independent scientific review recorded"),
+    },
+}
+
+
+# ==============================================================================
+# Tier computation
+# ==============================================================================
+
+
+def compute_tier(criteria: Dict[str, CriterionEvidence | bool]) -> CertificationTier:
+    """
+    Compute the certification tier from criterion evidence (BNS-010 §3).
+
+    CERTIFIED requires ALL criteria; VALIDATED requires all core criteria;
+    EXPERIMENTAL requires a formal contract plus at least one passing test
+    class. Tiers are never asserted past their evidence. Values may be
+    CriterionEvidence records or plain booleans.
+    """
+
+    def ok(name: str) -> bool:
+        ev = criteria.get(name)
+        if isinstance(ev, bool):
+            return ev
+        return ev is not None and ev.satisfied
+
+    if all(ok(name) for name in CERTIFICATION_CRITERIA):
+        return CertificationTier.CERTIFIED
+
+    if all(ok(c) for c in CORE_CRITERIA):
+        return CertificationTier.VALIDATED
+
+    if ok("formal_input_contract") and (ok("positive_test") or ok("negative_test")):
+        return CertificationTier.EXPERIMENTAL
+
+    return CertificationTier.CONNECTOR_ONLY
+
+
+def certify_capability(capability_id: str) -> CertificationRecord:
+    """Compute the honest certification record for a capability."""
+    if capability_id not in CANONICAL_CAPABILITIES:
+        raise KeyError(f"Unknown capability '{capability_id}'. Available: {sorted(CANONICAL_CAPABILITIES)}")
+
+    evidence = _EVIDENCE.get(capability_id)
+    criteria: Dict[str, CriterionEvidence]
+    if evidence is None:
+        # No recorded evidence at all: connector-grade only.
+        criteria = {name: CriterionEvidence(satisfied=False, evidence="", note="no evidence recorded") for name in CERTIFICATION_CRITERIA}
+    else:
+        criteria = {
+            name: CriterionEvidence(satisfied=sat, evidence=ptr, note=note)
+            for name, (sat, ptr, note) in evidence.items()
+        }
+        # Structural cross-checks: contract-derived criteria cannot be claimed
+        # without their live sources (mirrors the drift-guard philosophy).
+        abis = capability_abis()
+        if not abis[capability_id].input_contract.required_inputs:
+            criteria["formal_input_contract"].satisfied = False
+        if not CANONICAL_CAPABILITIES[capability_id].preconditions:
+            criteria["invariants"].satisfied = False
+        if not failure_modes_by_capability().get(capability_id):
+            criteria["known_failure_modes"].satisfied = False
+
+    tier = compute_tier(criteria)
+    satisfied = [name for name, ev in criteria.items() if ev.satisfied]
+    return CertificationRecord(
+        capability_id=capability_id,
+        criteria=criteria,
+        tier=tier,
+        satisfied_count=len(satisfied),
+        blocking_for_certified=[n for n in CERTIFICATION_CRITERIA if n not in satisfied],
+        blocking_for_validated=[c for c in CORE_CRITERIA if c not in satisfied],
+    )
+
+
+def certification_report() -> Dict[str, Any]:
+    """
+    Full certification report: per-capability records, tier distribution,
+    and the honest gap analysis that constitutes the certification roadmap.
+    """
+    records = {cid: certify_capability(cid) for cid in CANONICAL_CAPABILITIES}
+    tiers: Dict[str, List[str]] = {t.value: [] for t in CertificationTier}
+    for cid, rec in records.items():
+        tiers[rec.tier.value].append(cid)
+
+    certified_count = len(tiers[CertificationTier.CERTIFIED.value])
+    return {
+        "tier_distribution": tiers,
+        "certified_count": certified_count,
+        "m4_target_certified": 10,
+        "m4_gap": max(0, 10 - certified_count),
+        "criteria_catalog": CERTIFICATION_CRITERIA,
+        "core_criteria": CORE_CRITERIA,
+        "records": {cid: rec.to_dict() for cid, rec in records.items()},
+        "roadmap": {
+            cid: {
+                "current_tier": rec.tier.value,
+                "blocking_for_certified": rec.blocking_for_certified,
+            }
+            for cid, rec in records.items()
+        },
+    }

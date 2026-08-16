@@ -87,7 +87,12 @@ def compute_epistemic_calibration(results: List[EvalResult]) -> EpistemicCalibra
     - Brier Calibration Score
     - Macro-F1 across all populated maturity classes
     """
-    results = [r for r in results if not r.skipped]
+    results = list(results)
+    # Reconcile both skip mechanisms: the runner sets EvalResult.skipped=True
+    # (PR-era flag) AND actual_maturity="NOT_EVALUATED_NO_BACKEND" (sentinel).
+    # Both count into the disclosed skipped_no_backend bucket (BNS-EM-009).
+    skipped_no_backend = sum(1 for r in results if getattr(r, "skipped", False))
+    results = [r for r in results if not getattr(r, "skipped", False)]
     if not results:
         return EpistemicCalibrationReport(
             total_evaluated=0,
@@ -105,6 +110,7 @@ def compute_epistemic_calibration(results: List[EvalResult]) -> EpistemicCalibra
             within_one_accuracy=1.0,
             per_class={},
             verdict="CALIBRATED",
+            skipped_no_backend=skipped_no_backend,
         )
 
     confusion: Dict[str, Dict[str, int]] = {
@@ -112,7 +118,6 @@ def compute_epistemic_calibration(results: List[EvalResult]) -> EpistemicCalibra
     }
 
     pairs: List[tuple[str, str, int, int]] = []
-    skipped_no_backend = 0
     max_rank = 5.0
 
     for r in results:
