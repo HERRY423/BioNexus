@@ -7,7 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [0.9.0] - 2026-08-16
+
+### 🌐 Fixed (FastMCP Dynamic Tool Registration & Fallback Routing Disambiguation)
+- **Fixed FastMCP default tool leakage in `scripts/local_mcp_server.py`**: wrapped the 6 hosted-overlap fallback tools (`search_pubmed`, `get_pubmed_article`, `search_biorxiv`, `search_chembl`, `search_opentargets`, `search_clinical_trials`) and `search_cosmic` behind `BIONEXUS_LOCAL_HOSTED_FALLBACKS=1`. By default, FastMCP now registers exactly **9 local unique tools** (GTEx, GEO, STRING, UniProt, Ensembl, gnomAD, PDB, AlphaFold, Reactome) plus 6 Resources and 6 Prompts.
+- **Eliminated Agent routing ambiguity**: AI coding agents querying literature, targets, or clinical trials will cleanly route to dedicated cloud-hosted MCP endpoints without duplicate tool confusion.
+- **Synced test coverage**: updated `tests/unit/test_mcp_server.py` to assert 9 default unique tools and 16 tools upon opt-in.
 
 ### 🎖️ Added (Capability Certification Program — BNS-010)
 - **`src/bionexus/certification.py`**: 14 evidence criteria and four tiers (CERTIFIED / VALIDATED / EXPERIMENTAL / CONNECTOR-ONLY). Tiers are **computed from recorded evidence, never asserted** (BNS-CF-002); structural cross-checks re-verify contract-derived criteria against the live ABI, preconditions, and taxonomy. Honest current state: **0 CERTIFIED, 7 VALIDATED, 1 EXPERIMENTAL** — the per-capability blocking-criteria list is the published roadmap to the M4 target of 10 CERTIFIED (evidence must be produced, criteria never weakened, BNS-CF-006). CLI: `bionexus certification`.

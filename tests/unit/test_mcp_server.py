@@ -14,10 +14,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
 from local_mcp_server import create_mcp_server, handle_rpc_request_async
 
 
-def test_official_fastmcp_server_sdk():
+def test_official_fastmcp_server_sdk(monkeypatch):
     """Verify official MCP Python SDK FastMCP server instance and tool registration."""
     import pytest
 
+    monkeypatch.delenv("BIONEXUS_LOCAL_HOSTED_FALLBACKS", raising=False)
     try:
         server = create_mcp_server()
     except (ImportError, ModuleNotFoundError):
@@ -26,13 +27,28 @@ def test_official_fastmcp_server_sdk():
     assert server is not None
     assert server.name == "bionexus-local-mcp"
     tools = server._tool_manager.list_tools()
-    assert len(tools) == 16
+    assert len(tools) == 9
     tool_names = {t.name for t in tools}
     assert "search_uniprot" in tool_names
     assert "search_ensembl" in tool_names
     assert "search_gnomad" in tool_names
     assert "search_pdb" in tool_names
     assert "search_alphafold" in tool_names
+    assert "search_reactome" in tool_names
+    assert "search_string" in tool_names
+    assert "search_geo" in tool_names
+    assert "get_gene_expression" in tool_names
+    assert "search_pubmed" not in tool_names
+    assert "search_chembl" not in tool_names
+
+    # Opt-in for hosted fallbacks
+    monkeypatch.setenv("BIONEXUS_LOCAL_HOSTED_FALLBACKS", "1")
+    server_with_fallbacks = create_mcp_server()
+    tools_all = server_with_fallbacks._tool_manager.list_tools()
+    assert len(tools_all) == 16
+    tool_names_all = {t.name for t in tools_all}
+    assert "search_pubmed" in tool_names_all
+    assert "search_chembl" in tool_names_all
 
 
 def test_mcp_server_discover_modern():

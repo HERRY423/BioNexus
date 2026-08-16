@@ -44,7 +44,7 @@ def test_canonical_registry_loading_and_structure():
     registry = load_canonical_registry(_REPO_ROOT / "bionexus.registry.yaml")
     assert registry is not None
     assert registry["package"]["name"] == "BioNexus"
-    assert registry["package"]["version"] == "0.8.0"
+    assert registry["package"]["version"] == "0.9.0"
     assert "mcp_servers" in registry
     assert "local" in registry["mcp_servers"]
     assert "hosted" in registry["mcp_servers"]

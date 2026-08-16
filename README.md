@@ -162,7 +162,7 @@ python scripts/doctor.py
 ==============================================================================
                           BioNexus Environment Doctor
 ==============================================================================
-Plugin Version:  0.8.0
+Plugin Version:  0.9.0
 Tier:            full
 
 Active Analytical Capabilities:
@@ -276,18 +276,21 @@ Every biological output is packaged with a deterministic **`EvidenceCard`** and 
 
 ## 🌐 Model Context Protocol (MCP) Biological Layer
 
-BioNexus provides direct access to **16 biological tools** and **9 cloud-hosted servers** via the official Model Context Protocol (FastMCP):
+BioNexus provides direct access to biological tools, resources, and cloud-hosted servers via the official Model Context Protocol (FastMCP) with deterministic, non-overlapping routing:
 
 ### 1. Local Stdio MCP Server (`bionexus-local-mcp`)
 *Zero API keys required for all core endpoints:*
-* **Proteins & Structures**: `search_uniprot`, `search_alphafold`, `search_pdb`
-* **Genomics & Regulation**: `search_ensembl`, `search_gnomad`, `get_gene_expression` (GTEx), `search_geo`
-* **Pathways & Networks**: `search_reactome`, `search_string`
-* **Literature & Preprints**: `search_pubmed`, `get_pubmed_article` (full record), `search_biorxiv`
-* **Molecules & Targets**: `search_chembl`, `search_opentargets`, `search_clinical_trials`
-* **Cancer Genetics**: `search_cosmic` *(Local Census reference, RUO)*
+* **Core Local Unique Tools (Default Active — 9 Tools)**:
+  * **Proteins & Structures**: `search_uniprot`, `search_alphafold`, `search_pdb`
+  * **Genomics & Regulation**: `search_ensembl`, `search_gnomad`, `get_gene_expression` (GTEx), `search_geo`
+  * **Pathways & Networks**: `search_reactome`, `search_string`
+* **Workflow Resources & Prompts (Always Active)**:
+  * 6 production YAML workflows/configs (`bionexus://workflows/...`, `bionexus://configs/...`)
+  * 6 structured bioinformatic prompts (`drug_target_analysis`, `variant_pathogenicity`, etc.)
+* **Hosted Fallbacks (Opt-in Disaster Recovery via `BIONEXUS_LOCAL_HOSTED_FALLBACKS=1`)**:
+  * `search_pubmed`, `get_pubmed_article`, `search_biorxiv`, `search_chembl`, `search_opentargets`, `search_clinical_trials`, `search_cosmic` *(hidden by default to avoid duplicate tool routing with cloud endpoints)*
 
-### 2. Cloud-Hosted Streamable-HTTP Endpoints
+### 2. Cloud-Hosted Streamable-HTTP Endpoints (10 Endpoints)
 * **NCBI PubMed**: `https://pubmed.mcp.claude.com/mcp`
 * **bioRxiv / medRxiv**: `https://hcls.mcp.claude.com/biorxiv/mcp`
 * **ChEMBL**: `https://hcls.mcp.claude.com/chembl/mcp`
@@ -297,6 +300,7 @@ BioNexus provides direct access to **16 biological tools** and **9 cloud-hosted 
 * **Consensus AI**: `https://mcp.consensus.app/mcp`
 * **Wiley Online Library**: `https://connector.scholargateway.ai/mcp`
 * **Owkin Precision Medicine**: `https://mcp.k.owkin.com/mcp`
+* **Synapse**: `https://mcp.synapse.org/mcp`
 
 ### 3. Optional Elevated Rate-Limit Credentials
 To raise rate limits or connect enterprise lab platforms, copy `.env.example` to `.env` and run:

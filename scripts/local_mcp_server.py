@@ -1763,77 +1763,79 @@ def create_mcp_server():
         res = await tool_get_gene_expression(gene_symbol=gene_symbol, tissue_site=tissue_site)
         return json.dumps(res, indent=2, ensure_ascii=False)
 
-    @mcp.tool(
-        name="search_pubmed",
-        description="Search NCBI PubMed for biomedical literature with pagination and date filters.",
-    )
-    async def search_pubmed(
-        query: str,
-        max_results: int = 5,
-        offset: int = 0,
-        sort: str = "pub_date",
-        mindate: Optional[str] = None,
-        maxdate: Optional[str] = None,
-    ) -> str:
-        res = await tool_search_pubmed(
-            query=query, max_results=max_results, offset=offset, sort=sort, mindate=mindate, maxdate=maxdate
+    flag = os.environ.get("BIONEXUS_LOCAL_HOSTED_FALLBACKS", "").strip().lower()
+    if flag in {"1", "true", "yes"}:
+        @mcp.tool(
+            name="search_pubmed",
+            description="[local fallback — prefer hosted MCP if connected] Search NCBI PubMed for biomedical literature with pagination and date filters.",
         )
-        return json.dumps(res, indent=2, ensure_ascii=False)
+        async def search_pubmed(
+            query: str,
+            max_results: int = 5,
+            offset: int = 0,
+            sort: str = "pub_date",
+            mindate: Optional[str] = None,
+            maxdate: Optional[str] = None,
+        ) -> str:
+            res = await tool_search_pubmed(
+                query=query, max_results=max_results, offset=offset, sort=sort, mindate=mindate, maxdate=maxdate
+            )
+            return json.dumps(res, indent=2, ensure_ascii=False)
 
-    @mcp.tool(
-        name="get_pubmed_article",
-        description="Retrieve full metadata, abstract, and DOI/PMC links for a specific PubMed PMID.",
-    )
-    async def get_pubmed_article(pmid: str) -> str:
-        res = await tool_get_pubmed_article(pmid=pmid)
-        return json.dumps(res, indent=2, ensure_ascii=False)
-
-    @mcp.tool(name="search_biorxiv", description="Search Europe PMC for bioRxiv and medRxiv life science preprints.")
-    async def search_biorxiv(query: str, server: str = "biorxiv", limit: int = 5, page: int = 1) -> str:
-        res = await tool_search_biorxiv(query=query, server=server, limit=limit, page=page)
-        return json.dumps(res, indent=2, ensure_ascii=False)
-
-    @mcp.tool(
-        name="search_chembl",
-        description="Query ChEMBL database for bioactive molecules, drug targets, or bioactivity assays.",
-    )
-    async def search_chembl(query: str, entity_type: str = "molecule", limit: int = 5, offset: int = 0) -> str:
-        res = await tool_search_chembl(query=query, entity_type=entity_type, limit=limit, offset=offset)
-        return json.dumps(res, indent=2, ensure_ascii=False)
-
-    @mcp.tool(
-        name="search_opentargets",
-        description="Search Open Targets Platform GraphQL API for disease targets, evidence, and drug associations.",
-    )
-    async def search_opentargets(
-        query: str, entity_types: Optional[List[str]] = None, limit: int = 5, page_index: int = 0
-    ) -> str:
-        res = await tool_search_opentargets(query=query, entity_types=entity_types, limit=limit, page_index=page_index)
-        return json.dumps(res, indent=2, ensure_ascii=False)
-
-    @mcp.tool(
-        name="search_clinical_trials",
-        description="Search ClinicalTrials.gov API v2 for active and completed interventional/observational clinical studies.",
-    )
-    async def search_clinical_trials(
-        condition: str = "",
-        intervention: str = "",
-        status: Optional[str] = None,
-        limit: int = 5,
-        page_token: Optional[str] = None,
-    ) -> str:
-        res = await tool_search_clinical_trials(
-            condition=condition, intervention=intervention, status=status, limit=limit, page_token=page_token
+        @mcp.tool(
+            name="get_pubmed_article",
+            description="[local fallback — prefer hosted MCP if connected] Retrieve full metadata, abstract, and DOI/PMC links for a specific PubMed PMID.",
         )
-        return json.dumps(res, indent=2, ensure_ascii=False)
+        async def get_pubmed_article(pmid: str) -> str:
+            res = await tool_get_pubmed_article(pmid=pmid)
+            return json.dumps(res, indent=2, ensure_ascii=False)
 
-    @mcp.tool(
-        name="search_cosmic",
-        description="Search local CGC gene hint and Ensembl cross-reference (Research-use only; not the official COSMIC API).",
-    )
-    async def search_cosmic(gene_symbol: str) -> str:
-        res = await tool_search_cosmic(gene_symbol=gene_symbol)
-        return json.dumps(res, indent=2, ensure_ascii=False)
+        @mcp.tool(name="search_biorxiv", description="[local fallback — prefer hosted MCP if connected] Search Europe PMC for bioRxiv and medRxiv life science preprints.")
+        async def search_biorxiv(query: str, server: str = "biorxiv", limit: int = 5, page: int = 1) -> str:
+            res = await tool_search_biorxiv(query=query, server=server, limit=limit, page=page)
+            return json.dumps(res, indent=2, ensure_ascii=False)
+
+        @mcp.tool(
+            name="search_chembl",
+            description="[local fallback — prefer hosted MCP if connected] Query ChEMBL database for bioactive molecules, drug targets, or bioactivity assays.",
+        )
+        async def search_chembl(query: str, entity_type: str = "molecule", limit: int = 5, offset: int = 0) -> str:
+            res = await tool_search_chembl(query=query, entity_type=entity_type, limit=limit, offset=offset)
+            return json.dumps(res, indent=2, ensure_ascii=False)
+
+        @mcp.tool(
+            name="search_opentargets",
+            description="[local fallback — prefer hosted MCP if connected] Search Open Targets Platform GraphQL API for disease targets, evidence, and drug associations.",
+        )
+        async def search_opentargets(
+            query: str, entity_types: Optional[List[str]] = None, limit: int = 5, page_index: int = 0
+        ) -> str:
+            res = await tool_search_opentargets(query=query, entity_types=entity_types, limit=limit, page_index=page_index)
+            return json.dumps(res, indent=2, ensure_ascii=False)
+
+        @mcp.tool(
+            name="search_clinical_trials",
+            description="[local fallback — prefer hosted MCP if connected] Search ClinicalTrials.gov API v2 for active and completed interventional/observational clinical studies.",
+        )
+        async def search_clinical_trials(
+            condition: str = "",
+            intervention: str = "",
+            status: Optional[str] = None,
+            limit: int = 5,
+            page_token: Optional[str] = None,
+        ) -> str:
+            res = await tool_search_clinical_trials(
+                condition=condition, intervention=intervention, status=status, limit=limit, page_token=page_token
+            )
+            return json.dumps(res, indent=2, ensure_ascii=False)
+
+        @mcp.tool(
+            name="search_cosmic",
+            description="Search local CGC gene hint and Ensembl cross-reference (Research-use only; not the official COSMIC API).",
+        )
+        async def search_cosmic(gene_symbol: str) -> str:
+            res = await tool_search_cosmic(gene_symbol=gene_symbol)
+            return json.dumps(res, indent=2, ensure_ascii=False)
 
     @mcp.resource("bionexus://workflows/drug_target_discovery")
     def res_drug_target_discovery() -> str:
