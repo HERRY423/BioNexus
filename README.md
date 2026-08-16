@@ -34,6 +34,66 @@
 
 ---
 
+## 🔬 Why scientists install it: one case
+
+Not "the Biological Capability ABI is advanced." This:
+
+**Before BioNexus** — the agent just runs it:
+
+```text
+Request: "Run DE between these two clusters and identify condition-specific genes."
+
+Agent:   Done. 2,341 cells vs 3,107 cells. 153 significant genes.
+```
+
+**With BioNexus** — the firewall blocks it and says why:
+
+```text
+BLOCKED: BN-F002 Pseudoreplication
+
+Cells belong to only 3 donors per condition.
+Cell-level hypothesis testing would inflate
+the effective biological sample size.
+
+Recommended:
+aggregate counts by donor × condition
+and perform pseudobulk DE.
+```
+
+This is the product: catching biological analyses that should not have been run — before, during, and after they happen (`bionexus preflight` / `audit` / `verify`).
+
+---
+
+## 🧭 Product Matrix & Scope Boundary
+
+BioNexus is four layers with hard boundaries — not an ever-growing monolith ([full matrix](docs/product-matrix.md)):
+
+| Layer | Contains |
+|---|---|
+| **bionexus-core** | BNS spec series · Biological Capability ABI · Failure Taxonomy (BN-Fxxx) · Fail-Closed Engine · Evidence Model |
+| **bionexus-audit** | `preflight` · `audit` · `verify` |
+| **bionexus-conformance** | capability certification (flagship track) · host conformance · BioFailureBench |
+| **reference capability packs** | single-cell · spatial · reproducibility |
+
+Explicitly **not** in scope, ever: planner, memory, multi-agent, chat UI, cloud workspace, notebook replacement, compute service, agent marketplace.
+
+---
+
+## 🌐 Standards & Interoperability (BNS-016)
+
+BioNexus does **not** invent a proprietary research-data standard. Run capsules and Claim–Evidence Ledgers export through published community standards (`bionexus interop ro-crate|bco|check`):
+
+```text
+Claim–Evidence Ledger ──> W3C PROV-O ──┬── RO-Crate 1.1 (+ Workflow Run Crate profiles)
+Run Capsule           ─────────────────┴── BioCompute Object (IEEE 2791-2020)
+```
+
+Institutional pipelines (Galaxy, DNAnexus, Seven Bridges, WorkflowHub) can ingest BioNexus outputs today without adopting anything else from BioNexus. Exports are deterministic, offline, and validated before they are written.
+
+**Honest positioning** (`bionexus standards`): BioNexus is *not* an industry standard and does not claim to be one. The BNS series is an implementation proposal — discussable, criticizable, contributable — with the GA4GH AI Work Stream as the primary engagement window ([standards engagement](docs/standards-engagement.md)). Alignment statuses are machine-readable and honest: `implemented` (RO-Crate, Workflow Run Crate, BCO, PROV-O) · `aligned` (Bioschemas, nf-core) · `proposal` (GA4GH AI Work Stream) · `tracked` (ELIXIR, scverse, Bioconductor, WorkflowHub).
+
+---
+
 ## ⚡ 30-Second Quick Start: Choose Your AI Environment
 
 Install BioNexus into your preferred environment in seconds:
@@ -287,6 +347,7 @@ BioNexus is governed by a normative, machine-enforced scientific contract publis
 | [BNS-013](spec/BNS-013-scientific-assertion-firewall.md) | **Scientific Assertion Firewall**: preflight / audit / verify |
 | [BNS-014](spec/BNS-014-biofailurebench.md) | **BioFailureBench**: the scientific trap corpus (BF-nnn) |
 | [BNS-015](spec/BNS-015-flagship-certification.md) | **Flagship certification**: 3 externally-validated CERTIFIED capabilities |
+| [BNS-016](spec/BNS-016-standards-interop.md) | **Standards interoperability**: RO-Crate / Workflow Run Crate / IEEE 2791 BCO; product scope boundary |
 
 **The Biological Capability ABI** (`bionexus abi show <id>`): every capability projects to a stable Scientific ABI — input contracts (allowed matrix states, coordinate types), forbidden claims, execution references, validation policy, evidence ceilings, and provenance requirements. Any host agent connecting to BioNexus inherits this boundary and cannot bypass it.
 

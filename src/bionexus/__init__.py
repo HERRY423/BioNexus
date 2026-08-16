@@ -79,6 +79,15 @@ from .integrity import (
     audit_spatial_coordinates,
     audit_statistical_significance,
 )
+from .interop import (
+    export_bco,
+    export_ro_crate,
+    ledger_to_ro_crate,
+    run_bundle_to_bco,
+    run_bundle_to_ro_crate,
+    validate_bco,
+    validate_ro_crate,
+)
 from .inventory import (
     SKILLS,
     active_skills,
@@ -107,6 +116,13 @@ from .spatial_inference import (
     SpatialInferenceVerdict,
     assess_spatial_inference,
 )
+from .standards import (
+    ALIGNMENTS,
+    STANDARDS_DISCLAIMER,
+    StandardAlignment,
+    alignments_report,
+    render_alignments,
+)
 from .verification import (
     ClaimVerification,
     VerificationReport,
@@ -122,6 +138,18 @@ __version__ = PLUGIN_VERSION
 
 __all__ = [
     "ABSTAIN",
+    "ALIGNMENTS",
+    "STANDARDS_DISCLAIMER",
+    "StandardAlignment",
+    "alignments_report",
+    "render_alignments",
+    "export_bco",
+    "export_ro_crate",
+    "ledger_to_ro_crate",
+    "run_bundle_to_bco",
+    "run_bundle_to_ro_crate",
+    "validate_bco",
+    "validate_ro_crate",
     "AnalysisAuditResult",
     "AnalysisDocument",
     "AnnotationEvidence",

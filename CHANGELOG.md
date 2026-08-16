@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 🌐 Added (Standards Interoperability — BNS-016: no proprietary data-standard island)
+
+- **`src/bionexus/interop.py`**: BioNexus exports through published community standards instead of inventing a proprietary research bundle format. Run capsules project to **RO-Crate 1.1** following Workflow Run Crate conventions (capability → `ComputationalWorkflow` with the Workflow RO-Crate profile; execution → schema.org `CreateAction` with instrument/object/result/startTime/endTime and the Process Run Crate 0.5 profile; evidence maturity rides inside the crate as a contextual entity). Ledgers project to RO-Crate with claims/evidence as contextual entities (`isBasedOn` support edges). Run capsules project to **BioCompute Objects (IEEE 2791-2020)** with all six domains (provenance, usability, description, execution, io, parametric) and a content-computed `etag`. Deterministic, offline projections; **fail-closed exports** (a projection failing structural validation is never written); structural validators with disclosed scope. CLI: `bionexus interop ro-crate|bco|check`.
+- **`src/bionexus/standards.py` + `bionexus standards`**: machine-readable standards alignment registry with a closed, honest status vocabulary — `implemented` (RO-Crate, Workflow Run Crate, BCO, PROV-O) / `aligned` (Bioschemas typing, nf-core schemas) / `proposal` (GA4GH AI Work Stream) / `tracked` (ELIXIR, scverse, Bioconductor, WorkflowHub) — and the mandatory verbatim disclaimer: *BioNexus is not an industry standard and does not claim to be one.*
+- **`docs/standards-engagement.md`**: the GA4GH AI standardization window strategy — a concrete mapping of BioNexus artifacts (failure taxonomy, capability-contract schema, refusal semantics, host conformance, BioFailureBench) onto the AI Work Stream focus areas, engagement venues, and the contribution rule: *offer vocabulary, schemas, and tests; never announce; let adoption invert the direction.*
+- New spec `spec/BNS-016-standards-interop.md` (BNS-IO-001..013); tests `test_interop.py`, `test_standards.py`.
+
+### 🧭 Added (Product matrix & scope boundary — BNS-IO-012)
+
+- **`docs/product-matrix.md`**: the four-layer matrix (bionexus-core / bionexus-audit / bionexus-conformance / reference capability packs) with a test-enforced module mapping and the explicit non-goals list — no planner, memory, multi-agent, chat UI, cloud workspace, notebook replacement, compute service, or agent marketplace. README gains the matrix section; `test_product_matrix.py` guards the documented mapping against drift and enforces downward-only layering (core never imports the audit layer).
+
+### 🔬 Added (Why-install case on the front page)
+
+- README opens with the one case a computational biologist understands immediately: the before/after of *"Run DE between these two clusters"* — an agent that returns "153 significant genes" vs BioNexus blocking with **BN-F002 Pseudoreplication** and the pseudobulk remedy. One case beats a hundred features.
+
 ### 🧱 Added (Scientific Assertion Firewall — BNS-013)
 
 Product repositioning: **BioNexus catches biological analyses that should not have been run.** Three researcher-facing entry points, usable without any host agent:

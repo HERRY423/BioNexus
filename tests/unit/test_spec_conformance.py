@@ -33,6 +33,7 @@ EXPECTED_DOCUMENTS = [
     "BNS-013-scientific-assertion-firewall.md",
     "BNS-014-biofailurebench.md",
     "BNS-015-flagship-certification.md",
+    "BNS-016-standards-interop.md",
 ]
 
 RFC2119_KEYWORDS = ["MUST NOT", "MUST", "SHOULD NOT", "SHOULD", "MAY"]
@@ -163,3 +164,34 @@ def test_normative_requirements_backed_by_implementation():
     )
     for info in flagship_program()["capabilities"].values():
         assert info["current_tier"] in ("VALIDATED", "CERTIFIED"), info
+
+    # BNS-IO-001..006: standards interop projections exist and validate
+    from bionexus.interop import (
+        export_bco,
+        export_ro_crate,
+        ledger_to_ro_crate,
+        run_bundle_to_bco,
+        run_bundle_to_ro_crate,
+        validate_bco,
+        validate_ro_crate,
+    )
+
+    for fn in (
+        run_bundle_to_ro_crate,
+        ledger_to_ro_crate,
+        run_bundle_to_bco,
+        validate_ro_crate,
+        validate_bco,
+        export_ro_crate,
+        export_bco,
+    ):
+        assert callable(fn)
+
+    # BNS-IO-007/008: standards registry with verbatim disclaimer
+    from bionexus.standards import STANDARDS_DISCLAIMER, alignments_report
+
+    report = alignments_report()
+    assert report["disclaimer"] == STANDARDS_DISCLAIMER
+    assert "not an industry standard" in STANDARDS_DISCLAIMER
+    assert report["status_counts"]["implemented"] >= 3
+    assert report["status_counts"]["proposal"] >= 1  # GA4GH offered, not claimed
