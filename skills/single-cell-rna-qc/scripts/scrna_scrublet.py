@@ -38,8 +38,8 @@ def run_scrublet(adata, *, expected_doublet_rate: float | None = None):
     view.X = view.layers["counts"]
     try:
         sc.pp.scrublet(view, n_prin_comps=n_comp, **kwargs)
-    except ValueError as e:
-        if "skimage" in str(e).lower() or "threshold is none" in str(e).lower():
+    except (ValueError, Exception) as e:
+        if any(k in str(e).lower() for k in ("scikit-image", "skimage", "threshold")):
             sc.pp.scrublet(view, n_prin_comps=n_comp, threshold=0.25, **kwargs)
         else:
             raise

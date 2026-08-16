@@ -36,7 +36,13 @@ def run_scrublet(adata, *, expected_doublet_rate: float | None = None):
     n_comp = int(max(2, min(10, adata.n_obs // 5, max(2, adata.n_vars // 4))))
     view = adata.copy()
     view.X = view.layers["counts"]
-    sc.pp.scrublet(view, n_prin_comps=n_comp, **kwargs)
+    try:
+        sc.pp.scrublet(view, n_prin_comps=n_comp, **kwargs)
+    except (ValueError, Exception) as e:
+        if any(k in str(e).lower() for k in ("scikit-image", "skimage", "threshold")):
+            sc.pp.scrublet(view, n_prin_comps=n_comp, threshold=0.25, **kwargs)
+        else:
+            raise
     for col in ("doublet_score", "predicted_doublet"):
         if col in view.obs:
             adata.obs[col] = view.obs[col]
