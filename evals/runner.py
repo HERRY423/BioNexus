@@ -202,9 +202,8 @@ def run_single_case(
                             f"L3 Failure: Marker recall {recall:.2f} < threshold {min_recall:.2f}. Expected: {expected}, Recovered: {recovered}"
                         )
                 actual_status = "PERMITTED" if len(failure_reasons) == 0 else "OUTCOME_MISMATCH"
-            except (ImportError, ModuleNotFoundError) as dep_err:
+            except (ImportError, ModuleNotFoundError):
                 actual_status = "SKIPPED_DEPENDENCY"
-                failure_reasons.append(f"L3 Skipped: Missing required backend dependency: {dep_err}")
             except Exception as e:
                 actual_status = "EXECUTION_FAILURE"
                 failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
@@ -235,9 +234,8 @@ def run_single_case(
                         if left_i < min_i:
                             failure_reasons.append(f"L3 Failure: Moran's I {left_i:.3f} < threshold {min_i:.3f}")
                 actual_status = "PERMITTED" if len(failure_reasons) == 0 else "OUTCOME_MISMATCH"
-            except (ImportError, ModuleNotFoundError) as dep_err:
+            except (ImportError, ModuleNotFoundError):
                 actual_status = "SKIPPED_DEPENDENCY"
-                failure_reasons.append(f"L3 Skipped: Missing required backend dependency: {dep_err}")
             except Exception as e:
                 actual_status = "EXECUTION_FAILURE"
                 failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
@@ -270,9 +268,8 @@ def run_single_case(
                                 f"L3 Failure: Planted DEG '{g}' not found in top PyDESeq2 findings: {top_degs}"
                             )
                 actual_status = "PERMITTED" if len(failure_reasons) == 0 else "OUTCOME_MISMATCH"
-            except (ImportError, ModuleNotFoundError) as dep_err:
+            except (ImportError, ModuleNotFoundError):
                 actual_status = "SKIPPED_DEPENDENCY"
-                failure_reasons.append(f"L3 Skipped: Missing required backend dependency: {dep_err}")
             except Exception as e:
                 actual_status = "EXECUTION_FAILURE"
                 failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
@@ -305,9 +302,8 @@ def run_single_case(
                         f"L3 Failure: Clustering stability ARI {ari_score:.3f} < target threshold {target_ari:.3f}"
                     )
                 actual_status = "PERMITTED" if len(failure_reasons) == 0 else "OUTCOME_MISMATCH"
-            except (ImportError, ModuleNotFoundError) as dep_err:
+            except (ImportError, ModuleNotFoundError):
                 actual_status = "SKIPPED_DEPENDENCY"
-                failure_reasons.append(f"L3 Skipped: Missing required backend dependency: {dep_err}")
             except Exception as e:
                 actual_status = "EXECUTION_FAILURE"
                 failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
