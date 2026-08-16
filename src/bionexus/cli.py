@@ -795,12 +795,14 @@ def handle_eval(args: argparse.Namespace) -> int:
         level = None
     provider = getattr(args, "provider", None)
     model = getattr(args, "model", None)
+    strict = getattr(args, "strict", False) or None  # None defers to BIONEXUS_EVAL_STRICT
 
     report = run_benchmark(
         suite=suite,
         level=level,
         provider=provider,
         model=model,
+        strict=strict,
     )
 
     if getattr(args, "report", None):
@@ -814,6 +816,12 @@ def handle_eval(args: argparse.Namespace) -> int:
         print(json.dumps(report.to_dict(), indent=2))
     else:
         print(format_benchmark_markdown(report))
+
+    if report.skipped_cases > 0 and not report.strict_mode:
+        print(
+            f"[WARN] {report.skipped_cases} case(s) SKIPPED_NO_BACKEND: outcome NOT verified here. "
+            "Score above excludes them. Re-run with full backends or --strict before citing an L3 score."
+        )
 
     return 0 if report.failed_cases == 0 else 1
 
@@ -1121,6 +1129,15 @@ def main(argv: Optional[list[str]] = None) -> int:
     )
     p_eval.add_argument("--report", default=None, help="Path to save Markdown evaluation report")
     p_eval.add_argument("--json", action="store_true", help="Output benchmark results as JSON")
+    p_eval.add_argument(
+        "--strict",
+        action="store_true",
+        help=(
+            "Fail-closed mode: cases skipped due to missing backends (SKIPPED_NO_BACKEND) are "
+            "treated as failures and the command exits non-zero. Required when citing an L3 score. "
+            "Equivalent to BIONEXUS_EVAL_STRICT=1."
+        ),
+    )
 
     # 9. audit-claims (Prohibited Claims & Hallucination Auditor)
     p_claim = subparsers.add_parser(

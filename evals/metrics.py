@@ -76,6 +76,9 @@ def compute_epistemic_calibration(results: List[EvalResult]) -> EpistemicCalibra
     """
     Compute rigorous scientific evidence maturity calibration statistics.
 
+    Skipped cases (backend unavailable) are excluded: an unexecuted outcome has
+    no maturity warrant and must not silently count as calibrated agreement.
+
     Evaluates:
     - Confusion Matrix across ordinal maturity levels
     - Overconfidence Rate (Epistemic Hubris): Model asserts higher warrant than grounded data
@@ -84,6 +87,7 @@ def compute_epistemic_calibration(results: List[EvalResult]) -> EpistemicCalibra
     - Brier Calibration Score
     - Macro-F1 across all populated maturity classes
     """
+    results = [r for r in results if not r.skipped]
     if not results:
         return EpistemicCalibrationReport(
             total_evaluated=0,
@@ -171,7 +175,14 @@ def compute_epistemic_calibration(results: List[EvalResult]) -> EpistemicCalibra
 
 
 def compute_benchmark_metrics(results: List[EvalResult]) -> Dict[str, float]:
-    """Compute the 8 authoritative scientific agent reliability metrics."""
+    """Compute the 8 authoritative scientific agent reliability metrics.
+
+    Skipped cases (backend unavailable) are excluded from every rate so that a
+    missing backend can never inflate a score; they are reported separately via
+    ``skipped_cases`` and surface as a headline warning in the benchmark report.
+    """
+    skipped_cases = sum(1 for r in results if r.skipped)
+    results = [r for r in results if not r.skipped]
     if not results:
         return {
             "routing_accuracy": 0.0,
@@ -187,6 +198,7 @@ def compute_benchmark_metrics(results: List[EvalResult]) -> Dict[str, float]:
             "ordinal_calibration_error": 0.0,
             "maturity_macro_f1": 0.0,
             "composite_reliability_index": 0.0,
+            "skipped_cases": float(skipped_cases),
         }
 
     total = len(results)
@@ -263,43 +275,58 @@ def compute_benchmark_metrics(results: List[EvalResult]) -> Dict[str, float]:
         "ordinal_calibration_error": calib.ordinal_calibration_error,
         "maturity_macro_f1": calib.macro_f1,
         "composite_reliability_index": cri,
+        "skipped_cases": float(skipped_cases),
     }
 
 
 def compute_category_breakdown(results: List[EvalResult]) -> Dict[str, Dict[str, Any]]:
-    """Compute per-category accuracy and pass rates."""
+    """Compute per-category accuracy and pass rates.
+
+    Accuracy is computed over attempted (non-skipped) cases; skipped cases are
+    counted in a dedicated column so gaps stay visible.
+    """
     breakdown: Dict[str, Dict[str, Any]] = {}
     categories = sorted({r.category for r in results})
 
     for cat in categories:
         cat_results = [r for r in results if r.category == cat]
         total = len(cat_results)
+        skipped = sum(1 for r in cat_results if r.skipped)
         passed = sum(1 for r in cat_results if r.passed)
+        attempted = total - skipped
         breakdown[cat] = {
             "total": total,
             "passed": passed,
-            "failed": total - passed,
-            "accuracy": (passed / total) if total > 0 else 0.0,
+            "failed": attempted - passed,
+            "skipped": skipped,
+            "accuracy": (passed / attempted) if attempted > 0 else 0.0,
         }
 
     return breakdown
 
 
 def compute_level_breakdown(results: List[EvalResult]) -> Dict[str, Dict[str, Any]]:
-    """Compute per-level (L1, L2, L3) pass rates and latency statistics."""
+    """Compute per-level (L1, L2, L3) pass rates and latency statistics.
+
+    Accuracy is computed over attempted (non-skipped) cases; skipped cases are
+    counted in a dedicated column so gaps stay visible.
+    """
     breakdown: Dict[str, Dict[str, Any]] = {}
     levels = ["L1", "L2", "L3"]
 
     for lvl in levels:
         lvl_results = [r for r in results if r.level == lvl]
         total = len(lvl_results)
+        skipped = sum(1 for r in lvl_results if r.skipped)
         passed = sum(1 for r in lvl_results if r.passed)
+        attempted = total - skipped
         avg_time = (sum(r.execution_time_ms for r in lvl_results) / total) if total > 0 else 0.0
         breakdown[lvl] = {
             "total": total,
             "passed": passed,
-            "failed": total - passed,
-            "accuracy": (passed / total) if total > 0 else 0.0,
+            "failed": attempted - passed,
+            "skipped": skipped,
+            "accuracy": (passed / attempted) if attempted > 0 else 0.0,
             "avg_latency_ms": round(avg_time, 2),
         }
 

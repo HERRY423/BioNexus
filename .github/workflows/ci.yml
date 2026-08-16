@@ -97,6 +97,38 @@ jobs:
           print('Local MCP Server legacy stdio protocol PASSED.')
           "
 
+  eval-strict:
+    name: Strict L3 outcome eval (no skips allowed)
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install full scientific backend stack (no graceful degradation)
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements-dev.txt
+          pip install -e .
+          pip install -e ".[goldchain,spatial]"
+      - name: Require gold-chain backends present
+        run: |
+          python -c "import scanpy, anndata, squidpy, pydeseq2, leidenalg; print('L3 backends OK')"
+      - name: Run benchmark in strict mode (SKIPPED_NO_BACKEND fails)
+        env:
+          BIONEXUS_EVAL_STRICT: "1"
+        run: |
+          python -m bionexus.cli eval --level all --provider replay --strict --report evals/reports/benchmark_report.md
+      - name: Upload strict benchmark report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: strict-benchmark-report
+          path: evals/reports/benchmark_report.md
+
   scvi-smoke:
     name: scVI one-epoch smoke
     needs: lint

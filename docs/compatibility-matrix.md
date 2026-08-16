@@ -8,12 +8,14 @@ This document provides the official compatibility matrix for **BioNexus**, detai
 
 BioNexus operates as a scientific reliability and capability enforcement layer on top of all major AI coding assistants:
 
-| Host Agent Platform | Integration Method | Verified Status | Key Features Tested |
+| Host Agent Platform | Integration Method | Verification Status | Integration Surface |
 |---|---|---|---|
-| **Codex / OpenAI Agents SDK** | `.codex/config.json` + CLI tools | 🟢 **Verified (Tier 1)** | Capability Contract pre-checks, doctor diagnostics, pseudobulk DE |
-| **Claude Code / Desktop** | `.claude-plugin/plugin.json` + HTTP/Stdio MCP | 🟢 **Verified (Tier 1)** | Literature search (PubMed/bioRxiv), Local MCP server, EvidenceCard 2.0 |
-| **Cursor / Windsurf** | Native Agent Plugins (`plugin.json` + `mcp.json`) | 🟢 **Verified (Tier 1)** | Skill routing, zero-drift manifest compilation, scverse gold chain |
-| **Google Antigravity** | Native Python SDK + Stdio/Lazy MCP Servers | 🟢 **Verified (Tier 1)** | 6-stage Scientific Intent Router, BioNexus Eval harness, W3C PROV-O |
+| **Codex / OpenAI Agents SDK** | `.codex/config.json` + CLI tools | 🟡 **Declared (not CI-verified)** | Capability Contract pre-checks, doctor diagnostics, pseudobulk DE |
+| **Claude Code / Desktop** | `.claude-plugin/plugin.json` + HTTP/Stdio MCP | 🟡 **Declared (not CI-verified)** | Literature search (PubMed/bioRxiv), Local MCP server, EvidenceCard 2.0 |
+| **Cursor / Windsurf** | Native Agent Plugins (`plugin.json` + `mcp.json`) | 🟡 **Declared (not CI-verified)** | Skill routing, zero-drift manifest compilation, scverse gold chain |
+| **Google Antigravity** | Native Python SDK + Stdio/Lazy MCP Servers | 🟡 **Declared (not CI-verified)** | 6-stage Scientific Intent Router, BioNexus Eval harness, W3C PROV-O |
+
+> ⚠️ **Honesty note**: "Declared" means the integration surface exists and is exercised manually; BioNexus CI currently contains **no automated host-client harness** for these platforms. The only machine-verified surfaces are the Python kernel/CLI, the FastMCP stdio protocol probe, and the offline replay eval. Do not cite host-agent integration as "verified" until a client harness lands.
 
 ---
 
@@ -23,10 +25,10 @@ BioNexus core kernel and capability contracts are tested continuously across CPy
 
 | Python Version | Core Kernel | Gold-Chain Wrappers | Heuristic Fallbacks | Status | Notes |
 |---|---|---|---|---|---|
-| **Python 3.10** | 🟢 Compatible | 🟢 Compatible | 🟢 Compatible | Supported | Minimum supported Python runtime |
-| **Python 3.11** | 🟢 Compatible | 🟢 Compatible | 🟢 Compatible | Supported | Recommended for production pipelines |
-| **Python 3.12** | 🟢 Compatible | 🟢 Compatible | 🟢 Compatible | Supported | Required for latest scanpy 1.12+ features |
-| **Python 3.13** | 🟢 Compatible | 🟢 Compatible | 🟢 Compatible | **Primary Active** | Current primary development & CI runtime |
+| **Python 3.10** | 🟢 Compatible | 🟢 Compatible | 🟢 Compatible | Supported (CI) | Minimum supported Python runtime |
+| **Python 3.11** | 🟢 Compatible | 🟢 Compatible | 🟢 Compatible | Supported (CI) | Recommended for production pipelines |
+| **Python 3.12** | 🟢 Compatible | 🟢 Compatible | 🟢 Compatible | Supported (CI) | Required for latest scanpy 1.12+ features |
+| **Python 3.13** | 🟡 Untested | 🟡 Untested | 🟡 Untested | **Experimental — not in CI** | Not covered by the CI matrix; do not claim support until a `3.13` leg passes |
 
 ---
 

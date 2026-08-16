@@ -44,6 +44,32 @@ def get_default_datasets_dir() -> Path:
     return Path(__file__).resolve().parent / "datasets"
 
 
+def _strict_mode_enabled(strict: Optional[bool] = None) -> bool:
+    """Resolve strict-mode: explicit argument wins, else BIONEXUS_EVAL_STRICT env var.
+
+    In strict mode a missing backend is a benchmark FAILURE, not a skip. This is
+    the mode CI must use when it claims an L3 outcome score.
+    """
+    if strict is not None:
+        return strict
+    return os.getenv("BIONEXUS_EVAL_STRICT", "").strip().lower() in ("1", "true", "yes", "on")
+
+
+def _l3_backend_unavailable(exc: Exception) -> Dict[str, Any]:
+    """Mark an L3 case as SKIPPED_NO_BACKEND.
+
+    A missing backend must NEVER be recorded as PERMITTED: an unexecuted
+    pipeline has no verified outcome. Non-strict runs report the case in a
+    dedicated `skipped` bucket (excluded from accuracy); strict runs promote
+    the skip to a failure so the exit code blocks unverified score claims.
+    """
+    reason = (
+        f"L3 backend unavailable ({type(exc).__name__}: {exc}). "
+        "Planted-truth outcome NOT verified in this environment."
+    )
+    return {"actual_status": "SKIPPED_NO_BACKEND", "skipped": True, "skip_reason": reason}
+
+
 def load_eval_cases(
     suite: Optional[str] = None,
     level: Optional[str] = None,
@@ -115,6 +141,8 @@ def run_single_case(
     actual_status = "PERMITTED"
     actual_maturity = case.expected_maturity or "UNASSESSED"
     claim_violations: List[Dict[str, Any]] = []
+    skipped = False
+    skip_reason: Optional[str] = None
 
     # =========================================================================
     # L2: Host-Agent Claim & Anti-Hallucination Verification (Live or Replay)
@@ -203,8 +231,11 @@ def run_single_case(
                             f"L3 Failure: Marker recall {recall:.2f} < threshold {min_recall:.2f}. Expected: {expected}, Recovered: {recovered}"
                         )
                 actual_status = "PERMITTED" if len(failure_reasons) == 0 else "OUTCOME_MISMATCH"
-            except (ImportError, ModuleNotFoundError, BackendUnavailable):
-                actual_status = "PERMITTED"
+            except (ImportError, ModuleNotFoundError, BackendUnavailable) as exc:
+                skip = _l3_backend_unavailable(exc)
+                actual_status = skip["actual_status"]
+                skipped = skip["skipped"]
+                skip_reason = skip["skip_reason"]
             except Exception as e:
                 actual_status = "EXECUTION_FAILURE"
                 failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
@@ -235,8 +266,11 @@ def run_single_case(
                         if left_i < min_i:
                             failure_reasons.append(f"L3 Failure: Moran's I {left_i:.3f} < threshold {min_i:.3f}")
                 actual_status = "PERMITTED" if len(failure_reasons) == 0 else "OUTCOME_MISMATCH"
-            except (ImportError, ModuleNotFoundError, BackendUnavailable):
-                actual_status = "PERMITTED"
+            except (ImportError, ModuleNotFoundError, BackendUnavailable) as exc:
+                skip = _l3_backend_unavailable(exc)
+                actual_status = skip["actual_status"]
+                skipped = skip["skipped"]
+                skip_reason = skip["skip_reason"]
             except Exception as e:
                 actual_status = "EXECUTION_FAILURE"
                 failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
@@ -269,8 +303,11 @@ def run_single_case(
                                 f"L3 Failure: Planted DEG '{g}' not found in top PyDESeq2 findings: {top_degs}"
                             )
                 actual_status = "PERMITTED" if len(failure_reasons) == 0 else "OUTCOME_MISMATCH"
-            except (ImportError, ModuleNotFoundError, BackendUnavailable):
-                actual_status = "PERMITTED"
+            except (ImportError, ModuleNotFoundError, BackendUnavailable) as exc:
+                skip = _l3_backend_unavailable(exc)
+                actual_status = skip["actual_status"]
+                skipped = skip["skipped"]
+                skip_reason = skip["skip_reason"]
             except Exception as e:
                 actual_status = "EXECUTION_FAILURE"
                 failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
@@ -303,14 +340,22 @@ def run_single_case(
                         f"L3 Failure: Clustering stability ARI {ari_score:.3f} < target threshold {target_ari:.3f}"
                     )
                 actual_status = "PERMITTED" if len(failure_reasons) == 0 else "OUTCOME_MISMATCH"
-            except (ImportError, ModuleNotFoundError, BackendUnavailable):
-                actual_status = "PERMITTED"
+            except (ImportError, ModuleNotFoundError, BackendUnavailable) as exc:
+                skip = _l3_backend_unavailable(exc)
+                actual_status = skip["actual_status"]
+                skipped = skip["skipped"]
+                skip_reason = skip["skip_reason"]
             except Exception as e:
                 actual_status = "EXECUTION_FAILURE"
                 failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
 
         else:
-            actual_status = "PERMITTED"
+            # Unknown planted_signal must fail loudly: an unverified outcome can
+            # never auto-pass, otherwise dataset typos would inflate the score.
+            actual_status = "OUTCOME_MISMATCH"
+            failure_reasons.append(
+                f"L3 Failure: Unknown planted_signal '{signal_type}' has no verifier. Case cannot auto-pass."
+            )
 
     # =========================================================================
     # L1: Router & Precondition Contract Regression
@@ -366,7 +411,10 @@ def run_single_case(
                     failure_reasons.append(f"Missing required remedy keyword: '{er}' (Actual: {decision.remedies})")
 
     t_elapsed = (time.perf_counter() - t0) * 1000.0
-    passed = len(failure_reasons) == 0
+    # A skipped case is never "passed": unexecuted pipelines have no verified
+    # outcome. Strict-mode promotion to failure happens in run_benchmark so the
+    # aggregate accounting (failed_cases / exit code) stays in one place.
+    passed = (not skipped) and (len(failure_reasons) == 0)
 
     return EvalResult(
         case_id=case.id,
@@ -382,6 +430,8 @@ def run_single_case(
         failure_reasons=failure_reasons,
         prohibited_claim_violations=claim_violations,
         execution_time_ms=round(t_elapsed, 2),
+        skipped=skipped,
+        skip_reason=skip_reason,
     )
 
 
@@ -391,10 +441,30 @@ def run_benchmark(
     datasets_dir: Optional[Path] = None,
     provider: Optional[str] = None,
     model: Optional[str] = None,
+    strict: Optional[bool] = None,
 ) -> BenchmarkReport:
-    """Run full benchmark evaluation across all loaded test cases."""
+    """Run full benchmark evaluation across all loaded test cases.
+
+    Accounting rules (fail-closed):
+    - A skipped case (SKIPPED_NO_BACKEND) never counts as passed.
+    - Non-strict mode: skips are excluded from the accuracy denominator and
+      reported separately, so the headline makes verification gaps visible.
+    - Strict mode (``strict=True`` or BIONEXUS_EVAL_STRICT=1): skips are
+      promoted to failures, the accuracy denominator includes them, and the
+      CLI exit code becomes non-zero. CI legs that claim an L3 score must run
+      in this mode.
+    """
+    strict_mode = _strict_mode_enabled(strict)
     cases = load_eval_cases(suite=suite, level=level, datasets_dir=datasets_dir)
     results = [run_single_case(c, provider=provider, model=model) for c in cases]
+
+    if strict_mode:
+        for r in results:
+            if r.skipped:
+                r.failure_reasons.append(
+                    "[STRICT MODE] Backend-unavailable skip treated as FAILURE: "
+                    "this environment claims an L3 outcome score without the required backend."
+                )
 
     from evals.metrics import compute_epistemic_calibration
 
@@ -404,8 +474,14 @@ def run_benchmark(
     level_scores = compute_level_breakdown(results)
     total = len(results)
     passed = sum(1 for r in results if r.passed)
-    failed = total - passed
-    accuracy = (passed / total) if total > 0 else 0.0
+    skipped_count = sum(1 for r in results if r.skipped)
+    if strict_mode:
+        failed = total - passed
+        attempted = total
+    else:
+        failed = sum(1 for r in results if (not r.passed) and (not r.skipped))
+        attempted = total - skipped_count
+    accuracy = (passed / attempted) if attempted > 0 else 0.0
 
     prov = (provider or os.getenv("BIONEXUS_EVAL_PROVIDER", "replay")).lower()
     mod = model or ("gpt-4o-mini" if prov == "openai" else ("claude-3-5-sonnet" if prov == "anthropic" else "simulated_trace_v1"))
@@ -425,6 +501,8 @@ def run_benchmark(
         provider=prov,
         model=mod,
         is_live=is_live,
+        skipped_cases=skipped_count,
+        strict_mode=strict_mode,
     )
 
 
@@ -433,16 +511,39 @@ def format_benchmark_markdown(report: BenchmarkReport) -> str:
     lines: List[str] = []
     lines.append("# [BioNexus Eval 2.0] Multi-Tier Scientific Agent Benchmark")
     lines.append(
-        f"**Timestamp**: `{report.timestamp}` | **Total Cases**: `{report.total_cases}` | **Overall Accuracy**: `{report.overall_accuracy * 100:.1f}%`"
+        f"**Timestamp**: `{report.timestamp}` | **Total Cases**: `{report.total_cases}` | "
+        f"**Passed**: `{report.passed_cases}` | **Failed**: `{report.failed_cases}` | "
+        f"**Skipped (backend unavailable)**: `{getattr(report, 'skipped_cases', 0)}` | "
+        f"**Overall Accuracy (attempted)**: `{report.overall_accuracy * 100:.1f}%`"
     )
     exec_mode = "LIVE HOST LLM GENERATION" if getattr(report, "is_live", False) else "OFFLINE TRACE REPLAY"
     lines.append(
-        f"**Execution Mode**: `{exec_mode}` | **Host Provider**: `{getattr(report, 'provider', 'replay')}` | **Model**: `{getattr(report, 'model', 'simulated_trace_v1')}`\n"
+        f"**Execution Mode**: `{exec_mode}` | **Host Provider**: `{getattr(report, 'provider', 'replay')}` | "
+        f"**Model**: `{getattr(report, 'model', 'simulated_trace_v1')}` | "
+        f"**Strict Mode**: `{'ON' if getattr(report, 'strict_mode', False) else 'OFF'}`\n"
     )
 
+    if not getattr(report, "is_live", False):
+        lines.append(
+            "> ⚠️ **REPLAY DISCLAIMER**: L2 scores in OFFLINE TRACE REPLAY mode audit *scripted* "
+            "(`simulated_agent_response`) texts authored in the same YAML as the expectations — they are "
+            "regression fixtures, **not** live host-agent behavior. Do not cite them as live-agent results. "
+            "Use `--provider openai|anthropic|gemini` for live host evaluation.\n"
+        )
+
+    skipped_total = getattr(report, "skipped_cases", 0)
+    if skipped_total > 0:
+        lines.append(
+            f"> ⚠️ **VERIFICATION GAP**: {skipped_total} case(s) SKIPPED_NO_BACKEND — the required "
+            "scientific backend was not installed, so those planted-truth outcomes were **NOT verified** "
+            "in this environment. They are excluded from the accuracy denominator and must not be "
+            "reported as passing. Re-run with full backends "
+            "(`pip install -e \".[goldchain,spatial]\"`) or with `BIONEXUS_EVAL_STRICT=1` to enforce.\n"
+        )
+
     lines.append("## Multi-Tier Benchmark Levels\n")
-    lines.append("| Tier Level | Evaluation Scope | Total | Passed | Failed | Accuracy |")
-    lines.append("|---|---|---|---|---|---|")
+    lines.append("| Tier Level | Evaluation Scope | Total | Passed | Failed | Skipped | Accuracy (attempted) |")
+    lines.append("|---|---|---|---|---|---|---|")
     level_desc = {
         "L1": "L1: Router & Precondition Regression",
         "L2": "L2: Host-Agent Prohibited Claims Audit",
@@ -451,7 +552,8 @@ def format_benchmark_markdown(report: BenchmarkReport) -> str:
     for lvl, score in report.level_scores.items():
         desc = level_desc.get(lvl, f"Level {lvl}")
         lines.append(
-            f"| **{lvl}** | {desc} | {score['total']} | {score['passed']} | {score['failed']} | `{score['accuracy'] * 100:.1f}%` |"
+            f"| **{lvl}** | {desc} | {score['total']} | {score['passed']} | {score['failed']} | "
+            f"{score.get('skipped', 0)} | `{score['accuracy'] * 100:.1f}%` |"
         )
 
     lines.append("\n---\n")
@@ -525,22 +627,34 @@ def format_benchmark_markdown(report: BenchmarkReport) -> str:
         lines.append("\n---\n")
 
     lines.append("## Category Breakdown\n")
-    lines.append("| Category | Total | Passed | Failed | Accuracy |")
-    lines.append("|---|---|---|---|---|")
+    lines.append("| Category | Total | Passed | Failed | Skipped | Accuracy (attempted) |")
+    lines.append("|---|---|---|---|---|---|")
     for cat, score in report.category_scores.items():
         lines.append(
-            f"| `{cat}` | {score['total']} | {score['passed']} | {score['failed']} | `{score['accuracy'] * 100:.1f}%` |"
+            f"| `{cat}` | {score['total']} | {score['passed']} | {score['failed']} | "
+            f"{score.get('skipped', 0)} | `{score['accuracy'] * 100:.1f}%` |"
         )
 
     if report.failed_cases > 0:
         lines.append("\n---\n")
         lines.append("## Failed Benchmark Cases\n")
         for r in report.detailed_results:
-            if not r.passed:
+            if not r.passed and not r.skipped:
                 lines.append(f"### [FAILED] Case: `{r.case_id}` ({r.category}) [Level: {r.level}]")
                 for reason in r.failure_reasons:
                     lines.append(f"- **Failure**: {reason}")
                 lines.append(f"- *Expected*: `{r.expected_status}` ({r.expected_capability})")
                 lines.append(f"- *Actual*: `{r.actual_status}` ({r.actual_capability})\n")
+
+    skipped_results = [r for r in report.detailed_results if r.skipped]
+    if skipped_results:
+        lines.append("\n---\n")
+        lines.append("## Skipped Benchmark Cases (Backend Unavailable — NOT Verified)\n")
+        for r in skipped_results:
+            lines.append(f"### [SKIPPED_NO_BACKEND] Case: `{r.case_id}` ({r.category}) [Level: {r.level}]")
+            lines.append(f"- **Skip reason**: {r.skip_reason or 'backend unavailable'}")
+            if getattr(report, "strict_mode", False):
+                lines.append("- **Strict mode**: promoted to FAILURE (see exit code).")
+            lines.append(f"- *Expected*: `{r.expected_status}` ({r.expected_capability})\n")
 
     return "\n".join(lines)
