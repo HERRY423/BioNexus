@@ -212,8 +212,19 @@ BioNexus is governed by a normative, machine-enforced scientific contract publis
 | [BNS-007](spec/BNS-007-cross-method-validation.md) | Parameter sensitivity & cross-method concordance |
 | [BNS-008](spec/BNS-008-host-conformance.md) | Host agent conformance (Claude / Codex / any agent) |
 | [BNS-009](spec/BNS-009-capability-lifecycle.md) | Capability lifecycle, frontier graduation, deprecation |
+| [BNS-010](spec/BNS-010-capability-certification.md) | **Capability certification**: 14 evidence criteria, 4 tiers |
+| [BNS-011](spec/BNS-011-failure-taxonomy.md) | **Scientific failure taxonomy** (BN-F001..F012) |
+| [BNS-012](spec/BNS-012-claim-evidence-ledger.md) | **Claim–Evidence Ledger** (JSON / PROV-O JSON-LD) |
 
 **The Biological Capability ABI** (`bionexus abi show <id>`): every capability projects to a stable Scientific ABI — input contracts (allowed matrix states, coordinate types), forbidden claims, execution references, validation policy, evidence ceilings, and provenance requirements. Any host agent connecting to BioNexus inherits this boundary and cannot bypass it.
+
+**Fail-closed philosophy** (`bionexus prevent "<query>"`): *knowing when not to compute is a scientific capability.* The canonical gate `prevent_invalid_run()` maps missing evidence → ABSTAIN, invalid input → REFUSE, missing backend → DEGRADE WITH DISCLOSURE, violated assumption → BLOCK CLAIM, absent external validation → CAP EVIDENCE LEVEL. The most scarce BioNexus API is not `run()` — it is `prevent_invalid_run()`.
+
+**Capability certification** (`bionexus certification`): skills deepen through evidence tiers — CERTIFIED (all 14 criteria: backend, input contract, invariants, failure modes, positive/negative/adversarial tests, public reference dataset, independent ground truth, parameter perturbation, degradation test, provenance test, cross-host test, external reviewer), VALIDATED, EXPERIMENTAL, CONNECTOR-ONLY. Tiers are **computed from recorded evidence, never asserted**; the blocking-criteria list per capability is the published roadmap to 10 CERTIFIED.
+
+**Scientific failure taxonomy** (`bionexus failures list`): twelve failure modes (BN-F001 assay-state confusion … BN-F012 unexecuted maturity claim), each with definition, detection rule, required fail-closed behavior, acceptable degradation, and benchmark coverage. Open gaps (BN-F004 identifier mismatch, BN-F005 missing FDR, BN-F008 cross-database contradiction) are flagged, not hidden — this ontology is BioNexus's durable asset.
+
+**Claim–Evidence Ledger** (`bionexus ledger`): claims as auditable dependency graphs (`supported_by` / `contradicted_by` / `depends_on` → fail-closed status resolution), persisted as JSON and projectable to PROV-O JSON-LD. Deliberately a data structure, not a graph platform.
 
 **Honest calibration (BNS-LC-004..006)**: the benchmark separates the *gating track* (guaranteed behavior, drives CRI) from the *frontier track* (`known_limitation` probes, reported with honest pass/fail). A gating-only 100% is explicitly not a calibration claim; calibration spans the union. Current honest state: **gating 42/42 · frontier 7/11 · union 92.5% · union macro-F1 96.3%** — see [`evals/reports/benchmark_report.md`](evals/reports/benchmark_report.md).
 

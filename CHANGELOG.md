@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 🎖️ Added (Capability Certification Program — BNS-010)
+- **`src/bionexus/certification.py`**: 14 evidence criteria and four tiers (CERTIFIED / VALIDATED / EXPERIMENTAL / CONNECTOR-ONLY). Tiers are **computed from recorded evidence, never asserted** (BNS-CF-002); structural cross-checks re-verify contract-derived criteria against the live ABI, preconditions, and taxonomy. Honest current state: **0 CERTIFIED, 7 VALIDATED, 1 EXPERIMENTAL** — the per-capability blocking-criteria list is the published roadmap to the M4 target of 10 CERTIFIED (evidence must be produced, criteria never weakened, BNS-CF-006). CLI: `bionexus certification`.
+- New spec `spec/BNS-010-capability-certification.md`; tests `tests/unit/test_certification.py` (CERTIFIED requires all 14 — structurally un-gameable).
+
+### 🧯 Added (Scientific Failure Taxonomy — BNS-011)
+- **`src/bionexus/failures.py`**: twelve normative failure modes (BN-F001 assay-state confusion, BN-F002 pseudoreplication, BN-F003 unsupported annotation, BN-F004 identifier mismatch, BN-F005 missing multiple-testing correction, BN-F006 invalid model assumption, BN-F007 parameter instability, BN-F008 cross-database contradiction, BN-F009 missing spatial provenance, BN-F010 backend degradation masquerading, BN-F011 claim inflation, BN-F012 unexecuted maturity claim). Each record: definition, canonical example, affected capabilities, detection rule, **fail-closed required behavior**, acceptable degradation, benchmark cases. Three modes are honestly flagged as open gaps (no benchmark coverage yet). `classify_violation()` tags runtime violations with taxonomy IDs. CLI: `bionexus failures list|show`.
+- New spec `spec/BNS-011-failure-taxonomy.md`; tests verify record shape, vocabulary, and that every benchmark-case reference resolves to a real eval case.
+
+### 🚫 Added (Fail-Closed Gate — BNS-005 §6)
+- **`src/bionexus/failclosed.py`**: `prevent_invalid_run()` — the canonical gate implementing *knowing when not to compute is a scientific capability*: missing evidence → ABSTAIN (request data), invalid input → REFUSE, backend unavailable → DEGRADE WITH DISCLOSURE, assumption violated → BLOCK CLAIM, claim beyond warrant → BLOCK CLAIM, external validation absent → CAP EVIDENCE LEVEL. No row resolves to silent execution. Returns `PreventionDecision` with failure-mode IDs, remedies, and the underlying routing decision. CLI: `bionexus prevent "<query>"`.
+- New spec requirements BNS-AD-013..015; tests cover all six rows plus the clean RUN PERMITTED exit.
+
+### 📒 Added (Claim–Evidence Ledger — BNS-012)
+- **`src/bionexus/ledger.py`**: claims as auditable dependency graphs — `ClaimRecord` (supported_by / contradicted_by / depends_on) over closed-vocabulary `EvidenceRef` nodes (dataset, transformation, method_run, statistical_result, database, cross_method). **Fail-closed resolution**: any contradiction forces CONFLICTED; no support forces ABSTAIN; otherwise the weakest supporting warrant, clamped by the capability's ABI evidence ceiling (database/cross-method support counts as external validation). JSON round-trip + PROV-O JSON-LD projection; append-only (duplicate IDs rejected). Deliberately a data structure, not a graph platform. CLI: `bionexus ledger show|jsonld`.
+- New spec `spec/BNS-012-claim-evidence-ledger.md`; tests include the CLAIM-017 reference scenario.
+- **ABI clamp refinement**: warning states (FRAGILE / CONFLICTED / ABSTAIN / UNASSESSED) are never rewritten by evidence ceilings — only ascending-ladder warrant levels (PRELIMINARY→REPLICATED) are clamped.
+
 ### 📜 Added (BioNexus Scientific Contract Specification — BNS series)
 - **`spec/` normative specification tree**: nine RFC 2119-style documents (`BNS-001`..`BNS-009`) plus index, defining the scientific contract that binds BioNexus and any connected host agent — capability contract & Scientific ABI, input semantic invariants, execution fidelity, evidence maturity, abstention & degradation, provenance, cross-method validation, host conformance, and capability lifecycle. Every requirement carries a stable ID (`BNS-XX-nnn`) with a live verification hook (unit test, eval category, or runtime refusal). `tests/unit/test_spec_conformance.py` enforces document presence, RFC 2119 keyword usage, and cross-document reference integrity.
 

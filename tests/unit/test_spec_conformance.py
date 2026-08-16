@@ -27,6 +27,9 @@ EXPECTED_DOCUMENTS = [
     "BNS-007-cross-method-validation.md",
     "BNS-008-host-conformance.md",
     "BNS-009-capability-lifecycle.md",
+    "BNS-010-capability-certification.md",
+    "BNS-011-failure-taxonomy.md",
+    "BNS-012-claim-evidence-ledger.md",
 ]
 
 RFC2119_KEYWORDS = ["MUST NOT", "MUST", "SHOULD NOT", "SHOULD", "MAY"]
