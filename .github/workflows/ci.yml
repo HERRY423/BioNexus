@@ -62,11 +62,11 @@ jobs:
       - name: Verify BioNexus CLI & Commands
         shell: bash
         run: |
-          bionexus --version
-          bionexus doctor
-          bionexus list-skills
-          bionexus registry --check
-          bionexus eval --level all --provider replay
+          python -m bionexus.cli --version
+          python -m bionexus.cli doctor
+          python -m bionexus.cli list-skills
+          python -m bionexus.cli registry --check
+          python -m bionexus.cli eval --level all --provider replay
 
       - name: Fixture gold-chain smoke
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
