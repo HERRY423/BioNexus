@@ -204,24 +204,27 @@ class RealHostEvaluator:
         """Select appropriate live or replay adapter based on provider and available keys."""
         prov = (provider or os.getenv("BIONEXUS_EVAL_PROVIDER", "auto")).lower()
 
-        if prov == "openai" or (prov == "auto" and os.getenv("OPENAI_API_KEY")):
-            try:
+        if prov == "openai":
+            return OpenAIHostAdapter()
+        elif prov == "anthropic":
+            return AnthropicHostAdapter()
+        elif prov == "gemini":
+            return GeminiHostAdapter()
+        elif prov == "replay":
+            return TraceReplayHostAdapter(fallback_text=fallback_text)
+        elif prov == "auto":
+            if os.getenv("OPENAI_API_KEY"):
                 return OpenAIHostAdapter()
-            except Exception:
-                pass
-        elif prov == "anthropic" or (prov == "auto" and os.getenv("ANTHROPIC_API_KEY")):
-            try:
+            elif os.getenv("ANTHROPIC_API_KEY"):
                 return AnthropicHostAdapter()
-            except Exception:
-                pass
-        elif prov == "gemini" or (prov == "auto" and os.getenv("GEMINI_API_KEY")):
-            try:
+            elif os.getenv("GEMINI_API_KEY"):
                 return GeminiHostAdapter()
-            except Exception:
-                pass
-
-        # Offline deterministic fallback
-        return TraceReplayHostAdapter(fallback_text=fallback_text)
+            else:
+                return TraceReplayHostAdapter(fallback_text=fallback_text)
+        else:
+            raise ValueError(
+                f"Unknown host agent eval provider: '{prov}'. Supported: 'openai', 'anthropic', 'gemini', 'replay', 'auto'."
+            )
 
     @classmethod
     def evaluate_case_live(

@@ -139,6 +139,9 @@ class BenchmarkReport:
     detailed_results: List[EvalResult]
     timestamp: str
     calibration: Optional[Dict[str, Any]] = None
+    provider: str = "replay"
+    model: str = "simulated_trace_v1"
+    is_live: bool = False
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -146,6 +149,9 @@ class BenchmarkReport:
             "passed_cases": self.passed_cases,
             "failed_cases": self.failed_cases,
             "overall_accuracy": round(self.overall_accuracy, 4),
+            "provider": self.provider,
+            "model": self.model,
+            "is_live": self.is_live,
             "level_scores": self.level_scores,
             "metrics": {k: round(v, 4) for k, v in self.metrics.items()},
             "category_scores": self.category_scores,

@@ -9,6 +9,7 @@ Executes multi-tier benchmark suites:
 
 from __future__ import annotations
 
+import os
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -21,6 +22,7 @@ from bionexus.claim_checker import audit_prohibited_claims
 from bionexus.integrity import (
     audit_parameter_stability,
 )
+from bionexus.intent_router import RoutingStatus
 from evals.metrics import (
     compute_benchmark_metrics,
     compute_category_breakdown,
@@ -109,6 +111,8 @@ def run_single_case(
     t0 = time.perf_counter()
     failure_reasons: List[str] = []
     actual_cap = None
+    actual_status = "PERMITTED"
+    actual_maturity = case.expected_maturity or "UNASSESSED"
     claim_violations: List[Dict[str, Any]] = []
 
     # =========================================================================
@@ -180,23 +184,30 @@ def run_single_case(
                 out, markers, summary = run_scrna_gold_chain(
                     adata, run_qc=False, n_top_genes=60, resolution=1.2, n_marker_genes=15
                 )
-                expected = set(case.data_metadata.get("expected_markers", ["CD3D", "MS4A1", "CD14"]))
-                name_col = (
-                    "names"
-                    if "names" in markers.columns
-                    else ("gene" if "gene" in markers.columns else markers.columns[0])
-                )
-                top_markers = set(markers[name_col].astype(str))
-                recovered = expected.intersection(top_markers)
-                recall = len(recovered) / len(expected) if expected else 1.0
-                min_recall = case.data_metadata.get("min_recall", 0.80)
-                if recall < min_recall:
-                    failure_reasons.append(
-                        f"L3 Failure: Marker recall {recall:.2f} < threshold {min_recall:.2f}. Expected: {expected}, Recovered: {recovered}"
+                if markers is None or len(markers) == 0:
+                    failure_reasons.append("L3 Failure: Scanpy marker calling produced empty markers dataframe.")
+                else:
+                    expected = set(case.data_metadata.get("expected_markers", ["CD3D", "MS4A1", "CD14"]))
+                    name_col = (
+                        "names"
+                        if "names" in markers.columns
+                        else ("gene" if "gene" in markers.columns else markers.columns[0])
                     )
-            except (ImportError, ModuleNotFoundError, Exception):
-                pass
-            actual_status = "PERMITTED"
+                    top_markers = set(markers[name_col].astype(str))
+                    recovered = expected.intersection(top_markers)
+                    recall = len(recovered) / len(expected) if expected else 1.0
+                    min_recall = case.data_metadata.get("min_recall", 0.80)
+                    if recall < min_recall:
+                        failure_reasons.append(
+                            f"L3 Failure: Marker recall {recall:.2f} < threshold {min_recall:.2f}. Expected: {expected}, Recovered: {recovered}"
+                        )
+                actual_status = "PERMITTED" if len(failure_reasons) == 0 else "OUTCOME_MISMATCH"
+            except (ImportError, ModuleNotFoundError) as dep_err:
+                actual_status = "SKIPPED_DEPENDENCY"
+                failure_reasons.append(f"L3 Skipped: Missing required backend dependency: {dep_err}")
+            except Exception as e:
+                actual_status = "EXECUTION_FAILURE"
+                failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
 
         elif signal_type == "spatial_moran_svg":
             # 2. Run actual Squidpy spatial gold chain pipeline on planted dataset
@@ -211,18 +222,25 @@ def run_single_case(
                 adata = ad.read_h5ad(fixture_path)
 
                 out, svg, summary = run_spatial_gold_chain(adata, cluster=False, top_n=10, n_neighs=6)
-                top_svgs = set(svg.head(5)["gene"].astype(str))
-                expected = set(case.data_metadata.get("expected_genes", ["SVG_LEFT"]))
-                if not expected.issubset(top_svgs):
-                    failure_reasons.append(f"L3 Failure: Expected SVGs {expected} not recovered in top 5: {top_svgs}")
-                if "SVG_LEFT" in set(svg["gene"]):
-                    left_i = float(svg.loc[svg["gene"] == "SVG_LEFT", "morans_i"].iloc[0])
-                    min_i = case.data_metadata.get("moran_i_min", 0.30)
-                    if left_i < min_i:
-                        failure_reasons.append(f"L3 Failure: Moran's I {left_i:.3f} < threshold {min_i:.3f}")
-            except (ImportError, ModuleNotFoundError, Exception):
-                pass
-            actual_status = "PERMITTED"
+                if svg is None or len(svg) == 0:
+                    failure_reasons.append("L3 Failure: Squidpy spatial pipeline produced empty SVG table.")
+                else:
+                    top_svgs = set(svg.head(5)["gene"].astype(str))
+                    expected = set(case.data_metadata.get("expected_genes", ["SVG_LEFT"]))
+                    if not expected.issubset(top_svgs):
+                        failure_reasons.append(f"L3 Failure: Expected SVGs {expected} not recovered in top 5: {top_svgs}")
+                    if "SVG_LEFT" in set(svg["gene"]):
+                        left_i = float(svg.loc[svg["gene"] == "SVG_LEFT", "morans_i"].iloc[0])
+                        min_i = case.data_metadata.get("moran_i_min", 0.30)
+                        if left_i < min_i:
+                            failure_reasons.append(f"L3 Failure: Moran's I {left_i:.3f} < threshold {min_i:.3f}")
+                actual_status = "PERMITTED" if len(failure_reasons) == 0 else "OUTCOME_MISMATCH"
+            except (ImportError, ModuleNotFoundError) as dep_err:
+                actual_status = "SKIPPED_DEPENDENCY"
+                failure_reasons.append(f"L3 Skipped: Missing required backend dependency: {dep_err}")
+            except Exception as e:
+                actual_status = "EXECUTION_FAILURE"
+                failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
 
         elif signal_type == "pseudobulk_de":
             # 3. Run actual PyDESeq2 Wald test on planted condition DE matrix
@@ -241,16 +259,23 @@ def run_single_case(
                 design = pd.DataFrame({"sample_id": samples, "condition": cond})
 
                 table, contract = run_pydeseq2(counts, design, condition="condition", reference="A", contrast_level="B")
-                top_degs = table.sort_values("pvalue").head(5)["gene"].astype(str).tolist()
-                expected_de = case.data_metadata.get("expected_de_genes", ["g0"])
-                for g in expected_de:
-                    if g not in top_degs:
-                        failure_reasons.append(
-                            f"L3 Failure: Planted DEG '{g}' not found in top PyDESeq2 findings: {top_degs}"
-                        )
-            except (ImportError, ModuleNotFoundError, Exception):
-                pass
-            actual_status = "PERMITTED"
+                if table is None or len(table) == 0:
+                    failure_reasons.append("L3 Failure: PyDESeq2 Wald test produced empty results table.")
+                else:
+                    top_degs = table.sort_values("pvalue").head(5)["gene"].astype(str).tolist()
+                    expected_de = case.data_metadata.get("expected_de_genes", ["g0"])
+                    for g in expected_de:
+                        if g not in top_degs:
+                            failure_reasons.append(
+                                f"L3 Failure: Planted DEG '{g}' not found in top PyDESeq2 findings: {top_degs}"
+                            )
+                actual_status = "PERMITTED" if len(failure_reasons) == 0 else "OUTCOME_MISMATCH"
+            except (ImportError, ModuleNotFoundError) as dep_err:
+                actual_status = "SKIPPED_DEPENDENCY"
+                failure_reasons.append(f"L3 Skipped: Missing required backend dependency: {dep_err}")
+            except Exception as e:
+                actual_status = "EXECUTION_FAILURE"
+                failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
 
         elif signal_type == "clustering_stability":
             # 4. Run parameter resolution sweep and compute actual Adjusted Rand Index
@@ -279,9 +304,13 @@ def run_single_case(
                     failure_reasons.append(
                         f"L3 Failure: Clustering stability ARI {ari_score:.3f} < target threshold {target_ari:.3f}"
                     )
-            except (ImportError, ModuleNotFoundError, Exception):
-                pass
-            actual_status = "PERMITTED"
+                actual_status = "PERMITTED" if len(failure_reasons) == 0 else "OUTCOME_MISMATCH"
+            except (ImportError, ModuleNotFoundError) as dep_err:
+                actual_status = "SKIPPED_DEPENDENCY"
+                failure_reasons.append(f"L3 Skipped: Missing required backend dependency: {dep_err}")
+            except Exception as e:
+                actual_status = "EXECUTION_FAILURE"
+                failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
 
         else:
             actual_status = "PERMITTED"
@@ -298,22 +327,30 @@ def run_single_case(
         actual_status = decision.status.value
         actual_cap = decision.matched_capability.id if decision.matched_capability else None
 
-        # 1. Check Status and Capability Match
-        if case.category == EvalCategory.ROUTING:
-            if case.expected_capability and actual_cap != case.expected_capability:
-                failure_reasons.append(
-                    f"Capability mismatch: expected '{case.expected_capability}', got '{actual_cap}'"
-                )
+        # Determine inferred conclusion maturity from routing decision
+        if decision.status == RoutingStatus.ABSTAIN:
+            actual_maturity = "ABSTAIN"
+        elif decision.status == RoutingStatus.PERMITTED:
+            actual_maturity = (
+                decision.evidence_card_template.synthesize_status()
+                if decision.evidence_card_template
+                else "UNASSESSED"
+            )
+        elif decision.status == RoutingStatus.DEGRADED_ADVISORY:
+            actual_maturity = "FRAGILE"
         else:
-            if actual_status != case.expected_status.value:
-                failure_reasons.append(
-                    f"Status mismatch: expected '{case.expected_status.value}', got '{actual_status}'"
-                )
+            actual_maturity = "UNASSESSED"
 
-            if case.expected_capability and actual_cap != case.expected_capability:
-                failure_reasons.append(
-                    f"Capability mismatch: expected '{case.expected_capability}', got '{actual_cap}'"
-                )
+        # 1. Check Status & Capability Matches
+        if actual_status != case.expected_status.value:
+            failure_reasons.append(
+                f"Status mismatch: Expected {case.expected_status.value}, got {actual_status} (Rationale: {decision.rationale})"
+            )
+
+        if case.expected_capability and actual_cap != case.expected_capability:
+            failure_reasons.append(
+                f"Capability mismatch: Expected '{case.expected_capability}', got '{actual_cap}'"
+            )
 
         # 2. Check Expected Violations
         if case.expected_violations:
@@ -344,6 +381,7 @@ def run_single_case(
         expected_capability=case.expected_capability,
         actual_capability=actual_cap,
         expected_maturity=case.expected_maturity,
+        actual_maturity=actual_maturity,
         failure_reasons=failure_reasons,
         prohibited_claim_violations=claim_violations,
         execution_time_ms=round(t_elapsed, 2),
@@ -372,6 +410,10 @@ def run_benchmark(
     failed = total - passed
     accuracy = (passed / total) if total > 0 else 0.0
 
+    prov = (provider or os.getenv("BIONEXUS_EVAL_PROVIDER", "replay")).lower()
+    mod = model or ("gpt-4o-mini" if prov == "openai" else ("claude-3-5-sonnet" if prov == "anthropic" else "simulated_trace_v1"))
+    is_live = prov in ("openai", "anthropic", "gemini")
+
     return BenchmarkReport(
         total_cases=total,
         passed_cases=passed,
@@ -383,6 +425,9 @@ def run_benchmark(
         detailed_results=results,
         timestamp=datetime.now(timezone.utc).isoformat(),
         calibration=calib.to_dict(),
+        provider=prov,
+        model=mod,
+        is_live=is_live,
     )
 
 
@@ -391,7 +436,11 @@ def format_benchmark_markdown(report: BenchmarkReport) -> str:
     lines: List[str] = []
     lines.append("# [BioNexus Eval 2.0] Multi-Tier Scientific Agent Benchmark")
     lines.append(
-        f"**Timestamp**: `{report.timestamp}` | **Total Cases**: `{report.total_cases}` | **Overall Accuracy**: `{report.overall_accuracy * 100:.1f}%`\n"
+        f"**Timestamp**: `{report.timestamp}` | **Total Cases**: `{report.total_cases}` | **Overall Accuracy**: `{report.overall_accuracy * 100:.1f}%`"
+    )
+    exec_mode = "LIVE HOST LLM GENERATION" if getattr(report, "is_live", False) else "OFFLINE TRACE REPLAY"
+    lines.append(
+        f"**Execution Mode**: `{exec_mode}` | **Host Provider**: `{getattr(report, 'provider', 'replay')}` | **Model**: `{getattr(report, 'model', 'simulated_trace_v1')}`\n"
     )
 
     lines.append("## Multi-Tier Benchmark Levels\n")
