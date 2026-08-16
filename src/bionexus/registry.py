@@ -278,7 +278,15 @@ def to_marketplace_json(registry: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def get_expected_manifests(registry: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
-    """Return dictionary of relative file paths to their expected dictionary representations."""
+    """Return dictionary of relative file paths to their expected dictionary representations.
+
+    `plugins/bionexus/` is a compiler-managed, self-contained plugin mirror of the
+    repository root (so it can be installed on its own): its JSON manifests are
+    generated here, and its `skills/` + `scripts/` code trees are byte-synced by
+    `sync_mirror_trees()` / verified by `check_mirror_drift()`. The former
+    `plugins/codex/` target was removed: its only manifest pointed at a
+    `./skills/` directory that never existed there.
+    """
     codex_plugin = to_codex_plugin_json(registry)
     mkt = to_marketplace_json(registry)
     agent_plugin = to_agent_plugins_plugin_json(registry)
@@ -290,10 +298,10 @@ def get_expected_manifests(registry: Dict[str, Any]) -> Dict[str, Dict[str, Any]
         ".mcp.json": to_claude_mcp_json(registry),
         ".codex/config.json": to_codex_config(registry),
         ".codex-plugin/plugin.json": codex_plugin,
-        "plugins/codex/.codex-plugin/plugin.json": codex_plugin,
         "plugins/bionexus/.codex-plugin/plugin.json": codex_plugin,
         "plugins/bionexus/plugin.json": agent_plugin,
         "plugins/bionexus/mcp.json": agent_mcp,
+        "plugins/bionexus/.mcp.json": to_claude_mcp_json(registry),
         ".agents/plugins/marketplace.json": mkt,
         ".codex/marketplace.json": mkt,
         ".claude-plugin/marketplace.json": mkt,
@@ -352,3 +360,92 @@ def compile_and_write_all(repo_root: Path, registry: Optional[Dict[str, Any]] = 
         written.append(rel_path)
 
     return written
+
+
+# --- Plugin Mirror Tree Sync & Drift Detection (single source of truth) ---
+
+# Canonical root directories that MUST be byte-identical to their mirrors under
+# plugins/bionexus/ so the nested plugin root stays independently installable.
+MIRROR_PAIRS: List[Tuple[str, str]] = [
+    ("skills", "plugins/bionexus/skills"),
+    ("scripts", "plugins/bionexus/scripts"),
+]
+
+# Build artifacts and machine-local state that never belong to either tree.
+_MIRROR_IGNORED_DIRS = {"__pycache__", ".pytest_cache", ".ruff_cache", ".mypy_cache", ".git", ".venv", "venv"}
+_MIRROR_IGNORED_FILES = {".DS_Store", ".bionexus-doctor.json", "local_mcp_server.log"}
+
+
+def _iter_tree_files(root: Path) -> Dict[str, Path]:
+    """Map of posix relative path -> file path for all sync-relevant files under root."""
+    files: Dict[str, Path] = {}
+    if not root.is_dir():
+        return files
+    for path in sorted(root.rglob("*")):
+        if path.is_dir():
+            continue
+        if path.name in _MIRROR_IGNORED_FILES:
+            continue
+        rel = path.relative_to(root)
+        if any(part in _MIRROR_IGNORED_DIRS for part in rel.parts[:-1]):
+            continue
+        files[rel.as_posix()] = path
+    return files
+
+
+def check_mirror_drift(repo_root: Path) -> Tuple[bool, List[str]]:
+    """
+    Verify the plugins/bionexus code mirror is byte-identical to the canonical trees.
+
+    The root `skills/` and `scripts/` directories are the single source of truth;
+    the copies under `plugins/bionexus/` exist only so that the nested plugin root
+    remains self-contained. Any difference (edited content, missing file, stale
+    extra file) is drift and must be resolved with `sync_mirror_trees()`.
+    Returns (in_sync: bool, diff_messages: List[str]).
+    """
+    diffs: List[str] = []
+    for canonical_rel, mirror_rel in MIRROR_PAIRS:
+        canonical_files = _iter_tree_files(repo_root / canonical_rel)
+        mirror_files = _iter_tree_files(repo_root / mirror_rel)
+
+        for rel, canonical_path in canonical_files.items():
+            mirror_path = repo_root / mirror_rel / rel
+            if rel not in mirror_files:
+                diffs.append(f"Mirror drift: missing in {mirror_rel}: {rel}")
+            elif canonical_path.read_bytes() != mirror_path.read_bytes():
+                diffs.append(f"Mirror drift: content differs at {mirror_rel}/{rel} (canonical: {canonical_rel}/{rel})")
+
+        for rel in sorted(set(mirror_files) - set(canonical_files)):
+            diffs.append(f"Mirror drift: stale file only in {mirror_rel}: {rel} (not present in {canonical_rel})")
+
+    return (len(diffs) == 0, diffs)
+
+
+def sync_mirror_trees(repo_root: Path) -> List[str]:
+    """
+    Synchronize the plugins/bionexus code mirror from the canonical root trees.
+
+    Copies every canonical file into the mirror (creating directories as
+    needed) and removes stale mirror-only files, so the mirror becomes
+    byte-identical to the source of truth. Ignored artifacts (e.g. __pycache__)
+    are left untouched. Returns the list of synchronized relative paths.
+    """
+    import shutil
+
+    synced: List[str] = []
+    for canonical_rel, mirror_rel in MIRROR_PAIRS:
+        canonical_files = _iter_tree_files(repo_root / canonical_rel)
+        mirror_files = _iter_tree_files(repo_root / mirror_rel)
+
+        for rel, canonical_path in canonical_files.items():
+            mirror_path = repo_root / mirror_rel / rel
+            if not mirror_path.is_file() or mirror_path.read_bytes() != canonical_path.read_bytes():
+                mirror_path.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(canonical_path, mirror_path)
+            synced.append(rel)
+
+        for rel in sorted(set(mirror_files) - set(canonical_files)):
+            (repo_root / mirror_rel / rel).unlink()
+            print(f" [MIRROR] removed stale {mirror_rel}/{rel}")
+
+    return synced

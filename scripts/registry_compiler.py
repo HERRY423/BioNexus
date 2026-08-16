@@ -26,8 +26,10 @@ if _SRC.is_dir() and str(_SRC) not in sys.path:
 
 from bionexus.registry import (  # noqa: E402
     check_manifest_drift,
+    check_mirror_drift,
     compile_and_write_all,
     load_canonical_registry,
+    sync_mirror_trees,
     validate_endpoints,
 )
 
@@ -87,14 +89,27 @@ def main() -> int:
     if args.check:
         print("\n=== Checking for Configuration Drift ===")
         in_sync, diffs = check_manifest_drift(_REPO_ROOT, registry)
-        if in_sync:
+        mirror_sync, mirror_diffs = check_mirror_drift(_REPO_ROOT)
+        if in_sync and mirror_sync:
             print("[OK] All platform manifests are strictly in sync with bionexus.registry.yaml.")
+            print("[OK] Plugin mirror trees (plugins/bionexus/skills, scripts) are byte-identical to the canonical root.")
         else:
-            print("[DRIFT DETECTED] The following files do not match bionexus.registry.yaml:", file=sys.stderr)
-            for d in diffs:
-                print(f" - {d}", file=sys.stderr)
+            if not in_sync:
+                print("[DRIFT DETECTED] The following files do not match bionexus.registry.yaml:", file=sys.stderr)
+                for d in diffs:
+                    print(f" - {d}", file=sys.stderr)
+            if not mirror_sync:
+                print(
+                    "[MIRROR DRIFT DETECTED] plugins/bionexus code mirror differs from the canonical root trees:",
+                    file=sys.stderr,
+                )
+                for d in mirror_diffs:
+                    print(f" - {d}", file=sys.stderr)
             print(
-                "\nRun `python scripts/registry_compiler.py --generate` to synchronize all manifests.", file=sys.stderr
+                "\nRun `python scripts/registry_compiler.py --generate` to synchronize all manifests "
+                "and mirrors. NOTE: always edit the canonical root skills/ and scripts/ trees; the "
+                "plugins/bionexus copies are regenerated, never hand-edited.",
+                file=sys.stderr,
             )
             exit_code = 1
 
@@ -104,6 +119,18 @@ def main() -> int:
         for f in written:
             print(f" [GENERATED] {f}")
         print("[OK] Successfully generated all platform manifests.")
+
+        print("\n=== Synchronizing Plugin Mirror Trees (skills/, scripts/) ===")
+        synced = sync_mirror_trees(_REPO_ROOT)
+        print(f" [MIRROR] {len(synced)} files verified/synchronized into plugins/bionexus/")
+        mirror_sync, mirror_diffs = check_mirror_drift(_REPO_ROOT)
+        if not mirror_sync:
+            print("[ERROR] Mirror sync failed verification:", file=sys.stderr)
+            for d in mirror_diffs:
+                print(f" - {d}", file=sys.stderr)
+            exit_code = 1
+        else:
+            print("[OK] Plugin mirror trees are byte-identical to the canonical root.")
 
     return exit_code
 

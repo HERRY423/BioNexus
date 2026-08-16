@@ -25,8 +25,10 @@ if str(_SRC) not in sys.path:
 
 from bionexus.registry import (
     check_manifest_drift,
+    check_mirror_drift,
     compile_and_write_all,
     load_canonical_registry,
+    sync_mirror_trees,
     to_agent_plugins_mcp_json,
     to_agent_plugins_plugin_json,
     to_claude_mcp_json,
@@ -145,6 +147,86 @@ def test_drift_detection_catches_tampering():
         assert "Configuration drift in .mcp.json" in tampered_diffs[0]
 
 
+def test_plugin_mirror_zero_drift():
+    """Verify the repository ships byte-identical canonical and mirror code trees.
+
+    Regression guard for the dual-tree drift defect: root `skills/` and
+    `scripts/` are the single source of truth; the `plugins/bionexus/` copies
+    must never diverge (historically `scrna_pipeline.py` drifted by 49 lines
+    and no check noticed).
+    """
+    in_sync, diffs = check_mirror_drift(_REPO_ROOT)
+    assert in_sync is True, f"Plugin mirror drift detected: {diffs}"
+
+    canonical = (_REPO_ROOT / "skills" / "single-cell-rna-qc" / "scripts" / "scrna_pipeline.py").read_bytes()
+    mirror = (
+        _REPO_ROOT / "plugins" / "bionexus" / "skills" / "single-cell-rna-qc" / "scripts" / "scrna_pipeline.py"
+    ).read_bytes()
+    assert canonical == mirror
+
+
+def test_mirror_drift_detection_catches_all_divergence_classes():
+    """Mirror checker must catch content edits, missing files, and stale extras."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_path = Path(tmp_dir)
+        canonical_skill = tmp_path / "skills" / "demo-skill" / "scripts"
+        canonical_script = tmp_path / "scripts"
+        canonical_skill.mkdir(parents=True)
+        canonical_script.mkdir(parents=True)
+        (canonical_skill / "pipeline.py").write_text("print('canonical')\n", encoding="utf-8")
+        (canonical_script / "helper.py").write_text("VERSION = 1\n", encoding="utf-8")
+
+        synced = sync_mirror_trees(tmp_path)
+        assert set(synced) == {"demo-skill/scripts/pipeline.py", "helper.py"}
+        in_sync, diffs = check_mirror_drift(tmp_path)
+        assert in_sync is True, diffs
+
+        # 1. Content divergence in the mirror
+        mirror_pipeline = tmp_path / "plugins" / "bionexus" / "skills" / "demo-skill" / "scripts" / "pipeline.py"
+        mirror_pipeline.write_text("print('hand-edited mirror')\n", encoding="utf-8")
+        in_sync, diffs = check_mirror_drift(tmp_path)
+        assert in_sync is False
+        assert any("content differs" in d and "skills/demo-skill/scripts/pipeline.py" in d for d in diffs)
+
+        # 2. Missing file in the mirror
+        (tmp_path / "skills" / "demo-skill" / "scripts" / "extra.py").write_text("x = 1\n", encoding="utf-8")
+        in_sync, diffs = check_mirror_drift(tmp_path)
+        assert in_sync is False
+        assert any("missing in plugins/bionexus/skills" in d and "extra.py" in d for d in diffs)
+
+        # 3. Stale extra file in the mirror
+        stale = tmp_path / "plugins" / "bionexus" / "skills" / "demo-skill" / "scripts" / "stale.py"
+        stale.write_text("orphaned\n", encoding="utf-8")
+        in_sync, diffs = check_mirror_drift(tmp_path)
+        assert in_sync is False
+        assert any("stale file only in plugins/bionexus/skills" in d and "stale.py" in d for d in diffs)
+
+        # 4. Sync repairs everything back to byte-identity
+        sync_mirror_trees(tmp_path)
+        in_sync, diffs = check_mirror_drift(tmp_path)
+        assert in_sync is True, diffs
+        assert not stale.exists(), "stale mirror-only file must be removed by sync"
+
+
+def test_plugin_root_manifests_are_self_contained():
+    """plugins/bionexus must be a complete, self-contained plugin root.
+
+    Every relative reference its manifests declare (`./skills/`, `./mcp.json`,
+    `./.mcp.json`) must resolve inside the mirror — this failed historically
+    for `.mcp.json` and for the deleted `plugins/codex/` tree.
+    """
+    plugin_root = _REPO_ROOT / "plugins" / "bionexus"
+    assert (plugin_root / "skills").is_dir(), "mirror skills/ tree missing"
+    assert (plugin_root / "scripts").is_dir(), "mirror scripts/ tree missing"
+    for manifest in ("plugin.json", "mcp.json", ".mcp.json", ".codex-plugin/plugin.json"):
+        assert (plugin_root / manifest).is_file(), f"plugins/bionexus/{manifest} missing"
+
+    assert not (_REPO_ROOT / "plugins" / "codex").exists(), (
+        "plugins/codex should not exist: its only manifest pointed at a ./skills/ directory "
+        "that never existed there."
+    )
+
+
 def test_registry_compiler_cli():
     """Verify CLI tool execution and arguments."""
     cli_path = _REPO_ROOT / "scripts" / "registry_compiler.py"
@@ -155,6 +237,7 @@ def test_registry_compiler_cli():
     )
     assert proc_check.returncode == 0
     assert "strictly in sync" in proc_check.stdout
+    assert "byte-identical to the canonical root" in proc_check.stdout
 
     # Test --validate-endpoints
     proc_val = subprocess.run(
