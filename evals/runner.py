@@ -292,8 +292,10 @@ def run_single_case(
                 adata_res05, _ = reduce_and_cluster(adata_pre.copy(), resolution=0.5)
                 adata_res08, _ = reduce_and_cluster(adata_pre.copy(), resolution=0.8)
 
-                labels_05 = adata_res05.obs["leiden"].values
-                labels_08 = adata_res08.obs["leiden"].values
+                key_05 = "leiden" if "leiden" in adata_res05.obs else "cluster"
+                key_08 = "leiden" if "leiden" in adata_res08.obs else "cluster"
+                labels_05 = adata_res05.obs[key_05].values
+                labels_08 = adata_res08.obs[key_08].values
 
                 grade, notes, stats = audit_parameter_stability([labels_05, labels_08], metric="ari")
                 ari_score = stats.get("mean_similarity", 0.0)
