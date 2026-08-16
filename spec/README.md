@@ -37,6 +37,9 @@ deleted.
 | [BNS-007](BNS-007-cross-method-validation.md) | Cross-Method Validation | Parameter sensitivity and method concordance | `src/bionexus/integrity.py` (stability audits) |
 | [BNS-008](BNS-008-host-conformance.md) | Host Agent Conformance | What any connected host agent MUST/MUST NOT do | `src/bionexus/claim_checker.py`, `evals/host_eval.py` |
 | [BNS-009](BNS-009-capability-lifecycle.md) | Capability Lifecycle | Versioning, frontier graduation, deprecation | `docs/versioning-policy.md`, eval frontier track |
+| [BNS-010](BNS-010-capability-certification.md) | Capability Certification | 14 evidence criteria; CERTIFIED / VALIDATED / EXPERIMENTAL / CONNECTOR-ONLY tiers | `src/bionexus/certification.py` |
+| [BNS-011](BNS-011-failure-taxonomy.md) | Scientific Failure Taxonomy | The BN-Fxxx failure ontology with detection rules | `src/bionexus/failures.py` |
+| [BNS-012](BNS-012-claim-evidence-ledger.md) | Claim–Evidence Ledger | Claim graph as a data structure (JSON / PROV-O JSON-LD) | `src/bionexus/ledger.py` |
 
 ## Conformance classes
 
@@ -47,6 +50,15 @@ deleted.
 3. **Calibration conformance** (BNS-004): obligations on reported evidence quality;
    measured by the epistemic calibration benchmark (OCE, overconfidence, macro-F1)
    and the frontier calibration track (BNS-009).
+4. **Certification conformance** (BNS-010): tier claims MUST be computed from
+   recorded evidence; honest gap reporting is mandatory (BNS-CF-005).
+
+## Governing philosophy
+
+**Fail-closed** (BNS-005 §6): *knowing when not to compute is a scientific
+capability.* Missing evidence abstains, invalid input refuses, missing backends
+degrade with disclosure, violated assumptions block claims, absent external
+validation caps evidence. The canonical gate is `prevent_invalid_run()`.
 
 ## Verification
 

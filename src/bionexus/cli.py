@@ -845,6 +845,145 @@ def handle_abi(args: argparse.Namespace) -> int:
     return 0
 
 
+def handle_certification(args: argparse.Namespace) -> int:
+    """Handle the 'certification' command (BNS-010): honest tier report + roadmap."""
+    from bionexus.certification import certification_report
+
+    report = certification_report()
+    if args.json:
+        print(json.dumps(report, indent=2))
+        return 0
+
+    tiers = report["tier_distribution"]
+    print("\n=== BioNexus Capability Certification (BNS-010) ===")
+    print(
+        f"**CERTIFIED**: {len(tiers['CERTIFIED'])} | **VALIDATED**: {len(tiers['VALIDATED'])} | "
+        f"**EXPERIMENTAL**: {len(tiers['EXPERIMENTAL'])} | **CONNECTOR-ONLY**: {len(tiers['CONNECTOR-ONLY'])}"
+    )
+    print(f"M4 target: {report['m4_target_certified']} CERTIFIED -> honest gap: {report['m4_gap']}\n")
+
+    print("| Capability | Tier | Criteria | Blocking CERTIFIED |")
+    print("|---|---|---|---|")
+    for cid, rec in report["records"].items():
+        blocking = ", ".join(report["roadmap"][cid]["blocking_for_certified"]) or "none"
+        print(
+            f"| `{cid}` | `{rec['tier']}` | {rec['satisfied_count']}/{rec['total_criteria']} | {blocking} |"
+        )
+    print("\nTiers are computed from recorded evidence, never asserted (BNS-CF-002).")
+    print("The blocking list is the certification roadmap (BNS-CF-005).\n")
+    return 0
+
+
+def handle_failures(args: argparse.Namespace) -> int:
+    """Handle the 'failures' command (BNS-011): scientific failure taxonomy."""
+    from bionexus.failures import (
+        failure_to_dict,
+        get_failure_mode,
+        list_failure_modes,
+        taxonomy_summary,
+    )
+
+    action = getattr(args, "failures_action", "list")
+    if action == "list":
+        if args.json:
+            print(json.dumps([failure_to_dict(m) for m in list_failure_modes()], indent=2))
+            return 0
+        summary = taxonomy_summary()
+        print(f"\n=== BioNexus Scientific Failure Taxonomy (BNS-011): {summary['total_modes']} modes ===\n")
+        print("| ID | Failure Mode | Required Behavior | Benchmark Cases | Open Gap |")
+        print("|---|---|---|---|---|")
+        for m in list_failure_modes():
+            gap = "**OPEN**" if m.open_gap else ""
+            print(f"| `{m.failure_id}` | {m.name} | {m.required_behavior.split(';')[0]} | {len(m.benchmark_cases)} | {gap} |")
+        print(f"\nOpen gaps (no benchmark coverage yet): {', '.join(summary['open_gaps'])}\n")
+        return 0
+
+    elif action == "show":
+        try:
+            mode = get_failure_mode(args.id)
+        except KeyError as e:
+            print(f"[ERROR] {e}", file=sys.stderr)
+            return 1
+        if args.json:
+            print(json.dumps(failure_to_dict(mode), indent=2))
+            return 0
+        print(f"\n### {mode.failure_id}: {mode.name}\n")
+        print(f"**Definition**: {mode.definition}\n")
+        print(f"**Example**: {mode.example}\n")
+        print(f"**Affected capabilities**: {', '.join(f'`{c}`' for c in mode.affected_capabilities)}\n")
+        print(f"**Detection rule**: {mode.detection_rule}\n")
+        print(f"**Required behavior**: {mode.required_behavior}\n")
+        print(f"**Acceptable degradation**: {mode.acceptable_degradation}\n")
+        print(f"**Benchmark cases**: {', '.join(f'`{c}`' for c in mode.benchmark_cases) or '*none (open gap)*'}\n")
+        return 0
+    return 0
+
+
+def handle_prevent(args: argparse.Namespace) -> int:
+    """Handle the 'prevent' command (BNS-005 §6): the fail-closed gate."""
+    from bionexus.failclosed import prevent_invalid_run
+
+    meta = {}
+    if getattr(args, "min_replicates", None) is not None:
+        meta["min_replicates_per_condition"] = args.min_replicates
+    if getattr(args, "is_normalized", False):
+        meta["is_normalized"] = True
+        meta["is_integer_like"] = False
+    if getattr(args, "n_spatial_spots", None) is not None:
+        meta["n_spatial_spots"] = args.n_spatial_spots
+
+    verdict = prevent_invalid_run(
+        args.query,
+        data_metadata=meta,
+        claimed_maturity=getattr(args, "claim_maturity", None),
+        allow_degraded=args.allow_degraded,
+    )
+    if args.json:
+        print(json.dumps(verdict.to_dict(), indent=2))
+    else:
+        print("\n=== BioNexus Fail-Closed Gate (prevent_invalid_run) ===\n")
+        print(f"**Prevented**: `{verdict.prevented}` | **Kind**: `{verdict.prevention_kind}` | **Action**: `{verdict.action}`")
+        print(f"**Reason**: {verdict.reason}")
+        if verdict.failure_mode_ids:
+            print(f"**Failure modes**: {', '.join(f'`{fid}`' for fid in verdict.failure_mode_ids)}")
+        if verdict.claimed_maturity:
+            print(f"**Maturity**: claimed `{verdict.claimed_maturity}` -> warranted `{verdict.warranted_maturity}`")
+        for r in verdict.remedies:
+            print(f"  * Remedy: {r}")
+        for m in verdict.missing_data_requests:
+            print(f"  * Needed: {m}")
+        print()
+    return 1 if verdict.prevented else 0
+
+
+def handle_ledger(args: argparse.Namespace) -> int:
+    """Handle the 'ledger' command (BNS-012): claim-evidence ledger inspection."""
+    from bionexus.ledger import ClaimLedger
+
+    action = getattr(args, "ledger_action", "show")
+    ledger = ClaimLedger.load(args.path)
+    if action == "show":
+        if args.json:
+            print(json.dumps(ledger.to_dict(), indent=2))
+            return 0
+        print(f"\n=== Claim–Evidence Ledger: {args.path} ===\n")
+        print(f"**Evidence refs**: {len(ledger.evidence)} | **Claims**: {len(ledger.claims)}\n")
+        for cid, claim in ledger.claims.items():
+            print(f"- **`{cid}`** [{claim.evidence_status}] {claim.statement}")
+            if claim.supported_by:
+                print(f"  - supported_by: {', '.join(claim.supported_by)}")
+            if claim.contradicted_by:
+                print(f"  - contradicted_by: {', '.join(claim.contradicted_by)}")
+            if claim.depends_on:
+                print(f"  - depends_on: {', '.join(claim.depends_on)}")
+        print()
+        return 0
+    elif action == "jsonld":
+        print(json.dumps(ledger.to_jsonld(), indent=2))
+        return 0
+    return 0
+
+
 def handle_route(args: argparse.Namespace) -> int:
     """Handle the 'route' command for scientific intent routing."""
     meta = {}
@@ -1238,6 +1377,50 @@ def main(argv: Optional[list[str]] = None) -> int:
     )
     p_abi_conf.add_argument("--json", action="store_true", help="Output as JSON")
 
+    # 6.6 certification (BNS-010)
+    p_cert = subparsers.add_parser(
+        "certification", help="Capability certification tiers, evidence, and honest gap roadmap (BNS-010)"
+    )
+    p_cert.add_argument("--json", action="store_true", help="Output full certification report as JSON")
+
+    # 6.7 failures (BNS-011)
+    p_fail = subparsers.add_parser(
+        "failures", help="BioNexus Scientific Failure Taxonomy (BN-Fxxx) (BNS-011)"
+    )
+    fail_subs = p_fail.add_subparsers(dest="failures_action", help="Failure taxonomy actions")
+
+    p_fail_list = fail_subs.add_parser("list", help="List all failure modes")
+    p_fail_list.add_argument("--json", action="store_true", help="Output as JSON")
+
+    p_fail_show = fail_subs.add_parser("show", help="Show one failure mode record")
+    p_fail_show.add_argument("id", help="Failure mode ID (e.g. BN-F002)")
+    p_fail_show.add_argument("--json", action="store_true", help="Output as JSON")
+
+    # 6.8 prevent (fail-closed gate, BNS-005 §6)
+    p_prevent = subparsers.add_parser(
+        "prevent", help="Fail-closed gate: prevent_invalid_run() before any execution (BNS-AD-013)"
+    )
+    p_prevent.add_argument("query", help="Requested scientific analysis")
+    p_prevent.add_argument("--min-replicates", type=int, default=None, help="Replicates per condition metadata")
+    p_prevent.add_argument("--is-normalized", action="store_true", help="Input matrix is normalized floats")
+    p_prevent.add_argument("--n-spatial-spots", type=int, default=None, help="Spatial spot count metadata")
+    p_prevent.add_argument("--claim-maturity", default=None, help="Maturity the host intends to claim (ceiling audit)")
+    p_prevent.add_argument("--allow-degraded", action="store_true", help="Consent to Grade C degradation")
+    p_prevent.add_argument("--json", action="store_true", help="Output verdict as JSON")
+
+    # 6.9 ledger (BNS-012)
+    p_ledger = subparsers.add_parser(
+        "ledger", help="Inspect a Claim–Evidence Ledger JSON artifact (BNS-012)"
+    )
+    ledger_subs = p_ledger.add_subparsers(dest="ledger_action", help="Ledger actions")
+
+    p_ledger_show = ledger_subs.add_parser("show", help="Render ledger claims and evidence status")
+    p_ledger_show.add_argument("path", help="Path to ledger JSON file")
+    p_ledger_show.add_argument("--json", action="store_true", help="Output raw ledger as JSON")
+
+    p_ledger_ld = ledger_subs.add_parser("jsonld", help="Project the ledger as PROV-O JSON-LD")
+    p_ledger_ld.add_argument("path", help="Path to ledger JSON file")
+
     # 7. route (Validated Scientific Intent Router)
     p_route = subparsers.add_parser(
         "route", help="Route scientific queries to validated capabilities with invariant checks"
@@ -1357,6 +1540,20 @@ def main(argv: Optional[list[str]] = None) -> int:
             p_abi.print_help()
             return 0
         return handle_abi(args)
+    elif args.command == "certification":
+        return handle_certification(args)
+    elif args.command == "failures":
+        if not getattr(args, "failures_action", None):
+            p_fail.print_help()
+            return 0
+        return handle_failures(args)
+    elif args.command == "prevent":
+        return handle_prevent(args)
+    elif args.command == "ledger":
+        if not getattr(args, "ledger_action", None):
+            p_ledger.print_help()
+            return 0
+        return handle_ledger(args)
     elif args.command == "route":
         return handle_route(args)
     elif args.command == "eval":

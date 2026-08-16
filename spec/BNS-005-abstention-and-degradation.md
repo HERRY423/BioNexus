@@ -66,6 +66,34 @@ by which degraded execution is allowed at all.
   specification series (e.g. `BNS-II-002` for count-scale violations) so that hosts
   can cite the governing invariant.
 
+## 6. Fail-closed philosophy: `prevent_invalid_run()`
+
+*Knowing when not to compute is a scientific capability.* The platform's most
+scarce API is not `run()` — it is `prevent_invalid_run()`
+(`src/bionexus/failclosed.py`).
+
+- **BNS-AD-013** The runtime MUST expose `prevent_invalid_run()` as the single
+  canonical fail-closed gate: it evaluates a requested run against the
+  scientific contract BEFORE any compute and returns a prevention verdict
+  (`PreventionDecision`) with prevention kind, action, reason, failure-mode IDs
+  (BNS-FT-006), remedies, and the underlying routing decision. Hosts SHOULD
+  call it before execution and MUST honor its verdict; an unsupervised `run()`
+  of a prevented request is a BNS-HC-002 conformance violation.
+- **BNS-AD-014** The gate MUST implement the closed-by-default table:
+
+  | Condition | Prevention kind | Action |
+  |---|---|---|
+  | missing evidence | `MISSING_EVIDENCE` | ABSTAIN (request data) |
+  | invalid input | `INVALID_INPUT` | REFUSE |
+  | backend unavailable | `BACKEND_UNAVAILABLE` | DEGRADE WITH DISCLOSURE |
+  | assumption violated | `ASSUMPTION_VIOLATED` | BLOCK CLAIM |
+  | claim beyond warrant | `CLAIM_BEYOND_WARRANT` | BLOCK CLAIM |
+  | external validation absent | `EXTERNAL_VALIDATION_ABSENT` | CAP EVIDENCE LEVEL |
+
+- **BNS-AD-015** Every prevention row MUST terminate in a blocked or disclosed
+  state; there is NO row that resolves to silent execution. A clean request
+  resolves to `RUN PERMITTED` only after all six rows fail to match.
+
 ## 6. Conformance verification
 
 | Requirement | Verified by |
@@ -75,3 +103,5 @@ by which degraded execution is allowed at all.
 | BNS-AD-006..008 | eval `backend_failure` (DEGRADED_ADVISORY cases); `tests/unit/test_kernel_and_honesty.py` |
 | BNS-AD-009 | `abi.audit_claims_against_abi`; frontier calibration track |
 | BNS-AD-010 | `claim_checker._REGULATORY_PATTERNS`; eval L2 `host_agent_claim` |
+| BNS-AD-011..012 | Host integration guidance (SHOULD-tier) |
+| BNS-AD-013..015 | `tests/unit/test_failclosed.py` (all six rows); `bionexus prevent` CLI |

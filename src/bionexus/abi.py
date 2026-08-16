@@ -215,7 +215,16 @@ class EvidenceCeiling:
             ConclusionMaturity.ROBUST.value: 4,
             ConclusionMaturity.REPLICATED.value: 5,
         }
-        claimed_rank = ranks.get(str(claimed_maturity).upper(), 1)
+        claimed = str(claimed_maturity).upper()
+        # Warning states are not warrant levels: never rewrite them downward.
+        if claimed in (
+            ConclusionMaturity.ABSTAIN.value,
+            ConclusionMaturity.UNASSESSED.value,
+            ConclusionMaturity.FRAGILE.value,
+            ConclusionMaturity.CONFLICTED.value,
+        ):
+            return claimed_maturity
+        claimed_rank = ranks.get(claimed, 1)
         ceiling_rank = ranks.get(self.without_external_validation, ranks[ConclusionMaturity.SUPPORTED.value])
         if claimed_rank > ceiling_rank:
             return self.without_external_validation
