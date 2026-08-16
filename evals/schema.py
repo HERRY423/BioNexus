@@ -63,6 +63,7 @@ class EvalCase:
     data_metadata: Dict[str, Any] = field(default_factory=dict)
     allow_degraded: bool = False
     description: str = ""
+    known_limitation: bool = False
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -80,6 +81,7 @@ class EvalCase:
             "data_metadata": self.data_metadata,
             "allow_degraded": self.allow_degraded,
             "description": self.description,
+            "known_limitation": self.known_limitation,
         }
 
 
@@ -100,6 +102,8 @@ class EvalResult:
     failure_reasons: List[str] = field(default_factory=list)
     prohibited_claim_violations: List[Dict[str, Any]] = field(default_factory=list)
     execution_time_ms: float = 0.0
+    known_limitation: bool = False
+    provider: Optional[str] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -120,6 +124,11 @@ class EpistemicCalibrationReport:
     macro_f1: float
     confusion_matrix: Dict[str, Dict[str, int]]
     maturity_levels: List[str]
+    adjacent_error_rate: float = 0.0
+    within_one_accuracy: float = 1.0
+    per_class: Dict[str, Dict[str, float]] = field(default_factory=dict)
+    verdict: str = "CALIBRATED"
+    skipped_no_backend: int = 0
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -142,6 +151,12 @@ class BenchmarkReport:
     provider: str = "replay"
     model: str = "simulated_trace_v1"
     is_live: bool = False
+    frontier_results: List[EvalResult] = field(default_factory=list)
+    frontier_metrics: Dict[str, Any] = field(default_factory=dict)
+    frontier_calibration: Optional[Dict[str, Any]] = None
+    union_total: int = 0
+    union_passed: int = 0
+    union_accuracy: float = 0.0
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -158,4 +173,10 @@ class BenchmarkReport:
             "timestamp": self.timestamp,
             "calibration": self.calibration,
             "detailed_results": [r.to_dict() for r in self.detailed_results],
+            "frontier_results": [r.to_dict() for r in self.frontier_results],
+            "frontier_metrics": self.frontier_metrics,
+            "frontier_calibration": self.frontier_calibration,
+            "union_total": self.union_total,
+            "union_passed": self.union_passed,
+            "union_accuracy": round(self.union_accuracy, 4),
         }

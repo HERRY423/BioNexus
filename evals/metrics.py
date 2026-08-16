@@ -97,6 +97,10 @@ def compute_epistemic_calibration(results: List[EvalResult]) -> EpistemicCalibra
             macro_f1=1.0,
             confusion_matrix={lvl: {l2: 0 for l2 in CANONICAL_MATURITY_LEVELS} for lvl in CANONICAL_MATURITY_LEVELS},
             maturity_levels=CANONICAL_MATURITY_LEVELS,
+            adjacent_error_rate=0.0,
+            within_one_accuracy=1.0,
+            per_class={},
+            verdict="CALIBRATED",
         )
 
     confusion: Dict[str, Dict[str, int]] = {
@@ -104,11 +108,19 @@ def compute_epistemic_calibration(results: List[EvalResult]) -> EpistemicCalibra
     }
 
     pairs: List[tuple[str, str, int, int]] = []
+    skipped_no_backend = 0
     max_rank = 5.0
 
     for r in results:
         y_true = _infer_expected_maturity(r)
         y_pred = _infer_actual_maturity(r)
+
+        # Honest calibration: cases that never executed (missing optional
+        # backends in minimal environments) carry no maturity claim and MUST
+        # not inflate or deflate calibration statistics (BNS-EM-009).
+        if y_pred == "NOT_EVALUATED_NO_BACKEND":
+            skipped_no_backend += 1
+            continue
 
         # Map to canonical keys if unknown
         if y_true not in confusion:
@@ -135,6 +147,14 @@ def compute_epistemic_calibration(results: List[EvalResult]) -> EpistemicCalibra
     rank_diffs = [abs(rp - rt) for _, _, rt, rp in pairs]
     oce = sum(rank_diffs) / total if total > 0 else 0.0
 
+    # Adjacent-rank discrimination diagnostics (BNS-EM-010):
+    # adjacent errors are the hardest calibration failures to detect and the
+    # most dangerous in scientific reporting (PRELIMINARY vs SUPPORTED etc.)
+    adjacent_errors = sum(1 for d in rank_diffs if d == 1)
+    adjacent_error_rate = adjacent_errors / total if total > 0 else 0.0
+    within_one = sum(1 for d in rank_diffs if d <= 1)
+    within_one_accuracy = within_one / total if total > 0 else 1.0
+
     # Brier Calibration Score: 1.0 - mean((rp - rt)/max_rank)^2
     brier_loss = sum(((rp - rt) / max_rank) ** 2 for _, _, rt, rp in pairs) / total if total > 0 else 0.0
     brier_score = max(0.0, 1.0 - brier_loss)
@@ -155,6 +175,32 @@ def compute_epistemic_calibration(results: List[EvalResult]) -> EpistemicCalibra
 
     macro_f1 = sum(f1_scores) / len(f1_scores) if f1_scores else 1.0
 
+    # Per-class precision / recall / F1 over populated labels
+    per_class: Dict[str, Dict[str, float]] = {}
+    for label in sorted(active_labels):
+        tp = confusion[label][label]
+        fp = sum(confusion[other][label] for other in CANONICAL_MATURITY_LEVELS if other != label)
+        fn = sum(confusion[label][other] for other in CANONICAL_MATURITY_LEVELS if other != label)
+        precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
+        recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+        f1 = (2 * precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
+        per_class[label] = {
+            "support": int(tp + fn),
+            "precision": round(precision, 4),
+            "recall": round(recall, 4),
+            "f1": round(f1, 4),
+        }
+
+    # Calibration verdict (BNS-EM-007): overconfidence dominates the verdict
+    if overconf_rate > underconf_rate and overconf_rate > 0:
+        verdict = "OVERCONFIDENT"
+    elif underconf_rate > overconf_rate and underconf_rate > 0:
+        verdict = "UNDERCONFIDENT"
+    elif overconf_rate > 0 and underconf_rate > 0:
+        verdict = "MISALIGNED"
+    else:
+        verdict = "CALIBRATED"
+
     return EpistemicCalibrationReport(
         total_evaluated=total,
         exact_accuracy=round(exact_acc, 4),
@@ -167,6 +213,11 @@ def compute_epistemic_calibration(results: List[EvalResult]) -> EpistemicCalibra
         macro_f1=round(macro_f1, 4),
         confusion_matrix=confusion,
         maturity_levels=CANONICAL_MATURITY_LEVELS,
+        adjacent_error_rate=round(adjacent_error_rate, 4),
+        within_one_accuracy=round(within_one_accuracy, 4),
+        per_class=per_class,
+        verdict=verdict,
+        skipped_no_backend=skipped_no_backend,
     )
 
 
@@ -304,3 +355,72 @@ def compute_level_breakdown(results: List[EvalResult]) -> Dict[str, Dict[str, An
         }
 
     return breakdown
+
+
+def compute_frontier_metrics(results: List[EvalResult]) -> Dict[str, Any]:
+    """
+    Compute the frontier (known-limitation) track metrics (BNS-LC-004..006).
+
+    Frontier cases probe beyond currently-guaranteed behavior. They are
+    executed and reported with honest pass/fail but excluded from gating
+    metrics until they graduate. A frontier pass rate below 100% is the
+    public statement of what BioNexus does not yet guarantee.
+    """
+    total = len(results)
+    passed = sum(1 for r in results if r.passed)
+    failed = total - passed
+
+    failed_cases = [
+        {
+            "case_id": r.case_id,
+            "level": r.level,
+            "category": r.category,
+            "failure_reasons": r.failure_reasons,
+        }
+        for r in results
+        if not r.passed
+    ]
+
+    calib = compute_epistemic_calibration(results) if results else None
+    return {
+        "total": total,
+        "passed": passed,
+        "failed": failed,
+        "pass_rate": round((passed / total) if total > 0 else 0.0, 4),
+        "failed_cases": failed_cases,
+        "graduation_eligible": [r.case_id for r in results if r.passed],
+        "calibration": calib.to_dict() if calib else None,
+    }
+
+
+def compute_cross_host_consistency(results: List[EvalResult]) -> Dict[str, Any]:
+    """
+    Compute cross-host consistency over L2 claim-audit results (BNS-HC-007).
+
+    Consistency is the fraction of L2 cases on which all evaluated hosts
+    agree on the claim-audit outcome. Single-host runs are reported as
+    not evaluated rather than trivially consistent.
+    """
+    l2 = [r for r in results if r.level == "L2"]
+    providers = sorted({r.provider for r in l2 if r.provider})
+
+    if len(providers) < 2:
+        return {
+            "evaluated": False,
+            "providers": providers or ["replay"],
+            "agreement_rate": None,
+            "note": "Cross-host consistency requires L2 runs against >= 2 host providers (use --provider matrix runs).",
+        }
+
+    by_case: Dict[str, List[bool]] = {}
+    for r in l2:
+        by_case.setdefault(r.case_id, []).append(r.passed)
+
+    agreeing = sum(1 for outcomes in by_case.values() if len(set(outcomes)) == 1)
+    agreement_rate = agreeing / len(by_case) if by_case else 1.0
+    return {
+        "evaluated": True,
+        "providers": providers,
+        "agreement_rate": round(agreement_rate, 4),
+        "cases_compared": len(by_case),
+    }

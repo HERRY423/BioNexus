@@ -748,6 +748,103 @@ def handle_capability(args: argparse.Namespace) -> int:
     return 0
 
 
+def handle_abi(args: argparse.Namespace) -> int:
+    """Handle the 'abi' command: inspect the Biological Capability ABI (BNS-001 §5)."""
+    from bionexus.abi import (
+        abi_conformance_summary,
+        audit_claims_against_abi,
+        capability_abis,
+        get_capability_abi,
+    )
+
+    action = getattr(args, "abi_action", "list")
+
+    if action == "list":
+        abis = capability_abis()
+        if args.json:
+            print(json.dumps([a.to_dict() for a in abis.values()], indent=2))
+            return 0
+        print(f"\n=== Biological Capability ABI v1.0 ({len(abis)} Capabilities) ===\n")
+        print("| Capability | ABI Ceiling (no ext. validation) | Forbidden Claims | Reference Backend |")
+        print("|---|---|---|---|")
+        for a in abis.values():
+            forbidden = ", ".join(a.forbidden_claims)
+            print(
+                f"| `{a.capability_id}` | `{a.evidence_ceiling.without_external_validation}` | {forbidden} | `{a.execution.reference_backend}` |"
+            )
+        print()
+        return 0
+
+    elif action == "show":
+        try:
+            abi = get_capability_abi(args.id)
+            if args.json:
+                print(json.dumps(abi.to_dict(), indent=2))
+                return 0
+            print(f"\n### Biological Capability ABI: `{abi.capability_id}` (ABI v{abi.abi_version})\n")
+            ic = abi.input_contract
+            print(f"- **Matrix states allowed**: `{', '.join(ic.matrix_state_allowed)}`")
+            if ic.coordinates_required:
+                print(f"- **Coordinates**: required (`{', '.join(ic.coordinate_type_allowed)}`)")
+            print(f"- **Preconditions**: `{', '.join(abi.preconditions)}`")
+            print(f"- **Forbidden claims**: `{', '.join(abi.forbidden_claims)}`")
+            print(
+                f"- **Execution reference**: `{abi.execution.reference_backend}` / `{abi.execution.reference_algorithm}`"
+            )
+            v = abi.validation
+            print(
+                f"- **Validation policy**: multiple_testing={v.multiple_testing}, parameter_sensitivity={v.parameter_sensitivity}, cross_method={v.cross_method}"
+            )
+            print(
+                f"- **Evidence ceiling (without external validation)**: `{abi.evidence_ceiling.without_external_validation}`"
+            )
+            print(f"  * {abi.evidence_ceiling.note}")
+            print(
+                f"- **Provenance**: dataset_hash={abi.provenance.dataset_hash}, package_versions={abi.provenance.package_versions}, parameters={abi.provenance.parameters}"
+            )
+            print()
+            return 0
+        except KeyError as e:
+            print(f"[ERROR] {e}", file=sys.stderr)
+            return 1
+
+    elif action == "audit-claims":
+        try:
+            audit = audit_claims_against_abi(args.id, args.claims)
+            if args.json:
+                print(json.dumps(audit.to_dict(), indent=2))
+                return 0 if audit.passed else 1
+            verdict = "CONFORMANT" if audit.passed else "VIOLATIONS DETECTED"
+            print(f"\n=== ABI Claim Audit: `{args.id}` -> {verdict} ===")
+            for v in audit.violations:
+                print(f"  - [FORBIDDEN] `{v['claim_id']}` matched: \"{v['matched_text']}\"")
+                print(f"    {v['description']}")
+            print()
+            return 0 if audit.passed else 1
+        except KeyError as e:
+            print(f"[ERROR] {e}", file=sys.stderr)
+            return 1
+
+    elif action == "conformance":
+        summary = abi_conformance_summary()
+        if args.json:
+            print(json.dumps(summary, indent=2))
+        verdict = "CONFORMANT" if summary["conformant"] else "NON-CONFORMANT"
+        print(f"\n=== Biological Capability ABI v{summary['abi_version']} Structural Conformance: {verdict} ===")
+        for cid, checks in summary["capabilities"].items():
+            status = "[OK]" if checks["ok"] else "[FAIL]"
+            print(f"  {status} `{cid}`")
+            for k, ok in checks.items():
+                if k == "ok":
+                    continue
+                if not ok:
+                    print(f"      - missing: {k}")
+        print()
+        return 0 if summary["conformant"] else 1
+
+    return 0
+
+
 def handle_route(args: argparse.Namespace) -> int:
     """Handle the 'route' command for scientific intent routing."""
     meta = {}
@@ -1096,6 +1193,37 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_cap_check.add_argument("--is-normalized", action="store_true", help="Flag if input is normalized floats")
     p_cap_check.add_argument("--json", action="store_true", help="Output evaluation as JSON")
 
+    # 6.5 abi (Biological Capability ABI)
+    p_abi = subparsers.add_parser(
+        "abi", help="Inspect the Biological Capability ABI (Scientific ABI boundary for host agents)"
+    )
+    abi_subs = p_abi.add_subparsers(dest="abi_action", help="ABI actions")
+
+    # abi list
+    p_abi_list = abi_subs.add_parser("list", help="List all capability ABI records")
+    p_abi_list.add_argument("--json", action="store_true", help="Output as JSON")
+
+    # abi show <id>
+    p_abi_show = abi_subs.add_parser("show", help="Show the full ABI record for a capability")
+    p_abi_show.add_argument("id", help="Capability contract ID (e.g. spatial.morans_svg)")
+    p_abi_show.add_argument("--json", action="store_true", help="Output ABI record as JSON")
+
+    # abi audit-claims <id> --claims ...
+    p_abi_audit = abi_subs.add_parser(
+        "audit-claims", help="Audit candidate output claims against the capability's forbidden claims"
+    )
+    p_abi_audit.add_argument("id", help="Capability contract ID")
+    p_abi_audit.add_argument(
+        "--claims", nargs="+", required=True, help="Candidate claim strings to audit"
+    )
+    p_abi_audit.add_argument("--json", action="store_true", help="Output audit as JSON")
+
+    # abi conformance
+    p_abi_conf = abi_subs.add_parser(
+        "conformance", help="Structural conformance scan of all ABI records (BNS-CC-010..014)"
+    )
+    p_abi_conf.add_argument("--json", action="store_true", help="Output as JSON")
+
     # 7. route (Validated Scientific Intent Router)
     p_route = subparsers.add_parser(
         "route", help="Route scientific queries to validated capabilities with invariant checks"
@@ -1201,6 +1329,11 @@ def main(argv: Optional[list[str]] = None) -> int:
             p_cap.print_help()
             return 0
         return handle_capability(args)
+    elif args.command == "abi":
+        if not getattr(args, "abi_action", None):
+            p_abi.print_help()
+            return 0
+        return handle_abi(args)
     elif args.command == "route":
         return handle_route(args)
     elif args.command == "eval":

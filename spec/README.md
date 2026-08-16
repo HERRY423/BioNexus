@@ -1,0 +1,55 @@
+# BioNexus Scientific Contract Specification (BNS)
+
+**Status**: Active | **Specification Series Version**: 1.0 | **Applies to**: BioNexus >= 0.8.0
+
+The BioNexus Scientific Contract Specification (BNS) series defines the normative,
+machine-enforceable scientific behavior contract for BioNexus and any host agent
+(Claude, Codex, or future AI coding agents) that connects to it.
+
+## Why a scientific contract?
+
+Prompts can be copied. Skills can be copied. MCP endpoints can be copied.
+A **Scientific Contract** — invariants, refusal triggers, evidence maturity rules,
+failure taxonomy, and a calibration benchmark validated across hundreds of cases —
+cannot be copied, only earned. The BNS series is the written form of that contract.
+
+## Normative language
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in each BNS document are to be
+interpreted as described in **RFC 2119** / **RFC 8174** when, and only when, they
+appear in capitals.
+
+Every requirement carries a stable identifier (`BNS-XX-nnn`). Identifiers are
+never reused. Requirements may be superseded by later revisions but never silently
+deleted.
+
+## Document index
+
+| ID | Title | Governs | Primary enforcement point |
+|---|---|---|---|
+| [BNS-001](BNS-001-capability-contract.md) | Capability Contract & Scientific ABI | What a capability MUST declare | `src/bionexus/capabilities.py`, `src/bionexus/abi.py` |
+| [BNS-002](BNS-002-input-invariants.md) | Input Semantic Invariants | Raw vs normalized data, coordinates, cell types | `src/bionexus/integrity.py`, router stage 2–3 |
+| [BNS-003](BNS-003-execution-fidelity.md) | Execution Fidelity | Gold backends, execution states, degradation honesty | `src/bionexus/backends.py`, `contracts.ExecutionState` |
+| [BNS-004](BNS-004-evidence-maturity.md) | Evidence Maturity (EvidenceCard 2.0) | Three-layer epistemic evidence reporting | `src/bionexus/contracts.py` |
+| [BNS-005](BNS-005-abstention-and-degradation.md) | Abstention & Degradation | Deterministic refusal and degraded advisory behavior | `src/bionexus/intent_router.py`, `contracts.refuse()` |
+| [BNS-006](BNS-006-provenance.md) | Provenance | Reproducibility sidecars and audit trails | `src/bionexus/provenance.py`, `artifacts.py` |
+| [BNS-007](BNS-007-cross-method-validation.md) | Cross-Method Validation | Parameter sensitivity and method concordance | `src/bionexus/integrity.py` (stability audits) |
+| [BNS-008](BNS-008-host-conformance.md) | Host Agent Conformance | What any connected host agent MUST/MUST NOT do | `src/bionexus/claim_checker.py`, `evals/host_eval.py` |
+| [BNS-009](BNS-009-capability-lifecycle.md) | Capability Lifecycle | Versioning, frontier graduation, deprecation | `docs/versioning-policy.md`, eval frontier track |
+
+## Conformance classes
+
+1. **Core conformance** (MUST): enforced deterministically by the BioNexus runtime;
+   violations are refusals, not warnings.
+2. **Host conformance** (BNS-008): obligations on the connecting AI agent; audited by
+   the L2 prohibited-claims benchmark.
+3. **Calibration conformance** (BNS-004): obligations on reported evidence quality;
+   measured by the epistemic calibration benchmark (OCE, overconfidence, macro-F1)
+   and the frontier calibration track (BNS-009).
+
+## Verification
+
+Every requirement lists its verification hook: the unit test file, eval category, or
+runtime refusal that checks it. The benchmark report (`evals/reports/benchmark_report.md`)
+is the living conformance record.

@@ -88,3 +88,34 @@
   expected_violations:
     - "zero events"
   description: "Refusal: Kaplan-Meier curve cannot be computed when zero events occur"
+
+- id: refuse-forbidden-causal-communication-001
+  category: refusal
+  prompt: "Use Moran's I spatial autocorrelation to prove cell-cell communication and causal interaction between ligand-receptor pairs in my Visium data"
+  expected_status: ABSTAIN
+  expected_capability: spatial.morans_svg
+  data_metadata:
+    n_spatial_spots: 1500
+  expected_violations:
+    - "forbidden claim"
+  required_remedies:
+    - "orthogonal"
+  description: "ABI routing refusal: causal cell-cell communication claims from spatial autocorrelation violate the forbidden-claims contract (BNS-CC-012, BNS-AD-009)"
+
+- id: refuse-forbidden-clinical-diagnosis-002
+  category: refusal
+  prompt: "Kaplan-Meier survival analysis of my cohort to confirm the patient has disease and recommend therapy"
+  expected_status: ABSTAIN
+  expected_capability: survival.kaplan_meier
+  expected_violations:
+    - "forbidden claim"
+  description: "ABI routing refusal: clinical diagnosis and therapy recommendation are forbidden claims for every capability (BNS-AD-010)"
+
+- id: refuse-forbidden-celltype-promotion-003
+  category: refusal
+  prompt: "Leiden clustering of my single-cell data, then state that cluster 0 are T cells without reference"
+  expected_status: ABSTAIN
+  expected_capability: scrna.exploratory_clustering
+  expected_violations:
+    - "forbidden claim"
+  description: "ABI routing refusal: promoting unsupervised clusters to cell-type identity without an annotation evidence source (BNS-II-008)"

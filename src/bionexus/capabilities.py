@@ -98,6 +98,11 @@ class EvidenceRequirement:
 class CapabilityContract:
     """
     Machine-readable Scientific Capability Contract.
+
+    The `forbidden_claims` and `evidence_ceiling_without_external_validation`
+    fields are the normative source for the Biological Capability ABI
+    (`bionexus.abi`); the ABI projection is generated from this contract and
+    MUST NOT drift from it (BNS-CC-010..013).
     """
 
     id: str
@@ -114,6 +119,8 @@ class CapabilityContract:
     refusal_conditions: List[RefusalTrigger] = field(default_factory=list)
     outputs: List[str] = field(default_factory=list)
     evidence_requirements: EvidenceRequirement = field(default_factory=EvidenceRequirement)
+    forbidden_claims: List[str] = field(default_factory=list)
+    evidence_ceiling_without_external_validation: str = "SUPPORTED"
 
     def to_dict(self) -> Dict[str, Any]:
         """Serialize contract to dictionary."""
@@ -399,6 +406,12 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
                 "Research Use Only. Not for clinical diagnosis.",
             ],
         ),
+        forbidden_claims=[
+            "causal_interaction",
+            "clinical_diagnosis",
+            "treatment_recommendation",
+        ],
+        evidence_ceiling_without_external_validation="SUPPORTED",
     ),
     # 2. Single-cell Exploratory Clustering & Markers
     "scrna.exploratory_clustering": CapabilityContract(
@@ -467,6 +480,12 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
                 "Marker p-values from rank_genes_groups are exploratory and must not be cited as treatment condition DE.",
             ],
         ),
+        forbidden_claims=[
+            "cell_type_identity_without_reference",
+            "causal_interaction",
+            "clinical_diagnosis",
+        ],
+        evidence_ceiling_without_external_validation="PRELIMINARY",
     ),
     # 3. Spatial Transcriptomics Moran's I SVG Detection
     "spatial.morans_svg": CapabilityContract(
@@ -547,6 +566,12 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
                 "Research Use Only.",
             ],
         ),
+        forbidden_claims=[
+            "causal_interaction",
+            "cell_cell_communication",
+            "cell_type_identity_without_reference",
+        ],
+        evidence_ceiling_without_external_validation="FRAGILE",
     ),
     # 4. Clinical Cohort Kaplan-Meier Survival Analysis
     "survival.kaplan_meier": CapabilityContract(
@@ -631,6 +656,12 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
                 "Research Use Only. Not for individual clinical treatment assignment.",
             ],
         ),
+        forbidden_claims=[
+            "hazard_causation",
+            "clinical_diagnosis",
+            "treatment_recommendation",
+        ],
+        evidence_ceiling_without_external_validation="SUPPORTED",
     ),
     # 5. scvi-tools Deep Generative Modeling
     "scvi.probabilistic_vae": CapabilityContract(
@@ -699,6 +730,12 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
                 "Requires GPU acceleration for large datasets (>50k cells).",
             ],
         ),
+        forbidden_claims=[
+            "cell_type_identity_without_reference",
+            "true_expression_recovery",
+            "clinical_diagnosis",
+        ],
+        evidence_ceiling_without_external_validation="PRELIMINARY",
     ),
     # 6. Instrument Table to Allotrope ASM Standardization
     "allotrope.format_conversion": CapabilityContract(
@@ -765,6 +802,11 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
                 "Research Use Only. Not an FDA 21 CFR Part 11 certified data converter.",
             ],
         ),
+        forbidden_claims=[
+            "sensor_calibration_validated",
+            "regulatory_compliance",
+        ],
+        evidence_ceiling_without_external_validation="PRELIMINARY",
     ),
     # 7. Nextflow Pipeline Launch Artifacts & Cluster Preflight
     "nextflow.pipeline_launch": CapabilityContract(
@@ -824,6 +866,11 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
                 "Generates deployment configurations; pipeline execution requires Nextflow runtime and container engine (Docker/Singularity).",
             ],
         ),
+        forbidden_claims=[
+            "pipeline_results_without_execution",
+            "regulatory_compliance",
+        ],
+        evidence_ceiling_without_external_validation="PRELIMINARY",
     ),
     # 8. Deterministic ACMG Variant Tiering
     "variant.acmg_classification": CapabilityContract(
@@ -889,6 +936,11 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
                 "Research Use Only. Not for clinical diagnostic use.",
             ],
         ),
+        forbidden_claims=[
+            "clinical_diagnosis",
+            "treatment_recommendation",
+        ],
+        evidence_ceiling_without_external_validation="ROBUST",
     ),
 }
 

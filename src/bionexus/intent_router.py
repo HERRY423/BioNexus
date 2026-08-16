@@ -20,6 +20,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+from bionexus.abi import detect_forbidden_claims_in_query
 from bionexus.agent_routing import is_default_skill
 from bionexus.backends import probe
 from bionexus.capabilities import (
@@ -256,6 +257,41 @@ def route_scientific_intent(
 
     skill_name = cap.skill_name
     is_default = is_default_skill(skill_name)
+
+    # 1.5 Forbidden-Claim Intent Screening (BNS-AD-009, BNS-CC-012)
+    # The request itself asks this capability to assert a claim on its
+    # forbidden_claims list (e.g. causal cell-cell communication from Moran's I).
+    claim_hits = detect_forbidden_claims_in_query(cap.id, query)
+    if claim_hits:
+        violations = [
+            f"Forbidden claim '{h['claim_id']}' requested from capability '{cap.id}': {h['description']}"
+            for h in claim_hits
+        ]
+        remedies = [
+            f"Reformulate within the capability's warranted claims: {cap.display_name} cannot support '{h['claim_id']}' without additional orthogonal evidence. {h['remedy']}"
+            for h in claim_hits
+        ]
+        return RoutingDecision(
+            status=RoutingStatus.ABSTAIN,
+            matched_capability=cap,
+            target_skill=skill_name,
+            recommended_script=None,
+            recommended_command=None,
+            rationale=(
+                f"Request violates the forbidden-claims contract of capability '{cap.id}' "
+                "(Biological Capability ABI). The method's evidence cannot warrant the requested claim."
+            ),
+            violations=violations,
+            remedies=remedies,
+            evidence_card_template=EvidenceCard(
+                execution_state=ExecutionState.REFUSED.value,
+                details={
+                    "contract_id": cap.id,
+                    "refusal_triggers": [f"forbidden_claim:{h['claim_id']}" for h in claim_hits],
+                    "violations": violations,
+                },
+            ),
+        )
 
     # 2. Inspect Data Semantics from data_path if provided
     if data_path:

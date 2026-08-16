@@ -42,7 +42,7 @@ def test_load_eval_cases():
 
 
 def test_run_benchmark_harness():
-    """Verify full multi-tier benchmark run passes with high Composite Reliability Index."""
+    """Verify gating track passes with high Composite Reliability Index; frontier reported honestly."""
     report = run_benchmark()
     assert report.total_cases >= 35
     assert report.failed_cases == 0
@@ -57,6 +57,10 @@ def test_run_benchmark_harness():
     assert m["capability_hallucination_rate"] == 0.0
     assert m["scientific_semantic_error_rate"] == 0.0
     assert m["composite_reliability_index"] >= 0.90
+
+    # Frontier track (BNS-LC-004..006): executed honestly, never gating
+    assert report.frontier_metrics["total"] >= 8
+    assert report.union_total == report.total_cases + report.frontier_metrics["total"]
 
 
 def test_format_benchmark_markdown():
@@ -76,4 +80,4 @@ def test_cli_eval_subcommand(capsys):
     assert rc == 0
     captured = capsys.readouterr()
     assert "[BioNexus Eval 2.0]" in captured.out
-    assert "Overall Accuracy" in captured.out
+    assert "Gating Accuracy" in captured.out or "Overall Accuracy" in captured.out

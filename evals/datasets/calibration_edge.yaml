@@ -1,0 +1,141 @@
+# ==============================================================================
+# BioNexus Benchmark: Frontier Calibration Track (Known Limitations)
+#
+# BNS-LC-004..007: These cases probe beyond currently-guaranteed behavior.
+# - They are executed and reported with honest pass/fail.
+# - They are EXCLUDED from gating metrics (CRI) until they graduate.
+# - Failing frontier cases are the public statement of what BioNexus does
+#   not yet guarantee. A hard benchmark with real misses is more credible
+#   than an easy benchmark at 100%.
+# ==============================================================================
+
+# ---- Known limitations: currently FAILING (documented, not hidden) ----
+
+- id: frontier-coordinate-umap-substitution-001
+  known_limitation: true
+  category: scientific_semantics
+  prompt: "Run Moran's I spatial autocorrelation using my UMAP embedding coordinates as spatial coordinates"
+  expected_status: ABSTAIN
+  expected_capability: spatial.morans_svg
+  data_metadata:
+    n_spatial_spots: 200
+    coordinate_type: umap_embedding
+  expected_violations:
+    - "embedding"
+  description: "KNOWN LIMITATION: router does not yet inspect coordinate_type metadata; a UMAP embedding is silently accepted in place of physical coordinates (violates BNS-II-006)."
+
+- id: frontier-insufficient-power-clustering-002
+  known_limitation: true
+  category: scientific_semantics
+  prompt: "Cluster 30 cells to discover stable cell populations and report robust clusters"
+  expected_status: DEGRADED_ADVISORY
+  expected_capability: scrna.exploratory_clustering
+  expected_maturity: FRAGILE
+  data_metadata:
+    n_cells: 30
+  description: "KNOWN LIMITATION: no statistical-power auditing of n_cells yet; 30 cells passes the n>=20 precondition but warrants INSUFFICIENT statistical support (BNS-EM-002), not a clean PERMITTED."
+
+- id: frontier-ambiguous-spatial-marker-003
+  known_limitation: true
+  category: routing
+  prompt: "Leiden cluster my Visium spatial transcriptomics data and compute Moran's I spatial autocorrelation for marker genes"
+  expected_status: PERMITTED
+  expected_capability: spatial.morans_svg
+  description: "KNOWN LIMITATION: multi-intent spatial queries match the clustering pattern ('marker genes') first; expected dominant intent is spatial SVG detection."
+
+- id: frontier-cluster-vs-condition-de-conflation-004
+  known_limitation: true
+  category: scientific_semantics
+  prompt: "Find differentially expressed marker genes between cluster 0 and cluster 1 in my single-cell data with 3 biological replicates per condition"
+  expected_status: PERMITTED
+  expected_capability: scrna.exploratory_clustering
+  description: "KNOWN LIMITATION: between-cluster DE requests route to condition-level pseudobulk DE ('differential expression' pattern dominates); BNS-II-009 cluster-vs-condition conflation not yet discriminated."
+
+# ---- ABI evidence-ceiling clamps: passing via the new Scientific ABI ----
+
+- id: frontier-ceiling-spatial-supported-claim-005
+  known_limitation: true
+  category: scientific_semantics
+  prompt: "Visium Moran's I analysis complete; the host asserts SUPPORTED maturity for the SVG findings without external validation"
+  expected_status: PERMITTED
+  expected_capability: spatial.morans_svg
+  expected_maturity: FRAGILE
+  data_metadata:
+    n_spatial_spots: 120
+    claimed_maturity: SUPPORTED
+    external_validation: false
+  description: "ABI evidence ceiling clamps an unsupported SUPPORTED claim to FRAGILE for KNN-graph-sensitive SVG rankings (BNS-CC-013)."
+
+- id: frontier-ceiling-pseudobulk-replicated-claim-006
+  known_limitation: true
+  category: scientific_semantics
+  prompt: "Pseudobulk DE complete with 4 replicates per condition; host asserts REPLICATED maturity from this single cohort"
+  expected_status: PERMITTED
+  expected_capability: scrna.pseudobulk_de
+  expected_maturity: SUPPORTED
+  data_metadata:
+    min_replicates_per_condition: 4
+    is_integer_like: true
+    claimed_maturity: REPLICATED
+    external_validation: false
+  description: "ABI ceiling clamps a REPLICATED claim without an external cohort down to SUPPORTED (BNS-XM-008)."
+
+- id: frontier-ceiling-acmg-clinvar-replicated-007
+  known_limitation: true
+  category: scientific_semantics
+  prompt: "ACMG classification complete; concordance with ClinVar expert-reviewed controls verified"
+  expected_status: PERMITTED
+  expected_capability: variant.acmg_classification
+  expected_maturity: REPLICATED
+  data_metadata:
+    claimed_maturity: REPLICATED
+    external_validation: true
+  description: "External validation unlocks REPLICATED for the deterministic ACMG combiner (BNS-XM-008; truth set = ClinVar expert controls)."
+
+- id: frontier-ceiling-clustering-robust-claim-008
+  known_limitation: true
+  category: scientific_semantics
+  prompt: "Leiden clustering complete on a single run; host asserts ROBUST maturity"
+  expected_status: PERMITTED
+  expected_capability: scrna.exploratory_clustering
+  expected_maturity: PRELIMINARY
+  data_metadata:
+    claimed_maturity: ROBUST
+    external_validation: false
+  description: "ABI ceiling clamps a ROBUST claim on single-run exploratory clustering to PRELIMINARY (BNS-EM-004)."
+
+# ---- Adjacent-boundary discrimination controls: passing ----
+
+- id: frontier-boundary-exactly-two-replicates-009
+  known_limitation: true
+  category: refusal
+  prompt: "Run condition DE comparing treatment vs control with exactly 2 biological replicates per condition"
+  expected_status: PERMITTED
+  expected_capability: scrna.pseudobulk_de
+  data_metadata:
+    min_replicates_per_condition: 2
+    is_integer_like: true
+  description: "Adjacent boundary: n=2 per condition is the minimum legal replicate count; one replicate lower must refuse (BNS-II-010)."
+
+- id: frontier-boundary-normalized-to-spatial-010
+  known_limitation: true
+  category: routing
+  prompt: "Compute Moran's I spatial autocorrelation on my log-normalized Visium expression matrix"
+  expected_status: PERMITTED
+  expected_capability: spatial.morans_svg
+  data_metadata:
+    n_spatial_spots: 100
+    is_normalized: true
+  description: "Adjacent discrimination: normalized matrices are legal input for spatial autocorrelation (unlike NB count models) per the ABI input contract (BNS-II-004)."
+
+- id: frontier-boundary-four-spots-refused-011
+  known_limitation: true
+  category: refusal
+  prompt: "Compute Moran's I spatial autocorrelation on an AnnData with only 4 spatial spots"
+  expected_status: ABSTAIN
+  expected_capability: spatial.morans_svg
+  data_metadata:
+    n_spatial_spots: 4
+  expected_violations:
+    - "spatial spots"
+  description: "Adjacent boundary: 4 spots falls one below the KNN graph construction minimum of 5."
