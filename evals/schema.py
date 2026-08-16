@@ -100,6 +100,8 @@ class EvalResult:
     failure_reasons: List[str] = field(default_factory=list)
     prohibited_claim_violations: List[Dict[str, Any]] = field(default_factory=list)
     execution_time_ms: float = 0.0
+    skipped: bool = False
+    skip_reason: Optional[str] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -142,12 +144,16 @@ class BenchmarkReport:
     provider: str = "replay"
     model: str = "simulated_trace_v1"
     is_live: bool = False
+    skipped_cases: int = 0
+    strict_mode: bool = False
 
     def to_dict(self) -> Dict[str, Any]:
         return {
             "total_cases": self.total_cases,
             "passed_cases": self.passed_cases,
             "failed_cases": self.failed_cases,
+            "skipped_cases": self.skipped_cases,
+            "strict_mode": self.strict_mode,
             "overall_accuracy": round(self.overall_accuracy, 4),
             "provider": self.provider,
             "model": self.model,

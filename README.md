@@ -8,8 +8,8 @@
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-purple.svg?style=flat-square)](https://claude.ai/)
 [![Cursor MCP](https://img.shields.io/badge/Cursor-MCP%20Ready-black.svg?style=flat-square)](https://cursor.com/)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg?style=flat-square)](https://www.python.org/)
-[![Tests](https://img.shields.io/badge/Tests-217%20Passed-success.svg?style=flat-square)](tests/)
-[![Eval CRI](https://img.shields.io/badge/Eval%20CRI-96.2%25-blueviolet.svg?style=flat-square)](evals/)
+[![Tests](https://img.shields.io/badge/Tests-CI%20Enforced-success.svg?style=flat-square)](tests/)
+[![Eval](https://img.shields.io/badge/Eval-3--Tier%20Harness-blueviolet.svg?style=flat-square)](evals/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
 [![RUO](https://img.shields.io/badge/Status-Research%20Use%20Only-yellow.svg?style=flat-square)](#-regulatory-notice--compliance)
 
@@ -23,7 +23,7 @@
 ✓ Deep Generative VAE Modeling (scvi-tools)       ✓ nf-core Pipeline Automation (RNA-seq / Sarek)
 ✓ 16+ Local MCP Biological Database Tools         ✓ 9 Cloud-Hosted Biological MCP Endpoints
 ✓ EvidenceCard 2.0 Epistemic Evaluation           ✓ Machine-Readable Capability Contracts
-✓ 6-Stage Scientific Intent & Invariant Router    ✓ BioNexus Eval Agent Behavior Benchmark (96.2% CRI)
+✓ 6-Stage Scientific Intent & Invariant Router    ✓ BioNexus Eval 3-Tier Benchmark (L1/L2/L3, fail-closed)
 ✓ Zero-Key Out-of-the-Box Core Databases          ✓ Deterministic Scientific Refusal Protocols
 ```
 
@@ -157,28 +157,24 @@ python scripts/doctor.py
 ```
 
 ### Diagnostic Output Example
+*Example output from a fully provisioned environment (see `bionexus doctor` in `src/bionexus/cli.py` for the exact format):*
 ```text
 ==============================================================================
                           BioNexus Environment Doctor
 ==============================================================================
 Plugin Version:  0.8.0
-Tier:            FULL (scverse ready, spatial ready)
-Python Runtime:  3.11.x (CPython)
+Tier:            full
 
 Active Analytical Capabilities:
-  [PASS] core_ready      : numpy, pandas, scipy, scikit-learn
-  [PASS] scverse_ready   : scanpy (1.10.x), anndata (0.10.x)
-  [PASS] spatial_ready   : squidpy (1.3.x)
-  [PASS] scvi_ready      : scvi-tools (1.1.x), PyTorch CUDA acceleration
-  [PASS] survival_ready  : lifelines (0.28.x)
-  [PASS] allotrope_ready : allotropy (0.1.x)
-  [PASS] mcp_server      : FastMCP (1.0.x), 16 local tools + 9 hosted endpoints
-
-Multi-Platform Manifest Synchronization:
-  [PASS] Canonical SSOT: bionexus.registry.yaml
-  [PASS] Manifest Drift: ZERO DRIFT across 12 platform targets (Codex, Claude, Cursor)
+  [PASS]    core_ready         : ready
+  [PASS]    scverse_ready      : ready
+  [PASS]    scvi_ready         : ready
+  [PASS]    spatial_ready      : ready
+  [PASS]    survival_ready     : ready
+  [PASS]    nextflow_ready     : ready
 ==============================================================================
 ```
+*Missing backends are reported as `[MISSING] ... : not installed` and lower the tier to `degraded` (or `refuse` when the core stack is absent). Manifest drift checking is a separate command: `bionexus registry --check`.*
 
 ---
 
@@ -228,17 +224,20 @@ Every biological output is packaged with a deterministic **`EvidenceCard`** and 
 
 | Skill Directory | Primary Backend | Evidence Grade | Non-Negotiable Scientific Honesty Rule |
 | :--- | :--- | :---: | :--- |
-| [`single-cell-rna-qc`](file:///skills/single-cell-rna-qc) | `scanpy` | **Grade A** | Clusters remain **numeric only**. Never invent cell-type annotations without trained reference models. |
+| [`single-cell-rna-qc`](file:///skills/single-cell-rna-qc) | `scanpy` + `pydeseq2` | **Grade A** | Clusters remain **numeric only**. Never invent cell-type annotations without trained reference models. |
 | [`spatial-transcriptomics`](file:///skills/spatial-transcriptomics) | `squidpy` | **Grade A** | Requires physical spatial coordinates. **Refuses** analysis if coordinates are missing. |
 | [`scvi-tools`](file:///skills/scvi-tools) | `scvi-tools`, `torch` | **Grade A** | Deep generative modeling on raw counts. Refuses if GPU/torch dependencies are missing. |
-| [`clinical-cohort-analysis`](file:///skills/clinical-cohort-analysis) | `lifelines` | **Grade A / C** | Uses Cox PH when `lifelines` is present; explicitly labels event-rate ratios as Grade C fallback. |
-| [`variant-interpretation`](file:///skills/variant-interpretation) | `ACMG/AMP 2015`, Bayes LR | **Grade B** | Strictly labels outputs as Research-Use-Only (RUO). Explicitly disclaims CLIA/CAP certification. |
-| [`protein-structure-analysis`](file:///skills/protein-structure-analysis) | `biotite`, PDB API | **Grade A** | Uses exact Kabsch RMSD / TM-score; reports AlphaFold pLDDT confidence intervals. |
-| [`protein-language-models`](file:///skills/protein-language-models) | `transformers`, ESM-2 | **Grade A / C** | Requires explicit user opt-in (`BIONEXUS_ALLOW_ESM=1`); never masquerades BLOSUM as ESM. |
-| [`biologics-design`](file:///skills/biologics-design) | `abnumber`, `ViennaRNA` | **Grade A / C** | Requires `abnumber` for IMGT numbering; uses real thermodynamic MFE for RNA secondary structures. |
 | [`nextflow-development`](file:///skills/nextflow-development) | `nextflow`, `nf-core` | **Grade A** | Validates FASTQ/BAM schema and profile configurations before generating launch scripts. |
 | [`instrument-data-to-allotrope`](file:///skills/instrument-data-to-allotrope) | `allotropy` | **Grade A** | Converts raw analytical instrument outputs (27+ vendors) into standardized Allotrope ASM JSON. |
-| [`provenance-and-audit`](file:///skills/provenance-and-audit) | `bionexus.provenance` | **Grade A** | SHA-256 dataset hashing and W3C PROV-O JSON-LD tracking without claiming 21 CFR Part 11. |
+| [`provenance-and-audit`](file:///skills/provenance-and-audit) | `bionexus.provenance` | **Grade B** | SHA-256 dataset hashing and W3C PROV-O JSON-LD tracking without claiming 21 CFR Part 11. |
+| [`clinical-cohort-analysis`](file:///skills/clinical-cohort-analysis) | `lifelines` (optional) + `scipy` | **Grade C** | Uses Cox PH when `lifelines` is present; explicitly labels event-rate ratios as Grade C fallback. |
+| [`variant-interpretation`](file:///skills/variant-interpretation) | local ACMG combiner + PWM splice | **Grade C** | Deterministic ACMG combination heuristics, strictly Research-Use-Only (RUO). Explicitly disclaims CLIA/CAP certification. |
+| [`protein-structure-analysis`](file:///skills/protein-structure-analysis) | RCSB/AlphaFold HTTP + Kabsch | **Grade C** | Uses exact Kabsch superposition on fetched coordinates; geometry heuristics are labeled Grade C, not gold-standard force fields. |
+| [`protein-language-models`](file:///skills/protein-language-models) | ESM-2 (opt-in) / `BLOSUM62` | **Grade C** | Requires explicit user opt-in (`BIONEXUS_ALLOW_ESM=1`); never masquerades BLOSUM as ESM. |
+| [`biologics-design`](file:///skills/biologics-design) | `abnumber` (optional) + sequence motifs | **Grade C** | Uses `abnumber` for IMGT numbering when installed; regex/motif fallbacks are explicitly labeled Grade C heuristics. |
+| [`multiome-integration`](file:///skills/multiome-integration) | `sklearn` ExtraTrees | **Grade C** | Co-expression heuristics only — explicitly **not** SCENIC+/GRNBoost2; disabled by default (opt-in via `SKILL.legacy.md`). |
+
+> **Grade provenance**: Evidence grades in this table mirror the canonical Single Source of Truth ([`bionexus.registry.yaml`](file:///bionexus.registry.yaml), `skills.canonical` + `skills.heuristics`). Overclaims are rejected in CI by `tests/unit/test_readme_consistency.py`. Grade A = community gold-standard backend executed; Grade C = labeled local heuristic; optional-backends skills degrade honestly to C when the backend is absent.
 
 ---
 
@@ -249,9 +248,9 @@ BioNexus provides direct access to **16 biological tools** and **9 cloud-hosted 
 ### 1. Local Stdio MCP Server (`bionexus-local-mcp`)
 *Zero API keys required for all core endpoints:*
 * **Proteins & Structures**: `search_uniprot`, `search_alphafold`, `search_pdb`
-* **Genomics & Regulation**: `search_ensembl`, `search_gnomad`, `search_gtex`, `search_geo`
+* **Genomics & Regulation**: `search_ensembl`, `search_gnomad`, `get_gene_expression` (GTEx), `search_geo`
 * **Pathways & Networks**: `search_reactome`, `search_string`
-* **Literature & Preprints**: `search_pubmed`, `search_pmc`, `search_biorxiv`
+* **Literature & Preprints**: `search_pubmed`, `get_pubmed_article` (full record), `search_biorxiv`
 * **Molecules & Targets**: `search_chembl`, `search_opentargets`, `search_clinical_trials`
 * **Cancer Genetics**: `search_cosmic` *(Local Census reference, RUO)*
 
@@ -304,14 +303,16 @@ python scripts/registry_compiler.py --validate-endpoints
 
 ## 🧪 Testing & Reliability Benchmark
 
-BioNexus is continuously tested on **Linux, Windows, and macOS** with **Python 3.10, 3.11, 3.12, and 3.13**:
+BioNexus is continuously tested on **Linux, Windows, and macOS** with **Python 3.10, 3.11, and 3.12** (see `.github/workflows/ci.yml`; Python 3.13 is not yet covered by CI):
 
 ```bash
-# Run full unit test suite (217+ tests)
+# Run the full unit test suite
 pytest
 
-# Run BioNexus Eval Benchmark across all 8 reliability pillars
-bionexus eval
+# Run BioNexus Eval Benchmark across all 8 reliability pillars.
+# Strict mode (--strict / BIONEXUS_EVAL_STRICT=1) fails on any L3 case that
+# could not verify its planted-truth outcome because a backend was missing.
+bionexus eval --strict
 
 # Run backend lifecycle matrix tests
 pytest tests/unit/test_backend_matrix.py -v
