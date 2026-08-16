@@ -40,6 +40,9 @@ deleted.
 | [BNS-010](BNS-010-capability-certification.md) | Capability Certification | 14 evidence criteria; CERTIFIED / VALIDATED / EXPERIMENTAL / CONNECTOR-ONLY tiers | `src/bionexus/certification.py` |
 | [BNS-011](BNS-011-failure-taxonomy.md) | Scientific Failure Taxonomy | The BN-Fxxx failure ontology with detection rules | `src/bionexus/failures.py` |
 | [BNS-012](BNS-012-claim-evidence-ledger.md) | Claim–Evidence Ledger | Claim graph as a data structure (JSON / PROV-O JSON-LD) | `src/bionexus/ledger.py` |
+| [BNS-013](BNS-013-scientific-assertion-firewall.md) | Scientific Assertion Firewall | The three researcher entry points: preflight / audit / verify | `src/bionexus/preflight.py`, `analysis_audit.py`, `verification.py` |
+| [BNS-014](BNS-014-biofailurebench.md) | BioFailureBench | The scientific trap corpus with ground truth (BF-nnn) | `evals/datasets/biofailurebench.yaml`, `evals/biofailurebench.py` |
+| [BNS-015](BNS-015-flagship-certification.md) | Flagship Certification | 3 externally-validated CERTIFIED capabilities as the priority track | `src/bionexus/certification.py` (flagship program) |
 
 ## Conformance classes
 

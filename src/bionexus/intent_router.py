@@ -189,7 +189,35 @@ _INTENT_PATTERNS: List[Tuple[List[str], str]] = [
         ],
         "variant.acmg_classification",
     ),
+    # 9. Cell annotation evidence assessment (BNS-013 flagship capability B)
+    (
+        [
+            r"annotation.*(?:evidence|support|valid|quality|audit)",
+            r"(?:cell[- ]type|label).*(?:evidence|support|verdict|confidence|warrant)",
+            r"open[- ]set.*(?:annotation|label)",
+            r"how (?:much|well) (?:is |are )?(?:the )?label",
+            r"label.*(?:supported|tentative|abstain)",
+        ],
+        "scrna.annotation_evidence",
+    ),
+    # 10. Spatial inference validity / alternative-explanation testing (flagship capability C)
+    (
+        [
+            r"spatial.*(?:inference|conclusion|interpretation).*(?:valid|hold|survive|alternative|robust|fragile)",
+            r"alternative explanation.*(?:spatial|neighborhood|enrich)",
+            r"(?:observation|finding|enrich).*(?:toward|toward membrane).*(?:valid|hold)",
+            r"segmentation.*leak",
+            r"neighborhood.*radius.*sensitiv",
+            r"permutation null.*spatial",
+            r"spatial.*(?:finding|conclusion).*(?:control|confound)",
+        ],
+        "spatial.inference_validity",
+    ),
 ]
+
+# Coordinate provenance values that are never silent substitutes for physical
+# tissue coordinates (BNS-II-006 / BN-F009).
+_EMBEDDING_COORDINATE_TYPES = ("umap_embedding", "pca_embedding", "embedding", "umap", "tsne")
 
 
 def extract_scientific_capability(
@@ -217,6 +245,198 @@ def extract_scientific_capability(
 # ==============================================================================
 # The Scientific Invariant Router
 # ==============================================================================
+
+
+def _screen_metadata_traps(cap: CapabilityContract, meta: Dict[str, Any]) -> Optional[RoutingDecision]:
+    """
+    Stage 3.5: deterministic screening of BioFailureBench-detectable traps.
+
+    These are metadata-visible scientific traps that MUST be caught before any
+    compute (BNS-013 firewall, BN-F004/F006/F008/F009): identifier-namespace
+    mismatches, perfect condition confounding, cross-database contradictions,
+    embedding-substituted spatial coordinates, and evidence-free annotation
+    requests. Returns None when no trap fires.
+    """
+    cap_id = cap.id
+
+    # BN-F004: identifier namespace mismatch on cross-source joins
+    id_ns = meta.get("identifier_namespace")
+    ref_ns = meta.get("reference_namespace")
+    if id_ns and ref_ns and str(id_ns).lower() != str(ref_ns).lower():
+        return RoutingDecision(
+            status=RoutingStatus.ABSTAIN,
+            matched_capability=cap,
+            target_skill=cap.skill_name,
+            recommended_script=None,
+            recommended_command=None,
+            rationale=(
+                "Identifier namespace mismatch: joining data keyed on "
+                f"'{id_ns}' against a reference keyed on '{ref_ns}' corrupts every downstream result."
+            ),
+            violations=[
+                f"Identifier namespace mismatch (BN-F004): input identifiers are '{id_ns}' while the "
+                f"reference/knowledge source is keyed on '{ref_ns}'. Silent cross-namespace joins are never acceptable."
+            ],
+            remedies=[
+                "Provide an explicit identifier mapping table (e.g. org.Hs.eg.db / mygene.info / Ensembl release map) "
+                "and record it in provenance, or re-key both sources onto the same namespace before joining."
+            ],
+            evidence_card_template=EvidenceCard(
+                execution_state=ExecutionState.REFUSED.value,
+                details={"failure_mode": "BN-F004", "identifier_namespace": id_ns, "reference_namespace": ref_ns},
+            ),
+        )
+
+    # BN-F008: cross-database contradiction between knowledge sources
+    if meta.get("cross_database_contradiction"):
+        return RoutingDecision(
+            status=RoutingStatus.ABSTAIN,
+            matched_capability=cap,
+            target_skill=cap.skill_name,
+            recommended_script=None,
+            recommended_command=None,
+            rationale=(
+                "Cross-database contradiction: independent knowledge sources disagree about the same entity; "
+                "the conclusion is CONFLICTED, not resolved."
+            ),
+            violations=[
+                "Cross-database contradiction (BN-F008): independent knowledge sources disagree about the target "
+                "entity (e.g. conflicting classifications or mappings across releases). The conflict MUST be surfaced, "
+                "never silently resolved by source preference order."
+            ],
+            remedies=[
+                "Mark the conclusion maturity CONFLICTED, surface both sources with identifiers and access dates, "
+                "and seek expert review before any downstream claim."
+            ],
+            evidence_card_template=EvidenceCard(
+                execution_state=ExecutionState.REFUSED.value,
+                details={"failure_mode": "BN-F008"},
+            ),
+        )
+
+    # BN-F006: perfect confounding between condition and a donor/batch variable
+    confounded_with = meta.get("condition_confounded_with")
+    if confounded_with:
+        return RoutingDecision(
+            status=RoutingStatus.ABSTAIN,
+            matched_capability=cap,
+            target_skill=cap.skill_name,
+            recommended_script=None,
+            recommended_command=None,
+            rationale=(
+                f"Condition is perfectly confounded with '{confounded_with}': the design cannot separate the "
+                "treatment effect from the confounding variable."
+            ),
+            violations=[
+                f"Perfect confounding (invalid model assumption, BN-F006): condition is 1:1 with '{confounded_with}', "
+                "so population-level condition effects are unidentifiable in this design."
+            ],
+            remedies=[
+                f"Add biological replicates that decouple condition from '{confounded_with}', restrict claims to "
+                "exploratory within-stratum comparisons, or perform and report an explicit sensitivity analysis."
+            ],
+            evidence_card_template=EvidenceCard(
+                execution_state=ExecutionState.REFUSED.value,
+                details={"failure_mode": "BN-F006", "confounded_with": confounded_with},
+            ),
+        )
+
+    # BN-F009: embedding coordinates substituted for physical tissue coordinates
+    coordinate_type = meta.get("coordinate_type")
+    requires_coords = cap_id in ("spatial.morans_svg", "spatial.inference_validity")
+    if requires_coords and coordinate_type and str(coordinate_type).lower() in _EMBEDDING_COORDINATE_TYPES:
+        return RoutingDecision(
+            status=RoutingStatus.ABSTAIN,
+            matched_capability=cap,
+            target_skill=cap.skill_name,
+            recommended_script=None,
+            recommended_command=None,
+            rationale=(
+                f"Spatial coordinates are a '{coordinate_type}' embedding, not physical tissue coordinates; "
+                "substituting an embedding silently invalidates spatial statistics."
+            ),
+            violations=[
+                f"Spatial coordinate substitution (BN-F009): obsm coordinates are a '{coordinate_type}' embedding. "
+                "A UMAP/PCA embedding MUST NOT be silently used in place of physical tissue coordinates."
+            ],
+            remedies=[
+                "Provide physical coordinates in obsm['spatial'], or record an explicit spatial justification for the "
+                "embedding and cap the conclusion maturity at FRAGILE (BNS-II-006)."
+            ],
+            evidence_card_template=EvidenceCard(
+                execution_state=ExecutionState.REFUSED.value,
+                details={"failure_mode": "BN-F009", "coordinate_type": coordinate_type},
+            ),
+        )
+
+    # BN-F003: annotation requested with no evidence source at all
+    if cap_id == "scrna.annotation_evidence" and meta.get("annotation_evidence_available") is False:
+        return RoutingDecision(
+            status=RoutingStatus.ABSTAIN,
+            matched_capability=cap,
+            target_skill=cap.skill_name,
+            recommended_script=None,
+            recommended_command=None,
+            rationale="No annotation evidence source is available; identity labels cannot be assessed or asserted.",
+            violations=[
+                "Unsupported annotation (BN-F003): no reference mapping, marker panel, or negative-marker set is "
+                "available. Labels must stay numeric/putative; identity claims are blocked."
+            ],
+            remedies=[
+                "Attach a reference atlas mapping, a curated marker panel with negative markers, or a cross-method "
+                "annotation before asserting any cell-type identity."
+            ],
+            evidence_card_template=EvidenceCard(
+                execution_state=ExecutionState.REFUSED.value,
+                details={"failure_mode": "BN-F003"},
+            ),
+        )
+
+    # BN-F003: open-set population forced into known-label assignment
+    if cap_id == "scrna.annotation_evidence" and meta.get("open_set_detected"):
+        return RoutingDecision(
+            status=RoutingStatus.ABSTAIN,
+            matched_capability=cap,
+            target_skill=cap.skill_name,
+            recommended_script=None,
+            recommended_command=None,
+            rationale="Open-set population detected: a novel/unknown population cannot be assigned a known label.",
+            violations=[
+                "Open-set annotation (BN-F003): an unknown population lies outside the reference universe; assigning "
+                "the nearest known label would be annotation without evidence."
+            ],
+            remedies=[
+                "Report the population as 'unknown / novel' (ABSTAIN verdict) and collect orthogonal evidence "
+                "(sorted bulk profiles, spatial markers, citation-supported panels) before naming it."
+            ],
+            evidence_card_template=EvidenceCard(
+                execution_state=ExecutionState.REFUSED.value,
+                details={"failure_mode": "BN-F003", "open_set": True},
+            ),
+        )
+
+    # Spatial validity assessment with zero controls: request the data (BNS-005)
+    if cap_id == "spatial.inference_validity" and meta.get("alternative_explanations_tested") is False:
+        return RoutingDecision(
+            status=RoutingStatus.NEEDS_DATA,
+            matched_capability=cap,
+            target_skill=cap.skill_name,
+            recommended_script=None,
+            recommended_command=None,
+            rationale=(
+                "Validity assessment of a spatial conclusion requires alternative-explanation controls; "
+                "none were provided."
+            ),
+            missing_data_requests=[
+                "Provide alternative-explanation control results (cell size, transcript density, segmentation "
+                "uncertainty, local cell density, spot composition, batch/FOV, permutation null)."
+            ],
+            remedies=[
+                "Run at least the core confound controls before asking whether the spatial conclusion holds."
+            ],
+        )
+
+    return None
 
 
 def route_scientific_intent(
@@ -334,6 +554,11 @@ def route_scientific_intent(
                         "Condition DE is valid only when biological replicates (n >= 2 per condition) are available."
                     ],
                 )
+
+    # 3.5 Deterministic trap screening (BN-F004/F006/F008/F009 + flagship gates)
+    trap_decision = _screen_metadata_traps(cap, meta)
+    if trap_decision is not None:
+        return trap_decision
 
     # 4. Check Scientific Preconditions & Refusal Triggers
     eval_result = cap.evaluate_viability(input_metadata=meta)

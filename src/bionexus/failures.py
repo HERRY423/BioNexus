@@ -60,6 +60,8 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
                 "semantics-raw-vs-log-001",
                 "adv-log-as-raw-001",
                 "frontier-boundary-normalized-to-spatial-010",
+                "BF-001",
+                "BF-019",
             ),
         ),
         FailureMode(
@@ -84,6 +86,8 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
                 "adv-force-pseudorep-001",
                 "semantics-marker-vs-de-001",
                 "frontier-boundary-exactly-two-replicates-009",
+                "BF-002",
+                "BF-010",
             ),
         ),
         FailureMode(
@@ -99,8 +103,9 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
                 "scrna.exploratory_clustering",
                 "spatial.morans_svg",
                 "scvi.probabilistic_vae",
+                "scrna.annotation_evidence",
             ),
-            detection_rule="claim_checker cell-type assertion patterns + ABI forbidden_claims cell_type_identity_without_reference",
+            detection_rule="claim_checker cell-type assertion patterns + ABI forbidden_claims cell_type_identity_without_reference + router trap screen (annotation_evidence_available / open_set_detected)",
             required_behavior="BLOCK CLAIM: labels stay numeric until a reference atlas / curated marker panel is attached (BNS-II-008)",
             acceptable_degradation="Putative/candidate phrasing with mandatory external-validation caveat.",
             benchmark_cases=(
@@ -109,6 +114,9 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
                 "l2-claim-celltype-hallucination-001",
                 "l2-claim-celltype-qualified-002",
                 "refuse-forbidden-celltype-promotion-003",
+                "BF-004",
+                "BF-006",
+                "BF-022",
             ),
         ),
         FailureMode(
@@ -125,11 +133,16 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
                 "variant.acmg_classification",
                 "nextflow.pipeline_launch",
             ),
-            detection_rule="Identifier-namespace audit on join keys (PLANNED; not yet wired into the router)",
+            detection_rule=(
+                "Router stage 3.5 trap screen: identifier_namespace vs reference_namespace mismatch -> refusal "
+                "(wired since BioFailureBench, BF-008/BF-025); output-table namespace audit pending"
+            ),
             required_behavior="REFUSE the join and request the identifier namespace, or record the mapping table in provenance",
             acceptable_degradation="None: silent cross-namespace joins are never acceptable.",
-            benchmark_cases=(),
-            open_gap=True,
+            benchmark_cases=(
+                "BF-008",
+                "BF-025",
+            ),
         ),
         FailureMode(
             failure_id="BN-F005",
@@ -144,11 +157,15 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
                 "spatial.morans_svg",
                 "scrna.pseudobulk_de",
             ),
-            detection_rule="ABI validation.multiple_testing == required AND corrected column absent from output table (PLANNED output-level audit)",
+            detection_rule=(
+                "abi.enforce_statistical_warrant: multiple_testing == required and has_fdr_correction is False -> "
+                "warrant capped at PRELIMINARY (wired since BioFailureBench, BF-005); static audit rule BFA-003"
+            ),
             required_behavior="CAP EVIDENCE LEVEL: cap conclusion maturity at PRELIMINARY until corrected values are reported alongside any finding (BNS-CC-009)",
             acceptable_degradation="Exploratory ranking tables without inferential labels.",
-            benchmark_cases=(),
-            open_gap=True,
+            benchmark_cases=(
+                "BF-005",
+            ),
         ),
         FailureMode(
             failure_id="BN-F006",
@@ -159,11 +176,11 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
                 "linearity of the linear predictor, dispersion-mean trend in NB GLMs."
             ),
             example="Interpreting a log-rank p-value as a hazard-ratio effect under strongly crossing survival curves.",
-            affected_capabilities=("survival.kaplan_meier", "scrna.pseudobulk_de"),
+            affected_capabilities=("survival.kaplan_meier", "scrna.pseudobulk_de", "spatial.inference_validity"),
             detection_rule="Capability preconditions (no_auto_pvs1_without_mechanism, positive_durations, non_zero_events) + assumption-specific audits (PLANNED: PH residual tests)",
             required_behavior="BLOCK CLAIM: downgrade to association language; REFUSE where the estimator is undefined (BNS-II-011..013)",
             acceptable_degradation="Descriptive statistics without inferential claims.",
-            benchmark_cases=("refuse-survival-all-censored-001",),
+            benchmark_cases=("refuse-survival-all-censored-001", "BF-003", "BF-015", "BF-021"),
         ),
         FailureMode(
             failure_id="BN-F007",
@@ -181,7 +198,7 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
             detection_rule="integrity.audit_parameter_stability across the declared sweep; ARI below capability threshold",
             required_behavior="CAP EVIDENCE LEVEL: cap conclusion maturity at FRAGILE (BNS-XM-003)",
             acceptable_degradation="Findings reported as parameter-sensitive with the sweep attached in provenance.",
-            benchmark_cases=("l3-outcome-clustering-ari-stability-004",),
+            benchmark_cases=("l3-outcome-clustering-ari-stability-004", "BF-018"),
         ),
         FailureMode(
             failure_id="BN-F008",
@@ -193,11 +210,15 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
             ),
             example="An ACMG classification contradicted by newer ClinVar expert-reviewed status not present in the vendored truth set.",
             affected_capabilities=("variant.acmg_classification",),
-            detection_rule="Truth-set concordance audit against recorded source versions (BNS-PV-002 records versions; concordance audit PLANNED)",
+            detection_rule=(
+                "Router stage 3.5 trap screen: cross_database_contradiction metadata -> refusal with CONFLICTED "
+                "guidance (wired since BioFailureBench, BF-016); ledger resolution marks claims CONFLICTED (BNS-CL-005)"
+            ),
             required_behavior="Mark conclusion maturity CONFLICTED and surface both sources with identifiers and access dates (BNS-XM-006)",
             acceptable_degradation="Reported as discordant pending expert review; never silently resolved by preference order.",
-            benchmark_cases=(),
-            open_gap=True,
+            benchmark_cases=(
+                "BF-016",
+            ),
         ),
         FailureMode(
             failure_id="BN-F009",
@@ -208,11 +229,20 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
                 "coordinates)."
             ),
             example="Moran's I 'spatially variable genes' computed over obsm['X_umap'] because obsm['spatial'] was absent.",
-            affected_capabilities=("spatial.morans_svg",),
-            detection_rule="ABI input_contract coordinate_type_allowed; router MUST inspect coordinate_type metadata (OPEN: frontier-coordinate-umap-substitution-001)",
+            affected_capabilities=("spatial.morans_svg", "spatial.inference_validity"),
+            detection_rule=(
+                "ABI input_contract coordinate_type_allowed; router stage 3.5 inspects coordinate_type metadata "
+                "(wired since BioFailureBench: embedding substitutions refused, BF-007/BF-020)"
+            ),
             required_behavior="REFUSE substitution, or DEGRADED advisory only when the capability explicitly allows justified_spatial_embedding (BNS-II-005/006)",
             acceptable_degradation="Analysis on a justified embedding with the substitution named in the evidence card and maturity capped FRAGILE.",
-            benchmark_cases=("frontier-coordinate-umap-substitution-001", "semantics-spatial-degenerate-coords-001", "refuse-spatial-degenerate-001"),
+            benchmark_cases=(
+                "frontier-coordinate-umap-substitution-001",
+                "semantics-spatial-degenerate-coords-001",
+                "refuse-spatial-degenerate-001",
+                "BF-007",
+                "BF-020",
+            ),
         ),
         FailureMode(
             failure_id="BN-F010",
@@ -231,6 +261,7 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
                 "backend-lifelines-strict-001",
                 "route-survival-km-001",
                 "l2-claim-regulatory-honest-006",
+                "BF-017",
             ),
         ),
         FailureMode(
@@ -255,6 +286,9 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
                 "l2-claim-causal-de-overclaim-003",
                 "l2-claim-causal-de-honest-004",
                 "l2-claim-regulatory-overclaim-005",
+                "BF-009",
+                "BF-023",
+                "BF-026",
             ),
         ),
         FailureMode(
@@ -275,6 +309,7 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
                 "frontier-ceiling-pseudobulk-replicated-claim-006",
                 "frontier-ceiling-acmg-clinvar-replicated-007",
                 "frontier-ceiling-clustering-robust-claim-008",
+                "BF-012",
             ),
         ),
     ]

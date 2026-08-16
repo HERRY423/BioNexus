@@ -30,6 +30,9 @@ EXPECTED_DOCUMENTS = [
     "BNS-010-capability-certification.md",
     "BNS-011-failure-taxonomy.md",
     "BNS-012-claim-evidence-ledger.md",
+    "BNS-013-scientific-assertion-firewall.md",
+    "BNS-014-biofailurebench.md",
+    "BNS-015-flagship-certification.md",
 ]
 
 RFC2119_KEYWORDS = ["MUST NOT", "MUST", "SHOULD NOT", "SHOULD", "MAY"]
@@ -88,7 +91,7 @@ def test_index_covers_all_documents():
 
 def test_normative_requirements_backed_by_implementation():
     """Spot-check that headline requirements have live enforcement points."""
-    from bionexus.abi import capability_abis
+    from bionexus.abi import capability_abis, enforce_statistical_warrant
     from bionexus.capabilities import CANONICAL_CAPABILITIES
     from bionexus.contracts import ConclusionMaturity, ExecutionState
 
@@ -122,3 +125,41 @@ def test_normative_requirements_backed_by_implementation():
     spatial = capability_abis()["spatial.morans_svg"]
     assert "physical" in spatial.input_contract.coordinate_type_allowed
     assert "justified_spatial_embedding" in spatial.input_contract.coordinate_type_allowed
+
+    # BNS-FW-001: the three firewall entry points exist as CLI handlers
+    from bionexus.cli import handle_audit, handle_preflight, handle_verify
+
+    assert callable(handle_preflight) and callable(handle_verify) and callable(handle_audit)
+
+    # BNS-FW-011: verify re-resolves claims fail-closed (BNS-CL-05 vocabulary)
+    from bionexus.verification import verify_results, write_example_ledger
+
+    assert callable(verify_results) and callable(write_example_ledger)
+
+    # BN-F005 statistical warrant: missing FDR caps warrant at PRELIMINARY
+    capped = enforce_statistical_warrant(
+        "scrna.pseudobulk_de", "SUPPORTED", has_fdr_correction=False
+    )
+    assert capped == "PRELIMINARY"
+    intact = enforce_statistical_warrant(
+        "scrna.pseudobulk_de", "SUPPORTED", has_fdr_correction=True
+    )
+    assert intact == "SUPPORTED"
+
+    # BNS-BF-007: the trap corpus is machine-validated
+    from evals.biofailurebench import validate_corpus
+
+    corpus = validate_corpus()
+    assert corpus.valid, [f"{i.case_id}:{i.field}" for i in corpus.issues]
+    assert corpus.total_cases >= 20 and corpus.gating_cases >= 15
+
+    # BNS-FC-002/007: flagship set is the three capabilities at VALIDATED floor
+    from bionexus.certification import FLAGSHIP_CAPABILITIES, flagship_program
+
+    assert FLAGSHIP_CAPABILITIES == (
+        "scrna.pseudobulk_de",
+        "scrna.annotation_evidence",
+        "spatial.inference_validity",
+    )
+    for info in flagship_program()["capabilities"].values():
+        assert info["current_tier"] in ("VALIDATED", "CERTIFIED"), info

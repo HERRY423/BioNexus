@@ -80,14 +80,21 @@ def test_benchmark_case_references_resolve():
 
 
 def test_open_gaps_are_flagged_not_hidden():
-    """Modes without benchmark coverage MUST be flagged open_gap (BNS-FT-005)."""
+    """Modes without benchmark coverage MUST be flagged open_gap (BNS-FT-005).
+
+    Honest state since BioFailureBench (BNS-014): every mode BN-F001..BN-F012
+    carries at least one benchmark case, so the open-gap set is empty. If a new
+    mode is added without coverage, this test fails until a trap is attached
+    (suites grow by attaching cases to open gaps, BNS-FT-008).
+    """
     summary = taxonomy_summary()
-    assert set(summary["open_gaps"]) == {"BN-F004", "BN-F005", "BN-F008"}
-    for fid in summary["open_gaps"]:
-        assert FAILURE_TAXONOMY[fid].benchmark_cases == ()
-        assert FAILURE_TAXONOMY[fid].open_gap is True
+    assert set(summary["open_gaps"]) == set()
     covered = [m for m in FAILURE_TAXONOMY.values() if not m.open_gap]
     assert all(m.benchmark_cases for m in covered)
+    # The three formerly-open gaps are now wired to deterministic detection
+    for fid in ("BN-F004", "BN-F005", "BN-F008"):
+        assert FAILURE_TAXONOMY[fid].benchmark_cases, fid
+        assert FAILURE_TAXONOMY[fid].open_gap is False
 
 
 def test_capability_index_and_queries():
@@ -115,7 +122,8 @@ def test_failures_cli(capsys):
     """CLI exposes the taxonomy: list + show."""
     assert cli_main(["failures", "list"]) == 0
     out = capsys.readouterr().out
-    assert "BN-F001" in out and "OPEN" in out
+    assert "BN-F001" in out
+    assert "Open gaps (no benchmark coverage yet):" in out  # honest even when empty
     assert cli_main(["failures", "show", "BN-F002"]) == 0
     out = capsys.readouterr().out
     assert "Pseudoreplication" in out and "Detection rule" in out

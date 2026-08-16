@@ -88,7 +88,10 @@ def test_calibration_diagnostics_present():
     assert c["total_evaluated"] > 0
 
     union_cal = report.frontier_metrics["union_calibration"]
-    assert union_cal["verdict"] == "UNDERCONFIDENT"  # the honest current state
+    # Honest current state: the union now contains BOTH an overconfidence
+    # frontier trap (BF-026: SUPPORTED labels without negative markers) and
+    # the underconfidence frontier probes -> MISALIGNED, not one-directional.
+    assert union_cal["verdict"] == "MISALIGNED"
     assert union_cal["macro_f1"] < 1.0
     assert union_cal["total_evaluated"] == c["total_evaluated"] + (
         report.frontier_metrics["total"] - report.frontier_metrics["calibration"]["skipped_no_backend"]

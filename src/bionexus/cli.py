@@ -1,14 +1,17 @@
 """
-BioNexus Unified Command-Line Interface.
+BioNexus Unified Command-Line Interface — the Scientific Assertion Firewall.
 
 Commands:
-  bionexus create-plugin    Scaffold a new skill following the Gold Reference pattern
-  bionexus create-skill     Alias for create-plugin
-  bionexus doctor           Run environment and backend preflight diagnostics
-  bionexus list-skills      Display canonical skill inventory and capability tiers
-  bionexus inventory        Alias for list-skills
-  bionexus registry         Compile and validate multi-platform registry manifests
-  bionexus audit            Audit expression matrix or spatial coordinate integrity
+  bionexus preflight     Decide BEFORE compute whether an analysis should run (BNS-013)
+  bionexus audit         Audit notebooks/scripts for scientific flaws, or data-matrix integrity
+  bionexus verify        Verify final results against their Claim-Evidence Ledger (BNS-013)
+  bionexus bench         BioFailureBench trap corpus: validate / summary (BNS-014)
+  bionexus create-plugin Scaffold a new skill following the Gold Reference pattern
+  bionexus create-skill  Alias for create-plugin
+  bionexus doctor        Run environment and backend preflight diagnostics
+  bionexus list-skills   Display canonical skill inventory and capability tiers
+  bionexus inventory     Alias for list-skills
+  bionexus registry      Compile and validate multi-platform registry manifests
 """
 
 from __future__ import annotations
@@ -621,11 +624,22 @@ def handle_registry(args: argparse.Namespace) -> int:
 
 
 def handle_audit(args: argparse.Namespace) -> int:
-    """Audit data semantics and matrix health via bionexus.integrity."""
+    """Audit data semantics OR static scientific analysis flaws (BNS-013)."""
+    from bionexus.analysis_audit import audit_analysis, render_analysis_audit
+
     path = Path(args.path)
     if not path.is_file():
         print(f"[ERROR] Target file not found: {path}", file=sys.stderr)
         return 1
+
+    # Code artifacts (notebooks / scripts) -> static scientific analysis audit
+    if path.suffix.lower() in {".ipynb", ".py", ".r", ".rmd", ".qmd", ".jl"}:
+        result = audit_analysis(path)
+        if getattr(args, "json", False):
+            print(json.dumps(result.to_dict(), indent=2))
+        else:
+            print(render_analysis_audit(result))
+        return 0 if result.passed else 1
 
     print(f"=== Auditing Biological Data File: {path} ===")
     if path.suffix == ".h5ad":
@@ -652,6 +666,66 @@ def handle_audit(args: argparse.Namespace) -> int:
         for note in notes:
             print(f"  - {note}")
         return 0 if grade in ("A", "B") else 1
+
+
+def handle_preflight(args: argparse.Namespace) -> int:
+    """Handle the 'preflight' command (BNS-013): decide before compute."""
+    from bionexus.preflight import render_preflight, run_preflight
+
+    try:
+        report = run_preflight(
+            intent=getattr(args, "intent", None),
+            query=getattr(args, "query", None),
+            data_path=getattr(args, "data", None),
+            metadata_path=getattr(args, "metadata", None),
+            claimed_maturity=getattr(args, "claim_maturity", None),
+            has_external_validation=getattr(args, "external_validation", False),
+            allow_degraded=args.allow_degraded,
+        )
+    except FileNotFoundError as e:
+        print(f"[ERROR] {e}", file=sys.stderr)
+        return 2
+    if args.json:
+        print(json.dumps(report.to_dict(), indent=2))
+    else:
+        print(render_preflight(report))
+    return report.exit_code
+
+
+def handle_verify(args: argparse.Namespace) -> int:
+    """Handle the 'verify' command (BNS-013): verify final results via their ledger."""
+    from bionexus.verification import render_verification, verify_results
+
+    try:
+        report = verify_results(args.path)
+    except FileNotFoundError as e:
+        print(f"[ERROR] {e}", file=sys.stderr)
+        return 1
+    if args.json:
+        print(json.dumps(report.to_dict(), indent=2))
+        return report.exit_code
+    print(render_verification(report))
+    return report.exit_code
+
+
+def handle_bench(args: argparse.Namespace) -> int:
+    """Handle the 'bench' command (BNS-014): BioFailureBench trap corpus."""
+    from evals.biofailurebench import render_corpus_report, validate_corpus
+
+    action = getattr(args, "bench_action", "validate")
+    if action == "validate":
+        report = validate_corpus()
+        if args.json:
+            print(json.dumps(report.to_dict(), indent=2))
+        else:
+            print(render_corpus_report(report))
+        return 0 if report.valid else 1
+    elif action == "run":
+        # Delegate to the standard eval runner over the identical suite:
+        # any host (Claude, Codex, Cursor, Biomni) executes the same traps.
+        args.suite = "biofailurebench"
+        return handle_eval(args)
+    return 0
 
 
 def handle_capability(args: argparse.Namespace) -> int:
@@ -871,6 +945,20 @@ def handle_certification(args: argparse.Namespace) -> int:
         )
     print("\nTiers are computed from recorded evidence, never asserted (BNS-CF-002).")
     print("The blocking list is the certification roadmap (BNS-CF-005).\n")
+
+    flagship = report.get("flagship") or {}
+    if flagship:
+        print("=== Flagship Certification Track (BNS-015) ===")
+        print(f"*{flagship['principle']}*\n")
+        print(f"Progress: {flagship['progress']} flagship capabilities at CERTIFIED\n")
+        print("| Flagship | Tier | Blocking CERTIFIED | External criteria remaining |")
+        print("|---|---|---|---|")
+        for cid, info in flagship["capabilities"].items():
+            ext = ", ".join(info["external_criteria_remaining"]) or "none"
+            blocking = ", ".join(info["blocking_for_certified"]) or "none"
+            print(f"| `{cid}` | `{info['current_tier']}` | {blocking} | {ext} |")
+        print("\nThe flagship track reaches CERTIFIED through external evidence first; the 10-CERTIFIED")
+        print("M4 target is unchanged and is never reached by weakening criteria (BNS-CF-006).\n")
     return 0
 
 
@@ -1316,10 +1404,57 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_registry.add_argument("--live-check", action="store_true", help="Probe live HTTP endpoints")
     p_registry.add_argument("--registry-path", default=None, help="Path to bionexus.registry.yaml")
 
-    # 5. audit
-    p_audit = subparsers.add_parser("audit", help="Audit data semantics and matrix health")
-    p_audit.add_argument("path", help="Path to .h5ad or matrix file to inspect")
+    # 5. audit (data files AND notebooks/scripts -> static scientific audit)
+    p_audit = subparsers.add_parser(
+        "audit",
+        help="Audit a notebook/script for scientific flaws, or audit data matrix semantics",
+    )
+    p_audit.add_argument(
+        "path",
+        help="Path to notebook (.ipynb), script (.py/.R/.Rmd/.qmd), or data file (.h5ad/csv)",
+    )
     p_audit.add_argument("--expected-type", choices=["counts", "normalized"], default="counts")
+    p_audit.add_argument("--json", action="store_true", help="Output audit result as JSON")
+
+    # 5.5 preflight (Scientific Assertion Firewall entry 1, BNS-013)
+    p_preflight = subparsers.add_parser(
+        "preflight",
+        help="Scientific preflight: decide BEFORE compute whether an analysis should run (BNS-013)",
+    )
+    p_preflight.add_argument("data", nargs="?", default=None, help="Optional path to data file (.h5ad)")
+    p_preflight.add_argument(
+        "--intent",
+        default=None,
+        help="Analytical intent (e.g. differential-expression, clustering, annotation-evidence, spatial-inference-validity)",
+    )
+    p_preflight.add_argument("--query", default=None, help="Optional free-text analysis request (routed as-is)")
+    p_preflight.add_argument("--metadata", default=None, help="Path to input metadata JSON (replicates, namespaces, ...)")
+    p_preflight.add_argument("--claim-maturity", default=None, help="Maturity the host intends to claim (ceiling audit)")
+    p_preflight.add_argument(
+        "--external-validation", action="store_true", help="External (orthogonal) validation evidence exists"
+    )
+    p_preflight.add_argument("--allow-degraded", action="store_true", help="Consent to Grade C degradation")
+    p_preflight.add_argument("--json", action="store_true", help="Output preflight report as JSON")
+
+    # 5.6 verify (Scientific Assertion Firewall entry 3, BNS-013)
+    p_verify = subparsers.add_parser(
+        "verify",
+        help="Verify final results against their Claim-Evidence Ledger (BNS-013)",
+    )
+    p_verify.add_argument("path", help="Path to results ledger JSON or a results directory containing one")
+    p_verify.add_argument("--json", action="store_true", help="Output verification report as JSON")
+
+    # 5.7 bench (BioFailureBench trap corpus, BNS-014)
+    p_bench = subparsers.add_parser(
+        "bench", help="BioFailureBench: the scientific trap corpus (BNS-014)"
+    )
+    bench_subs = p_bench.add_subparsers(dest="bench_action", help="BioFailureBench actions")
+    p_bench_validate = bench_subs.add_parser("validate", help="Validate corpus schema and taxonomy linkage")
+    p_bench_validate.add_argument("--json", action="store_true", help="Output corpus report as JSON")
+    p_bench_run = bench_subs.add_parser("run", help="Run the trap suite (same as eval --suite biofailurebench)")
+    p_bench_run.add_argument("--json", action="store_true", help="Output benchmark as JSON")
+    p_bench_run.add_argument("--strict", action="store_true", help="Strict mode: skips are failures")
+    p_bench_run.add_argument("--report", default=None, help="Path to save Markdown report")
 
     # 6. capability
     p_cap = subparsers.add_parser(
@@ -1458,9 +1593,10 @@ def main(argv: Optional[list[str]] = None) -> int:
             "adversarial",
             "l2_agent_claims",
             "l3_scientific_outcomes",
+            "biofailurebench",
         ],
         default="all",
-        help="Benchmark evaluation suite",
+        help="Benchmark evaluation suite (biofailurebench = the scientific trap corpus, BNS-014)",
     )
     p_eval.add_argument(
         "--provider",
@@ -1530,6 +1666,18 @@ def main(argv: Optional[list[str]] = None) -> int:
         return handle_registry(args)
     elif args.command == "audit":
         return handle_audit(args)
+    elif args.command == "preflight":
+        if not (getattr(args, "intent", None) or getattr(args, "query", None)):
+            p_preflight.print_help()
+            return 2
+        return handle_preflight(args)
+    elif args.command == "verify":
+        return handle_verify(args)
+    elif args.command == "bench":
+        if not getattr(args, "bench_action", None):
+            p_bench.print_help()
+            return 0
+        return handle_bench(args)
     elif args.command == "capability":
         if not getattr(args, "capability_action", None):
             p_cap.print_help()

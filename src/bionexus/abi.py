@@ -359,6 +359,28 @@ _ABI_ENRICHMENT: Dict[str, Dict[str, Any]] = {
         "validation": ValidationRequirements(multiple_testing="not_applicable", parameter_sensitivity="not_applicable", cross_method="recommended"),
         "evidence_ceiling_note": "Deterministic rule combiner; REPLICATED requires concordance with external expert-reviewed truth sets (e.g. ClinVar).",
     },
+    "scrna.annotation_evidence": {
+        "input_contract": InputContract(
+            matrix_state_allowed=[MatrixState.NORMALIZED_EXPRESSION.value, MatrixState.RAW_COUNTS.value],
+            required_inputs=["expression", "candidate_labels"],
+            notes={"labels": "Identity labels require an evidence source: reference mapping, marker panel, or cross-method agreement (BNS-II-008)."},
+        ),
+        "execution": ExecutionReference(reference_backend="local deterministic evidence combiner (bionexus)", reference_algorithm="annotation_evidence_scoring"),
+        "validation": ValidationRequirements(multiple_testing="optional", parameter_sensitivity="recommended", cross_method="required"),
+        "evidence_ceiling_note": "Per-label verdicts (SUPPORTED / TENTATIVE / ABSTAIN); REPLICATED requires an external reference cohort.",
+    },
+    "spatial.inference_validity": {
+        "input_contract": InputContract(
+            matrix_state_allowed=[MatrixState.NORMALIZED_EXPRESSION.value, MatrixState.RAW_COUNTS.value],
+            coordinates_required=True,
+            coordinate_type_allowed=[CoordinateType.PHYSICAL.value, CoordinateType.JUSTIFIED_SPATIAL_EMBEDDING.value],
+            required_inputs=["observation", "coordinates"],
+            notes={"coordinate_type": "UMAP/PCA embeddings MUST NOT be silently substituted for physical coordinates (BNS-II-006)."},
+        ),
+        "execution": ExecutionReference(reference_backend="local deterministic alternative-explanation tester (bionexus)", reference_algorithm="spatial_alternative_explanation_matrix"),
+        "validation": ValidationRequirements(multiple_testing="recommended", parameter_sensitivity="required", cross_method="recommended"),
+        "evidence_ceiling_note": "Untested alternative explanations cap the conclusion at FRAGILE; orthogonal validation is required to assert beyond it.",
+    },
 }
 
 
@@ -511,6 +533,51 @@ def enforce_evidence_ceiling(
     """
     abi = get_capability_abi(capability_id)
     return abi.evidence_ceiling.clamp(claimed_maturity, has_external_validation=has_external_validation)
+
+
+def enforce_statistical_warrant(
+    capability_id: str,
+    claimed_maturity: str,
+    has_external_validation: bool = False,
+    has_fdr_correction: Optional[bool] = None,
+) -> str:
+    """
+    The full statistical-warrant clamp (BNS-CC-009 / BN-F005):
+
+    1. ABI evidence-ceiling clamp (BNS-CC-013): no claim above the
+       capability's ceiling without external validation.
+    2. Multiple-testing warrant cap (BN-F005): when the capability REQUIRES
+       false-discovery control and `has_fdr_correction` is False, any
+       warrant-level maturity (SUPPORTED / ROBUST / REPLICATED) is capped at
+       PRELIMINARY until corrected values are reported alongside the findings.
+       Warning states (ABSTAIN / UNASSESSED / FRAGILE / CONFLICTED) pass
+       through unchanged — they are diagnostics, not warrant levels.
+    """
+    warranted = enforce_evidence_ceiling(
+        capability_id, claimed_maturity, has_external_validation=has_external_validation
+    )
+    if has_fdr_correction is False:
+        abi = get_capability_abi(capability_id)
+        if abi.validation.multiple_testing == "required":
+            ranks = {
+                ConclusionMaturity.ABSTAIN.value: 0,
+                ConclusionMaturity.UNASSESSED.value: 0,
+                ConclusionMaturity.PRELIMINARY.value: 1,
+                ConclusionMaturity.FRAGILE.value: 2,
+                ConclusionMaturity.CONFLICTED.value: 2,
+                ConclusionMaturity.SUPPORTED.value: 3,
+                ConclusionMaturity.ROBUST.value: 4,
+                ConclusionMaturity.REPLICATED.value: 5,
+            }
+            key = str(warranted).upper()
+            if key not in (
+                ConclusionMaturity.ABSTAIN.value,
+                ConclusionMaturity.UNASSESSED.value,
+                ConclusionMaturity.FRAGILE.value,
+                ConclusionMaturity.CONFLICTED.value,
+            ) and ranks.get(key, 0) > ranks[ConclusionMaturity.PRELIMINARY.value]:
+                warranted = ConclusionMaturity.PRELIMINARY.value
+    return warranted
 
 
 def abi_conformance_summary() -> Dict[str, Any]:
