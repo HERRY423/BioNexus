@@ -193,6 +193,28 @@ Test BioNexus immediately in your AI coding environment:
 
 ---
 
+## 📜 BioNexus Scientific Contract Specification (BNS)
+
+BioNexus is governed by a normative, machine-enforced scientific contract published in [`spec/`](spec/README.md) — nine RFC 2119-style documents with stable requirement IDs (`BNS-XX-nnn`) and live verification hooks:
+
+| Spec | Governs |
+|---|---|
+| [BNS-001](spec/BNS-001-capability-contract.md) | Capability Contract & **Biological Capability ABI** |
+| [BNS-002](spec/BNS-002-input-invariants.md) | Input semantic invariants (raw vs normalized, coordinates, cell types) |
+| [BNS-003](spec/BNS-003-execution-fidelity.md) | Execution fidelity & gold backends |
+| [BNS-004](spec/BNS-004-evidence-maturity.md) | EvidenceCard 2.0 maturity ladder & calibration |
+| [BNS-005](spec/BNS-005-abstention-and-degradation.md) | Deterministic abstention & degraded advisories |
+| [BNS-006](spec/BNS-006-provenance.md) | Provenance & reproducibility sidecars |
+| [BNS-007](spec/BNS-007-cross-method-validation.md) | Parameter sensitivity & cross-method concordance |
+| [BNS-008](spec/BNS-008-host-conformance.md) | Host agent conformance (Claude / Codex / any agent) |
+| [BNS-009](spec/BNS-009-capability-lifecycle.md) | Capability lifecycle, frontier graduation, deprecation |
+
+**The Biological Capability ABI** (`bionexus abi show <id>`): every capability projects to a stable Scientific ABI — input contracts (allowed matrix states, coordinate types), forbidden claims, execution references, validation policy, evidence ceilings, and provenance requirements. Any host agent connecting to BioNexus inherits this boundary and cannot bypass it.
+
+**Honest calibration (BNS-LC-004..006)**: the benchmark separates the *gating track* (guaranteed behavior, drives CRI) from the *frontier track* (`known_limitation` probes, reported with honest pass/fail). A gating-only 100% is explicitly not a calibration claim; calibration spans the union. Current honest state: **gating 42/42 · frontier 7/11 · union 92.5% · union macro-F1 96.3%** — see [`evals/reports/benchmark_report.md`](evals/reports/benchmark_report.md).
+
+---
+
 ## 🧬 Scientific Evidence Operating Architecture
 
 BioNexus enforces a strict distinction between **Execution Fidelity** (whether official algorithms executed) and **Scientific Evidence Quality** (statistical power, input integrity, parameter sensitivity, and external validation).

@@ -59,13 +59,7 @@ def test_load_eval_cases():
 
 
 def test_run_benchmark_accounting_integrity():
-    """Verify fail-closed accounting instead of asserting the benchmark passes.
-
-    Every case must be exactly one of passed / failed / skipped; a skipped case
-    is never passed; headline accuracy equals passed / attempted (non-skipped).
-    This replaces the old circular `failed_cases == 0` + `accuracy >= 0.95`
-    assertion which held by construction even with zero backends installed.
-    """
+    """Verify gating track passes with high Composite Reliability Index; frontier reported honestly."""
     report = run_benchmark()
     assert report.total_cases >= 35
 
@@ -93,6 +87,10 @@ def test_run_benchmark_accounting_integrity():
     assert m["capability_hallucination_rate"] == 0.0
     assert m["scientific_semantic_error_rate"] == 0.0
     assert m["composite_reliability_index"] >= 0.90
+
+    # Frontier track (BNS-LC-004..006): executed honestly, never gating
+    assert report.frontier_metrics["total"] >= 8
+    assert report.union_total == report.total_cases + report.frontier_metrics["total"]
 
 
 def test_l3_missing_backend_never_counts_as_pass(monkeypatch):
@@ -209,7 +207,7 @@ def test_cli_eval_subcommand(capsys):
     assert rc == 0
     captured = capsys.readouterr()
     assert "[BioNexus Eval 2.0]" in captured.out
-    assert "Overall Accuracy" in captured.out
+    assert "Gating Accuracy" in captured.out or "Overall Accuracy" in captured.out
 
 
 def test_cli_eval_strict_flag(capsys):

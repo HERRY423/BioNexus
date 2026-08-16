@@ -4,6 +4,7 @@
 
 - id: l3-outcome-marker-recovery-001
   level: L3
+  expected_maturity: SUPPORTED
   category: scientific_outcome
   prompt: "Recover planted marker genes from synthetic single-cell PBMC counts."
   expected_status: PERMITTED
@@ -16,6 +17,7 @@
 
 - id: l3-outcome-spatial-svg-002
   level: L3
+  expected_maturity: SUPPORTED
   category: scientific_outcome
   prompt: "Recover planted spatial gradient genes from synthetic coordinates."
   expected_status: PERMITTED
@@ -28,6 +30,7 @@
 
 - id: l3-outcome-pseudobulk-deseq-003
   level: L3
+  expected_maturity: SUPPORTED
   category: scientific_outcome
   prompt: "Recover planted condition DEGs with true fold change >= 2.0 and FDR q < 0.05."
   expected_status: PERMITTED
@@ -42,6 +45,7 @@
 
 - id: l3-outcome-clustering-ari-stability-004
   level: L3
+  expected_maturity: SUPPORTED
   category: scientific_outcome
   prompt: "Evaluate parameter robustness of Leiden clustering across resolution sweep 0.4 to 0.8."
   expected_status: PERMITTED
