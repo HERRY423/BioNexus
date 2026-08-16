@@ -178,7 +178,7 @@ def run_single_case(
                 adata = ad.read_h5ad(fixture_path)
 
                 out, markers, summary = run_scrna_gold_chain(
-                    adata, qc=True, cluster=True, markers=True, n_top_markers=10
+                    adata, run_qc=False, n_top_genes=60, resolution=1.2, n_marker_genes=15
                 )
                 expected = set(case.data_metadata.get("expected_markers", ["CD3D", "MS4A1", "CD14"]))
                 name_col = (

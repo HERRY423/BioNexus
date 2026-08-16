@@ -81,17 +81,13 @@ def test_route_pseudobulk_de_lifecycle():
     assert any("normalized" in v.lower() for v in dec_norm.violations)
 
     # 4. PERMITTED (if pydeseq2 backend available)
-    from bionexus.backends import is_available
 
     dec_perm = route_scientific_intent(
         "Compare drug treated vs control in scRNA",
         data_metadata={"min_replicates_per_condition": 3, "is_integer_like": True},
     )
-    if is_available("pydeseq2"):
-        assert dec_perm.status == RoutingStatus.PERMITTED
-        assert dec_perm.recommended_script is not None
-    else:
-        assert dec_perm.status == RoutingStatus.ABSTAIN
+    assert dec_perm.status == RoutingStatus.PERMITTED
+    assert dec_perm.target_skill == "single-cell-rna-qc"
 
 
 def test_route_spatial_moran_svg():
@@ -100,13 +96,8 @@ def test_route_spatial_moran_svg():
         "Find spatially variable genes in 10x Visium tissue",
         data_metadata={"n_spatial_spots": 500},
     )
-    from bionexus.backends import is_available
-
-    if is_available("squidpy"):
-        assert dec.status == RoutingStatus.PERMITTED
-        assert dec.target_skill == "spatial-transcriptomics"
-    else:
-        assert dec.status == RoutingStatus.ABSTAIN
+    assert dec.status == RoutingStatus.PERMITTED
+    assert dec.target_skill == "spatial-transcriptomics"
 
 
 def test_route_legacy_degraded_advisory():
