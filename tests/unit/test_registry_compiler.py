@@ -37,6 +37,7 @@ from bionexus.registry import (
     validate_endpoints,
     validate_registry_structure,
 )
+from bionexus.versions import PLUGIN_VERSION
 
 
 def test_canonical_registry_loading_and_structure():
@@ -44,7 +45,7 @@ def test_canonical_registry_loading_and_structure():
     registry = load_canonical_registry(_REPO_ROOT / "bionexus.registry.yaml")
     assert registry is not None
     assert registry["package"]["name"] == "BioNexus"
-    assert registry["package"]["version"] == "0.9.0"
+    assert registry["package"]["version"] == PLUGIN_VERSION
     assert "mcp_servers" in registry
     assert "local" in registry["mcp_servers"]
     assert "hosted" in registry["mcp_servers"]

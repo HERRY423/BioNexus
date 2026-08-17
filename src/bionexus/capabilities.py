@@ -942,6 +942,192 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
         ],
         evidence_ceiling_without_external_validation="ROBUST",
     ),
+    # 9. Cell Annotation Evidence Assessment (flagship capability B, BNS-013)
+    "scrna.annotation_evidence": CapabilityContract(
+        id="scrna.annotation_evidence",
+        version=1,
+        display_name="Cell Annotation Evidence Assessment",
+        skill_name="single-cell-rna-qc",
+        summary=(
+            "Not another annotator: assesses how much evidence backs each candidate cell-type label "
+            "(reference mapping, marker consistency, negative markers, doublet risk, ontology compatibility, "
+            "open-set detection, cross-method agreement) and returns per-label verdicts."
+        ),
+        intent=[
+            "annotation_evidence",
+            "label_support",
+            "cell_type_verification",
+            "open_set_annotation",
+            "annotation_audit",
+        ],
+        inputs={
+            "expression": InputSpecification(
+                name="expression",
+                semantic_type=SemanticInputType.NORMALIZED_MATRIX.value,
+                required=True,
+                description="Cell-level expression used for marker consistency and doublet assessment.",
+            ),
+            "candidate_labels": InputSpecification(
+                name="candidate_labels",
+                semantic_type=SemanticInputType.SAMPLE_METADATA.value,
+                required=True,
+                description="Candidate label assignment per cluster or per cell to be assessed (never asserted).",
+            ),
+            "reference": InputSpecification(
+                name="reference",
+                semantic_type=SemanticInputType.SAMPLE_METADATA.value,
+                required=False,
+                description="Reference atlas mapping or curated marker panel with positive and negative markers.",
+            ),
+        },
+        preconditions=[
+            Precondition(
+                id="annotation_source_recorded",
+                rule="every non-numeric label cites an evidence source",
+                description="A label without a recorded evidence source is a candidate, not an identity (BNS-II-008).",
+                fatal_if_violated=True,
+            ),
+            Precondition(
+                id="negative_markers_evaluated",
+                rule="negative_marker_violation is measured or explicitly declared unmeasured",
+                description="Positive-marker coherence alone cannot separate related lineages.",
+                fatal_if_violated=False,
+            ),
+        ],
+        backend=BackendRequirement(
+            canonical_name="local deterministic evidence combiner",
+            import_name="bionexus",
+            minimum_version="0.10.0",
+            description="Deterministic annotation-evidence scoring (annotation_evidence.assess_annotation_evidence)",
+        ),
+        refusal_conditions=[
+            RefusalTrigger(
+                condition_id="no_annotation_evidence",
+                description="No reference mapping, marker panel, or cross-method evidence is available for the labels.",
+                remedy="Keep labels numeric or explicitly putative; attach a reference atlas or curated marker panel with negative markers.",
+                violated_rule="Annotation evidence requirement (BN-F003)",
+            ),
+            RefusalTrigger(
+                condition_id="open_set_population",
+                description="An unknown/open-set population is being forced onto a known reference label.",
+                remedy="Report the population as unknown/novel (ABSTAIN verdict) until orthogonal evidence is collected.",
+                violated_rule="Open-set honesty invariant (BN-F003)",
+            ),
+        ],
+        outputs=[
+            "per_label_verdicts (SUPPORTED | TENTATIVE | ABSTAIN) (JSON/CSV)",
+            "missing_evidence_requests (list)",
+            "evidence_card (JSON/Markdown)",
+        ],
+        evidence_requirements=EvidenceRequirement(
+            multiple_testing="optional",
+            effect_size="recommended",
+            mandatory_limitations=[
+                "Verdicts describe evidence support for labels, not ground-truth identity.",
+                "ABSTAIN for open-set labels is the honest answer, not a failure.",
+            ],
+        ),
+        forbidden_claims=[
+            "cell_type_identity_without_reference",
+            "causal_interaction",
+            "clinical_diagnosis",
+        ],
+        evidence_ceiling_without_external_validation="SUPPORTED",
+    ),
+    # 10. Spatial Inference Validity Assessment (flagship capability C, BNS-013)
+    "spatial.inference_validity": CapabilityContract(
+        id="spatial.inference_validity",
+        version=1,
+        display_name="Spatial Inference Validity Assessment",
+        skill_name="spatial-transcriptomics",
+        summary=(
+            "Not a reimplementation of spatial methods: tests whether a spatial biology conclusion survives its "
+            "alternative explanations (segmentation leakage, cell size, transcript density, nuclear eccentricity, "
+            "local density, spot composition, spatial autocorrelation, batch/FOV, ligand/receptor abundance, "
+            "contact geometry, neighborhood radius, permutation null)."
+        ),
+        intent=[
+            "spatial_inference_validity",
+            "alternative_explanation_testing",
+            "spatial_conclusion_robustness",
+            "spatial_confound_audit",
+        ],
+        inputs={
+            "observation": InputSpecification(
+                name="observation",
+                semantic_type=SemanticInputType.SAMPLE_METADATA.value,
+                required=True,
+                description="The spatial finding under test, stated as an observation (not a mechanism).",
+            ),
+            "coordinates": InputSpecification(
+                name="coordinates",
+                semantic_type=SemanticInputType.SPATIAL_COORDINATES.value,
+                required=True,
+                description="Physical spatial coordinates (or an embedding with recorded spatial justification).",
+                validation_rule="audit_spatial_coordinates",
+            ),
+            "alternative_controls": InputSpecification(
+                name="alternative_controls",
+                semantic_type=SemanticInputType.SAMPLE_METADATA.value,
+                required=False,
+                description="Status of each alternative-explanation control (TESTED / CONTROLLED / UNTESTED / FAILED).",
+            ),
+        },
+        preconditions=[
+            Precondition(
+                id="coordinate_provenance_recorded",
+                rule="coordinate origin is physical or a justified embedding",
+                description="Embeddings substituted for tissue coordinates invalidate spatial statistics (BNS-II-006).",
+                fatal_if_violated=True,
+            ),
+            Precondition(
+                id="core_confound_controls_tested",
+                rule="cell_size and transcript_density and segmentation_uncertainty are TESTED or CONTROLLED",
+                description="The canonical spatial confound controls must be addressed before any validity verdict.",
+                fatal_if_violated=False,
+            ),
+        ],
+        backend=BackendRequirement(
+            canonical_name="local deterministic alternative-explanation tester",
+            import_name="bionexus",
+            minimum_version="0.10.0",
+            description="Deterministic alternative-explanation matrix (spatial_inference.assess_spatial_inference)",
+        ),
+        refusal_conditions=[
+            RefusalTrigger(
+                condition_id="no_controls_provided",
+                description="Validity requested with zero alternative-explanation controls.",
+                remedy="Run the core confound controls (cell size, transcript density, segmentation uncertainty, permutation null) and resubmit.",
+                violated_rule="Alternative-explanation requirement (BN-F006)",
+            ),
+            RefusalTrigger(
+                condition_id="embedding_substitution",
+                description="UMAP/PCA coordinates offered where physical tissue coordinates are required.",
+                remedy="Provide physical coordinates, or record a spatial justification and cap the verdict at FRAGILE.",
+                violated_rule="Spatial provenance invariant (BN-F009)",
+            ),
+        ],
+        outputs=[
+            "alternative_explanation_matrix (per-control status) (JSON/CSV)",
+            "validity_verdict (ROBUST | SUPPORTED | FRAGILE | ABSTAIN)",
+            "unresolved_alternatives (list)",
+            "evidence_card (JSON/Markdown)",
+        ],
+        evidence_requirements=EvidenceRequirement(
+            multiple_testing="recommended",
+            effect_size="recommended",
+            mandatory_limitations=[
+                "A FRAGILE verdict names the untested alternatives, not a negative result.",
+                "Orthogonal validation is required to assert beyond FRAGILE for confound-sensitive observations.",
+            ],
+        ),
+        forbidden_claims=[
+            "causal_interaction",
+            "cell_cell_communication",
+            "cell_type_identity_without_reference",
+        ],
+        evidence_ceiling_without_external_validation="FRAGILE",
+    ),
 }
 
 

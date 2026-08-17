@@ -57,6 +57,30 @@ CORE_CRITERIA = [
     "negative_test",
 ]
 
+# ==============================================================================
+# Flagship Certification Track (BNS-015)
+# ==============================================================================
+
+# The flagship program concentrates certification effort on three capabilities
+# with independent external validation rather than spreading self-tests across
+# many. Three externally-validated CERTIFIED capabilities carry more scientific
+# weight than ten self-defined, self-tested, self-certified ones (BNS-FC-001).
+FLAGSHIP_CAPABILITIES: tuple = (
+    "scrna.pseudobulk_de",           # A: scRNA differential expression / pseudoreplication
+    "scrna.annotation_evidence",     # B: cell annotation evidence
+    "spatial.inference_validity",    # C: spatial inference validity
+)
+
+# Criteria that cannot be satisfied by the implementer alone: the flagship
+# program is, by construction, a program of *external* evidence.
+EXTERNAL_CRITERIA = ("public_reference_dataset", "independent_ground_truth", "cross_host_test", "external_reviewer")
+
+FLAGSHIP_PRINCIPLE = (
+    "Three CERTIFIED capabilities with independent external validation outweigh "
+    "ten self-tested certifications. The flagship track exists to make external "
+    "evidence, not self-assertion, the path to CERTIFIED."
+)
+
 
 class CertificationTier(str, Enum):
     """Capability certification tiers (BNS-010 §1)."""
@@ -232,6 +256,38 @@ _EVIDENCE: Dict[str, Dict[str, tuple[bool, str, str]]] = {
         "cross_host_test": (False, "", "Single-host replay only"),
         "external_reviewer": (False, "", "No independent scientific review recorded"),
     },
+    "scrna.annotation_evidence": {
+        "reference_backend": (True, "local deterministic evidence combiner (bionexus >= 0.9.0)", ""),
+        "formal_input_contract": (True, "abi.get_capability_abi('scrna.annotation_evidence')", ""),
+        "invariants": (True, "preconditions: annotation_source_recorded, negative_markers_evaluated", ""),
+        "known_failure_modes": (True, "BN-F003, BN-F011", "router traps: no_annotation_evidence, open_set_population"),
+        "positive_test": (True, "tests/unit/test_flagship_capabilities.py (SUPPORTED/TENTATIVE verdict ladder)", ""),
+        "negative_test": (True, "BF-004 (no evidence source refused), BF-022 (open-set refused), test_flagship_capabilities", ""),
+        "adversarial_test": (False, "", "No annotation coercion case in the suites yet"),
+        "public_reference_dataset": (False, "", "No public reference atlas vendored; verdicts exercised on synthetic evidence classes"),
+        "independent_ground_truth": (False, "", "No independent label truth set (e.g. sorted-bulk concordance) recorded"),
+        "parameter_perturbation": (False, "", "Deterministic thresholds; no sweep audit wired yet"),
+        "degradation_test": (False, "", "Local backend always present; missing-evidence path is a refusal, not a degradation"),
+        "provenance_test": (False, "", "No provenance sidecar for verdict payloads yet"),
+        "cross_host_test": (False, "", "Single-host replay only"),
+        "external_reviewer": (False, "", "No independent scientific review recorded"),
+    },
+    "spatial.inference_validity": {
+        "reference_backend": (True, "local deterministic alternative-explanation tester (bionexus >= 0.9.0)", ""),
+        "formal_input_contract": (True, "abi.get_capability_abi('spatial.inference_validity')", ""),
+        "invariants": (True, "preconditions: coordinate_provenance_recorded, core_confound_controls_tested", ""),
+        "known_failure_modes": (True, "BN-F006, BN-F009, BN-F011", "router traps: embedding_substitution, no_controls_provided"),
+        "positive_test": (True, "tests/unit/test_flagship_capabilities.py (ROBUST/SUPPORTED/FRAGILE/ABSTAIN ladder)", ""),
+        "negative_test": (True, "BF-011 (untested alternatives -> FRAGILE ceiling), BF-015 (no controls -> NEEDS_DATA), test_flagship_capabilities", ""),
+        "adversarial_test": (False, "", "No spatial-validity coercion case in the suites yet"),
+        "public_reference_dataset": (False, "", "No public spatial control matrix vendored"),
+        "independent_ground_truth": (False, "", "No orthogonal spatial truth set recorded"),
+        "parameter_perturbation": (False, "", "Neighborhood-radius sensitivity is assessed per-run, not benchmarked yet"),
+        "degradation_test": (False, "", "Local backend always present; no-controls path is a refusal, not a degradation"),
+        "provenance_test": (False, "", "No provenance sidecar for verdict payloads yet"),
+        "cross_host_test": (False, "", "Single-host replay only"),
+        "external_reviewer": (False, "", "No independent scientific review recorded"),
+    },
 }
 
 
@@ -305,10 +361,36 @@ def certify_capability(capability_id: str) -> CertificationRecord:
     )
 
 
+def flagship_program() -> Dict[str, Any]:
+    """
+    The flagship certification track (BNS-015): the three capabilities that
+    will reach CERTIFIED through independent external evidence first.
+    """
+    records = {cid: certify_capability(cid) for cid in FLAGSHIP_CAPABILITIES}
+    certified = [cid for cid, rec in records.items() if rec.tier is CertificationTier.CERTIFIED]
+    return {
+        "principle": FLAGSHIP_PRINCIPLE,
+        "flagship_target_certified": 3,
+        "certified": certified,
+        "progress": f"{len(certified)}/{len(FLAGSHIP_CAPABILITIES)}",
+        "external_criteria": list(EXTERNAL_CRITERIA),
+        "capabilities": {
+            cid: {
+                "current_tier": rec.tier.value,
+                "satisfied_count": rec.satisfied_count,
+                "blocking_for_certified": rec.blocking_for_certified,
+                "external_criteria_remaining": [c for c in EXTERNAL_CRITERIA if c in rec.blocking_for_certified],
+            }
+            for cid, rec in records.items()
+        },
+    }
+
+
 def certification_report() -> Dict[str, Any]:
     """
     Full certification report: per-capability records, tier distribution,
-    and the honest gap analysis that constitutes the certification roadmap.
+    the flagship track (BNS-015), and the honest gap analysis that
+    constitutes the certification roadmap.
     """
     records = {cid: certify_capability(cid) for cid in CANONICAL_CAPABILITIES}
     tiers: Dict[str, List[str]] = {t.value: [] for t in CertificationTier}
@@ -323,6 +405,7 @@ def certification_report() -> Dict[str, Any]:
         "m4_gap": max(0, 10 - certified_count),
         "criteria_catalog": CERTIFICATION_CRITERIA,
         "core_criteria": CORE_CRITERIA,
+        "flagship": flagship_program(),
         "records": {cid: rec.to_dict() for cid, rec in records.items()},
         "roadmap": {
             cid: {

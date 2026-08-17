@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### 🧱 Added (Scientific Assertion Firewall — BNS-013)
+
+Product repositioning: **BioNexus catches biological analyses that should not have been run.** Three researcher-facing entry points, usable without any host agent:
+
+- **`bionexus preflight`** (`src/bionexus/preflight.py`): runs BEFORE compute. Resolves the declared intent onto a capability contract, inspects the actual data state (matrix semantics, donor/condition structure, confounding, spatial provenance — reading `.h5ad` directly when anndata is present), and renders the seven-section verdict block: INTENT / DATA STATE / RISKS / DECISION / ALLOWED / FORBIDDEN CLAIM / REMEDY. Decision vocabulary is the fail-closed table (BNS-AD-014) verbatim; ALLOWED under a prevented decision comes only from taxonomy `acceptable_degradation`; FORBIDDEN CLAIM is mechanically derived from the capability's forbidden-claim catalog + evidence ceiling. Exit codes: 0 proceed (incl. capped/degraded), 1 refused/blocked, 2 missing evidence.
+- **`bionexus audit <notebook|script>`** (`src/bionexus/analysis_audit.py`): deterministic static rule engine (BFA-001..BFA-013) over `.ipynb` / `.py` / `.R` / `.Rmd` / `.qmd` screening the canonical trap classes: cell-level pseudoreplication, raw/log matrix confusion, missing FDR, batch/condition confounding, inappropriate statistical unit, annotation without evidence, circular marker validation, missing negative controls, spatial coordinate substitution (incl. `obsm['spatial'] = obsm['X_umap']`), parameter instability, overclaimed causality (via the prohibited-claims auditor), backend substitution, and unexecuted code claims. Findings cite rule id + BN-Fxxx + evidence line + remedy; the mandatory disclaimer states that absence of findings is NOT proof of validity. Data-file audit behavior (`.h5ad`/csv matrix semantics) is preserved unchanged.
+- **`bionexus verify <results>`** (`src/bionexus/verification.py`): verifies final results against their Claim–Evidence Ledger (BNS-012): fail-closed re-resolution per claim, evidence lines with honest symbols, ceiling cross-check, and *not-warranted* flagging of causal/mechanistic language beyond the evidence class. Exit non-zero on ABSTAIN/CONFLICTED/unwarranted claims; honest intermediate maturities do not fail.
+- New spec `spec/BNS-013-scientific-assertion-firewall.md` (BNS-FW-001..014); tests `test_preflight.py`, `test_analysis_audit.py`, `test_result_verify.py`.
+
+### 🏆 Added (Flagship Certification Track + two flagship capabilities — BNS-015)
+
+- **Flagship principle**: *three CERTIFIED capabilities with independent external validation outweigh ten self-tested certifications.* Flagship set: `scrna.pseudobulk_de` (A: pseudoreplication), `scrna.annotation_evidence` (B: annotation evidence), `spatial.inference_validity` (C: spatial inference validity). The M4 10-CERTIFIED target is unchanged (BNS-CF-006); the flagship track is prioritization, never weakening. External criteria (public dataset, independent ground truth, cross-host, external reviewer) cannot be implementer-satisfied. `bionexus certification` now publishes the flagship section with per-capability external-criteria-remaining.
+- **`src/bionexus/annotation_evidence.py` + contract `scrna.annotation_evidence`**: not another CellTypist — assesses how much evidence backs a candidate cell-type label (reference mapping, marker consistency, negative markers, doublet risk, ontology compatibility, open-set detection, cross-method agreement) and returns per-label verdicts SUPPORTED / TENTATIVE / ABSTAIN with published deterministic thresholds.
+- **`src/bionexus/spatial_inference.py` + contract `spatial.inference_validity`**: not a Squidpy reimplementation — tests whether a spatial conclusion survives its alternative explanations (12-control canonical registry: cell size, transcript density, segmentation uncertainty, nuclear eccentricity, local density, spot composition, spatial autocorrelation, batch/FOV, ligand/receptor abundance, contact geometry, neighborhood radius, permutation null). Verdict ladder ROBUST / SUPPORTED / FRAGILE / ABSTAIN; ceiling FRAGILE without orthogonal validation.
+- New spec `spec/BNS-015-flagship-certification.md` (BNS-FC-001..008); tests `test_flagship_capabilities.py`.
+
+### 🪤 Added (BioFailureBench: the Scientific Trap Corpus — BNS-014)
+
+- **`evals/datasets/biofailurebench.yaml`**: 26 traps (23 gating — all passing deterministically; 3 frontier known limitations) covering **all twelve taxonomy modes**. Each trap is a complete record with eight fields: data, intended analysis, hidden flaw (BN-Fxxx), expected detection, allowed computation, forbidden claim, remediation, reference. Includes a positive control (BF-024) so the bench cannot degrade into an all-refusal benchmark. Host-agnostic: Claude, Codex, Cursor, Biomni, and future agents run the identical suite via `bionexus eval --suite biofailurebench`.
+- **`evals/biofailurebench.py` + `bionexus bench validate`**: machine-checked corpus integrity (field completeness, taxonomy linkage, gating/frontier prefixes, ID resolution, mode coverage); invalid corpora fail CI.
+- **Three taxonomy open gaps CLOSED with wired detection** (BNS-FT-008): BN-F004 identifier mismatch (router stage-3.5 namespace screen, BF-008/BF-025), BN-F005 missing FDR (`abi.enforce_statistical_warrant` caps warrant at PRELIMINARY, BF-005), BN-F008 cross-database contradiction (router trap screen, BF-016). BN-F009 embedding-coordinate substitution is now refused at routing (BF-007/BF-020). Perfect condition-donor confounding and open-set/annotation-evidence traps are screened deterministically (BF-003/BF-013, BF-004/BF-022).
+- New spec `spec/BNS-014-biofailurebench.md` (BNS-BF-001..009); tests `test_biofailurebench.py`. Honest benchmark state after extension: **gating 61/61 attempted (65 total, 4 L3 skipped no-backend) · frontier 7/14 · union 90.7% · union macro-F1 90.1%**; union calibration verdict is now MISALIGNED (both an overconfidence trap and underconfidence probes exist — reported, not hidden).
+
 ## [0.9.0] - 2026-08-16
 
 ### 🌐 Fixed (FastMCP Dynamic Tool Registration & Fallback Routing Disambiguation)

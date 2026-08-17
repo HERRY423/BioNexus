@@ -39,11 +39,11 @@ benchmark coverage cannot.
 | BN-F001 | Assay-state confusion | REFUSE |
 | BN-F002 | Pseudoreplication | REFUSE |
 | BN-F003 | Unsupported annotation | BLOCK CLAIM |
-| BN-F004 | Identifier mismatch | REFUSE (open gap) |
-| BN-F005 | Missing multiple-testing correction | CAP EVIDENCE LEVEL (open gap) |
+| BN-F004 | Identifier mismatch | REFUSE (wired: router trap screen, BF-008/BF-025) |
+| BN-F005 | Missing multiple-testing correction | CAP EVIDENCE LEVEL (wired: statistical warrant, BF-005) |
 | BN-F006 | Invalid model assumption | BLOCK CLAIM |
 | BN-F007 | Parameter instability | CAP EVIDENCE LEVEL (FRAGILE) |
-| BN-F008 | Cross-database contradiction | CONFLICTED (open gap) |
+| BN-F008 | Cross-database contradiction | CONFLICTED (wired: router trap screen, BF-016) |
 | BN-F009 | Missing spatial provenance | REFUSE / DEGRADE WITH DISCLOSURE |
 | BN-F010 | Backend degradation masquerading | DEGRADE WITH DISCLOSURE |
 | BN-F011 | Claim inflation | BLOCK CLAIM |

@@ -450,17 +450,20 @@ def run_single_case(
                 if er.lower() not in actual_rem_text:
                     failure_reasons.append(f"Missing required remedy keyword: '{er}' (Actual: {decision.remedies})")
 
-        # 4. ABI Evidence-Ceiling Claim Audit (BNS-CC-013 / BNS-EM-006)
+        # 4. ABI Statistical-Warrant Audit (BNS-CC-013 / BNS-CC-009 / BN-F005)
         # The case plants a host-asserted maturity claim; the ABI clamp must
-        # reduce it to the capability's warranted ceiling.
+        # reduce it to the capability's warranted ceiling, and a missing FDR
+        # correction on a multiple-testing-required capability caps the
+        # warrant at PRELIMINARY (enforce_statistical_warrant).
         claimed_maturity = case.data_metadata.get("claimed_maturity")
         if claimed_maturity and actual_cap:
-            from bionexus.abi import enforce_evidence_ceiling
+            from bionexus.abi import enforce_statistical_warrant
 
-            clamped = enforce_evidence_ceiling(
+            clamped = enforce_statistical_warrant(
                 actual_cap,
                 str(claimed_maturity).upper(),
                 has_external_validation=bool(case.data_metadata.get("external_validation", False)),
+                has_fdr_correction=case.data_metadata.get("multiple_testing_correction"),
             )
             actual_maturity = clamped
             if case.expected_maturity and clamped.upper() != str(case.expected_maturity).upper():

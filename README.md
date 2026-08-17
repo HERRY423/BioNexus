@@ -14,8 +14,11 @@
 [![RUO](https://img.shields.io/badge/Status-Research%20Use%20Only-yellow.svg?style=flat-square)](#-regulatory-notice--compliance)
 
 <p align="center">
-  <b>BioNexus</b> transforms AI coding agents (<b>OpenAI Codex</b>, <b>Anthropic Claude Code</b>, <b>Cursor</b>) into rigorous, peer-reviewed computational biology assistants.<br/>
-  It enforces gold-standard bioinformatics pipelines, deterministic 3-layer EvidenceCard 2.0 grading, machine-readable Capability Contracts, multi-database MCP connectivity, and non-negotiable scientific abstention when experimental conditions fail.
+  <b>BioNexus catches biological analyses that should not have been run.</b><br/>
+  It is the <b>Scientific Assertion Firewall</b> and reliability layer for agentic biology: deterministic preflight before compute,
+  static audits of the analyses your tools (Scanpy, Seurat, Bioconductor, Claude, Codex, Cursor) already produce,
+  and fail-closed verification of final claims against their evidence — backed by machine-readable Capability Contracts,
+  the BN-Fxxx failure taxonomy, and the BioFailureBench trap corpus with ground truth.
 </p>
 
 ```text
@@ -148,6 +151,76 @@ uv pip install -e ".[all]"
 
 ---
 
+## 🧱 The Scientific Assertion Firewall (BNS-013)
+
+You keep using Scanpy, Seurat, Bioconductor, Claude, Codex, and Cursor. BioNexus does not replace any of them — it checks whether the scientific analyses they produce stand up. Three high-frequency entry points:
+
+### 1. `bionexus preflight` — before the analysis
+
+```bash
+bionexus preflight sample.h5ad --intent differential-expression
+```
+
+```text
+=== BioNexus Preflight ===
+
+INTENT
+Single-Cell Pseudobulk Differential Expression  (scrna.pseudobulk_de)
+
+DATA STATE
+[OK] matrix state: raw integer-like counts present
+[!!] biological samples: 8 donors across 2 conditions; minimum 2 donors in a group
+
+RISKS
+[!!] BN-F006: condition strongly confounded with 'donor' (1:1 design)
+
+DECISION
+ABSTAIN -> REFUSE
+
+ALLOWED
+- at most: Exploratory within-sample marker ranking, explicitly not condition DE
+
+FORBIDDEN CLAIM
+- causal_interaction: Claiming causal molecular interaction or regulation from correlational evidence
+- maturity above 'SUPPORTED' without external validation
+
+REMEDY
+- Add biological replicates that decouple condition from 'donor' or perform an explicit sensitivity analysis
+```
+
+Exit codes encode the verdict: `0` proceed (incl. capped/degraded), `1` refused or claim-blocked, `2` missing evidence.
+
+### 2. `bionexus audit` — on the notebook or script
+
+```bash
+bionexus audit analysis.ipynb
+```
+
+Deterministic static rules screen the canonical trap classes — pseudoreplication, raw/log confusion, missing FDR, batch/condition confounding, wrong statistical unit, annotation without evidence, circular marker validation, missing negative controls, spatial coordinate substitution, parameter instability, overclaimed causality, backend substitution, and unexecuted code claims. Every finding cites its rule id, taxonomy failure id (BN-Fxxx), evidence line, and remedy. Honest scope: static rules have false negatives — absence of findings is **not** proof of validity.
+
+### 3. `bionexus verify` — on the final results
+
+```bash
+bionexus verify results/          # reads the Claim–Evidence Ledger (BNS-012)
+```
+
+Each claim is re-resolved fail-closed against its evidence graph and the capability's ceiling; causal language beyond the evidence class is flagged as *not warranted*:
+
+```text
+CLAIM [CLAIM-DEMO-017]
+  CXCL13+ T cells are enriched in tumor
+
+  Evidence:
+  [OK] EVID-DA: differential abundance test on independent donors (method_run, SUPPORTED)
+  [~] EVID-SENS: context: parameter sensitivity: borderline at k=30 (statistical_result, FRAGILE)
+
+  Warrant: SUPPORTED
+  Not warranted:
+  - "causal_interaction: ..." (forbidden)
+```
+
+---
+
 ## 🩺 Environment Preflight & Diagnostic Doctor
 
 Verify your installation and inspect active backend tiers at any time:
@@ -211,6 +284,9 @@ BioNexus is governed by a normative, machine-enforced scientific contract publis
 | [BNS-010](spec/BNS-010-capability-certification.md) | **Capability certification**: 14 evidence criteria, 4 tiers |
 | [BNS-011](spec/BNS-011-failure-taxonomy.md) | **Scientific failure taxonomy** (BN-F001..F012) |
 | [BNS-012](spec/BNS-012-claim-evidence-ledger.md) | **Claim–Evidence Ledger** (JSON / PROV-O JSON-LD) |
+| [BNS-013](spec/BNS-013-scientific-assertion-firewall.md) | **Scientific Assertion Firewall**: preflight / audit / verify |
+| [BNS-014](spec/BNS-014-biofailurebench.md) | **BioFailureBench**: the scientific trap corpus (BF-nnn) |
+| [BNS-015](spec/BNS-015-flagship-certification.md) | **Flagship certification**: 3 externally-validated CERTIFIED capabilities |
 
 **The Biological Capability ABI** (`bionexus abi show <id>`): every capability projects to a stable Scientific ABI — input contracts (allowed matrix states, coordinate types), forbidden claims, execution references, validation policy, evidence ceilings, and provenance requirements. Any host agent connecting to BioNexus inherits this boundary and cannot bypass it.
 
@@ -218,11 +294,15 @@ BioNexus is governed by a normative, machine-enforced scientific contract publis
 
 **Capability certification** (`bionexus certification`): skills deepen through evidence tiers — CERTIFIED (all 14 criteria: backend, input contract, invariants, failure modes, positive/negative/adversarial tests, public reference dataset, independent ground truth, parameter perturbation, degradation test, provenance test, cross-host test, external reviewer), VALIDATED, EXPERIMENTAL, CONNECTOR-ONLY. Tiers are **computed from recorded evidence, never asserted**; the blocking-criteria list per capability is the published roadmap to 10 CERTIFIED.
 
-**Scientific failure taxonomy** (`bionexus failures list`): twelve failure modes (BN-F001 assay-state confusion … BN-F012 unexecuted maturity claim), each with definition, detection rule, required fail-closed behavior, acceptable degradation, and benchmark coverage. Open gaps (BN-F004 identifier mismatch, BN-F005 missing FDR, BN-F008 cross-database contradiction) are flagged, not hidden — this ontology is BioNexus's durable asset.
+**Flagship certification track (BNS-015)**: *three CERTIFIED capabilities with independent external validation outweigh ten self-tested certifications.* The flagship set concentrates effort on the three highest-frequency failure surfaces — `scrna.pseudobulk_de` (cell ≠ biological replicate), `scrna.annotation_evidence` (how much evidence backs a cell-type label), and `spatial.inference_validity` (can a spatial conclusion survive its alternative explanations). The four external criteria (public dataset, independent ground truth, cross-host test, external reviewer) cannot be satisfied by the implementer alone — that is the point.
 
-**Claim–Evidence Ledger** (`bionexus ledger`): claims as auditable dependency graphs (`supported_by` / `contradicted_by` / `depends_on` → fail-closed status resolution), persisted as JSON and projectable to PROV-O JSON-LD. Deliberately a data structure, not a graph platform.
+**Scientific failure taxonomy** (`bionexus failures list`): twelve failure modes (BN-F001 assay-state confusion … BN-F012 unexecuted maturity claim), each with definition, detection rule, required fail-closed behavior, acceptable degradation, and benchmark coverage. Since BioFailureBench, **all twelve modes carry wired detection and passing benchmark traps** — the three formerly-open gaps (BN-F004 identifier mismatch, BN-F005 missing FDR, BN-F008 cross-database contradiction) are closed. This ontology is BioNexus's durable asset.
 
-**Honest calibration (BNS-LC-004..006)**: the benchmark separates the *gating track* (guaranteed behavior, drives CRI) from the *frontier track* (`known_limitation` probes, reported with honest pass/fail). A gating-only 100% is explicitly not a calibration claim; calibration spans the union. Current honest state: **gating 42/42 · frontier 7/11 · union 92.5% · union macro-F1 96.3%** — see [`evals/reports/benchmark_report.md`](evals/reports/benchmark_report.md).
+**Claim–Evidence Ledger** (`bionexus ledger`): claims as auditable dependency graphs (`supported_by` / `contradicted_by` / `depends_on` → fail-closed status resolution), persisted as JSON and projectable to PROV-O JSON-LD. Deliberately a data structure, not a graph platform. `bionexus verify` is its productized form.
+
+**BioFailureBench** (`bionexus bench validate` / `bionexus eval --suite biofailurebench`, [BNS-014](spec/BNS-014-biofailurebench.md)): a scientific trap corpus that does not test "can the AI answer biology questions" — it tests **whether the AI realizes an analysis should not have been run, or that a conclusion does not stand**. Every trap carries eight fields (data, intended analysis, hidden flaw, expected detection, allowed computation, forbidden claim, remediation, reference), links into the BN-Fxxx taxonomy, and runs identically on any host (Claude, Codex, Cursor, Biomni, future agents). Software, skills, and prompts are easy to copy; an expert-maintained trap corpus with ground truth is not. Current state: **26 traps (23 gating, all passing deterministically; 3 frontier known limitations), covering all 12 taxonomy modes** including a positive control so the bench cannot degrade into an all-refusal benchmark.
+
+**Honest calibration (BNS-LC-004..006)**: the benchmark separates the *gating track* (guaranteed behavior, drives CRI) from the *frontier track* (`known_limitation` probes, reported with honest pass/fail). A gating-only 100% is explicitly not a calibration claim; calibration spans the union. Current honest state: **gating 61/61 attempted (65 total, 4 L3 skipped no-backend) · frontier 7/14 · union 90.7% · union macro-F1 90.1%** — see [`evals/reports/benchmark_report.md`](evals/reports/benchmark_report.md).
 
 ---
 
@@ -350,6 +430,10 @@ pytest
 # Strict mode (--strict / BIONEXUS_EVAL_STRICT=1) fails on any L3 case that
 # could not verify its planted-truth outcome because a backend was missing.
 bionexus eval --strict
+
+# Validate / run BioFailureBench, the scientific trap corpus (BNS-014)
+bionexus bench validate
+bionexus eval --suite biofailurebench
 
 # Run backend lifecycle matrix tests
 pytest tests/unit/test_backend_matrix.py -v
