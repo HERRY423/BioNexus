@@ -43,6 +43,7 @@ deleted.
 | [BNS-013](BNS-013-scientific-assertion-firewall.md) | Scientific Assertion Firewall | The three researcher entry points: preflight / audit / verify | `src/bionexus/preflight.py`, `analysis_audit.py`, `verification.py` |
 | [BNS-014](BNS-014-biofailurebench.md) | BioFailureBench | The scientific trap corpus with ground truth (BF-nnn) | `evals/datasets/biofailurebench.yaml`, `evals/biofailurebench.py` |
 | [BNS-015](BNS-015-flagship-certification.md) | Flagship Certification | 3 externally-validated CERTIFIED capabilities as the priority track | `src/bionexus/certification.py` (flagship program) |
+| [BNS-016](BNS-016-standards-interop.md) | Standards Interoperability & External Scope | RO-Crate / Workflow Run Crate / IEEE 2791 BCO exports; standards engagement; product boundary | `src/bionexus/interop.py`, `src/bionexus/standards.py` |
 
 ## Conformance classes
 

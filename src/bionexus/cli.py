@@ -6,6 +6,8 @@ Commands:
   bionexus audit         Audit notebooks/scripts for scientific flaws, or data-matrix integrity
   bionexus verify        Verify final results against their Claim-Evidence Ledger (BNS-013)
   bionexus bench         BioFailureBench trap corpus: validate / summary (BNS-014)
+  bionexus interop       Standards exports: RO-Crate / Workflow Run Crate / BioCompute Object (BNS-016)
+  bionexus standards     Standards alignment registry with honest statuses (BNS-016)
   bionexus create-plugin Scaffold a new skill following the Gold Reference pattern
   bionexus create-skill  Alias for create-plugin
   bionexus doctor        Run environment and backend preflight diagnostics
@@ -725,6 +727,89 @@ def handle_bench(args: argparse.Namespace) -> int:
         # any host (Claude, Codex, Cursor, Biomni) executes the same traps.
         args.suite = "biofailurebench"
         return handle_eval(args)
+    return 0
+
+
+def handle_interop(args: argparse.Namespace) -> int:
+    """Handle the 'interop' command (BNS-016): standards-based exports."""
+    from bionexus.interop import (
+        export_bco,
+        export_ro_crate,
+        ledger_to_ro_crate,
+        load_interop_source,
+        run_bundle_to_bco,
+        run_bundle_to_ro_crate,
+        validate_bco,
+        validate_ro_crate,
+    )
+    from bionexus.ledger import ClaimLedger
+
+    action = getattr(args, "interop_action", "ro-crate")
+    out = getattr(args, "out", None)
+
+    try:
+        if action in ("ro-crate", "bco"):
+            if out is None:
+                kind, manifest, siblings = load_interop_source(args.path)
+                if action == "ro-crate":
+                    doc = (
+                        ledger_to_ro_crate(ClaimLedger.from_dict(manifest))
+                        if kind == "ledger"
+                        else run_bundle_to_ro_crate(manifest, siblings)
+                    )
+                    errors = validate_ro_crate(doc)
+                else:
+                    if kind != "run":
+                        print(
+                            "[ERROR] BioCompute Objects describe computations: export a run capsule "
+                            "(run.json); ledgers export as RO-Crate / PROV-O.",
+                            file=sys.stderr,
+                        )
+                        return 1
+                    doc = run_bundle_to_bco(manifest, siblings)
+                    errors = validate_bco(doc)
+                print(json.dumps(doc, indent=2))
+                return 0 if not errors else 1
+
+            target, _errors = (
+                export_ro_crate(args.path, out) if action == "ro-crate" else export_bco(args.path, out)
+            )
+            print(f"[OK] {'RO-Crate' if action == 'ro-crate' else 'BioCompute Object'} written to: {target}")
+            return 0
+
+        elif action == "check":
+            kind, manifest, siblings = load_interop_source(args.path)
+            crate = (
+                ledger_to_ro_crate(ClaimLedger.from_dict(manifest))
+                if kind == "ledger"
+                else run_bundle_to_ro_crate(manifest, siblings)
+            )
+            crate_errors = validate_ro_crate(crate)
+            bco_errors: list = ["n/a: ledgers do not project to BCO"]
+            if kind == "run":
+                bco_errors = validate_bco(run_bundle_to_bco(manifest, siblings))
+            print(f"=== Interop check: {args.path} (source kind: {kind}) ===")
+            print(f"RO-Crate 1.1 structural validation: {'PASS' if not crate_errors else 'FAIL'}")
+            for e in crate_errors:
+                print(f"  - {e}")
+            print(f"IEEE 2791-2020 BCO structural validation: {'PASS' if not bco_errors else 'FAIL'}")
+            for e in bco_errors:
+                print(f"  - {e}")
+            return 0 if not crate_errors and not (kind == "run" and bco_errors) else 1
+    except (FileNotFoundError, ValueError) as e:
+        print(f"[ERROR] {e}", file=sys.stderr)
+        return 1
+    return 0
+
+
+def handle_standards(args: argparse.Namespace) -> int:
+    """Handle the 'standards' command (BNS-016): alignment registry."""
+    from bionexus.standards import alignments_report, render_alignments
+
+    if args.json:
+        print(json.dumps(alignments_report(), indent=2))
+        return 0
+    print(render_alignments())
     return 0
 
 
@@ -1456,6 +1541,34 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_bench_run.add_argument("--strict", action="store_true", help="Strict mode: skips are failures")
     p_bench_run.add_argument("--report", default=None, help="Path to save Markdown report")
 
+    # 5.8 interop (standards-based exports, BNS-016)
+    p_interop = subparsers.add_parser(
+        "interop",
+        help="Standards-based exports: RO-Crate / Workflow Run Crate / BioCompute Object (BNS-016)",
+    )
+    interop_subs = p_interop.add_subparsers(dest="interop_action", help="Interoperability actions")
+    p_io_crate = interop_subs.add_parser(
+        "ro-crate", help="Export a run capsule or ledger as an RO-Crate 1.1 document"
+    )
+    p_io_crate.add_argument("path", help="Run capsule (dir/run.json) or ledger JSON")
+    p_io_crate.add_argument("--out", default=None, help="Output file (default: print to stdout)")
+    p_io_bco = interop_subs.add_parser(
+        "bco", help="Export a run capsule as an IEEE 2791-2020 BioCompute Object"
+    )
+    p_io_bco.add_argument("path", help="Run capsule directory or run.json file")
+    p_io_bco.add_argument("--out", default=None, help="Output file (default: print to stdout)")
+    p_io_check = interop_subs.add_parser(
+        "check", help="Structurally validate the projections for a run capsule or ledger"
+    )
+    p_io_check.add_argument("path", help="Run capsule (dir/run.json) or ledger JSON")
+
+    # 5.9 standards (alignment registry, BNS-016)
+    p_standards = subparsers.add_parser(
+        "standards",
+        help="Standards alignment registry: RO-Crate, BCO, PROV-O, GA4GH, ... (honest statuses)",
+    )
+    p_standards.add_argument("--json", action="store_true", help="Output alignment report as JSON")
+
     # 6. capability
     p_cap = subparsers.add_parser(
         "capability", help="Query and validate machine-readable scientific capability contracts"
@@ -1678,6 +1791,13 @@ def main(argv: Optional[list[str]] = None) -> int:
             p_bench.print_help()
             return 0
         return handle_bench(args)
+    elif args.command == "interop":
+        if not getattr(args, "interop_action", None):
+            p_interop.print_help()
+            return 0
+        return handle_interop(args)
+    elif args.command == "standards":
+        return handle_standards(args)
     elif args.command == "capability":
         if not getattr(args, "capability_action", None):
             p_cap.print_help()
