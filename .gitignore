@@ -80,6 +80,7 @@ work/
 
 # Temporary test outputs
 .pytest_temp/
+.bionexus-doctor.json
 
 # Submission and manuscript materials (DO NOT COMMIT)
 figures/

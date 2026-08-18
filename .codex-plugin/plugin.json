@@ -1,7 +1,7 @@
 {
   "name": "bionexus",
   "version": "0.10.0",
-  "description": "Agent skill pack that routes biomedical analyses to community tools (scanpy, squidpy, scvi-tools, nf-core, allotropy) or named local heuristics, with explicit evidence grades and refusal when a gold-standard backend is missing.",
+  "description": "Scientific Reliability Layer & Biological Capability Assertion Firewall for AI Agents (Deterministic Invariants, Fail-Closed Gating, Evidence Synthesis, Zero Silent Substitution).",
   "author": {
     "name": "BioNexus Team",
     "url": "https://github.com/HERRY423/BioNexus"
@@ -28,7 +28,7 @@
   "interface": {
     "displayName": "BioNexus",
     "shortDescription": "The Scientific Reliability Layer for Agentic Biology",
-    "longDescription": "Agent skill pack that routes biomedical analyses to community tools (scanpy, squidpy, scvi-tools, nf-core, allotropy) or named local heuristics, with explicit evidence grades and refusal when a gold-standard backend is missing.",
+    "longDescription": "Scientific Reliability Layer & Biological Capability Assertion Firewall for AI Agents (Deterministic Invariants, Fail-Closed Gating, Evidence Synthesis, Zero Silent Substitution).",
     "developerName": "BioNexus Team",
     "category": "Science",
     "capabilities": [

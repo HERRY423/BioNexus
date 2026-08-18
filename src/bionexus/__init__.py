@@ -132,9 +132,9 @@ from .verification import (
     verify_results,
     write_example_ledger,
 )
-from .versions import PINS, PITFALLS, PLUGIN_VERSION
+from .versions import PINS, PITFALLS, PLUGIN_VERSION, VERSION
 
-__version__ = PLUGIN_VERSION
+__version__ = VERSION
 
 __all__ = [
     "ABSTAIN",
@@ -195,6 +195,7 @@ __all__ = [
     "SKILLS",
     "SemanticInputType",
     "SpatialInferenceVerdict",
+    "VERSION",
     "VerificationReport",
     "__version__",
     "active_skills",

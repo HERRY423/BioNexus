@@ -9,7 +9,8 @@ from typing import Dict, List, TypedDict
 
 from .provenance import package_version
 
-PLUGIN_VERSION = "0.10.0"
+VERSION = "0.10.0"
+PLUGIN_VERSION = VERSION
 
 
 class VersionPin(TypedDict):

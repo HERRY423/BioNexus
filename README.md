@@ -295,7 +295,7 @@ python scripts/doctor.py
 ==============================================================================
                           BioNexus Environment Doctor
 ==============================================================================
-Plugin Version:  0.9.0
+Plugin Version:  0.10.0
 Tier:            full
 
 Active Analytical Capabilities:
