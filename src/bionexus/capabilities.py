@@ -1355,18 +1355,18 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
         ],
         evidence_ceiling_without_external_validation="SUPPORTED",
     ),
-    # 14. Single-Cell Foundation Model Geneformer Inference & Perturbation
-    "scfm.geneformer_inference": CapabilityContract(
-        id="scfm.geneformer_inference",
+    # 14. Single-Cell Foundation Model Geneformer Official Inference
+    "scfm.geneformer_canonical": CapabilityContract(
+        id="scfm.geneformer_canonical",
         version=1,
-        display_name="Single-Cell Geneformer Foundation Model Embedding & In Silico Perturbation",
+        display_name="Single-Cell Geneformer Foundation Model Official Inference (Checkpoint Required)",
         skill_name="single-cell-rna-qc",
-        summary="Extract zero-shot cell embeddings via rank-value encoding Transformer and simulate in silico gene knockout or overexpression.",
+        summary="Canonical Geneformer rank-value Transformer inference using official pretrained checkpoints (ctheodoris/Geneformer).",
         intent=[
+            "geneformer_canonical",
             "geneformer_embedding",
+            "geneformer_inference",
             "geneformer_perturbation",
-            "in_silico_knockout",
-            "rank_value_encoding",
             "foundation_model_embedding",
         ],
         inputs={
@@ -1375,6 +1375,12 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
                 semantic_type=SemanticInputType.RAW_COUNTS.value,
                 required=True,
                 description="Single-cell expression matrix (.h5ad / counts).",
+            ),
+            "model_checkpoint": InputSpecification(
+                name="model_checkpoint",
+                semantic_type=SemanticInputType.SAMPLE_METADATA.value,
+                required=True,
+                description="Path to official pretrained Geneformer checkpoint (e.g. 'ctheodoris/Geneformer' or local weights dir).",
             ),
         },
         preconditions=[
@@ -1385,31 +1391,31 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
                 fatal_if_violated=True,
             ),
             Precondition(
-                id="non_zero_counts_present",
-                rule="sum(counts) > 0",
-                description="Matrix must contain non-zero counts for rank encoding.",
+                id="checkpoint_specified",
+                rule="model_checkpoint is not None",
+                description="Canonical Geneformer execution strictly requires an official pretrained model checkpoint.",
                 fatal_if_violated=True,
             ),
         ],
         backend=BackendRequirement(
-            canonical_name="geneformer",
+            canonical_name="geneformer-transformers",
             import_name="transformers",
             minimum_version="4.30.0",
             extra="scverse",
-            description="Geneformer rank-value Transformer architecture",
+            description="Geneformer rank-value Transformer neural network with official checkpoint weights",
         ),
         refusal_conditions=[
+            RefusalTrigger(
+                condition_id="missing_checkpoint",
+                description="No official Geneformer model checkpoint or weights directory was provided.",
+                remedy="Provide official model checkpoint via `model_name_or_path` (e.g. 'ctheodoris/Geneformer' or local dir), or invoke `scfm.rank_proxy_embedding` for Grade C heuristic proxy.",
+                violated_rule="Official model checkpoint invariant (BNS-EF-002)",
+            ),
             RefusalTrigger(
                 condition_id="empty_matrix",
                 description="Dataset contains 0 cells or 0 genes.",
                 remedy="Provide valid single-cell AnnData count matrix.",
                 violated_rule="Matrix non-emptiness rule",
-            ),
-            RefusalTrigger(
-                condition_id="all_zero_counts",
-                description="Expression matrix contains exclusively zeros.",
-                remedy="Provide filtered count matrix with expressed genes.",
-                violated_rule="Rank encoding viability rule",
             ),
         ],
         outputs=[
@@ -1422,28 +1428,30 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             effect_size="not_applicable",
             mandatory_limitations=[
                 "Zero-shot embeddings and in silico perturbation shifts are computational hypotheses.",
+                "Official model weights must be loaded and disclosed in provenance.",
                 "Research Use Only. Not for clinical diagnosis.",
             ],
         ),
         forbidden_claims=[
+            "model_substitution",
             "clinical_diagnosis",
             "causal_interaction",
             "cell_type_identity_without_reference",
         ],
         evidence_ceiling_without_external_validation="PRELIMINARY",
     ),
-    # 15. Single-Cell Foundation Model scGPT Inference
-    "scfm.scgpt_inference": CapabilityContract(
-        id="scfm.scgpt_inference",
+    # 15. Single-Cell Foundation Model scGPT Official Inference
+    "scfm.scgpt_canonical": CapabilityContract(
+        id="scfm.scgpt_canonical",
         version=1,
-        display_name="Single-Cell scGPT Generative Pretrained Transformer Embedding",
+        display_name="Single-Cell scGPT Foundation Model Official Inference (Checkpoint Required)",
         skill_name="single-cell-rna-qc",
-        summary="Discretized expression binning and Transformer cell representation extraction with scGPT.",
+        summary="Canonical scGPT Generative Transformer inference using official pretrained checkpoints.",
         intent=[
+            "scgpt_canonical",
             "scgpt_embedding",
             "scgpt_inference",
             "scgpt_representation",
-            "generative_single_cell_model",
         ],
         inputs={
             "expression": InputSpecification(
@@ -1451,6 +1459,12 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
                 semantic_type=SemanticInputType.RAW_COUNTS.value,
                 required=True,
                 description="Single-cell expression matrix (.h5ad / counts).",
+            ),
+            "model_checkpoint": InputSpecification(
+                name="model_checkpoint",
+                semantic_type=SemanticInputType.SAMPLE_METADATA.value,
+                required=True,
+                description="Path to official pretrained scGPT checkpoint weights.",
             ),
         },
         preconditions=[
@@ -1460,20 +1474,26 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
                 description="Input single-cell dataset must not be empty.",
                 fatal_if_violated=True,
             ),
+            Precondition(
+                id="checkpoint_specified",
+                rule="model_checkpoint is not None",
+                description="Canonical scGPT execution strictly requires an official pretrained model checkpoint.",
+                fatal_if_violated=True,
+            ),
         ],
         backend=BackendRequirement(
-            canonical_name="scgpt",
+            canonical_name="scgpt-transformers",
             import_name="transformers",
             minimum_version="4.30.0",
             extra="scverse",
-            description="scGPT generative pretrained single-cell Transformer",
+            description="scGPT generative Transformer neural network with official checkpoint weights",
         ),
         refusal_conditions=[
             RefusalTrigger(
-                condition_id="empty_matrix",
-                description="Dataset contains 0 cells or 0 genes.",
-                remedy="Provide valid single-cell AnnData count matrix.",
-                violated_rule="Matrix non-emptiness rule",
+                condition_id="missing_checkpoint",
+                description="No official scGPT model checkpoint or weights directory was provided.",
+                remedy="Provide official scGPT weights directory, or invoke `scfm.rank_proxy_embedding` for Grade C heuristic proxy.",
+                violated_rule="Official model checkpoint invariant (BNS-EF-002)",
             ),
         ],
         outputs=[
@@ -1489,6 +1509,71 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             ],
         ),
         forbidden_claims=[
+            "model_substitution",
+            "clinical_diagnosis",
+            "causal_interaction",
+            "cell_type_identity_without_reference",
+        ],
+        evidence_ceiling_without_external_validation="PRELIMINARY",
+    ),
+    # 16. Single-Cell Rank-Value SVD Embedding Proxy (Grade C Experimental)
+    "scfm.rank_proxy_embedding": CapabilityContract(
+        id="scfm.rank_proxy_embedding",
+        version=1,
+        display_name="Single-Cell Rank-Value SVD Embedding Proxy (Grade C Experimental)",
+        skill_name="single-cell-rna-qc",
+        summary="Grade C Experimental: Rank-weighted Truncated SVD embedding proxy for exploratory zero-shot manifold visualization without neural network checkpoints.",
+        intent=[
+            "rank_proxy_embedding",
+            "rank_embedding",
+            "scfm_proxy",
+            "rank_value_svd",
+            "heuristic_rank_embedding",
+        ],
+        inputs={
+            "expression": InputSpecification(
+                name="expression",
+                semantic_type=SemanticInputType.RAW_COUNTS.value,
+                required=True,
+                description="Single-cell expression matrix (.h5ad / counts).",
+            ),
+        },
+        preconditions=[
+            Precondition(
+                id="non_empty_matrix",
+                rule="n_cells > 0 and n_genes > 0",
+                description="Input single-cell dataset must not be empty.",
+                fatal_if_violated=True,
+            ),
+        ],
+        backend=BackendRequirement(
+            canonical_name="local rank-svd heuristic proxy (bionexus)",
+            import_name="bionexus.scfm",
+            minimum_version="0.9.0",
+            description="Deterministic rank-weighted Truncated SVD heuristic proxy (Grade C)",
+        ),
+        refusal_conditions=[
+            RefusalTrigger(
+                condition_id="model_substitution_attempt",
+                description="Attempting to cite or present Rank-SVD proxy output as official Geneformer or scGPT Transformer output.",
+                remedy="Acknowledge output as a Grade C experimental rank-weighted SVD proxy, not an official foundation model checkpoint.",
+                violated_rule="Epistemic honesty and model attribution invariant (BNS-EF-002)",
+            ),
+        ],
+        outputs=[
+            "cell_embeddings (adata.obsm['X_rank_proxy'])",
+            "evidence_card (JSON/Markdown)",
+        ],
+        evidence_requirements=EvidenceRequirement(
+            multiple_testing="not_applicable",
+            effect_size="not_applicable",
+            mandatory_limitations=[
+                "Grade C Experimental proxy only. Does not execute deep Transformer attention mechanisms.",
+                "Research Use Only. Not for clinical diagnosis.",
+            ],
+        ),
+        forbidden_claims=[
+            "model_substitution",
             "clinical_diagnosis",
             "causal_interaction",
             "cell_type_identity_without_reference",

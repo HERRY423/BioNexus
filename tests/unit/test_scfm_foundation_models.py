@@ -1,5 +1,10 @@
 """
 Unit tests for BioNexus Single-Cell Foundation Model (scFM) interfaces: Geneformer & scGPT (bionexus.scfm).
+
+Verifies strict compliance with BioNexus Epistemic Honesty (BNS-EF-002 / BNS-CC-012):
+- Canonical Transformer execution with genuine neural network forward pass.
+- Fail-closed refusal when canonical model checkpoint is missing.
+- Transparent Grade C attribution for Rank-Weighted SVD proxy (no heuristic masquerading).
 """
 
 import anndata as ad
@@ -17,8 +22,10 @@ from bionexus.scfm import (
     SCFMEmbeddingResult,
     SCFMPerturbationResult,
     check_scfm_backend,
+    extract_rank_proxy_embeddings,
     extract_scfm_embeddings,
     rank_value_encode,
+    run_geneformer_canonical_forward,
     scgpt_tokenize_and_bin,
     simulate_gene_perturbation,
 )
@@ -69,28 +76,92 @@ def test_scgpt_tokenize_and_bin(synthetic_sc_adata):
     assert min(bins[0]) >= 1
 
 
-def test_extract_embeddings_geneformer(synthetic_sc_adata):
-    """Verify Geneformer cell embedding extraction stores matrix in adata.obsm['X_geneformer']."""
-    cfg = SCFMConfig(model_family=FoundationModelFamily.GENEFORMER, embedding_dim=128)
-    res = extract_scfm_embeddings(synthetic_sc_adata, config=cfg, allow_fallback=True)
+def test_fail_closed_refusal_when_checkpoint_missing(synthetic_sc_adata):
+    """
+    CRITICAL INVARIANT (BNS-EF-002):
+    When canonical foundation model is requested without a checkpoint and allow_proxy_fallback=False,
+    BioNexus MUST refuse (REFUSAL_MODEL_CHECKPOINT_REQUIRED) and NEVER silently run a proxy!
+    """
+    cfg = SCFMConfig(model_family=FoundationModelFamily.GENEFORMER, model_name_or_path=None)
+    res = extract_scfm_embeddings(synthetic_sc_adata, config=cfg, allow_proxy_fallback=False)
+
+    assert res.success is False
+    assert res.status == "REFUSAL_MODEL_CHECKPOINT_REQUIRED"
+    assert res.backend_used == "none"
+    assert "strictly requires an official model checkpoint" in res.remedy_if_failed
+    assert "BNS-EF-002" in res.remedy_if_failed
+
+
+def test_canonical_geneformer_transformer_execution(synthetic_sc_adata):
+    """
+    Verify genuine Transformer neural network forward pass when model is loaded.
+    Tests token tensor preparation, attention mask, and mean-pooled hidden state extraction.
+    """
+    try:
+        import torch
+        import torch.nn as nn
+    except ImportError:
+        pytest.skip("PyTorch not installed")
+
+    # Mock lightweight transformer model with actual nn.Embedding and linear layers
+    class MockGeneformerTransformer(nn.Module):
+        def __init__(self, vocab_size=100, hidden_dim=64):
+            super().__init__()
+            self.emb = nn.Embedding(vocab_size, hidden_dim)
+            self.transformer = nn.TransformerEncoderLayer(d_model=hidden_dim, nhead=2, batch_first=True)
+
+        def forward(self, input_ids, attention_mask, output_hidden_states=True):
+            x = self.emb(input_ids)
+            # Create boolean mask where False is valid and True is padded
+            pad_mask = (attention_mask == 0)
+            out = self.transformer(x, src_key_padding_mask=pad_mask)
+            return type("ModelOutput", (), {"last_hidden_state": out, "hidden_states": [out]})()
+
+    mock_model = MockGeneformerTransformer(vocab_size=100, hidden_dim=64)
+    tokens, _ = rank_value_encode(synthetic_sc_adata, max_seq_len=10)
+
+    # Run genuine forward pass
+    embeds = run_geneformer_canonical_forward(
+        model=mock_model,
+        token_sequences=tokens,
+        token_dict=None,
+        device="cpu",
+        max_seq_len=10,
+        embedding_dim=64,
+        batch_size=16,
+    )
+
+    assert embeds.shape == (40, 64)
+    assert not np.isnan(embeds).any()
+    assert np.std(embeds) > 0.0  # Real non-trivial embeddings generated
+
+
+def test_rank_proxy_embedding_grade_c_attribution(synthetic_sc_adata):
+    """
+    CRITICAL INVARIANT (BNS-EF-002 / BNS-CC-012):
+    When the rank-weighted SVD proxy is run, it MUST:
+    1. Honestly identify backend as 'heuristic-rank-svd-proxy (Grade C Heuristic)'.
+    2. Set is_canonical=False and status='COMPLETED_PROXY_EXPERIMENTAL'.
+    3. Include explicit Grade C / proxy disclaimers in execution notes.
+    4. Store embeddings in obsm['X_rank_proxy'].
+    """
+    res = extract_rank_proxy_embeddings(synthetic_sc_adata, embedding_dim=128)
 
     assert res.success is True
-    assert res.n_cells == 40
-    assert res.embedding_dim == 128
-    assert "X_geneformer" in synthetic_sc_adata.obsm
-    assert synthetic_sc_adata.obsm["X_geneformer"].shape == (40, 128)
+    assert res.status == "COMPLETED_PROXY_EXPERIMENTAL"
+    assert res.is_canonical is False
+    assert res.backend_used == "heuristic-rank-svd-proxy (Grade C Heuristic)"
+    assert res.obsm_key == "X_rank_proxy"
+    assert "X_rank_proxy" in synthetic_sc_adata.obsm
+    assert synthetic_sc_adata.obsm["X_rank_proxy"].shape == (40, 128)
 
+    # Check for mandatory disclaimers
+    disclaimer_found = any("Grade C experimental rank-weighted SVD proxy" in note for note in res.execution_notes)
+    assert disclaimer_found is True
 
-def test_extract_embeddings_scgpt(synthetic_sc_adata):
-    """Verify scGPT cell embedding extraction stores matrix in adata.obsm['X_scgpt']."""
-    cfg = SCFMConfig(model_family=FoundationModelFamily.SCGPT, embedding_dim=64)
-    res = extract_scfm_embeddings(synthetic_sc_adata, config=cfg, allow_fallback=True)
-
-    assert res.success is True
-    assert res.n_cells == 40
-    assert res.embedding_dim == 64
-    assert "X_scgpt" in synthetic_sc_adata.obsm
-    assert synthetic_sc_adata.obsm["X_scgpt"].shape == (40, 64)
+    # MUST NOT claim to be geneformer-pytorch or scgpt-pytorch
+    assert "geneformer-pytorch" not in res.backend_used
+    assert "scgpt-pytorch" not in res.backend_used
 
 
 def test_simulate_gene_perturbation_knockout(synthetic_sc_adata):
@@ -100,7 +171,7 @@ def test_simulate_gene_perturbation_knockout(synthetic_sc_adata):
         target_gene="Gene_1",
         mode="knockout",
         cell_type_col="cell_type",
-        allow_fallback=True,
+        allow_proxy_fallback=True,
     )
 
     assert res.success is True
@@ -138,32 +209,36 @@ def test_scfm_refusal_empty_and_zero_matrix():
 
 
 def test_scfm_capabilities_registered_and_abi_projection():
-    """Verify Geneformer and scGPT are registered in CANONICAL_CAPABILITIES and project to ABI."""
-    assert "scfm.geneformer_inference" in CANONICAL_CAPABILITIES
-    assert "scfm.scgpt_inference" in CANONICAL_CAPABILITIES
+    """Verify Geneformer, scGPT, and Rank Proxy capabilities are registered in CANONICAL_CAPABILITIES."""
+    assert "scfm.geneformer_canonical" in CANONICAL_CAPABILITIES
+    assert "scfm.scgpt_canonical" in CANONICAL_CAPABILITIES
+    assert "scfm.rank_proxy_embedding" in CANONICAL_CAPABILITIES
 
     abis = capability_abis()
-    assert "scfm.geneformer_inference" in abis
-    assert "scfm.scgpt_inference" in abis
+    assert "scfm.geneformer_canonical" in abis
+    assert "scfm.scgpt_canonical" in abis
+    assert "scfm.rank_proxy_embedding" in abis
 
-    gf_abi = get_capability_abi("scfm.geneformer_inference")
+    gf_abi = get_capability_abi("scfm.geneformer_canonical")
     assert gf_abi.evidence_ceiling.without_external_validation == "PRELIMINARY"
+    assert "model_substitution" in gf_abi.forbidden_claims
     assert "clinical_diagnosis" in gf_abi.forbidden_claims
 
-    scgpt_abi = get_capability_abi("scfm.scgpt_inference")
-    assert scgpt_abi.evidence_ceiling.without_external_validation == "PRELIMINARY"
+    proxy_abi = get_capability_abi("scfm.rank_proxy_embedding")
+    assert proxy_abi.evidence_ceiling.without_external_validation == "PRELIMINARY"
+    assert "model_substitution" in proxy_abi.forbidden_claims
 
 
 def test_scfm_intent_routing():
-    """Verify user queries about Geneformer, scGPT, or in silico knockout route to scfm capabilities."""
-    res1 = route_scientific_intent("Please extract zero-shot cell embeddings using geneformer foundation model")
+    """Verify user queries route accurately to canonical vs proxy capabilities."""
+    res1 = route_scientific_intent("extract cell embeddings with geneformer foundation model")
     assert res1.matched_capability is not None
-    assert res1.matched_capability.id == "scfm.geneformer_inference"
+    assert res1.matched_capability.id == "scfm.geneformer_canonical"
 
-    res2 = route_scientific_intent("simulate in silico knockout of TP53 using single-cell foundation model")
+    res2 = route_scientific_intent("extract single cell representation using scgpt")
     assert res2.matched_capability is not None
-    assert res2.matched_capability.id == "scfm.geneformer_inference"
+    assert res2.matched_capability.id == "scfm.scgpt_canonical"
 
-    res3 = route_scientific_intent("extract cell representations with scgpt foundation model")
+    res3 = route_scientific_intent("calculate rank-value SVD embedding proxy for exploratory visualization")
     assert res3.matched_capability is not None
-    assert res3.matched_capability.id == "scfm.scgpt_inference"
+    assert res3.matched_capability.id == "scfm.rank_proxy_embedding"

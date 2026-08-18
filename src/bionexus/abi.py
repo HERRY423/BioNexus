@@ -413,25 +413,35 @@ _ABI_ENRICHMENT: Dict[str, Dict[str, Any]] = {
         "validation": ValidationRequirements(multiple_testing="not_applicable", parameter_sensitivity="recommended", cross_method="recommended"),
         "evidence_ceiling_note": "Probabilistic optimal transport mapping; requires reference atlas concordance for high confidence.",
     },
-    "scfm.geneformer_inference": {
+    "scfm.geneformer_canonical": {
         "input_contract": InputContract(
             matrix_state_allowed=[MatrixState.RAW_COUNTS.value, MatrixState.NORMALIZED_EXPRESSION.value],
-            required_inputs=["expression"],
-            notes={"rank_encoding": "Expression counts are transformed into non-zero descending gene rank tokens."},
+            required_inputs=["expression", "model_checkpoint"],
+            notes={"rank_encoding": "Expression counts are transformed into non-zero descending gene rank tokens and passed to official checkpoint."},
         ),
-        "execution": ExecutionReference(reference_backend="geneformer", reference_algorithm="rank_value_transformer", minimum_version="4.30.0"),
+        "execution": ExecutionReference(reference_backend="geneformer-transformers", reference_algorithm="rank_value_transformer", minimum_version="4.30.0"),
         "validation": ValidationRequirements(multiple_testing="not_applicable", parameter_sensitivity="recommended", cross_method="recommended"),
-        "evidence_ceiling_note": "Zero-shot foundation model embedding and in silico perturbation predictions are computational hypotheses.",
+        "evidence_ceiling_note": "Canonical foundation model embeddings and in silico perturbation predictions are computational hypotheses requiring official weights.",
     },
-    "scfm.scgpt_inference": {
+    "scfm.scgpt_canonical": {
         "input_contract": InputContract(
             matrix_state_allowed=[MatrixState.RAW_COUNTS.value, MatrixState.NORMALIZED_EXPRESSION.value],
-            required_inputs=["expression"],
-            notes={"binning": "Continuous expression values are discretized into normalized expression bins."},
+            required_inputs=["expression", "model_checkpoint"],
+            notes={"binning": "Continuous expression values are discretized and fed to official scGPT transformer."},
         ),
-        "execution": ExecutionReference(reference_backend="scgpt", reference_algorithm="generative_transformer", minimum_version="4.30.0"),
+        "execution": ExecutionReference(reference_backend="scgpt-transformers", reference_algorithm="generative_transformer", minimum_version="4.30.0"),
         "validation": ValidationRequirements(multiple_testing="not_applicable", parameter_sensitivity="recommended", cross_method="recommended"),
         "evidence_ceiling_note": "Generative single-cell transformer embeddings are exploratory computational representations.",
+    },
+    "scfm.rank_proxy_embedding": {
+        "input_contract": InputContract(
+            matrix_state_allowed=[MatrixState.RAW_COUNTS.value, MatrixState.NORMALIZED_EXPRESSION.value],
+            required_inputs=["expression"],
+            notes={"rank_svd_proxy": "Deterministic rank-weighted Truncated SVD (Grade C Experimental proxy)."},
+        ),
+        "execution": ExecutionReference(reference_backend="local rank-svd heuristic proxy (bionexus)", reference_algorithm="rank_weighted_svd", minimum_version="0.9.0"),
+        "validation": ValidationRequirements(multiple_testing="not_applicable", parameter_sensitivity="recommended", cross_method="recommended"),
+        "evidence_ceiling_note": "Grade C Experimental heuristic proxy. Not an official neural network checkpoint.",
     },
     "perturbation.gears_prediction": {
         "input_contract": InputContract(

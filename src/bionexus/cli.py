@@ -1603,6 +1603,7 @@ def handle_scfm(args: argparse.Namespace) -> int:
         FoundationModelFamily,
         SCFMConfig,
         extract_scfm_embeddings,
+        extract_rank_proxy_embeddings,
         simulate_gene_perturbation,
     )
     import anndata as ad
@@ -1610,13 +1611,18 @@ def handle_scfm(args: argparse.Namespace) -> int:
     action = getattr(args, "scfm_action", None)
     if action == "embed":
         adata = ad.read_h5ad(args.input)
-        family = FoundationModelFamily.GENEFORMER if args.model == "geneformer" else FoundationModelFamily.SCGPT
-        cfg = SCFMConfig(
-            model_family=family,
-            device=args.device,
-            embedding_dim=args.dim,
-        )
-        res = extract_scfm_embeddings(adata, config=cfg, allow_fallback=True)
+        if getattr(args, "proxy", False):
+            res = extract_rank_proxy_embeddings(adata, embedding_dim=args.dim)
+        else:
+            family = FoundationModelFamily.GENEFORMER if args.model == "geneformer" else FoundationModelFamily.SCGPT
+            cfg = SCFMConfig(
+                model_family=family,
+                model_name_or_path=args.checkpoint,
+                device=args.device,
+                embedding_dim=args.dim,
+            )
+            res = extract_scfm_embeddings(adata, config=cfg, allow_proxy_fallback=getattr(args, "allow_proxy", False))
+
         if getattr(args, "json", False):
             print(json.dumps(res.to_dict(), indent=2))
             return 0 if res.success else 1
@@ -1629,7 +1635,9 @@ def handle_scfm(args: argparse.Namespace) -> int:
         print(f"Obsm Key:            adata.obsm['{res.obsm_key}']")
         for note in res.execution_notes:
             print(f"  Note: {note}")
-        if args.output:
+        if not res.success and res.remedy_if_failed:
+            print(f"  Remedy: {res.remedy_if_failed}")
+        if args.output and res.success:
             adata.write_h5ad(args.output)
             print(f"Saved dataset with embeddings to: {args.output}")
         return 0 if res.success else 1
@@ -1637,13 +1645,13 @@ def handle_scfm(args: argparse.Namespace) -> int:
     elif action == "perturb":
         adata = ad.read_h5ad(args.input)
         family = FoundationModelFamily.GENEFORMER if args.model == "geneformer" else FoundationModelFamily.SCGPT
-        cfg = SCFMConfig(model_family=family, device=args.device)
+        cfg = SCFMConfig(model_family=family, model_name_or_path=args.checkpoint, device=args.device)
         res = simulate_gene_perturbation(
             adata=adata,
             target_gene=args.gene,
             mode=args.mode,
             config=cfg,
-            allow_fallback=True,
+            allow_proxy_fallback=getattr(args, "allow_proxy", True),
         )
         if getattr(args, "json", False):
             print(json.dumps(res.to_dict(), indent=2))
@@ -1658,6 +1666,8 @@ def handle_scfm(args: argparse.Namespace) -> int:
         print(f"Backend Used:        {res.backend_used}")
         for note in res.execution_notes:
             print(f"  Note: {note}")
+        if not res.success and res.remedy_if_failed:
+            print(f"  Remedy: {res.remedy_if_failed}")
         return 0 if res.success else 1
 
     return 0
@@ -2183,6 +2193,9 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_scfm_emb = scfm_subs.add_parser("embed", help="Extract zero-shot or pretrained foundation model cell representations")
     p_scfm_emb.add_argument("input", help="Path to single-cell .h5ad dataset")
     p_scfm_emb.add_argument("--model", default="geneformer", choices=["geneformer", "scgpt"], help="Foundation model family")
+    p_scfm_emb.add_argument("--checkpoint", default=None, help="Path to official pretrained checkpoint directory or HuggingFace ID")
+    p_scfm_emb.add_argument("--proxy", action="store_true", help="Explicitly use Grade C Rank-Weighted SVD exploratory proxy")
+    p_scfm_emb.add_argument("--allow-proxy", action="store_true", help="Allow fallback to Grade C proxy if checkpoint is absent")
     p_scfm_emb.add_argument("--dim", type=int, default=512, help="Embedding dimension (default: 512)")
     p_scfm_emb.add_argument("--device", default="auto", choices=["auto", "cuda", "cpu"], help="Inference device")
     p_scfm_emb.add_argument("--output", "-o", default=None, help="Optional output path to save updated .h5ad file")
@@ -2194,6 +2207,8 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_scfm_pert.add_argument("--gene", required=True, help="Target gene identifier to perturb (e.g. TP53, MYC)")
     p_scfm_pert.add_argument("--mode", default="knockout", choices=["knockout", "overexpression"], help="Perturbation mode")
     p_scfm_pert.add_argument("--model", default="geneformer", choices=["geneformer", "scgpt"], help="Foundation model family")
+    p_scfm_pert.add_argument("--checkpoint", default=None, help="Path to official pretrained checkpoint directory or HuggingFace ID")
+    p_scfm_pert.add_argument("--allow-proxy", action="store_true", default=True, help="Allow fallback to Grade C proxy if checkpoint is absent")
     p_scfm_pert.add_argument("--device", default="auto", choices=["auto", "cuda", "cpu"], help="Inference device")
     p_scfm_pert.add_argument("--json", action="store_true", help="Output perturbation report as JSON")
 

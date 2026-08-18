@@ -249,23 +249,31 @@ _INTENT_PATTERNS: List[Tuple[List[str], str]] = [
         ],
         "spatial.tangram_deconvolution",
     ),
-    # 14. Geneformer foundation model embeddings & perturbation
+    # 14. Geneformer official foundation model
     (
         [
             r"\bgeneformer\b",
             r"in silico.*(?:knockout|deletion|perturbation|overexpression)",
-            r"rank[- ]value.*(?:encoding|tokenization|transformer)",
-            r"single[- ]cell foundation model.*(?:geneformer|embedding)",
+            r"geneformer.*(?:embedding|inference|checkpoint)",
         ],
-        "scfm.geneformer_inference",
+        "scfm.geneformer_canonical",
     ),
-    # 15. scGPT foundation model embeddings
+    # 15. scGPT official foundation model
     (
         [
             r"\bscgpt\b",
             r"generative single[- ]cell.*(?:model|transformer|representation)",
         ],
-        "scfm.scgpt_inference",
+        "scfm.scgpt_canonical",
+    ),
+    # 16. Single-cell Rank-Value SVD Embedding Proxy (Grade C Experimental)
+    (
+        [
+            r"rank[- ]value.*(?:encoding|svd|proxy|representation)",
+            r"rank.*(?:proxy|embedding proxy)",
+            r"scfm.*(?:proxy|heuristic)",
+        ],
+        "scfm.rank_proxy_embedding",
     ),
     # 16. Dry-wet closed loop perturbation to spatial niche
     (
