@@ -75,21 +75,56 @@ def synthetic_spatial_adata():
 def test_gears_fail_closed_refusal_when_backend_missing(synthetic_sc_adata):
     """
     CRITICAL INVARIANT (BNS-EF-002):
-    When GEARS package is not installed and allow_fallback=False (default),
-    BioNexus MUST refuse with REFUSAL_BACKEND_UNAVAILABLE.
+    When GEARS model/checkpoint is not provided and allow_fallback=False (default),
+    BioNexus MUST refuse with REFUSAL_CANONICAL_MODEL_REQUIRED.
     """
-    with patch("bionexus.closed_loop.check_gears_backend", return_value=(False, "gears not installed")):
-        _, res = predict_gears_perturbation(
-            adata_base=synthetic_sc_adata,
-            target_genes=["TP53"],
-            mode="knockout",
-            allow_fallback=False,
-        )
+    _, res = predict_gears_perturbation(
+        adata_base=synthetic_sc_adata,
+        target_genes=["TP53"],
+        mode="knockout",
+        allow_fallback=False,
+    )
 
-        assert res.success is False
-        assert res.status == "REFUSAL_BACKEND_UNAVAILABLE"
-        assert res.backend_used == "none"
-        assert "allow_fallback=True" in res.remedy_if_failed
+    assert res.success is False
+    assert res.status == "REFUSAL_CANONICAL_MODEL_REQUIRED"
+    assert res.backend_used == "none"
+    assert "allow_fallback=True" in res.remedy_if_failed
+
+
+def test_gears_canonical_backend_execution_identity_mock(synthetic_sc_adata):
+    """
+    BACKEND EXECUTION IDENTITY TEST:
+    Verify that when a canonical GEARS model is provided, BioNexus actually executes
+    the canonical model's predict/forward method and attributes provenance accurately.
+    """
+    from unittest.mock import MagicMock
+
+    # Create mock canonical GEARS model object
+    mock_gears_model = MagicMock()
+    # Mock predict method return format
+    X_pert_mock = np.zeros((50, 10), dtype=np.float32)
+    X_pert_mock[:, 0] = 0.0  # target zeroed
+    mock_gears_model.predict.return_value = {"_pert": X_pert_mock}
+
+    cfg = GEARSPerturbationConfig(
+        target_genes=["TP53"],
+        mode="knockout",
+        gears_model=mock_gears_model,
+    )
+
+    adata_pert, res = predict_gears_perturbation(
+        adata_base=synthetic_sc_adata,
+        target_genes=["TP53"],
+        mode="knockout",
+        config=cfg,
+        allow_fallback=False,
+    )
+
+    # Assert official backend predict method WAS called with perturbation targets
+    mock_gears_model.predict.assert_called_once_with([["TP53"]])
+    assert res.success is True
+    assert res.status == "COMPLETED"
+    assert res.backend_used == "gears-graph-neural-network (canonical)"
 
 
 def test_predict_gears_perturbation_fallback_honesty(synthetic_sc_adata):
@@ -143,20 +178,50 @@ def test_gears_refusal_missing_genes(synthetic_sc_adata):
 def test_nicheformer_fail_closed_refusal_when_backend_missing(synthetic_sc_adata, synthetic_spatial_adata):
     """
     CRITICAL INVARIANT (BNS-EF-002):
-    When NicheFormer package is missing and allow_fallback=False (default),
-    BioNexus MUST refuse with REFUSAL_BACKEND_UNAVAILABLE.
+    When NicheFormer model/checkpoint is missing and allow_fallback=False (default),
+    BioNexus MUST refuse with REFUSAL_CANONICAL_MODEL_REQUIRED.
     """
-    with patch("bionexus.closed_loop.check_nicheformer_backend", return_value=(False, "nicheformer not installed")):
-        _, res = forecast_spatial_niche(
-            adata_cells=synthetic_sc_adata,
-            adata_spatial=synthetic_spatial_adata,
-            allow_fallback=False,
-        )
+    _, res = forecast_spatial_niche(
+        adata_cells=synthetic_sc_adata,
+        adata_spatial=synthetic_spatial_adata,
+        allow_fallback=False,
+    )
 
-        assert res.success is False
-        assert res.status == "REFUSAL_BACKEND_UNAVAILABLE"
-        assert res.backend_used == "none"
-        assert "allow_fallback=True" in res.remedy_if_failed
+    assert res.success is False
+    assert res.status == "REFUSAL_CANONICAL_MODEL_REQUIRED"
+    assert res.backend_used == "none"
+    assert "allow_fallback=True" in res.remedy_if_failed
+
+
+def test_nicheformer_canonical_backend_execution_identity_mock(synthetic_sc_adata, synthetic_spatial_adata):
+    """
+    BACKEND EXECUTION IDENTITY TEST:
+    Verify that when a canonical NicheFormer model is provided, BioNexus actually executes
+    the canonical model forward method and attributes provenance accurately.
+    """
+    from unittest.mock import MagicMock
+
+    mock_nf_model = MagicMock()
+    # Mock prediction return shape (N_spots, N_niches)
+    mock_nf_model.predict.return_value = np.ones((60, 5), dtype=np.float32) / 5.0
+
+    cfg = NicheFormerConfig(
+        n_niche_classes=5,
+        nicheformer_model=mock_nf_model,
+    )
+
+    ad_sp, res = forecast_spatial_niche(
+        adata_cells=synthetic_sc_adata,
+        adata_spatial=synthetic_spatial_adata,
+        config=cfg,
+        allow_fallback=False,
+    )
+
+    # Assert official model predict method WAS called
+    mock_nf_model.predict.assert_called_once_with(synthetic_sc_adata, synthetic_spatial_adata)
+    assert res.success is True
+    assert res.status == "COMPLETED"
+    assert res.backend_used == "nicheformer-multimodal-transformer (canonical)"
 
 
 def test_forecast_spatial_niche_fallback_honesty(synthetic_sc_adata, synthetic_spatial_adata):

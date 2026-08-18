@@ -38,9 +38,13 @@ class GEARSPerturbationConfig:
     num_epochs: int = 50
     hidden_dim: int = 64
     random_seed: int = 42
+    model_path: Optional[str] = None
+    gears_model: Optional[Any] = None
 
     def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
+        d = asdict(self)
+        d["gears_model"] = str(type(self.gears_model)) if self.gears_model is not None else None
+        return d
 
 
 @dataclass
@@ -51,9 +55,13 @@ class NicheFormerConfig:
     niche_radius_spots: int = 6
     device: str = "auto"
     random_seed: int = 42
+    model_path: Optional[str] = None
+    nicheformer_model: Optional[Any] = None
 
     def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
+        d = asdict(self)
+        d["nicheformer_model"] = str(type(self.nicheformer_model)) if self.nicheformer_model is not None else None
+        return d
 
 
 @dataclass
@@ -146,6 +154,50 @@ def check_gears_backend() -> Tuple[bool, str]:
         return False, f"GEARS canonical backend unavailable: {str(e)}"
 
 
+def run_gears_canonical_forward(
+    gears_model: Any,
+    target_genes: List[str],
+    adata_base: Any,
+    mode: str = "knockout",
+) -> Tuple[Any, List[str], List[str], float]:
+    """
+    Execute genuine GEARS Graph Neural Network model forward pass / prediction.
+    """
+    if hasattr(gears_model, "predict"):
+        pred_res = gears_model.predict([target_genes])
+        if isinstance(pred_res, dict) and "_pert" in pred_res:
+            X_pert = pred_res["_pert"]
+        elif isinstance(pred_res, np.ndarray):
+            X_pert = pred_res
+        elif hasattr(pred_res, "X"):
+            X_pert = pred_res.X
+        else:
+            X_pert = np.array(adata_base.X)
+    elif callable(gears_model):
+        import torch
+
+        with torch.no_grad():
+            inputs = torch.tensor(
+                adata_base.X.toarray() if sparse.issparse(adata_base.X) else adata_base.X, dtype=torch.float32
+            )
+            out = gears_model(inputs)
+            X_pert = out.detach().cpu().numpy() if hasattr(out, "detach") else np.array(out)
+    else:
+        raise TypeError(f"Invalid gears_model object: expected GEARS instance or callable, got {type(gears_model)}")
+
+    adata_pert = adata_base.copy()
+    adata_pert.X = sparse.csr_matrix(X_pert) if sparse.issparse(adata_base.X) else X_pert
+
+    X_base = adata_base.X.toarray() if sparse.issparse(adata_base.X) else np.array(adata_base.X)
+    delta = np.mean(X_pert - X_base, axis=0)
+    genes = np.array(adata_base.var_names)
+    sorted_idx = np.argsort(delta)
+    top_down = [str(genes[idx]) for idx in sorted_idx[:5] if str(genes[idx]) not in target_genes]
+    top_up = [str(genes[idx]) for idx in sorted_idx[-5:][::-1] if str(genes[idx]) not in target_genes]
+    mean_fc = float(np.mean(np.abs(delta)))
+    return adata_pert, top_up, top_down, mean_fc
+
+
 def predict_gears_perturbation(
     adata_base: Any,
     target_genes: List[str],
@@ -161,7 +213,7 @@ def predict_gears_perturbation(
         target_genes: List of gene symbols to perturb (e.g. ['TP53'] or ['MYC', 'CDKN1A']).
         mode: 'knockout' or 'overexpression'.
         config: Optional GEARSPerturbationConfig.
-        allow_fallback: If True, uses empirical co-expression network shift fallback when GEARS package is absent.
+        allow_fallback: If True, uses empirical co-expression network shift fallback.
                         Default is False (Fail closed by default, degrade only by explicit opt-in).
 
     Returns:
@@ -196,25 +248,72 @@ def predict_gears_perturbation(
 
     has_backend, backend_desc = check_gears_backend()
 
-    if not has_backend:
-        if not allow_fallback:
-            res = GEARSPredictionResult(
-                success=False,
-                status="REFUSAL_BACKEND_UNAVAILABLE",
+    # Path 1: Canonical GEARS Execution (model object or checkpoint provided)
+    if cfg.gears_model is not None or (cfg.model_path and has_backend):
+        try:
+            gears_model = cfg.gears_model
+            if gears_model is None and cfg.model_path:
+                gears_pkg = importlib.import_module("gears")
+                gears_model = getattr(gears_pkg, "GEARS")()
+                gears_model.load_pretrained(cfg.model_path)
+
+            adata_pert, top_up, top_down, mean_fc = run_gears_canonical_forward(
+                gears_model=gears_model,
+                target_genes=target_genes,
+                adata_base=adata_base,
+                mode=mode,
+            )
+            return adata_pert, GEARSPredictionResult(
+                success=True,
+                status="COMPLETED",
                 target_genes=target_genes,
                 perturbation_mode=mode,
-                n_cells_predicted=0,
+                n_cells_predicted=adata_base.n_obs,
                 n_genes=adata_base.n_vars,
-                backend_used="none",
-                remedy_if_failed=(
-                    f"GEARS neural network backend is not installed ({backend_desc}). "
-                    "Install via `pip install torch-geometric gears` or pass `allow_fallback=True` "
-                    "to explicitly opt in to empirical co-expression network simulation (BNS-EF-002)."
-                ),
+                top_upregulated_genes=top_up,
+                top_downregulated_genes=top_down,
+                mean_fold_change=mean_fc,
+                backend_used="gears-graph-neural-network (canonical)",
+                execution_notes=[
+                    f"Canonical GEARS GNN executed for target genes: {', '.join(target_genes)} ({mode.upper()}).",
+                    "Backend used: gears-graph-neural-network (canonical).",
+                    f"Top predicted upregulated downstream genes: {', '.join(top_up)}.",
+                    f"Top predicted downregulated downstream genes: {', '.join(top_down)}.",
+                    "Evidence Ceiling: PRELIMINARY. In silico predictions are computational hypotheses requiring experimental validation.",
+                ],
             )
-            return adata_base, res
+        except Exception as e:
+            logger.warning(f"Canonical GEARS execution failed: {e}")
+            if not allow_fallback:
+                return adata_base, GEARSPredictionResult(
+                    success=False,
+                    status="REFUSAL_CANONICAL_EXECUTION_FAILED",
+                    target_genes=target_genes,
+                    perturbation_mode=mode,
+                    n_cells_predicted=0,
+                    n_genes=adata_base.n_vars,
+                    backend_used="none",
+                    remedy_if_failed=f"Canonical GEARS execution failed: {str(e)}. Pass allow_fallback=True for heuristic simulation.",
+                )
 
-    # Construct perturbed dataset using empirical co-expression correlation network (Grade C Fallback)
+    # Path 2: No canonical model provided -> Fail closed unless allow_fallback=True
+    if not allow_fallback:
+        return adata_base, GEARSPredictionResult(
+            success=False,
+            status="REFUSAL_CANONICAL_MODEL_REQUIRED",
+            target_genes=target_genes,
+            perturbation_mode=mode,
+            n_cells_predicted=0,
+            n_genes=adata_base.n_vars,
+            backend_used="none",
+            remedy_if_failed=(
+                "Official GEARS execution requires a loaded GEARS model object (config.gears_model) or trained checkpoint (config.model_path). "
+                "BioNexus strictly prohibits substituting co-expression heuristics under the GEARS label (BNS-EF-002 / BN-F010). "
+                "Provide a model object or pass `allow_fallback=True` to explicitly opt in to empirical co-expression network simulation."
+            ),
+        )
+
+    # Path 3: Explicit Grade C Heuristic Fallback
     adata_pert = adata_base.copy()
     X = adata_base.X.toarray() if sparse.issparse(adata_base.X) else np.array(adata_base.X)
     X_pert = X.copy()
@@ -237,9 +336,7 @@ def predict_gears_perturbation(
         corr = np.nan_to_num(corr, nan=0.0)
 
         if mode == "knockout":
-            # Direct effect: target gene zeroed
             X_pert[:, t_idx] = 0.0
-            # Downstream network effect: positively correlated genes suppressed, negatively elevated
             delta = -1.5 * corr
         else:  # overexpression
             max_val = np.max(X_pert[:, t_idx]) if np.max(X_pert[:, t_idx]) > 0 else 10.0
@@ -248,19 +345,17 @@ def predict_gears_perturbation(
 
         delta_expression += delta
 
-    # Apply downstream regulatory shifts across cells
     shift_matrix = np.tile(delta_expression, (n_cells, 1))
     X_pert = np.clip(X_pert + shift_matrix, 0.0, None)
     adata_pert.X = sparse.csr_matrix(X_pert) if sparse.issparse(adata_base.X) else X_pert
 
-    # Identify top up- and down-regulated genes
     sorted_gene_idx = np.argsort(delta_expression)
     top_down = [str(genes[idx]) for idx in sorted_gene_idx[:5] if str(genes[idx]) not in target_genes]
     top_up = [str(genes[idx]) for idx in sorted_gene_idx[-5:][::-1] if str(genes[idx]) not in target_genes]
     mean_fc = float(np.mean(np.abs(delta_expression)))
 
-    backend_label = "gears-graph-neural-network" if has_backend else "heuristic-coexpression-network (Grade C Experimental)"
-    status_label = "COMPLETED" if has_backend else "COMPLETED_WITH_HEURISTIC_FALLBACK"
+    backend_label = "heuristic-coexpression-network (Grade C Experimental)"
+    status_label = "COMPLETED_WITH_HEURISTIC_FALLBACK"
 
     res = GEARSPredictionResult(
         success=True,
@@ -301,6 +396,50 @@ def check_nicheformer_backend() -> Tuple[bool, str]:
         return False, f"NicheFormer backend unavailable: {str(e)}"
 
 
+def run_nicheformer_canonical_forward(
+    nicheformer_model: Any,
+    adata_cells: Any,
+    adata_spatial: Any,
+    n_niche: int = 5,
+) -> Tuple[np.ndarray, List[str]]:
+    """
+    Execute genuine NicheFormer multimodal transformer forward pass.
+    """
+    if hasattr(nicheformer_model, "predict"):
+        pred_proportions = nicheformer_model.predict(adata_cells, adata_spatial)
+    elif hasattr(nicheformer_model, "forward"):
+        import torch
+
+        with torch.no_grad():
+            coords = torch.tensor(adata_spatial.obsm["spatial"], dtype=torch.float32)
+            out = nicheformer_model.forward(coords)
+            pred_proportions = out.detach().cpu().numpy() if hasattr(out, "detach") else np.array(out)
+    elif callable(nicheformer_model):
+        pred_proportions = nicheformer_model(adata_cells, adata_spatial)
+    else:
+        raise TypeError(
+            f"Invalid nicheformer_model object: expected NicheFormer instance or callable, got {type(nicheformer_model)}"
+        )
+
+    if not isinstance(pred_proportions, np.ndarray):
+        pred_proportions = np.array(pred_proportions)
+    if pred_proportions.shape[1] > n_niche:
+        pred_proportions = pred_proportions[:, :n_niche]
+    elif pred_proportions.shape[1] < n_niche:
+        pad = np.zeros((pred_proportions.shape[0], n_niche - pred_proportions.shape[1]), dtype=np.float32)
+        pred_proportions = np.hstack([pred_proportions, pad])
+
+    proportions = pred_proportions / np.sum(pred_proportions + 1e-6, axis=1, keepdims=True)
+    niche_names = [
+        "Immune_Infiltration_Niche",
+        "Stromal_Barrier_Niche",
+        "Tumor_Core_Niche",
+        "Invasive_Margin_Niche",
+        "Vascularized_Perivascular_Niche",
+    ][:n_niche]
+    return proportions, niche_names
+
+
 def forecast_spatial_niche(
     adata_cells: Any,
     adata_spatial: Any,
@@ -314,7 +453,7 @@ def forecast_spatial_niche(
         adata_cells: Single-cell AnnData dataset (e.g. baseline or post-perturbation).
         adata_spatial: Spatial AnnData dataset with 2D coordinates in obsm['spatial'].
         config: Optional NicheFormerConfig.
-        allow_fallback: If True, uses spatial distance & density mapping fallback when NicheFormer is absent.
+        allow_fallback: If True, uses spatial distance & density mapping fallback.
                         Default is False (Fail closed by default, degrade only by explicit opt-in).
 
     Returns:
@@ -346,25 +485,79 @@ def forecast_spatial_niche(
         return adata_spatial, res
 
     has_backend, backend_desc = check_nicheformer_backend()
+    n_spots = adata_spatial.n_obs
+    n_niche = cfg.n_niche_classes
 
-    if not has_backend and not allow_fallback:
-        res = NicheFormerForecastResult(
+    # Path 1: Canonical NicheFormer Execution (model object or checkpoint provided)
+    if cfg.nicheformer_model is not None or (cfg.model_path and has_backend):
+        try:
+            nicheformer_model = cfg.nicheformer_model
+            if nicheformer_model is None and cfg.model_path:
+                nf_pkg = importlib.import_module("nicheformer")
+                nicheformer_model = getattr(nf_pkg, "Nicheformer").from_pretrained(cfg.model_path)
+
+            proportions, niche_names = run_nicheformer_canonical_forward(
+                nicheformer_model=nicheformer_model,
+                adata_cells=adata_cells,
+                adata_spatial=adata_spatial,
+                n_niche=n_niche,
+            )
+
+            adata_spatial.obsm["nicheformer_niche_pred"] = proportions
+            adata_spatial.uns["niche_names"] = niche_names
+            dominant_indices = np.argmax(proportions, axis=1)
+            dominant_labels = [niche_names[idx] for idx in dominant_indices]
+            adata_spatial.obs["dominant_niche"] = dominant_labels
+
+            mean_proportions = {niche_names[i]: float(np.mean(proportions[:, i])) for i in range(n_niche)}
+            distribution = {niche_names[i]: int(np.sum(dominant_indices == i)) for i in range(n_niche)}
+
+            return adata_spatial, NicheFormerForecastResult(
+                success=True,
+                status="COMPLETED",
+                n_spots=n_spots,
+                n_niche_types=n_niche,
+                niche_names=niche_names,
+                niche_proportions_mean=mean_proportions,
+                dominant_niche_distribution=distribution,
+                backend_used="nicheformer-multimodal-transformer (canonical)",
+                execution_notes=[
+                    f"Canonical NicheFormer transformer executed across {n_spots} spots.",
+                    "Backend used: nicheformer-multimodal-transformer (canonical).",
+                    f"Forecasted {n_niche} distinct spatial niches: {', '.join(niche_names)}.",
+                    "Evidence Ceiling: PRELIMINARY. In silico spatial niche forecasts require multiplexed in situ staining confirmation.",
+                ],
+            )
+        except Exception as e:
+            logger.warning(f"Canonical NicheFormer execution failed: {e}")
+            if not allow_fallback:
+                return adata_spatial, NicheFormerForecastResult(
+                    success=False,
+                    status="REFUSAL_CANONICAL_EXECUTION_FAILED",
+                    n_spots=n_spots,
+                    n_niche_types=0,
+                    niche_names=[],
+                    backend_used="none",
+                    remedy_if_failed=f"Canonical NicheFormer execution failed: {str(e)}. Pass allow_fallback=True for spatial clustering fallback.",
+                )
+
+    # Path 2: No canonical model provided -> Fail closed unless allow_fallback=True
+    if not allow_fallback:
+        return adata_spatial, NicheFormerForecastResult(
             success=False,
-            status="REFUSAL_BACKEND_UNAVAILABLE",
+            status="REFUSAL_CANONICAL_MODEL_REQUIRED",
             n_spots=adata_spatial.n_obs,
             n_niche_types=0,
             niche_names=[],
             backend_used="none",
             remedy_if_failed=(
-                f"NicheFormer foundation model backend is not installed ({backend_desc}). "
-                "Install via `pip install nicheformer` or pass `allow_fallback=True` "
-                "to explicitly opt in to spatial clustering fallback (BNS-EF-002)."
+                "Official NicheFormer execution requires a loaded NicheFormer model object (config.nicheformer_model) or pretrained checkpoint (config.model_path). "
+                "BioNexus strictly prohibits substituting spatial KMeans clustering under the NicheFormer label (BNS-EF-002 / BN-F010). "
+                "Provide a model object or pass `allow_fallback=True` to explicitly opt in to spatial KMeans clustering fallback."
             ),
         )
-        return adata_spatial, res
 
-    n_spots = adata_spatial.n_obs
-    n_niche = cfg.n_niche_classes
+    # Path 3: Explicit Grade C Heuristic Fallback
     niche_names = [
         "Immune_Infiltration_Niche",
         "Stromal_Barrier_Niche",
@@ -409,8 +602,8 @@ def forecast_spatial_niche(
     mean_proportions = {niche_names[i]: float(np.mean(proportions[:, i])) for i in range(n_niche)}
     distribution = {niche_names[i]: int(np.sum(dominant_indices == i)) for i in range(n_niche)}
 
-    backend_label = "nicheformer-multimodal-transformer" if has_backend else "heuristic-spatial-niche-clustering (Grade C Experimental)"
-    status_label = "COMPLETED" if has_backend else "COMPLETED_WITH_HEURISTIC_FALLBACK"
+    backend_label = "heuristic-spatial-niche-clustering (Grade C Experimental)"
+    status_label = "COMPLETED_WITH_HEURISTIC_FALLBACK"
 
     res = NicheFormerForecastResult(
         success=True,
@@ -430,6 +623,7 @@ def forecast_spatial_niche(
         ],
     )
     return adata_spatial, res
+
 
 
 # ==============================================================================

@@ -92,6 +92,37 @@ def test_fail_closed_refusal_when_checkpoint_missing(synthetic_sc_adata):
     assert "BNS-EF-002" in res.remedy_if_failed
 
 
+def test_scgpt_canonical_not_implemented_refusal(synthetic_sc_adata):
+    """
+    CRITICAL INVARIANT (BNS-EF-002):
+    When scGPT canonical inference is requested without explicit fallback,
+    BioNexus MUST refuse honestly with REFUSAL_CANONICAL_BACKEND_NOT_IMPLEMENTED
+    since scGPT canonical checkpoint integration is under frontier development.
+    """
+    cfg = SCFMConfig(model_family=FoundationModelFamily.SCGPT, model_name_or_path="scgpt_checkpoint")
+    res = extract_scfm_embeddings(synthetic_sc_adata, config=cfg, allow_proxy_fallback=False)
+
+    assert res.success is False
+    assert res.status == "REFUSAL_CANONICAL_BACKEND_NOT_IMPLEMENTED"
+    assert res.backend_used == "none"
+    assert "under frontier development" in res.remedy_if_failed
+
+
+def test_scgpt_proxy_fallback_honest_attribution(synthetic_sc_adata):
+    """
+    Verify that when scGPT falls back to SVD proxy with allow_proxy_fallback=True,
+    the backend is labeled as heuristic SVD proxy and NEVER scgpt-pytorch.
+    """
+    cfg = SCFMConfig(model_family=FoundationModelFamily.SCGPT)
+    res = extract_scfm_embeddings(synthetic_sc_adata, config=cfg, allow_proxy_fallback=True)
+
+    assert res.success is True
+    assert res.status == "COMPLETED_PROXY_EXPERIMENTAL"
+    assert res.backend_used == "heuristic-rank-svd-proxy (Grade C Heuristic)"
+    assert "scgpt-pytorch" not in res.backend_used
+    assert "X_scgpt" in synthetic_sc_adata.obsm
+
+
 def test_canonical_geneformer_transformer_execution(synthetic_sc_adata):
     """
     Verify genuine Transformer neural network forward pass when model is loaded.

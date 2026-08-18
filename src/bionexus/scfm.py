@@ -414,7 +414,7 @@ def extract_scfm_embeddings(
         Executes genuine canonical Transformer inference with model weights.
     When `config.model_name_or_path` is None or unavailable:
         If `allow_proxy_fallback=True`, runs `extract_rank_proxy_embeddings` with explicit Grade C attribution.
-        If `allow_proxy_fallback=False`, fails closed (REFUSAL_MODEL_CHECKPOINT_REQUIRED).
+        If `allow_proxy_fallback=False`, fails closed (REFUSAL_MODEL_CHECKPOINT_REQUIRED / REFUSAL_CANONICAL_BACKEND_NOT_IMPLEMENTED).
     """
     cfg = config or SCFMConfig()
     obsm_key = f"X_{cfg.model_family.value}"
@@ -449,7 +449,34 @@ def extract_scfm_embeddings(
             remedy_if_failed="Count matrix contains exclusively zeros. Cannot compute rank encoding or tokenization.",
         )
 
-    # Case 1: Checkpoint specified -> Attempt canonical Transformer execution
+    # Case 1: scGPT model family (Frontier / Canonical execution not yet implemented)
+    if cfg.model_family == FoundationModelFamily.SCGPT:
+        if not allow_proxy_fallback:
+            return SCFMEmbeddingResult(
+                success=False,
+                status="REFUSAL_CANONICAL_BACKEND_NOT_IMPLEMENTED",
+                model_family=cfg.model_family.value,
+                model_name=cfg.model_name_or_path,
+                n_cells=adata.n_obs,
+                n_genes=adata.n_vars,
+                embedding_dim=cfg.embedding_dim,
+                backend_used="none",
+                obsm_key=obsm_key,
+                remedy_if_failed=(
+                    "Canonical scGPT transformer forward execution pipeline is currently under frontier development "
+                    "(vocabulary alignment, gene token binning & official checkpoint loader). Strict mode refusal: "
+                    "canonical execution not yet implemented. Opt in with `allow_proxy_fallback=True` to run the Grade C SVD proxy (BNS-EF-002)."
+                ),
+            )
+        return extract_rank_proxy_embeddings(
+            adata=adata,
+            embedding_dim=cfg.embedding_dim,
+            max_seq_len=cfg.max_seq_len,
+            random_seed=cfg.random_seed,
+            obsm_key=obsm_key,
+        )
+
+    # Case 2: Geneformer Checkpoint specified -> Attempt canonical Transformer execution
     if cfg.model_name_or_path:
         try:
             torch = importlib.import_module("torch")
@@ -457,38 +484,37 @@ def extract_scfm_embeddings(
             if device == "auto":
                 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-            if cfg.model_family == FoundationModelFamily.GENEFORMER:
-                model, token_dict = load_geneformer_transformer_model(cfg.model_name_or_path, device=device)
-                token_sequences, token_counts = rank_value_encode(adata, max_seq_len=cfg.max_seq_len)
-                embeddings = run_geneformer_canonical_forward(
-                    model=model,
-                    token_sequences=token_sequences,
-                    token_dict=token_dict,
-                    device=device,
-                    max_seq_len=cfg.max_seq_len,
-                    embedding_dim=cfg.embedding_dim,
-                    batch_size=cfg.batch_size,
-                )
-                adata.obsm[obsm_key] = embeddings
+            model, token_dict = load_geneformer_transformer_model(cfg.model_name_or_path, device=device)
+            token_sequences, token_counts = rank_value_encode(adata, max_seq_len=cfg.max_seq_len)
+            embeddings = run_geneformer_canonical_forward(
+                model=model,
+                token_sequences=token_sequences,
+                token_dict=token_dict,
+                device=device,
+                max_seq_len=cfg.max_seq_len,
+                embedding_dim=cfg.embedding_dim,
+                batch_size=cfg.batch_size,
+            )
+            adata.obsm[obsm_key] = embeddings
 
-                return SCFMEmbeddingResult(
-                    success=True,
-                    status="COMPLETED",
-                    model_family=cfg.model_family.value,
-                    model_name=cfg.model_name_or_path,
-                    n_cells=adata.n_obs,
-                    n_genes=adata.n_vars,
-                    embedding_dim=cfg.embedding_dim,
-                    backend_used=f"geneformer-canonical-transformer ({cfg.model_name_or_path})",
-                    obsm_key=obsm_key,
-                    is_canonical=True,
-                    mean_token_count_per_cell=float(np.mean(token_counts)),
-                    execution_notes=[
-                        f"Canonical GENEFORMER transformer executed successfully with weights from '{cfg.model_name_or_path}'.",
-                        f"Embedding tensor stored in adata.obsm['{obsm_key}'] with shape {embeddings.shape}.",
-                        "Evidence Ceiling: PRELIMINARY (BNS-CC-013).",
-                    ],
-                )
+            return SCFMEmbeddingResult(
+                success=True,
+                status="COMPLETED",
+                model_family=cfg.model_family.value,
+                model_name=cfg.model_name_or_path,
+                n_cells=adata.n_obs,
+                n_genes=adata.n_vars,
+                embedding_dim=cfg.embedding_dim,
+                backend_used=f"geneformer-canonical-transformer ({cfg.model_name_or_path})",
+                obsm_key=obsm_key,
+                is_canonical=True,
+                mean_token_count_per_cell=float(np.mean(token_counts)),
+                execution_notes=[
+                    f"Canonical GENEFORMER transformer executed successfully with weights from '{cfg.model_name_or_path}'.",
+                    f"Embedding tensor stored in adata.obsm['{obsm_key}'] with shape {embeddings.shape}.",
+                    "Evidence Ceiling: PRELIMINARY (BNS-CC-013).",
+                ],
+            )
 
         except Exception as e:
             logger.warning(f"Canonical {cfg.model_family.value} checkpoint loading/inference failed: {e}")
@@ -509,7 +535,7 @@ def extract_scfm_embeddings(
                     ),
                 )
 
-    # Case 2: No checkpoint provided
+    # Case 3: Geneformer without checkpoint
     if not allow_proxy_fallback:
         return SCFMEmbeddingResult(
             success=False,
@@ -639,3 +665,4 @@ def simulate_gene_perturbation(
             "Evidence Ceiling: PRELIMINARY. In silico predictions are computational hypotheses requiring experimental validation.",
         ],
     )
+
