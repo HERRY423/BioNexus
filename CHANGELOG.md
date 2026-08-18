@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [0.10.0] - 2026-08-17
+
+### 🛡️ Epistemic Honesty & Fail-Closed by Default (BNS-EF-002 / BNS-CC-012)
+
+- **Fail-closed by default for Tangram, GEARS, and NicheFormer**: `run_tangram_spatial_mapping()`, `predict_gears_perturbation()`, and `forecast_spatial_niche()` now default to `allow_fallback=False`. Missing backends trigger immediate deterministic refusal (`REFUSAL_BACKEND_UNAVAILABLE`). Grade C heuristic baselines run only with explicit caller opt-in (`allow_fallback=True`) and are transparently labeled as `Grade C Experimental` without masquerading as official neural network models.
+- **Frontier capability segregation**: Segregated experimental foundation models and closed-loop exploration (`scfm.geneformer_canonical`, `scfm.scgpt_canonical`, `scfm.rank_proxy_embedding`, `perturbation.gears_prediction`, `spatial.nicheformer_forecasting`, `closed_loop.perturbation_to_niche`) into `FRONTIER_CAPABILITIES`, maintaining the stable core of 13 certified canonical capabilities in `CANONICAL_CAPABILITIES`.
+- **Version SSOT & Zero-Drift Guard**: Unified versioning across `pyproject.toml`, `bionexus.registry.yaml`, `src/bionexus/versions.py`, `src/bionexus/__init__.py`, `plugin.json`, `marketplace.json`, and all client manifests. Added `scripts/sync_version.py` and `tests/unit/test_version_ssot.py` CI enforcement.
 
 ### 🌐 Added (Standards Interoperability — BNS-016: no proprietary data-standard island)
 
