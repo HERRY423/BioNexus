@@ -200,7 +200,7 @@ def run_tangram_spatial_mapping(
     adata_sp: Any,
     cell_type_col: str = "cell_type",
     config: Optional[TangramConfig] = None,
-    allow_fallback: bool = True,
+    allow_fallback: bool = False,
 ) -> TangramMappingResult:
     """
     Execute Tangram spatial deconvolution and cell-to-spot mapping.
@@ -210,7 +210,8 @@ def run_tangram_spatial_mapping(
         adata_sp: Spatial AnnData target containing 2D coordinates in obsm['spatial'].
         cell_type_col: Column name in adata_sc.obs containing cell type annotations.
         config: Optional TangramConfig hyperparameters.
-        allow_fallback: If True and tangram is missing, uses honest NNLS fallback. If False, raises refusal.
+        allow_fallback: If True and tangram is missing, uses honest NNLS fallback.
+                        Default is False (Fail closed by default, degrade only by explicit opt-in).
 
     Returns:
         TangramMappingResult containing cell type proportions, shared genes, and diagnostic metadata.

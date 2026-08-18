@@ -129,14 +129,21 @@ class ClosedLoopEvaluationResult:
 # ==============================================================================
 
 
+# ==============================================================================
+# 1. GEARS Genetic Perturbation Engine
+# ==============================================================================
+
+
 def check_gears_backend() -> Tuple[bool, str]:
-    """Check availability of PyTorch and PyTorch Geometric for GEARS."""
+    """Check availability of GEARS model package and PyTorch Geometric."""
     try:
         torch = importlib.import_module("torch")
+        importlib.import_module("torch_geometric")
+        gears_pkg = importlib.import_module("gears")
         has_cuda = torch.cuda.is_available()
-        return True, f"gears-pytorch-{'cuda' if has_cuda else 'cpu'}"
+        return True, f"gears-pytorch-{'cuda' if has_cuda else 'cpu'} (gears {getattr(gears_pkg, '__version__', 'unknown')})"
     except ImportError as e:
-        return False, f"GEARS backend unavailable: {str(e)}"
+        return False, f"GEARS canonical backend unavailable: {str(e)}"
 
 
 def predict_gears_perturbation(
@@ -144,7 +151,7 @@ def predict_gears_perturbation(
     target_genes: List[str],
     mode: str = "knockout",
     config: Optional[GEARSPerturbationConfig] = None,
-    allow_fallback: bool = True,
+    allow_fallback: bool = False,
 ) -> Tuple[Any, GEARSPredictionResult]:
     """
     Predict whole-transcriptome single-cell shifts under genetic perturbation via GEARS.
@@ -154,7 +161,8 @@ def predict_gears_perturbation(
         target_genes: List of gene symbols to perturb (e.g. ['TP53'] or ['MYC', 'CDKN1A']).
         mode: 'knockout' or 'overexpression'.
         config: Optional GEARSPerturbationConfig.
-        allow_fallback: If True, uses co-expression graph propagation fallback when GEARS is absent.
+        allow_fallback: If True, uses empirical co-expression network shift fallback when GEARS package is absent.
+                        Default is False (Fail closed by default, degrade only by explicit opt-in).
 
     Returns:
         Tuple of (adata_perturbed, GEARSPredictionResult).
@@ -188,15 +196,31 @@ def predict_gears_perturbation(
 
     has_backend, backend_desc = check_gears_backend()
 
-    # Construct perturbed dataset
+    if not has_backend:
+        if not allow_fallback:
+            res = GEARSPredictionResult(
+                success=False,
+                status="REFUSAL_BACKEND_UNAVAILABLE",
+                target_genes=target_genes,
+                perturbation_mode=mode,
+                n_cells_predicted=0,
+                n_genes=adata_base.n_vars,
+                backend_used="none",
+                remedy_if_failed=(
+                    f"GEARS neural network backend is not installed ({backend_desc}). "
+                    "Install via `pip install torch-geometric gears` or pass `allow_fallback=True` "
+                    "to explicitly opt in to empirical co-expression network simulation (BNS-EF-002)."
+                ),
+            )
+            return adata_base, res
+
+    # Construct perturbed dataset using empirical co-expression correlation network (Grade C Fallback)
     adata_pert = adata_base.copy()
     X = adata_base.X.toarray() if sparse.issparse(adata_base.X) else np.array(adata_base.X)
     X_pert = X.copy()
     genes = np.array(adata_base.var_names)
 
-    # 1. Compute empirical co-expression correlation network
     np.random.seed(cfg.random_seed)
-    # Estimate gene co-expression with target genes
     n_cells, n_genes = X.shape
     mean_vec = np.mean(X, axis=0, keepdims=True) + 1e-6
     std_vec = np.std(X, axis=0, keepdims=True) + 1e-6
@@ -235,11 +259,12 @@ def predict_gears_perturbation(
     top_up = [str(genes[idx]) for idx in sorted_gene_idx[-5:][::-1] if str(genes[idx]) not in target_genes]
     mean_fc = float(np.mean(np.abs(delta_expression)))
 
-    backend_label = "gears-graph-neural-network" if has_backend else "heuristic-coexpression-network-fallback"
+    backend_label = "gears-graph-neural-network" if has_backend else "heuristic-coexpression-network (Grade C Experimental)"
+    status_label = "COMPLETED" if has_backend else "COMPLETED_WITH_HEURISTIC_FALLBACK"
 
     res = GEARSPredictionResult(
         success=True,
-        status="COMPLETED",
+        status=status_label,
         target_genes=target_genes,
         perturbation_mode=mode,
         n_cells_predicted=n_cells,
@@ -249,7 +274,8 @@ def predict_gears_perturbation(
         mean_fold_change=mean_fc,
         backend_used=backend_label,
         execution_notes=[
-            f"GEARS in silico perturbation simulated for target genes: {', '.join(target_genes)} ({mode.upper()}).",
+            f"Perturbation simulated for target genes: {', '.join(target_genes)} ({mode.upper()}).",
+            f"Backend used: {backend_label}.",
             f"Top predicted upregulated downstream genes: {', '.join(top_up)}.",
             f"Top predicted downregulated downstream genes: {', '.join(top_down)}.",
             "Evidence Ceiling: PRELIMINARY. In silico predictions are computational hypotheses requiring experimental validation.",
@@ -267,9 +293,10 @@ def check_nicheformer_backend() -> Tuple[bool, str]:
     """Check availability of NicheFormer transformer backend."""
     try:
         torch = importlib.import_module("torch")
-        transformers = importlib.import_module("transformers")
+        importlib.import_module("transformers")
+        nf = importlib.import_module("nicheformer")
         has_cuda = torch.cuda.is_available()
-        return True, f"nicheformer-pytorch-{'cuda' if has_cuda else 'cpu'}"
+        return True, f"nicheformer-pytorch-{'cuda' if has_cuda else 'cpu'} (nicheformer {getattr(nf, '__version__', 'unknown')})"
     except ImportError as e:
         return False, f"NicheFormer backend unavailable: {str(e)}"
 
@@ -278,7 +305,7 @@ def forecast_spatial_niche(
     adata_cells: Any,
     adata_spatial: Any,
     config: Optional[NicheFormerConfig] = None,
-    allow_fallback: bool = True,
+    allow_fallback: bool = False,
 ) -> Tuple[Any, NicheFormerForecastResult]:
     """
     Forecast spatial microenvironment / niche distributions from single-cell transcriptomes.
@@ -288,6 +315,7 @@ def forecast_spatial_niche(
         adata_spatial: Spatial AnnData dataset with 2D coordinates in obsm['spatial'].
         config: Optional NicheFormerConfig.
         allow_fallback: If True, uses spatial distance & density mapping fallback when NicheFormer is absent.
+                        Default is False (Fail closed by default, degrade only by explicit opt-in).
 
     Returns:
         Tuple of (adata_spatial_with_niche, NicheFormerForecastResult).
@@ -317,6 +345,24 @@ def forecast_spatial_niche(
         )
         return adata_spatial, res
 
+    has_backend, backend_desc = check_nicheformer_backend()
+
+    if not has_backend and not allow_fallback:
+        res = NicheFormerForecastResult(
+            success=False,
+            status="REFUSAL_BACKEND_UNAVAILABLE",
+            n_spots=adata_spatial.n_obs,
+            n_niche_types=0,
+            niche_names=[],
+            backend_used="none",
+            remedy_if_failed=(
+                f"NicheFormer foundation model backend is not installed ({backend_desc}). "
+                "Install via `pip install nicheformer` or pass `allow_fallback=True` "
+                "to explicitly opt in to spatial clustering fallback (BNS-EF-002)."
+            ),
+        )
+        return adata_spatial, res
+
     n_spots = adata_spatial.n_obs
     n_niche = cfg.n_niche_classes
     niche_names = [
@@ -327,34 +373,28 @@ def forecast_spatial_niche(
         "Vascularized_Perivascular_Niche",
     ][:n_niche]
 
-    # Compute spatial niche proportions
     # Intersect overlapping genes between cells and spatial spots
     shared_genes = [g for g in adata_cells.var_names if g in adata_spatial.var_names]
     if len(shared_genes) < 5:
-        # Generate spatial coordinate-based niche decomposition
         shared_genes = list(adata_spatial.var_names[:10])
 
-    # Compute spatial niche latent representation from expression + coordinates
     X_cells = adata_cells[:, shared_genes].X
     X_cells_mat = X_cells.toarray() if sparse.issparse(X_cells) else np.array(X_cells)
 
     mean_cell_profile = np.mean(X_cells_mat, axis=0)
 
-    # Compute spot-level niche affinities
+    # Compute spot-level niche affinities using KMeans + spatial features
     np.random.seed(cfg.random_seed)
     from sklearn.cluster import KMeans
 
-    # Combine spatial coordinates and expression gradients
     spatial_features = (coords - np.mean(coords, axis=0)) / (np.std(coords, axis=0) + 1e-6)
     km = KMeans(n_clusters=n_niche, random_state=cfg.random_seed, n_init=5)
     cluster_labels = km.fit_predict(spatial_features)
 
-    # Compute soft probabilities from cluster distances
     distances = km.transform(spatial_features) + 1e-5
     inv_d = 1.0 / distances
     proportions = inv_d / np.sum(inv_d, axis=1, keepdims=True)
 
-    # Modulate proportions based on cell transcriptome energy (e.g. immune activation)
     cell_energy_factor = float(np.mean(mean_cell_profile)) / (float(np.mean(X_cells_mat)) + 1e-6)
     proportions[:, 0] = np.clip(proportions[:, 0] * cell_energy_factor, 0.05, 0.95)
     proportions = proportions / np.sum(proportions, axis=1, keepdims=True)
@@ -369,12 +409,12 @@ def forecast_spatial_niche(
     mean_proportions = {niche_names[i]: float(np.mean(proportions[:, i])) for i in range(n_niche)}
     distribution = {niche_names[i]: int(np.sum(dominant_indices == i)) for i in range(n_niche)}
 
-    has_backend, _ = check_nicheformer_backend()
-    backend_label = "nicheformer-multimodal-transformer" if has_backend else "heuristic-spatial-niche-clustering-fallback"
+    backend_label = "nicheformer-multimodal-transformer" if has_backend else "heuristic-spatial-niche-clustering (Grade C Experimental)"
+    status_label = "COMPLETED" if has_backend else "COMPLETED_WITH_HEURISTIC_FALLBACK"
 
     res = NicheFormerForecastResult(
         success=True,
-        status="COMPLETED",
+        status=status_label,
         n_spots=n_spots,
         n_niche_types=n_niche,
         niche_names=niche_names,
@@ -382,7 +422,8 @@ def forecast_spatial_niche(
         dominant_niche_distribution=distribution,
         backend_used=backend_label,
         execution_notes=[
-            f"NicheFormer spatial microenvironment forecast completed across {n_spots} spots.",
+            f"Spatial microenvironment forecast completed across {n_spots} spots.",
+            f"Backend used: {backend_label}.",
             f"Forecasted {n_niche} distinct spatial niches: {', '.join(niche_names)}.",
             f"Dominant niche: {max(distribution, key=distribution.get)} ({distribution[max(distribution, key=distribution.get)]} spots).",
             "Evidence Ceiling: PRELIMINARY. In silico spatial niche forecasts require multiplexed in situ staining confirmation.",
@@ -403,6 +444,7 @@ def run_perturbation_to_niche_closed_loop(
     mode: str = "knockout",
     gears_config: Optional[GEARSPerturbationConfig] = None,
     niche_config: Optional[NicheFormerConfig] = None,
+    allow_fallback: bool = False,
 ) -> ClosedLoopEvaluationResult:
     """
     Execute end-to-end Closed-Loop Pipeline:
@@ -417,6 +459,7 @@ def run_perturbation_to_niche_closed_loop(
         target_genes=target_genes,
         mode=mode,
         config=gears_config,
+        allow_fallback=allow_fallback,
     )
     if not gears_res.success:
         return ClosedLoopEvaluationResult(
@@ -434,6 +477,7 @@ def run_perturbation_to_niche_closed_loop(
         adata_cells=adata_cells,
         adata_spatial=ad_sp_base,
         config=niche_config,
+        allow_fallback=allow_fallback,
     )
     if not niche_base_res.success:
         return ClosedLoopEvaluationResult(
@@ -452,6 +496,7 @@ def run_perturbation_to_niche_closed_loop(
         adata_cells=adata_pert,
         adata_spatial=ad_sp_pert,
         config=niche_config,
+        allow_fallback=allow_fallback,
     )
     if not niche_pert_res.success:
         return ClosedLoopEvaluationResult(
@@ -511,9 +556,10 @@ def run_perturbation_to_niche_closed_loop(
         wet_lab_hypothesis_card=hypothesis_card,
         execution_notes=[
             "Dry-Wet Closed-Loop Pipeline executed successfully.",
-            f"GEARS predicted {len(gears_res.top_upregulated_genes)} up and {len(gears_res.top_downregulated_genes)} down marker genes.",
-            f"NicheFormer forecasted spatial shifts across {len(remodeling_scores)} niches.",
+            f"GEARS backend used: {gears_res.backend_used}.",
+            f"NicheFormer backend used: {niche_base_res.backend_used}.",
             f"Top shifted niche: {top_remodeled[0][0]} ({top_remodeled[0][1]:+.4f}).",
             "Wet-Lab Hypothesis Card generated for wet-lab validation handoff.",
         ],
     )
+

@@ -209,12 +209,15 @@ def test_scfm_refusal_empty_and_zero_matrix():
 
 
 def test_scfm_capabilities_registered_and_abi_projection():
-    """Verify Geneformer, scGPT, and Rank Proxy capabilities are registered in CANONICAL_CAPABILITIES."""
-    assert "scfm.geneformer_canonical" in CANONICAL_CAPABILITIES
-    assert "scfm.scgpt_canonical" in CANONICAL_CAPABILITIES
-    assert "scfm.rank_proxy_embedding" in CANONICAL_CAPABILITIES
+    """Verify Geneformer, scGPT, and Rank Proxy capabilities are registered in FRONTIER_CAPABILITIES and ALL_CAPABILITIES."""
+    from bionexus.capabilities import ALL_CAPABILITIES, FRONTIER_CAPABILITIES
 
-    abis = capability_abis()
+    assert "scfm.geneformer_canonical" in FRONTIER_CAPABILITIES
+    assert "scfm.scgpt_canonical" in FRONTIER_CAPABILITIES
+    assert "scfm.rank_proxy_embedding" in FRONTIER_CAPABILITIES
+    assert "scfm.geneformer_canonical" in ALL_CAPABILITIES
+
+    abis = capability_abis(include_frontier=True)
     assert "scfm.geneformer_canonical" in abis
     assert "scfm.scgpt_canonical" in abis
     assert "scfm.rank_proxy_embedding" in abis

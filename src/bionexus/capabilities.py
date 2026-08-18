@@ -1355,7 +1355,15 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
         ],
         evidence_ceiling_without_external_validation="SUPPORTED",
     ),
-    # 14. Single-Cell Foundation Model Geneformer Official Inference
+}
+
+# ==============================================================================
+# Frontier / Experimental Capabilities (BNS-010 / Research Track)
+# Segregated from Stable Canonical v1.0 Release.
+# ==============================================================================
+
+FRONTIER_CAPABILITIES: Dict[str, CapabilityContract] = {
+    # 14. Single-Cell Foundation Model Geneformer Official Inference (Frontier)
     "scfm.geneformer_canonical": CapabilityContract(
         id="scfm.geneformer_canonical",
         version=1,
@@ -1440,7 +1448,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
         ],
         evidence_ceiling_without_external_validation="PRELIMINARY",
     ),
-    # 15. Single-Cell Foundation Model scGPT Official Inference
+    # 15. Single-Cell Foundation Model scGPT Official Inference (Frontier)
     "scfm.scgpt_canonical": CapabilityContract(
         id="scfm.scgpt_canonical",
         version=1,
@@ -1516,7 +1524,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
         ],
         evidence_ceiling_without_external_validation="PRELIMINARY",
     ),
-    # 16. Single-Cell Rank-Value SVD Embedding Proxy (Grade C Experimental)
+    # 16. Single-Cell Rank-Value SVD Embedding Proxy (Grade C Experimental Frontier)
     "scfm.rank_proxy_embedding": CapabilityContract(
         id="scfm.rank_proxy_embedding",
         version=1,
@@ -1580,7 +1588,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
         ],
         evidence_ceiling_without_external_validation="PRELIMINARY",
     ),
-    # 16. GEARS Combinatorial Genetic Perturbation Prediction
+    # 17. GEARS Combinatorial Genetic Perturbation Prediction (Frontier)
     "perturbation.gears_prediction": CapabilityContract(
         id="perturbation.gears_prediction",
         version=1,
@@ -1611,8 +1619,8 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
         ],
         backend=BackendRequirement(
             canonical_name="gears",
-            import_name="torch",
-            minimum_version="2.0.0",
+            import_name="gears",
+            minimum_version="0.1.0",
             extra="scverse",
             description="GEARS Graph-Enhanced Perturbation Prediction GNN",
         ),
@@ -1646,13 +1654,14 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             ],
         ),
         forbidden_claims=[
+            "model_substitution",
             "clinical_diagnosis",
             "causal_interaction",
             "cell_type_identity_without_reference",
         ],
         evidence_ceiling_without_external_validation="PRELIMINARY",
     ),
-    # 17. NicheFormer Spatial Niche Forecasting
+    # 18. NicheFormer Spatial Niche Forecasting (Frontier)
     "spatial.nicheformer_forecasting": CapabilityContract(
         id="spatial.nicheformer_forecasting",
         version=1,
@@ -1689,8 +1698,8 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
         ],
         backend=BackendRequirement(
             canonical_name="nicheformer",
-            import_name="transformers",
-            minimum_version="4.30.0",
+            import_name="nicheformer",
+            minimum_version="0.1.0",
             extra="scverse",
             description="NicheFormer Spatial Microenvironment Foundation Model",
         ),
@@ -1716,13 +1725,14 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             ],
         ),
         forbidden_claims=[
+            "model_substitution",
             "clinical_diagnosis",
             "causal_interaction",
             "cell_type_identity_without_reference",
         ],
         evidence_ceiling_without_external_validation="PRELIMINARY",
     ),
-    # 18. Dry-Wet Closed Loop Perturbation to Spatial Niche
+    # 19. Dry-Wet Closed Loop Perturbation to Spatial Niche (Frontier)
     "closed_loop.perturbation_to_niche": CapabilityContract(
         id="closed_loop.perturbation_to_niche",
         version=1,
@@ -1765,8 +1775,8 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
         ],
         backend=BackendRequirement(
             canonical_name="bionexus-closed-loop",
-            import_name="torch",
-            minimum_version="2.0.0",
+            import_name="gears",
+            minimum_version="0.1.0",
             extra="scverse",
             description="BioNexus GEARS + NicheFormer Closed-Loop Integration Pipeline",
         ),
@@ -1799,6 +1809,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             ],
         ),
         forbidden_claims=[
+            "model_substitution",
             "clinical_diagnosis",
             "causal_interaction",
             "cell_type_identity_without_reference",
@@ -1807,24 +1818,35 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
     ),
 }
 
+ALL_CAPABILITIES: Dict[str, CapabilityContract] = {
+    **CANONICAL_CAPABILITIES,
+    **FRONTIER_CAPABILITIES,
+}
+
 
 # ==============================================================================
 # Helper Query Functions
 # ==============================================================================
 
 
-def get_capability(capability_id: str) -> CapabilityContract:
+def get_capability(capability_id: str, include_frontier: bool = True) -> CapabilityContract:
     """Retrieve capability contract by ID."""
-    if capability_id not in CANONICAL_CAPABILITIES:
+    registry = ALL_CAPABILITIES if include_frontier else CANONICAL_CAPABILITIES
+    if capability_id not in registry:
         raise KeyError(
-            f"Unknown capability contract ID: '{capability_id}'. Available: {list(CANONICAL_CAPABILITIES.keys())}"
+            f"Unknown capability contract ID: '{capability_id}'. Available: {list(registry.keys())}"
         )
-    return CANONICAL_CAPABILITIES[capability_id]
+    return registry[capability_id]
 
 
-def list_capabilities(intent: Optional[str] = None, skill_name: Optional[str] = None) -> List[CapabilityContract]:
+def list_capabilities(
+    intent: Optional[str] = None,
+    skill_name: Optional[str] = None,
+    include_frontier: bool = True,
+) -> List[CapabilityContract]:
     """Filter and list capability contracts by intent or skill."""
-    caps = list(CANONICAL_CAPABILITIES.values())
+    registry = ALL_CAPABILITIES if include_frontier else CANONICAL_CAPABILITIES
+    caps = list(registry.values())
     if skill_name:
         caps = [c for c in caps if c.skill_name == skill_name]
     if intent:
@@ -1832,9 +1854,9 @@ def list_capabilities(intent: Optional[str] = None, skill_name: Optional[str] = 
     return caps
 
 
-def find_capabilities_by_intent(intent: str) -> List[CapabilityContract]:
+def find_capabilities_by_intent(intent: str, include_frontier: bool = True) -> List[CapabilityContract]:
     """Find capabilities matching a specific scientific intent."""
-    return list_capabilities(intent=intent)
+    return list_capabilities(intent=intent, include_frontier=include_frontier)
 
 
 def evaluate_capability_preconditions(

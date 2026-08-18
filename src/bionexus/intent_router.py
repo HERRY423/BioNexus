@@ -24,6 +24,7 @@ from bionexus.abi import detect_forbidden_claims_in_query
 from bionexus.agent_routing import is_default_skill
 from bionexus.backends import probe
 from bionexus.capabilities import (
+    ALL_CAPABILITIES,
     CANONICAL_CAPABILITIES,
     CapabilityContract,
     find_capabilities_by_intent,
@@ -326,8 +327,8 @@ def extract_scientific_capability(
     for patterns, cap_id in _INTENT_PATTERNS:
         for pat in patterns:
             if re.search(pat, query_lower):
-                if cap_id in CANONICAL_CAPABILITIES:
-                    return CANONICAL_CAPABILITIES[cap_id]
+                if cap_id in ALL_CAPABILITIES:
+                    return ALL_CAPABILITIES[cap_id]
 
     return None
 

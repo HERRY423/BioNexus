@@ -69,7 +69,7 @@ def test_select_training_marker_genes(dummy_sc_and_spatial):
 
 
 def test_run_tangram_mapping_fallback(dummy_sc_and_spatial):
-    """Verify execution in fallback NNLS mode when tangram is not installed or allow_fallback=True."""
+    """Verify execution in fallback NNLS mode ONLY when caller explicitly opts in (allow_fallback=True)."""
     adata_sc, adata_sp = dummy_sc_and_spatial
     cfg = TangramConfig(num_epochs=10, min_shared_genes=5)
 
@@ -88,6 +88,31 @@ def test_run_tangram_mapping_fallback(dummy_sc_and_spatial):
     assert "tangram_ct_pred" in adata_sp.obsm
     assert "dominant_cell_type" in adata_sp.obs
     assert len(adata_sp.obs["dominant_cell_type"]) == 20
+    assert res.status == "COMPLETED_WITH_HEURISTIC_FALLBACK"
+
+
+def test_run_tangram_fail_closed_default_without_fallback(dummy_sc_and_spatial):
+    """
+    CRITICAL INVARIANT (Fail-closed by default, degrade only by explicit opt-in):
+    When tangram is not installed and allow_fallback=False (the default),
+    BioNexus MUST refuse with REFUSAL_BACKEND_UNAVAILABLE.
+    """
+    adata_sc, adata_sp = dummy_sc_and_spatial
+    cfg = TangramConfig(min_shared_genes=5)
+
+    # By default allow_fallback is False
+    with patch("bionexus.tangram.check_tangram_backend", return_value=(False, "tangram not installed")):
+        res = run_tangram_spatial_mapping(
+            adata_sc=adata_sc,
+            adata_sp=adata_sp,
+            cell_type_col="cell_type",
+            config=cfg,
+            # allow_fallback=False by default!
+        )
+
+        assert res.success is False
+        assert res.status == "REFUSAL_BACKEND_UNAVAILABLE"
+        assert "allow_fallback=True" in res.remedy_if_failed
 
 
 def test_run_tangram_refusal_missing_coordinates(dummy_sc_and_spatial):

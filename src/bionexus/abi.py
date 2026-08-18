@@ -24,7 +24,7 @@ from dataclasses import asdict, dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from bionexus.capabilities import CANONICAL_CAPABILITIES, CapabilityContract
+from bionexus.capabilities import ALL_CAPABILITIES, CANONICAL_CAPABILITIES, FRONTIER_CAPABILITIES, CapabilityContract
 from bionexus.contracts import ConclusionMaturity
 
 ABI_VERSION = "1.0"
@@ -531,14 +531,15 @@ def _build_abi(contract: CapabilityContract) -> CapabilityABI:
     )
 
 
-def capability_abis() -> Dict[str, CapabilityABI]:
-    """All canonical capability ABI records, keyed by capability id."""
-    return {cid: _build_abi(c) for cid, c in CANONICAL_CAPABILITIES.items()}
+def capability_abis(include_frontier: bool = False) -> Dict[str, CapabilityABI]:
+    """All capability ABI records, keyed by capability id. Defaults to canonical capabilities."""
+    registry = ALL_CAPABILITIES if include_frontier else CANONICAL_CAPABILITIES
+    return {cid: _build_abi(c) for cid, c in registry.items()}
 
 
 def get_capability_abi(capability_id: str) -> CapabilityABI:
     """Retrieve the ABI record for a capability id (BNS-CC-010)."""
-    abis = capability_abis()
+    abis = capability_abis(include_frontier=True)
     if capability_id not in abis:
         raise KeyError(
             f"Unknown capability id '{capability_id}'. Available: {sorted(abis.keys())}"

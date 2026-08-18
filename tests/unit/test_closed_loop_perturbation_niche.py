@@ -1,6 +1,13 @@
 """
 Unit tests for BioNexus Closed-Loop Perturbation-to-Spatial-Niche Engine (GEARS + NicheFormer).
+
+Verifies strict compliance with BioNexus Epistemic Honesty (BNS-EF-002 / BNS-CC-012):
+- Fail-closed refusal by default when GEARS or NicheFormer backends are absent.
+- Explicit opt-in required for heuristic fallbacks (allow_fallback=True).
+- Transparent Grade C attribution (never masquerading as neural network).
 """
+
+from unittest.mock import patch
 
 import anndata as ad
 import numpy as np
@@ -9,7 +16,7 @@ import pytest
 from scipy import sparse
 
 from bionexus.abi import capability_abis, get_capability_abi
-from bionexus.capabilities import CANONICAL_CAPABILITIES
+from bionexus.capabilities import ALL_CAPABILITIES, CANONICAL_CAPABILITIES, FRONTIER_CAPABILITIES
 from bionexus.closed_loop import (
     ClosedLoopEvaluationResult,
     GEARSPerturbationConfig,
@@ -65,16 +72,38 @@ def synthetic_spatial_adata():
     return adata
 
 
-def test_predict_gears_perturbation_single_knockout(synthetic_sc_adata):
-    """Verify GEARS single-gene knockout suppresses target gene and shifts correlated genes."""
+def test_gears_fail_closed_refusal_when_backend_missing(synthetic_sc_adata):
+    """
+    CRITICAL INVARIANT (BNS-EF-002):
+    When GEARS package is not installed and allow_fallback=False (default),
+    BioNexus MUST refuse with REFUSAL_BACKEND_UNAVAILABLE.
+    """
+    with patch("bionexus.closed_loop.check_gears_backend", return_value=(False, "gears not installed")):
+        _, res = predict_gears_perturbation(
+            adata_base=synthetic_sc_adata,
+            target_genes=["TP53"],
+            mode="knockout",
+            allow_fallback=False,
+        )
+
+        assert res.success is False
+        assert res.status == "REFUSAL_BACKEND_UNAVAILABLE"
+        assert res.backend_used == "none"
+        assert "allow_fallback=True" in res.remedy_if_failed
+
+
+def test_predict_gears_perturbation_fallback_honesty(synthetic_sc_adata):
+    """Verify GEARS fallback accurately attributes Grade C heuristic without masquerading."""
     adata_pert, res = predict_gears_perturbation(
         adata_base=synthetic_sc_adata,
         target_genes=["TP53"],
         mode="knockout",
+        allow_fallback=True,
     )
 
     assert res.success is True
-    assert res.status == "COMPLETED"
+    assert res.status == "COMPLETED_WITH_HEURISTIC_FALLBACK"
+    assert res.backend_used == "heuristic-coexpression-network (Grade C Experimental)"
     assert res.target_genes == ["TP53"]
     assert res.n_cells_predicted == 50
     assert len(res.top_downregulated_genes) > 0
@@ -92,6 +121,7 @@ def test_predict_gears_perturbation_combinatorial_knockout(synthetic_sc_adata):
         adata_base=synthetic_sc_adata,
         target_genes=["TP53", "MYC"],
         mode="knockout",
+        allow_fallback=True,
     )
 
     assert res.success is True
@@ -110,16 +140,37 @@ def test_gears_refusal_missing_genes(synthetic_sc_adata):
     assert res.status == "REFUSAL_TARGET_GENES_NOT_FOUND"
 
 
-def test_forecast_spatial_niche(synthetic_sc_adata, synthetic_spatial_adata):
-    """Verify NicheFormer spatial microenvironment forecasting."""
+def test_nicheformer_fail_closed_refusal_when_backend_missing(synthetic_sc_adata, synthetic_spatial_adata):
+    """
+    CRITICAL INVARIANT (BNS-EF-002):
+    When NicheFormer package is missing and allow_fallback=False (default),
+    BioNexus MUST refuse with REFUSAL_BACKEND_UNAVAILABLE.
+    """
+    with patch("bionexus.closed_loop.check_nicheformer_backend", return_value=(False, "nicheformer not installed")):
+        _, res = forecast_spatial_niche(
+            adata_cells=synthetic_sc_adata,
+            adata_spatial=synthetic_spatial_adata,
+            allow_fallback=False,
+        )
+
+        assert res.success is False
+        assert res.status == "REFUSAL_BACKEND_UNAVAILABLE"
+        assert res.backend_used == "none"
+        assert "allow_fallback=True" in res.remedy_if_failed
+
+
+def test_forecast_spatial_niche_fallback_honesty(synthetic_sc_adata, synthetic_spatial_adata):
+    """Verify NicheFormer fallback accurately attributes Grade C spatial clustering."""
     ad_sp, res = forecast_spatial_niche(
         adata_cells=synthetic_sc_adata,
         adata_spatial=synthetic_spatial_adata,
         config=NicheFormerConfig(n_niche_classes=4),
+        allow_fallback=True,
     )
 
     assert res.success is True
-    assert res.status == "COMPLETED"
+    assert res.status == "COMPLETED_WITH_HEURISTIC_FALLBACK"
+    assert res.backend_used == "heuristic-spatial-niche-clustering (Grade C Experimental)"
     assert res.n_spots == 60
     assert res.n_niche_types == 4
     assert len(res.niche_names) == 4
@@ -148,6 +199,7 @@ def test_closed_loop_pipeline_end_to_end(synthetic_sc_adata, synthetic_spatial_a
         adata_spatial=synthetic_spatial_adata,
         target_genes=["TP53", "CDKN1A"],
         mode="knockout",
+        allow_fallback=True,
     )
 
     assert res.success is True
@@ -166,12 +218,13 @@ def test_closed_loop_pipeline_end_to_end(synthetic_sc_adata, synthetic_spatial_a
 
 
 def test_closed_loop_capabilities_and_abi():
-    """Verify capabilities are registered and project cleanly to ABI without drift."""
-    assert "perturbation.gears_prediction" in CANONICAL_CAPABILITIES
-    assert "spatial.nicheformer_forecasting" in CANONICAL_CAPABILITIES
-    assert "closed_loop.perturbation_to_niche" in CANONICAL_CAPABILITIES
+    """Verify capabilities are registered in Frontier track and project cleanly to ABI without drift."""
+    assert "perturbation.gears_prediction" in FRONTIER_CAPABILITIES
+    assert "spatial.nicheformer_forecasting" in FRONTIER_CAPABILITIES
+    assert "closed_loop.perturbation_to_niche" in FRONTIER_CAPABILITIES
+    assert "perturbation.gears_prediction" in ALL_CAPABILITIES
 
-    abis = capability_abis()
+    abis = capability_abis(include_frontier=True)
     assert "perturbation.gears_prediction" in abis
     assert "spatial.nicheformer_forecasting" in abis
     assert "closed_loop.perturbation_to_niche" in abis
@@ -194,3 +247,4 @@ def test_closed_loop_intent_routing():
     res3 = route_scientific_intent("evaluate closed-loop perturbation to spatial niche remodeling using GEARS and NicheFormer")
     assert res3.matched_capability is not None
     assert res3.matched_capability.id == "closed_loop.perturbation_to_niche"
+
