@@ -278,6 +278,9 @@ Examples:
     parser.add_argument("--google-region", default="us-central1", help="Google Cloud region")
     parser.add_argument("--work-bucket", help="Cloud object storage work directory (s3://... or gs://...)")
 
+    parser.add_argument("--wrapper-script", help="Optional path to write a corresponding HPC batch submission wrapper (e.g. submit.sh)")
+    parser.add_argument("--pipeline-command", default="nextflow run nf-core/rnaseq", help="Pipeline execution command for the wrapper script")
+
     args = parser.parse_args()
 
     if args.executor == "awsbatch":
@@ -313,6 +316,32 @@ Examples:
     print(
         f"  Container Engine: {args.container if args.executor not in ('awsbatch', 'googlebatch') else 'Cloud Native'}"
     )
+
+    if args.wrapper_script:
+        try:
+            import sys
+            from pathlib import Path
+            src = Path(__file__).resolve().parents[3] / "src"
+            if src.is_dir() and str(src) not in sys.path:
+                sys.path.insert(0, str(src))
+            from bionexus.cluster import JobResourceConfig, generate_job_script
+
+            full_cmd = f"{args.pipeline_command} -c {args.output} -profile {args.container}"
+            res = JobResourceConfig(
+                job_name="nextflow_head_job",
+                cpus=2,
+                memory="8GB",
+                time_limit="72:00:00",
+                partition=args.partition,
+                account=args.account,
+                qos=args.qos,
+            )
+            w_text = generate_job_script(scheduler=args.executor, command=full_cmd, resources=res)
+            Path(args.wrapper_script).write_text(w_text, encoding="utf-8")
+            print(f"Generated HPC wrapper script: {args.wrapper_script}")
+        except Exception as e:
+            print(f"Notice: could not generate wrapper script: {e}")
+
     print(f"To run your pipeline: nextflow run nf-core/rnaseq -c {args.output} -profile {args.container} ...")
 
 

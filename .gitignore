@@ -77,3 +77,19 @@ model/
 # Nextflow work directory
 work/
 .nextflow*
+
+# Temporary test outputs
+.pytest_temp/
+
+# Submission and manuscript materials (DO NOT COMMIT)
+figures/
+*投稿*
+*manuscript*
+*paper*
+*submission*
+*thesis*
+*cover_letter*
+*response_to_reviewers*
+*.docx
+*.pptx
+*.pdf

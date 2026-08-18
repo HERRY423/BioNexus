@@ -134,21 +134,52 @@ def deconvolve_spatial_spots(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Spot-Level Cell Type Deconvolution")
+    parser = argparse.ArgumentParser(description="Spot-Level Cell Type Deconvolution (Tangram & NNLS)")
     parser.add_argument("--spatial-input", "-s", required=True, help="Spatial AnnData .h5ad file")
     parser.add_argument("--sc-reference", "-r", required=True, help="Single-cell reference AnnData .h5ad file")
     parser.add_argument("--output", "-o", required=True, help="Output deconvolved spatial .h5ad file")
     parser.add_argument("--cell-type-col", default="cell_type", help="Column name in reference obs for cell types")
-    parser.add_argument("--min-prop", type=float, default=0.02, help="Minimum proportion threshold")
+    parser.add_argument("--method", choices=["tangram", "nnls"], default="tangram", help="Deconvolution method (default: tangram)")
+    parser.add_argument("--device", default="auto", choices=["auto", "cuda", "cpu"], help="Compute device for Tangram")
+    parser.add_argument("--epochs", type=int, default=500, help="Number of training epochs for Tangram")
+    parser.add_argument("--min-prop", type=float, default=0.02, help="Minimum proportion threshold for NNLS")
 
     args = parser.parse_args()
+    import sys
+    from pathlib import Path
+    src = Path(__file__).resolve().parents[3] / "src"
+    if src.is_dir() and str(src) not in sys.path:
+        sys.path.insert(0, str(src))
+
     import scanpy as sc
 
     spatial_adata = sc.read_h5ad(args.spatial_input)
     sc_adata = sc.read_h5ad(args.sc_reference)
 
-    sig_df, markers = build_reference_signature(sc_adata, cell_type_col=args.cell_type_col)
-    deconvolve_spatial_spots(spatial_adata, sig_df, marker_genes=markers, min_prop_threshold=args.min_prop)
+    if args.method == "tangram":
+        try:
+            from bionexus.tangram import TangramConfig, run_tangram_spatial_mapping
+            cfg = TangramConfig(device=args.device, num_epochs=args.epochs)
+            res = run_tangram_spatial_mapping(
+                adata_sc=sc_adata,
+                adata_sp=spatial_adata,
+                cell_type_col=args.cell_type_col,
+                config=cfg,
+                allow_fallback=True,
+            )
+            if not res.success:
+                logger.error(f"Tangram deconvolution failed: {res.status} - {res.remedy_if_failed}")
+                sys.exit(1)
+            logger.info(f"Tangram deconvolution completed using backend: {res.backend_used}")
+            for note in res.execution_notes:
+                logger.info(f"  Note: {note}")
+        except Exception as e:
+            logger.warning(f"Error running bionexus.tangram ({e}); falling back to standard NNLS.")
+            sig_df, markers = build_reference_signature(sc_adata, cell_type_col=args.cell_type_col)
+            deconvolve_spatial_spots(spatial_adata, sig_df, marker_genes=markers, min_prop_threshold=args.min_prop)
+    else:
+        sig_df, markers = build_reference_signature(sc_adata, cell_type_col=args.cell_type_col)
+        deconvolve_spatial_spots(spatial_adata, sig_df, marker_genes=markers, min_prop_threshold=args.min_prop)
 
     os.makedirs(os.path.dirname(os.path.abspath(args.output)) or ".", exist_ok=True)
     spatial_adata.write_h5ad(args.output)

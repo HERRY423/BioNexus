@@ -39,6 +39,8 @@ class SemanticInputType(str, Enum):
     INSTRUMENT_TABLE = "instrument_table"  # Raw analytical instrument output (plate reader, chromatography)
     PROTEIN_SEQUENCE = "protein_sequence"  # Amino acid sequence string / FASTA
     PDB_STRUCTURE = "pdb_structure"  # 3D atomic coordinates (PDB/mmCIF)
+    COMPUTE_SPECIFICATION = "compute_specification"  # HPC / Cloud batch resource descriptor
+    BIGDATA_STORE = "bigdata_store"  # H5AD, AnnData Zarr, or TileDB-SOMA store
 
 
 @dataclass
@@ -1127,6 +1129,596 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             "cell_type_identity_without_reference",
         ],
         evidence_ceiling_without_external_validation="FRAGILE",
+    ),
+    # 11. HPC & Cloud-Native Batch Job Generation, Dispatch & Lifecycle Management
+    "cluster.hpc_dispatch": CapabilityContract(
+        id="cluster.hpc_dispatch",
+        version=1,
+        display_name="HPC & Cloud-Native Batch Job Generation, Dispatch & Lifecycle Management",
+        skill_name="nextflow-development",
+        summary="Generate native batch scripts (Slurm/PBS/LSF/Kubernetes/AWS/GCP), submit jobs, track queue status, and perform OOM/timeout post-mortem diagnosis.",
+        intent=[
+            "cluster_dispatch",
+            "hpc_submit",
+            "slurm_job",
+            "batch_job",
+            "cloud_compute",
+            "job_diagnostics",
+            "kubernetes_job",
+        ],
+        inputs={
+            "command": InputSpecification(
+                name="command",
+                semantic_type=SemanticInputType.COMPUTE_SPECIFICATION.value,
+                required=True,
+                description="Bioinformatics command line string or list of execution commands.",
+            ),
+        },
+        preconditions=[
+            Precondition(
+                id="positive_cpus_and_memory",
+                rule="cpus > 0 and memory_specified == True",
+                description="HPC batch jobs must declare valid positive CPU and memory allocation limits.",
+                fatal_if_violated=True,
+            ),
+        ],
+        backend=BackendRequirement(
+            canonical_name="bionexus-cluster",
+            import_name="bionexus.cluster",
+            minimum_version="0.9.0",
+            description="BioNexus unified HPC and cloud batch dispatcher",
+        ),
+        refusal_conditions=[
+            RefusalTrigger(
+                condition_id="unsupported_scheduler",
+                description="Target scheduler is not recognized or supported by BioNexus.",
+                remedy="Select a supported scheduler: slurm, pbs, lsf, sge, kubernetes, aws_batch, or gcp_batch.",
+                violated_rule="Scheduler compatibility rule",
+            ),
+        ],
+        outputs=[
+            "job_script (bash/YAML/JSON)",
+            "job_id",
+            "job_submission_result (JSON)",
+            "job_diagnostic_report (Markdown/JSON)",
+        ],
+        evidence_requirements=EvidenceRequirement(
+            multiple_testing="not_applicable",
+            effect_size="not_applicable",
+            mandatory_limitations=[
+                "Generates and dispatches batch job manifests; execution outcome depends on remote cluster infrastructure health.",
+            ],
+        ),
+        forbidden_claims=[
+            "pipeline_results_without_execution",
+            "regulatory_compliance",
+        ],
+        evidence_ceiling_without_external_validation="SUPPORTED",
+    ),
+    # 12. Large-Scale Biological Matrix Memory Estimation & Out-of-Core Streaming Audit
+    "bigdata.out_of_core_audit": CapabilityContract(
+        id="bigdata.out_of_core_audit",
+        version=1,
+        display_name="Large-Scale Biological Matrix Memory Estimation & Out-of-Core Streaming Audit",
+        skill_name="single-cell-rna-qc",
+        summary="Audit storage format, estimate RAM requirements for multi-million cell datasets, prevent OOM crashes, and generate out-of-core streaming execution plans.",
+        intent=[
+            "bigdata_audit",
+            "memory_estimation",
+            "out_of_core",
+            "zarr_streaming",
+            "oom_prevention",
+            "large_matrix_plan",
+        ],
+        inputs={
+            "matrix_dimensions": InputSpecification(
+                name="matrix_dimensions",
+                semantic_type=SemanticInputType.BIGDATA_STORE.value,
+                required=True,
+                description="Dataset dimensions (n_cells, n_genes) or file path to H5AD/Zarr store.",
+            ),
+        },
+        preconditions=[
+            Precondition(
+                id="valid_positive_dimensions",
+                rule="n_cells > 0 and n_genes > 0",
+                description="Dataset matrix dimensions must be non-zero positive integers.",
+                fatal_if_violated=True,
+            ),
+        ],
+        backend=BackendRequirement(
+            canonical_name="bionexus-bigdata",
+            import_name="bionexus.bigdata",
+            minimum_version="0.9.0",
+            description="BioNexus large-scale matrix memory and streaming estimator",
+        ),
+        refusal_conditions=[
+            RefusalTrigger(
+                condition_id="critical_oom_in_memory",
+                description="Attempting to perform in-memory dense matrix operations that exceed 200% of host RAM.",
+                remedy="Must switch to AnnData backed mode (backed='r'), convert to chunked Zarr, or dispatch to HPC cluster with higher RAM.",
+                violated_rule="Host memory safety invariant",
+            ),
+        ],
+        outputs=[
+            "memory_estimation_report (JSON)",
+            "streaming_execution_plan (Markdown)",
+            "storage_audit_report (JSON)",
+        ],
+        evidence_requirements=EvidenceRequirement(
+            multiple_testing="not_applicable",
+            effect_size="not_applicable",
+            mandatory_limitations=[
+                "Calculates theoretical and empirical working memory bounds based on sparse/dense representations.",
+            ],
+        ),
+        forbidden_claims=[
+            "regulatory_compliance",
+        ],
+        evidence_ceiling_without_external_validation="SUPPORTED",
+    ),
+    # 13. Spatial Transcriptomics Tangram Single-Cell to Spatial Deconvolution
+    "spatial.tangram_deconvolution": CapabilityContract(
+        id="spatial.tangram_deconvolution",
+        version=1,
+        display_name="Spatial Transcriptomics Tangram Single-Cell to Spatial Deconvolution",
+        skill_name="spatial-transcriptomics",
+        summary="Optimal transport & deep learning mapping of single-cell reference transcriptomes to spatial coordinates with spot deconvolution.",
+        intent=[
+            "tangram_mapping",
+            "spatial_deconvolution",
+            "spot_deconvolution",
+            "cell_to_space",
+            "visium_deconvolution",
+        ],
+        inputs={
+            "sc_reference": InputSpecification(
+                name="sc_reference",
+                semantic_type=SemanticInputType.RAW_COUNTS.value,
+                required=True,
+                description="Annotated single-cell RNA-seq reference AnnData.",
+            ),
+            "spatial_target": InputSpecification(
+                name="spatial_target",
+                semantic_type=SemanticInputType.SPATIAL_COORDINATES.value,
+                required=True,
+                description="Spatial transcriptomics AnnData containing obsm['spatial'].",
+                validation_rule="audit_spatial_coordinates",
+            ),
+        },
+        preconditions=[
+            Precondition(
+                id="spatial_coords_present",
+                rule="'spatial' in spatial_adata.obsm and shape[1] in (2, 3)",
+                description="Spatial coordinates must be present in target obsm['spatial'].",
+                fatal_if_violated=True,
+            ),
+            Precondition(
+                id="reference_cell_types_present",
+                rule="cell_type_col in sc_adata.obs",
+                description="Single-cell reference must contain cell type annotations in obs.",
+                fatal_if_violated=True,
+            ),
+            Precondition(
+                id="shared_genes_sufficient",
+                rule="len(shared_marker_genes) >= 10",
+                description="At least 10 marker genes must overlap between single-cell reference and spatial target.",
+                fatal_if_violated=True,
+            ),
+        ],
+        backend=BackendRequirement(
+            canonical_name="tangram-sc",
+            import_name="tangram",
+            minimum_version="1.0.4",
+            extra="spatial",
+            description="Tangram optimal transport spatial mapping library",
+        ),
+        refusal_conditions=[
+            RefusalTrigger(
+                condition_id="missing_coordinates",
+                description="Spatial target contains no 2D/3D coordinate arrays.",
+                remedy="Ensure spatial AnnData contains valid 2D coordinates in obsm['spatial'].",
+                violated_rule="Spatial geometry requirement",
+            ),
+            RefusalTrigger(
+                condition_id="unannotated_reference",
+                description="Single-cell reference lacks cell type annotations.",
+                remedy="Provide single-cell AnnData with labeled cell types in obs (e.g. obs['cell_type']).",
+                violated_rule="Reference annotation requirement",
+            ),
+            RefusalTrigger(
+                condition_id="insufficient_shared_genes",
+                description="Fewer than 10 marker genes overlap between scRNA and spatial target.",
+                remedy="Harmonize gene symbol / Ensembl ID nomenclature between single-cell and spatial datasets.",
+                violated_rule="Feature overlap requirement",
+            ),
+        ],
+        outputs=[
+            "tangram_cell_proportions (adata_sp.obsm['tangram_ct_pred'])",
+            "dominant_cell_types (adata_sp.obs['dominant_cell_type'])",
+            "cell_to_spot_mapping_matrix (.h5ad)",
+            "deconvolution_summary (CSV)",
+            "evidence_card (JSON/Markdown)",
+        ],
+        evidence_requirements=EvidenceRequirement(
+            multiple_testing="not_applicable",
+            effect_size="not_applicable",
+            mandatory_limitations=[
+                "Predicted spot proportions represent probabilistic optimal transport weights, not physical microscopic counting.",
+                "Research Use Only. Not for clinical diagnosis.",
+            ],
+        ),
+        forbidden_claims=[
+            "clinical_diagnosis",
+            "causal_interaction",
+            "cell_type_identity_without_reference",
+        ],
+        evidence_ceiling_without_external_validation="SUPPORTED",
+    ),
+    # 14. Single-Cell Foundation Model Geneformer Inference & Perturbation
+    "scfm.geneformer_inference": CapabilityContract(
+        id="scfm.geneformer_inference",
+        version=1,
+        display_name="Single-Cell Geneformer Foundation Model Embedding & In Silico Perturbation",
+        skill_name="single-cell-rna-qc",
+        summary="Extract zero-shot cell embeddings via rank-value encoding Transformer and simulate in silico gene knockout or overexpression.",
+        intent=[
+            "geneformer_embedding",
+            "geneformer_perturbation",
+            "in_silico_knockout",
+            "rank_value_encoding",
+            "foundation_model_embedding",
+        ],
+        inputs={
+            "expression": InputSpecification(
+                name="expression",
+                semantic_type=SemanticInputType.RAW_COUNTS.value,
+                required=True,
+                description="Single-cell expression matrix (.h5ad / counts).",
+            ),
+        },
+        preconditions=[
+            Precondition(
+                id="non_empty_matrix",
+                rule="n_cells > 0 and n_genes > 0",
+                description="Input single-cell dataset must not be empty.",
+                fatal_if_violated=True,
+            ),
+            Precondition(
+                id="non_zero_counts_present",
+                rule="sum(counts) > 0",
+                description="Matrix must contain non-zero counts for rank encoding.",
+                fatal_if_violated=True,
+            ),
+        ],
+        backend=BackendRequirement(
+            canonical_name="geneformer",
+            import_name="transformers",
+            minimum_version="4.30.0",
+            extra="scverse",
+            description="Geneformer rank-value Transformer architecture",
+        ),
+        refusal_conditions=[
+            RefusalTrigger(
+                condition_id="empty_matrix",
+                description="Dataset contains 0 cells or 0 genes.",
+                remedy="Provide valid single-cell AnnData count matrix.",
+                violated_rule="Matrix non-emptiness rule",
+            ),
+            RefusalTrigger(
+                condition_id="all_zero_counts",
+                description="Expression matrix contains exclusively zeros.",
+                remedy="Provide filtered count matrix with expressed genes.",
+                violated_rule="Rank encoding viability rule",
+            ),
+        ],
+        outputs=[
+            "cell_embeddings (adata.obsm['X_geneformer'])",
+            "perturbation_report (JSON/CSV)",
+            "evidence_card (JSON/Markdown)",
+        ],
+        evidence_requirements=EvidenceRequirement(
+            multiple_testing="not_applicable",
+            effect_size="not_applicable",
+            mandatory_limitations=[
+                "Zero-shot embeddings and in silico perturbation shifts are computational hypotheses.",
+                "Research Use Only. Not for clinical diagnosis.",
+            ],
+        ),
+        forbidden_claims=[
+            "clinical_diagnosis",
+            "causal_interaction",
+            "cell_type_identity_without_reference",
+        ],
+        evidence_ceiling_without_external_validation="PRELIMINARY",
+    ),
+    # 15. Single-Cell Foundation Model scGPT Inference
+    "scfm.scgpt_inference": CapabilityContract(
+        id="scfm.scgpt_inference",
+        version=1,
+        display_name="Single-Cell scGPT Generative Pretrained Transformer Embedding",
+        skill_name="single-cell-rna-qc",
+        summary="Discretized expression binning and Transformer cell representation extraction with scGPT.",
+        intent=[
+            "scgpt_embedding",
+            "scgpt_inference",
+            "scgpt_representation",
+            "generative_single_cell_model",
+        ],
+        inputs={
+            "expression": InputSpecification(
+                name="expression",
+                semantic_type=SemanticInputType.RAW_COUNTS.value,
+                required=True,
+                description="Single-cell expression matrix (.h5ad / counts).",
+            ),
+        },
+        preconditions=[
+            Precondition(
+                id="non_empty_matrix",
+                rule="n_cells > 0 and n_genes > 0",
+                description="Input single-cell dataset must not be empty.",
+                fatal_if_violated=True,
+            ),
+        ],
+        backend=BackendRequirement(
+            canonical_name="scgpt",
+            import_name="transformers",
+            minimum_version="4.30.0",
+            extra="scverse",
+            description="scGPT generative pretrained single-cell Transformer",
+        ),
+        refusal_conditions=[
+            RefusalTrigger(
+                condition_id="empty_matrix",
+                description="Dataset contains 0 cells or 0 genes.",
+                remedy="Provide valid single-cell AnnData count matrix.",
+                violated_rule="Matrix non-emptiness rule",
+            ),
+        ],
+        outputs=[
+            "cell_embeddings (adata.obsm['X_scgpt'])",
+            "evidence_card (JSON/Markdown)",
+        ],
+        evidence_requirements=EvidenceRequirement(
+            multiple_testing="not_applicable",
+            effect_size="not_applicable",
+            mandatory_limitations=[
+                "scGPT representations are high-dimensional latent embeddings.",
+                "Research Use Only. Not for clinical diagnosis.",
+            ],
+        ),
+        forbidden_claims=[
+            "clinical_diagnosis",
+            "causal_interaction",
+            "cell_type_identity_without_reference",
+        ],
+        evidence_ceiling_without_external_validation="PRELIMINARY",
+    ),
+    # 16. GEARS Combinatorial Genetic Perturbation Prediction
+    "perturbation.gears_prediction": CapabilityContract(
+        id="perturbation.gears_prediction",
+        version=1,
+        display_name="GEARS Graph-Enhanced Single-Cell Genetic Perturbation Modeling",
+        skill_name="single-cell-rna-qc",
+        summary="Predict post-perturbation transcriptomic states and downstream gene shifts under genetic knockouts or overexpressions using GNNs.",
+        intent=[
+            "gears_perturbation",
+            "genetic_perturbation_prediction",
+            "combinatorial_knockout",
+            "in_silico_crispr",
+        ],
+        inputs={
+            "expression": InputSpecification(
+                name="expression",
+                semantic_type=SemanticInputType.RAW_COUNTS.value,
+                required=True,
+                description="Baseline single-cell expression matrix (.h5ad / counts).",
+            ),
+        },
+        preconditions=[
+            Precondition(
+                id="non_empty_matrix",
+                rule="n_cells > 0 and n_genes > 0",
+                description="Input single-cell dataset must not be empty.",
+                fatal_if_violated=True,
+            ),
+        ],
+        backend=BackendRequirement(
+            canonical_name="gears",
+            import_name="torch",
+            minimum_version="2.0.0",
+            extra="scverse",
+            description="GEARS Graph-Enhanced Perturbation Prediction GNN",
+        ),
+        refusal_conditions=[
+            RefusalTrigger(
+                condition_id="empty_matrix",
+                description="Dataset contains 0 cells or 0 genes.",
+                remedy="Provide valid single-cell AnnData count matrix.",
+                violated_rule="Matrix non-emptiness rule",
+            ),
+            RefusalTrigger(
+                condition_id="missing_target_genes",
+                description="Target perturbation genes are not present in dataset.",
+                remedy="Check gene symbol spelling or provide full transcriptome matrix.",
+                violated_rule="Target gene presence rule",
+            ),
+        ],
+        outputs=[
+            "predicted_perturbed_matrix (adata_perturbed.X)",
+            "top_upregulated_genes (List[str])",
+            "top_downregulated_genes (List[str])",
+            "evidence_card (JSON/Markdown)",
+        ],
+        evidence_requirements=EvidenceRequirement(
+            multiple_testing="not_applicable",
+            effect_size="not_applicable",
+            mandatory_limitations=[
+                "GEARS in silico perturbation shifts are computational predictions.",
+                "Experimental validation via CRISPR knockout or qPCR is mandatory.",
+                "Research Use Only. Not for clinical diagnosis.",
+            ],
+        ),
+        forbidden_claims=[
+            "clinical_diagnosis",
+            "causal_interaction",
+            "cell_type_identity_without_reference",
+        ],
+        evidence_ceiling_without_external_validation="PRELIMINARY",
+    ),
+    # 17. NicheFormer Spatial Niche Forecasting
+    "spatial.nicheformer_forecasting": CapabilityContract(
+        id="spatial.nicheformer_forecasting",
+        version=1,
+        display_name="NicheFormer Spatial Microenvironment & Niche Forecasting",
+        skill_name="spatial-transcriptomics",
+        summary="Forecast spatial niche composition, microenvironment boundaries, and cellular neighborhood shifts using foundation models.",
+        intent=[
+            "nicheformer_forecasting",
+            "spatial_niche_prediction",
+            "microenvironment_forecasting",
+            "spatial_niche_remodeling",
+        ],
+        inputs={
+            "expression": InputSpecification(
+                name="expression",
+                semantic_type=SemanticInputType.RAW_COUNTS.value,
+                required=True,
+                description="Single-cell or spot expression matrix (.h5ad).",
+            ),
+            "spatial_coordinates": InputSpecification(
+                name="spatial_coordinates",
+                semantic_type=SemanticInputType.SPATIAL_COORDINATES.value,
+                required=True,
+                description="Spatial coordinates in adata.obsm['spatial'].",
+            ),
+        },
+        preconditions=[
+            Precondition(
+                id="spatial_coordinates_present",
+                rule="'spatial' in adata.obsm",
+                description="Spatial reference must contain 2D coordinates.",
+                fatal_if_violated=True,
+            ),
+        ],
+        backend=BackendRequirement(
+            canonical_name="nicheformer",
+            import_name="transformers",
+            minimum_version="4.30.0",
+            extra="scverse",
+            description="NicheFormer Spatial Microenvironment Foundation Model",
+        ),
+        refusal_conditions=[
+            RefusalTrigger(
+                condition_id="missing_coordinates",
+                description="Dataset lacks 2D coordinates in obsm['spatial'].",
+                remedy="Provide spatial AnnData with valid obsm['spatial'] matrix.",
+                violated_rule="Spatial geometry requirement",
+            ),
+        ],
+        outputs=[
+            "niche_proportions (adata_spatial.obsm['nicheformer_niche_pred'])",
+            "dominant_niche (adata_spatial.obs['dominant_niche'])",
+            "evidence_card (JSON/Markdown)",
+        ],
+        evidence_requirements=EvidenceRequirement(
+            multiple_testing="not_applicable",
+            effect_size="not_applicable",
+            mandatory_limitations=[
+                "NicheFormer spatial compositions are in silico exploratory forecasts.",
+                "Research Use Only. Not for clinical diagnosis.",
+            ],
+        ),
+        forbidden_claims=[
+            "clinical_diagnosis",
+            "causal_interaction",
+            "cell_type_identity_without_reference",
+        ],
+        evidence_ceiling_without_external_validation="PRELIMINARY",
+    ),
+    # 18. Dry-Wet Closed Loop Perturbation to Spatial Niche
+    "closed_loop.perturbation_to_niche": CapabilityContract(
+        id="closed_loop.perturbation_to_niche",
+        version=1,
+        display_name="Dry-Wet Closed Loop: Perturbation -> Spatial Niche Remodeling",
+        skill_name="spatial-transcriptomics",
+        summary="Chains GEARS genetic perturbation with NicheFormer spatial microenvironment forecasting into an actionable wet-lab validation card.",
+        intent=[
+            "dry_wet_closed_loop",
+            "perturbation_to_spatial_niche",
+            "niche_remodeling_closed_loop",
+            "wet_lab_validation_handoff",
+        ],
+        inputs={
+            "expression": InputSpecification(
+                name="expression",
+                semantic_type=SemanticInputType.RAW_COUNTS.value,
+                required=True,
+                description="Baseline single-cell expression matrix (.h5ad).",
+            ),
+            "spatial_coordinates": InputSpecification(
+                name="spatial_coordinates",
+                semantic_type=SemanticInputType.SPATIAL_COORDINATES.value,
+                required=True,
+                description="Spatial reference coordinates in adata_spatial.obsm['spatial'].",
+            ),
+        },
+        preconditions=[
+            Precondition(
+                id="non_empty_matrix",
+                rule="n_cells > 0 and n_genes > 0",
+                description="Input single-cell dataset must not be empty.",
+                fatal_if_violated=True,
+            ),
+            Precondition(
+                id="spatial_coordinates_present",
+                rule="'spatial' in adata_spatial.obsm",
+                description="Spatial reference must contain 2D coordinates.",
+                fatal_if_violated=True,
+            ),
+        ],
+        backend=BackendRequirement(
+            canonical_name="bionexus-closed-loop",
+            import_name="torch",
+            minimum_version="2.0.0",
+            extra="scverse",
+            description="BioNexus GEARS + NicheFormer Closed-Loop Integration Pipeline",
+        ),
+        refusal_conditions=[
+            RefusalTrigger(
+                condition_id="empty_matrix",
+                description="Dataset contains 0 cells or 0 genes.",
+                remedy="Provide valid single-cell AnnData count matrix.",
+                violated_rule="Matrix non-emptiness rule",
+            ),
+            RefusalTrigger(
+                condition_id="missing_coordinates",
+                description="Spatial reference lacks 2D coordinates.",
+                remedy="Provide spatial AnnData with valid obsm['spatial'] matrix.",
+                violated_rule="Spatial geometry requirement",
+            ),
+        ],
+        outputs=[
+            "remodeling_scores (Dict[str, float])",
+            "wet_lab_hypothesis_card (JSON/Markdown)",
+            "evidence_card (JSON/Markdown)",
+        ],
+        evidence_requirements=EvidenceRequirement(
+            multiple_testing="not_applicable",
+            effect_size="not_applicable",
+            mandatory_limitations=[
+                "Closed-loop perturbation-to-niche forecasts are computational hypotheses.",
+                "Wet-lab validation is required prior to translational claims.",
+                "Research Use Only. Not for clinical diagnosis.",
+            ],
+        ),
+        forbidden_claims=[
+            "clinical_diagnosis",
+            "causal_interaction",
+            "cell_type_identity_without_reference",
+        ],
+        evidence_ceiling_without_external_validation="PRELIMINARY",
     ),
 }
 

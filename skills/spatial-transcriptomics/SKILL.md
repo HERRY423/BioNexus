@@ -22,8 +22,7 @@ Accepts SpatialData `.zarr` (requires `spatialdata`) or `.h5ad` with `obsm['spat
 |---|---|---|
 | inspect | `spatial_inspect.py` | AnnData / SpatialData I/O |
 | pipeline | `spatial_pipeline.py` | `spatial_neighbors_knn` + Moran |
+| deconvolve | `spatial_deconvolution.py` | Tangram optimal transport (`tangram-sc` / PyTorch) |
 | plot | `spatial_plot.py` | `squidpy.pl.spatial_scatter` → `spatial_{color}.png` |
 
-**Refuses** if squidpy is missing. No silent local-Moran substitute on this path.
-
-Legacy grade-C scripts stay in-tree. They are not Cell2location / BayesSpace / COMMOT.
+**Refuses** if squidpy is missing for Moran's I. For deconvolution, Tangram deep learning is used with transparent NNLS fallback.

@@ -182,8 +182,7 @@ _INTENT_PATTERNS: List[Tuple[List[str], str]] = [
             r"acmg.*(?:classification|criteria|tiering)",
             r"variant.*(?:pathogenicity|interpretation|brca|tp53|c\.)",
             r"patient variant",
-            r"brca\d+",
-            r"tp53",
+            r"(?:brca\d+|tp53).*(?:variant|mutation|pathogenicity|c\.|p\.|acmg)",
             r"pathogenicity.*scoring",
             r"pathology report.*variant",
         ],
@@ -212,6 +211,89 @@ _INTENT_PATTERNS: List[Tuple[List[str], str]] = [
             r"spatial.*(?:finding|conclusion).*(?:control|confound)",
         ],
         "spatial.inference_validity",
+    ),
+    # 11. HPC & Cloud Batch cluster dispatch
+    (
+        [
+            r"slurm.*(?:job|script|sbatch|submit|queue|cluster|partition)",
+            r"pbs.*(?:job|script|qsub)",
+            r"lsf.*(?:job|script|bsub)",
+            r"kubernetes.*(?:batch|job|manifest|k8s)",
+            r"aws batch.*(?:job|submit)",
+            r"gcp batch.*(?:job|submit)",
+            r"hpc.*(?:cluster|submit|dispatch|job|diagnostic)",
+            r"cluster.*(?:submit|dispatch|probe|sbatch)",
+            r"diagnose.*(?:oom|exit code|job failure|137)",
+        ],
+        "cluster.hpc_dispatch",
+    ),
+    # 12. Large-scale matrix memory estimation & out-of-core audit
+    (
+        [
+            r"memory.*(?:estimate|estimation|requirement|overhead|capacity)",
+            r"out[- ]of[- ]core.*(?:streaming|matrix|scanpy|zarr|analysis)",
+            r"zarr.*(?:storage|streaming|chunk|audit)",
+            r"large.*(?:dataset|matrix|scale|million cells)",
+            r"oom.*(?:prevention|protection|guard)",
+            r"how much ram.*(?:cells|genes|matrix)",
+        ],
+        "bigdata.out_of_core_audit",
+    ),
+    # 13. Tangram spatial deconvolution and cell-to-space mapping
+    (
+        [
+            r"tangram.*(?:mapping|deconvolution|spatial|cell to space|project)",
+            r"(?:spatial|spot).*(?:deconvolution|deconvolve|cell type proportion)",
+            r"cell.*(?:to.*space|projection.*spatial|map.*spatial)",
+            r"visium.*(?:deconvolution|cell type.*predict|spot composition)",
+        ],
+        "spatial.tangram_deconvolution",
+    ),
+    # 14. Geneformer foundation model embeddings & perturbation
+    (
+        [
+            r"\bgeneformer\b",
+            r"in silico.*(?:knockout|deletion|perturbation|overexpression)",
+            r"rank[- ]value.*(?:encoding|tokenization|transformer)",
+            r"single[- ]cell foundation model.*(?:geneformer|embedding)",
+        ],
+        "scfm.geneformer_inference",
+    ),
+    # 15. scGPT foundation model embeddings
+    (
+        [
+            r"\bscgpt\b",
+            r"generative single[- ]cell.*(?:model|transformer|representation)",
+        ],
+        "scfm.scgpt_inference",
+    ),
+    # 16. Dry-wet closed loop perturbation to spatial niche
+    (
+        [
+            r"(?:dry[- ]wet|closed[- ]loop).*(?:perturbation|niche|spatial|gears|nicheformer)",
+            r"(?:perturbation|knockout).*(?:to.*spatial|spatial.*niche|microenvironment.*distribution)",
+            r"gears.*(?:and|with|to).*nicheformer",
+            r"nicheformer.*(?:and|with|to).*gears",
+        ],
+        "closed_loop.perturbation_to_niche",
+    ),
+    # 17. GEARS combinatorial genetic perturbation
+    (
+        [
+            r"\bgears\b",
+            r"combinatorial.*(?:knockout|perturbation|gene knockout)",
+            r"graph[- ]enhanced.*(?:perturbation|gene perturbation)",
+        ],
+        "perturbation.gears_prediction",
+    ),
+    # 18. NicheFormer spatial microenvironment forecasting
+    (
+        [
+            r"\bnicheformer\b",
+            r"spatial.*(?:niche.*forecast|niche.*prediction|microenvironment.*forecast)",
+            r"niche.*(?:remodeling|composition.*prediction|spatial distribution)",
+        ],
+        "spatial.nicheformer_forecasting",
     ),
 ]
 

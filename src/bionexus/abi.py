@@ -381,6 +381,92 @@ _ABI_ENRICHMENT: Dict[str, Dict[str, Any]] = {
         "validation": ValidationRequirements(multiple_testing="recommended", parameter_sensitivity="required", cross_method="recommended"),
         "evidence_ceiling_note": "Untested alternative explanations cap the conclusion at FRAGILE; orthogonal validation is required to assert beyond it.",
     },
+    "cluster.hpc_dispatch": {
+        "input_contract": InputContract(
+            matrix_state_allowed=[MatrixState.ANY.value],
+            required_inputs=["command"],
+            notes={"resources": "Must declare positive CPU and memory limits."},
+        ),
+        "execution": ExecutionReference(reference_backend="bionexus-cluster", reference_algorithm="cluster_job_orchestration", minimum_version="0.9.0"),
+        "validation": ValidationRequirements(multiple_testing="not_applicable", parameter_sensitivity="not_applicable", cross_method="not_applicable"),
+        "evidence_ceiling_note": "Generates job manifests and submits to remote queues; asserts no immediate analytical conclusion.",
+    },
+    "bigdata.out_of_core_audit": {
+        "input_contract": InputContract(
+            matrix_state_allowed=[MatrixState.ANY.value],
+            required_inputs=["matrix_dimensions"],
+            notes={"dimensions": "Requires positive non-zero cell and gene dimensions."},
+        ),
+        "execution": ExecutionReference(reference_backend="bionexus-bigdata", reference_algorithm="out_of_core_memory_planning", minimum_version="0.9.0"),
+        "validation": ValidationRequirements(multiple_testing="not_applicable", parameter_sensitivity="not_applicable", cross_method="not_applicable"),
+        "evidence_ceiling_note": "Calculates working memory bounds and streaming steps for huge datasets.",
+    },
+    "spatial.tangram_deconvolution": {
+        "input_contract": InputContract(
+            matrix_state_allowed=[MatrixState.RAW_COUNTS.value, MatrixState.NORMALIZED_EXPRESSION.value],
+            coordinates_required=True,
+            coordinate_type_allowed=["physical", "justified_spatial_embedding"],
+            required_inputs=["sc_reference", "spatial_target"],
+            notes={"coordinates": "Coordinates must reside in obsm['spatial']."},
+        ),
+        "execution": ExecutionReference(reference_backend="tangram-sc", reference_algorithm="tangram_optimal_transport", minimum_version="1.0.4"),
+        "validation": ValidationRequirements(multiple_testing="not_applicable", parameter_sensitivity="recommended", cross_method="recommended"),
+        "evidence_ceiling_note": "Probabilistic optimal transport mapping; requires reference atlas concordance for high confidence.",
+    },
+    "scfm.geneformer_inference": {
+        "input_contract": InputContract(
+            matrix_state_allowed=[MatrixState.RAW_COUNTS.value, MatrixState.NORMALIZED_EXPRESSION.value],
+            required_inputs=["expression"],
+            notes={"rank_encoding": "Expression counts are transformed into non-zero descending gene rank tokens."},
+        ),
+        "execution": ExecutionReference(reference_backend="geneformer", reference_algorithm="rank_value_transformer", minimum_version="4.30.0"),
+        "validation": ValidationRequirements(multiple_testing="not_applicable", parameter_sensitivity="recommended", cross_method="recommended"),
+        "evidence_ceiling_note": "Zero-shot foundation model embedding and in silico perturbation predictions are computational hypotheses.",
+    },
+    "scfm.scgpt_inference": {
+        "input_contract": InputContract(
+            matrix_state_allowed=[MatrixState.RAW_COUNTS.value, MatrixState.NORMALIZED_EXPRESSION.value],
+            required_inputs=["expression"],
+            notes={"binning": "Continuous expression values are discretized into normalized expression bins."},
+        ),
+        "execution": ExecutionReference(reference_backend="scgpt", reference_algorithm="generative_transformer", minimum_version="4.30.0"),
+        "validation": ValidationRequirements(multiple_testing="not_applicable", parameter_sensitivity="recommended", cross_method="recommended"),
+        "evidence_ceiling_note": "Generative single-cell transformer embeddings are exploratory computational representations.",
+    },
+    "perturbation.gears_prediction": {
+        "input_contract": InputContract(
+            matrix_state_allowed=[MatrixState.RAW_COUNTS.value, MatrixState.NORMALIZED_EXPRESSION.value],
+            required_inputs=["expression"],
+            notes={"perturbation_target": "Target genes must exist in baseline var_names."},
+        ),
+        "execution": ExecutionReference(reference_backend="gears", reference_algorithm="graph_enhanced_perturbation_gnn", minimum_version="2.0.0"),
+        "validation": ValidationRequirements(multiple_testing="not_applicable", parameter_sensitivity="recommended", cross_method="recommended"),
+        "evidence_ceiling_note": "In silico genetic perturbation predictions are computational hypotheses requiring experimental validation.",
+    },
+    "spatial.nicheformer_forecasting": {
+        "input_contract": InputContract(
+            matrix_state_allowed=[MatrixState.RAW_COUNTS.value, MatrixState.NORMALIZED_EXPRESSION.value],
+            coordinates_required=True,
+            coordinate_type_allowed=["physical", "justified_spatial_embedding"],
+            required_inputs=["expression", "spatial_coordinates"],
+            notes={"spatial": "Coordinates must reside in obsm['spatial']."},
+        ),
+        "execution": ExecutionReference(reference_backend="nicheformer", reference_algorithm="spatial_niche_transformer", minimum_version="4.30.0"),
+        "validation": ValidationRequirements(multiple_testing="not_applicable", parameter_sensitivity="recommended", cross_method="recommended"),
+        "evidence_ceiling_note": "Spatial niche forecasting outputs are exploratory microenvironment distributions.",
+    },
+    "closed_loop.perturbation_to_niche": {
+        "input_contract": InputContract(
+            matrix_state_allowed=[MatrixState.RAW_COUNTS.value, MatrixState.NORMALIZED_EXPRESSION.value],
+            coordinates_required=True,
+            coordinate_type_allowed=["physical", "justified_spatial_embedding"],
+            required_inputs=["expression", "spatial_coordinates"],
+            notes={"closed_loop": "Couples GEARS in silico perturbation with NicheFormer spatial niche remodeling."},
+        ),
+        "execution": ExecutionReference(reference_backend="bionexus-closed-loop", reference_algorithm="perturbation_spatial_niche_pipeline", minimum_version="2.0.0"),
+        "validation": ValidationRequirements(multiple_testing="not_applicable", parameter_sensitivity="recommended", cross_method="recommended"),
+        "evidence_ceiling_note": "End-to-end dry-wet closed loop results generate prioritized experimental hypotheses for laboratory validation.",
+    },
 }
 
 
