@@ -24,7 +24,12 @@ from bionexus.contracts import (
     DimensionGrade,
     EvidenceCard,
     ExecutionState,
+    _MATURITY_RANK,
+    cap_conclusion_by_purpose,
 )
+from bionexus.research_purpose import PurposeContext, ResearchPurpose
+from bionexus.researcher_override import OverrideRecord
+from bionexus.rule_provenance import RuleProvenance, default_provenance_for_condition_id
 
 
 class SemanticInputType(str, Enum):
@@ -62,6 +67,11 @@ class Precondition:
     rule: str
     description: str
     fatal_if_violated: bool = True
+    provenance: Optional[RuleProvenance] = None
+
+    def __post_init__(self) -> None:
+        if self.provenance is None:
+            self.provenance = default_provenance_for_condition_id(self.id)
 
 
 @dataclass
@@ -88,6 +98,11 @@ class RefusalTrigger:
     description: str
     remedy: str
     violated_rule: str
+    provenance: Optional[RuleProvenance] = None
+
+    def __post_init__(self) -> None:
+        if self.provenance is None:
+            self.provenance = default_provenance_for_condition_id(self.condition_id)
 
 
 @dataclass
@@ -322,13 +337,156 @@ class CapabilityContract:
             backend_available=backend_available,
         )
 
+    def evaluate_viability_with_purpose(
+        self,
+        *,
+        input_metadata: Optional[Dict[str, Any]] = None,
+        context: Optional[Dict[str, Any]] = None,
+        purpose_context: Optional[PurposeContext] = None,
+    ) -> CapabilityEvaluationResult:
+        """Purpose-aware evaluation: classifies refusals as hard BLOCK or soft PERMITTED_WITH_LIMITS.
+
+        Hard blocks (never overridable):
+        - Rules with provenance.hard_rule == True (clinical, identifier corruption, model substitution)
+        - Missing backend for canonical capabilities (no silent substitution)
+
+        Soft blocks (overridable with documentation):
+        - Methodological guidelines (replicate count, input distribution, etc.)
+        - Missing backend for frontier capabilities with explicit fallback consent
+
+        When a soft block is overridden, the result is PERMITTED_WITH_LIMITS with:
+        - residual_limitations: what constraints remain
+        - blocked_claims: what claims are still not warranted
+        - evidence_ceiling: the highest reachable ConclusionMaturity
+        """
+        pctx = purpose_context or PurposeContext()
+        base = self.evaluate_viability(input_metadata=input_metadata, context=context)
+
+        # If the base evaluation is permitted, just apply the evidence ceiling cap.
+        if base.permitted:
+            base.research_purpose = pctx.purpose.value
+            base.evidence_ceiling = pctx.evidence_ceiling.value
+            capped = cap_conclusion_by_purpose(base.conclusion_maturity, pctx.evidence_ceiling)
+            base.conclusion_maturity = capped
+            if base.evidence_card:
+                base.evidence_card.research_purpose = pctx.purpose.value
+                base.evidence_card.evidence_ceiling = pctx.evidence_ceiling.value
+            return base
+
+        # Classify each triggered refusal as hard or soft.
+        hard_violations: List[str] = []
+        soft_violations: List[str] = []
+        hard_triggers: List[RefusalTrigger] = []
+        soft_triggers: List[RefusalTrigger] = []
+
+        for trigger in base.refusal_triggers:
+            prov = trigger.provenance
+            if prov and prov.hard_rule:
+                hard_violations.append(trigger.description)
+                hard_triggers.append(trigger)
+            elif trigger.condition_id == "missing_backend":
+                # Backend missing is always hard for canonical, soft for frontier
+                from bionexus.capabilities import FRONTIER_CAPABILITIES
+                if self.id in FRONTIER_CAPABILITIES:
+                    soft_violations.append(trigger.description)
+                    soft_triggers.append(trigger)
+                else:
+                    hard_violations.append(trigger.description)
+                    hard_triggers.append(trigger)
+            else:
+                soft_violations.append(trigger.description)
+                soft_triggers.append(trigger)
+
+        # Hard violations always block regardless of purpose or override.
+        if hard_violations:
+            base.research_purpose = pctx.purpose.value
+            base.evidence_ceiling = pctx.evidence_ceiling.value
+            return base
+
+        # Only soft violations remain.  If override is active and permitted,
+        # convert to PERMITTED_WITH_LIMITS.
+        if pctx.override_active and soft_violations:
+            from bionexus.researcher_override import create_override_record
+            override_dicts = []
+            all_residual: List[str] = []
+            all_blocked: List[str] = []
+            min_ceiling = pctx.evidence_ceiling
+
+            for trigger in soft_triggers:
+                try:
+                    record = create_override_record(
+                        rule_id=trigger.condition_id,
+                        rule_description=trigger.description,
+                        justification=pctx.override_justification or "Researcher override invoked.",
+                        purpose=pctx.purpose,
+                        provenance=trigger.provenance,
+                    )
+                    override_dicts.append(record.to_dict())
+                    all_residual.extend(record.residual_limitations)
+                    all_blocked.extend(record.blocked_claims)
+                    if _MATURITY_RANK.get(record.evidence_ceiling_override, 0) < _MATURITY_RANK.get(min_ceiling, 0):
+                        min_ceiling = record.evidence_ceiling_override
+                except Exception:
+                    # Override denied for this rule; treat as hard block.
+                    hard_violations.append(trigger.description)
+
+            if hard_violations:
+                # Some overrides were denied; still blocked.
+                base.research_purpose = pctx.purpose.value
+                base.evidence_ceiling = pctx.evidence_ceiling.value
+                return base
+
+            # All overrides accepted: PERMITTED_WITH_LIMITS.
+            capped = cap_conclusion_by_purpose(
+                ConclusionMaturity.FRAGILE.value, min_ceiling
+            )
+            card = EvidenceCard(
+                execution_state=ExecutionState.PERMITTED_WITH_LIMITS.value,
+                input_integrity=base.evidence_card.input_integrity if base.evidence_card else DimensionGrade.GRADE_C.value,
+                assumption_validity=base.evidence_card.assumption_validity if base.evidence_card else DimensionGrade.GRADE_C.value,
+                statistical_support=base.evidence_card.statistical_support if base.evidence_card else DimensionGrade.UNTESTED.value,
+                details={
+                    "contract_id": self.id,
+                    "execution_backend": self.backend.canonical_name,
+                    "override_active": True,
+                    "override_justification": pctx.override_justification,
+                },
+                research_purpose=pctx.purpose.value,
+                evidence_ceiling=min_ceiling.value,
+                override_records=override_dicts,
+                residual_limitations=all_residual,
+                blocked_claims=list(set(all_blocked)),
+            )
+            return CapabilityEvaluationResult(
+                capability_id=self.id,
+                status="PERMITTED_WITH_LIMITS",
+                permitted=True,
+                violations=[],
+                refusal_triggers=[],
+                remedies=base.remedies,
+                evidence_card=card,
+                conclusion_maturity=capped,
+                backend_available=base.backend_available,
+                research_purpose=pctx.purpose.value,
+                evidence_ceiling=min_ceiling.value,
+                soft_violations=soft_violations,
+                override_records=override_dicts,
+                residual_limitations=all_residual,
+                blocked_claims=list(set(all_blocked)),
+            )
+
+        # No override active: soft violations still block, but with provenance info.
+        base.research_purpose = pctx.purpose.value
+        base.evidence_ceiling = pctx.evidence_ceiling.value
+        return base
+
 
 @dataclass
 class CapabilityEvaluationResult:
     """Result of evaluating a scientific capability contract against execution context."""
 
     capability_id: str
-    status: str  # "PERMITTED" | "REFUSED" | "DEGRADED"
+    status: str  # "PERMITTED" | "PERMITTED_WITH_LIMITS" | "REFUSED" | "DEGRADED"
     permitted: bool
     violations: List[str]
     refusal_triggers: List[RefusalTrigger]
@@ -337,10 +495,17 @@ class CapabilityEvaluationResult:
     conclusion_maturity: str
     # None when the capability declares no backend; otherwise the live probe result.
     backend_available: Optional[bool] = None
+    # Purpose-aware fields
+    research_purpose: Optional[str] = None
+    evidence_ceiling: Optional[str] = None
+    soft_violations: List[str] = field(default_factory=list)  # overridden soft blocks
+    override_records: List[Dict[str, Any]] = field(default_factory=list)  # active overrides
+    residual_limitations: List[str] = field(default_factory=list)  # remaining limitations
+    blocked_claims: List[str] = field(default_factory=list)  # claims still not warranted
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert evaluation result to dictionary."""
-        return {
+        d = {
             "capability_id": self.capability_id,
             "status": self.status,
             "permitted": self.permitted,
@@ -351,6 +516,15 @@ class CapabilityEvaluationResult:
             "conclusion_maturity": self.conclusion_maturity,
             "backend_available": self.backend_available,
         }
+        # Include purpose-aware fields only when populated
+        if self.research_purpose:
+            d["research_purpose"] = self.research_purpose
+            d["evidence_ceiling"] = self.evidence_ceiling
+            d["soft_violations"] = self.soft_violations
+            d["override_records"] = self.override_records
+            d["residual_limitations"] = self.residual_limitations
+            d["blocked_claims"] = self.blocked_claims
+        return d
 
 
 # ==============================================================================

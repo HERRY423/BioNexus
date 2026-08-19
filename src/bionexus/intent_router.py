@@ -37,12 +37,20 @@ from bionexus.contracts import (
     ExecutionState,
 )
 from bionexus.integrity import audit_expression_matrix
+from bionexus.research_purpose import (
+    PurposeContext,
+    ResearchPurpose,
+    infer_research_purpose,
+    purpose_from_string,
+)
+from bionexus.researcher_override import OverrideRecord, create_override_record
 
 
 class RoutingStatus(str, Enum):
     """Status of the scientific routing decision."""
 
     PERMITTED = "PERMITTED"  # Analysis is scientifically valid, preconditions met, backend ready
+    PERMITTED_WITH_LIMITS = "PERMITTED_WITH_LIMITS"  # Permitted with documented soft-limit overrides and evidence ceiling
     NEEDS_DATA = "NEEDS_DATA"  # Valid intent, but essential metadata or input artifacts are missing
     ABSTAIN = "ABSTAIN"  # Refused: Mathematically/biologically impossible or violates scientific invariants
     DEGRADED_ADVISORY = "DEGRADED_ADVISORY"  # Permitted with explicit notice of Grade C heuristic degradation
@@ -58,6 +66,9 @@ class ScientificIntentRequest:
     data_path: Optional[str] = None
     data_metadata: Dict[str, Any] = field(default_factory=dict)
     allow_degraded: bool = False
+    # Purpose-aware fields
+    research_purpose: Optional[str] = None  # exploratory | screening | confirmatory | causal | clinical
+    override_justification: str = ""  # researcher override reason (empty = no override)
 
 
 @dataclass
@@ -74,10 +85,15 @@ class RoutingDecision:
     remedies: List[str] = field(default_factory=list)
     missing_data_requests: List[str] = field(default_factory=list)
     evidence_card_template: Optional[EvidenceCard] = None
+    # Purpose-aware fields
+    purpose_context: Optional[PurposeContext] = None
+    residual_limitations: List[str] = field(default_factory=list)
+    blocked_claims: List[str] = field(default_factory=list)
+    override_records: List[Dict[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert decision to dictionary."""
-        return {
+        d = {
             "status": self.status.value,
             "matched_capability_id": self.matched_capability.id if self.matched_capability else None,
             "target_skill": self.target_skill,
@@ -89,6 +105,12 @@ class RoutingDecision:
             "missing_data_requests": self.missing_data_requests,
             "evidence_card_template": self.evidence_card_template.to_dict() if self.evidence_card_template else None,
         }
+        if self.purpose_context:
+            d["purpose_context"] = self.purpose_context.to_dict()
+            d["residual_limitations"] = self.residual_limitations
+            d["blocked_claims"] = self.blocked_claims
+            d["override_records"] = self.override_records
+        return d
 
 
 # ==============================================================================
@@ -542,6 +564,8 @@ def route_scientific_intent(
     data_metadata: Optional[Dict[str, Any]] = None,
     allow_degraded: bool = False,
     allow_frontier: bool = False,
+    research_purpose: Optional[str] = None,
+    override_justification: str = "",
 ) -> RoutingDecision:
     """
     Evaluate scientific intent and determine execution validity.
@@ -551,15 +575,40 @@ def route_scientific_intent(
     2. Frontier execution-isolation gate (BNS-010): frontier capabilities are
        unreachable unless the caller explicitly opts in (`allow_frontier=True`)
     3. Inspect data semantics -> Extract metadata
-    4. Evaluate scientific preconditions & refusal triggers
+    4. Evaluate scientific preconditions & refusal triggers (purpose-aware)
     5. Deterministic capability-bound backend gate
-    6. Return authoritative RoutingDecision
+    6. Return authoritative RoutingDecision with evidence ceiling and override records
 
     ``allow_frontier`` defaults to False: stable/frontier isolation is enforced
     at runtime, not only in the registry.
+
+    ``research_purpose`` modulates the evidence ceiling: the same data design
+    can carry different epistemic weight under exploratory vs confirmatory vs
+    clinical intent.  When omitted, the purpose is inferred from the query.
+
+    ``override_justification`` activates the explicit researcher override
+    mechanism: soft blocks can be bypassed with full documentation of what
+    limitations remain and what claims are still not warranted.
     """
     meta = dict(data_metadata or {})
     intents = list(intent_keywords or [])
+
+    # 0. Build PurposeContext (explicit or inferred from query).
+    if research_purpose:
+        pctx = PurposeContext(
+            purpose=purpose_from_string(research_purpose),
+            explicitly_declared=True,
+            override_active=bool(override_justification),
+            override_justification=override_justification,
+        )
+    else:
+        inferred = infer_research_purpose(query)
+        pctx = PurposeContext(
+            purpose=inferred,
+            explicitly_declared=False,
+            override_active=bool(override_justification),
+            override_justification=override_justification,
+        )
 
     # 1. Match Capability Contract
     cap = extract_scientific_capability(query, intents)
@@ -689,10 +738,14 @@ def route_scientific_intent(
     if trap_decision is not None:
         return trap_decision
 
-    # 4. Scientific Validity + Availability Evaluation.
-    # `evaluate_viability` is the single deterministic gate: it verifies
-    # scientific invariants AND probes the capability-bound canonical backend.
-    eval_result = cap.evaluate_viability(input_metadata=meta)
+    # 4. Scientific Validity + Availability Evaluation (purpose-aware).
+    # `evaluate_viability_with_purpose` classifies refusals as hard BLOCK or
+    # soft PERMITTED_WITH_LIMITS, applies evidence ceiling, and creates
+    # override records when the researcher has invoked an override.
+    eval_result = cap.evaluate_viability_with_purpose(
+        input_metadata=meta,
+        purpose_context=pctx,
+    )
 
     script_map = {
         "scrna.pseudobulk_de": "skills/single-cell-rna-qc/scripts/scrna_deseq.py",
@@ -705,6 +758,29 @@ def route_scientific_intent(
         "variant.acmg_classification": "skills/variant-interpretation/scripts/acmg_classifier.py",
     }
     rec_script = script_map.get(cap.id)
+
+    if eval_result.status == "PERMITTED_WITH_LIMITS":
+        # Soft blocks overridden: execution permitted with documented limits.
+        rationale = (
+            f"Analysis under capability '{cap.id}' is permitted with limits via "
+            f"researcher override (purpose={pctx.purpose.value}). "
+            f"Evidence ceiling capped at {eval_result.evidence_ceiling}."
+        )
+        return RoutingDecision(
+            status=RoutingStatus.PERMITTED_WITH_LIMITS,
+            matched_capability=cap,
+            target_skill=skill_name,
+            recommended_script=rec_script,
+            recommended_command=f"python {rec_script} --help" if rec_script else None,
+            rationale=rationale,
+            violations=[],
+            remedies=eval_result.remedies,
+            evidence_card_template=eval_result.evidence_card,
+            purpose_context=pctx,
+            residual_limitations=eval_result.residual_limitations,
+            blocked_claims=eval_result.blocked_claims,
+            override_records=eval_result.override_records,
+        )
 
     if not eval_result.permitted:
         backend_missing = eval_result.backend_available is False
@@ -726,6 +802,7 @@ def route_scientific_intent(
                 violations=eval_result.violations,
                 remedies=eval_result.remedies,
                 evidence_card_template=eval_result.evidence_card,
+                purpose_context=pctx,
             )
 
         # Availability-only refusal: the deterministic capability-bound backend gate.
@@ -780,6 +857,7 @@ def route_scientific_intent(
             " FRONTIER/EXPERIMENTAL capability executed under explicit opt-in: conclusions are "
             "capped at PRELIMINARY without external validation (BNS-CC-013)."
         )
+    rationale += f" Purpose: {pctx.purpose.value}; evidence ceiling: {pctx.evidence_ceiling.value}."
     return RoutingDecision(
         status=RoutingStatus.PERMITTED,
         matched_capability=cap,
@@ -788,4 +866,5 @@ def route_scientific_intent(
         recommended_command=f"python {rec_script} --help" if rec_script else None,
         rationale=rationale,
         evidence_card_template=eval_result.evidence_card,
+        purpose_context=pctx,
     )

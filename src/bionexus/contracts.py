@@ -24,6 +24,7 @@ class ExecutionState(str, Enum):
     """
 
     PERMITTED = "PERMITTED"  # Preflight preconditions satisfied, execution permitted but not yet run
+    PERMITTED_WITH_LIMITS = "PERMITTED_WITH_LIMITS"  # Permitted but with documented soft-limit overrides
     EXECUTED = "EXECUTED"  # Official gold-standard backend/code executed properly
     DEGRADED = "DEGRADED"  # Heuristic fallback, partial stack, or approximate parameters
     REFUSED = "REFUSED"  # Deterministically refused (missing required backend/hard gate)
@@ -111,6 +112,13 @@ class EvidenceCard:
     # Extra diagnostics & details
     details: Dict[str, Any] = field(default_factory=dict)
 
+    # Layer 4: Purpose-aware fields (Research Intent / Analysis Purpose)
+    research_purpose: Optional[str] = None  # exploratory | screening | confirmatory | causal | clinical
+    evidence_ceiling: Optional[str] = None  # highest reachable ConclusionMaturity under current purpose
+    override_records: List[Dict[str, Any]] = field(default_factory=list)  # active researcher overrides
+    residual_limitations: List[str] = field(default_factory=list)  # limitations that remain after override
+    blocked_claims: List[str] = field(default_factory=list)  # claims still not warranted after override
+
     # Backward compatibility field
     execution_fidelity: Optional[str] = None
 
@@ -139,6 +147,10 @@ class EvidenceCard:
         d = asdict(self)
         if not d.get("execution_fidelity"):
             d["execution_fidelity"] = GRADE_A if self.execution_state == ExecutionState.EXECUTED.value else GRADE_C
+        # Strip empty purpose-aware fields for backward compatibility
+        for key in ("research_purpose", "evidence_ceiling", "override_records", "residual_limitations", "blocked_claims"):
+            if not d.get(key):
+                d.pop(key, None)
         return d
 
     def synthesize_status(self, abstain: bool = False) -> str:
@@ -373,3 +385,41 @@ def refuse(
         evidence_card=card,
         conclusion_maturity=ConclusionMaturity.ABSTAIN.value,
     )
+
+
+# ---------------------------------------------------------------------------
+# Purpose-aware evidence ceiling enforcement
+# ---------------------------------------------------------------------------
+
+# Ordered maturity levels (lowest to highest).
+_MATURITY_ORDER = [
+    ConclusionMaturity.UNASSESSED,
+    ConclusionMaturity.ABSTAIN,
+    ConclusionMaturity.FRAGILE,
+    ConclusionMaturity.CONFLICTED,
+    ConclusionMaturity.PRELIMINARY,
+    ConclusionMaturity.SUPPORTED,
+    ConclusionMaturity.ROBUST,
+    ConclusionMaturity.REPLICATED,
+]
+
+_MATURITY_RANK = {m: i for i, m in enumerate(_MATURITY_ORDER)}
+
+
+def cap_conclusion_by_purpose(
+    maturity: str,
+    ceiling: ConclusionMaturity,
+) -> str:
+    """Cap a ConclusionMaturity at the evidence ceiling defined by a ResearchPurpose.
+
+    If the computed maturity exceeds the ceiling, it is reduced to the ceiling
+    and a note is attached.  If the maturity is already at or below the ceiling,
+    it is returned unchanged.
+    """
+    try:
+        actual = ConclusionMaturity(maturity)
+    except ValueError:
+        return maturity
+    if _MATURITY_RANK.get(actual, 0) <= _MATURITY_RANK.get(ceiling, 0):
+        return maturity
+    return ceiling.value

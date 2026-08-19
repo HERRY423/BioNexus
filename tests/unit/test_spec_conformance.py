@@ -103,6 +103,7 @@ def test_normative_requirements_backed_by_implementation():
     # BNS-EF-001: execution state vocabulary
     assert {s.value for s in ExecutionState} == {
         "PERMITTED",
+        "PERMITTED_WITH_LIMITS",
         "EXECUTED",
         "DEGRADED",
         "REFUSED",
