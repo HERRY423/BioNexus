@@ -1,0 +1,120 @@
+# ==============================================================================
+# BioNexus Flagship External Validation Track (BNS-015, v1.0 real-data)
+# ==============================================================================
+# Exactly THREE capabilities receive external validation — not a benchmark of
+# twenty. Synthetic planted-signal fixtures do NOT satisfy this track: every
+# case requires a real public dataset under data/flagship/<dataset_id>/ and is
+# honestly SKIPPED when absent (BNS-EM-009). Fetch datasets with:
+#   python evals/datasets/download_flagship_datasets.py
+# ==============================================================================
+
+# --- A. pseudobulk: BioNexus donor-aware pseudobulk vs published DE truth ---
+- id: flagship-pseudobulk-kang2018-001
+  level: L3
+  expected_maturity: SUPPORTED
+  category: scientific_outcome
+  prompt: "Validate BioNexus donor-aware pseudobulk DE against the published Kang 2018 IFN-beta PBMC results."
+  expected_status: PERMITTED
+  expected_capability: scrna.pseudobulk_de
+  data_metadata:
+    flagship_suite: "pseudobulk_external_truth"
+    dataset_id: "kang2018_pbmc_ifnb"
+    reference_condition: "ctrl"
+    contrast_level: "stim"
+    top_n: 100
+    min_truth_overlap: 0.5
+  description: "Flagship A: cell-level public dataset -> BioNexus pseudobulk -> overlap with published DE truth (backend identity must be CONFORMANT first)"
+
+# --- B. annotation evidence: knowing when an annotation is NOT believable ---
+- id: flagship-annotation-distrust-002
+  level: L3
+  expected_maturity: SUPPORTED
+  category: scientific_outcome
+  prompt: "Determine whether BioNexus correctly distrusts under-evidenced cell annotations on CITE-seq/sorted PBMC ground truth."
+  expected_status: PERMITTED
+  expected_capability: scrna.annotation_evidence
+  data_metadata:
+    flagship_suite: "annotation_distrust"
+    dataset_id: "citeseq_pbmc_sorted"
+    scenarios: ["no_negative_markers", "open_set_forced", "fully_evidenced"]
+  description: "Flagship B: the benchmark is distrust calibration — under-evidenced labels must not be SUPPORTED, open-set must ABSTAIN, fully-evidenced must not be over-skepticized"
+
+# --- C. spatial inference validity: manufactured artifacts must downgrade ---
+- id: flagship-spatial-segmentation-leakage-003
+  level: L3
+  expected_maturity: SUPPORTED
+  category: scientific_outcome
+  prompt: "Manufacture segmentation leakage in real Xenium-class data and verify the spatial conclusion is downgraded."
+  expected_status: PERMITTED
+  expected_capability: spatial.inference_validity
+  data_metadata:
+    flagship_suite: "spatial_artifact_downgrade"
+    dataset_id: "xenium_spatial_truth"
+    artifact: "segmentation_leakage"
+  description: "Flagship C1: nearest-neighbor transcript borrowing must break segmentation specificity and downgrade the conclusion"
+
+- id: flagship-spatial-cell-size-bias-004
+  level: L3
+  expected_maturity: SUPPORTED
+  category: scientific_outcome
+  prompt: "Manufacture cell-size bias and verify the spatial conclusion is downgraded."
+  expected_status: PERMITTED
+  expected_capability: spatial.inference_validity
+  data_metadata:
+    flagship_suite: "spatial_artifact_downgrade"
+    dataset_id: "xenium_spatial_truth"
+    artifact: "cell_size_bias"
+  description: "Flagship C2: area-driven total-count confounding must be measured and downgrade the conclusion"
+
+- id: flagship-spatial-transcript-density-bias-005
+  level: L3
+  expected_maturity: SUPPORTED
+  category: scientific_outcome
+  prompt: "Manufacture transcript-density bias and verify the spatial conclusion is downgraded."
+  expected_status: PERMITTED
+  expected_capability: spatial.inference_validity
+  data_metadata:
+    flagship_suite: "spatial_artifact_downgrade"
+    dataset_id: "xenium_spatial_truth"
+    artifact: "transcript_density_bias"
+  description: "Flagship C3: local-density-driven count confounding must be measured and downgrade the conclusion"
+
+- id: flagship-spatial-radius-change-006
+  level: L3
+  expected_maturity: SUPPORTED
+  category: scientific_outcome
+  prompt: "Declare neighborhood radius sensitivity untested and verify the spatial conclusion is downgraded to FRAGILE."
+  expected_status: PERMITTED
+  expected_capability: spatial.inference_validity
+  data_metadata:
+    flagship_suite: "spatial_artifact_downgrade"
+    dataset_id: "xenium_spatial_truth"
+    artifact: "radius_change"
+    expected_verdict: "FRAGILE"
+  description: "Flagship C4: an unrun radius-sensitivity sweep is an UNTESTED canonical alternative -> verdict tops out below SUPPORTED"
+
+- id: flagship-spatial-permutation-007
+  level: L3
+  expected_maturity: SUPPORTED
+  category: scientific_outcome
+  prompt: "Permute spatial coordinates and verify the spatial conclusion fails its own permutation null."
+  expected_status: PERMITTED
+  expected_capability: spatial.inference_validity
+  data_metadata:
+    flagship_suite: "spatial_artifact_downgrade"
+    dataset_id: "xenium_spatial_truth"
+    artifact: "spatial_permutation"
+  description: "Flagship C5: a permuted coordinate field cannot sustain genuine spatial structure -> permutation_null FAILED -> downgrade"
+
+- id: flagship-spatial-fov-confounding-008
+  level: L3
+  expected_maturity: SUPPORTED
+  category: scientific_outcome
+  prompt: "Confound FOV identity with condition and verify the spatial conclusion is downgraded."
+  expected_status: PERMITTED
+  expected_capability: spatial.inference_validity
+  data_metadata:
+    flagship_suite: "spatial_artifact_downgrade"
+    dataset_id: "xenium_spatial_truth"
+    artifact: "batch_fov_confounding"
+  description: "Flagship C6: 1:1 FOV-condition confounding must be detected and downgrade the conclusion"

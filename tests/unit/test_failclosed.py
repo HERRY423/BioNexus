@@ -4,11 +4,13 @@ Unit tests for the fail-closed execution gate (BNS-005 §6, BNS-AD-013..015).
 Validates every row of the closed-by-default table:
     missing evidence            -> ABSTAIN (request data)
     invalid input               -> REFUSE
-    backend unavailable         -> DEGRADE WITH DISCLOSURE
+    backend unavailable         -> REFUSE (canonical); DEGRADE WITH DISCLOSURE only
+                                   for frontier capabilities under opt-in + explicit fallback
     assumption violated         -> BLOCK CLAIM
     claim beyond warrant        -> BLOCK CLAIM
     external validation absent  -> CAP EVIDENCE LEVEL
-plus the clean RUN PERMITTED exit and the CLI surface.
+plus frontier execution isolation (refused without opt-in), the clean
+RUN PERMITTED exit and the CLI surface.
 """
 
 import sys
@@ -64,15 +66,40 @@ def test_claim_beyond_warrant_blocks_claim():
     assert "BN-F011" in d.failure_mode_ids
 
 
-def test_backend_unavailable_degrades_with_disclosure():
+def test_backend_unavailable_refuses_canonical():
+    """A missing canonical backend is a strict refusal, even with degradation consent."""
     d = prevent_invalid_run(
         "Fit Kaplan-Meier survival curve for clinical cohort",
         allow_degraded=True,
     )
     assert d.prevented is True
     assert d.prevention_kind == "BACKEND_UNAVAILABLE"
-    assert d.action == "DEGRADE WITH DISCLOSURE"
+    assert d.action == "REFUSE"
     assert "BN-F010" in d.failure_mode_ids
+
+
+def test_backend_unavailable_degrades_only_for_opted_in_frontier():
+    """DEGRADE WITH DISCLOSURE is reachable only via frontier opt-in + explicit fallback."""
+    from bionexus.backends import is_available
+
+    if is_available("gears"):
+        return  # nothing to degrade when the canonical backend is present
+
+    # No opt-in: the frontier capability is not even evaluated.
+    d = prevent_invalid_run("use GEARS to predict TP53 perturbation", allow_degraded=True)
+    assert d.prevented is True
+    assert d.action == "REFUSE"
+
+    # Opt-in + explicit fallback: disclosed degradation, never silent.
+    d2 = prevent_invalid_run(
+        "use GEARS to predict TP53 perturbation",
+        allow_frontier=True,
+        allow_degraded=True,
+    )
+    assert d2.prevented is True
+    assert d2.prevention_kind == "BACKEND_UNAVAILABLE"
+    assert d2.action == "DEGRADE WITH DISCLOSURE"
+    assert "BN-F010" in d2.failure_mode_ids
 
 
 def test_external_validation_absent_caps_evidence():

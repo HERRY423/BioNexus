@@ -1,5 +1,18 @@
 name: BioNexus Release Pipeline
 
+# ==============================================================================
+# v1 RC pipeline: the release gate verifies the WHEEL, not the source tree.
+#
+#   Version SSOT -> ruff -> unit tests -> strict benchmark -> full scientific
+#   backend -> build wheel -> NEW clean venv -> pip install wheel ->
+#   bionexus doctor -> registry --check -> backend-identity -> strict eval ->
+#   plugin manifest validation -> release
+#
+# "source works, wheel missing files" is exactly the failure class this
+# pipeline exists to catch: every post-build gate runs inside a fresh venv
+# that contains ONLY the built wheel plus the eval harness (no src/ tree).
+# ==============================================================================
+
 on:
   push:
     tags:
@@ -7,9 +20,9 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Release Tag (e.g. v0.8.0)'
+        description: 'Release Tag (e.g. v0.10.0)'
         required: true
-        default: 'v0.8.0'
+        default: 'v0.10.0'
 
 permissions:
   contents: write
@@ -17,7 +30,7 @@ permissions:
 
 jobs:
   build-and-release:
-    name: Build, Verify & Publish Release
+    name: Build, Verify Wheel & Publish Release
     runs-on: ubuntu-latest
 
     steps:
@@ -32,23 +45,121 @@ jobs:
           python-version: "3.11"
           cache: "pip"
 
-      - name: Install Build & Release Dependencies
+      # -------------------------------------------------------------------
+      # Gate 0: Version SSOT — tag, pyproject and bionexus.versions.VERSION
+      # must agree before anything else is allowed to run.
+      # -------------------------------------------------------------------
+      - name: Version SSOT Check
+        run: |
+          TAG="${{ github.ref_name }}"
+          if [ -z "$TAG" ] || [ "$TAG" = "main" ]; then
+            TAG="${{ github.event.inputs.tag_name }}"
+          fi
+          VERSION="${TAG#v}"
+          PYPROJECT_VERSION=$(python -c "import tomllib,pathlib; print(tomllib.loads(pathlib.Path('pyproject.toml').read_text(encoding='utf-8'))['project']['version'])")
+          SOURCE_VERSION=$(python -c "import re,pathlib; m=re.search(r'VERSION\s*=\s*\"([^\"]+)\"', pathlib.Path('src/bionexus/versions.py').read_text(encoding='utf-8')); print(m.group(1))")
+          echo "tag=$VERSION pyproject=$PYPROJECT_VERSION source=$SOURCE_VERSION"
+          if [ "$VERSION" != "$PYPROJECT_VERSION" ] || [ "$VERSION" != "$SOURCE_VERSION" ]; then
+            echo "[BLOCK] Version SSOT mismatch: tag / pyproject / bionexus.versions disagree."
+            exit 1
+          fi
+          echo "RELEASE_VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Install Dev Dependencies
         run: |
           python -m pip install --upgrade pip build wheel ruff pyyaml
-          pip install -e .
+          pip install -e ".[dev]"
 
-      - name: Validate Multi-Platform Registry Manifests
+      # -------------------------------------------------------------------
+      # Gate 1: static analysis (source tree)
+      # -------------------------------------------------------------------
+      - name: Ruff Lint
         run: |
-          python -m bionexus.cli registry --check
-          python -m bionexus.cli registry --validate-endpoints
+          ruff check src evals tests
 
-      - name: Run BioNexus Agent Reliability Benchmark
+      # -------------------------------------------------------------------
+      # Gate 2: unit tests (source tree)
+      # -------------------------------------------------------------------
+      - name: Unit Tests
         run: |
-          python -m bionexus.cli eval --report dist/benchmark_report.md
+          pytest -q -p no:cacheprovider
 
+      # -------------------------------------------------------------------
+      # Gate 3: full scientific backend (canonical capabilities)
+      # -------------------------------------------------------------------
+      - name: Install Full Scientific Backend
+        run: |
+          pip install -e ".[goldchain,deseq,spatial,survival]"
+
+      # -------------------------------------------------------------------
+      # Gate 4: strict benchmark on the source tree.
+      # flagship_validation is excluded (disclosed): its real external
+      # datasets require manual acquisition and are absent in CI.
+      # -------------------------------------------------------------------
+      - name: Strict Benchmark (source)
+        run: |
+          python -m bionexus.cli eval --strict --exclude flagship_validation --report dist/benchmark_report.md
+
+      # -------------------------------------------------------------------
+      # Gate 5: build the artifacts that will actually ship
+      # -------------------------------------------------------------------
       - name: Build Python Wheels and Source Distribution
         run: |
           python -m build
+
+      # -------------------------------------------------------------------
+      # Gates 6-10: verify the WHEEL in a NEW clean venv.
+      # The workspace contains the eval harness + registry manifests but
+      # deliberately NO src/ tree, so every import must resolve to the wheel.
+      # -------------------------------------------------------------------
+      - name: Clean-Venv Wheel Verification
+        run: |
+          set -e
+          WHL=$(ls dist/bionexus-*.whl | head -n1)
+          python -m venv wheelcheck
+          wheelcheck/bin/pip install --upgrade pip
+          wheelcheck/bin/pip install "${WHL}[goldchain,deseq,spatial,survival]"
+
+          rm -rf .wheelws
+          mkdir .wheelws
+          cp -r evals data bionexus.registry.yaml mcp.json plugin.json .wheelws/
+          cp -r skills .wheelws/ 2>/dev/null || true
+          cd .wheelws
+
+          echo "--- Gate 6: bionexus doctor (wheel) ---"
+          ../wheelcheck/bin/bionexus doctor
+
+          echo "--- Gate 7: registry integrity (wheel) ---"
+          ../wheelcheck/bin/bionexus registry --check
+          ../wheelcheck/bin/bionexus registry --validate-endpoints
+
+          echo "--- Gate 8: Backend Identity Conformance (wheel, BNS-EF-012..016) ---"
+          ../wheelcheck/bin/bionexus backend-identity --canonical-only
+
+          echo "--- Gate 9: strict eval against the wheel ---"
+          BIONEXUS_EVAL_STRICT=1 ../wheelcheck/bin/bionexus eval --strict \
+            --exclude flagship_validation \
+            --report ../dist/wheel_benchmark_report.md
+
+      # -------------------------------------------------------------------
+      # Gate 10: plugin manifest validation (machine-checked, version-locked)
+      # -------------------------------------------------------------------
+      - name: Plugin Manifest Validation
+        run: |
+          python -c "
+          import json, pathlib
+          v = '$RELEASE_VERSION'
+          for name in ('plugin.json', 'mcp.json'):
+              data = json.loads(pathlib.Path(name).read_text(encoding='utf-8'))
+              if not isinstance(data, dict) or not data.get('name'):
+                  raise SystemExit(f'[BLOCK] {name} is not a valid manifest (missing name)')
+              print(f'[OK] {name} is valid JSON with name={data[\"name\"]}')
+          pkg = json.loads(pathlib.Path('plugin.json').read_text(encoding='utf-8'))
+          pv = str(pkg.get('version', ''))
+          if pv and pv != v:
+              raise SystemExit(f'[BLOCK] plugin.json version {pv} != release version {v}')
+          print(f'[OK] plugin manifest version locked to {v}')
+          "
 
       - name: Generate SHA-256 Checksums
         run: |
@@ -95,6 +206,7 @@ jobs:
             dist/*.tar.gz
             dist/SHA256SUMS.txt
             dist/benchmark_report.md
+            dist/wheel_benchmark_report.md
             plugin.json
             mcp.json
         env:

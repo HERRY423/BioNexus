@@ -30,6 +30,10 @@ from bionexus.bigdata import (
     estimate_memory_requirements,
     generate_streaming_plan,
 )
+from bionexus.capabilities import (
+    get_capability,
+    list_capabilities,
+)
 from bionexus.cluster import (
     JobResourceConfig,
     diagnose_job_failure,
@@ -37,10 +41,6 @@ from bionexus.cluster import (
     get_job_status,
     probe_cluster_environment,
     submit_job,
-)
-from bionexus.capabilities import (
-    get_capability,
-    list_capabilities,
 )
 from bionexus.doctor import run_doctor
 from bionexus.integrity import audit_expression_matrix
@@ -512,6 +512,51 @@ def handle_create_plugin(args: argparse.Namespace) -> int:
     return 0
 
 
+def handle_backend_identity(args: argparse.Namespace) -> int:
+    """Audit Backend Identity Conformance: declared_backend == observed_backend (BNS-EF-012..016)."""
+    import json as _json
+
+    from bionexus.backend_conformance import (
+        BackendIdentityState,
+        backend_identity_summary,
+        verify_all_backend_identity,
+        verify_backend_identity,
+    )
+    from bionexus.capabilities import ALL_CAPABILITIES
+
+    capability = getattr(args, "capability", None)
+    if capability:
+        if capability not in ALL_CAPABILITIES:
+            print(f"[ERROR] Unknown capability '{capability}'.", file=sys.stderr)
+            return 2
+        reports = [verify_backend_identity(ALL_CAPABILITIES[capability])]
+    else:
+        reports = verify_all_backend_identity(include_frontier=not getattr(args, "canonical_only", False))
+
+    if getattr(args, "json", False):
+        print(_json.dumps({"reports": [r.to_dict() for r in reports], "summary": backend_identity_summary(reports)}, indent=2))
+    else:
+        print("=== BioNexus Backend Identity Conformance (BNS-EF-012..016 / BN-F010) ===")
+        print(f"{'Capability':<38} {'Track':<10} {'Claimed':<28} {'Observed':<16} {'Version':<10} {'State':<22} Action")
+        for r in reports:
+            print(
+                f"{r.capability_id:<38} {r.track:<10} {r.claimed_backend:<28} "
+                f"{(r.observed_backend or '-'):<16} {(r.version or '-'):<10} "
+                f"{r.state.value:<22} {r.action}"
+            )
+            if r.execution_fingerprint:
+                print(f"    fingerprint: {r.execution_fingerprint}  entry_points: {len(r.entry_points_resolved)}/{len(r.entry_points_declared)}  fallback: {r.fallback}")
+            if r.state in (BackendIdentityState.MASQUERADE, BackendIdentityState.INCOMPATIBLE_VERSION):
+                print(f"    BN-F010 BLOCK: {r.reason}")
+        summary = backend_identity_summary(reports)
+        print(
+            f"\nVerdict: {summary['verdict']} "
+            f"(conformant {summary['conformant']}/{summary['total']}, not installed {summary['not_installed']}, blocked {len(summary['blocked'])})"
+        )
+
+    return 1 if any(r.action == "BLOCK" for r in reports) else 0
+
+
 def handle_doctor(args: argparse.Namespace) -> int:
     """Run BioNexus environment doctor diagnostics."""
     report = run_doctor()
@@ -696,6 +741,7 @@ def handle_preflight(args: argparse.Namespace) -> int:
             claimed_maturity=getattr(args, "claim_maturity", None),
             has_external_validation=getattr(args, "external_validation", False),
             allow_degraded=args.allow_degraded,
+            allow_frontier=getattr(args, "allow_frontier", False),
         )
     except FileNotFoundError as e:
         print(f"[ERROR] {e}", file=sys.stderr)
@@ -1123,6 +1169,7 @@ def handle_prevent(args: argparse.Namespace) -> int:
         data_metadata=meta,
         claimed_maturity=getattr(args, "claim_maturity", None),
         allow_degraded=args.allow_degraded,
+        allow_frontier=getattr(args, "allow_frontier", False),
     )
     if args.json:
         print(json.dumps(verdict.to_dict(), indent=2))
@@ -1184,6 +1231,7 @@ def handle_route(args: argparse.Namespace) -> int:
         data_path=args.data,
         data_metadata=meta,
         allow_degraded=args.allow_degraded,
+        allow_frontier=getattr(args, "allow_frontier", False),
     )
 
     if args.json:
@@ -1223,6 +1271,15 @@ def handle_route(args: argparse.Namespace) -> int:
             print(f"  * {r}")
         return 1
 
+    elif decision.status == RoutingStatus.EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN:
+        print("[FRONTIER] Frontier capability detected — execution requires explicit opt-in:")
+        for v in decision.violations:
+            print(f"  - {v}")
+        print("\nRemedy:")
+        for r in decision.remedies:
+            print(f"  * {r}")
+        return 1
+
     elif decision.status == RoutingStatus.DEGRADED_ADVISORY:
         print("[DEGRADED ADVISORY] Execution permitted via Grade C heuristic fallback:")
         for v in decision.violations:
@@ -1245,6 +1302,13 @@ def handle_eval(args: argparse.Namespace) -> int:
     provider = getattr(args, "provider", None)
     model = getattr(args, "model", None)
     strict = getattr(args, "strict", False) or None  # None defers to BIONEXUS_EVAL_STRICT
+    exclude_raw = getattr(args, "exclude", None)
+    exclude = [x.strip() for x in exclude_raw.split(",") if x.strip()] if exclude_raw else None
+    if exclude:
+        print(
+            f"[DISCLOSED] Excluding dataset suite(s) {exclude}: these cases are NOT counted "
+            "in this run (external real-data requirement unmet in this environment)."
+        )
 
     report = run_benchmark(
         suite=suite,
@@ -1252,6 +1316,7 @@ def handle_eval(args: argparse.Namespace) -> int:
         provider=provider,
         model=model,
         strict=strict,
+        exclude=exclude,
     )
 
     if getattr(args, "report", None):
@@ -1599,14 +1664,16 @@ def handle_bigdata(args: argparse.Namespace) -> int:
 
 def handle_scfm(args: argparse.Namespace) -> int:
     import json
+
+    import anndata as ad
+
     from bionexus.scfm import (
         FoundationModelFamily,
         SCFMConfig,
-        extract_scfm_embeddings,
         extract_rank_proxy_embeddings,
+        extract_scfm_embeddings,
         simulate_gene_perturbation,
     )
-    import anndata as ad
 
     action = getattr(args, "scfm_action", None)
     if action == "embed":
@@ -1675,12 +1742,14 @@ def handle_scfm(args: argparse.Namespace) -> int:
 
 def handle_closed_loop(args: argparse.Namespace) -> int:
     import json
+
     import anndata as ad
+
     from bionexus.closed_loop import (
         GEARSPerturbationConfig,
         NicheFormerConfig,
-        predict_gears_perturbation,
         forecast_spatial_niche,
+        predict_gears_perturbation,
         run_perturbation_to_niche_closed_loop,
     )
 
@@ -1818,6 +1887,15 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_doctor.add_argument("--require-scverse", action="store_true", help="Enforce scverse stack presence")
     p_doctor.add_argument("--require-spatial", action="store_true", help="Enforce spatial stack presence")
 
+    # 2.5 backend-identity
+    p_backend_identity = subparsers.add_parser(
+        "backend-identity",
+        help="Audit Backend Identity Conformance: declared_backend == observed_backend (BNS-EF-012..016, BN-F010)",
+    )
+    p_backend_identity.add_argument("--json", action="store_true", help="Output identity reports as JSON")
+    p_backend_identity.add_argument("--capability", default=None, help="Audit a single capability id")
+    p_backend_identity.add_argument("--canonical-only", action="store_true", help="Skip the frontier track")
+
     # 3. list-skills / inventory
     for cmd_name in ("list-skills", "inventory"):
         p_skills = subparsers.add_parser(cmd_name, help="Display canonical skill inventory and capability tiers")
@@ -1868,6 +1946,9 @@ def main(argv: Optional[list[str]] = None) -> int:
         "--external-validation", action="store_true", help="External (orthogonal) validation evidence exists"
     )
     p_preflight.add_argument("--allow-degraded", action="store_true", help="Consent to Grade C degradation")
+    p_preflight.add_argument(
+        "--allow-frontier", action="store_true", help="Explicit opt-in to execute experimental frontier capabilities"
+    )
     p_preflight.add_argument("--json", action="store_true", help="Output preflight report as JSON")
 
     # 5.6 verify (Scientific Assertion Firewall entry 3, BNS-013)
@@ -2003,6 +2084,9 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_prevent.add_argument("--n-spatial-spots", type=int, default=None, help="Spatial spot count metadata")
     p_prevent.add_argument("--claim-maturity", default=None, help="Maturity the host intends to claim (ceiling audit)")
     p_prevent.add_argument("--allow-degraded", action="store_true", help="Consent to Grade C degradation")
+    p_prevent.add_argument(
+        "--allow-frontier", action="store_true", help="Explicit opt-in to execute experimental frontier capabilities"
+    )
     p_prevent.add_argument("--json", action="store_true", help="Output verdict as JSON")
 
     # 6.9 ledger (BNS-012)
@@ -2031,6 +2115,9 @@ def main(argv: Optional[list[str]] = None) -> int:
         "--is-normalized", action="store_true", help="Flag if input matrix is normalized continuous floats"
     )
     p_route.add_argument("--allow-degraded", action="store_true", help="Allow fallback to Grade C heuristics")
+    p_route.add_argument(
+        "--allow-frontier", action="store_true", help="Explicit opt-in to execute experimental frontier capabilities"
+    )
     p_route.add_argument("--json", action="store_true", help="Output routing decision as JSON")
 
     # 8. eval (BioNexus Agent Behavior & Epistemic Benchmark)
@@ -2056,9 +2143,10 @@ def main(argv: Optional[list[str]] = None) -> int:
             "l2_agent_claims",
             "l3_scientific_outcomes",
             "biofailurebench",
+            "flagship_validation",
         ],
         default="all",
-        help="Benchmark evaluation suite (biofailurebench = the scientific trap corpus, BNS-014)",
+        help="Benchmark evaluation suite (biofailurebench = the scientific trap corpus, BNS-014; flagship_validation = real-data external track, BNS-015)",
     )
     p_eval.add_argument(
         "--provider",
@@ -2070,6 +2158,14 @@ def main(argv: Optional[list[str]] = None) -> int:
         "--model", default=None, help="Host model override (e.g. gpt-4o, claude-3-5-sonnet, gemini-1.5-pro)"
     )
     p_eval.add_argument("--report", default=None, help="Path to save Markdown evaluation report")
+    p_eval.add_argument(
+        "--exclude",
+        default=None,
+        help=(
+            "Comma-separated dataset file stems to omit (e.g. 'flagship_validation' when the "
+            "real external datasets are absent). Omissions are disclosed, never silent."
+        ),
+    )
     p_eval.add_argument("--json", action="store_true", help="Output benchmark results as JSON")
     p_eval.add_argument(
         "--strict",
@@ -2250,6 +2346,8 @@ def main(argv: Optional[list[str]] = None) -> int:
         return handle_create_plugin(args)
     elif args.command == "doctor":
         return handle_doctor(args)
+    elif args.command == "backend-identity":
+        return handle_backend_identity(args)
     elif args.command in ("list-skills", "inventory"):
         return handle_list_skills(args)
     elif args.command == "registry":

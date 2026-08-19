@@ -75,17 +75,26 @@ def load_eval_cases(
     suite: Optional[str] = None,
     level: Optional[str] = None,
     datasets_dir: Optional[Path] = None,
+    exclude: Optional[List[str]] = None,
 ) -> List[EvalCase]:
-    """Load benchmark cases from YAML files across L1, L2, and L3."""
+    """Load benchmark cases from YAML files across L1, L2, and L3.
+
+    ``exclude`` lists dataset file stems to omit (e.g. ``flagship_validation``
+    when the real external datasets are not present in the environment); the
+    omission is always disclosed in the report, never silently.
+    """
     d_dir = datasets_dir or get_default_datasets_dir()
     if not d_dir.exists():
         raise FileNotFoundError(f"Datasets directory not found: {d_dir}")
 
+    excluded_stems = {Path(x).stem for x in (exclude or [])}
     cases: List[EvalCase] = []
     yaml_files = [d_dir / f"{suite}.yaml"] if suite and suite != "all" else sorted(d_dir.glob("*.yaml"))
 
     for yf in yaml_files:
         if not yf.is_file():
+            continue
+        if yf.stem in excluded_stems:
             continue
         with open(yf, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
@@ -122,6 +131,7 @@ def load_eval_cases(
                         simulated_agent_response=item.get("simulated_agent_response"),
                         data_metadata=item.get("data_metadata", {}),
                         allow_degraded=item.get("allow_degraded", False),
+                        allow_frontier=item.get("allow_frontier", False),
                         description=item.get("description", ""),
                         known_limitation=bool(item.get("known_limitation", False)),
                     )
@@ -208,7 +218,31 @@ def run_single_case(
             if p not in sys.path:
                 sys.path.insert(0, p)
 
-        if signal_type == "scrna_markers":
+        if case.data_metadata.get("flagship_suite"):
+            # 0. Flagship external-validation track (BNS-015 real-data): runs on
+            # real public datasets under data/flagship/, never on synthetic
+            # planted-signal fixtures. Absent dataset => honest skip (BNS-EM-009).
+            try:
+                from evals.flagship_validation import run_flagship_case
+
+                fres = run_flagship_case(case)
+            except Exception as e:
+                fres = {
+                    "actual_status": "EXECUTION_FAILURE",
+                    "actual_maturity": "ABSTAIN",
+                    "failure_reasons": [f"Flagship suite crash: {type(e).__name__}: {e}"],
+                    "skipped": False,
+                    "skip_reason": None,
+                }
+            actual_status = fres["actual_status"]
+            actual_maturity = fres.get("actual_maturity") or "UNASSESSED"
+            failure_reasons.extend(fres.get("failure_reasons", []))
+            if fres.get("skipped"):
+                skipped = True
+                skip_reason = fres.get("skip_reason")
+                actual_maturity = "NOT_EVALUATED_NO_BACKEND"
+
+        elif signal_type == "scrna_markers":
             # 1. Run actual Scanpy gold chain pipeline on planted dataset
             try:
                 import anndata as ad
@@ -405,12 +439,15 @@ def run_single_case(
             query=case.prompt,
             data_metadata=case.data_metadata,
             allow_degraded=case.allow_degraded,
+            allow_frontier=case.allow_frontier,
         )
         actual_status = decision.status.value
         actual_cap = decision.matched_capability.id if decision.matched_capability else None
 
         # Determine inferred conclusion maturity from routing decision
         if decision.status == RoutingStatus.ABSTAIN:
+            actual_maturity = "ABSTAIN"
+        elif decision.status == RoutingStatus.EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN:
             actual_maturity = "ABSTAIN"
         elif decision.status == RoutingStatus.PERMITTED:
             actual_maturity = (
@@ -506,9 +543,10 @@ def run_benchmark(
     provider: Optional[str] = None,
     model: Optional[str] = None,
     strict: Optional[bool] = None,
+    exclude: Optional[List[str]] = None,
 ) -> BenchmarkReport:
     strict_mode = _strict_mode_enabled(strict)
-    cases = load_eval_cases(suite=suite, level=level, datasets_dir=datasets_dir)
+    cases = load_eval_cases(suite=suite, level=level, datasets_dir=datasets_dir, exclude=exclude)
     results = [run_single_case(c, provider=provider, model=model) for c in cases]
 
     if strict_mode:

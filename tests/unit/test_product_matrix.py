@@ -31,8 +31,14 @@ def test_product_matrix_document_exists_and_is_indexed():
     assert _DOC.strip(), "docs/product-matrix.md must exist"
     readme = (_REPO_ROOT / "README.md").read_text(encoding="utf-8")
     assert "docs/product-matrix.md" in readme, "README must link the product matrix"
-    assert "bionexus-core" in _DOC and "bionexus-audit" in _DOC
-    assert "bionexus-conformance" in _DOC and "reference capability packs" in _DOC
+    # Two-plane structure: reliability layer is the product core; frontier is
+    # reference implementations on the Capability Plane, never a product layer.
+    assert "BioNexus Core" in _DOC
+    assert "Capability Plane" in _DOC
+    assert "stable reference packs" in _DOC and "frontier reference packs" in _DOC
+    # Conformance layer must name all four pillars incl. backend identity.
+    assert "backend identity conformance" in _DOC
+    assert "capability certification" in _DOC and "BioFailureBench" in _DOC
 
 
 def test_non_goals_are_published():
@@ -47,7 +53,7 @@ def test_documented_modules_exist():
     table = _DOC.split("## Module mapping")[1].split("## Non-goals")[0]
     module_pattern = re.compile(r"`([a-z_][a-z0-9_]*)`")
     rows = [ln for ln in table.splitlines() if ln.startswith("|")]
-    assert len(rows) >= 8, "module mapping table must cover the four layers"
+    assert len(rows) >= 8, "module mapping table must cover both planes (Core + Capability Plane)"
 
     src_dir = _REPO_ROOT / "src" / "bionexus"
     for row in rows:

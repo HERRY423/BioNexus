@@ -17,15 +17,14 @@ Adheres strictly to BioNexus Epistemic Honesty & Specification Series:
 - Forbidden claims: model_substitution, clinical_diagnosis, causal_interaction, cell_type_identity_without_reference.
 """
 
-from dataclasses import asdict, dataclass, field
-from enum import Enum
 import importlib
 import logging
+from dataclasses import asdict, dataclass, field
+from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-import pandas as pd
 from scipy import sparse
 
 logger = logging.getLogger("bionexus.scfm")
@@ -216,7 +215,6 @@ def load_geneformer_transformer_model(
     """
     Load official Geneformer transformer model from HuggingFace hub or local checkpoint directory.
     """
-    import torch
     from transformers import AutoModel, AutoModelForMaskedLM, BertForMaskedLM
 
     model_path = Path(model_name_or_path)

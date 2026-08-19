@@ -2,7 +2,7 @@
 Unit tests for BioNexus Tangram Spatial Deconvolution & Cell-to-Space Mapping (bionexus.tangram).
 """
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import anndata as ad
 import numpy as np
@@ -15,8 +15,6 @@ from bionexus.capabilities import CANONICAL_CAPABILITIES
 from bionexus.intent_router import route_scientific_intent
 from bionexus.tangram import (
     TangramConfig,
-    TangramMappingResult,
-    check_tangram_backend,
     run_tangram_spatial_mapping,
     select_training_marker_genes,
 )

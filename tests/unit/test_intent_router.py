@@ -6,8 +6,11 @@ Validates the 6-stage Scientific Intent Routing Pipeline:
 2. Missing experimental metadata detection (NEEDS_DATA).
 3. Scientific violation and pseudoreplication refusal (ABSTAIN).
 4. Precondition validation and gold-backend clearance (PERMITTED).
-5. Explicit heuristic fallback routing (DEGRADED_ADVISORY).
-6. CLI route subcommand behavior.
+5. Deterministic capability-bound backend gate: canonical backend absence is a
+   strict refusal (ABSTAIN); DEGRADED_ADVISORY is reachable only for frontier
+   capabilities under explicit opt-in + explicit fallback consent.
+6. Frontier execution isolation (EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN).
+7. CLI route subcommand behavior.
 """
 
 import sys
@@ -100,8 +103,12 @@ def test_route_spatial_moran_svg():
     assert dec.target_skill == "spatial-transcriptomics"
 
 
-def test_route_legacy_degraded_advisory():
-    """Verify legacy skill routing with and without explicit degradation permission."""
+def test_route_canonical_backend_missing_strict_refusal():
+    """CANONICAL + backend missing -> REFUSE, even with allow_degraded consent.
+
+    Backend readiness binds to the capability, never to a skill: a missing
+    canonical backend is a deterministic violation, not an advisory note.
+    """
     from bionexus.backends import is_available
 
     if not is_available("lifelines"):
@@ -111,14 +118,45 @@ def test_route_legacy_degraded_advisory():
             allow_degraded=False,
         )
         assert dec_abstain.status == RoutingStatus.ABSTAIN
+        assert any("backend" in v.lower() for v in dec_abstain.violations)
+        assert any("pip install" in r for r in dec_abstain.remedies)
 
-        # With allow_degraded: DEGRADED_ADVISORY
-        dec_degraded = route_scientific_intent(
+        # With allow_degraded: STILL ABSTAIN. Consent cannot authorize a
+        # heuristic masquerading as the canonical lifelines capability.
+        dec_strict = route_scientific_intent(
             "Kaplan-Meier survival estimation for clinical cohort",
             allow_degraded=True,
         )
+        assert dec_strict.status == RoutingStatus.ABSTAIN
+
+
+def test_route_frontier_execution_isolation():
+    """Frontier capabilities are unreachable without explicit opt-in (BNS-010)."""
+    query = "use GEARS to predict TP53 perturbation"
+
+    # Default: registry segregation becomes an execution-time fact.
+    dec = route_scientific_intent(query)
+    assert dec.status == RoutingStatus.EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN
+    assert dec.matched_capability is not None
+    assert dec.matched_capability.id == "perturbation.gears_prediction"
+    assert any("--allow-frontier" in r for r in dec.remedies)
+
+    # Opt-in releases the capability into the deterministic backend gate.
+    from bionexus.backends import is_available
+
+    dec_optin = route_scientific_intent(query, allow_frontier=True)
+    if is_available("gears"):
+        assert dec_optin.status == RoutingStatus.PERMITTED
+        assert "PRELIMINARY" in dec_optin.rationale
+    else:
+        # FRONTIER + opt-in + backend absent + no fallback consent -> REFUSE
+        assert dec_optin.status == RoutingStatus.ABSTAIN
+
+        # FRONTIER + opt-in + backend absent + explicit fallback -> DEGRADED
+        dec_degraded = route_scientific_intent(
+            query, allow_frontier=True, allow_degraded=True
+        )
         assert dec_degraded.status == RoutingStatus.DEGRADED_ADVISORY
-        assert dec_degraded.target_skill == "clinical-cohort-analysis"
 
 
 def test_cli_route_subcommand(capsys):
@@ -140,3 +178,15 @@ def test_cli_route_subcommand(capsys):
     assert rc == 1
     captured = capsys.readouterr()
     assert '"status": "ABSTAIN"' in captured.out
+
+    # 4. Frontier isolation: blocked by default, released by --allow-frontier
+    rc = cli_main(["route", "use GEARS to predict TP53 perturbation"])
+    assert rc == 1
+    captured = capsys.readouterr()
+    assert "[FRONTIER]" in captured.out
+    assert "--allow-frontier" in captured.out
+
+    rc = cli_main(["route", "use GEARS to predict TP53 perturbation", "--allow-frontier"])
+    captured = capsys.readouterr()
+    assert "[FRONTIER]" not in captured.out
+    assert rc in (0, 1)  # PERMITTED if gears installed, else strict backend refusal

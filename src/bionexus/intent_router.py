@@ -7,9 +7,14 @@ Evolves static skill discovery into a validated 6-stage Scientific Intent Pipeli
 3. Scientific Preconditions Verification (Biological replication, Non-degenerate geometry)
 4. Capability Contract Matching (Canonical Capability vs Heuristic)
 5. Backend Lifecycle Probe (Installed vs Missing vs Incompatible)
-6. Deterministic Routing Decision (PERMITTED | NEEDS_DATA | ABSTAIN | DEGRADED_ADVISORY)
+6. Deterministic Routing Decision
+   (PERMITTED | NEEDS_DATA | ABSTAIN | DEGRADED_ADVISORY | EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN)
 
 Enforces what is scientifically legal and protects Host Agents from executing invalid analyses.
+
+Gate order is normative: Scientific validity -> Execution fidelity -> Availability.
+Backend readiness is bound to the Capability (canonical vs frontier track), never
+to a skill's default/legacy classification (BNS-010 runtime isolation).
 """
 
 from __future__ import annotations
@@ -21,11 +26,9 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from bionexus.abi import detect_forbidden_claims_in_query
-from bionexus.agent_routing import is_default_skill
-from bionexus.backends import probe
 from bionexus.capabilities import (
     ALL_CAPABILITIES,
-    CANONICAL_CAPABILITIES,
+    FRONTIER_CAPABILITIES,
     CapabilityContract,
     find_capabilities_by_intent,
 )
@@ -43,6 +46,7 @@ class RoutingStatus(str, Enum):
     NEEDS_DATA = "NEEDS_DATA"  # Valid intent, but essential metadata or input artifacts are missing
     ABSTAIN = "ABSTAIN"  # Refused: Mathematically/biologically impossible or violates scientific invariants
     DEGRADED_ADVISORY = "DEGRADED_ADVISORY"  # Permitted with explicit notice of Grade C heuristic degradation
+    EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN = "EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN"  # Frontier capability blocked until explicit opt-in (BNS-010)
 
 
 @dataclass
@@ -537,16 +541,22 @@ def route_scientific_intent(
     data_path: Optional[str | Path] = None,
     data_metadata: Optional[Dict[str, Any]] = None,
     allow_degraded: bool = False,
+    allow_frontier: bool = False,
 ) -> RoutingDecision:
     """
     Evaluate scientific intent and determine execution validity.
 
     Pipeline:
     1. Match query -> CapabilityContract
-    2. Inspect data semantics -> Extract metadata
-    3. Evaluate scientific preconditions & refusal triggers
-    4. Check backend status
-    5. Return authoritative RoutingDecision
+    2. Frontier execution-isolation gate (BNS-010): frontier capabilities are
+       unreachable unless the caller explicitly opts in (`allow_frontier=True`)
+    3. Inspect data semantics -> Extract metadata
+    4. Evaluate scientific preconditions & refusal triggers
+    5. Deterministic capability-bound backend gate
+    6. Return authoritative RoutingDecision
+
+    ``allow_frontier`` defaults to False: stable/frontier isolation is enforced
+    at runtime, not only in the registry.
     """
     meta = dict(data_metadata or {})
     intents = list(intent_keywords or [])
@@ -567,9 +577,37 @@ def route_scientific_intent(
         )
 
     skill_name = cap.skill_name
-    is_default = is_default_skill(skill_name)
+    is_frontier = cap.id in FRONTIER_CAPABILITIES
 
-    # 1.5 Forbidden-Claim Intent Screening (BNS-AD-009, BNS-CC-012)
+    # 1.5 Frontier Execution-Isolation Gate (BNS-010).
+    # Registry segregation is nominal; this gate makes it an execution-time fact:
+    # no frontier capability is reachable without explicit caller opt-in.
+    if is_frontier and not allow_frontier:
+        return RoutingDecision(
+            status=RoutingStatus.EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN,
+            matched_capability=cap,
+            target_skill=skill_name,
+            recommended_script=None,
+            recommended_command=None,
+            rationale=(
+                f"Frontier capability detected: '{cap.id}' ({cap.display_name}) is an experimental "
+                "capability segregated from the stable canonical core. Execution requires explicit opt-in."
+            ),
+            violations=[
+                f"Frontier capability '{cap.id}' requested without experimental opt-in "
+                "(allow_frontier=False; BNS-010 runtime isolation)."
+            ],
+            remedies=[
+                "Rerun with --allow-frontier (CLI) or allow_frontier=True (Python API) to execute "
+                "this experimental capability with its PRELIMINARY evidence ceiling."
+            ],
+            evidence_card_template=EvidenceCard(
+                execution_state=ExecutionState.REFUSED.value,
+                details={"contract_id": cap.id, "refusal_triggers": ["frontier_opt_in_required"]},
+            ),
+        )
+
+    # 1.6 Forbidden-Claim Intent Screening (BNS-AD-009, BNS-CC-012)
     # The request itself asks this capability to assert a claim on its
     # forbidden_claims list (e.g. causal cell-cell communication from Moran's I).
     claim_hits = detect_forbidden_claims_in_query(cap.id, query)
@@ -651,39 +689,11 @@ def route_scientific_intent(
     if trap_decision is not None:
         return trap_decision
 
-    # 4. Check Scientific Preconditions & Refusal Triggers
+    # 4. Scientific Validity + Availability Evaluation.
+    # `evaluate_viability` is the single deterministic gate: it verifies
+    # scientific invariants AND probes the capability-bound canonical backend.
     eval_result = cap.evaluate_viability(input_metadata=meta)
 
-    if not eval_result.permitted:
-        # Check if this is a backend missing issue on a legacy skill that user allows degrading
-        if not is_default and allow_degraded:
-            return RoutingDecision(
-                status=RoutingStatus.DEGRADED_ADVISORY,
-                matched_capability=cap,
-                target_skill=skill_name,
-                recommended_script=None,
-                recommended_command=None,
-                rationale=f"Executing via Grade C heuristic fallback for '{skill_name}'. Results are preliminary/degraded.",
-                violations=eval_result.violations,
-                remedies=eval_result.remedies,
-                evidence_card_template=eval_result.evidence_card,
-            )
-
-        # Fatal Scientific Refusal (ABSTAIN)
-        return RoutingDecision(
-            status=RoutingStatus.ABSTAIN,
-            matched_capability=cap,
-            target_skill=skill_name,
-            recommended_script=None,
-            recommended_command=None,
-            rationale=f"Analysis is scientifically invalid or prohibited by BioNexus capability contract '{cap.id}'.",
-            violations=eval_result.violations,
-            remedies=eval_result.remedies,
-            evidence_card_template=eval_result.evidence_card,
-        )
-
-    # 5. Check Gold Backend Presence
-    backend_import = cap.backend.import_name
     script_map = {
         "scrna.pseudobulk_de": "skills/single-cell-rna-qc/scripts/scrna_deseq.py",
         "scrna.exploratory_clustering": "skills/single-cell-rna-qc/scripts/scrna_pipeline.py",
@@ -696,52 +706,86 @@ def route_scientific_intent(
     }
     rec_script = script_map.get(cap.id)
 
-    if backend_import and backend_import != "none":
-        b_status = probe(backend_import)
-        if not b_status.available:
-            if not is_default:
-                if allow_degraded:
-                    return RoutingDecision(
-                        status=RoutingStatus.DEGRADED_ADVISORY,
-                        matched_capability=cap,
-                        target_skill=skill_name,
-                        recommended_script=rec_script,
-                        recommended_command=f"pip install bionexus[{cap.backend.extra or 'all'}]",
-                        rationale=f"Canonical backend '{cap.backend.canonical_name}' is not installed ({b_status.state.value}). Executing via Grade C heuristic fallback for legacy skill '{skill_name}'.",
-                        violations=[f"Backend '{cap.backend.canonical_name}' is not installed."],
-                        remedies=[
-                            f"Install required backend via `pip install bionexus[{cap.backend.extra}]` or `pip install {cap.backend.import_name}`."
-                        ],
-                        evidence_card_template=EvidenceCard(
-                            execution_state=ExecutionState.DEGRADED.value,
-                            details={"missing_backend": cap.backend.canonical_name},
-                        ),
-                    )
-                else:
-                    return RoutingDecision(
-                        status=RoutingStatus.ABSTAIN,
-                        matched_capability=cap,
-                        target_skill=skill_name,
-                        recommended_script=None,
-                        recommended_command=f"pip install bionexus[{cap.backend.extra or 'all'}]",
-                        rationale=f"Strict mode refusal: Canonical backend '{cap.backend.canonical_name}' for legacy skill '{skill_name}' is missing.",
-                        violations=[f"Backend '{cap.backend.canonical_name}' is not installed."],
-                        remedies=[
-                            f"Install required backend via `pip install bionexus[{cap.backend.extra}]` or `pip install {cap.backend.import_name}`."
-                        ],
-                        evidence_card_template=EvidenceCard(
-                            execution_state=ExecutionState.REFUSED.value,
-                            details={"missing_backend": cap.backend.canonical_name},
-                        ),
-                    )
+    if not eval_result.permitted:
+        backend_missing = eval_result.backend_available is False
+        # The single backend violation (if any) is appended last; everything
+        # before it is a scientific-validity violation.
+        scientific_violations = (
+            eval_result.violations[:-1] if backend_missing else list(eval_result.violations)
+        )
 
-    # 6. PERMITTED (Fully scientifically valid execution path)
+        if scientific_violations or not backend_missing:
+            # Fatal Scientific Refusal (ABSTAIN): validity failures never degrade.
+            return RoutingDecision(
+                status=RoutingStatus.ABSTAIN,
+                matched_capability=cap,
+                target_skill=skill_name,
+                recommended_script=None,
+                recommended_command=None,
+                rationale=f"Analysis is scientifically invalid or prohibited by BioNexus capability contract '{cap.id}'.",
+                violations=eval_result.violations,
+                remedies=eval_result.remedies,
+                evidence_card_template=eval_result.evidence_card,
+            )
+
+        # Availability-only refusal: the deterministic capability-bound backend gate.
+        # Backend correctness binds to the Capability (track), never to the skill.
+        install_hint = f"pip install bionexus[{cap.backend.extra or 'all'}]"
+        if is_frontier and allow_degraded:
+            # FRONTIER + opt-in + backend absent + explicit fallback -> DEGRADED
+            return RoutingDecision(
+                status=RoutingStatus.DEGRADED_ADVISORY,
+                matched_capability=cap,
+                target_skill=skill_name,
+                recommended_script=rec_script,
+                recommended_command=install_hint,
+                rationale=(
+                    f"Frontier capability '{cap.id}': canonical backend '{cap.backend.canonical_name}' "
+                    "is not installed. Executing via Grade C heuristic fallback under explicit opt-in; "
+                    "output is experimental and must never be presented as the canonical backend's result."
+                ),
+                violations=eval_result.violations,
+                remedies=eval_result.remedies,
+                evidence_card_template=EvidenceCard(
+                    execution_state=ExecutionState.DEGRADED.value,
+                    details={"missing_backend": cap.backend.canonical_name, "frontier": True},
+                ),
+            )
+
+        # CANONICAL + backend missing -> REFUSE (strict).
+        # FRONTIER + opt-in + backend absent + no fallback consent -> REFUSE too.
+        return RoutingDecision(
+            status=RoutingStatus.ABSTAIN,
+            matched_capability=cap,
+            target_skill=skill_name,
+            recommended_script=None,
+            recommended_command=install_hint,
+            rationale=(
+                f"Canonical backend '{cap.backend.canonical_name}' required by capability '{cap.id}' "
+                "is not available. Backend readiness binds to the capability: no silent substitution, "
+                "no skill-based exceptions."
+            ),
+            violations=eval_result.violations,
+            remedies=eval_result.remedies,
+            evidence_card_template=EvidenceCard(
+                execution_state=ExecutionState.REFUSED.value,
+                details={"missing_backend": cap.backend.canonical_name},
+            ),
+        )
+
+    # 5. PERMITTED (Fully scientifically valid execution path)
+    rationale = f"Scientific preconditions, input semantics, and backend for '{cap.id}' are fully satisfied."
+    if is_frontier:
+        rationale += (
+            " FRONTIER/EXPERIMENTAL capability executed under explicit opt-in: conclusions are "
+            "capped at PRELIMINARY without external validation (BNS-CC-013)."
+        )
     return RoutingDecision(
         status=RoutingStatus.PERMITTED,
         matched_capability=cap,
         target_skill=skill_name,
         recommended_script=rec_script,
         recommended_command=f"python {rec_script} --help" if rec_script else None,
-        rationale=f"Scientific preconditions, input semantics, and backend for '{cap.id}' are fully satisfied.",
+        rationale=rationale,
         evidence_card_template=eval_result.evidence_card,
     )

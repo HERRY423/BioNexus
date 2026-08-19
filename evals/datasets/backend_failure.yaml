@@ -5,10 +5,14 @@
 - id: backend-lifelines-missing-001
   category: backend_failure
   prompt: "Fit Kaplan-Meier survival curve for clinical cohort"
-  expected_status: DEGRADED_ADVISORY
+  expected_status: ABSTAIN
   expected_capability: survival.kaplan_meier
   allow_degraded: true
-  description: "Backend Degradation: Legacy clinical skill permits Grade C heuristic fallback when allow_degraded is True"
+  expected_violations:
+    - "backend"
+  required_remedies:
+    - "pip install"
+  description: "Strict capability-bound gate: canonical capability refuses a missing backend even when allow_degraded consent is given"
 
 - id: backend-lifelines-strict-001
   category: backend_failure
@@ -16,4 +20,30 @@
   expected_status: ABSTAIN
   expected_capability: survival.kaplan_meier
   allow_degraded: false
-  description: "Backend Degradation: Strict mode refuses when backend is missing and provides pip install remedy"
+  expected_violations:
+    - "backend"
+  required_remedies:
+    - "pip install"
+  description: "Backend gate: refusal when backend is missing, with pip install remedy"
+
+- id: backend-frontier-fallback-001
+  category: backend_failure
+  prompt: "predict combinatorial knockout of TP53 and CDKN1A with GEARS"
+  expected_status: DEGRADED_ADVISORY
+  expected_capability: perturbation.gears_prediction
+  allow_frontier: true
+  allow_degraded: true
+  expected_violations:
+    - "backend"
+  description: "FRONTIER + opt-in + backend absent + explicit fallback -> disclosed Grade C degradation (assumes gears absent)"
+
+- id: backend-frontier-nofallback-001
+  category: backend_failure
+  prompt: "forecast spatial niche composition and microenvironment with NicheFormer"
+  expected_status: ABSTAIN
+  expected_capability: spatial.nicheformer_forecasting
+  allow_frontier: true
+  allow_degraded: false
+  expected_violations:
+    - "backend"
+  description: "FRONTIER + opt-in + backend absent + no fallback consent -> strict refusal (assumes nicheformer absent)"

@@ -66,16 +66,17 @@ This is the product: catching biological analyses that should not have been run 
 
 ## 🧭 Product Matrix & Scope Boundary
 
-BioNexus is four layers with hard boundaries — not an ever-growing monolith ([full matrix](docs/product-matrix.md)):
+BioNexus is two planes with hard boundaries — the reliability layer IS the product, and frontier biology is reference implementation, never a product layer ([full matrix](docs/product-matrix.md)):
 
-| Layer | Contains |
+| Plane / Layer | Contains |
 |---|---|
-| **bionexus-core** | BNS spec series · Biological Capability ABI · Failure Taxonomy (BN-Fxxx) · Fail-Closed Engine · Evidence Model |
-| **bionexus-audit** | `preflight` · `audit` · `verify` |
-| **bionexus-conformance** | capability certification (flagship track) · host conformance · BioFailureBench |
-| **reference capability packs** | single-cell · spatial · reproducibility |
+| **BioNexus Core · core** | BNS spec series · Biological Capability ABI · Failure Taxonomy (BN-Fxxx) · Fail-Closed Engine · Evidence Model |
+| **BioNexus Core · audit** | `preflight` · `audit` · `verify` |
+| **BioNexus Core · conformance** | capability certification (flagship track) · **backend identity conformance** (`declared_backend == observed_backend`, machine-provable, BN-F010) · host conformance · BioFailureBench |
+| **Capability Plane · stable reference packs** | single-cell · spatial · reproducibility |
+| **Capability Plane · frontier reference packs** | foundation models · cluster/big data · tangram · perturbation/closed-loop (opt-in only) |
 
-Explicitly **not** in scope, ever: planner, memory, multi-agent, chat UI, cloud workspace, notebook replacement, compute service, agent marketplace.
+Explicitly **not** in scope, ever: planner, memory, multi-agent, chat UI, cloud workspace, notebook replacement, compute service, agent marketplace, or a frontier capability promoted to a product layer.
 
 ---
 

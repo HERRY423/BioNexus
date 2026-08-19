@@ -7,13 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### 🛡️ Added (Backend Identity Conformance — the fourth conformance pillar, BNS-EF-012..016 / BN-F010)
+
+- **`src/bionexus/backend_conformance.py` + CLI `bionexus backend-identity`**: every canonical capability now answers a machine-checkable identity audit — claimed backend, observed executed backend, entry points, version, execution fingerprint, and fallback flag. `declared_backend == observed_backend` is verified via the installed-distribution witness (`importlib.metadata.packages_distributions`), never via caller claims: a missing or mismatched witness is `MASQUERADE` → `BLOCK` (BN-F010); the right distribution without the declared API surface (entry points) is still a masquerade; an absent backend is `NOT_INSTALLED` → `ABSTAIN` (honest refusal, never BN-F010). The `fallback` field is structurally `False`: an identity report that needed a fallback is itself a masquerade. This upgrades "we say we don't silently substitute" into "a machine can prove no silent substitution happened".
+- `BackendRequirement.entry_points` on every capability contract (e.g. `pydeseq2.dds.DeseqDataSet` / `pydeseq2.ds.DeseqStats` for `scrna.pseudobulk_de`); tests `tests/unit/test_backend_conformance.py`.
+
+### 🔬 Added (Flagship real-data external validation track — BNS-015, no synthetic truth)
+
+- **`evals/flagship_validation.py` + `evals/datasets/flagship_validation.yaml`**: external validation concentrates on exactly three capabilities — (A) `scrna.pseudobulk_de` vs published DE truth on Kang 2018 PBMC/IFN-β with a donor design (gated on Backend Identity CONFORMANT: external truth on an unwitnessed backend is not validation), (B) `scrna.annotation_evidence` distrust calibration on CITE-seq/FACS-sorted PBMC (the benchmark is knowing when an annotation is NOT worth believing — under-evidenced labels must not be SUPPORTED, open-set must ABSTAIN, fully-evidenced must not be over-skepticized), (C) `spatial.inference_validity` on Xenium/CosMx/MERFISH-class data with actively manufactured artifacts (segmentation leakage, cell-size bias, transcript-density bias, radius sensitivity, spatial permutation, FOV/condition confounding) that MUST correctly downgrade the conclusion. Controls are measured, never trusted from the injection record.
+- Absent real datasets are honestly `SKIPPED_NO_BACKEND` / `NOT_EVALUATED_NO_BACKEND` (BNS-EM-009); synthetic planted-signal fixtures can never satisfy this track. **`evals/datasets/download_flagship_datasets.py`** fetches what is automatable (GEO GSE96583) and publishes exact manual-acquisition steps otherwise — nothing is ever synthesized.
+- `bionexus eval --exclude` discloses omitted suites (e.g. `flagship_validation` in CI); `--suite flagship_validation` runs the track standalone.
+
+### 🚀 Changed (Release pipeline — the RC gate verifies the WHEEL, not the source tree)
+
+- `.github/workflows/release.yml` is now a full RC pipeline: Version SSOT (tag == pyproject == `bionexus.versions`) → ruff → unit tests → full scientific backend → strict benchmark → build → **new clean venv → pip install the wheel → doctor → registry --check/--validate-endpoints → backend-identity → strict eval** → plugin manifest validation → checksums → release. Post-build gates run in a workspace with no `src/` tree, so "source works, wheel missing files" fails the release instead of shipping.
+
+### 🧭 Changed (Product Matrix — Core + Capability Plane, frontier is not a product layer)
+
+- `docs/product-matrix.md` restructured: **BioNexus Core** (core / audit / conformance, now incl. backend identity conformance) + **Capability Plane** (stable reference packs / frontier reference packs). Foundation models, cluster/big data, tangram, closed-loop are reference implementations on the Capability Plane — opt-in, certification-gradable, never the product core and never a path to a "do-everything biology platform". README matrix table and `test_product_matrix.py` updated to guard the new structure.
+
+---
+
 ## [0.10.0] - 2026-08-17
 
 ### 🛡️ Epistemic Honesty & Fail-Closed by Default (BNS-EF-002 / BNS-CC-012)
 
 - **Fail-closed by default for Tangram, GEARS, and NicheFormer**: `run_tangram_spatial_mapping()`, `predict_gears_perturbation()`, and `forecast_spatial_niche()` now default to `allow_fallback=False`. Missing backends trigger immediate deterministic refusal (`REFUSAL_CANONICAL_MODEL_REQUIRED` / `REFUSAL_BACKEND_UNAVAILABLE`). Grade C heuristic baselines run only with explicit caller opt-in (`allow_fallback=True`) and are transparently labeled as `Grade C Experimental` without masquerading as official neural network models.
 - **Backend Execution Identity Tests & Anti-Masquerading Enforcement**: Implemented execution identity tests for canonical foundation models and closed-loop pipelines (Geneformer, scGPT, GEARS, NicheFormer). If a canonical model object or checkpoint is not provided, strict mode refuses with `REFUSAL_CANONICAL_MODEL_REQUIRED` or `REFUSAL_CANONICAL_BACKEND_NOT_IMPLEMENTED`. Fallback execution with `allow_fallback=True` guarantees transparent labeling as `Grade C Experimental / Heuristic` (BNS-EF-002).
-- **Frontier capability segregation**: Segregated experimental foundation models and closed-loop exploration (`scfm.geneformer_canonical`, `scfm.scgpt_canonical`, `scfm.rank_proxy_embedding`, `perturbation.gears_prediction`, `spatial.nicheformer_forecasting`, `closed_loop.perturbation_to_niche`) into `FRONTIER_CAPABILITIES`, maintaining the stable core of 13 certified canonical capabilities in `CANONICAL_CAPABILITIES`.
+- **Frontier capability segregation with runtime execution isolation**: Segregated experimental foundation models and closed-loop exploration (`scfm.geneformer_canonical`, `scfm.scgpt_canonical`, `scfm.rank_proxy_embedding`, `perturbation.gears_prediction`, `spatial.nicheformer_forecasting`, `closed_loop.perturbation_to_niche`) into `FRONTIER_CAPABILITIES`; the stable core of 13 stable canonical capabilities remains in `CANONICAL_CAPABILITIES` (canonical ≠ certified: CERTIFIED still requires 14/14 evidence gates). Isolation is enforced at execution time, not only in the registry: `route_scientific_intent()` defaults to `allow_frontier=False` and returns `EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN` for any frontier capability; execution requires explicit opt-in (`--allow-frontier` CLI / `allow_frontier=True` API). Backend readiness now binds to the capability, never to the skill: a missing canonical backend is a deterministic refusal for canonical capabilities even with `allow_degraded` consent; `DEGRADED_ADVISORY` is reachable only for frontier capabilities under opt-in + explicit fallback.
 - **Version SSOT & Zero-Drift Guard**: Unified versioning across `pyproject.toml`, `bionexus.registry.yaml`, `src/bionexus/versions.py`, `src/bionexus/__init__.py`, `plugin.json`, `marketplace.json`, and all client manifests. Added `scripts/sync_version.py` and `tests/unit/test_version_ssot.py` CI enforcement.
 
 ### 🌐 Added (Standards Interoperability — BNS-016: no proprietary data-standard island)

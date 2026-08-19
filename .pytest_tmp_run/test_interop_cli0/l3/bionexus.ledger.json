@@ -1,0 +1,58 @@
+{
+  "evidence": {
+    "EVID-DA": {
+      "ref_id": "EVID-DA",
+      "kind": "method_run",
+      "summary": "differential abundance test on independent donors",
+      "maturity": "SUPPORTED",
+      "provenance": {}
+    },
+    "EVID-DONOR": {
+      "ref_id": "EVID-DONOR",
+      "kind": "dataset",
+      "summary": "8 independent donors, balanced conditions",
+      "maturity": "SUPPORTED",
+      "provenance": {}
+    },
+    "EVID-FDR": {
+      "ref_id": "EVID-FDR",
+      "kind": "statistical_result",
+      "summary": "BH FDR q < 0.05 across tested genes",
+      "maturity": "SUPPORTED",
+      "provenance": {}
+    },
+    "EVID-REPL": {
+      "ref_id": "EVID-REPL",
+      "kind": "cross_method",
+      "summary": "second cohort replication",
+      "maturity": "SUPPORTED",
+      "provenance": {}
+    },
+    "EVID-SENS": {
+      "ref_id": "EVID-SENS",
+      "kind": "statistical_result",
+      "summary": "parameter sensitivity: borderline at k=30",
+      "maturity": "FRAGILE",
+      "provenance": {}
+    }
+  },
+  "claims": {
+    "CLAIM-DEMO-017": {
+      "claim_id": "CLAIM-DEMO-017",
+      "statement": "CXCL13+ T cells are enriched in tumor",
+      "capability_id": "scrna.pseudobulk_de",
+      "supported_by": [
+        "EVID-DA",
+        "EVID-DONOR",
+        "EVID-FDR",
+        "EVID-REPL"
+      ],
+      "contradicted_by": [],
+      "depends_on": [
+        "EVID-SENS"
+      ],
+      "evidence_status": "SUPPORTED",
+      "provenance": {}
+    }
+  }
+}

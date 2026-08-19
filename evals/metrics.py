@@ -46,7 +46,8 @@ def _infer_expected_maturity(r: EvalResult) -> str:
     """Infer expected evidence maturity from status and level if not explicitly provided."""
     if r.expected_maturity:
         return r.expected_maturity.upper()
-    if r.expected_status == "ABSTAIN":
+    # A frontier opt-in refusal executes nothing: it carries ABSTAIN-level warrant.
+    if r.expected_status in ("ABSTAIN", "EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN"):
         return "ABSTAIN"
     if r.expected_status in ("NEEDS_DATA", "PERMITTED") and r.level == "L1":
         return "UNASSESSED"

@@ -61,29 +61,41 @@
 - id: route-survival-km-001
   category: routing
   prompt: "Estimate Kaplan-Meier survival curves and perform log-rank test for CD8 high vs low cohorts"
-  expected_status: DEGRADED_ADVISORY
+  expected_status: ABSTAIN
   expected_capability: survival.kaplan_meier
   allow_degraded: true
   data_metadata:
     positive_durations: true
     n_events: 42
-  description: "Clinical biomarker survival estimation via heuristic fallback advisory"
+  expected_violations:
+    - "backend"
+  required_remedies:
+    - "pip install"
+  description: "Strict capability-bound backend gate: canonical capability refuses when lifelines is missing, even with allow_degraded consent"
 
 - id: route-scvi-vae-001
   category: routing
   prompt: "Train an scVI deep generative variational autoencoder model for batch integration across 5 donors"
-  expected_status: PERMITTED
+  expected_status: ABSTAIN
   expected_capability: scvi.probabilistic_vae
   data_metadata:
     is_integer_like: true
-  description: "scvi-tools probabilistic latent embedding"
+  expected_violations:
+    - "backend"
+  required_remedies:
+    - "pip install"
+  description: "Strict backend gate: default-visible skill no longer waves through a missing scvi backend (assumes scvi absent)"
 
 - id: route-allotrope-001
   category: routing
   prompt: "Standardize multi-well spectrophotometer plate reader raw CSV export into Allotrope ASM JSON"
-  expected_status: PERMITTED
+  expected_status: ABSTAIN
   expected_capability: allotrope.format_conversion
-  description: "Analytical plate reader to ASM JSON converter"
+  expected_violations:
+    - "backend"
+  required_remedies:
+    - "pip install"
+  description: "Strict backend gate: canonical allotropy backend missing means refusal, never silent substitution (assumes allotropy absent)"
 
 - id: route-nextflow-001
   category: routing
@@ -98,3 +110,34 @@
   expected_status: PERMITTED
   expected_capability: variant.acmg_classification
   description: "Deterministic ACMG criteria combination"
+
+# ---- Frontier execution isolation (BNS-010 runtime gate) ----
+
+- id: route-frontier-gears-no-optin-001
+  category: routing
+  prompt: "use GEARS to predict TP53 perturbation"
+  expected_status: EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN
+  expected_capability: perturbation.gears_prediction
+  expected_violations:
+    - "opt-in"
+  required_remedies:
+    - "allow-frontier"
+  description: "Frontier isolation: frontier capability is matched but unreachable without explicit opt-in"
+
+- id: route-frontier-scgpt-optin-nofallback-001
+  category: routing
+  prompt: "extract single cell representation using scgpt"
+  expected_status: ABSTAIN
+  expected_capability: scfm.scgpt_canonical
+  allow_frontier: true
+  expected_violations:
+    - "backend"
+  description: "Frontier opt-in alone does not waive the capability-bound backend gate (assumes transformers absent)"
+
+- id: route-frontier-rankproxy-optin-001
+  category: routing
+  prompt: "calculate rank-value SVD embedding proxy for exploratory visualization"
+  expected_status: PERMITTED
+  expected_capability: scfm.rank_proxy_embedding
+  allow_frontier: true
+  description: "Frontier opt-in + present backend (bionexus.scfm is in-tree) -> PERMITTED under experimental track"

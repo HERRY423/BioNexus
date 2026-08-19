@@ -15,14 +15,12 @@ Adheres strictly to BioNexus Epistemic Honesty & Specification Series:
 - Transparent backend disclosure (PyTorch GNN/Transformer vs Co-expression Network Fallback).
 """
 
-from dataclasses import asdict, dataclass, field
 import importlib
 import logging
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from dataclasses import asdict, dataclass, field
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-import pandas as pd
 from scipy import sparse
 
 logger = logging.getLogger("bionexus.closed_loop")
@@ -582,7 +580,7 @@ def forecast_spatial_niche(
 
     spatial_features = (coords - np.mean(coords, axis=0)) / (np.std(coords, axis=0) + 1e-6)
     km = KMeans(n_clusters=n_niche, random_state=cfg.random_seed, n_init=5)
-    cluster_labels = km.fit_predict(spatial_features)
+    km.fit_predict(spatial_features)
 
     distances = km.transform(spatial_features) + 1e-5
     inv_d = 1.0 / distances

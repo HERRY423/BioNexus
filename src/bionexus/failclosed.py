@@ -8,10 +8,12 @@ The closed-by-default mapping (BNS-AD-014):
 
     missing evidence            -> ABSTAIN (request data)
     invalid input               -> REFUSE
-    backend unavailable         -> DEGRADE WITH DISCLOSURE
+    backend unavailable         -> REFUSE (canonical); DEGRADE WITH DISCLOSURE only for
+                                   frontier capabilities with opt-in + explicit fallback
     assumption violated         -> BLOCK CLAIM
     claim beyond warrant        -> BLOCK CLAIM
     external validation absent  -> CAP EVIDENCE LEVEL
+    frontier capability, no opt-in -> REFUSE (EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN)
 
 Every row prevents an invalid run or an invalid claim *before* compute.
 `prevent_invalid_run()` is the single canonical entry point: hosts SHOULD
@@ -52,7 +54,7 @@ class PreventionDecision:
 FAIL_CLOSED_TABLE: List[Dict[str, str]] = [
     {"condition": "missing evidence", "prevention_kind": "MISSING_EVIDENCE", "action": "ABSTAIN (request data)"},
     {"condition": "invalid input", "prevention_kind": "INVALID_INPUT", "action": "REFUSE"},
-    {"condition": "backend unavailable", "prevention_kind": "BACKEND_UNAVAILABLE", "action": "DEGRADE WITH DISCLOSURE"},
+    {"condition": "backend unavailable", "prevention_kind": "BACKEND_UNAVAILABLE", "action": "REFUSE (canonical); DEGRADE WITH DISCLOSURE (frontier opt-in + explicit fallback)"},
     {"condition": "assumption violated", "prevention_kind": "ASSUMPTION_VIOLATED", "action": "BLOCK CLAIM"},
     {"condition": "claim beyond warrant", "prevention_kind": "CLAIM_BEYOND_WARRANT", "action": "BLOCK CLAIM"},
     {"condition": "external validation absent", "prevention_kind": "EXTERNAL_VALIDATION_ABSENT", "action": "CAP EVIDENCE LEVEL"},
@@ -61,6 +63,7 @@ FAIL_CLOSED_TABLE: List[Dict[str, str]] = [
 # Violation signatures that indicate input-semantics failures vs assumption failures
 _INPUT_SIGNATURES = ("normalized", "integer", "spatial spots", "coordinates", "zero events", "missing required input")
 _ASSUMPTION_SIGNATURES = ("replicat", "pseudoreplication", "assumption", "distribution", "mechanism", "censor")
+_BACKEND_SIGNATURES = ("backend",)
 
 
 def _classify_prevention_kind(decision: RoutingDecision) -> str:
@@ -70,6 +73,8 @@ def _classify_prevention_kind(decision: RoutingDecision) -> str:
         return "CLAIM_BEYOND_WARRANT"
     if any(sig in joined for sig in _INPUT_SIGNATURES):
         return "INVALID_INPUT"
+    if any(sig in joined for sig in _BACKEND_SIGNATURES):
+        return "BACKEND_UNAVAILABLE"
     if any(sig in joined for sig in _ASSUMPTION_SIGNATURES):
         return "ASSUMPTION_VIOLATED"
     return "ASSUMPTION_VIOLATED"  # conservative default: blocked, never waved through
@@ -82,6 +87,7 @@ def prevent_invalid_run(
     claimed_maturity: Optional[str] = None,
     has_external_validation: bool = False,
     allow_degraded: bool = False,
+    allow_frontier: bool = False,
 ) -> PreventionDecision:
     """
     The canonical fail-closed gate (BNS-AD-013).
@@ -95,6 +101,7 @@ def prevent_invalid_run(
         query=query,
         data_metadata=data_metadata,
         allow_degraded=allow_degraded,
+        allow_frontier=allow_frontier,
     )
     routing_dict = decision.to_dict()
     failure_ids = sorted({fid for v in decision.violations for fid in classify_violation(v)})
@@ -126,7 +133,21 @@ def prevent_invalid_run(
             routing=routing_dict,
         )
 
+    # Frontier execution isolation (BNS-010): blocked until explicit opt-in.
+    # Conservative mapping into the closed vocabulary: refused, never waved through.
+    if decision.status == RoutingStatus.EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN:
+        return PreventionDecision(
+            prevented=True,
+            prevention_kind="ASSUMPTION_VIOLATED",
+            action="REFUSE",
+            reason=decision.rationale,
+            failure_mode_ids=failure_ids,
+            remedies=decision.remedies,
+            routing=routing_dict,
+        )
+
     # 3. Backend unavailable with consent -> DEGRADE WITH DISCLOSURE
+    # (reachable only for frontier capabilities under strict capability-bound gating)
     if decision.status == RoutingStatus.DEGRADED_ADVISORY:
         return PreventionDecision(
             prevented=True,

@@ -43,6 +43,7 @@ class ExpectedStatus(str, Enum):
     NEEDS_DATA = "NEEDS_DATA"
     ABSTAIN = "ABSTAIN"
     DEGRADED_ADVISORY = "DEGRADED_ADVISORY"
+    EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN = "EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN"
 
 
 @dataclass
@@ -62,6 +63,7 @@ class EvalCase:
     simulated_agent_response: Optional[str] = None
     data_metadata: Dict[str, Any] = field(default_factory=dict)
     allow_degraded: bool = False
+    allow_frontier: bool = False
     description: str = ""
     known_limitation: bool = False
 
@@ -80,6 +82,7 @@ class EvalCase:
             "simulated_agent_response": self.simulated_agent_response,
             "data_metadata": self.data_metadata,
             "allow_degraded": self.allow_degraded,
+            "allow_frontier": self.allow_frontier,
             "description": self.description,
             "known_limitation": self.known_limitation,
         }

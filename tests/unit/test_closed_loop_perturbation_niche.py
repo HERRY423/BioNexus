@@ -7,7 +7,6 @@ Verifies strict compliance with BioNexus Epistemic Honesty (BNS-EF-002 / BNS-CC-
 - Transparent Grade C attribution (never masquerading as neural network).
 """
 
-from unittest.mock import patch
 
 import anndata as ad
 import numpy as np
@@ -16,15 +15,10 @@ import pytest
 from scipy import sparse
 
 from bionexus.abi import capability_abis, get_capability_abi
-from bionexus.capabilities import ALL_CAPABILITIES, CANONICAL_CAPABILITIES, FRONTIER_CAPABILITIES
+from bionexus.capabilities import ALL_CAPABILITIES, FRONTIER_CAPABILITIES
 from bionexus.closed_loop import (
-    ClosedLoopEvaluationResult,
     GEARSPerturbationConfig,
-    GEARSPredictionResult,
     NicheFormerConfig,
-    NicheFormerForecastResult,
-    check_gears_backend,
-    check_nicheformer_backend,
     forecast_spatial_niche,
     predict_gears_perturbation,
     run_perturbation_to_niche_closed_loop,

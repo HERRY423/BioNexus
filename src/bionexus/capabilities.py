@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from bionexus.backends import probe
 from bionexus.contracts import (
@@ -73,6 +73,11 @@ class BackendRequirement:
     minimum_version: Optional[str] = None
     extra: Optional[str] = None
     description: str = ""
+    # Dotted import paths (module or module.attribute) that the declared backend
+    # MUST expose for this capability. Backend Identity Conformance resolves
+    # each entry point at audit time: an unresolvable entry point is an
+    # identity violation (BN-F010), never a silent substitute.
+    entry_points: Tuple[str, ...] = ()
 
 
 @dataclass
@@ -226,14 +231,41 @@ class CapabilityContract:
             violations.append(trigger.description)
             remedies.append(trigger.remedy)
 
-        # 3. Backend Availability Note
+        # 3. Backend Availability Gate (bound to the Capability, never to a skill).
+        # A missing canonical backend is a violation, not an advisory note:
+        # availability is decided here, deterministically, for every caller.
         backend_name = self.backend.import_name
+        backend_available: Optional[bool] = None
         if backend_name and backend_name != "none":
-            status = probe(backend_name)
-            if not status.available:
-                remedies.append(
-                    f"Recommended backend '{self.backend.canonical_name}' not detected. Install via `pip install {self.backend.import_name}` or `pip install bionexus[{self.backend.extra}]`."
+            backend_status = probe(backend_name)
+            backend_available = backend_status.available
+            if not backend_status.available:
+                # Deterministic violation wording (always names the backend) so
+                # downstream classification (BN-F010 / BACKEND_UNAVAILABLE) never
+                # depends on per-contract phrasing; only the remedy may be bespoke.
+                contract_trigger = next(
+                    (r for r in self.refusal_conditions if r.condition_id == "missing_backend"),
+                    None,
                 )
+                trigger = RefusalTrigger(
+                    condition_id="missing_backend",
+                    description=(
+                        f"Canonical backend '{self.backend.canonical_name}' required by capability "
+                        f"'{self.id}' is not available in this environment ({backend_status.state.value})."
+                    ),
+                    remedy=(
+                        contract_trigger.remedy
+                        if contract_trigger
+                        else (
+                            f"Install via `pip install {self.backend.import_name}` "
+                            f"or `pip install bionexus[{self.backend.extra or 'all'}]`."
+                        )
+                    ),
+                    violated_rule="Gold-standard backend requirement",
+                )
+                triggered_refusals.append(trigger)
+                violations.append(trigger.description)
+                remedies.append(trigger.remedy)
 
         # 4. Synthesize Evaluation
         permitted = len(triggered_refusals) == 0 and len(violations) == 0
@@ -287,6 +319,7 @@ class CapabilityContract:
             remedies=remedies,
             evidence_card=card,
             conclusion_maturity=concl_maturity,
+            backend_available=backend_available,
         )
 
 
@@ -302,6 +335,8 @@ class CapabilityEvaluationResult:
     remedies: List[str]
     evidence_card: EvidenceCard
     conclusion_maturity: str
+    # None when the capability declares no backend; otherwise the live probe result.
+    backend_available: Optional[bool] = None
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert evaluation result to dictionary."""
@@ -314,6 +349,7 @@ class CapabilityEvaluationResult:
             "remedies": self.remedies,
             "evidence_card": self.evidence_card.to_dict(),
             "conclusion_maturity": self.conclusion_maturity,
+            "backend_available": self.backend_available,
         }
 
 
@@ -370,6 +406,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             import_name="pydeseq2",
             minimum_version="0.4.0",
             extra="deseq",
+            entry_points=("pydeseq2.dds.DeseqDataSet", "pydeseq2.ds.DeseqStats"),
             description="PyDESeq2 Wald tests on pseudobulk counts",
         ),
         refusal_conditions=[
@@ -451,6 +488,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             import_name="scanpy",
             minimum_version="1.10.0",
             extra="goldchain",
+            entry_points=("scanpy.pp", "scanpy.tl"),
             description="Scanpy single-cell analysis toolkit",
         ),
         refusal_conditions=[
@@ -537,6 +575,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             import_name="squidpy",
             minimum_version="1.3.0",
             extra="spatial",
+            entry_points=("squidpy.gr.spatial_neighbors", "squidpy.gr.spatial_autocorr"),
             description="Squidpy spatial analysis library",
         ),
         refusal_conditions=[
@@ -628,6 +667,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             import_name="lifelines",
             minimum_version="0.27.0",
             extra="survival",
+            entry_points=("lifelines.KaplanMeierFitter", "lifelines.CoxPHFitter"),
             description="Lifelines survival analysis library",
         ),
         refusal_conditions=[
@@ -701,6 +741,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             import_name="scvi",
             minimum_version="1.0.0",
             extra="scverse",
+            entry_points=("scvi.model.SCVI",),
             description="scvi-tools probabilistic generative modeling framework",
         ),
         refusal_conditions=[
@@ -774,6 +815,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             import_name="allotropy",
             minimum_version="0.1.30",
             extra="allotrope",
+            entry_points=("allotropy",),
             description="Allotropy open-source instrument parser library",
         ),
         refusal_conditions=[
@@ -1001,6 +1043,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             import_name="bionexus",
             minimum_version="0.10.0",
             description="Deterministic annotation-evidence scoring (annotation_evidence.assess_annotation_evidence)",
+            entry_points=("bionexus.annotation_evidence",),
         ),
         refusal_conditions=[
             RefusalTrigger(
@@ -1094,6 +1137,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             import_name="bionexus",
             minimum_version="0.10.0",
             description="Deterministic alternative-explanation matrix (spatial_inference.assess_spatial_inference)",
+            entry_points=("bionexus.spatial_inference",),
         ),
         refusal_conditions=[
             RefusalTrigger(
@@ -1167,6 +1211,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             import_name="bionexus.cluster",
             minimum_version="0.9.0",
             description="BioNexus unified HPC and cloud batch dispatcher",
+            entry_points=("bionexus.cluster",),
         ),
         refusal_conditions=[
             RefusalTrigger(
@@ -1231,6 +1276,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             import_name="bionexus.bigdata",
             minimum_version="0.9.0",
             description="BioNexus large-scale matrix memory and streaming estimator",
+            entry_points=("bionexus.bigdata",),
         ),
         refusal_conditions=[
             RefusalTrigger(
@@ -1311,6 +1357,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             import_name="tangram",
             minimum_version="1.0.4",
             extra="spatial",
+            entry_points=("tangram.mapper",),
             description="Tangram optimal transport spatial mapping library",
         ),
         refusal_conditions=[
@@ -1410,6 +1457,7 @@ FRONTIER_CAPABILITIES: Dict[str, CapabilityContract] = {
             import_name="transformers",
             minimum_version="4.30.0",
             extra="scverse",
+            entry_points=("transformers.AutoModel", "transformers.AutoConfig"),
             description="Geneformer rank-value Transformer neural network with official checkpoint weights",
         ),
         refusal_conditions=[
@@ -1494,6 +1542,7 @@ FRONTIER_CAPABILITIES: Dict[str, CapabilityContract] = {
             import_name="transformers",
             minimum_version="4.30.0",
             extra="scverse",
+            entry_points=("transformers.AutoModel", "transformers.AutoConfig"),
             description="scGPT generative Transformer neural network with official checkpoint weights",
         ),
         refusal_conditions=[
@@ -1558,6 +1607,7 @@ FRONTIER_CAPABILITIES: Dict[str, CapabilityContract] = {
             canonical_name="local rank-svd heuristic proxy (bionexus)",
             import_name="bionexus.scfm",
             minimum_version="0.9.0",
+            entry_points=("bionexus.scfm",),
             description="Deterministic rank-weighted Truncated SVD heuristic proxy (Grade C)",
         ),
         refusal_conditions=[
@@ -1622,6 +1672,7 @@ FRONTIER_CAPABILITIES: Dict[str, CapabilityContract] = {
             import_name="gears",
             minimum_version="0.1.0",
             extra="scverse",
+            entry_points=("gears",),
             description="GEARS Graph-Enhanced Perturbation Prediction GNN",
         ),
         refusal_conditions=[
@@ -1701,6 +1752,7 @@ FRONTIER_CAPABILITIES: Dict[str, CapabilityContract] = {
             import_name="nicheformer",
             minimum_version="0.1.0",
             extra="scverse",
+            entry_points=("nicheformer",),
             description="NicheFormer Spatial Microenvironment Foundation Model",
         ),
         refusal_conditions=[
@@ -1778,6 +1830,7 @@ FRONTIER_CAPABILITIES: Dict[str, CapabilityContract] = {
             import_name="gears",
             minimum_version="0.1.0",
             extra="scverse",
+            entry_points=("gears", "bionexus.closed_loop"),
             description="BioNexus GEARS + NicheFormer Closed-Loop Integration Pipeline",
         ),
         refusal_conditions=[

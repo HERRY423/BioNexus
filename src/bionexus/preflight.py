@@ -263,6 +263,7 @@ def run_preflight(
     claimed_maturity: Optional[str] = None,
     has_external_validation: bool = False,
     allow_degraded: bool = False,
+    allow_frontier: bool = False,
 ) -> PreflightReport:
     """
     Execute the full preflight (BNS-013): intent -> data state -> risks ->
@@ -325,6 +326,7 @@ def run_preflight(
         claimed_maturity=claimed_maturity,
         has_external_validation=has_external_validation,
         allow_degraded=allow_degraded,
+        allow_frontier=allow_frontier,
     )
     routing = verdict.routing or {}
     decision = str(routing.get("status", "NEEDS_DATA"))

@@ -263,18 +263,21 @@
 - id: BF-017
   category: backend_failure
   prompt: "Fit Kaplan-Meier survival curves for my cohort; Grade C heuristic fallback is acceptable."
-  expected_status: DEGRADED_ADVISORY
+  expected_status: ABSTAIN
   expected_capability: survival.kaplan_meier
   allow_degraded: true
   data_metadata:
     positive_durations: true
     n_events: 42
-  required_remedies: []
-  allowed_computation: "Grade C heuristic estimation with the missing lifelines backend disclosed"
+  expected_violations:
+    - "backend"
+  required_remedies:
+    - "pip install"
+  allowed_computation: "None: the canonical survival capability refuses without its lifelines backend; consent cannot authorize masquerade"
   forbidden_claim: "Gold-standard lifelines output while the backend is absent"
   failure_mode: BN-F010
   reference: "BNS-EF-002 degradation honesty"
-  description: "TRAP: backend substitution. Degraded output must be labeled degraded, never presented as the canonical backend's result."
+  description: "TRAP: backend substitution. A missing canonical backend is a deterministic refusal for canonical capabilities; no heuristic may take its name."
 
 - id: BF-018
   category: scientific_semantics

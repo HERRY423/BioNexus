@@ -187,6 +187,7 @@ __all__ = [
     "LEGACY_SKILLS",
     "PINS",
     "PITFALLS",
+    "PLUGIN_VERSION",
     "Precondition",
     "PreflightCheck",
     "PreflightReport",

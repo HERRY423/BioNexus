@@ -116,7 +116,12 @@ def test_l3_missing_backend_never_counts_as_pass(monkeypatch):
         assert not result.passed, f"{case.id} must not pass without a backend"
         assert result.actual_status == "SKIPPED_NO_BACKEND"
         assert result.skipped is True
-        assert result.skip_reason and "backend unavailable" in result.skip_reason
+        # The skip reason must disclose why: either the scientific backend is
+        # unavailable, or (flagship real-data track) the external dataset is
+        # absent. Both are honest refusal territory (BNS-EM-009).
+        is_backend_skip = "backend unavailable" in (result.skip_reason or "")
+        is_flagship_skip = "Flagship suite" in (result.skip_reason or "") and "Dataset absent" in (result.skip_reason or "")
+        assert is_backend_skip or is_flagship_skip
 
 
 def test_unknown_planted_signal_cannot_auto_pass():

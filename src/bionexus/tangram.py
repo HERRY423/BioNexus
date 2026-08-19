@@ -12,11 +12,10 @@ Adheres strictly to BioNexus Fail-Closed & Epistemic Honesty Invariants:
 - Transparently discloses execution backend (PyTorch GPU/CPU vs Heuristic Fallback).
 """
 
-from dataclasses import asdict, dataclass, field
 import importlib
 import logging
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from dataclasses import asdict, dataclass, field
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -384,8 +383,8 @@ def run_tangram_spatial_mapping(
             cell_to_spot_map_shape=ad_map.shape,
             execution_notes=[
                 f"Tangram optimal transport optimization completed successfully on {device.upper()}.",
-                f"Cell type proportions written to adata_sp.obsm['tangram_ct_pred'].",
-                f"Dominant cell type assigned per spatial spot in adata_sp.obs['dominant_cell_type'].",
+                "Cell type proportions written to adata_sp.obsm['tangram_ct_pred'].",
+                "Dominant cell type assigned per spatial spot in adata_sp.obs['dominant_cell_type'].",
             ],
         )
 

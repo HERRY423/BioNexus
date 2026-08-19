@@ -18,6 +18,9 @@ by which degraded execution is allowed at all.
     MUST enumerate the missing items (`missing_data_requests`).
   - `ABSTAIN` — a scientific invariant is violated; execution is prohibited.
   - `DEGRADED_ADVISORY` — permitted only with explicit Grade C degradation notice.
+  - `EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN` — a frontier capability was matched
+    but the caller has not opted in (`allow_frontier=False`); execution is blocked
+    until explicit opt-in (BNS-010 runtime isolation).
 
 ## 3. Mandatory refusals
 
@@ -39,8 +42,12 @@ by which degraded execution is allowed at all.
 ## 4. Degradation
 
 - **BNS-AD-006** Degraded execution (heuristic in place of missing gold backend)
-  MUST require explicit user consent (`allow_degraded`), and MUST only be offered
-  for capabilities whose skill is not default-visible (BNS-EF-005/006).
+  MUST require explicit user consent (`allow_degraded`). Backend readiness binds
+  to the capability, never to the skill: for canonical capabilities a missing
+  canonical backend is a strict refusal (`ABSTAIN`/REFUSE) regardless of consent;
+  `DEGRADED_ADVISORY` is reachable only for frontier capabilities under explicit
+  frontier opt-in (`allow_frontier`) plus degradation consent (BNS-EF-005/006,
+  BNS-010).
 - **BNS-AD-007** A degraded result MUST carry `ExecutionState.DEGRADED`, name the
   missing canonical backend in its evidence card, and synthesize maturity at most
   `FRAGILE`.
@@ -85,14 +92,19 @@ scarce API is not `run()` — it is `prevent_invalid_run()`
   |---|---|---|
   | missing evidence | `MISSING_EVIDENCE` | ABSTAIN (request data) |
   | invalid input | `INVALID_INPUT` | REFUSE |
-  | backend unavailable | `BACKEND_UNAVAILABLE` | DEGRADE WITH DISCLOSURE |
+  | backend unavailable (canonical) | `BACKEND_UNAVAILABLE` | REFUSE |
+  | backend unavailable (frontier, opt-in + explicit fallback) | `BACKEND_UNAVAILABLE` | DEGRADE WITH DISCLOSURE |
+  | frontier capability, no opt-in | `ASSUMPTION_VIOLATED` | REFUSE (`EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN`) |
   | assumption violated | `ASSUMPTION_VIOLATED` | BLOCK CLAIM |
   | claim beyond warrant | `CLAIM_BEYOND_WARRANT` | BLOCK CLAIM |
   | external validation absent | `EXTERNAL_VALIDATION_ABSENT` | CAP EVIDENCE LEVEL |
 
+  Backend readiness binds to the capability, never to the skill: no default/legacy
+  skill classification may decide whether a missing backend matters.
+
 - **BNS-AD-015** Every prevention row MUST terminate in a blocked or disclosed
   state; there is NO row that resolves to silent execution. A clean request
-  resolves to `RUN PERMITTED` only after all six rows fail to match.
+  resolves to `RUN PERMITTED` only after every row fails to match.
 
 ## 6. Conformance verification
 

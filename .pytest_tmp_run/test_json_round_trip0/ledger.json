@@ -1,0 +1,65 @@
+{
+  "evidence": {
+    "DE-102": {
+      "ref_id": "DE-102",
+      "kind": "statistical_result",
+      "summary": "IFN-stimulated genes enriched in cluster 3",
+      "maturity": "PRELIMINARY",
+      "provenance": {}
+    },
+    "GSEA-021": {
+      "ref_id": "GSEA-021",
+      "kind": "statistical_result",
+      "summary": "Interferon response pathway ES=0.58, FDR q=0.11",
+      "maturity": "FRAGILE",
+      "provenance": {}
+    },
+    "SCVI-DE-014": {
+      "ref_id": "SCVI-DE-014",
+      "kind": "cross_method",
+      "summary": "scVI latent DE does not separate IFN program",
+      "maturity": "PRELIMINARY",
+      "provenance": {}
+    },
+    "QC-004": {
+      "ref_id": "QC-004",
+      "kind": "transformation",
+      "summary": "MAD-based QC, 8% cells removed",
+      "maturity": "SUPPORTED",
+      "provenance": {}
+    },
+    "NORMALIZATION-003": {
+      "ref_id": "NORMALIZATION-003",
+      "kind": "transformation",
+      "summary": "CPM + log1p",
+      "maturity": "SUPPORTED",
+      "provenance": {}
+    },
+    "CLUSTERING-007": {
+      "ref_id": "CLUSTERING-007",
+      "kind": "method_run",
+      "summary": "Leiden res=1.0, ARI stability 0.74",
+      "maturity": "FRAGILE",
+      "provenance": {}
+    }
+  },
+  "claims": {
+    "CLAIM-017": {
+      "claim_id": "CLAIM-017",
+      "statement": "Cluster 3 exhibits interferon-response activation",
+      "capability_id": "scrna.exploratory_clustering",
+      "supported_by": [
+        "DE-102",
+        "GSEA-021"
+      ],
+      "contradicted_by": [
+        "SCVI-DE-014"
+      ],
+      "depends_on": [
+        "DATASET-SHA256:deadbeef"
+      ],
+      "evidence_status": "CONFLICTED",
+      "provenance": {}
+    }
+  }
+}

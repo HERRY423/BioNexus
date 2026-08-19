@@ -14,14 +14,10 @@ import pytest
 from scipy import sparse
 
 from bionexus.abi import capability_abis, get_capability_abi
-from bionexus.capabilities import CANONICAL_CAPABILITIES
 from bionexus.intent_router import route_scientific_intent
 from bionexus.scfm import (
     FoundationModelFamily,
     SCFMConfig,
-    SCFMEmbeddingResult,
-    SCFMPerturbationResult,
-    check_scfm_backend,
     extract_rank_proxy_embeddings,
     extract_scfm_embeddings,
     rank_value_encode,
@@ -129,7 +125,6 @@ def test_canonical_geneformer_transformer_execution(synthetic_sc_adata):
     Tests token tensor preparation, attention mask, and mean-pooled hidden state extraction.
     """
     try:
-        import torch
         import torch.nn as nn
     except ImportError:
         pytest.skip("PyTorch not installed")

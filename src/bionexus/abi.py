@@ -24,7 +24,7 @@ from dataclasses import asdict, dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from bionexus.capabilities import ALL_CAPABILITIES, CANONICAL_CAPABILITIES, FRONTIER_CAPABILITIES, CapabilityContract
+from bionexus.capabilities import ALL_CAPABILITIES, CANONICAL_CAPABILITIES, CapabilityContract
 from bionexus.contracts import ConclusionMaturity
 
 ABI_VERSION = "1.0"

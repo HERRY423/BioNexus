@@ -59,6 +59,31 @@ refused analysis has no conclusion at all.
   provenance; a capability whose reference algorithm is seed-sensitive MUST record
   the seed (BNS-006).
 
+## 5a. Backend Identity Conformance
+
+BNS-EF-005 forbids silent substitution as a *policy*; BNS-EF-012..016 make the
+absence of substitution *machine-provable*. Every canonical capability answers
+an identity audit: claimed backend, observed executed backend, entry points,
+version, execution fingerprint, and fallback flag.
+
+- **BNS-EF-012** Each capability MUST emit a machine-checkable backend identity
+  statement (`backend_conformance.verify_backend_identity`): claimed backend,
+  observed backend, declared/resolved/missing entry points, installed version,
+  execution fingerprint, and a fallback flag.
+- **BNS-EF-013** `declared_backend == observed_backend` MUST be verified via the
+  installed-distribution witness (`importlib.metadata.packages_distributions`),
+  not via anything the caller claims. A missing or mismatched witness MUST
+  resolve to state `MASQUERADE` with action `BLOCK` and failure mode `BN-F010`.
+- **BNS-EF-014** The declared entry points MUST resolve to real symbols of the
+  observed backend. The right distribution without the declared API surface is
+  still a masquerade and MUST `BLOCK` (BN-F010).
+- **BNS-EF-015** An identity report MUST NOT conceal a fallback: the `fallback`
+  field is structurally `False`. An identity report that required a fallback is
+  itself a masquerade.
+- **BNS-EF-016** A backend that executed nothing MUST be reported as
+  `NOT_INSTALLED` with action `ABSTAIN` and no failure mode: absence is honest
+  refusal territory (BNS-005), never a masquerade.
+
 ## 6. Conformance verification
 
 | Requirement | Verified by |
@@ -69,3 +94,4 @@ refused analysis has no conclusion at all.
 | BNS-EF-008 | L3 planted-truth suites (`scrna_markers`, `spatial_moran_svg`, `pseudobulk_de`) |
 | BNS-EF-009 | `src/bionexus/provenance.py` sidecar schema |
 | BNS-EF-010 | eval L3 `EXECUTION_FAILURE` handling in `evals/runner.py` |
+| BNS-EF-012..016 | `tests/unit/test_backend_conformance.py`; CLI `backend-identity`; flagship pseudobulk gate (`evals/flagship_validation.py`) |
