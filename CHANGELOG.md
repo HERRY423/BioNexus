@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 🧭 Changed (Narrative unification — Scientific Reliability Layer / Scientific Warrant Engine, warrant-first)
+
+- Product narrative unified across `README.md`, `pyproject.toml`, `bionexus.registry.yaml`, and all plugin manifests (`plugin.json`, `marketplace.json`, `.claude-plugin/`, `.codex/`, `.codex-plugin/`, `.agents/plugins/`, `plugins/bionexus/`): **Scientific Reliability Layer & Scientific Warrant Engine for AI Agents (Warrant-First Evidence Assessment, Fail-Closed Invariants, Evidence-Capped Claims, Zero Silent Substitution)**. The refusal-first framing ("catching analyses that should not have been run") is retired from the product claim — `docs/product-matrix.md` non-goals and `BNS-013` purpose (v1.1) now state the warrant-first claim: cap claims that exceed their evidence, block execution only where a true invariant is violated.
+
+### 🔒 Added (Capability freeze — flagship-first certification phase)
+
+- `docs/product-matrix.md` gains a **Capability freeze (current phase)** section: no new protein, clinical, or additional omics tool capabilities. The phase priority is bringing the three flagships — `scrna.pseudobulk_de`, `scrna.annotation_evidence`, `spatial.inference_validity` — to genuinely CERTIFIED status (14/14 evidence gates, Backend Identity CONFORMANT, BNS-015 external real-data validation). The freeze governs new capability surface only, not maintenance or certification of existing packs.
+
 ### 🛡️ Added (Backend Identity Conformance — the fourth conformance pillar, BNS-EF-012..016 / BN-F010)
 
 - **`src/bionexus/backend_conformance.py` + CLI `bionexus backend-identity`**: every canonical capability now answers a machine-checkable identity audit — claimed backend, observed executed backend, entry points, version, execution fingerprint, and fallback flag. `declared_backend == observed_backend` is verified via the installed-distribution witness (`importlib.metadata.packages_distributions`), never via caller claims: a missing or mismatched witness is `MASQUERADE` → `BLOCK` (BN-F010); the right distribution without the declared API surface (entry points) is still a masquerade; an absent backend is `NOT_INSTALLED` → `ABSTAIN` (honest refusal, never BN-F010). The `fallback` field is structurally `False`: an identity report that needed a fallback is itself a masquerade. This upgrades "we say we don't silently substitute" into "a machine can prove no silent substitution happened".

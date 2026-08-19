@@ -1,7 +1,7 @@
 {
   "name": "bionexus",
   "version": "0.10.0",
-  "description": "Scientific Reliability Layer & Biological Capability Assertion Firewall for AI Agents (Deterministic Invariants, Fail-Closed Gating, Evidence Synthesis, Zero Silent Substitution).",
+  "description": "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents (Warrant-First Evidence Assessment, Fail-Closed Invariants, Evidence-Capped Claims, Zero Silent Substitution).",
   "author": {
     "name": "BioNexus Team",
     "url": "https://github.com/HERRY423/BioNexus"
@@ -28,7 +28,7 @@
   "interface": {
     "displayName": "BioNexus",
     "shortDescription": "The Scientific Reliability Layer for Agentic Biology",
-    "longDescription": "Scientific Reliability Layer & Biological Capability Assertion Firewall for AI Agents (Deterministic Invariants, Fail-Closed Gating, Evidence Synthesis, Zero Silent Substitution).",
+    "longDescription": "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents (Warrant-First Evidence Assessment, Fail-Closed Invariants, Evidence-Capped Claims, Zero Silent Substitution).",
     "developerName": "BioNexus Team",
     "category": "Science",
     "capabilities": [

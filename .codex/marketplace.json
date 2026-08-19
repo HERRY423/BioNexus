@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "bionexus-reliability",
-      "description": "Scientific Reliability Layer & Biological Capability Assertion Firewall for AI Agents (Deterministic Invariants, Fail-Closed Gating, Evidence Synthesis, Zero Silent Substitution).",
+      "description": "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents (Warrant-First Evidence Assessment, Fail-Closed Invariants, Evidence-Capped Claims, Zero Silent Substitution).",
       "version": "0.10.0",
       "source": {
         "source": "local",

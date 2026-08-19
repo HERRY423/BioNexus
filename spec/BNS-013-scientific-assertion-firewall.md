@@ -1,6 +1,6 @@
 # BNS-013: Scientific Assertion Firewall
 
-**Status**: Active | **Version**: 1.0 | **Supersedes**: none
+**Status**: Active | **Version**: 1.1 | **Supersedes**: none
 **Applies to**: `src/bionexus/preflight.py`, `src/bionexus/analysis_audit.py`, `src/bionexus/verification.py`, `src/bionexus/cli.py`
 **Normative language**: RFC 2119 / RFC 8174. Requirement IDs are stable and never reused.
 
@@ -8,9 +8,11 @@
 
 BioNexus's defensible product claim is not "BioNexus can run analyses" — it is:
 
-> **BioNexus catches biological analyses that should not have been run.**
+> **BioNexus tells you what the evidence warrants: it caps claims that exceed
+> their evidence, and blocks execution only where a true invariant is violated.**
 
-The Scientific Assertion Firewall productizes that claim as three high-frequency
+The Scientific Assertion Firewall productizes the blocking and capping surface
+of that claim as three high-frequency
 entry points around the researcher's existing toolchain (Scanpy, Seurat,
 Bioconductor, Claude, Codex, Cursor — BioNexus does not replace any of them):
 

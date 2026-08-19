@@ -1,7 +1,11 @@
 # BioNexus Product Matrix & Scope Boundaries
 
-The product is not an ever-growing monolith, and frontier biology is not a
-fifth product layer. BioNexus is exactly two planes with hard boundaries:
+BioNexus is the **Scientific Reliability Layer / Scientific Warrant Engine** for
+agentic biology: it assesses what the evidence warrants (policy-independent),
+caps claims that exceed their evidence, and blocks execution only where a true
+invariant is violated. The product is not an ever-growing monolith, and
+frontier biology is not a fifth product layer. BioNexus is exactly two planes
+with hard boundaries:
 
 ```text
 BioNexus
@@ -11,6 +15,8 @@ BioNexus
 │   ├── core                             the scientific contract kernel
 │   │   ├── BNS specification series     (spec/BNS-001..016)
 │   │   ├── Biological Capability ABI    (capabilities, abi)
+│   │   ├── Warrant Engine               (warrant: WarrantAssessment / PolicyDecision,
+│   │   │                                 rule_classification: EpistemicKind taxonomy)
 │   │   ├── Failure Taxonomy             (failures, BN-F001..F012)
 │   │   ├── Fail-Closed Engine           (intent_router, failclosed)
 │   │   └── Evidence Model               (contracts, ledger, provenance, artifacts, interop)
@@ -80,8 +86,10 @@ kernel itself.
 
 BioNexus deliberately contains none of the following — each of them is a
 different product with different failure modes, and adding any of them would
-dilute the one thing BioNexus is for (catching analyses that should not have
-been run):
+dilute the one thing BioNexus is for: **warrant-first scientific assessment —
+determining what the evidence actually warrants, capping claims that exceed
+their evidence, and blocking execution only where a true invariant is
+violated**:
 
 - planner / orchestration agent
 - memory / persistent agent state
@@ -96,3 +104,23 @@ been run):
 
 A pull request that adds any of these should be rejected on scope grounds,
 however well implemented.
+
+## Capability freeze (current phase)
+
+The current development phase imposes a freeze on **horizontal capability
+expansion**: no new protein, clinical, or additional omics tool capabilities
+will be added. The three flagship capabilities —
+
+| Flagship | Capability ID | Certification track |
+|---|---|---|
+| Pseudobulk differential expression | `scrna.pseudobulk_de` | BNS-015 external validation vs published DE truth (Kang 2018) |
+| Annotation evidence assessment | `scrna.annotation_evidence` | BNS-015 distrust calibration on CITE-seq/FACS-sorted PBMC |
+| Spatial inference validity | `spatial.inference_validity` | BNS-015 manufactured-artifact downgrade on Xenium/CosMx/MERFISH-class data |
+
+— are the priority: they must reach genuinely **CERTIFIED** status (14/14
+evidence gates, Backend Identity CONFORMANT, external real-data validation).
+Three certified flagships prove the core thesis — policy-independent warrant
+assessment with evidence-capped claims — better than a broad catalog of
+uncertified capabilities. Existing frontier packs remain opt-in reference
+implementations; the freeze governs *new* capability surface, not maintenance
+or certification of what already exists.
