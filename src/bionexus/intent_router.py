@@ -730,7 +730,7 @@ def route_scientific_intent(
 
         # Availability-only refusal: the deterministic capability-bound backend gate.
         # Backend correctness binds to the Capability (track), never to the skill.
-        install_hint = f"pip install bionexus[{cap.backend.extra or 'all'}]"
+        install_hint = f"pip install bionexus-reliability[{cap.backend.extra or 'all'}]"
         if is_frontier and allow_degraded:
             # FRONTIER + opt-in + backend absent + explicit fallback -> DEGRADED
             return RoutingDecision(

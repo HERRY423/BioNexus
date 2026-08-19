@@ -176,7 +176,7 @@ def inspect_data_state(
         except ImportError:
             checks.append(
                 PreflightCheck(
-                    name="input", passed=None, detail="anndata not installed; matrix state not verified (install bionexus[goldchain] or supply --metadata)"
+                    name="input", passed=None, detail="anndata not installed; matrix state not verified (install bionexus-reliability[goldchain] or supply --metadata)"
                 )
             )
         except Exception as exc:  # unreadable h5ad

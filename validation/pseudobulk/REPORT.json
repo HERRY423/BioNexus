@@ -1,0 +1,70 @@
+{
+  "capability": "scrna.pseudobulk_de",
+  "dataset": {
+    "name": "kang2018_pbmc_ifnb",
+    "version": "GSE96583",
+    "accession": "GEO GSE96583; Kang et al. 2018 doi:10.1038/s41467-018-04001-5",
+    "checksum_sha256": "unavailable",
+    "supplementary_data": {
+      "file": "data/pbmc3k_raw.h5ad",
+      "checksum_sha256": "89a96f1beaa2dd83a687666d3f19a4513ac27a2a2d12581fcd77afed7ea653a1",
+      "note": "Available PBMC data; not the designated kang2018 flagship dataset"
+    }
+  },
+  "pipeline": {
+    "version": "0.10.0",
+    "backend_identity": {
+      "capability_id": "scrna.pseudobulk_de",
+      "track": "canonical",
+      "claimed_backend": "pydeseq2",
+      "observed_backend": "pydeseq2",
+      "entry_points_declared": [
+        "pydeseq2.dds.DeseqDataSet",
+        "pydeseq2.ds.DeseqStats"
+      ],
+      "entry_points_resolved": [
+        "pydeseq2.dds.DeseqDataSet",
+        "pydeseq2.ds.DeseqStats"
+      ],
+      "entry_points_missing": [],
+      "version": "0.5.4",
+      "execution_fingerprint": "eba3d75dd5730980",
+      "fallback": false,
+      "state": "CONFORMANT",
+      "action": "RUN PERMITTED (identity)",
+      "failure_mode_ids": [],
+      "reason": "declared_backend == observed_backend: 'pydeseq2' (distribution 'pydeseq2', version 0.5.4, entry points 2/2 resolved, fallback False)."
+    }
+  },
+  "metrics": [
+    {
+      "name": "fdr_control",
+      "expected": "<=0.05",
+      "observed": "N/A",
+      "result": "skipped"
+    },
+    {
+      "name": "top100_overlap",
+      "expected": ">=0.50",
+      "observed": "N/A",
+      "result": "skipped"
+    },
+    {
+      "name": "donor_design_concordance",
+      "expected": ">=0.80",
+      "observed": "N/A",
+      "result": "skipped"
+    }
+  ],
+  "limitations": [
+    "Reference dataset 'kang2018_pbmc_ifnb' not locally available — requires download from: GEO GSE96583; Kang et al. 2018 doi:10.1038/s41467-018-04001-5",
+    "Required files not found: pbmc_ifnb_counts.h5ad, published_de_truth.csv",
+    "Validation outcome NOT verified in this environment (BNS-EM-009)",
+    "data/pbmc3k_raw.h5ad is available but is not the designated flagship dataset (kang2018_pbmc_ifnb with published DE truth); cannot substitute for external truth validation"
+  ],
+  "timestamp": "2026-08-19T07:11:00.162897+00:00",
+  "evidence_files": [
+    "validation\\pseudobulk\\evidence\\.gitkeep"
+  ],
+  "status": "skipped"
+}

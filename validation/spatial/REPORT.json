@@ -1,0 +1,62 @@
+{
+  "capability": "spatial.inference_validity",
+  "dataset": {
+    "name": "xenium_spatial_truth",
+    "version": "unknown",
+    "accession": "10x Genomics Xenium public datasets (e.g. Human Breast FFPE) / Vizgen MERSCOPE public releases (Moffitt et al. 2016-style MERFISH)",
+    "checksum_sha256": "unavailable"
+  },
+  "pipeline": {
+    "version": "0.10.0",
+    "backend_identity": {
+      "capability_id": "spatial.inference_validity",
+      "track": "canonical",
+      "claimed_backend": "local deterministic alternative-explanation tester",
+      "observed_backend": "bionexus",
+      "entry_points_declared": [
+        "bionexus.spatial_inference"
+      ],
+      "entry_points_resolved": [
+        "bionexus.spatial_inference"
+      ],
+      "entry_points_missing": [],
+      "version": "2.7.0",
+      "execution_fingerprint": "e20d607d73e9f342",
+      "fallback": false,
+      "state": "CONFORMANT",
+      "action": "RUN PERMITTED (identity)",
+      "failure_mode_ids": [],
+      "reason": "declared_backend == observed_backend: 'local deterministic alternative-explanation tester' (distribution 'bionexus', version 2.7.0, entry points 1/1 resolved, fallback False)."
+    }
+  },
+  "metrics": [
+    {
+      "name": "artifact_downgrade",
+      "expected": "not SUPPORTED/ROBUST",
+      "observed": "N/A",
+      "result": "skipped"
+    },
+    {
+      "name": "control_measured",
+      "expected": "FAILED",
+      "observed": "N/A",
+      "result": "skipped"
+    },
+    {
+      "name": "permutation_null",
+      "expected": "FAILED",
+      "observed": "N/A",
+      "result": "skipped"
+    }
+  ],
+  "limitations": [
+    "Reference dataset 'xenium_spatial_truth' not locally available — requires download from: 10x Genomics Xenium public datasets (e.g. Human Breast FFPE) / Vizgen MERSCOPE public releases (Moffitt et al. 2016-style MERFISH)",
+    "Required files not found: spatial_truth.h5ad",
+    "Validation outcome NOT verified in this environment (BNS-EM-009)"
+  ],
+  "timestamp": "2026-08-19T07:11:06.785178+00:00",
+  "evidence_files": [
+    "validation\\spatial\\evidence\\.gitkeep"
+  ],
+  "status": "skipped"
+}

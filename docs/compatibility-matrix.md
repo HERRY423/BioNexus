@@ -38,14 +38,14 @@ BioNexus routes analytical intents exclusively to official community gold standa
 
 | Package | Canonical Role | Supported Versions | Minimum Required | Extras Flag |
 |---|---|---|---|---|
-| **`scanpy`** | Single-cell preprocessing, PCA, UMAP, Leiden | `1.10.x`, `1.11.x`, `1.12.x` | `>= 1.10.0` | `bionexus[goldchain]` |
-| **`anndata`** | Annotated data matrix container (`.h5ad`) | `0.10.x`, `0.11.x` | `>= 0.10.0` | `bionexus[core]` |
-| **`squidpy`** | Spatial KNN graph, Moran's I SVGs, spatial plots | `1.3.x`, `1.4.x` | `>= 1.3.0` | `bionexus[spatial]` |
-| **`pydeseq2`** | Pseudobulk negative binomial GLM condition DE | `0.4.x`, `0.5.x` | `>= 0.4.0` | `bionexus[deseq]` |
-| **`scvi-tools`** | Probabilistic deep generative models (scVI, scANVI) | `1.0.x`, `1.1.x`, `1.2.x` | `>= 1.0.0` | `bionexus[scverse]` |
-| **`allotropy`** | Analytical instrument table to ASM JSON | `0.1.30+` | `>= 0.1.30` | `bionexus[allotrope]` |
-| **`lifelines`** | Kaplan-Meier survival curves & log-rank tests | `0.27.x`, `0.28.x` | `>= 0.27.0` | `bionexus[survival]` |
-| **`scikit-learn`** | ARI, Jaccard similarity, dimensionality metrics | `1.3.x`, `1.4.x`, `1.5.x` | `>= 1.3.0` | `bionexus[core]` |
+| **`scanpy`** | Single-cell preprocessing, PCA, UMAP, Leiden | `1.10.x`, `1.11.x`, `1.12.x` | `>= 1.10.0` | `bionexus-reliability[goldchain]` |
+| **`anndata`** | Annotated data matrix container (`.h5ad`) | `0.10.x`, `0.11.x` | `>= 0.10.0` | `bionexus-reliability[core]` |
+| **`squidpy`** | Spatial KNN graph, Moran's I SVGs, spatial plots | `1.3.x`, `1.4.x` | `>= 1.3.0` | `bionexus-reliability[spatial]` |
+| **`pydeseq2`** | Pseudobulk negative binomial GLM condition DE | `0.4.x`, `0.5.x` | `>= 0.4.0` | `bionexus-reliability[deseq]` |
+| **`scvi-tools`** | Probabilistic deep generative models (scVI, scANVI) | `1.0.x`, `1.1.x`, `1.2.x` | `>= 1.0.0` | `bionexus-reliability[scverse]` |
+| **`allotropy`** | Analytical instrument table to ASM JSON | `0.1.30+` | `>= 0.1.30` | `bionexus-reliability[allotrope]` |
+| **`lifelines`** | Kaplan-Meier survival curves & log-rank tests | `0.27.x`, `0.28.x` | `>= 0.27.0` | `bionexus-reliability[survival]` |
+| **`scikit-learn`** | ARI, Jaccard similarity, dimensionality metrics | `1.3.x`, `1.4.x`, `1.5.x` | `>= 1.3.0` | `bionexus-reliability[core]` |
 
 ---
 

@@ -258,7 +258,7 @@ class CapabilityContract:
                         if contract_trigger
                         else (
                             f"Install via `pip install {self.backend.import_name}` "
-                            f"or `pip install bionexus[{self.backend.extra or 'all'}]`."
+                            f"or `pip install bionexus-reliability[{self.backend.extra or 'all'}]`."
                         )
                     ),
                     violated_rule="Gold-standard backend requirement",
@@ -425,7 +425,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             RefusalTrigger(
                 condition_id="missing_backend",
                 description="PyDESeq2 backend not available in environment.",
-                remedy="Install via `pip install bionexus[deseq]` or `pip install pydeseq2`.",
+                remedy="Install via `pip install bionexus-reliability[deseq]` or `pip install pydeseq2`.",
                 violated_rule="Gold-standard backend requirement",
             ),
         ],
@@ -495,7 +495,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             RefusalTrigger(
                 condition_id="missing_backend",
                 description="Scanpy or anndata is not installed.",
-                remedy="Install via `pip install bionexus[goldchain]` or `pip install scanpy anndata`.",
+                remedy="Install via `pip install bionexus-reliability[goldchain]` or `pip install scanpy anndata`.",
                 violated_rule="scverse gold chain backend requirement",
             ),
             RefusalTrigger(
@@ -588,7 +588,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             RefusalTrigger(
                 condition_id="missing_backend",
                 description="Squidpy library not available.",
-                remedy="Install via `pip install bionexus[spatial]` or `pip install squidpy spatialdata`.",
+                remedy="Install via `pip install bionexus-reliability[spatial]` or `pip install squidpy spatialdata`.",
                 violated_rule="Squidpy spatial backend requirement",
             ),
         ],
@@ -680,7 +680,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             RefusalTrigger(
                 condition_id="missing_backend",
                 description="Lifelines survival package not installed.",
-                remedy="Install via `pip install bionexus[survival]` or `pip install lifelines`.",
+                remedy="Install via `pip install bionexus-reliability[survival]` or `pip install lifelines`.",
                 violated_rule="Survival analysis backend requirement",
             ),
         ],
@@ -754,7 +754,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             RefusalTrigger(
                 condition_id="missing_backend",
                 description="scvi-tools and PyTorch packages are not installed.",
-                remedy="Install via `pip install bionexus[scverse]` or `pip install scvi-tools torch`.",
+                remedy="Install via `pip install bionexus-reliability[scverse]` or `pip install scvi-tools torch`.",
                 violated_rule="scvi-tools backend requirement",
             ),
         ],
@@ -828,7 +828,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             RefusalTrigger(
                 condition_id="missing_backend",
                 description="allotropy parser package not installed.",
-                remedy="Install via `pip install bionexus[allotrope]` or `pip install allotropy`.",
+                remedy="Install via `pip install bionexus-reliability[allotrope]` or `pip install allotropy`.",
                 violated_rule="Allotropy backend requirement",
             ),
         ],

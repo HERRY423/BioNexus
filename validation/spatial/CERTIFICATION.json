@@ -1,0 +1,117 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "spatial.inference_validity",
+  "certification_level": "VALIDATED",
+  "assessment_date": "2026-08-19",
+  "project_version": "0.10.0",
+  "standards": [
+    {
+      "standard_id": "reference_backend",
+      "satisfied": true,
+      "evidence": "validation/spatial/REPORT.json -> pipeline.backend_identity.state = CONFORMANT",
+      "notes": "Local deterministic alternative-explanation tester (bionexus >= 0.9.0); entry point bionexus.spatial_inference resolved"
+    },
+    {
+      "standard_id": "formal_input_contract",
+      "satisfied": true,
+      "evidence": "src/bionexus/abi.py -> abi.get_capability_abi('spatial.inference_validity')",
+      "notes": "Complete ABI input contract defined; coordinate_type_allowed includes 'physical'"
+    },
+    {
+      "standard_id": "invariants",
+      "satisfied": true,
+      "evidence": "src/bionexus/capabilities.py -> preconditions: coordinate_provenance_recorded, core_confound_controls_tested; review/INVARIANTS_CATALOG.json -> INV-011..INV-013, INV-017",
+      "notes": "Machine-checkable preconditions; router traps: embedding_substitution, no_controls_provided"
+    },
+    {
+      "standard_id": "known_failure_modes",
+      "satisfied": true,
+      "evidence": "src/bionexus/failures.py -> BN-F006, BN-F009, BN-F011",
+      "notes": "Failure taxonomy modes linked with detection rules"
+    },
+    {
+      "standard_id": "positive_test",
+      "satisfied": true,
+      "evidence": "tests/unit/test_flagship_capabilities.py (ROBUST/SUPPORTED/FRAGILE/ABSTAIN ladder)",
+      "notes": "Verified execution producing expected scientific result"
+    },
+    {
+      "standard_id": "negative_test",
+      "satisfied": true,
+      "evidence": "tests/unit/test_flagship_capabilities.py -> BF-011 (untested alternatives -> FRAGILE ceiling), BF-015 (no controls -> NEEDS_DATA)",
+      "notes": "Invalid inputs and invalid requests refused deterministically"
+    },
+    {
+      "standard_id": "adversarial_test",
+      "satisfied": false,
+      "evidence": "",
+      "notes": "No spatial-validity coercion case in the suites yet. Minimum supplement: add adversarial eval case attempting to force ROBUST verdict without adequate controls."
+    },
+    {
+      "standard_id": "public_reference_dataset",
+      "satisfied": false,
+      "evidence": "validation/spatial/REPORT.json -> dataset.accession = 10x Genomics Xenium / Vizgen MERSCOPE",
+      "notes": "Target datasets recorded (Xenium Human Breast FFPE, MERSCOPE public releases), but not locally available — validation status is 'skipped'. Minimum supplement: download spatial dataset, run inference validity validation."
+    },
+    {
+      "standard_id": "independent_ground_truth",
+      "satisfied": false,
+      "evidence": "",
+      "notes": "No orthogonal spatial truth set recorded. Minimum supplement: obtain independent spatial truth (e.g. smFISH validation panel) and compare inference verdicts."
+    },
+    {
+      "standard_id": "parameter_perturbation",
+      "satisfied": false,
+      "evidence": "",
+      "notes": "Neighborhood-radius sensitivity is assessed per-run, not benchmarked yet. Minimum supplement: define radius sweep grid, record verdict stability across radii."
+    },
+    {
+      "standard_id": "degradation_test",
+      "satisfied": false,
+      "evidence": "",
+      "notes": "Local backend always present; no-controls path is a refusal, not a degradation. Minimum supplement: if applicable, document why degradation is N/A for a local-only backend."
+    },
+    {
+      "standard_id": "provenance_test",
+      "satisfied": false,
+      "evidence": "",
+      "notes": "No provenance sidecar for verdict payloads yet. Minimum supplement: implement provenance sidecar for spatial inference verdict outputs and add integrity test."
+    },
+    {
+      "standard_id": "cross_host_test",
+      "satisfied": false,
+      "evidence": "cross-host/COMPARISON.json (framework created, 0 traps compared)",
+      "notes": "Cross-host framework exists but no L2 claim audit executed for spatial capability. Minimum supplement: run L2 replay on >= 2 hosts."
+    },
+    {
+      "standard_id": "external_reviewer",
+      "satisfied": false,
+      "evidence": "review/SCIENTIFIC_REVIEW.json (framework created, reviewer-2 assigned to spatial)",
+      "notes": "Review framework established; reviewer-2 (spatial transcriptomics researcher) assigned to spatial cases. However, all reviewers [PENDING], no review conducted. Minimum supplement: complete reviewer onboarding, conduct spatial inference review."
+    }
+  ],
+  "summary": {
+    "total_standards": 14,
+    "satisfied": 6,
+    "unsatisfied": 8,
+    "unsatisfied_list": [
+      "adversarial_test",
+      "public_reference_dataset",
+      "independent_ground_truth",
+      "parameter_perturbation",
+      "degradation_test",
+      "provenance_test",
+      "cross_host_test",
+      "external_reviewer"
+    ],
+    "verdict": "VALIDATED",
+    "verdict_rationale": "All 6 core criteria satisfied (reference_backend, formal_input_contract, invariants, known_failure_modes, positive_test, negative_test). Per BNS-CF-001, VALIDATED requires all core criteria. 8 non-core criteria remain unsatisfied."
+  },
+  "evidence_bundle": {
+    "validation_report": "validation/spatial/REPORT.json",
+    "cross_host_report": "cross-host/COMPARISON.json",
+    "scientific_review": "review/SCIENTIFIC_REVIEW.json",
+    "invariants_catalog": "review/INVARIANTS_CATALOG.json",
+    "certification_source": "src/bionexus/certification.py -> _EVIDENCE['spatial.inference_validity']"
+  }
+}

@@ -217,7 +217,7 @@ def probe(name: str) -> BackendStatus:
         elif not pkg_present:
             state = BackendState.MISSING
             available = False
-            note = f"Package '{import_name}' is not installed. Install with 'pip install bionexus[plm]'."
+            note = f"Package '{import_name}' is not installed. Install with 'pip install bionexus-reliability[plm]'."
         elif not weights_ready:
             state = BackendState.MISSING_WEIGHTS
             available = False

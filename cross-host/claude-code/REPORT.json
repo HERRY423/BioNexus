@@ -1,0 +1,14 @@
+{
+  "host": "claude-code",
+  "host_version": "",
+  "execution_date": "",
+  "plugin_version": "0.10.0",
+  "records": [],
+  "summary": {
+    "total_traps": 0,
+    "correct_refusals": 0,
+    "incorrect_refusals": 0,
+    "false_positives": 0,
+    "agreement_rate": null
+  }
+}

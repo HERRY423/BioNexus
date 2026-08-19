@@ -1,0 +1,117 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "scrna.annotation_evidence",
+  "certification_level": "VALIDATED",
+  "assessment_date": "2026-08-19",
+  "project_version": "0.10.0",
+  "standards": [
+    {
+      "standard_id": "reference_backend",
+      "satisfied": true,
+      "evidence": "validation/annotation/REPORT.json -> pipeline.backend_identity.state = CONFORMANT",
+      "notes": "Local deterministic evidence combiner (bionexus >= 0.9.0); entry point bionexus.annotation_evidence resolved"
+    },
+    {
+      "standard_id": "formal_input_contract",
+      "satisfied": true,
+      "evidence": "src/bionexus/abi.py -> abi.get_capability_abi('scrna.annotation_evidence')",
+      "notes": "Complete ABI input contract defined"
+    },
+    {
+      "standard_id": "invariants",
+      "satisfied": true,
+      "evidence": "src/bionexus/capabilities.py -> preconditions: annotation_source_recorded, negative_markers_evaluated; review/INVARIANTS_CATALOG.json -> INV-004..INV-008, INV-016",
+      "notes": "Machine-checkable preconditions; router traps: no_annotation_evidence, open_set_population"
+    },
+    {
+      "standard_id": "known_failure_modes",
+      "satisfied": true,
+      "evidence": "src/bionexus/failures.py -> BN-F003, BN-F011",
+      "notes": "Failure taxonomy modes linked with detection rules"
+    },
+    {
+      "standard_id": "positive_test",
+      "satisfied": true,
+      "evidence": "tests/unit/test_flagship_capabilities.py (SUPPORTED/TENTATIVE verdict ladder)",
+      "notes": "Verified execution producing expected scientific result"
+    },
+    {
+      "standard_id": "negative_test",
+      "satisfied": true,
+      "evidence": "tests/unit/test_flagship_capabilities.py -> BF-004 (no evidence source refused), BF-022 (open-set refused)",
+      "notes": "Invalid inputs and invalid requests refused deterministically"
+    },
+    {
+      "standard_id": "adversarial_test",
+      "satisfied": false,
+      "evidence": "",
+      "notes": "No annotation coercion case in the suites yet. Minimum supplement: add adversarial eval case attempting to force annotation verdict without sufficient evidence."
+    },
+    {
+      "standard_id": "public_reference_dataset",
+      "satisfied": false,
+      "evidence": "validation/annotation/REPORT.json -> dataset.accession = 10x Genomics CITE-seq PBMC (Hao et al. 2021)",
+      "notes": "Target dataset recorded (CITE-seq PBMC), but not locally available — validation status is 'skipped'. Minimum supplement: download dataset, run annotation validation pipeline."
+    },
+    {
+      "standard_id": "independent_ground_truth",
+      "satisfied": false,
+      "evidence": "",
+      "notes": "No independent label truth set (e.g. sorted-bulk concordance) recorded. Minimum supplement: obtain independently sorted bulk PBMC labels and compute concordance with annotation verdicts."
+    },
+    {
+      "standard_id": "parameter_perturbation",
+      "satisfied": false,
+      "evidence": "",
+      "notes": "Deterministic thresholds; no sweep audit wired yet. Minimum supplement: vary consistency/violation thresholds and record verdict stability."
+    },
+    {
+      "standard_id": "degradation_test",
+      "satisfied": false,
+      "evidence": "",
+      "notes": "Local backend always present; missing-evidence path is a refusal, not a degradation. Minimum supplement: if applicable, document why degradation is N/A for a local-only backend, or add a test for evidence-source absence."
+    },
+    {
+      "standard_id": "provenance_test",
+      "satisfied": false,
+      "evidence": "",
+      "notes": "No provenance sidecar for verdict payloads yet. Minimum supplement: implement provenance sidecar for annotation verdict outputs and add integrity test."
+    },
+    {
+      "standard_id": "cross_host_test",
+      "satisfied": false,
+      "evidence": "cross-host/COMPARISON.json (framework created, 0 traps compared)",
+      "notes": "Cross-host framework exists but no L2 claim audit executed for annotation capability. Minimum supplement: run L2 replay on >= 2 hosts."
+    },
+    {
+      "standard_id": "external_reviewer",
+      "satisfied": false,
+      "evidence": "review/SCIENTIFIC_REVIEW.json (framework created, reviewer-1 assigned to pseudobulk, reviewer-3 assigned to annotation)",
+      "notes": "Review framework established; reviewer-3 (biostatistics) assigned to annotation cases. However, all reviewers [PENDING], no review conducted. Minimum supplement: complete reviewer onboarding, conduct annotation review."
+    }
+  ],
+  "summary": {
+    "total_standards": 14,
+    "satisfied": 6,
+    "unsatisfied": 8,
+    "unsatisfied_list": [
+      "adversarial_test",
+      "public_reference_dataset",
+      "independent_ground_truth",
+      "parameter_perturbation",
+      "degradation_test",
+      "provenance_test",
+      "cross_host_test",
+      "external_reviewer"
+    ],
+    "verdict": "VALIDATED",
+    "verdict_rationale": "All 6 core criteria satisfied (reference_backend, formal_input_contract, invariants, known_failure_modes, positive_test, negative_test). Per BNS-CF-001, VALIDATED requires all core criteria. 8 non-core criteria remain unsatisfied."
+  },
+  "evidence_bundle": {
+    "validation_report": "validation/annotation/REPORT.json",
+    "cross_host_report": "cross-host/COMPARISON.json",
+    "scientific_review": "review/SCIENTIFIC_REVIEW.json",
+    "invariants_catalog": "review/INVARIANTS_CATALOG.json",
+    "certification_source": "src/bionexus/certification.py -> _EVIDENCE['scrna.annotation_evidence']"
+  }
+}

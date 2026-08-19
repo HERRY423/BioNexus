@@ -27,8 +27,14 @@ Honesty rules:
 
 from __future__ import annotations
 
+import argparse
+import hashlib
+import json
+import sys
+from dataclasses import asdict, dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 FLAGSHIP_ROOT = REPO_ROOT / "data" / "flagship"
@@ -508,3 +514,202 @@ def run_flagship_case(case) -> Dict[str, Any]:
             "skip_reason": None,
         }
     return runner(case, meta)
+
+
+# ==============================================================================
+# Validation Artifact (standardized JSON report)
+# ==============================================================================
+
+
+@dataclass
+class ValidationArtifact:
+    """Standardized validation artifact for a single flagship capability run."""
+
+    capability: str               # e.g. "scrna.pseudobulk_de"
+    dataset: Dict[str, Any]       # {name, version, accession, checksum_sha256}
+    pipeline: Dict[str, Any]      # {version, backend_identity}
+    metrics: List[Dict[str, Any]] # [{name, expected, observed, result}]
+    limitations: List[str]        # known limitations
+    timestamp: str                # ISO 8601
+    evidence_files: List[str]     # paths to evidence files
+    status: str                   # "pass" | "fail" | "skipped"
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Serialize to a plain dictionary (JSON-safe)."""
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> ValidationArtifact:
+        """Deserialize from a dictionary."""
+        return cls(**data)
+
+    def to_json(self, indent: int = 2) -> str:
+        """Serialize to a JSON string."""
+        return json.dumps(self.to_dict(), indent=indent, ensure_ascii=False)
+
+
+def compute_file_checksum(file_path: Path, algorithm: str = "sha256") -> str:
+    """Compute the hex-digest checksum of a file (default SHA-256)."""
+    h = hashlib.new(algorithm)
+    with open(file_path, "rb") as f:
+        for chunk in iter(lambda: f.read(8192), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _resolve_backend_identity(capability_id: str) -> Dict[str, Any]:
+    """Retrieve backend identity information for a capability (best-effort)."""
+    try:
+        from bionexus.backend_conformance import verify_backend_identity
+        from bionexus.capabilities import ALL_CAPABILITIES
+
+        cap = ALL_CAPABILITIES.get(capability_id)
+        if cap is None:
+            return {"state": "UNKNOWN", "reason": f"Capability '{capability_id}' not registered."}
+        report = verify_backend_identity(cap)
+        return report.to_dict()
+    except Exception as exc:
+        return {"state": "UNKNOWN", "reason": str(exc)}
+
+
+def _determine_status(run_result: Dict[str, Any]) -> str:
+    """Map a flagship run result dict to a simple pass/fail/skipped status."""
+    if run_result.get("skipped") or run_result.get("actual_status") == "SKIPPED_NO_BACKEND":
+        return "skipped"
+    status = run_result.get("actual_status", "")
+    if status in ("PERMITTED",):
+        return "pass"
+    return "fail"
+
+
+def generate_validation_report(
+    capability: str,
+    dataset_id: str,
+    run_result: Dict[str, Any],
+    metrics: Optional[List[Dict[str, Any]]] = None,
+    limitations: Optional[List[str]] = None,
+    evidence_files: Optional[List[str]] = None,
+    output_dir: Optional[Path] = None,
+) -> ValidationArtifact:
+    """Build a ValidationArtifact from a flagship run result and optionally write it to disk.
+
+    Parameters
+    ----------
+    capability : str
+        The capability identifier (e.g. ``"scrna.pseudobulk_de"``).
+    dataset_id : str
+        Key into :data:`FLAGSHIP_DATASETS`.
+    run_result : dict
+        The dict returned by :func:`run_flagship_case`.
+    metrics : list[dict], optional
+        Per-metric records ``{name, expected, observed, result}``.
+    limitations : list[str], optional
+        Known limitations to record.
+    evidence_files : list[str], optional
+        Paths to evidence files produced during the run.
+    output_dir : Path, optional
+        Directory to write the JSON artifact.  When *None* the artifact is
+        returned without being written to disk.
+
+    Returns
+    -------
+    ValidationArtifact
+    """
+    manifest = FLAGSHIP_DATASETS.get(dataset_id, {})
+
+    # Compute checksums for required dataset files (if present on disk).
+    checksums: Dict[str, str] = {}
+    ds_dir = flagship_dataset_dir(dataset_id)
+    for fname in manifest.get("required_files", []):
+        fpath = ds_dir / fname
+        if fpath.is_file():
+            checksums[fname] = compute_file_checksum(fpath)
+
+    dataset_info: Dict[str, Any] = {
+        "name": dataset_id,
+        "version": manifest.get("version", "unknown"),
+        "accession": manifest.get("source", "unknown"),
+        "checksum_sha256": checksums,
+    }
+
+    backend_info = _resolve_backend_identity(capability)
+    pipeline_info: Dict[str, Any] = {
+        "version": backend_info.get("version", "unknown"),
+        "backend_identity": backend_info,
+    }
+
+    artifact = ValidationArtifact(
+        capability=capability,
+        dataset=dataset_info,
+        pipeline=pipeline_info,
+        metrics=metrics or [],
+        limitations=limitations or [],
+        timestamp=datetime.now(timezone.utc).isoformat(),
+        evidence_files=evidence_files or [],
+        status=_determine_status(run_result),
+    )
+
+    if output_dir is not None:
+        output_dir = Path(output_dir)
+        # Determine sub-directory from capability.
+        suite_subdir = _capability_to_subdir(capability)
+        target_dir = output_dir / suite_subdir
+        target_dir.mkdir(parents=True, exist_ok=True)
+        out_path = target_dir / f"{dataset_id}_validation.json"
+        out_path.write_text(artifact.to_json(), encoding="utf-8")
+
+    return artifact
+
+
+def _capability_to_subdir(capability: str) -> str:
+    """Map a capability id to its validation output sub-directory."""
+    mapping = {
+        "scrna.pseudobulk_de": "pseudobulk",
+        "scrna.annotation_evidence": "annotation",
+        "spatial.inference_validity": "spatial",
+    }
+    return mapping.get(capability, capability.replace(".", "_"))
+
+
+# ==============================================================================
+# CLI entry point
+# ==============================================================================
+
+
+def build_arg_parser() -> argparse.ArgumentParser:
+    """Build the CLI argument parser for the flagship validation harness."""
+    parser = argparse.ArgumentParser(
+        description="BioNexus Flagship External Validation Harness (BNS-015).",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=REPO_ROOT / "validation",
+        help="Directory to write validation artifacts (default: validation/).",
+    )
+    parser.add_argument(
+        "--dataset-only",
+        action="store_true",
+        help="Only check dataset presence; do not run suites.",
+    )
+    return parser
+
+
+def main(argv: Optional[List[str]] = None) -> int:
+    """CLI entry point for flagship validation."""
+    parser = build_arg_parser()
+    args = parser.parse_args(argv)
+    output_dir: Path = args.output_dir
+
+    print(f"BioNexus Flagship Validation — output_dir={output_dir}")
+    for ds_id, manifest in FLAGSHIP_DATASETS.items():
+        present = flagship_dataset_present(ds_id)
+        cap = manifest["capability"]
+        status_icon = "OK" if present else "MISSING"
+        print(f"  [{status_icon}] {ds_id} ({cap})")
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

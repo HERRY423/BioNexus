@@ -108,7 +108,7 @@ refusal_conditions:
     remedy: "Condition DE is invalid without replicates (pseudoreplication). Collect replicates or report exploratory rankings only."
   - id: missing_backend
     description: "PyDESeq2 backend missing."
-    remedy: "Install via `pip install bionexus[deseq]`."
+    remedy: "Install via `pip install bionexus-reliability[deseq]`."
 
 evidence_requirements:
   multiple_testing: required

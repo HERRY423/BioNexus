@@ -1,0 +1,143 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "scrna.pseudobulk_de",
+  "certification_level": "VALIDATED",
+  "assessment_date": "2026-08-19",
+  "project_version": "0.10.0",
+  "standards": [
+    {
+      "standard_id": "reference_backend",
+      "satisfied": true,
+      "evidence": "validation/pseudobulk/REPORT.json -> pipeline.backend_identity.state = CONFORMANT",
+      "notes": "PyDESeq2 >= 0.4.0 (bionexus-reliability[deseq]); ABI execution reference; observed backend pydeseq2 v0.5.4, 2/2 entry points resolved"
+    },
+    {
+      "standard_id": "formal_input_contract",
+      "satisfied": true,
+      "evidence": "src/bionexus/abi.py -> abi.get_capability_abi('scrna.pseudobulk_de')",
+      "notes": "raw_counts only; sample_design required"
+    },
+    {
+      "standard_id": "invariants",
+      "satisfied": true,
+      "evidence": "src/bionexus/capabilities.py -> preconditions: min_replicates, raw_integer_counts; review/INVARIANTS_CATALOG.json -> INV-001, INV-003, INV-014",
+      "notes": "Machine-checkable preconditions recorded in capabilities and invariants catalog"
+    },
+    {
+      "standard_id": "known_failure_modes",
+      "satisfied": true,
+      "evidence": "src/bionexus/failures.py -> BN-F001, BN-F002, BN-F006, BN-F011, BN-F012",
+      "notes": "Failure taxonomy modes linked with detection rules"
+    },
+    {
+      "standard_id": "positive_test",
+      "satisfied": true,
+      "evidence": "evals/datasets/ -> l3-outcome-pseudobulk-deseq-003 (planted DEG g0 recovered)",
+      "notes": "Full-extras CI matrix; verified execution producing expected scientific result"
+    },
+    {
+      "standard_id": "negative_test",
+      "satisfied": true,
+      "evidence": "evals/datasets/ -> refuse-pseudorep-001/002, refuse-normalized-counts-001",
+      "notes": "Invalid inputs and invalid requests refused deterministically"
+    },
+    {
+      "standard_id": "adversarial_test",
+      "satisfied": true,
+      "evidence": "evals/datasets/ -> adv-force-pseudorep-001, adv-log-as-raw-001",
+      "notes": "Coercion / jailbreak attempts to bypass invariants blocked"
+    },
+    {
+      "standard_id": "public_reference_dataset",
+      "satisfied": false,
+      "evidence": "validation/pseudobulk/REPORT.json -> dataset.accession = GEO GSE96583",
+      "notes": "Target dataset GSE96583 (Kang et al. 2018) recorded as designated reference, but not locally available — validation status is 'skipped'. Minimum supplement: download GSE96583 count matrix, run validation pipeline, record verified metrics."
+    },
+    {
+      "standard_id": "independent_ground_truth",
+      "satisfied": true,
+      "evidence": "evals/datasets/ -> Planted DEG with known fold change (truth independent of PyDESeq2)",
+      "notes": "Planted DEG with known fold change; ground truth independent of the implementation under test"
+    },
+    {
+      "standard_id": "parameter_perturbation",
+      "satisfied": false,
+      "evidence": "",
+      "notes": "No declared parameter sweep audit for the DE model. Minimum supplement: define a parameter grid (e.g. min_replicates, lfc_threshold, alpha), run eval across grid, record stability of DEG calls."
+    },
+    {
+      "standard_id": "degradation_test",
+      "satisfied": false,
+      "evidence": "",
+      "notes": "No dedicated missing-pydeseq2 behavior case in the eval suites. Minimum supplement: add eval case that removes pydeseq2 backend and verifies refusal or disclose-degrade behavior per BNS-AD-006/007."
+    },
+    {
+      "standard_id": "provenance_test",
+      "satisfied": true,
+      "evidence": "tests/unit/test_provenance_tracker.py, tests/unit/test_artifacts.py",
+      "notes": "Provenance sidecar completeness and integrity tested"
+    },
+    {
+      "standard_id": "cross_host_test",
+      "satisfied": false,
+      "evidence": "cross-host/COMPARISON.json (framework created, 0 traps compared, agreement_rate null)",
+      "notes": "Cross-host framework established (cross-host/ directory, codex + claude-code hosts, report generator). However, no L2 claim audit has been executed: traps_compared=0, conformance_verdict='not_evaluated'. Minimum supplement: run L2 replay on >= 2 hosts, populate COMPARISON.json with per-trap agreement data."
+    },
+    {
+      "standard_id": "external_reviewer",
+      "satisfied": false,
+      "evidence": "review/SCIENTIFIC_REVIEW.json (framework created, reviewers [PENDING])",
+      "notes": "Scientific review framework established with 3 reviewer slots (single-cell, spatial, biostatistics). However, all reviewers are [PENDING] and no review cases have been conducted (status: 'framework_created_pending_review'). Minimum supplement: identify and invite qualified independent reviewers, conduct review of pseudobulk invariants and eval cases, record findings."
+    }
+  ],
+  "summary": {
+    "total_standards": 14,
+    "satisfied": 9,
+    "unsatisfied": 5,
+    "unsatisfied_list": [
+      "public_reference_dataset",
+      "parameter_perturbation",
+      "degradation_test",
+      "cross_host_test",
+      "external_reviewer"
+    ],
+    "verdict": "VALIDATED",
+    "verdict_rationale": "All 6 core criteria satisfied (reference_backend, formal_input_contract, invariants, known_failure_modes, positive_test, negative_test) plus adversarial_test, independent_ground_truth, and provenance_test. Per BNS-CF-001, VALIDATED requires all core criteria. CERTIFIED requires all 14 — 5 remain unsatisfied with only framework-level scaffolding, no executed evidence."
+  },
+  "evidence_bundle": {
+    "validation_report": "validation/pseudobulk/REPORT.json",
+    "cross_host_report": "cross-host/COMPARISON.json",
+    "scientific_review": "review/SCIENTIFIC_REVIEW.json",
+    "invariants_catalog": "review/INVARIANTS_CATALOG.json",
+    "certification_source": "src/bionexus/certification.py -> _EVIDENCE['scrna.pseudobulk_de']"
+  },
+  "certification_roadmap": {
+    "next_milestones": [
+      {
+        "criterion": "public_reference_dataset",
+        "effort": "Download GSE96583 count matrix from GEO; run validation/pseudobulk pipeline; populate REPORT.json metrics (fdr_control, top100_overlap, donor_design_concordance)",
+        "estimated_files": ["validation/pseudobulk/REPORT.json (updated)"]
+      },
+      {
+        "criterion": "parameter_perturbation",
+        "effort": "Define parameter grid for PyDESeq2 DE (alpha, lfc_threshold, min_replicates); run eval across grid; record ARI or DEG overlap stability",
+        "estimated_files": ["evals/datasets/parameter_sweep_pseudobulk.json"]
+      },
+      {
+        "criterion": "degradation_test",
+        "effort": "Add eval case: remove pydeseq2, verify refusal or disclose-degrade per BNS-AD-006/007",
+        "estimated_files": ["evals/datasets/degradation_pseudobulk.json"]
+      },
+      {
+        "criterion": "cross_host_test",
+        "effort": "Execute L2 claim replay on codex + claude-code; populate cross-host/COMPARISON.json with per-trap results",
+        "estimated_files": ["cross-host/COMPARISON.json (updated)"]
+      },
+      {
+        "criterion": "external_reviewer",
+        "effort": "Invite 1+ independent scientific reviewers; conduct review of pseudobulk invariants and eval outcomes; record findings in SCIENTIFIC_REVIEW.json",
+        "estimated_files": ["review/SCIENTIFIC_REVIEW.json (updated)"]
+      }
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "bionexus",
+  "name": "bionexus-reliability",
   "version": "0.10.0",
   "description": "Scientific Reliability Layer & Biological Capability Assertion Firewall for AI Agents (Deterministic Invariants, Fail-Closed Gating, Evidence Synthesis, Zero Silent Substitution).",
   "author": {

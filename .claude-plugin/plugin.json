@@ -3,6 +3,44 @@
   "version": "0.10.0",
   "description": "Scientific Reliability Layer & Biological Capability Assertion Firewall for AI Agents (Deterministic Invariants, Fail-Closed Gating, Evidence Synthesis, Zero Silent Substitution).",
   "author": {
-    "name": "BioNexus Team"
+    "name": "BioNexus Team",
+    "url": "https://github.com/HERRY423/BioNexus"
+  },
+  "homepage": "https://github.com/HERRY423/BioNexus",
+  "repository": "https://github.com/HERRY423/BioNexus",
+  "license": "Apache-2.0",
+  "keywords": [
+    "bionexus",
+    "bioinformatics",
+    "single-cell",
+    "scanpy",
+    "scvi-tools",
+    "nextflow",
+    "nf-core",
+    "allotrope",
+    "mcp",
+    "variant-interpretation",
+    "spatial-transcriptomics",
+    "squidpy"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./mcp.json",
+  "interface": {
+    "displayName": "BioNexus",
+    "shortDescription": "The Scientific Reliability Layer for Agentic Biology",
+    "longDescription": "Scientific Reliability Layer & Biological Capability Assertion Firewall for AI Agents (Deterministic Invariants, Fail-Closed Gating, Evidence Synthesis, Zero Silent Substitution).",
+    "developerName": "BioNexus Team",
+    "category": "Science",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/HERRY423/BioNexus",
+    "defaultPrompt": [
+      "Inspect single-cell dataset and run QC",
+      "Query UniProt for TP53 protein details",
+      "Analyze spatial transcriptomics with squidpy"
+    ]
   }
 }
