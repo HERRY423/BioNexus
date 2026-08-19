@@ -95,3 +95,5 @@ figures/
 *.docx
 *.pptx
 *.pdf
+
+.pytest_tmp_run/
