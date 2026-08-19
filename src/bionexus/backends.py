@@ -102,6 +102,26 @@ def is_module_available(import_name: str) -> bool:
 
 def get_package_version(import_name: str) -> Optional[str]:
     """Retrieve installed version of a package via importlib or module attribute."""
+    # For the 'bionexus' top-level package, the PyPI distribution was renamed
+    # from 'bionexus' to 'bionexus-reliability'.  A stale 'bionexus' dist
+    # (e.g. 2.7.0) may coexist with the source tree (0.10.0).  The module's
+    # own __version__ is the most trustworthy runtime witness; distribution
+    # metadata is checked only as fallback, preferring the new dist name.
+    if import_name == "bionexus":
+        try:
+            mod = importlib.import_module("bionexus")
+            ver = getattr(mod, "__version__", None)
+            if ver:
+                return ver
+        except Exception:
+            pass
+        for candidate in ["bionexus-reliability", "bionexus"]:
+            try:
+                return importlib.metadata.version(candidate)
+            except Exception:
+                pass
+        return None
+
     # 1. Try importlib.metadata
     for candidate in [import_name, import_name.replace("_", "-")]:
         try:

@@ -151,7 +151,9 @@ def test_in_tree_backend_version_witness():
     bionexus package itself, so cluster/bigdata are CONFORMANT when installed."""
     r = verify_backend_identity(ALL_CAPABILITIES["cluster.hpc_dispatch"])
     assert r.state == BackendIdentityState.CONFORMANT
-    assert r.observed_backend == "bionexus"
+    # The observed distribution is 'bionexus' from a source checkout (no dist
+    # metadata) or 'bionexus-reliability' when the PyPI package is installed.
+    assert r.observed_backend in ("bionexus", "bionexus-reliability")
     assert r.version is not None
     assert r.failure_mode_ids == []
 

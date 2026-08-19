@@ -200,12 +200,26 @@ def verify_backend_identity(cap: CapabilityContract) -> BackendIdentityReport:
     # In-tree backends (bionexus.*): no per-submodule distribution exists; the
     # identity version is the version of the bionexus package actually imported
     # — the honest runtime witness, not a per-module claim.
+    # The PyPI distribution was renamed from 'bionexus' to 'bionexus-reliability';
+    # prefer the module's __version__ over distribution metadata to avoid stale
+    # versions from a leftover 'bionexus' distribution (e.g. 2.7.0 vs 0.10.0).
     top = _top_level_package(import_name)
     if top == "bionexus":
         try:
-            version = version or getattr(importlib.import_module("bionexus"), "__version__", None)
+            mod = importlib.import_module("bionexus")
+            version = version or getattr(mod, "__version__", None)
         except Exception:
             pass
+        # If the module __version__ was not available, try distribution metadata
+        # preferring the current distribution name.
+        if not version:
+            for _dist in ("bionexus-reliability", "bionexus"):
+                try:
+                    version = importlib.metadata.version(_dist)
+                    if version:
+                        break
+                except Exception:
+                    pass
     report.version = version
 
     # Version contract: the contract-declared minimum is part of the identity
@@ -234,6 +248,7 @@ def verify_backend_identity(cap: CapabilityContract) -> BackendIdentityReport:
     declared_candidates = {_norm_dist(cap.backend.canonical_name)}
     if top == "bionexus":
         declared_candidates.add("bionexus")
+        declared_candidates.add("bionexus-reliability")  # current PyPI distribution name
         if observed is None:
             # In-tree backends run from a source checkout without distribution
             # metadata; the importable module itself is the identity witness
