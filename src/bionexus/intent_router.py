@@ -44,7 +44,6 @@ from bionexus.research_purpose import (
     infer_research_purpose,
     purpose_from_string,
 )
-from bionexus.researcher_override import OverrideRecord, create_override_record
 
 
 class RoutingStatus(str, Enum):
@@ -584,9 +583,11 @@ def route_scientific_intent(
     ``allow_frontier`` defaults to False: stable/frontier isolation is enforced
     at runtime, not only in the registry.
 
-    ``research_purpose`` modulates the evidence ceiling: the same data design
-    can carry different epistemic weight under exploratory vs confirmatory vs
-    clinical intent.  When omitted, the purpose is inferred from the query.
+    ``research_purpose`` sets the intended-use evidence REQUIREMENT, never the
+    evidence value: what the evidence is worth is assessed independently from
+    declared evidence factors, and the purpose decides the bar it must clear
+    (exploratory → PRELIMINARY, confirmatory → ROBUST, clinical → REPLICATED).
+    When omitted, the purpose is inferred from the query.
 
     ``override_justification`` activates the explicit researcher override
     mechanism: soft blocks can be bypassed with full documentation of what

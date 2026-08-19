@@ -22,11 +22,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional
 
 from bionexus.contracts import ConclusionMaturity
 from bionexus.research_purpose import OVERRIDABLE_PURPOSES, ResearchPurpose
-from bionexus.rule_provenance import ConsensusLevel, RuleProvenance
+from bionexus.rule_provenance import RuleProvenance
 
 
 @dataclass

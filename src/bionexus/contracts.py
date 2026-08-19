@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 from enum import Enum
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, List, Optional
 
 
 class ExecutionState(str, Enum):

@@ -2,33 +2,37 @@
 Research Intent / Analysis Purpose Framework.
 
 Upgrades BioNexus from "when not to compute" (binary REFUSED/PERMITTED) to
-"what the evidence warrants" (purpose-modulated evidence ceilings).
+"what the evidence warrants" — with one critical theoretical boundary:
 
-The same data design can carry different epistemic weight under different
-research purposes:
+    **Purpose decides the evidence REQUIREMENT, never the evidence VALUE.**
 
-- **Exploratory**: hypothesis-generating; PRELIMINARY / FRAGILE conclusions
-  are acceptable as starting points for further investigation.
-- **Screening**: cast-a-wide net; tolerates higher false-positive rates but
-  MUST NOT claim confirmatory status.
-- **Confirmatory**: hypothesis-testing; requires solid statistics, validated
-  inputs, and distribution-appropriate methods.
-- **Causal**: causal effect estimation; demands experimental or quasi-experimental
-  designs, instrumental variables, or explicit causal identification strategies.
-- **Clinical**: patient-facing; highest bar — REPLICATED evidence, CLIA/CAP
-  context, and regulatory compliance.
+A study with 10 donors per group, pre-registration, adequate power, and an
+independent replication carries ROBUST evidence whether the researcher calls
+it exploratory or confirmatory; weak data does not acquire a REPLICATED
+ceiling because someone declares a clinical purpose.  Evidence strength is
+assessed in ``evidence_model.py`` from evidence facts alone; purpose lives on
+the requirement side of the comparison:
+
+- **Exploratory**: hypothesis-generating; requires >= PRELIMINARY evidence.
+- **Screening**: cast-a-wide net; requires >= PRELIMINARY, tolerates higher
+  false-positive rates but MUST NOT claim confirmatory status.
+- **Confirmatory**: hypothesis-testing; requires >= ROBUST evidence.
+- **Causal**: causal effect estimation; requires >= SUPPORTED evidence plus a
+  documented causal identification strategy.
+- **Clinical**: patient-facing; highest bar — requires REPLICATED evidence,
+  external validation, and regulatory context (CLIA/CAP).
 
 Purpose is an *input* to the capability evaluation, not a post-hoc label.
-It modulates the evidence ceiling (the highest reachable ConclusionMaturity)
-and determines which soft limits can be overridden by a researcher.
+It determines the use requirement the evidence must clear, and which soft
+limits can be overridden by a researcher.
 """
 
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Set
 
 from bionexus.contracts import ConclusionMaturity
 
@@ -37,13 +41,15 @@ class ResearchPurpose(str, Enum):
     """Research Intent / Analysis Purpose.
 
     Ordered by increasing epistemic strictness.  Each purpose defines an
-    evidence ceiling — the highest ConclusionMaturity reachable without
-    external validation or researcher override.
+    evidence REQUIREMENT — the minimum ConclusionMaturity the intended use
+    demands.  Purpose never changes what the evidence is worth; see
+    ``evidence_model.py`` for the evidence side of the comparison.
 
     - UNSPECIFIED: Caller has not declared a purpose. This is NOT exploratory;
-      it is a state requiring explicit declaration before purpose-aware routing
-      can apply. The evidence ceiling defaults to the most conservative reachable
-      level (FRAGILE) until purpose is specified.
+      it is a state requiring explicit declaration before use-aware verdicts
+      can apply. Until purpose is specified, sufficiency for any intended use
+      is undecided and evidence is treated at the most conservative level
+      (FRAGILE).
     """
 
     UNSPECIFIED = "unspecified"
@@ -55,16 +61,31 @@ class ResearchPurpose(str, Enum):
 
 
 # ---------------------------------------------------------------------------
-# Evidence ceiling per purpose: the highest ConclusionMaturity reachable
-# *without* external validation or explicit researcher override.
-# UNSPECIFIED gets FRAGILE as default — the most conservative reachable ceiling.
-PURPOSE_EVIDENCE_CEILING: Dict[ResearchPurpose, ConclusionMaturity] = {
+# Evidence REQUIREMENT per intended use: the minimum ConclusionMaturity the
+# evidence must reach for this use to be warranted.  These numbers were
+# historically (and misleadingly) called "evidence ceilings" — they were
+# requirements all along.  Purpose sets the bar; evidence_model.py sets the
+# score.
+PURPOSE_EVIDENCE_REQUIREMENT: Dict[ResearchPurpose, ConclusionMaturity] = {
     ResearchPurpose.UNSPECIFIED: ConclusionMaturity.FRAGILE,
     ResearchPurpose.EXPLORATORY: ConclusionMaturity.PRELIMINARY,
     ResearchPurpose.SCREENING: ConclusionMaturity.PRELIMINARY,
     ResearchPurpose.CONFIRMATORY: ConclusionMaturity.ROBUST,
     ResearchPurpose.CAUSAL: ConclusionMaturity.SUPPORTED,
     ResearchPurpose.CLINICAL: ConclusionMaturity.REPLICATED,
+}
+
+#: Deprecated legacy alias.  Kept so existing call sites keep working while
+#: they migrate to the requirement semantics; MUST NOT be read as "purpose
+#: caps the evidence value".
+PURPOSE_EVIDENCE_CEILING: Dict[ResearchPurpose, ConclusionMaturity] = PURPOSE_EVIDENCE_REQUIREMENT
+
+#: Non-maturity conditions an intended use additionally demands.  These are
+#: checked in evidence_model.evaluate_sufficiency against declared factors
+#: and documented extras.
+PURPOSE_EXTRA_REQUIREMENTS: Dict[ResearchPurpose, List[str]] = {
+    ResearchPurpose.CAUSAL: ["causal_identification"],
+    ResearchPurpose.CLINICAL: ["external_validation", "regulatory_context"],
 }
 
 # ---------------------------------------------------------------------------
@@ -178,11 +199,20 @@ class PurposeContext:
     override_justification: str = ""
 
     @property
+    def required_evidence(self) -> ConclusionMaturity:
+        """The minimum ConclusionMaturity this intended use demands."""
+        return PURPOSE_EVIDENCE_REQUIREMENT.get(self.purpose, ConclusionMaturity.FRAGILE)
+
+    @property
     def evidence_ceiling(self) -> ConclusionMaturity:
-        """The highest ConclusionMaturity reachable under this purpose."""
-        return PURPOSE_EVIDENCE_CEILING.get(
-            self.purpose, ConclusionMaturity.PRELIMINARY
-        )
+        """DEPRECATED legacy alias for :pyattr:`required_evidence`.
+
+        Retained for backward compatibility.  The returned value is the
+        intended-use REQUIREMENT, not a cap on evidence value: declaring a
+        clinical purpose does not grant REPLICATED evidence, and declaring an
+        exploratory purpose does not downgrade robust evidence.
+        """
+        return self.required_evidence
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -190,7 +220,8 @@ class PurposeContext:
             "explicitly_declared": self.explicitly_declared,
             "override_active": self.override_active,
             "override_justification": self.override_justification,
-            "evidence_ceiling": self.evidence_ceiling.value,
+            "required_evidence": self.required_evidence.value,
+            "evidence_ceiling": self.evidence_ceiling.value,  # legacy alias
         }
 
 
@@ -200,6 +231,4 @@ def purpose_from_string(value: str) -> ResearchPurpose:
         return ResearchPurpose(value.lower().strip())
     except ValueError:
         valid = ", ".join(p.value for p in ResearchPurpose)
-        raise ValueError(
-            f"Unknown research purpose '{value}'. Valid purposes: {valid}"
-        )
+        raise ValueError(f"Unknown research purpose '{value}'. Valid purposes: {valid}")

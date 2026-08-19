@@ -73,6 +73,20 @@ from .contracts import (
     synthesize_conclusion_status,
 )
 from .doctor import run_doctor
+from .evidence_model import (
+    CLAIM_REQUIREMENTS,
+    FACTOR_SUPPORT_LADDER,
+    ClaimClass,
+    ClaimContext,
+    EvidenceAssessment,
+    EvidenceFactor,
+    SufficiencyAssessment,
+    SufficiencyVerdict,
+    UseRequirement,
+    assess_evidence,
+    evaluate_sufficiency,
+    use_requirement_for,
+)
 from .gate import DoctorGateError, require_doctor, write_doctor_report
 from .integrity import (
     audit_expression_matrix,
@@ -125,6 +139,8 @@ from .provenance import capture_environment, sha256_file, sidecar
 from .research_purpose import (
     OVERRIDABLE_PURPOSES,
     PURPOSE_EVIDENCE_CEILING,
+    PURPOSE_EVIDENCE_REQUIREMENT,
+    PURPOSE_EXTRA_REQUIREMENTS,
     PurposeContext,
     ResearchPurpose,
     infer_research_purpose,
@@ -259,6 +275,20 @@ __all__ = [
     "PolicyAction",
     "PolicyDecision",
     "PURPOSE_EVIDENCE_CEILING",
+    "PURPOSE_EVIDENCE_REQUIREMENT",
+    "PURPOSE_EXTRA_REQUIREMENTS",
+    "EvidenceFactor",
+    "EvidenceAssessment",
+    "ClaimClass",
+    "ClaimContext",
+    "UseRequirement",
+    "SufficiencyVerdict",
+    "SufficiencyAssessment",
+    "CLAIM_REQUIREMENTS",
+    "FACTOR_SUPPORT_LADDER",
+    "assess_evidence",
+    "use_requirement_for",
+    "evaluate_sufficiency",
     "Precondition",
     "PreflightCheck",
     "PreflightReport",

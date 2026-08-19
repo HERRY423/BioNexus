@@ -16,9 +16,8 @@ import hashlib
 import json
 import shutil
 import tempfile
-from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict
+from typing import Dict
 
 import pytest
 
@@ -33,7 +32,6 @@ from evals.flagship_validation import (
     compute_file_checksum,
     generate_validation_report,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures — use workspace-local temp dir to avoid Windows system-temp issues
@@ -344,11 +342,6 @@ class TestCertificationBundles:
     def test_certification_level_matches_compute_tier(self) -> None:
         """CERTIFICATION.json level must match what compute_tier computes from _EVIDENCE."""
         from bionexus.certification import certify_capability
-        tier_map = {
-            "scrna.pseudobulk_de": "scrna.pseudobulk_de",
-            "scrna.annotation_evidence": "scrna.annotation_evidence",
-            "spatial.inference_validity": "spatial.inference_validity",
-        }
         for cid, path in _FLAGSHIP_CERT_FILES.items():
             data = json.loads(path.read_text(encoding="utf-8"))
             rec = certify_capability(cid)

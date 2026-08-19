@@ -25,6 +25,7 @@ if _SRC.is_dir() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 import yaml  # noqa: E402
+
 from bionexus.registry import compile_and_write_all, load_canonical_registry, sync_mirror_trees  # noqa: E402
 from bionexus.versions import VERSION  # noqa: E402
 

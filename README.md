@@ -17,14 +17,15 @@
   <b>BioNexus tells you what the evidence warrants — and blocks only what is truly invalid.</b><br/>
   It is the <b>Scientific Warrant Engine</b> for agentic biology: it separates <em>execution invariants</em>
   (rules that must block computation) from <em>warrant constraints</em> (limits on what claims your evidence justifies),
-  modulates evidence ceilings by your declared research purpose, and carries every rule's provenance,
+  assesses evidence strength independently of purpose and compares it against the intended-use
+  requirement your declared research purpose sets, and carries every rule's provenance,
   consensus level, and exceptions in an auditable registry — so BioNexus never looks like it invented
   scientific law. The firewall is a subset of the warrant system, not the product.
 </p>
 
 ```text
-✓ Warrant-first evidence ceilings per purpose      ✓ Execution Invariant vs Warrant taxonomy
-✓ ResearchPurpose: exploratory → clinical          ✓ Evidence-backed Rule Provenance Registry
+✓ Evidence Strength ≠ Intended Use Requirement     ✓ Execution Invariant vs Warrant taxonomy
+✓ Purpose sets the evidence bar, never the value   ✓ Evidence-backed Rule Provenance Registry
 ✓ Researcher Override with documented limits       ✓ Lab Policy: Shadow / Advisory / Enforced
 ✓ EvidenceCard 2.0 epistemic evaluation            ✓ Biological Capability ABI & contracts
 ✓ BN-Fxxx failure taxonomy + BioFailureBench       ✓ Fail-closed verification of final claims
@@ -75,11 +76,54 @@ BioNexus was upgraded from *"when not to compute"* to *"what the evidence warran
 | Pillar | What it does | Key API |
 |---|---|---|
 | **1. Invariant vs Warrant** | Splits every rule into an **execution invariant** (safety/integrity — must block) or a **warrant constraint** (epistemic — caps the claim, never blocks legal compute). | `RuleCategory`, `RuleClassification` |
-| **2. ResearchPurpose** | Same data design carries different epistemic weight per purpose: `exploratory` → PRELIMINARY, `confirmatory` → ROBUST, `clinical` → REPLICATED. Unspecified purpose caps at FRAGILE — BioNexus does not assume exploratory for you. | `ResearchPurpose`, `PurposeContext` |
+| **2. Evidence Model** | Evidence strength is assessed **only** from evidence facts (replication, sample design, confound controls, provenance…) — purpose decides the **requirement** the evidence must clear, never the evidence value: `exploratory` requires ≥ PRELIMINARY, `confirmatory` ≥ ROBUST, `clinical` ≥ REPLICATED + external validation. Unspecified purpose leaves sufficiency undecided — BioNexus does not assume exploratory for you. | `assess_evidence`, `evaluate_sufficiency`, `UseRequirement` |
 | **3. Rule Provenance** | Every rule carries evidence-backed provenance (DOIs/URLs), a consensus level, and known exceptions — loaded from an auditable registry, not hardcoded opinion. | `RuleProvenance`, `load_rule_registry` |
 | **4. Researcher Override** | Professionals may proceed past a soft warrant block, but must record *why*, what limits remain, and which claims still cannot be made. Hard invariants are never overridable. | `create_override_record`, `OverrideRecord` |
 
 The old binary `PERMITTED / REFUSED` is now a spectrum: `PERMITTED` · `PERMITTED_WITH_LIMITS` (soft blocks overridden) · `REFUSED` (hard invariant violated).
+
+---
+
+## ⚖️ Evidence Model: Evidence Strength ≠ Intended Use Requirement
+
+The deepest decoupling: **purpose decides the evidence requirement, never the evidence value.**
+A study with 10 donors/group, pre-registration, adequate power, and an independent replication
+carries ROBUST evidence whether the researcher calls it exploratory or confirmatory — and weak
+data does not acquire a REPLICATED standing because someone declares a clinical purpose.
+Three objects make this explicit:
+
+| Object | Question | Depends on |
+|---|---|---|
+| `EvidenceAssessment` | How strong **is** the evidence? | Evidence facts only (declared factors + active violations). Purpose- and policy-independent. |
+| `ClaimContext` | What does the researcher want to claim? | Claim class: descriptive → association → population effect → mechanistic → causal → clinical actionability. |
+| `UseRequirement` | How much evidence does the intended use demand? | Purpose + claim class composed — the only place purpose enters. |
+
+The verdict compares them — `evaluate_sufficiency` returns `WARRANTED`, `WARRANTED_WITH_LIMITS`
+(documented ack; the bar never moves), or `NOT_SUFFICIENT_FOR_INTENDED_USE` with an explicit gap list:
+
+```python
+from bionexus import (
+    assess_evidence, evaluate_sufficiency, ClaimClass, ClaimContext,
+    PurposeContext, ResearchPurpose,
+)
+
+# Evidence is what it is, whatever the purpose:
+evidence = assess_evidence(satisfied_factors=[
+    "sample_design", "confound_controls", "sensitivity_analysis",
+    "backend_fidelity", "provenance",
+])  # -> ROBUST under every purpose
+
+# ROBUST evidence + population-effect claim + confirmatory use -> WARRANTED
+suff = evaluate_sufficiency(
+    evidence=evidence,
+    purpose_context=PurposeContext(purpose=ResearchPurpose.CONFIRMATORY),
+    claim_context=ClaimContext(claim_class=ClaimClass.POPULATION_EFFECT),
+)
+# SufficiencyVerdict.WARRANTED
+
+# SUPPORTED evidence + clinical use -> NOT_SUFFICIENT_FOR_INTENDED_USE
+# (requires REPLICATED + external_validation + regulatory_context)
+```
 
 ---
 
@@ -94,7 +138,7 @@ claim_maturity · evidence_ceiling · unsupported_      ALLOW · ALLOW_WITH_ACK 
 claims · residual_uncertainty · rule_basis            OVERRIDE · BLOCK · ESCALATE
 ```
 
-The assessment answers *“what is this evidence worth?”* and is computed **only** from the data design, the triggered rules, and the declared purpose — it is identical in every lab. The policy decision answers *“does BioNexus intervene, and how?”* For n=1 donor/condition, every lab sees the same science:
+The assessment answers *“what is this evidence worth?”* and is computed **only** from the evidence facts (declared factors, active violations) — purpose sets the use requirement, never the evidence value — so it is identical in every lab. The policy decision answers *“does BioNexus intervene, and how?”* For n=1 donor/condition, every lab sees the same science:
 
 ```text
 Scientific assessment (all labs):  ceiling = FRAGILE · population_level_inference unsupported
@@ -420,7 +464,7 @@ BioNexus is governed by a normative, machine-enforced scientific contract publis
 
 **The Biological Capability ABI** (`bionexus abi show <id>`): every capability projects to a stable Scientific ABI — input contracts (allowed matrix states, coordinate types), forbidden claims, execution references, validation policy, evidence ceilings, and provenance requirements. Any host agent connecting to BioNexus inherits this boundary and cannot bypass it.
 
-**Fail-closed philosophy** (`bionexus prevent "<query>"`): *knowing what the evidence warrants is a scientific capability.* Fail-closed now means two things: hard execution invariants (missing evidence → ABSTAIN, identifier corruption → REFUSE, model masquerade → BLOCK) still gate the compute, while soft warrant constraints (weak statistics, thin replication, unvalidated assumptions) permit the compute but cap the claim — `violated assumption → CAP CLAIM MATURITY`, `absent external validation → CAP EVIDENCE LEVEL`, `unspecified purpose → CAP AT FRAGILE`. The scarcest BioNexus API is not `run()` — it is the honest warrant.
+**Fail-closed philosophy** (`bionexus prevent "<query>"`): *knowing what the evidence warrants is a scientific capability.* Fail-closed now means two things: hard execution invariants (missing evidence → ABSTAIN, identifier corruption → REFUSE, model masquerade → BLOCK) still gate the compute, while soft warrant constraints (weak statistics, thin replication, unvalidated assumptions) permit the compute but cap the claim — `violated assumption → CAP CLAIM MATURITY`, `absent external validation → CAP EVIDENCE LEVEL`, `unspecified purpose → sufficiency undecided for any intended use`. The scarcest BioNexus API is not `run()` — it is the honest warrant.
 
 **Capability certification** (`bionexus certification`): skills deepen through evidence tiers — CERTIFIED (all 14 criteria: backend, input contract, invariants, failure modes, positive/negative/adversarial tests, public reference dataset, independent ground truth, parameter perturbation, degradation test, provenance test, cross-host test, external reviewer), VALIDATED, EXPERIMENTAL, CONNECTOR-ONLY. Tiers are **computed from recorded evidence, never asserted**; the blocking-criteria list per capability is the published roadmap to 10 CERTIFIED.
 

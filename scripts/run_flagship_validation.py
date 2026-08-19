@@ -12,7 +12,6 @@ SKIPPED status when reference datasets are unavailable (BNS-EM-009).
 
 from __future__ import annotations
 
-import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path

@@ -34,15 +34,16 @@ from dataclasses import asdict, dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, Sequence, Union
 
-from bionexus.contracts import ConclusionMaturity, _MATURITY_RANK
+from bionexus.contracts import _MATURITY_RANK, ConclusionMaturity
+from bionexus.evidence_model import EvidenceAssessment
 from bionexus.lab_policy import EnforcementMode
 from bionexus.research_purpose import PurposeContext
-from bionexus.rule_classification import RuleCategory
 
 # The policy-independent scientific content (what remains uncertain, what
 # cannot be claimed, per-rule ceiling caps) lives in researcher_override and
 # is shared by both the warrant assessment and the override mechanism.
 from bionexus.researcher_override import scientific_consequences_for
+from bionexus.rule_classification import RuleCategory
 
 # Any active warrant violation caps conclusions at FRAGILE by construction:
 # the design flaw means the claim rests on unreplicated or unvalidated ground.
@@ -190,15 +191,27 @@ def assess_warrant(
     warrant_triggers: Sequence[Any],
     invariant_triggers: Sequence[Any],
     base_maturity: Union[str, ConclusionMaturity] = ConclusionMaturity.UNASSESSED,
+    evidence: Optional[EvidenceAssessment] = None,
 ) -> WarrantAssessment:
     """Compute the policy-independent scientific assessment.
 
-    The evidence ceiling is ``min(purpose ceiling, per-rule caps)`` whenever
-    any violation (warrant or invariant) is active.  The same inputs yield the
-    same assessment in every lab — that is the contract.
+    The evidence ceiling starts from **what the evidence is worth** — the
+    ``evidence`` assessment's maturity when provided — and is then lowered by
+    per-rule caps and by any active violation.  Purpose never raises the
+    ceiling: it sets the use requirement (see ``evidence_model.py``), not the
+    evidence value.  When no ``EvidenceAssessment`` is supplied the legacy
+    purpose-derived value is used as a compatibility fallback only.
+
+    The same inputs yield the same assessment in every lab — that is the
+    contract.
     """
     pctx = purpose_context
-    ceiling = pctx.evidence_ceiling
+    if evidence is not None:
+        ceiling = ConclusionMaturity(evidence.evidence_maturity)
+    else:
+        # Legacy compatibility path: pre-evidence-model callers.  The value
+        # returned here is the use requirement, read as a conservative cap.
+        ceiling = pctx.evidence_ceiling
 
     unsupported: List[str] = []
     residual: List[str] = []
@@ -262,10 +275,7 @@ def decide_policy(
         elif strongest != PolicyAction.ESCALATE:
             strongest = PolicyAction.BLOCK
     if invariant_triggers:
-        rationale = (
-            "Execution invariant violated: this rule cannot be modulated by any "
-            "lab policy profile."
-        )
+        rationale = "Execution invariant violated: this rule cannot be modulated by any lab policy profile."
         if strongest == PolicyAction.ESCALATE:
             notes.append("Route to human / regulatory review before any further action.")
         return PolicyDecision(
@@ -286,9 +296,7 @@ def decide_policy(
 
     # Warrant violations: the lab posture chooses the intervention, and ONLY
     # the intervention.  The assessment above is identical in every lab.
-    modes = {
-        policy.effective_mode_for(_classification_of(t)) for t in warrant_triggers
-    }
+    modes = {policy.effective_mode_for(_classification_of(t)) for t in warrant_triggers}
     actions = {WARRANT_ACTION_BY_MODE.get(m, PolicyAction.REQUIRE_OVERRIDE) for m in modes}
     # Registry-declared ENFORCED warrants always block (mapped via effective_mode).
     for rank_action in (PolicyAction.BLOCK, PolicyAction.REQUIRE_OVERRIDE, PolicyAction.ALLOW_WITH_ACK):

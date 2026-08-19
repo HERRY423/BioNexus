@@ -16,23 +16,22 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from bionexus.backends import probe
 from bionexus.contracts import (
+    _MATURITY_RANK,
     ConclusionMaturity,
     DimensionGrade,
     EvidenceCard,
     ExecutionState,
-    _MATURITY_RANK,
     cap_conclusion_by_purpose,
 )
 from bionexus.lab_policy import (
     DEFAULT_LAB_POLICY,
     LabPolicyProfile,
 )
-from bionexus.research_purpose import PurposeContext, ResearchPurpose
-from bionexus.researcher_override import OverrideRecord
+from bionexus.research_purpose import PurposeContext
 from bionexus.rule_classification import classify_condition
 from bionexus.rule_provenance import RuleProvenance, default_provenance_for_condition_id
 
@@ -349,25 +348,33 @@ class CapabilityContract:
         context: Optional[Dict[str, Any]] = None,
         purpose_context: Optional[PurposeContext] = None,
         lab_policy: Optional[LabPolicyProfile] = None,
+        evidence_factors: Sequence[Any] = (),
+        claim_context: Optional[Any] = None,
+        documented_extras: Sequence[str] = (),
     ) -> CapabilityEvaluationResult:
         """Purpose-aware, warrant/policy-separated evaluation.
 
-        Two strictly separated stages:
+        Three strictly separated objects:
 
-        1. **WarrantAssessment** (policy-independent): what is the evidence
-           worth?  Evidence ceiling = min(purpose ceiling, per-rule caps,
-           FRAGILE) whenever any violation is active.  Identical in every lab.
-        2. **PolicyDecision** (deployment posture): does BioNexus intervene?
+        1. **EvidenceAssessment** (purpose- and policy-independent): what the
+           evidence IS worth, from declared evidence factors and active
+           violations.  Purpose never raises or lowers it.
+        2. **WarrantAssessment** (policy-independent): the capped claim
+           maturity and unsupported claims, starting from the evidence
+           assessment.  Identical in every lab.
+        3. **PolicyDecision** (deployment posture): does BioNexus intervene?
            ALLOW / ALLOW_WITH_ACK (shadow) / REQUIRE_OVERRIDE (advisory) /
            BLOCK (enforced or integrity invariant) / ESCALATE (safety).
 
-        Policy can choose the intervention but can never change the assessment:
-        under shadow mode the run proceeds, yet the evidence ceiling recorded
-        on the card is exactly the same FRAGILE ceiling an advisory lab sees.
+        Additionally a **SufficiencyAssessment** compares the evidence against
+        the intended-use requirement (purpose + claim class): WARRANTED or
+        NOT_SUFFICIENT_FOR_INTENDED_USE.  Purpose decides the requirement,
+        never the evidence value.
 
         Execution invariants (safety/integrity) and missing canonical backends
         always BLOCK/ESCALATE regardless of policy or override.
         """
+        from bionexus.evidence_model import assess_evidence, evaluate_sufficiency
         from bionexus.rule_classification import RuleCategory
         from bionexus.warrant import PolicyAction, assess_warrant, decide_policy
 
@@ -375,35 +382,63 @@ class CapabilityContract:
         pctx = purpose_context or PurposeContext()
         base = self.evaluate_viability(input_metadata=input_metadata, context=context)
 
-        def _attach(card: EvidenceCard, assessment: Any, decision: Any) -> None:
+        def _attach(
+            card: EvidenceCard,
+            assessment: Any,
+            decision: Any,
+            evidence: Any = None,
+            sufficiency: Any = None,
+        ) -> None:
             card.details.setdefault("lab_policy", policy.name)
+            if evidence is not None:
+                card.details["evidence_assessment"] = evidence.to_dict()
             card.details["warrant_assessment"] = assessment.to_dict()
-            card.details["policy_decision"] = {
-                k: v for k, v in decision.to_dict().items() if k != "warrant"
-            }
+            if sufficiency is not None:
+                card.details["sufficiency"] = sufficiency.to_dict()
+            card.details["policy_decision"] = {k: v for k, v in decision.to_dict().items() if k != "warrant"}
 
         # If the base evaluation is permitted, the assessment carries no
-        # violations and the ceiling is simply the purpose ceiling.
+        # violations; the ceiling is what the evidence itself is worth.
         if base.permitted:
-            assessment = assess_warrant(
-                purpose_context=pctx, warrant_triggers=[], invariant_triggers=[],
+            evidence = assess_evidence(
                 base_maturity=base.conclusion_maturity,
+                satisfied_factors=evidence_factors,
+            )
+            assessment = assess_warrant(
+                purpose_context=pctx,
+                warrant_triggers=[],
+                invariant_triggers=[],
+                base_maturity=base.conclusion_maturity,
+                evidence=evidence,
+            )
+            sufficiency = evaluate_sufficiency(
+                evidence=evidence,
+                purpose_context=pctx,
+                claim_context=claim_context,
+                documented_extras=documented_extras,
+                override_acknowledged=pctx.override_active,
             )
             decision = decide_policy(
-                policy=policy, assessment=assessment,
-                invariant_triggers=[], warrant_triggers=[],
+                policy=policy,
+                assessment=assessment,
+                invariant_triggers=[],
+                warrant_triggers=[],
             )
             base.research_purpose = pctx.purpose.value
             base.evidence_ceiling = assessment.evidence_ceiling
             base.lab_policy_name = policy.name
+            base.evidence_assessment = evidence.to_dict()
             base.warrant_assessment = assessment.to_dict()
+            base.sufficiency = sufficiency.to_dict()
             base.policy_decision = decision.to_dict()
-            capped = cap_conclusion_by_purpose(base.conclusion_maturity, pctx.evidence_ceiling)
+            capped = cap_conclusion_by_purpose(
+                base.conclusion_maturity, ConclusionMaturity(assessment.evidence_ceiling)
+            )
             base.conclusion_maturity = capped
             if base.evidence_card:
                 base.evidence_card.research_purpose = pctx.purpose.value
                 base.evidence_card.evidence_ceiling = assessment.evidence_ceiling
-                _attach(base.evidence_card, assessment, decision)
+                _attach(base.evidence_card, assessment, decision, evidence, sufficiency)
             return base
 
         # ------------------------------------------------------------------
@@ -419,6 +454,7 @@ class CapabilityContract:
                 # Backend identity is an integrity invariant; the only softness
                 # is the frontier fallback consent path, which predates policies.
                 from bionexus.capabilities import FRONTIER_CAPABILITIES
+
                 if self.id in FRONTIER_CAPABILITIES:
                     warrant_triggers.append(trigger)
                 else:
@@ -440,12 +476,28 @@ class CapabilityContract:
 
         # ------------------------------------------------------------------
         # Stage 2: the scientific assessment.  Identical in every lab.
+        # The evidence assessment is purpose-independent; the warrant
+        # assessment starts from what the evidence is worth.
         # ------------------------------------------------------------------
+        evidence = assess_evidence(
+            base_maturity=base.conclusion_maturity,
+            satisfied_factors=evidence_factors,
+            warrant_triggers=warrant_triggers,
+            invariant_triggers=invariant_triggers,
+        )
         assessment = assess_warrant(
             purpose_context=pctx,
             warrant_triggers=warrant_triggers,
             invariant_triggers=invariant_triggers,
             base_maturity=base.conclusion_maturity,
+            evidence=evidence,
+        )
+        sufficiency = evaluate_sufficiency(
+            evidence=evidence,
+            purpose_context=pctx,
+            claim_context=claim_context,
+            documented_extras=documented_extras,
+            override_acknowledged=pctx.override_active,
         )
 
         # ------------------------------------------------------------------
@@ -464,22 +516,26 @@ class CapabilityContract:
             base.research_purpose = pctx.purpose.value
             base.evidence_ceiling = assessment.evidence_ceiling
             base.lab_policy_name = policy.name
+            base.evidence_assessment = evidence.to_dict()
             base.warrant_assessment = assessment.to_dict()
+            base.sufficiency = sufficiency.to_dict()
             base.policy_decision = decision.to_dict()
             if base.evidence_card:
-                _attach(base.evidence_card, assessment, decision)
+                _attach(base.evidence_card, assessment, decision, evidence, sufficiency)
             return base
 
         # Shadow posture: proceed without intervention — but the assessment
         # ceiling still applies to every claim made from this run.
         if decision.action == PolicyAction.ALLOW_WITH_ACK:
-            capped = cap_conclusion_by_purpose(
-                ConclusionMaturity.UNASSESSED.value, assessment.evidence_ceiling
-            )
+            capped = cap_conclusion_by_purpose(ConclusionMaturity.UNASSESSED.value, assessment.evidence_ceiling)
             card = EvidenceCard(
                 execution_state=ExecutionState.PERMITTED.value,
-                input_integrity=base.evidence_card.input_integrity if base.evidence_card else DimensionGrade.UNTESTED.value,
-                assumption_validity=base.evidence_card.assumption_validity if base.evidence_card else DimensionGrade.GRADE_B.value,
+                input_integrity=base.evidence_card.input_integrity
+                if base.evidence_card
+                else DimensionGrade.UNTESTED.value,
+                assumption_validity=base.evidence_card.assumption_validity
+                if base.evidence_card
+                else DimensionGrade.GRADE_B.value,
                 statistical_support=DimensionGrade.UNTESTED.value,
                 details={
                     "contract_id": self.id,
@@ -498,7 +554,7 @@ class CapabilityContract:
                 blocked_claims=assessment.unsupported_claims,
                 residual_limitations=assessment.residual_uncertainty,
             )
-            _attach(card, assessment, decision)
+            _attach(card, assessment, decision, evidence, sufficiency)
             return CapabilityEvaluationResult(
                 capability_id=self.id,
                 status="PERMITTED",
@@ -513,18 +569,23 @@ class CapabilityContract:
                 evidence_ceiling=assessment.evidence_ceiling,
                 lab_policy_name=policy.name,
                 shadow_violations=[t.description for t in warrant_triggers],
+                evidence_assessment=evidence.to_dict(),
                 warrant_assessment=assessment.to_dict(),
+                sufficiency=sufficiency.to_dict(),
                 policy_decision=decision.to_dict(),
             )
 
         # Advisory posture with a documented override: PERMITTED_WITH_LIMITS.
         if decision.action == PolicyAction.REQUIRE_OVERRIDE and pctx.override_active:
             from bionexus.researcher_override import create_override_record
+
             override_dicts = []
             all_residual: List[str] = []
             all_blocked: List[str] = []
             override_denied: List[str] = []
-            min_ceiling = pctx.evidence_ceiling
+            # The override negotiation starts from what the evidence is worth
+            # (evidence-derived ceiling), never from the purpose.
+            min_ceiling = ConclusionMaturity(assessment.evidence_ceiling)
 
             for trigger in warrant_triggers:
                 try:
@@ -550,23 +611,29 @@ class CapabilityContract:
                 base.research_purpose = pctx.purpose.value
                 base.evidence_ceiling = assessment.evidence_ceiling
                 base.lab_policy_name = policy.name
+                base.evidence_assessment = evidence.to_dict()
                 base.warrant_assessment = assessment.to_dict()
+                base.sufficiency = sufficiency.to_dict()
                 base.policy_decision = decision.to_dict()
                 if base.evidence_card:
-                    _attach(base.evidence_card, assessment, decision)
+                    _attach(base.evidence_card, assessment, decision, evidence, sufficiency)
                 return base
 
             # All overrides accepted: PERMITTED_WITH_LIMITS.  The override is
             # the ack; the warrant assessment is untouched.
-            capped = cap_conclusion_by_purpose(
-                ConclusionMaturity.FRAGILE.value, min_ceiling
-            )
+            capped = cap_conclusion_by_purpose(ConclusionMaturity.FRAGILE.value, min_ceiling)
             decision.override_records = override_dicts
             card = EvidenceCard(
                 execution_state=ExecutionState.PERMITTED_WITH_LIMITS.value,
-                input_integrity=base.evidence_card.input_integrity if base.evidence_card else DimensionGrade.GRADE_C.value,
-                assumption_validity=base.evidence_card.assumption_validity if base.evidence_card else DimensionGrade.GRADE_C.value,
-                statistical_support=base.evidence_card.statistical_support if base.evidence_card else DimensionGrade.UNTESTED.value,
+                input_integrity=base.evidence_card.input_integrity
+                if base.evidence_card
+                else DimensionGrade.GRADE_C.value,
+                assumption_validity=base.evidence_card.assumption_validity
+                if base.evidence_card
+                else DimensionGrade.GRADE_C.value,
+                statistical_support=base.evidence_card.statistical_support
+                if base.evidence_card
+                else DimensionGrade.UNTESTED.value,
                 details={
                     "contract_id": self.id,
                     "execution_backend": self.backend.canonical_name,
@@ -579,7 +646,7 @@ class CapabilityContract:
                 residual_limitations=all_residual,
                 blocked_claims=list(set(all_blocked)),
             )
-            _attach(card, assessment, decision)
+            _attach(card, assessment, decision, evidence, sufficiency)
             return CapabilityEvaluationResult(
                 capability_id=self.id,
                 status="PERMITTED_WITH_LIMITS",
@@ -597,7 +664,9 @@ class CapabilityContract:
                 residual_limitations=all_residual,
                 blocked_claims=list(set(all_blocked)),
                 lab_policy_name=policy.name,
+                evidence_assessment=evidence.to_dict(),
                 warrant_assessment=assessment.to_dict(),
+                sufficiency=sufficiency.to_dict(),
                 policy_decision=decision.to_dict(),
             )
 
@@ -606,10 +675,12 @@ class CapabilityContract:
         base.research_purpose = pctx.purpose.value
         base.evidence_ceiling = assessment.evidence_ceiling
         base.lab_policy_name = policy.name
+        base.evidence_assessment = evidence.to_dict()
         base.warrant_assessment = assessment.to_dict()
+        base.sufficiency = sufficiency.to_dict()
         base.policy_decision = decision.to_dict()
         if base.evidence_card:
-            _attach(base.evidence_card, assessment, decision)
+            _attach(base.evidence_card, assessment, decision, evidence, sufficiency)
         return base
 
 
@@ -640,6 +711,9 @@ class CapabilityEvaluationResult:
     # Warrant / policy separation (the assessment is policy-independent)
     warrant_assessment: Optional[Dict[str, Any]] = None
     policy_decision: Optional[Dict[str, Any]] = None
+    # Evidence model (evidence strength vs intended-use requirement)
+    evidence_assessment: Optional[Dict[str, Any]] = None
+    sufficiency: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert evaluation result to dictionary."""
@@ -670,6 +744,10 @@ class CapabilityEvaluationResult:
             d["warrant_assessment"] = self.warrant_assessment
         if self.policy_decision:
             d["policy_decision"] = self.policy_decision
+        if self.evidence_assessment:
+            d["evidence_assessment"] = self.evidence_assessment
+        if self.sufficiency:
+            d["sufficiency"] = self.sufficiency
         return d
 
 
@@ -2206,9 +2284,7 @@ def get_capability(capability_id: str, include_frontier: bool = True) -> Capabil
     """Retrieve capability contract by ID."""
     registry = ALL_CAPABILITIES if include_frontier else CANONICAL_CAPABILITIES
     if capability_id not in registry:
-        raise KeyError(
-            f"Unknown capability contract ID: '{capability_id}'. Available: {list(registry.keys())}"
-        )
+        raise KeyError(f"Unknown capability contract ID: '{capability_id}'. Available: {list(registry.keys())}")
     return registry[capability_id]
 
 
