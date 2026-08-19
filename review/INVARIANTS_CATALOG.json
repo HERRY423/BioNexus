@@ -1,0 +1,205 @@
+{
+  "catalog_version": "1.0",
+  "invariants": [
+    {
+      "id": "INV-001",
+      "name": "pseudoreplication_threshold",
+      "description": "Minimum number of biological replicates required per experimental condition for pseudobulk differential expression",
+      "current_value": 2,
+      "source_file": "src/bionexus/capabilities.py",
+      "source_line": 177,
+      "rationale": "At least 2 biological replicates per group are needed to estimate within-group biological dispersion for negative binomial GLM (PyDESeq2). Below this threshold, statistical inference is mathematically undefined.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-002",
+      "name": "spatial_spots_minimum",
+      "description": "Minimum number of spatial spots required for neighborhood graph construction and spatial inference",
+      "current_value": 5,
+      "source_file": "src/bionexus/capabilities.py",
+      "source_line": 193,
+      "rationale": "Spatial neighborhood graphs require a minimum number of spots to construct meaningful connectivity structures. Below 5 spots, Moran's I and other spatial statistics become unstable.",
+      "sensitivity": "medium",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-003",
+      "name": "fdr_alpha_threshold",
+      "description": "Minimum FDR (False Discovery Rate) alpha threshold for multiple testing correction",
+      "current_value": 0.05,
+      "source_file": "src/bionexus/capabilities.py",
+      "source_line": 99,
+      "rationale": "Standard Benjamini-Hochberg FDR control at 5% is the conventional threshold for statistical significance in high-throughput genomics. Capabilities requiring multiple testing warrant use this as the minimum acceptable alpha.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-004",
+      "name": "annotation_marker_consistency_threshold",
+      "description": "Minimum positive-marker consistency score required for SUPPORTED annotation verdict",
+      "current_value": 0.60,
+      "source_file": "src/bionexus/annotation_evidence.py",
+      "source_line": 34,
+      "rationale": "At least 60% of positive markers must show coherent expression within the labeled population to support the label. This balances sensitivity to true markers against noise tolerance.",
+      "sensitivity": "medium",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-005",
+      "name": "annotation_negative_marker_violation_max",
+      "description": "Maximum allowed negative-marker violation rate for annotation evidence",
+      "current_value": 0.20,
+      "source_file": "src/bionexus/annotation_evidence.py",
+      "source_line": 35,
+      "rationale": "No more than 20% of lineage-exclusive negative markers may be expressed. Exceeding this indicates the label violates lineage exclusivity constraints.",
+      "sensitivity": "medium",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-006",
+      "name": "annotation_reference_mapping_min",
+      "description": "Minimum reference mapping score required for independent identity evidence",
+      "current_value": 0.70,
+      "source_file": "src/bionexus/annotation_evidence.py",
+      "source_line": 36,
+      "rationale": "Reference atlas mapping confidence must reach 0.70 to serve as an independent identity source. Below this, the mapping is too uncertain to anchor a cell-type identity claim.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-007",
+      "name": "annotation_cross_method_agreement_min",
+      "description": "Minimum cross-method agreement score for independent identity evidence",
+      "current_value": 0.80,
+      "source_file": "src/bionexus/annotation_evidence.py",
+      "source_line": 37,
+      "rationale": "When multiple independent annotation methods agree at >= 0.80, this serves as an alternative to reference mapping for establishing label identity. Higher threshold compensates for method-specific biases.",
+      "sensitivity": "medium",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-008",
+      "name": "annotation_doublet_rate_max",
+      "description": "Maximum allowed doublet rate within a labeled population",
+      "current_value": 0.15,
+      "source_file": "src/bionexus/annotation_evidence.py",
+      "source_line": 38,
+      "rationale": "If more than 15% of cells in a labeled population are predicted doublets, the population may be a doublet artifact rather than a genuine biological cluster.",
+      "sensitivity": "medium",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-009",
+      "name": "causal_language_pattern",
+      "description": "Regex pattern detecting prohibited causal/mechanistic language in scientific claims",
+      "current_value": "\\b(?:drives?|causes?|caused|induces?|induced|proves?|proven|mechanism of action|is causal)\\b",
+      "source_file": "src/bionexus/verification.py",
+      "source_line": 37,
+      "rationale": "These keywords indicate causal or mechanistic claims that exceed the warrant of observational/associative evidence classes. Detection blocks the claim as not-warranted.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-010",
+      "name": "causal_de_overclaim_patterns",
+      "description": "Regex patterns detecting false causal treatment DE claims from marker gene analysis",
+      "current_value": [
+        "rank_genes_groups/marker genes + proves/demonstrates + treatment caused/induced",
+        "rank_genes_groups/marker p-values + proves/caused/treatment effect",
+        "caused/induced + N DEGs + without replicates/at single-cell level"
+      ],
+      "source_file": "src/bionexus/claim_checker.py",
+      "source_line": 103,
+      "rationale": "Marker p-values from single-cell rank_genes_groups cannot be cited as causal treatment condition DE p-values. These patterns detect the specific linguistic forms of this common overclaim.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-011",
+      "name": "spatial_robustness_ladder",
+      "description": "Canonical validity ladder for spatial inference verdicts with degradation semantics",
+      "current_value": ["ROBUST", "SUPPORTED", "FRAGILE", "ABSTAIN"],
+      "source_file": "src/bionexus/spatial_inference.py",
+      "source_line": 52,
+      "rationale": "ROBUST requires all canonical controls tested+passing AND permutation null. SUPPORTED requires all provided controls pass but no permutation null. FRAGILE is the honest default when any alternative is UNTESTED. ABSTAIN when a control FAILED or no controls provided.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-012",
+      "name": "spatial_core_controls",
+      "description": "Canonical alternative-explanation controls that MUST be addressed before a spatial conclusion can exceed FRAGILE",
+      "current_value": ["cell_size", "transcript_density", "segmentation_uncertainty"],
+      "source_file": "src/bionexus/spatial_inference.py",
+      "source_line": 48,
+      "rationale": "These three confounds are the most common non-biological explanations for spatial enrichment patterns. Without addressing them, the observation may reflect measurement geometry rather than biology.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-013",
+      "name": "spatial_canonical_alternatives",
+      "description": "Complete registry of canonical alternative explanations for spatial observations",
+      "current_value": [
+        "cell_size", "transcript_density", "segmentation_uncertainty",
+        "nuclear_eccentricity", "local_cell_density", "spot_composition",
+        "spatial_autocorrelation", "batch_fov", "ligand_receptor_abundance",
+        "contact_geometry", "neighborhood_radius", "permutation_null"
+      ],
+      "source_file": "src/bionexus/spatial_inference.py",
+      "source_line": 31,
+      "rationale": "These 12 alternative explanations represent the known non-biological confounds in spatial transcriptomics. The registry is part of the capability contract and may only change with a contract version bump.",
+      "sensitivity": "medium",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-014",
+      "name": "pseudoreplication_detection_pattern",
+      "description": "Detection logic for cell-level pseudoreplication in differential expression analysis",
+      "current_value": "BFA-001: DE call at cell level with condition groupby but no pseudobulk aggregation marker",
+      "source_file": "src/bionexus/analysis_audit.py",
+      "source_line": 282,
+      "rationale": "Condition-level inference performed on cell-level observations without biological replicate aggregation treats thousands of cells from one sample as independent, inflating false discovery rates.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-015",
+      "name": "cell_type_hallucination_patterns",
+      "description": "Regex patterns detecting unverified cell-type assertions from numeric cluster IDs",
+      "current_value": [
+        "cluster N is/represents/corresponds to [cell type]",
+        "cluster N : [cell type]",
+        "concluded that cluster N is/are [cell type]"
+      ],
+      "source_file": "src/bionexus/claim_checker.py",
+      "source_line": 87,
+      "rationale": "Unsupervised clusters must remain numeric unless verified against ground truth reference markers. These patterns detect the linguistic forms of cell-type hallucination from cluster IDs.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-016",
+      "name": "annotation_verdict_ladder",
+      "description": "Deterministic verdict ladder for cell annotation evidence assessment",
+      "current_value": ["SUPPORTED", "TENTATIVE", "ABSTAIN"],
+      "source_file": "src/bionexus/annotation_evidence.py",
+      "source_line": 41,
+      "rationale": "SUPPORTED requires multiple independent evidence classes cohere. TENTATIVE indicates partial evidence or at least one class missing/weak. ABSTAIN means no evidence, contradictory evidence, or open-set population.",
+      "sensitivity": "medium",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-017",
+      "name": "spatial_coordinate_audit_min_spots",
+      "description": "Minimum spots threshold for spatial coordinate audit grading",
+      "current_value": 5,
+      "source_file": "src/bionexus/integrity.py",
+      "source_line": 128,
+      "rationale": "Spatial coordinate audit returns grade C (fail) when fewer than min_spots (default 5) are present. This aligns with the capability precondition for spatial graph construction.",
+      "sensitivity": "medium",
+      "review_status": "pending"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "project": "bionexus-reliability",
+  "project_version": "0.10.0",
+  "review_date": "2026-08-18",
+  "reviewers": [
+    {
+      "id": "reviewer-1",
+      "name": "[PENDING]",
+      "role": "single-cell computational researcher",
+      "affiliation": "[PENDING]",
+      "expertise": ["single-cell RNA-seq", "pseudobulk DE"],
+      "cases_assigned": ["pseudobulk"]
+    },
+    {
+      "id": "reviewer-2",
+      "name": "[PENDING]",
+      "role": "spatial transcriptomics researcher",
+      "affiliation": "[PENDING]",
+      "expertise": ["spatial transcriptomics", "MERFISH", "Xenium"],
+      "cases_assigned": ["spatial"]
+    },
+    {
+      "id": "reviewer-3",
+      "name": "[PENDING]",
+      "role": "biostatistics / computational methods researcher",
+      "affiliation": "[PENDING]",
+      "expertise": ["statistical methods", "FDR", "replication"],
+      "cases_assigned": ["pseudobulk", "annotation"]
+    }
+  ],
+  "invariants_reviewed": [],
+  "cases_reviewed": [],
+  "disagreements": [],
+  "false_refusals": [],
+  "changes_made": [],
+  "status": "framework_created_pending_review"
+}
