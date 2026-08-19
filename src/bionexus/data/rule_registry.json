@@ -18,6 +18,7 @@
       "classification": {
         "category": "INVARIANT_SAFETY",
         "enforcement_level": "ENFORCED",
+        "epistemic_kind": "EXECUTION_INVARIANT",
         "rationale": "CLIA/CAP mandate: clinical diagnosis without certified validation directly impacts patient treatment decisions."
       }
     },
@@ -35,6 +36,7 @@
       "classification": {
         "category": "INVARIANT_INTEGRITY",
         "enforcement_level": "ENFORCED",
+        "epistemic_kind": "DATA_INTEGRITY_INVARIANT",
         "rationale": "Data integrity: joining HGNC gene symbols against Ensembl IDs produces silent one-to-many mappings indistinguishable from correct joins."
       }
     },
@@ -52,6 +54,7 @@
       "classification": {
         "category": "INVARIANT_INTEGRITY",
         "enforcement_level": "ENFORCED",
+        "epistemic_kind": "DATA_INTEGRITY_INVARIANT",
         "rationale": "Reproducibility: substituting models without detection breaks deterministic audit trails (BN-F010)."
       }
     },
@@ -73,6 +76,7 @@
       "classification": {
         "category": "WARRANT_EPISTEMIC",
         "enforcement_level": "ADVISORY",
+        "epistemic_kind": "WARRANT_CONSTRAINT",
         "rationale": "Statistical theory: negative binomial models assume integer counts; feeding normalized floats violates dispersion estimation assumptions, making p-values approximate rather than calibrated."
       }
     },
@@ -94,7 +98,8 @@
       "classification": {
         "category": "WARRANT_EPISTEMIC",
         "enforcement_level": "ADVISORY",
-        "rationale": "Experimental design theory: biological replication is required to estimate between-subject variance. Without it, population-level effects are confounded with sample-specific noise."
+        "epistemic_kind": "WARRANT_CONSTRAINT",
+        "rationale": "Experimental design theory: with fewer replicates than the intended inferential design requires, reliable between-replicate variance estimation is not supported; population-level effects are confounded with sample-specific noise. The software can still compute, and the statistical model is still mathematically defined — what is missing is a reliable design basis for inference."
       }
     },
     "spatial_coords_present": {
@@ -113,6 +118,7 @@
       "classification": {
         "category": "WARRANT_EPISTEMIC",
         "enforcement_level": "ADVISORY",
+        "epistemic_kind": "WARRANT_CONSTRAINT",
         "rationale": "Spatial statistics: Moran's I assumes physical adjacency; embedding coordinates proxy for topological similarity which may correlate with but does not equal tissue-level structure."
       }
     },
@@ -133,6 +139,7 @@
       "classification": {
         "category": "WARRANT_EPISTEMIC",
         "enforcement_level": "ADVISORY",
+        "epistemic_kind": "WARRANT_CONSTRAINT",
         "rationale": "Annotation evidence limits what identity claims can be justified; numeric clusters remain valid."
       }
     },
@@ -152,7 +159,8 @@
       "classification": {
         "category": "WARRANT_EPISTEMIC",
         "enforcement_level": "ADVISORY",
-        "rationale": "Without FDR control, individual p-values are inflated false positives; exploratory ranking tolerates this."
+        "epistemic_kind": "POLICY_DEFAULT",
+        "rationale": "Without FDR control, individual p-values are inflated false positives; exploratory ranking tolerates this. The 0.05 alpha is a community-convention default, legitimately replaceable per study design."
       }
     },
     "missing_backend": {
@@ -168,6 +176,7 @@
       "classification": {
         "category": "INVARIANT_INTEGRITY",
         "enforcement_level": "ENFORCED",
+        "epistemic_kind": "DATA_INTEGRITY_INVARIANT",
         "rationale": "Scientific capability contract: the canonical backend defines the algorithm. Silent substitution means the result is not what was advertised — zero silent substitution policy."
       }
     }

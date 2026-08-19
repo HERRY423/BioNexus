@@ -122,7 +122,7 @@ Each reviewer independently examines their assigned invariants:
 
 | Phase | Duration | Deliverable |
 |-------|----------|-------------|
-| Framework Creation | Day 0 | This protocol + INVARIANTS_CATALOG.json |
+| Framework Creation | Day 0 | This protocol + SCIENTIFIC_RULE_CATALOG.json |
 | Independent Review | Weeks 1–2 | Per-reviewer verdicts in SCIENTIFIC_REVIEW.json |
 | Cross-Review | Week 3 | Disagreement documentation |
 | Consensus Meeting | Week 4 | Final verdicts, change log |
@@ -130,29 +130,33 @@ Each reviewer independently examines their assigned invariants:
 
 ---
 
-## 7. Invariant Catalog Summary
+## 7. Scientific Rule Catalog Summary
 
-The following 17 invariants require review:
+The following 21 rules require review. Not every rule is an invariant: each rule declares one epistemic kind (EXECUTION_INVARIANT, DATA_INTEGRITY_INVARIANT, WARRANT_CONSTRAINT, CALIBRATED_THRESHOLD, HEURISTIC_DETECTOR, POLICY_DEFAULT). See `review/SCIENTIFIC_RULE_CATALOG.json` (v2.0, supersedes INVARIANTS_CATALOG.json v1.0).
 
-| ID | Name | Source File | Sensitivity |
-|----|------|-------------|-------------|
-| INV-001 | pseudoreplication_threshold | capabilities.py | high |
-| INV-002 | spatial_spots_minimum | capabilities.py | medium |
-| INV-003 | fdr_alpha_threshold | capabilities.py | high |
-| INV-004 | annotation_marker_consistency_threshold | annotation_evidence.py | medium |
-| INV-005 | annotation_negative_marker_violation_max | annotation_evidence.py | medium |
-| INV-006 | annotation_reference_mapping_min | annotation_evidence.py | high |
-| INV-007 | annotation_cross_method_agreement_min | annotation_evidence.py | medium |
-| INV-008 | annotation_doublet_rate_max | annotation_evidence.py | medium |
-| INV-009 | causal_language_pattern | verification.py | high |
-| INV-010 | causal_de_overclaim_patterns | claim_checker.py | high |
-| INV-011 | spatial_robustness_ladder | spatial_inference.py | high |
-| INV-012 | spatial_core_controls | spatial_inference.py | high |
-| INV-013 | spatial_canonical_alternatives | spatial_inference.py | medium |
-| INV-014 | pseudoreplication_detection_pattern | analysis_audit.py | high |
-| INV-015 | cell_type_hallucination_patterns | claim_checker.py | high |
-| INV-016 | annotation_verdict_ladder | annotation_evidence.py | medium |
-| INV-017 | spatial_coordinate_audit_min_spots | integrity.py | medium |
+| ID | Name | Epistemic Kind | Source File | Sensitivity |
+|----|------|----------------|-------------|-------------|
+| INV-001 | pseudoreplication_threshold | WARRANT_CONSTRAINT | capabilities.py | high |
+| INV-002 | spatial_spots_minimum | CALIBRATED_THRESHOLD | capabilities.py | medium |
+| INV-003 | fdr_alpha_threshold | POLICY_DEFAULT | capabilities.py | high |
+| INV-004 | annotation_marker_consistency_threshold | CALIBRATED_THRESHOLD | annotation_evidence.py | medium |
+| INV-005 | annotation_negative_marker_violation_max | CALIBRATED_THRESHOLD | annotation_evidence.py | medium |
+| INV-006 | annotation_reference_mapping_min | CALIBRATED_THRESHOLD | annotation_evidence.py | high |
+| INV-007 | annotation_cross_method_agreement_min | CALIBRATED_THRESHOLD | annotation_evidence.py | medium |
+| INV-008 | annotation_doublet_rate_max | CALIBRATED_THRESHOLD | annotation_evidence.py | medium |
+| INV-009 | causal_language_pattern | HEURISTIC_DETECTOR | verification.py | high |
+| INV-010 | causal_de_overclaim_patterns | HEURISTIC_DETECTOR | claim_checker.py | high |
+| INV-011 | spatial_robustness_ladder | WARRANT_CONSTRAINT | spatial_inference.py | high |
+| INV-012 | spatial_core_controls | WARRANT_CONSTRAINT | spatial_inference.py | high |
+| INV-013 | spatial_canonical_alternatives | WARRANT_CONSTRAINT | spatial_inference.py | medium |
+| INV-014 | pseudoreplication_detection_pattern | HEURISTIC_DETECTOR | analysis_audit.py | high |
+| INV-015 | cell_type_hallucination_patterns | HEURISTIC_DETECTOR | claim_checker.py | high |
+| INV-016 | annotation_verdict_ladder | WARRANT_CONSTRAINT | annotation_evidence.py | medium |
+| INV-017 | spatial_coordinate_audit_min_spots | CALIBRATED_THRESHOLD | integrity.py | medium |
+| RULE-018 | identifier_namespace_integrity | DATA_INTEGRITY_INVARIANT | rule_registry.json | high |
+| RULE-019 | model_substitution_detection | DATA_INTEGRITY_INVARIANT | rule_registry.json | high |
+| RULE-020 | clinical_diagnosis_without_certification | EXECUTION_INVARIANT | rule_registry.json | high |
+| RULE-021 | canonical_backend_identity | EXECUTION_INVARIANT | rule_registry.json | high |
 
 ---
 
@@ -163,7 +167,7 @@ Any approved changes to invariants require:
 2. Version bump in `pyproject.toml` (minor or major, depending on impact)
 3. Entry in CHANGELOG.md describing the change and scientific rationale
 4. Re-run of all affected tests to verify no regressions
-5. Update to INVARIANTS_CATALOG.json with new value and review status = "approved"
+5. Update to SCIENTIFIC_RULE_CATALOG.json with new value and review status = "approved"
 
 ---
 
@@ -172,7 +176,7 @@ Any approved changes to invariants require:
 - **Review Coordinator:** [TO BE ASSIGNED]
 - **Final Arbiter:** [TO BE ASSIGNED — typically Principal Investigator or Scientific Advisory Board]
 - **Review Records Maintained In:** `review/SCIENTIFIC_REVIEW.json`
-- **Invariant Catalog:** `review/INVARIANTS_CATALOG.json`
+- **Scientific Rule Catalog:** `review/SCIENTIFIC_RULE_CATALOG.json`
 
 ---
 

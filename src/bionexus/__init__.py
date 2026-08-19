@@ -135,9 +135,12 @@ from .researcher_override import (
     OverrideRecord,
     create_override_record,
     is_override_permitted,
+    scientific_consequences_for,
 )
 from .rule_classification import (
+    CATEGORY_TO_EPISTEMIC_KIND,
     EnforcementLevel,
+    EpistemicKind,
     RuleCategory,
     RuleClassification,
     classify_condition,
@@ -176,6 +179,14 @@ from .verification import (
     write_example_ledger,
 )
 from .versions import PINS, PITFALLS, PLUGIN_VERSION, VERSION
+from .warrant import (
+    PolicyAction,
+    PolicyDecision,
+    RuleBasisEntry,
+    WarrantAssessment,
+    assess_warrant,
+    decide_policy,
+)
 
 __version__ = VERSION
 
@@ -197,6 +208,7 @@ __all__ = [
     "AnalysisDocument",
     "AnnotationEvidence",
     "AnnotationVerdict",
+    "assess_warrant",
     "AuditFinding",
     "BundleVerificationResult",
     "CANONICAL_CAPABILITIES",
@@ -215,6 +227,8 @@ __all__ = [
     "RunBundle",
     "RuleCategory",
     "RuleClassification",
+    "EpistemicKind",
+    "CATEGORY_TO_EPISTEMIC_KIND",
     "RuleProvenance",
     "RuleRegistryError",
     "RuleSourceKind",
@@ -242,6 +256,8 @@ __all__ = [
     "OVERRIDABLE_PURPOSES",
     "OverrideDenied",
     "OverrideRecord",
+    "PolicyAction",
+    "PolicyDecision",
     "PURPOSE_EVIDENCE_CEILING",
     "Precondition",
     "PreflightCheck",
@@ -254,6 +270,7 @@ __all__ = [
     "SpatialInferenceVerdict",
     "VERSION",
     "VerificationReport",
+    "WarrantAssessment",
     "__version__",
     "active_skills",
     "as_markdown_table",
@@ -275,6 +292,7 @@ __all__ = [
     "core_skills",
     "create_override_record",
     "ConsensusLevel",
+    "decide_policy",
     "DEFAULT_LAB_POLICY",
     "DISCOVERY_LAB",
     "default_provenance_for_condition_id",
@@ -318,7 +336,9 @@ __all__ = [
     "route_scientific_intent",
     "RoutingDecision",
     "RoutingStatus",
+    "RuleBasisEntry",
     "ScientificIntentRequest",
+    "scientific_consequences_for",
     "run_doctor",
     "run_preflight",
     "sha256_file",

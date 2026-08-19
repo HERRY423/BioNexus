@@ -29,7 +29,6 @@ from bionexus.contracts import (
 )
 from bionexus.lab_policy import (
     DEFAULT_LAB_POLICY,
-    EnforcementMode,
     LabPolicyProfile,
 )
 from bionexus.research_purpose import PurposeContext, ResearchPurpose
@@ -351,52 +350,69 @@ class CapabilityContract:
         purpose_context: Optional[PurposeContext] = None,
         lab_policy: Optional[LabPolicyProfile] = None,
     ) -> CapabilityEvaluationResult:
-        """Purpose-aware evaluation: classifies refusals as hard BLOCK or soft PERMITTED_WITH_LIMITS.
+        """Purpose-aware, warrant/policy-separated evaluation.
 
-        Hard blocks (never overridable):
-        - Execution invariants (safety/integrity) — always ENFORCED regardless
-          of lab policy
-        - Missing backend for canonical capabilities (no silent substitution)
+        Two strictly separated stages:
 
-        Soft blocks (overridable with documentation):
-        - Warrant constraints resolved to ADVISORY by the lab policy
-        - Missing backend for frontier capabilities with explicit fallback consent
+        1. **WarrantAssessment** (policy-independent): what is the evidence
+           worth?  Evidence ceiling = min(purpose ceiling, per-rule caps,
+           FRAGILE) whenever any violation is active.  Identical in every lab.
+        2. **PolicyDecision** (deployment posture): does BioNexus intervene?
+           ALLOW / ALLOW_WITH_ACK (shadow) / REQUIRE_OVERRIDE (advisory) /
+           BLOCK (enforced or integrity invariant) / ESCALATE (safety).
 
-        Shadow observations (record only, never block or cap):
-        - Warrant constraints resolved to SHADOW by the lab policy are logged
-          on the EvidenceCard without changing routing or the evidence ceiling
+        Policy can choose the intervention but can never change the assessment:
+        under shadow mode the run proceeds, yet the evidence ceiling recorded
+        on the card is exactly the same FRAGILE ceiling an advisory lab sees.
 
-        When a soft block is overridden, the result is PERMITTED_WITH_LIMITS with:
-        - residual_limitations: what constraints remain
-        - blocked_claims: what claims are still not warranted
-        - evidence_ceiling: the highest reachable ConclusionMaturity
+        Execution invariants (safety/integrity) and missing canonical backends
+        always BLOCK/ESCALATE regardless of policy or override.
         """
+        from bionexus.rule_classification import RuleCategory
+        from bionexus.warrant import PolicyAction, assess_warrant, decide_policy
+
         policy = lab_policy or DEFAULT_LAB_POLICY
         pctx = purpose_context or PurposeContext()
         base = self.evaluate_viability(input_metadata=input_metadata, context=context)
 
-        # If the base evaluation is permitted, just apply the evidence ceiling cap.
+        def _attach(card: EvidenceCard, assessment: Any, decision: Any) -> None:
+            card.details.setdefault("lab_policy", policy.name)
+            card.details["warrant_assessment"] = assessment.to_dict()
+            card.details["policy_decision"] = {
+                k: v for k, v in decision.to_dict().items() if k != "warrant"
+            }
+
+        # If the base evaluation is permitted, the assessment carries no
+        # violations and the ceiling is simply the purpose ceiling.
         if base.permitted:
+            assessment = assess_warrant(
+                purpose_context=pctx, warrant_triggers=[], invariant_triggers=[],
+                base_maturity=base.conclusion_maturity,
+            )
+            decision = decide_policy(
+                policy=policy, assessment=assessment,
+                invariant_triggers=[], warrant_triggers=[],
+            )
             base.research_purpose = pctx.purpose.value
-            base.evidence_ceiling = pctx.evidence_ceiling.value
+            base.evidence_ceiling = assessment.evidence_ceiling
             base.lab_policy_name = policy.name
+            base.warrant_assessment = assessment.to_dict()
+            base.policy_decision = decision.to_dict()
             capped = cap_conclusion_by_purpose(base.conclusion_maturity, pctx.evidence_ceiling)
             base.conclusion_maturity = capped
             if base.evidence_card:
                 base.evidence_card.research_purpose = pctx.purpose.value
-                base.evidence_card.evidence_ceiling = pctx.evidence_ceiling.value
-                base.evidence_card.details.setdefault("lab_policy", policy.name)
+                base.evidence_card.evidence_ceiling = assessment.evidence_ceiling
+                _attach(base.evidence_card, assessment, decision)
             return base
 
-        # Classify each triggered refusal as hard, soft, or shadow under the
-        # lab policy.  Execution invariants are always ENFORCED (policy cannot
-        # relax them); warrants follow policy.effective_mode_for().
-        hard_violations: List[str] = []
-        soft_violations: List[str] = []
-        shadow_violations: List[str] = []
-        hard_triggers: List[RefusalTrigger] = []
-        soft_triggers: List[RefusalTrigger] = []
-        shadow_triggers: List[RefusalTrigger] = []
+        # ------------------------------------------------------------------
+        # Stage 1: split triggers into invariants vs warrants.
+        # This classification is POLICY-INDEPENDENT: it reflects what the
+        # rules *are*, not how this lab enforces them.
+        # ------------------------------------------------------------------
+        invariant_triggers: List[RefusalTrigger] = []
+        warrant_triggers: List[RefusalTrigger] = []
 
         for trigger in base.refusal_triggers:
             if trigger.condition_id == "missing_backend":
@@ -404,11 +420,9 @@ class CapabilityContract:
                 # is the frontier fallback consent path, which predates policies.
                 from bionexus.capabilities import FRONTIER_CAPABILITIES
                 if self.id in FRONTIER_CAPABILITIES:
-                    soft_violations.append(trigger.description)
-                    soft_triggers.append(trigger)
+                    warrant_triggers.append(trigger)
                 else:
-                    hard_violations.append(trigger.description)
-                    hard_triggers.append(trigger)
+                    invariant_triggers.append(trigger)
                 continue
             classification = None
             prov = trigger.provenance
@@ -416,34 +430,51 @@ class CapabilityContract:
                 classification = prov.classification
             if classification is None:
                 classification = classify_condition(trigger.condition_id)
-            mode = policy.effective_mode_for(classification)
-            if mode == EnforcementMode.ENFORCED:
-                hard_violations.append(trigger.description)
-                hard_triggers.append(trigger)
-            elif mode == EnforcementMode.ADVISORY:
-                soft_violations.append(trigger.description)
-                soft_triggers.append(trigger)
+            if classification is not None and classification.category in (
+                RuleCategory.INVARIANT_SAFETY,
+                RuleCategory.INVARIANT_INTEGRITY,
+            ):
+                invariant_triggers.append(trigger)
             else:
-                shadow_violations.append(trigger.description)
-                shadow_triggers.append(trigger)
+                warrant_triggers.append(trigger)
 
-        # Hard violations always block regardless of purpose, policy, or override.
-        if hard_violations:
+        # ------------------------------------------------------------------
+        # Stage 2: the scientific assessment.  Identical in every lab.
+        # ------------------------------------------------------------------
+        assessment = assess_warrant(
+            purpose_context=pctx,
+            warrant_triggers=warrant_triggers,
+            invariant_triggers=invariant_triggers,
+            base_maturity=base.conclusion_maturity,
+        )
+
+        # ------------------------------------------------------------------
+        # Stage 3: the policy decision.  Intervention only.
+        # ------------------------------------------------------------------
+        decision = decide_policy(
+            policy=policy,
+            assessment=assessment,
+            invariant_triggers=invariant_triggers,
+            warrant_triggers=warrant_triggers,
+            override_active=pctx.override_active,
+        )
+
+        # Invariants (ESCALATE/BLOCK) always refuse, in every lab.
+        if invariant_triggers:
             base.research_purpose = pctx.purpose.value
-            base.evidence_ceiling = pctx.evidence_ceiling.value
+            base.evidence_ceiling = assessment.evidence_ceiling
             base.lab_policy_name = policy.name
-            base.shadow_violations = shadow_violations
+            base.warrant_assessment = assessment.to_dict()
+            base.policy_decision = decision.to_dict()
             if base.evidence_card:
-                base.evidence_card.details.setdefault("lab_policy", policy.name)
-                if shadow_violations:
-                    base.evidence_card.details["shadow_violations"] = shadow_violations
+                _attach(base.evidence_card, assessment, decision)
             return base
 
-        # Shadow-only violations: record on the evidence card but neither block
-        # nor cap — the lab has opted into observe-only posture for warrants.
-        if shadow_violations and not soft_violations:
+        # Shadow posture: proceed without intervention — but the assessment
+        # ceiling still applies to every claim made from this run.
+        if decision.action == PolicyAction.ALLOW_WITH_ACK:
             capped = cap_conclusion_by_purpose(
-                ConclusionMaturity.UNASSESSED.value, pctx.evidence_ceiling
+                ConclusionMaturity.UNASSESSED.value, assessment.evidence_ceiling
             )
             card = EvidenceCard(
                 execution_state=ExecutionState.PERMITTED.value,
@@ -453,19 +484,21 @@ class CapabilityContract:
                 details={
                     "contract_id": self.id,
                     "execution_backend": self.backend.canonical_name,
-                    "lab_policy": policy.name,
                     "shadow_mode": True,
-                    "shadow_violations": shadow_violations,
-                    "shadow_condition_ids": [t.condition_id for t in shadow_triggers],
+                    "shadow_violations": [t.description for t in warrant_triggers],
+                    "shadow_condition_ids": [t.condition_id for t in warrant_triggers],
                     "notes": (
-                        "Warrant violations were observed but the lab policy is "
-                        "SHADOW for these rules: they are recorded for audit "
-                        "without blocking execution or capping the claim."
+                        "Shadow posture: no intervention, but the scientific "
+                        "assessment is unchanged — the evidence ceiling still "
+                        "bounds every claim from this run."
                     ),
                 },
                 research_purpose=pctx.purpose.value,
-                evidence_ceiling=pctx.evidence_ceiling.value,
+                evidence_ceiling=assessment.evidence_ceiling,
+                blocked_claims=assessment.unsupported_claims,
+                residual_limitations=assessment.residual_uncertainty,
             )
+            _attach(card, assessment, decision)
             return CapabilityEvaluationResult(
                 capability_id=self.id,
                 status="PERMITTED",
@@ -477,21 +510,23 @@ class CapabilityContract:
                 conclusion_maturity=capped,
                 backend_available=base.backend_available,
                 research_purpose=pctx.purpose.value,
-                evidence_ceiling=pctx.evidence_ceiling.value,
+                evidence_ceiling=assessment.evidence_ceiling,
                 lab_policy_name=policy.name,
-                shadow_violations=shadow_violations,
+                shadow_violations=[t.description for t in warrant_triggers],
+                warrant_assessment=assessment.to_dict(),
+                policy_decision=decision.to_dict(),
             )
 
-        # Only soft violations remain.  If override is active and permitted,
-        # convert to PERMITTED_WITH_LIMITS.
-        if pctx.override_active and soft_violations:
+        # Advisory posture with a documented override: PERMITTED_WITH_LIMITS.
+        if decision.action == PolicyAction.REQUIRE_OVERRIDE and pctx.override_active:
             from bionexus.researcher_override import create_override_record
             override_dicts = []
             all_residual: List[str] = []
             all_blocked: List[str] = []
+            override_denied: List[str] = []
             min_ceiling = pctx.evidence_ceiling
 
-            for trigger in soft_triggers:
+            for trigger in warrant_triggers:
                 try:
                     record = create_override_record(
                         rule_id=trigger.condition_id,
@@ -507,20 +542,26 @@ class CapabilityContract:
                         min_ceiling = record.evidence_ceiling_override
                 except Exception:
                     # Override denied for this rule; treat as hard block.
-                    hard_violations.append(trigger.description)
+                    override_denied.append(trigger.description)
 
-            if hard_violations:
+            if override_denied:
                 # Some overrides were denied; still blocked.
+                decision.rationale += " Override denied for: " + "; ".join(override_denied)
                 base.research_purpose = pctx.purpose.value
-                base.evidence_ceiling = pctx.evidence_ceiling.value
+                base.evidence_ceiling = assessment.evidence_ceiling
                 base.lab_policy_name = policy.name
-                base.shadow_violations = shadow_violations
+                base.warrant_assessment = assessment.to_dict()
+                base.policy_decision = decision.to_dict()
+                if base.evidence_card:
+                    _attach(base.evidence_card, assessment, decision)
                 return base
 
-            # All overrides accepted: PERMITTED_WITH_LIMITS.
+            # All overrides accepted: PERMITTED_WITH_LIMITS.  The override is
+            # the ack; the warrant assessment is untouched.
             capped = cap_conclusion_by_purpose(
                 ConclusionMaturity.FRAGILE.value, min_ceiling
             )
+            decision.override_records = override_dicts
             card = EvidenceCard(
                 execution_state=ExecutionState.PERMITTED_WITH_LIMITS.value,
                 input_integrity=base.evidence_card.input_integrity if base.evidence_card else DimensionGrade.GRADE_C.value,
@@ -529,10 +570,8 @@ class CapabilityContract:
                 details={
                     "contract_id": self.id,
                     "execution_backend": self.backend.canonical_name,
-                    "lab_policy": policy.name,
                     "override_active": True,
                     "override_justification": pctx.override_justification,
-                    **({"shadow_violations": shadow_violations} if shadow_violations else {}),
                 },
                 research_purpose=pctx.purpose.value,
                 evidence_ceiling=min_ceiling.value,
@@ -540,6 +579,7 @@ class CapabilityContract:
                 residual_limitations=all_residual,
                 blocked_claims=list(set(all_blocked)),
             )
+            _attach(card, assessment, decision)
             return CapabilityEvaluationResult(
                 capability_id=self.id,
                 status="PERMITTED_WITH_LIMITS",
@@ -552,19 +592,24 @@ class CapabilityContract:
                 backend_available=base.backend_available,
                 research_purpose=pctx.purpose.value,
                 evidence_ceiling=min_ceiling.value,
-                soft_violations=soft_violations,
+                soft_violations=[t.description for t in warrant_triggers],
                 override_records=override_dicts,
                 residual_limitations=all_residual,
                 blocked_claims=list(set(all_blocked)),
                 lab_policy_name=policy.name,
-                shadow_violations=shadow_violations,
+                warrant_assessment=assessment.to_dict(),
+                policy_decision=decision.to_dict(),
             )
 
-        # No override active: soft violations still block, but with provenance info.
+        # REQUIRE_OVERRIDE without override, or BLOCK: refuse, with the
+        # assessment recorded so the scientist sees *why* the evidence is capped.
         base.research_purpose = pctx.purpose.value
-        base.evidence_ceiling = pctx.evidence_ceiling.value
+        base.evidence_ceiling = assessment.evidence_ceiling
         base.lab_policy_name = policy.name
-        base.shadow_violations = shadow_violations
+        base.warrant_assessment = assessment.to_dict()
+        base.policy_decision = decision.to_dict()
+        if base.evidence_card:
+            _attach(base.evidence_card, assessment, decision)
         return base
 
 
@@ -592,6 +637,9 @@ class CapabilityEvaluationResult:
     # Lab-policy fields
     lab_policy_name: Optional[str] = None  # profile name resolved for this evaluation
     shadow_violations: List[str] = field(default_factory=list)  # observed but not enforced
+    # Warrant / policy separation (the assessment is policy-independent)
+    warrant_assessment: Optional[Dict[str, Any]] = None
+    policy_decision: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert evaluation result to dictionary."""
@@ -618,6 +666,10 @@ class CapabilityEvaluationResult:
             d["lab_policy"] = self.lab_policy_name
         if self.shadow_violations:
             d["shadow_violations"] = self.shadow_violations
+        if self.warrant_assessment:
+            d["warrant_assessment"] = self.warrant_assessment
+        if self.policy_decision:
+            d["policy_decision"] = self.policy_decision
         return d
 
 

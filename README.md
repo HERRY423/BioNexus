@@ -85,13 +85,29 @@ The old binary `PERMITTED / REFUSED` is now a spectrum: `PERMITTED` · `PERMITTE
 
 ## 🏛️ Lab Policy Profiles: Shadow / Advisory / Enforced
 
-Different laboratories have different compliance postures. BioNexus separates the *scientific rule* from its *enforcement posture* — for warrant constraints only:
+BioNexus strictly separates two objects that must never be conflated:
 
-| Profile | `warrant_mode` | Behavior on a warrant violation |
+```text
+WarrantAssessment  (science — policy-independent)     PolicyDecision  (deployment posture)
+─────────────────────────────────────────────────     ─────────────────────────────────
+claim_maturity · evidence_ceiling · unsupported_      ALLOW · ALLOW_WITH_ACK · REQUIRE_
+claims · residual_uncertainty · rule_basis            OVERRIDE · BLOCK · ESCALATE
+```
+
+The assessment answers *“what is this evidence worth?”* and is computed **only** from the data design, the triggered rules, and the declared purpose — it is identical in every lab. The policy decision answers *“does BioNexus intervene, and how?”* For n=1 donor/condition, every lab sees the same science:
+
+```text
+Scientific assessment (all labs):  ceiling = FRAGILE · population_level_inference unsupported
+Policy action:                     SHADOW    → ALLOW_WITH_ACK    (proceed; warning recorded)
+                                   ADVISORY  → REQUIRE_OVERRIDE  (proceed only with documented override)
+                                   ENFORCED  → BLOCK             (remedy the violation first)
+```
+
+| Profile | Intervention on a warrant violation | Scientific assessment |
 |---|---|---|
-| `shadow_audit` | `SHADOW` | Permits the compute; the violation is recorded on the EvidenceCard (`shadow_mode: true`) without capping the claim. For evaluation, migration, or telemetry-only rollouts. |
-| `discovery_lab` *(default)* | `ADVISORY` | Permits the compute once the researcher overrides with a documented justification → `PERMITTED_WITH_LIMITS` with a capped maturity. |
-| `enforced_lab` | `ENFORCED` | Warrant constraints apply at full registry severity — a violation blocks even under override. For confirmatory / regulated / pre-clinical workflows. |
+| `shadow_audit` | `ALLOW_WITH_ACK` — proceed, warning on the EvidenceCard | **unchanged** (ceiling still applies to every claim) |
+| `discovery_lab` *(default)* | `REQUIRE_OVERRIDE` — proceed with documented justification → `PERMITTED_WITH_LIMITS` | **unchanged** |
+| `enforced_lab` | `BLOCK` — even under override | **unchanged** |
 
 ```python
 from bionexus import route_scientific_intent
@@ -102,12 +118,15 @@ decision = route_scientific_intent(
     research_purpose="screening",
     lab_policy="shadow_audit",   # or "discovery_lab" / "enforced_lab"
 )
+card = decision.evidence_card_template
+card.details["warrant_assessment"]  # identical across profiles
+card.details["policy_decision"]     # the only thing that varies
 ```
 
 Two guardrails keep this honest in both directions:
 
-1. **Execution invariants are never relaxed.** `INVARIANT_SAFETY` / `INVARIANT_INTEGRITY` rules — and any warrant the registry itself marks `ENFORCED` — block under *every* profile. A shadow policy cannot let a clinical claim slip through.
-2. **The posture is always audited.** The resolved profile name is written to the EvidenceCard (`details.lab_policy`), and unknown profile names fall back to the default advisory posture rather than silently hardening a pipeline into refusal.
+1. **Policy decides intervention, never evidence value.** The same data yields the same `WarrantAssessment` (ceiling, unsupported claims, residual uncertainty) under shadow, advisory, and enforced — asserted by the test suite as the decoupling invariant.
+2. **Execution invariants are never relaxed.** `INVARIANT_SAFETY` rules `ESCALATE` to human/regulatory review and `INVARIANT_INTEGRITY` rules `BLOCK` under *every* profile; the resolved profile name and both objects are always written to the EvidenceCard for audit.
 
 ---
 

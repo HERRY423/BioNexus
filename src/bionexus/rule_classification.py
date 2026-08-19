@@ -30,7 +30,7 @@ Fisher 1935).
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set
 
@@ -56,6 +56,7 @@ class RuleCategory(str, Enum):
 # Convenience constants matching ConsensusLevel for backward compatibility.
 # ---------------------------------------------------------------------------
 
+
 class EnforcementLevel(str, Enum):
     """How strictly this rule must be enforced under different lab policies.
 
@@ -68,6 +69,46 @@ class EnforcementLevel(str, Enum):
     ENFORCED = "ENFORCED"
     ADVISORY = "ADVISORY"
     SHADOW = "SHADOW"
+
+
+class EpistemicKind(str, Enum):
+    """The epistemic identity of a scientific rule.
+
+    Not every rule BioNexus encodes is an invariant; calling calibrated
+    thresholds or heuristic detectors "invariants" overstates their status and
+    damages scientific credibility.  Every rule in the catalog declares exactly
+    one of these kinds:
+
+    - EXECUTION_INVARIANT: Violation must stop execution (safety/regulatory,
+      e.g. uncertified clinical claims).
+    - DATA_INTEGRITY_INVARIANT: Violation silently corrupts what the run
+      computes or reports (identifier namespace corruption, model masquerade).
+    - WARRANT_CONSTRAINT: A design-level limit on what claims the evidence
+      can justify; caps the conclusion, never blocks legal computation.
+    - CALIBRATED_THRESHOLD: A numeric threshold chosen by calibration /
+      engineering judgement.  Platform- and protocol-dependent; must never be
+      presented as a universal scientific law.
+    - HEURISTIC_DETECTOR: A pattern-based detector (regexes, audit patterns)
+      with known precision/recall limits; it implements a warrant constraint
+      but is not itself a law of nature.
+    - POLICY_DEFAULT: A community convention adopted as a default (e.g.
+      FDR alpha = 0.05); legitimately replaceable per study design.
+    """
+
+    EXECUTION_INVARIANT = "EXECUTION_INVARIANT"
+    DATA_INTEGRITY_INVARIANT = "DATA_INTEGRITY_INVARIANT"
+    WARRANT_CONSTRAINT = "WARRANT_CONSTRAINT"
+    CALIBRATED_THRESHOLD = "CALIBRATED_THRESHOLD"
+    HEURISTIC_DETECTOR = "HEURISTIC_DETECTOR"
+    POLICY_DEFAULT = "POLICY_DEFAULT"
+
+
+#: How the enforcement taxonomy maps onto the epistemic taxonomy.
+CATEGORY_TO_EPISTEMIC_KIND: Dict[RuleCategory, EpistemicKind] = {
+    RuleCategory.INVARIANT_SAFETY: EpistemicKind.EXECUTION_INVARIANT,
+    RuleCategory.INVARIANT_INTEGRITY: EpistemicKind.DATA_INTEGRITY_INVARIANT,
+    RuleCategory.WARRANT_EPISTEMIC: EpistemicKind.WARRANT_CONSTRAINT,
+}
 
 
 # Backward compatibility aliases for existing provenance records.
@@ -91,17 +132,23 @@ class RuleClassification:
         composition_with_purpose: Whether this rule's enforceability changes
             under different ResearchPurpose values. Only warrants are purpose-
             sensitive; invariants are always context-insensitive.
+        epistemic_kind: The epistemic identity of the rule (see EpistemicKind).
+            Defaults to the category-derived kind; registries may declare a
+            finer-grained kind (e.g. CALIBRATED_THRESHOLD) explicitly.
     """
 
     category: RuleCategory = RuleCategory.WARRANT_EPISTEMIC
     enforcement_level: EnforcementLevel = EnforcementLevel.ADVISORY
     rationale: str = ""
     composition_with_purpose: bool = False
+    epistemic_kind: Optional[EpistemicKind] = None
 
     def __post_init__(self) -> None:
         # Derive defaults from category if not explicitly overridden.
         if not self.rationale:
             self.rationale = self._default_rationale()
+        if self.epistemic_kind is None:
+            self.epistemic_kind = CATEGORY_TO_EPISTEMIC_KIND[self.category]
         if self.category == RuleCategory.INVARIANT_SAFETY:
             self.enforcement_level = EnforcementLevel.ENFORCED
             self.composition_with_purpose = False
@@ -136,6 +183,7 @@ class RuleClassification:
             "enforcement_level": self.enforcement_level.value,
             "rationale": self.rationale,
             "composition_with_purpose": self.composition_with_purpose,
+            "epistemic_kind": self.epistemic_kind.value if self.epistemic_kind else "",
         }
 
 
@@ -171,7 +219,14 @@ CLASSIFICATION_RAW_COUNTS_DE = RuleClassification(
 CLASSIFICATION_BIOLOGICAL_REPLICATES = RuleClassification(
     category=RuleCategory.WARRANT_EPISTEMIC,
     enforcement_level=EnforcementLevel.ADVISORY,
-    rationale="Experimental design theory: biological replication is required to estimate between-subject variance. Without it, population-level effects are confounded with sample-specific noise.",
+    rationale=(
+        "Experimental design theory: with fewer replicates than the intended "
+        "inferential design requires, reliable between-replicate variance "
+        "estimation is not supported; population-level effects are confounded "
+        "with sample-specific noise. The software can still compute, and the "
+        "statistical model is still mathematically defined — what is missing is "
+        "a reliable design basis for inference."
+    ),
     composition_with_purpose=True,
 )
 

@@ -20,7 +20,7 @@
     {
       "standard_id": "invariants",
       "satisfied": true,
-      "evidence": "src/bionexus/capabilities.py -> preconditions: min_replicates, raw_integer_counts; review/INVARIANTS_CATALOG.json -> INV-001, INV-003, INV-014",
+      "evidence": "src/bionexus/capabilities.py -> preconditions: min_replicates, raw_integer_counts; review/SCIENTIFIC_RULE_CATALOG.json -> INV-001, INV-003, INV-014",
       "notes": "Machine-checkable preconditions recorded in capabilities and invariants catalog"
     },
     {
@@ -108,7 +108,7 @@
     "validation_report": "validation/pseudobulk/REPORT.json",
     "cross_host_report": "cross-host/COMPARISON.json",
     "scientific_review": "review/SCIENTIFIC_REVIEW.json",
-    "invariants_catalog": "review/INVARIANTS_CATALOG.json",
+    "scientific_rule_catalog": "review/SCIENTIFIC_RULE_CATALOG.json",
     "certification_source": "src/bionexus/certification.py -> _EVIDENCE['scrna.pseudobulk_de']"
   },
   "certification_roadmap": {

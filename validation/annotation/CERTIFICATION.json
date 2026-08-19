@@ -20,7 +20,7 @@
     {
       "standard_id": "invariants",
       "satisfied": true,
-      "evidence": "src/bionexus/capabilities.py -> preconditions: annotation_source_recorded, negative_markers_evaluated; review/INVARIANTS_CATALOG.json -> INV-004..INV-008, INV-016",
+      "evidence": "src/bionexus/capabilities.py -> preconditions: annotation_source_recorded, negative_markers_evaluated; review/SCIENTIFIC_RULE_CATALOG.json -> INV-004..INV-008, INV-016",
       "notes": "Machine-checkable preconditions; router traps: no_annotation_evidence, open_set_population"
     },
     {
@@ -111,7 +111,7 @@
     "validation_report": "validation/annotation/REPORT.json",
     "cross_host_report": "cross-host/COMPARISON.json",
     "scientific_review": "review/SCIENTIFIC_REVIEW.json",
-    "invariants_catalog": "review/INVARIANTS_CATALOG.json",
+    "scientific_rule_catalog": "review/SCIENTIFIC_RULE_CATALOG.json",
     "certification_source": "src/bionexus/certification.py -> _EVIDENCE['scrna.annotation_evidence']"
   }
 }

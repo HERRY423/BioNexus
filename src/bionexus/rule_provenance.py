@@ -39,14 +39,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from bionexus.rule_classification import (
-    CLASSIFICATION_BIOLOGICAL_REPLICATES,
-    CLASSIFICATION_CLINICAL_DIAGNOSIS,
-    CLASSIFICATION_IDENTIFIER_NAMESPACE,
-    CLASSIFICATION_MISSING_BACKEND,
-    CLASSIFICATION_MODEL_SUBSTITUTION,
-    CLASSIFICATION_RAW_COUNTS_DE,
-    CLASSIFICATION_SPATIAL_COORDINATES,
     EnforcementLevel,
+    EpistemicKind,
     RuleCategory,
     RuleClassification,
 )
@@ -170,10 +164,13 @@ def registry_path() -> Path:
 
 def _build_classification(record: Dict[str, Any]) -> RuleClassification:
     cat = RuleCategory(record["classification"]["category"])
+    kind_raw = record["classification"].get("epistemic_kind")
+    kind = EpistemicKind(kind_raw) if kind_raw else None
     return RuleClassification(
         category=cat,
         enforcement_level=EnforcementLevel(record["classification"]["enforcement_level"]),
         rationale=record["classification"].get("rationale", ""),
+        epistemic_kind=kind,
     )
 
 
@@ -187,8 +184,7 @@ def _build_provenance(record: Dict[str, Any]) -> RuleProvenance:
         consensus=ConsensusLevel(record["consensus"]),
         exceptions=list(record.get("exceptions", [])),
         last_verified=record.get("last_verified", ""),
-        hard_rule=classification.category
-        in (RuleCategory.INVARIANT_SAFETY, RuleCategory.INVARIANT_INTEGRITY),
+        hard_rule=classification.category in (RuleCategory.INVARIANT_SAFETY, RuleCategory.INVARIANT_INTEGRITY),
         classification=classification,
     )
 
@@ -200,18 +196,16 @@ def _validate_registry(data: Dict[str, Any]) -> None:
     for rule_id, record in data["rules"].items():
         for required in ("source_kind", "source_citation", "consensus", "classification"):
             if required not in record:
-                raise RuleRegistryError(
-                    f"Registry rule '{rule_id}' is missing required field '{required}'."
-                )
+                raise RuleRegistryError(f"Registry rule '{rule_id}' is missing required field '{required}'.")
         try:
             RuleSourceKind(record["source_kind"])
             ConsensusLevel(record["consensus"])
             RuleCategory(record["classification"]["category"])
             EnforcementLevel(record["classification"]["enforcement_level"])
+            if record["classification"].get("epistemic_kind"):
+                EpistemicKind(record["classification"]["epistemic_kind"])
         except ValueError as exc:
-            raise RuleRegistryError(
-                f"Registry rule '{rule_id}' contains an invalid enum value: {exc}"
-            ) from exc
+            raise RuleRegistryError(f"Registry rule '{rule_id}' contains an invalid enum value: {exc}") from exc
 
 
 def load_rule_registry(path: Optional[Path] = None) -> Dict[str, RuleProvenance]:

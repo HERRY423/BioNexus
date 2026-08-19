@@ -1,0 +1,272 @@
+{
+  "catalog_version": "2.0",
+  "supersedes": "INVARIANTS_CATALOG.json (v1.0)",
+  "taxonomy_note": "Not every rule BioNexus encodes is an invariant. Each rule declares exactly one epistemic_kind: EXECUTION_INVARIANT, DATA_INTEGRITY_INVARIANT, WARRANT_CONSTRAINT, CALIBRATED_THRESHOLD, HEURISTIC_DETECTOR, or POLICY_DEFAULT. Calibrated thresholds and heuristic detectors must never be presented as universal scientific laws. Legacy INV-xxx identifiers are preserved for certification traceability.",
+  "rules": [
+    {
+      "id": "INV-001",
+      "name": "pseudoreplication_threshold",
+      "epistemic_kind": "WARRANT_CONSTRAINT",
+      "description": "Minimum number of biological replicates required per experimental condition for pseudobulk differential expression",
+      "current_value": 2,
+      "source_file": "src/bionexus/capabilities.py",
+      "source_line": 177,
+      "rationale": "With fewer than 2 biological replicates per condition, reliable between-replicate variance estimation is not supported by the intended inferential design. Note the three distinct questions: the software can still compute, the negative binomial model is mathematically defined, but population-level statistical inference lacks a reliable design basis. The value 2 is the minimum at which within-group dispersion becomes estimable, not a universal law of biology.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-002",
+      "name": "spatial_spots_minimum",
+      "epistemic_kind": "CALIBRATED_THRESHOLD",
+      "description": "Minimum number of spatial spots required for neighborhood graph construction and spatial inference",
+      "current_value": 5,
+      "source_file": "src/bionexus/capabilities.py",
+      "source_line": 193,
+      "rationale": "An engineering minimum for neighborhood graph connectivity: below 5 spots the graph is degenerate and spatial statistics are numerically unstable. This is a calibrated implementation floor, platform- and protocol-dependent, not a cross-platform scientific law.",
+      "sensitivity": "medium",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-003",
+      "name": "fdr_alpha_threshold",
+      "epistemic_kind": "POLICY_DEFAULT",
+      "description": "Default FDR (False Discovery Rate) alpha threshold for multiple testing correction",
+      "current_value": 0.05,
+      "source_file": "src/bionexus/capabilities.py",
+      "source_line": 99,
+      "rationale": "Benjamini-Hochberg FDR control at 5% is adopted as the community-convention default for high-throughput genomics. It is a statistical policy default, legitimately replaceable per study design (e.g. stricter for confirmatory work); BioNexus flags its absence, not a specific alternative value.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-004",
+      "name": "annotation_marker_consistency_threshold",
+      "epistemic_kind": "CALIBRATED_THRESHOLD",
+      "description": "Minimum positive-marker consistency score required for SUPPORTED annotation verdict",
+      "current_value": 0.6,
+      "source_file": "src/bionexus/annotation_evidence.py",
+      "source_line": 34,
+      "rationale": "Calibrated balance between sensitivity to true markers and noise tolerance: 0.60 is an engineering choice, not a biological constant. Marker coherence requirements vary with platform, tissue dissociation, and cell-type biology; this threshold must be recalibrated, not universalized.",
+      "sensitivity": "medium",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-005",
+      "name": "annotation_negative_marker_violation_max",
+      "epistemic_kind": "CALIBRATED_THRESHOLD",
+      "description": "Maximum allowed negative-marker violation rate for annotation evidence",
+      "current_value": 0.2,
+      "source_file": "src/bionexus/annotation_evidence.py",
+      "source_line": 35,
+      "rationale": "Calibrated tolerance for lineage-exclusive negative marker expression (ambient RNA, doublets, genuine plasticity). 0.20 is a heuristic allowance, platform-dependent; exceeding it suggests but does not prove lineage confusion.",
+      "sensitivity": "medium",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-006",
+      "name": "annotation_reference_mapping_min",
+      "epistemic_kind": "CALIBRATED_THRESHOLD",
+      "description": "Minimum reference mapping score required for independent identity evidence",
+      "current_value": 0.7,
+      "source_file": "src/bionexus/annotation_evidence.py",
+      "source_line": 36,
+      "rationale": "Calibrated confidence floor below which reference-atlas mapping is too uncertain to anchor an identity claim. Method- and atlas-dependent; different mapping tools produce non-comparable scores, so this threshold is only meaningful with the documented scorer.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-007",
+      "name": "annotation_cross_method_agreement_min",
+      "epistemic_kind": "CALIBRATED_THRESHOLD",
+      "description": "Minimum cross-method agreement score for independent identity evidence",
+      "current_value": 0.8,
+      "source_file": "src/bionexus/annotation_evidence.py",
+      "source_line": 37,
+      "rationale": "Calibrated alternative to reference mapping: independent methods agreeing at >= 0.80 compensate for method-specific biases. The 0.80 value is an engineering judgement about how much agreement substitutes for an atlas, not a statistical theorem.",
+      "sensitivity": "medium",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-008",
+      "name": "annotation_doublet_rate_max",
+      "epistemic_kind": "CALIBRATED_THRESHOLD",
+      "description": "Maximum allowed doublet rate within a labeled population",
+      "current_value": 0.15,
+      "source_file": "src/bionexus/annotation_evidence.py",
+      "source_line": 38,
+      "rationale": "Calibrated ceiling reflecting typical doublet rates of droplet platforms (~5-10% at standard loading). 0.15 is platform- and loading-dependent; populations above it MAY be doublet artifacts — the flag is a warning requiring investigation, not a verdict.",
+      "sensitivity": "medium",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-009",
+      "name": "causal_language_pattern",
+      "epistemic_kind": "HEURISTIC_DETECTOR",
+      "description": "Regex pattern detecting prohibited causal/mechanistic language in scientific claims",
+      "current_value": "\\b(?:drives?|causes?|caused|induces?|induced|proves?|proven|mechanism of action|is causal)\\b",
+      "source_file": "src/bionexus/verification.py",
+      "source_line": 37,
+      "rationale": "Pattern-based detector with known precision/recall limits: it implements the warrant constraint that causal language exceeds observational evidence classes, but lexical detection can both over-fire (quoted text, negation) and miss paraphrases. The detector is heuristic; the underlying warrant constraint is what carries the science.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-010",
+      "name": "causal_de_overclaim_patterns",
+      "epistemic_kind": "HEURISTIC_DETECTOR",
+      "description": "Detection patterns for false causal treatment DE claims from marker gene analysis",
+      "current_value": [
+        "rank_genes_groups/marker genes + proves/demonstrates + treatment caused/induced",
+        "rank_genes_groups/marker p-values + proves/caused/treatment effect",
+        "caused/induced + N DEGs + without replicates/at single-cell level"
+      ],
+      "source_file": "src/bionexus/claim_checker.py",
+      "source_line": 103,
+      "rationale": "Heuristic detectors for a specific, well-documented overclaim form: marker p-values from single-cell rank_genes_groups cited as causal treatment-condition DE evidence. Detection is pattern-based and falsifiable; review should measure precision/recall on real notebooks.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-011",
+      "name": "spatial_robustness_ladder",
+      "epistemic_kind": "WARRANT_CONSTRAINT",
+      "description": "Canonical validity ladder for spatial inference verdicts with degradation semantics",
+      "current_value": ["ROBUST", "SUPPORTED", "FRAGILE", "ABSTAIN"],
+      "source_file": "src/bionexus/spatial_inference.py",
+      "source_line": 52,
+      "rationale": "Epistemic grading semantics: ROBUST requires all canonical controls tested+passing AND a permutation null; SUPPORTED requires all provided controls pass without a permutation null; FRAGILE is the honest default when any alternative is UNTESTED; ABSTAIN when a control FAILED or no controls were provided. The ladder structure is a warrant constraint on claim strength.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-012",
+      "name": "spatial_core_controls",
+      "epistemic_kind": "WARRANT_CONSTRAINT",
+      "description": "Canonical alternative-explanation controls that MUST be addressed before a spatial conclusion can exceed FRAGILE",
+      "current_value": ["cell_size", "transcript_density", "segmentation_uncertainty"],
+      "source_file": "src/bionexus/spatial_inference.py",
+      "source_line": 48,
+      "rationale": "The three most common non-biological explanations for spatial enrichment patterns. The requirement to address them before claiming biology is a warrant constraint grounded in spatial-confounding literature; the specific control set is revisable as the field identifies new dominant confounds.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-013",
+      "name": "spatial_canonical_alternatives",
+      "epistemic_kind": "WARRANT_CONSTRAINT",
+      "description": "Complete registry of canonical alternative explanations for spatial observations",
+      "current_value": [
+        "cell_size", "transcript_density", "segmentation_uncertainty",
+        "nuclear_eccentricity", "local_cell_density", "spot_composition",
+        "spatial_autocorrelation", "batch_fov", "ligand_receptor_abundance",
+        "contact_geometry", "neighborhood_radius", "permutation_null"
+      ],
+      "source_file": "src/bionexus/spatial_inference.py",
+      "source_line": 31,
+      "rationale": "Registry of known non-biological confounds in spatial transcriptomics. The registry is part of the capability contract and changes only with a contract version bump; individual entries remain open to external review as the field matures.",
+      "sensitivity": "medium",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-014",
+      "name": "pseudoreplication_detection_pattern",
+      "epistemic_kind": "HEURISTIC_DETECTOR",
+      "description": "Detection logic for cell-level pseudoreplication in differential expression analysis",
+      "current_value": "BFA-001: DE call at cell level with condition groupby but no pseudobulk aggregation marker",
+      "source_file": "src/bionexus/analysis_audit.py",
+      "source_line": 282,
+      "rationale": "The underlying science is a warrant constraint: treating thousands of cells from one sample as independent observations inflates false discovery rates. BFA-001 itself is a heuristic detector for that violation (audit-trail pattern matching) with its own false-positive/false-negative profile.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-015",
+      "name": "cell_type_hallucination_patterns",
+      "epistemic_kind": "HEURISTIC_DETECTOR",
+      "description": "Detection patterns for unverified cell-type assertions from numeric cluster IDs",
+      "current_value": [
+        "cluster N is/represents/corresponds to [cell type]",
+        "cluster N : [cell type]",
+        "concluded that cluster N is/are [cell type]"
+      ],
+      "source_file": "src/bionexus/claim_checker.py",
+      "source_line": 87,
+      "rationale": "Heuristic lexical detectors for asserting cell-type identity directly from unsupervised cluster IDs without marker/reference evidence. The warrant constraint (identity claims need evidence) is sound; the patterns themselves have precision/recall limits subject to review.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-016",
+      "name": "annotation_verdict_ladder",
+      "epistemic_kind": "WARRANT_CONSTRAINT",
+      "description": "Deterministic verdict ladder for cell annotation evidence assessment",
+      "current_value": ["SUPPORTED", "TENTATIVE", "ABSTAIN"],
+      "source_file": "src/bionexus/annotation_evidence.py",
+      "source_line": 41,
+      "rationale": "Epistemic grading semantics for annotation evidence: SUPPORTED requires multiple independent evidence classes to cohere; TENTATIVE indicates partial evidence; ABSTAIN means no evidence, contradictory evidence, or an open-set population. A warrant constraint on identity claims, not a threshold.",
+      "sensitivity": "medium",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-017",
+      "name": "spatial_coordinate_audit_min_spots",
+      "epistemic_kind": "CALIBRATED_THRESHOLD",
+      "description": "Minimum spots threshold for spatial coordinate audit grading",
+      "current_value": 5,
+      "source_file": "src/bionexus/integrity.py",
+      "source_line": 128,
+      "rationale": "Calibrated audit floor aligned with the capability precondition for spatial graph construction (INV-002). Same engineering-minimum status: below it the audit grades the input C (fail) because spatial statistics are not supportable, not because the data is corrupt.",
+      "sensitivity": "medium",
+      "review_status": "pending"
+    },
+    {
+      "id": "RULE-018",
+      "name": "identifier_namespace_integrity",
+      "epistemic_kind": "DATA_INTEGRITY_INVARIANT",
+      "description": "Identifier namespace consistency: joins across feature ID spaces must not silently mix HGNC symbols with Ensembl IDs",
+      "current_value": "block on mismatch",
+      "source_file": "src/bionexus/data/rule_registry.json",
+      "source_line": 24,
+      "rationale": "True integrity invariant: cross-namespace joins produce silent one-to-many mappings indistinguishable from correct joins, corrupting every downstream number. Violation must stop execution; no lab policy can relax this.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "RULE-019",
+      "name": "model_substitution_detection",
+      "epistemic_kind": "DATA_INTEGRITY_INVARIANT",
+      "description": "Substituting the declared model/backend with another without detection breaks the audit trail (BN-F010)",
+      "current_value": "block on substitution",
+      "source_file": "src/bionexus/data/rule_registry.json",
+      "source_line": 41,
+      "rationale": "Integrity invariant: reproducibility requires that the executed model is the declared model. Silent substitution means the result is not what was advertised; zero silent substitution policy.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "RULE-020",
+      "name": "clinical_diagnosis_without_certification",
+      "epistemic_kind": "EXECUTION_INVARIANT",
+      "description": "Clinical diagnosis or treatment recommendation without CLIA/CAP-certified validation must be refused",
+      "current_value": "block + escalate",
+      "source_file": "src/bionexus/data/rule_registry.json",
+      "source_line": 6,
+      "rationale": "Execution (safety) invariant grounded in regulation (CLIA 42 CFR Part 493; CAP checklists; EU IVDR 2017/746): uncertified clinical claims directly affect patient decisions. BioNexus escalates this to human/regulatory review under every lab policy.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "RULE-021",
+      "name": "canonical_backend_identity",
+      "epistemic_kind": "EXECUTION_INVARIANT",
+      "description": "Canonical capability execution requires the declared canonical backend; silent substitution is refused (BN-F010)",
+      "current_value": "block when canonical backend unavailable",
+      "source_file": "src/bionexus/data/rule_registry.json",
+      "source_line": 158,
+      "rationale": "The canonical backend defines the algorithm of a certified capability; executing a substitute without explicit frontier-fallback consent advertises a result the run did not produce. Frontier capabilities retain a documented consent path; canonical ones do not.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    }
+  ]
+}

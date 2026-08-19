@@ -179,6 +179,27 @@ _DEFAULT_EVIDENCE_CEILING: Dict[str, ConclusionMaturity] = {
 }
 
 
+def scientific_consequences_for(rule_id: str) -> Dict[str, Any]:
+    """Policy-independent scientific consequences of violating a rule.
+
+    Returns the residual uncertainty, the claims the evidence cannot warrant,
+    and the evidence ceiling cap for ``rule_id``.  These are facts about the
+    science, not about any lab's enforcement posture: they feed the
+    WarrantAssessment and are identical under shadow/advisory/enforced policy.
+    """
+    return {
+        "residual_uncertainty": list(
+            _DEFAULT_RESIDUAL_LIMITATIONS.get(
+                rule_id, [f"Rule '{rule_id}' violated; limitations not pre-specified."]
+            )
+        ),
+        "unsupported_claims": list(
+            _DEFAULT_BLOCKED_CLAIMS.get(rule_id, ["clinical_diagnosis", "treatment_recommendation"])
+        ),
+        "evidence_ceiling": _DEFAULT_EVIDENCE_CEILING.get(rule_id, ConclusionMaturity.FRAGILE),
+    }
+
+
 def create_override_record(
     rule_id: str,
     rule_description: str,

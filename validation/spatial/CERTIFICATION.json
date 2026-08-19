@@ -20,7 +20,7 @@
     {
       "standard_id": "invariants",
       "satisfied": true,
-      "evidence": "src/bionexus/capabilities.py -> preconditions: coordinate_provenance_recorded, core_confound_controls_tested; review/INVARIANTS_CATALOG.json -> INV-011..INV-013, INV-017",
+      "evidence": "src/bionexus/capabilities.py -> preconditions: coordinate_provenance_recorded, core_confound_controls_tested; review/SCIENTIFIC_RULE_CATALOG.json -> INV-011..INV-013, INV-017",
       "notes": "Machine-checkable preconditions; router traps: embedding_substitution, no_controls_provided"
     },
     {
@@ -111,7 +111,7 @@
     "validation_report": "validation/spatial/REPORT.json",
     "cross_host_report": "cross-host/COMPARISON.json",
     "scientific_review": "review/SCIENTIFIC_REVIEW.json",
-    "invariants_catalog": "review/INVARIANTS_CATALOG.json",
+    "scientific_rule_catalog": "review/SCIENTIFIC_RULE_CATALOG.json",
     "certification_source": "src/bionexus/certification.py -> _EVIDENCE['spatial.inference_validity']"
   }
 }
