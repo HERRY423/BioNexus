@@ -39,8 +39,14 @@ class ResearchPurpose(str, Enum):
     Ordered by increasing epistemic strictness.  Each purpose defines an
     evidence ceiling — the highest ConclusionMaturity reachable without
     external validation or researcher override.
+
+    - UNSPECIFIED: Caller has not declared a purpose. This is NOT exploratory;
+      it is a state requiring explicit declaration before purpose-aware routing
+      can apply. The evidence ceiling defaults to the most conservative reachable
+      level (FRAGILE) until purpose is specified.
     """
 
+    UNSPECIFIED = "unspecified"
     EXPLORATORY = "exploratory"
     SCREENING = "screening"
     CONFIRMATORY = "confirmatory"
@@ -51,9 +57,9 @@ class ResearchPurpose(str, Enum):
 # ---------------------------------------------------------------------------
 # Evidence ceiling per purpose: the highest ConclusionMaturity reachable
 # *without* external validation or explicit researcher override.
-# ---------------------------------------------------------------------------
-
+# UNSPECIFIED gets FRAGILE as default — the most conservative reachable ceiling.
 PURPOSE_EVIDENCE_CEILING: Dict[ResearchPurpose, ConclusionMaturity] = {
+    ResearchPurpose.UNSPECIFIED: ConclusionMaturity.FRAGILE,
     ResearchPurpose.EXPLORATORY: ConclusionMaturity.PRELIMINARY,
     ResearchPurpose.SCREENING: ConclusionMaturity.PRELIMINARY,
     ResearchPurpose.CONFIRMATORY: ConclusionMaturity.ROBUST,
@@ -63,9 +69,8 @@ PURPOSE_EVIDENCE_CEILING: Dict[ResearchPurpose, ConclusionMaturity] = {
 
 # ---------------------------------------------------------------------------
 # Which purposes can a researcher override soft blocks for?
-# Clinical purpose NEVER permits override (patient safety invariant).
-# ---------------------------------------------------------------------------
-
+# Clinical and Unspecified purpose NEVER permit override.
+# Patient safety invariant + need for explicit purpose specification.
 OVERRIDABLE_PURPOSES: Set[ResearchPurpose] = {
     ResearchPurpose.EXPLORATORY,
     ResearchPurpose.SCREENING,
@@ -125,11 +130,17 @@ def infer_research_purpose(query: str) -> ResearchPurpose:
     """Infer the research purpose from the user's query text.
 
     Scans for keyword patterns ordered by epistemic strictness (clinical > causal >
-    confirmatory > screening > exploratory).  Falls back to EXPLORATORY when no
-    specific pattern fires — the most permissive default is the safest assumption.
+    confirmatory > screening > exploratory).  Falls back to UNSPECIFIED when no
+    specific pattern fires — this deliberately refuses to assume exploratory on behalf
+    of the caller. The absence of declared purpose means UNSPECIFIED, which caps
+    evidence at FRAGILE until the user explicitly states their intent.
+
+    IMPORTANT CHANGE from old behavior: previously fell back to EXPLORATORY. This
+    gave the inference engine too much power. Now the default is UNSPECIFIED, which
+    forces callers to declare their purpose if they want higher ceilings.
     """
     query_lower = query.lower()
-    # Check in strictness order: clinical first, exploratory last.
+    # Check in strictness order: clinical first, unspecified last.
     for purpose in (
         ResearchPurpose.CLINICAL,
         ResearchPurpose.CAUSAL,
@@ -140,7 +151,7 @@ def infer_research_purpose(query: str) -> ResearchPurpose:
         for pattern in _PURPOSE_PATTERNS.get(purpose, []):
             if re.search(pattern, query_lower):
                 return purpose
-    return ResearchPurpose.EXPLORATORY
+    return ResearchPurpose.UNSPECIFIED
 
 
 # ---------------------------------------------------------------------------
@@ -155,13 +166,13 @@ class PurposeContext:
     Attributes:
         purpose: The declared or inferred research purpose.
         explicitly_declared: True if the caller specified the purpose directly;
-            False if it was inferred from the query text.
+            False if it was inferred from the query text OR defaulted to UNSPECIFIED.
         override_active: True when a researcher has invoked an explicit override
             to proceed past a soft block.
         override_justification: Free-text reason recorded when override is active.
     """
 
-    purpose: ResearchPurpose = ResearchPurpose.EXPLORATORY
+    purpose: ResearchPurpose = ResearchPurpose.UNSPECIFIED
     explicitly_declared: bool = False
     override_active: bool = False
     override_justification: str = ""

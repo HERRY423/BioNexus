@@ -1,0 +1,214 @@
+"""Tests for Lab Policy Profiles: Shadow / Advisory / Enforced enforcement modes.
+
+Verifies the Task 5 contract:
+- Execution invariants are enforced under every lab policy profile.
+- Warrant constraints follow the lab's declared posture (shadow/advisory/enforced).
+- Shadow mode records violations on the EvidenceCard without blocking or capping.
+- Unknown policy names fall back to the default advisory profile.
+"""
+
+from unittest.mock import patch
+
+from bionexus import (
+    DEFAULT_LAB_POLICY,
+    DISCOVERY_LAB,
+    ENFORCED_LAB,
+    SHADOW_AUDIT,
+    EnforcementMode,
+    get_lab_policy,
+    route_scientific_intent,
+)
+from bionexus.capabilities import (
+    CapabilityEvaluationResult,
+    RefusalTrigger,
+    get_capability,
+)
+from bionexus.contracts import DimensionGrade, EvidenceCard, ExecutionState
+from bionexus.lab_policy import laxer, mode_rank, stricter
+from bionexus.research_purpose import PurposeContext, ResearchPurpose
+from bionexus.rule_classification import (
+    CLASSIFICATION_BIOLOGICAL_REPLICATES,
+    CLASSIFICATION_CLINICAL_DIAGNOSIS,
+)
+
+# ---------------------------------------------------------------------------
+# Profile resolution & helpers
+# ---------------------------------------------------------------------------
+
+
+def test_policy_resolution_and_unknown_name_fallback():
+    assert get_lab_policy(None) is DISCOVERY_LAB
+    assert get_lab_policy("shadow_audit") is SHADOW_AUDIT
+    assert get_lab_policy("discovery_lab") is DISCOVERY_LAB
+    assert get_lab_policy("enforced_lab") is ENFORCED_LAB
+    # Typo must never harden a pipeline into refusal: fall back to default.
+    assert get_lab_policy("typo_lab") is DEFAULT_LAB_POLICY
+
+
+def test_mode_ordering_helpers():
+    assert mode_rank(EnforcementMode.SHADOW) < mode_rank(EnforcementMode.ADVISORY)
+    assert mode_rank(EnforcementMode.ADVISORY) < mode_rank(EnforcementMode.ENFORCED)
+    assert stricter(EnforcementMode.SHADOW, EnforcementMode.ENFORCED) is EnforcementMode.ENFORCED
+    assert laxer(EnforcementMode.SHADOW, EnforcementMode.ENFORCED) is EnforcementMode.SHADOW
+
+
+def test_effective_mode_for_semantics():
+    # Invariants are ENFORCED under every profile.
+    for policy in (SHADOW_AUDIT, DISCOVERY_LAB, ENFORCED_LAB):
+        assert policy.effective_mode_for(CLASSIFICATION_CLINICAL_DIAGNOSIS) is EnforcementMode.ENFORCED
+    # Warrants follow the lab posture.
+    assert SHADOW_AUDIT.effective_mode_for(CLASSIFICATION_BIOLOGICAL_REPLICATES) is EnforcementMode.SHADOW
+    assert DISCOVERY_LAB.effective_mode_for(CLASSIFICATION_BIOLOGICAL_REPLICATES) is EnforcementMode.ADVISORY
+    assert ENFORCED_LAB.effective_mode_for(CLASSIFICATION_BIOLOGICAL_REPLICATES) is EnforcementMode.ENFORCED
+    # Unknown classification falls back to the lab posture.
+    assert DISCOVERY_LAB.effective_mode_for(None) is EnforcementMode.ADVISORY
+
+
+def test_profile_serialization_round_trip():
+    d = ENFORCED_LAB.to_dict()
+    assert d["name"] == "enforced_lab"
+    assert d["warrant_mode"] == "ENFORCED"
+    assert d["require_override_justification"] is True
+
+
+# ---------------------------------------------------------------------------
+# End-to-end routing under the three profiles
+# ---------------------------------------------------------------------------
+
+_DE_META = {
+    "n_cells": 5000,
+    "has_condition": True,
+    "conditions": ["ctrl", "treat"],
+    "min_replicates_per_condition": 1,
+    "is_normalized": False,
+    "is_integer_like": True,
+}
+_DE_QUERY = "Run differential expression between conditions"
+
+
+def test_shadow_policy_permits_and_records_warrant_violation():
+    decision = route_scientific_intent(
+        _DE_QUERY, data_metadata=_DE_META, research_purpose="screening", lab_policy="shadow_audit"
+    )
+    assert decision.status.value == "PERMITTED"
+    card = decision.evidence_card_template
+    assert card.details.get("shadow_mode") is True
+    assert card.details.get("shadow_violations")
+    assert card.details.get("lab_policy") == "shadow_audit"
+
+
+def test_advisory_policy_blocks_without_override():
+    decision = route_scientific_intent(_DE_QUERY, data_metadata=_DE_META, research_purpose="screening")
+    assert decision.status.value == "ABSTAIN"
+
+
+def test_advisory_policy_override_yields_permitted_with_limits():
+    decision = route_scientific_intent(
+        _DE_QUERY,
+        data_metadata=_DE_META,
+        research_purpose="screening",
+        override_justification="Pilot screen; replicates pending.",
+    )
+    assert decision.status.value == "PERMITTED_WITH_LIMITS"
+    assert decision.evidence_card_template.details.get("lab_policy") == "discovery_lab"
+    assert decision.override_records
+
+
+def test_enforced_policy_blocks_warrant_even_under_override():
+    decision = route_scientific_intent(
+        _DE_QUERY,
+        data_metadata=_DE_META,
+        research_purpose="screening",
+        override_justification="Pilot screen; replicates pending.",
+        lab_policy="enforced_lab",
+    )
+    assert decision.status.value == "ABSTAIN"
+
+
+# ---------------------------------------------------------------------------
+# Capability-layer classification under injected triggers
+# ---------------------------------------------------------------------------
+
+
+def _refused_base(cap_id: str, trigger: RefusalTrigger) -> CapabilityEvaluationResult:
+    return CapabilityEvaluationResult(
+        capability_id=cap_id,
+        status="REFUSED",
+        permitted=False,
+        violations=[trigger.description],
+        refusal_triggers=[trigger],
+        remedies=[trigger.remedy],
+        evidence_card=EvidenceCard(
+            execution_state=ExecutionState.REFUSED.value,
+            input_integrity=DimensionGrade.UNTESTED.value,
+            assumption_validity=DimensionGrade.GRADE_C.value,
+            statistical_support=DimensionGrade.UNTESTED.value,
+            details={"contract_id": cap_id, "violations": [trigger.description]},
+        ),
+        conclusion_maturity="ABSTAIN",
+    )
+
+
+def test_invariant_trigger_blocks_under_every_policy():
+    cap = get_capability("scrna.pseudobulk_de")
+    trigger = RefusalTrigger(
+        condition_id="model_substitution_attempt",
+        description="Presenting proxy output as official foundation-model output.",
+        remedy="Acknowledge the proxy.",
+        violated_rule="Model attribution invariant",
+    )
+    base = _refused_base(cap.id, trigger)
+    for pname in ("shadow_audit", "discovery_lab", "enforced_lab"):
+        with patch.object(type(cap), "evaluate_viability", return_value=base):
+            result = cap.evaluate_viability_with_purpose(
+                purpose_context=PurposeContext(purpose=ResearchPurpose.EXPLORATORY),
+                lab_policy=get_lab_policy(pname),
+            )
+            assert result.status == "REFUSED", (pname, result.status)
+            assert result.permitted is False
+
+
+def test_warrant_trigger_shadowed_but_not_forgotten():
+    cap = get_capability("scrna.pseudobulk_de")
+    trigger = RefusalTrigger(
+        condition_id="missing_replicates",
+        description="Found 1 replicate per condition, minimum required is 2.",
+        remedy="Add replicates.",
+        violated_rule="Biological replicate requirement",
+    )
+    base = _refused_base(cap.id, trigger)
+    with patch.object(type(cap), "evaluate_viability", return_value=base):
+        result = cap.evaluate_viability_with_purpose(
+            purpose_context=PurposeContext(purpose=ResearchPurpose.SCREENING),
+            lab_policy=SHADOW_AUDIT,
+        )
+        assert result.status == "PERMITTED" and result.permitted
+        assert result.shadow_violations == [trigger.description]
+        assert result.evidence_card.details["shadow_mode"] is True
+        assert result.evidence_card.details["shadow_condition_ids"] == ["missing_replicates"]
+
+    with patch.object(type(cap), "evaluate_viability", return_value=base):
+        enforced = cap.evaluate_viability_with_purpose(
+            purpose_context=PurposeContext(purpose=ResearchPurpose.SCREENING),
+            lab_policy=ENFORCED_LAB,
+        )
+        assert enforced.status == "REFUSED" and not enforced.permitted
+
+
+def test_evaluation_result_dict_exposes_policy_fields():
+    cap = get_capability("scrna.pseudobulk_de")
+    trigger = RefusalTrigger(
+        condition_id="missing_replicates",
+        description="Found 1 replicate per condition, minimum required is 2.",
+        remedy="Add replicates.",
+        violated_rule="Biological replicate requirement",
+    )
+    base = _refused_base(cap.id, trigger)
+    with patch.object(type(cap), "evaluate_viability", return_value=base):
+        result = cap.evaluate_viability_with_purpose(
+            purpose_context=PurposeContext(purpose=ResearchPurpose.SCREENING),
+            lab_policy=SHADOW_AUDIT,
+        )
+    d = result.to_dict()
+    assert d["lab_policy"] == "shadow_audit"
+    assert d["shadow_violations"] == [trigger.description]

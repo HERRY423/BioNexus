@@ -115,7 +115,7 @@ jobs:
       - name: Clean-Venv Wheel Verification
         run: |
           set -e
-          WHL=$(ls dist/bionexus-*.whl | head -n1)
+          WHL=$(ls dist/bionexus_reliability-*.whl | head -n1)
           python -m venv wheelcheck
           wheelcheck/bin/pip install --upgrade pip
           wheelcheck/bin/pip install "${WHL}[goldchain,deseq,spatial,survival]"

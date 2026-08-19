@@ -86,6 +86,7 @@ def is_override_permitted(
     """Check whether a rule can be overridden under the given purpose.
 
     Override is blocked when:
+    - The purpose is UNSPECIFIED (declare a purpose before overriding).
     - The purpose is CLINICAL (patient safety invariant).
     - The rule is a hard rule (safety invariant).
     """
@@ -183,7 +184,7 @@ def create_override_record(
     rule_description: str,
     justification: str,
     *,
-    purpose: ResearchPurpose = ResearchPurpose.EXPLORATORY,
+    purpose: ResearchPurpose = ResearchPurpose.UNSPECIFIED,
     researcher_id: str = "",
     provenance: Optional[RuleProvenance] = None,
 ) -> OverrideRecord:
@@ -194,13 +195,17 @@ def create_override_record(
     after creation if the defaults need adjustment.
     """
     if not is_override_permitted(purpose, provenance):
-        raise OverrideDenied(
-            f"Rule '{rule_id}' cannot be overridden under purpose '{purpose.value}'. "
-            + (
-                "Clinical purpose never permits override (patient safety invariant)."
-                if purpose == ResearchPurpose.CLINICAL
-                else "This is a hard rule (safety invariant)."
+        if purpose == ResearchPurpose.UNSPECIFIED:
+            reason = (
+                "Research purpose is UNSPECIFIED: declare a purpose "
+                "(exploratory / screening / confirmatory / causal) before invoking an override."
             )
+        elif purpose == ResearchPurpose.CLINICAL:
+            reason = "Clinical purpose never permits override (patient safety invariant)."
+        else:
+            reason = "This is a hard rule (safety invariant)."
+        raise OverrideDenied(
+            f"Rule '{rule_id}' cannot be overridden under purpose '{purpose.value}'. {reason}"
         )
 
     return OverrideRecord(

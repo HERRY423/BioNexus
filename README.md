@@ -14,53 +14,100 @@
 [![RUO](https://img.shields.io/badge/Status-Research%20Use%20Only-yellow.svg?style=flat-square)](#-regulatory-notice--compliance)
 
 <p align="center">
-  <b>BioNexus catches biological analyses that should not have been run.</b><br/>
-  It is the <b>Scientific Assertion Firewall</b> and reliability layer for agentic biology: deterministic preflight before compute,
-  static audits of the analyses your tools (Scanpy, Seurat, Bioconductor, Claude, Codex, Cursor) already produce,
-  and fail-closed verification of final claims against their evidence — backed by machine-readable Capability Contracts,
-  the BN-Fxxx failure taxonomy, and the BioFailureBench trap corpus with ground truth.
+  <b>BioNexus tells you what the evidence warrants — and blocks only what is truly invalid.</b><br/>
+  It is the <b>Scientific Warrant Engine</b> for agentic biology: it separates <em>execution invariants</em>
+  (rules that must block computation) from <em>warrant constraints</em> (limits on what claims your evidence justifies),
+  modulates evidence ceilings by your declared research purpose, and carries every rule's provenance,
+  consensus level, and exceptions in an auditable registry — so BioNexus never looks like it invented
+  scientific law. The firewall is a subset of the warrant system, not the product.
 </p>
 
 ```text
-✓ Single-Cell RNA-seq QC & Clustering (scanpy)    ✓ Spatial Transcriptomics & SVG Analysis (squidpy)
-✓ Deep Generative VAE Modeling (scvi-tools)       ✓ nf-core Pipeline Automation (RNA-seq / Sarek)
-✓ 16+ Local MCP Biological Database Tools         ✓ 9 Cloud-Hosted Biological MCP Endpoints
-✓ EvidenceCard 2.0 Epistemic Evaluation           ✓ Machine-Readable Capability Contracts
-✓ 6-Stage Scientific Intent & Invariant Router    ✓ BioNexus Eval 3-Tier Benchmark (L1/L2/L3, fail-closed)
-✓ Zero-Key Out-of-the-Box Core Databases          ✓ Deterministic Scientific Refusal Protocols
+✓ Warrant-first evidence ceilings per purpose      ✓ Execution Invariant vs Warrant taxonomy
+✓ ResearchPurpose: exploratory → clinical          ✓ Evidence-backed Rule Provenance Registry
+✓ Researcher Override with documented limits       ✓ Lab Policy: Shadow / Advisory / Enforced
+✓ EvidenceCard 2.0 epistemic evaluation            ✓ Biological Capability ABI & contracts
+✓ BN-Fxxx failure taxonomy + BioFailureBench       ✓ Fail-closed verification of final claims
 ```
 
 </div>
 
 ---
 
-## 🔬 Why scientists install it: one case
+## 🔬 Why scientists install it: warrant, not refusal
 
-Not "the Biological Capability ABI is advanced." This:
+Not "the firewall is strict." This:
 
-**Before BioNexus** — the agent just runs it:
+**Before BioNexus** — the agent runs it and overclaims:
 
 ```text
 Request: "Run DE between these two clusters and identify condition-specific genes."
 
 Agent:   Done. 2,341 cells vs 3,107 cells. 153 significant genes.
+         -> Presented as a population-level condition effect.
 ```
 
-**With BioNexus** — the firewall blocks it and says why:
+**With BioNexus** — the same request is separated into what blocks and what limits:
 
 ```text
-BLOCKED: BN-F002 Pseudoreplication
+WARRANT: PERMITTED_WITH_LIMITS  (purpose=screening, ceiling=FRAGILE)
 
-Cells belong to only 3 donors per condition.
-Cell-level hypothesis testing would inflate
-the effective biological sample size.
+Rule hit: missing_replicates [WARRANT_EPISTEMIC]
+  Not an execution invariant — the compute is legal. But 3 donors/condition
+  is not enough for population-level inference, so the CLAIM is capped.
 
-Recommended:
-aggregate counts by donor × condition
-and perform pseudobulk DE.
+What you CAN still do:   run pseudobulk DE, rank markers, screen candidates.
+What is BLOCKED:         'population-level condition effect' claim.
+Override:                allowed (screening purpose) — researcher records why,
+                         and FRAGILE ceiling + blocked claim are preserved.
+
+Rule provenance: Fisher 1935; Soneson & Robinson 2018; consensus=ESTABLISHED.
 ```
 
-This is the product: catching biological analyses that should not have been run — before, during, and after they happen (`bionexus preflight` / `audit` / `verify`).
+This is the product: telling you what the evidence warrants. A hard block fires only when an execution invariant is violated (garbage data, model masquerade, uncertified clinical claim) — otherwise BioNexus permits the compute and caps the claim.
+
+---
+
+## 🏗️ The Four Pillars of the Warrant Architecture
+
+BioNexus was upgraded from *"when not to compute"* to *"what the evidence warrants"*. Four mechanisms make that real:
+
+| Pillar | What it does | Key API |
+|---|---|---|
+| **1. Invariant vs Warrant** | Splits every rule into an **execution invariant** (safety/integrity — must block) or a **warrant constraint** (epistemic — caps the claim, never blocks legal compute). | `RuleCategory`, `RuleClassification` |
+| **2. ResearchPurpose** | Same data design carries different epistemic weight per purpose: `exploratory` → PRELIMINARY, `confirmatory` → ROBUST, `clinical` → REPLICATED. Unspecified purpose caps at FRAGILE — BioNexus does not assume exploratory for you. | `ResearchPurpose`, `PurposeContext` |
+| **3. Rule Provenance** | Every rule carries evidence-backed provenance (DOIs/URLs), a consensus level, and known exceptions — loaded from an auditable registry, not hardcoded opinion. | `RuleProvenance`, `load_rule_registry` |
+| **4. Researcher Override** | Professionals may proceed past a soft warrant block, but must record *why*, what limits remain, and which claims still cannot be made. Hard invariants are never overridable. | `create_override_record`, `OverrideRecord` |
+
+The old binary `PERMITTED / REFUSED` is now a spectrum: `PERMITTED` · `PERMITTED_WITH_LIMITS` (soft blocks overridden) · `REFUSED` (hard invariant violated).
+
+---
+
+## 🏛️ Lab Policy Profiles: Shadow / Advisory / Enforced
+
+Different laboratories have different compliance postures. BioNexus separates the *scientific rule* from its *enforcement posture* — for warrant constraints only:
+
+| Profile | `warrant_mode` | Behavior on a warrant violation |
+|---|---|---|
+| `shadow_audit` | `SHADOW` | Permits the compute; the violation is recorded on the EvidenceCard (`shadow_mode: true`) without capping the claim. For evaluation, migration, or telemetry-only rollouts. |
+| `discovery_lab` *(default)* | `ADVISORY` | Permits the compute once the researcher overrides with a documented justification → `PERMITTED_WITH_LIMITS` with a capped maturity. |
+| `enforced_lab` | `ENFORCED` | Warrant constraints apply at full registry severity — a violation blocks even under override. For confirmatory / regulated / pre-clinical workflows. |
+
+```python
+from bionexus import route_scientific_intent
+
+decision = route_scientific_intent(
+    "Run differential expression between conditions",
+    data_metadata=meta,
+    research_purpose="screening",
+    lab_policy="shadow_audit",   # or "discovery_lab" / "enforced_lab"
+)
+```
+
+Two guardrails keep this honest in both directions:
+
+1. **Execution invariants are never relaxed.** `INVARIANT_SAFETY` / `INVARIANT_INTEGRITY` rules — and any warrant the registry itself marks `ENFORCED` — block under *every* profile. A shadow policy cannot let a clinical claim slip through.
+2. **The posture is always audited.** The resolved profile name is written to the EvidenceCard (`details.lab_policy`), and unknown profile names fall back to the default advisory posture rather than silently hardening a pipeline into refusal.
 
 ---
 
@@ -212,9 +259,9 @@ uv pip install -e ".[all]"
 
 ---
 
-## 🧱 The Scientific Assertion Firewall (BNS-013)
+## 🧱 The Warrant Engine & Its Enforcement Surface (BNS-013)
 
-You keep using Scanpy, Seurat, Bioconductor, Claude, Codex, and Cursor. BioNexus does not replace any of them — it checks whether the scientific analyses they produce stand up. Three high-frequency entry points:
+You keep using Scanpy, Seurat, Bioconductor, Claude, Codex, and Cursor. BioNexus does not replace any of them — it evaluates whether the scientific claims they produce are warranted. The enforcement surface has three entry points; each returns a *warrant*, not just a pass/fail: **execution invariants** are blocked outright, while **warrant constraints** cap the claim and disclose the ceiling. Three high-frequency entry points:
 
 ### 1. `bionexus preflight` — before the analysis
 
@@ -352,7 +399,7 @@ BioNexus is governed by a normative, machine-enforced scientific contract publis
 
 **The Biological Capability ABI** (`bionexus abi show <id>`): every capability projects to a stable Scientific ABI — input contracts (allowed matrix states, coordinate types), forbidden claims, execution references, validation policy, evidence ceilings, and provenance requirements. Any host agent connecting to BioNexus inherits this boundary and cannot bypass it.
 
-**Fail-closed philosophy** (`bionexus prevent "<query>"`): *knowing when not to compute is a scientific capability.* The canonical gate `prevent_invalid_run()` maps missing evidence → ABSTAIN, invalid input → REFUSE, missing backend → DEGRADE WITH DISCLOSURE, violated assumption → BLOCK CLAIM, absent external validation → CAP EVIDENCE LEVEL. The most scarce BioNexus API is not `run()` — it is `prevent_invalid_run()`.
+**Fail-closed philosophy** (`bionexus prevent "<query>"`): *knowing what the evidence warrants is a scientific capability.* Fail-closed now means two things: hard execution invariants (missing evidence → ABSTAIN, identifier corruption → REFUSE, model masquerade → BLOCK) still gate the compute, while soft warrant constraints (weak statistics, thin replication, unvalidated assumptions) permit the compute but cap the claim — `violated assumption → CAP CLAIM MATURITY`, `absent external validation → CAP EVIDENCE LEVEL`, `unspecified purpose → CAP AT FRAGILE`. The scarcest BioNexus API is not `run()` — it is the honest warrant.
 
 **Capability certification** (`bionexus certification`): skills deepen through evidence tiers — CERTIFIED (all 14 criteria: backend, input contract, invariants, failure modes, positive/negative/adversarial tests, public reference dataset, independent ground truth, parameter perturbation, degradation test, provenance test, cross-host test, external reviewer), VALIDATED, EXPERIMENTAL, CONNECTOR-ONLY. Tiers are **computed from recorded evidence, never asserted**; the blocking-criteria list per capability is the published roadmap to 10 CERTIFIED.
 

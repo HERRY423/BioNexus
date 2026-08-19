@@ -37,6 +37,7 @@ from bionexus.contracts import (
     ExecutionState,
 )
 from bionexus.integrity import audit_expression_matrix
+from bionexus.lab_policy import get_lab_policy
 from bionexus.research_purpose import (
     PurposeContext,
     ResearchPurpose,
@@ -566,6 +567,7 @@ def route_scientific_intent(
     allow_frontier: bool = False,
     research_purpose: Optional[str] = None,
     override_justification: str = "",
+    lab_policy: Optional[str] = None,
 ) -> RoutingDecision:
     """
     Evaluate scientific intent and determine execution validity.
@@ -589,6 +591,12 @@ def route_scientific_intent(
     ``override_justification`` activates the explicit researcher override
     mechanism: soft blocks can be bypassed with full documentation of what
     limitations remain and what claims are still not warranted.
+
+    ``lab_policy`` selects the laboratory enforcement profile by name
+    (``shadow_audit`` / ``discovery_lab`` / ``enforced_lab``).  The profile
+    modulates warrant constraints only — execution invariants are enforced
+    under every profile.  Unknown names fall back to the default advisory
+    profile, and the resolved name is recorded on the evidence card.
     """
     meta = dict(data_metadata or {})
     intents = list(intent_keywords or [])
@@ -741,10 +749,14 @@ def route_scientific_intent(
     # 4. Scientific Validity + Availability Evaluation (purpose-aware).
     # `evaluate_viability_with_purpose` classifies refusals as hard BLOCK or
     # soft PERMITTED_WITH_LIMITS, applies evidence ceiling, and creates
-    # override records when the researcher has invoked an override.
+    # override records when the researcher has invoked an override.  The lab
+    # policy profile modulates warrant constraints (shadow/advisory/enforced);
+    # execution invariants are enforced under every profile.
+    policy = get_lab_policy(lab_policy)
     eval_result = cap.evaluate_viability_with_purpose(
         input_metadata=meta,
         purpose_context=pctx,
+        lab_policy=policy,
     )
 
     script_map = {
@@ -858,6 +870,16 @@ def route_scientific_intent(
             "capped at PRELIMINARY without external validation (BNS-CC-013)."
         )
     rationale += f" Purpose: {pctx.purpose.value}; evidence ceiling: {pctx.evidence_ceiling.value}."
+    purpose_requests: List[str] = []
+    if pctx.purpose == ResearchPurpose.UNSPECIFIED:
+        rationale += (
+            " Research purpose is UNSPECIFIED: conclusions are capped at FRAGILE until a purpose "
+            "(exploratory / screening / confirmatory / causal / clinical) is explicitly declared."
+        )
+        purpose_requests.append(
+            "Declare the research purpose (research_purpose=...) to set the appropriate evidence ceiling: "
+            "exploratory -> PRELIMINARY, confirmatory -> ROBUST, clinical -> REPLICATED."
+        )
     return RoutingDecision(
         status=RoutingStatus.PERMITTED,
         matched_capability=cap,
@@ -865,6 +887,7 @@ def route_scientific_intent(
         recommended_script=rec_script,
         recommended_command=f"python {rec_script} --help" if rec_script else None,
         rationale=rationale,
+        missing_data_requests=purpose_requests,
         evidence_card_template=eval_result.evidence_card,
         purpose_context=pctx,
     )

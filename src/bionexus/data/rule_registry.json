@@ -1,0 +1,175 @@
+{
+  "registry_version": "2.0.0",
+  "description": "BioNexus Scientific Rule Provenance Registry. Every rule enforced by BioNexus carries explicit, verifiable provenance: source citations with DOIs/URLs, consensus level, known exceptions, and an invariant-vs-warrant classification. This registry is data, not code: labs can fork it, extend it, or override it via BIONEXUS_RULE_REGISTRY. Edit the registry file; the Python constants in rule_provenance.py are generated from it at import time.",
+  "last_reviewed": "2026-08",
+  "rules": {
+    "clinical_diagnosis_without_certification": {
+      "aliases": ["treatment_recommendation", "clinical_diagnosis", "unverified_clinical_diagnosis"],
+      "source_kind": "regulatory",
+      "source_citation": "CLIA regulations (42 CFR Part 493); CAP accreditation checklists; EU IVDR 2017/746; FDA 21 CFR Part 11",
+      "evidence": [
+        {"kind": "regulation", "ref": "https://www.ecfr.gov/current/title-42/chapter-IV/subchapter-G/part-493", "note": "CLIA laboratory requirements"},
+        {"kind": "regulation", "ref": "https://eur-lex.europa.eu/eli/reg/2017/746/oj", "note": "EU In Vitro Diagnostic Regulation"},
+        {"kind": "regulation", "ref": "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-H/part-11", "note": "FDA electronic records/signatures"}
+      ],
+      "consensus": "ESTABLISHED",
+      "exceptions": [],
+      "last_verified": "2025-06",
+      "classification": {
+        "category": "INVARIANT_SAFETY",
+        "enforcement_level": "ENFORCED",
+        "rationale": "CLIA/CAP mandate: clinical diagnosis without certified validation directly impacts patient treatment decisions."
+      }
+    },
+    "identifier_namespace_mismatch": {
+      "aliases": ["identifier_namespace"],
+      "source_kind": "statistical_theory",
+      "source_citation": "Data integrity invariant: joining mismatched identifier namespaces corrupts all downstream results (BN-F004)",
+      "evidence": [
+        {"kind": "documentation", "ref": "https://www.ensembl.org/info/genome/stable_ids/index.html", "note": "Ensembl stable ID semantics differ from HGNC symbols"},
+        {"kind": "documentation", "ref": "https://www.genenames.org/help/symbol-management/", "note": "HGNC symbol lifecycle and reuse"}
+      ],
+      "consensus": "ESTABLISHED",
+      "exceptions": ["Explicit mapping table provided and recorded in provenance"],
+      "last_verified": "2025-06",
+      "classification": {
+        "category": "INVARIANT_INTEGRITY",
+        "enforcement_level": "ENFORCED",
+        "rationale": "Data integrity: joining HGNC gene symbols against Ensembl IDs produces silent one-to-many mappings indistinguishable from correct joins."
+      }
+    },
+    "model_substitution_attempt": {
+      "aliases": ["model_substitution"],
+      "source_kind": "project_invariant",
+      "source_citation": "BioNexus honesty policy (BNS-EF-002, BN-F010): never present heuristic output as canonical backend results",
+      "evidence": [
+        {"kind": "spec", "ref": "spec/BNS-003-execution-fidelity.md", "note": "Execution fidelity specification"},
+        {"kind": "spec", "ref": "spec/BNS-008-host-conformance.md", "note": "Host conformance and backend identity"}
+      ],
+      "consensus": "PROJECT_INTERNAL",
+      "exceptions": [],
+      "last_verified": "2025-06",
+      "classification": {
+        "category": "INVARIANT_INTEGRITY",
+        "enforcement_level": "ENFORCED",
+        "rationale": "Reproducibility: substituting models without detection breaks deterministic audit trails (BN-F010)."
+      }
+    },
+    "normalized_matrix_only": {
+      "aliases": ["raw_counts_only"],
+      "source_kind": "statistical_theory",
+      "source_citation": "Negative binomial GLM requires integer counts; Love et al. 2014 (DESeq2), Soneson & Robinson 2016 (pseudobulk)",
+      "evidence": [
+        {"kind": "paper", "ref": "doi:10.1186/s13059-014-0550-8", "note": "Love, Huber & Anders 2014, DESeq2 negative binomial model"},
+        {"kind": "paper", "ref": "doi:10.12688/f1000research.10570.2", "note": "Soneson & Robinson 2018, muscat pseudobulk"},
+        {"kind": "paper", "ref": "doi:10.1038/nbt.3192", "note": "Ritchie et al. 2015, limma input requirements"}
+      ],
+      "consensus": "STRONG",
+      "exceptions": [
+        "Exploratory marker ranking with normalized input (ceiling: PRELIMINARY)",
+        "Pseudobulk aggregation from log-normalized data with explicit disclaimer"
+      ],
+      "last_verified": "2025-06",
+      "classification": {
+        "category": "WARRANT_EPISTEMIC",
+        "enforcement_level": "ADVISORY",
+        "rationale": "Statistical theory: negative binomial models assume integer counts; feeding normalized floats violates dispersion estimation assumptions, making p-values approximate rather than calibrated."
+      }
+    },
+    "missing_replicates": {
+      "aliases": ["min_replicates"],
+      "source_kind": "statistical_theory",
+      "source_citation": "Biological replication is required for population-level inference; Fisher 1935, design-based inference",
+      "evidence": [
+        {"kind": "book", "ref": "isbn:978-0028446905", "note": "Fisher 1935, The Design of Experiments"},
+        {"kind": "paper", "ref": "doi:10.12688/f1000research.10570.2", "note": "Soneson & Robinson 2018, pseudobulk requires biological replicates"},
+        {"kind": "paper", "ref": "doi:10.1038/nmeth.4612", "note": "Lun & Risso 2018, single-cell DE workflow pitfalls (pseudoreplication)"}
+      ],
+      "consensus": "ESTABLISHED",
+      "exceptions": [
+        "Exploratory per-sample descriptive statistics (no population claim)",
+        "Screening with explicit 'no inferential claims' disclaimer"
+      ],
+      "last_verified": "2025-06",
+      "classification": {
+        "category": "WARRANT_EPISTEMIC",
+        "enforcement_level": "ADVISORY",
+        "rationale": "Experimental design theory: biological replication is required to estimate between-subject variance. Without it, population-level effects are confounded with sample-specific noise."
+      }
+    },
+    "spatial_coords_present": {
+      "aliases": ["non_degenerate_geometry", "embedding_substitution", "insufficient_spatial_spots", "degenerate_spatial_coordinates"],
+      "source_kind": "landmark_paper",
+      "source_citation": "Spatial statistics require physical coordinates; embedding substitution invalidates Moran's I (BN-F009, BNS-II-006)",
+      "evidence": [
+        {"kind": "paper", "ref": "doi:10.1038/s41592-021-01358-2", "note": "Palla et al. 2022, Squidpy spatial statistics framework"},
+        {"kind": "paper", "ref": "doi:10.1002/wics.66", "note": "Li, Calder & Martin 2007, Moran's I review: weights from physical adjacency"}
+      ],
+      "consensus": "STRONG",
+      "exceptions": [
+        "Embedding coordinates with explicit spatial justification and FRAGILE ceiling"
+      ],
+      "last_verified": "2025-06",
+      "classification": {
+        "category": "WARRANT_EPISTEMIC",
+        "enforcement_level": "ADVISORY",
+        "rationale": "Spatial statistics: Moran's I assumes physical adjacency; embedding coordinates proxy for topological similarity which may correlate with but does not equal tissue-level structure."
+      }
+    },
+    "annotation_source_recorded": {
+      "aliases": ["negative_markers_evaluated", "annotation_evidence_available"],
+      "source_kind": "best_practice",
+      "source_citation": "Cell-type labels require evidence support (reference atlas, marker panel); BN-F003",
+      "evidence": [
+        {"kind": "paper", "ref": "doi:10.1038/s41576-021-00341-c", "note": "Luecken et al. 2022, single-cell best practices: annotation"},
+        {"kind": "paper", "ref": "doi:10.1038/s41587-021-00870-2", "note": "Abdelaal et al. 2019, automated cell-type annotation benchmark"}
+      ],
+      "consensus": "STRONG",
+      "exceptions": [
+        "Numeric cluster labels without biological identity claims",
+        "Exploratory annotation with explicit 'candidate only' disclaimer"
+      ],
+      "last_verified": "2025-06",
+      "classification": {
+        "category": "WARRANT_EPISTEMIC",
+        "enforcement_level": "ADVISORY",
+        "rationale": "Annotation evidence limits what identity claims can be justified; numeric clusters remain valid."
+      }
+    },
+    "multiple_testing_uncorrected": {
+      "aliases": ["missing_fdr"],
+      "source_kind": "statistical_theory",
+      "source_citation": "Multiple testing correction required when testing >1 hypothesis; Benjamini & Hochberg 1995",
+      "evidence": [
+        {"kind": "paper", "ref": "doi:10.1111/j.2517-6161.1995.tb02031.x", "note": "Benjamini & Hochberg 1995, FDR control"}
+      ],
+      "consensus": "ESTABLISHED",
+      "exceptions": [
+        "Single pre-registered hypothesis (no correction needed)",
+        "Exploratory ranking without inferential claims"
+      ],
+      "last_verified": "2025-06",
+      "classification": {
+        "category": "WARRANT_EPISTEMIC",
+        "enforcement_level": "ADVISORY",
+        "rationale": "Without FDR control, individual p-values are inflated false positives; exploratory ranking tolerates this."
+      }
+    },
+    "missing_backend": {
+      "aliases": ["backend_identity"],
+      "source_kind": "project_invariant",
+      "source_citation": "Backend identity conformance (BNS-EF-012..016, BN-F010): declared == observed, no silent substitution",
+      "evidence": [
+        {"kind": "spec", "ref": "spec/BNS-008-host-conformance.md", "note": "Host conformance specification"}
+      ],
+      "consensus": "PROJECT_INTERNAL",
+      "exceptions": [],
+      "last_verified": "2025-06",
+      "classification": {
+        "category": "INVARIANT_INTEGRITY",
+        "enforcement_level": "ENFORCED",
+        "rationale": "Scientific capability contract: the canonical backend defines the algorithm. Silent substitution means the result is not what was advertised — zero silent substitution policy."
+      }
+    }
+  }
+}
