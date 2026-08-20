@@ -132,7 +132,7 @@ jobs:
           ../wheelcheck/bin/bionexus backend-identity --canonical-only
 
           echo "--- Gate 9: strict eval against the wheel ---"
-          BIONEXUS_EVAL_STRICT=1 ../wheelcheck/bin/bionexus eval --strict \
+          PYTHONPATH=. BIONEXUS_EVAL_STRICT=1 ../wheelcheck/bin/bionexus eval --strict \
             --exclude flagship_validation \
             --report ../dist/wheel_benchmark_report.md
 
