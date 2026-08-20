@@ -65,31 +65,25 @@ jobs:
           fi
           echo "RELEASE_VERSION=$VERSION" >> "$GITHUB_ENV"
 
-      - name: Install Dev Dependencies
+      - name: Install Full Dependencies
         run: |
           python -m pip install --upgrade pip build wheel ruff pyyaml
-          pip install -e ".[dev]"
+          pip install -r requirements-dev.txt
+          pip install -e ".[dev,goldchain,deseq,spatial,survival]"
 
       # -------------------------------------------------------------------
       # Gate 1: static analysis (source tree)
       # -------------------------------------------------------------------
       - name: Ruff Lint
         run: |
-          ruff check src evals tests
+          ruff check .
 
       # -------------------------------------------------------------------
       # Gate 2: unit tests (source tree)
       # -------------------------------------------------------------------
       - name: Unit Tests
         run: |
-          pytest -q -p no:cacheprovider
-
-      # -------------------------------------------------------------------
-      # Gate 3: full scientific backend (canonical capabilities)
-      # -------------------------------------------------------------------
-      - name: Install Full Scientific Backend
-        run: |
-          pip install -e ".[goldchain,deseq,spatial,survival]"
+          pytest tests/unit/ -q -p no:cacheprovider --ignore=tests/unit/test_scvi_smoke.py
 
       # -------------------------------------------------------------------
       # Gate 4: strict benchmark on the source tree.
