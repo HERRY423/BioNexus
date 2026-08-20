@@ -519,48 +519,66 @@ Every biological output is packaged with a deterministic **`EvidenceCard`** and 
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────────────────────┐
 │                                   BioNexus Evidence Card                                    │
-├──────────────────────────┬────────┬─────────────────────────────────────────────────────────┤
-│ Dimension                │ Grade  │ Evaluation Criteria & Audited Ground Truth              │
-├──────────────────────────┼────────┼─────────────────────────────────────────────────────────┤
-│ 1. Execution Fidelity    │ A      │ Official peer-reviewed package executed (scanpy/squidpy)│
-│ 2. Input Integrity       │ A      │ Raw count matrix verified non-negative integer values   │
-│ 3. Assumption Validity   │ A      │ Coordinates & library scales verified against metadata  │
-│ 4. Statistical Support   │ A      │ Multiple testing correction applied (Benjamini-Hochberg)│
-│ 5. Parameter Robustness  │ B      │ Results tested across parameter bounds (e.g. k=6, 8, 10) │
-│ 6. Cross-Method Agreement│ UNTEST │ Independent orthogonal method evaluation                │
-│ 7. External Validation   │ UNTEST │ Concordance against orthogonal ground truth benchmarks │
-├──────────────────────────┴────────┴─────────────────────────────────────────────────────────┤
-│ Synthesized Conclusion Status:                                                              │
-│ [ SUPPORTED | TENTATIVE | FRAGILE | CONFLICTED | ABSTAIN ]                                  │
-└─────────────────────────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 🛠️ Core Scientific Skills & Non-Negotiable Honesty Rules
+├──────────────────────�## 🛠️ Core Scientific Skills & Non-Negotiable Honesty Rules
 
 | Skill Directory | Primary Backend | Evidence Grade | Non-Negotiable Scientific Honesty Rule |
-| :--- | :--- | :---: | :--- |
-| [`single-cell-rna-qc`](file:///skills/single-cell-rna-qc) | `scanpy` + `pydeseq2` | **Grade A** | Clusters remain **numeric only**. Never invent cell-type annotations without trained reference models. |
-| [`spatial-transcriptomics`](file:///skills/spatial-transcriptomics) | `squidpy` | **Grade A** | Requires physical spatial coordinates. **Refuses** analysis if coordinates are missing. |
-| [`scvi-tools`](file:///skills/scvi-tools) | `scvi-tools`, `torch` | **Grade A** | Deep generative modeling on raw counts. Refuses if GPU/torch dependencies are missing. |
-| [`nextflow-development`](file:///skills/nextflow-development) | `nextflow`, `nf-core` | **Grade A** | Validates FASTQ/BAM schema and profile configurations before generating launch scripts. |
-| [`instrument-data-to-allotrope`](file:///skills/instrument-data-to-allotrope) | `allotropy` | **Grade A** | Converts raw analytical instrument outputs (27+ vendors) into standardized Allotrope ASM JSON. |
-| [`provenance-and-audit`](file:///skills/provenance-and-audit) | `bionexus.provenance` | **Grade B** | SHA-256 dataset hashing and W3C PROV-O JSON-LD tracking without claiming 21 CFR Part 11. |
-| [`clinical-cohort-analysis`](file:///skills/clinical-cohort-analysis) | `lifelines` (optional) + `scipy` | **Grade C** | Uses Cox PH when `lifelines` is present; explicitly labels event-rate ratios as Grade C fallback. |
-| [`variant-interpretation`](file:///skills/variant-interpretation) | local ACMG combiner + PWM splice | **Grade C** | Deterministic ACMG combination heuristics, strictly Research-Use-Only (RUO). Explicitly disclaims CLIA/CAP certification. |
-| [`protein-structure-analysis`](file:///skills/protein-structure-analysis) | RCSB/AlphaFold HTTP + Kabsch | **Grade C** | Uses exact Kabsch superposition on fetched coordinates; geometry heuristics are labeled Grade C, not gold-standard force fields. |
-| [`protein-language-models`](file:///skills/protein-language-models) | ESM-2 (opt-in) / `BLOSUM62` | **Grade C** | Requires explicit user opt-in (`BIONEXUS_ALLOW_ESM=1`); never masquerades BLOSUM as ESM. |
-| [`biologics-design`](file:///skills/biologics-design) | `abnumber` (optional) + sequence motifs | **Grade C** | Uses `abnumber` for IMGT numbering when installed; regex/motif fallbacks are explicitly labeled Grade C heuristics. |
-| [`multiome-integration`](file:///skills/multiome-integration) | `sklearn` ExtraTrees | **Grade C** | Co-expression heuristics only — explicitly **not** SCENIC+/GRNBoost2; disabled by default (opt-in via `SKILL.legacy.md`). |
+| :--- | :--- | :--- | :--- |
+| [`single-cell-rna-qc`](skills/single-cell-rna-qc) | `scanpy` + `pydeseq2` | **Grade A** | Clusters remain **numeric only**. Never invent cell-type annotations without trained reference models. |
+| [`spatial-transcriptomics`](skills/spatial-transcriptomics) | `squidpy` | **Grade A** | Requires physical spatial coordinates. **Refuses** analysis if coordinates are missing. |
+| [`scvi-tools`](skills/scvi-tools) | `scvi-tools`, `torch` | **Grade A** | Deep generative modeling on raw counts. Refuses if GPU/torch dependencies are missing. |
+| [`nextflow-development`](skills/nextflow-development) | `nextflow`, `nf-core` | **Grade A** | Validates FASTQ/BAM schema and profile configurations before generating launch scripts. |
+| [`instrument-data-to-allotrope`](skills/instrument-data-to-allotrope) | `allotropy` | **Grade A** | Converts raw analytical instrument outputs (27+ vendors) into standardized Allotrope ASM JSON. |
+| [`provenance-and-audit`](skills/provenance-and-audit) | `bionexus.provenance` | **Grade B** | SHA-256 dataset hashing and W3C PROV-O JSON-LD tracking without claiming 21 CFR Part 11. |
+| [`clinical-cohort-analysis`](skills/clinical-cohort-analysis) | `lifelines` (optional) + `scipy` | **Grade C** | Uses Cox PH when `lifelines` is present; explicitly labels event-rate ratios as Grade C fallback. |
+| [`variant-interpretation`](skills/variant-interpretation) | local ACMG combiner + PWM splice | **Grade C** | Deterministic ACMG combination heuristics, strictly Research-Use-Only (RUO). Explicitly disclaims CLIA/CAP certification. |
+| [`protein-structure-analysis`](skills/protein-structure-analysis) | RCSB/AlphaFold HTTP + Kabsch | **Grade C** | Uses exact Kabsch superposition on fetched coordinates; geometry heuristics are labeled Grade C, not gold-standard force fields. |
+| [`protein-language-models`](skills/protein-language-models) | ESM-2 (opt-in) / `BLOSUM62` | **Grade C** | Requires explicit user opt-in (`BIONEXUS_ALLOW_ESM=1`); never masquerades BLOSUM as ESM. |
+| [`biologics-design`](skills/biologics-design) | `abnumber` (optional) + sequence motifs | **Grade C** | Uses `abnumber` for IMGT numbering when installed; regex/motif fallbacks are explicitly labeled Grade C heuristics. |
+| [`multiome-integration`](skills/multiome-integration) | `sklearn` ExtraTrees | **Grade C** | Co-expression heuristics only — explicitly **not** SCENIC+/GRNBoost2; disabled by default (opt-in via `SKILL.legacy.md`). |
 
-> **Grade provenance**: Evidence grades in this table mirror the canonical Single Source of Truth ([`bionexus.registry.yaml`](file:///bionexus.registry.yaml), `skills.canonical` + `skills.heuristics`). Overclaims are rejected in CI by `tests/unit/test_readme_consistency.py`. Grade A = community gold-standard backend executed; Grade C = labeled local heuristic; optional-backends skills degrade honestly to C when the backend is absent.
+> **Grade provenance**: Evidence grades in this table mirror the canonical Single Source of Truth ([`bionexus.registry.yaml`](bionexus.registry.yaml), `skills.canonical` + `skills.heuristics`). Overclaims are rejected in CI by `tests/unit/test_readme_consistency.py`. Grade A = community gold-standard backend executed; Grade C = labeled local heuristic; optional-backends skills degrade honestly to C when the backend is absent.
 
 ---
 
 ## 🌐 Model Context Protocol (MCP) Biological Layer
 
 BioNexus provides direct access to biological tools, resources, and cloud-hosted servers via the official Model Context Protocol (FastMCP) with deterministic, non-overlapping routing:
+
+### 1. Local Stdio MCP Server (`bionexus-local-mcp`)
+*Zero API keys required for all core endpoints:*
+* **Core Local Unique Tools (Default Active — 9 Tools)**:
+  * **Proteins & Structures**: `search_uniprot`, `search_alphafold`, `search_pdb`
+  * **Genomics & Regulation**: `search_ensembl`, `search_gnomad`, `get_gene_expression` (GTEx), `search_geo`
+  * **Pathways & Networks**: `search_reactome`, `search_string`
+* **Workflow Resources & Prompts (Always Active)**:
+  * 6 production YAML workflows/configs (`bionexus://workflows/...`, `bionexus://configs/...`)
+  * 6 structured bioinformatic prompts (`drug_target_analysis`, `variant_pathogenicity`, etc.)
+* **Hosted Fallbacks (Opt-in Disaster Recovery via `BIONEXUS_LOCAL_HOSTED_FALLBACKS=1`)**:
+  * `search_pubmed`, `get_pubmed_article`, `search_biorxiv`, `search_chembl`, `search_opentargets`, `search_clinical_trials`, `search_cosmic` *(hidden by default to avoid duplicate tool routing with cloud endpoints)*
+
+### 2. Cloud-Hosted Streamable-HTTP Endpoints (10 Endpoints)
+* **NCBI PubMed**: `https://pubmed.mcp.claude.com/mcp`
+* **bioRxiv / medRxiv**: `https://hcls.mcp.claude.com/biorxiv/mcp`
+* **ChEMBL**: `https://hcls.mcp.claude.com/chembl/mcp`
+* **Open Targets**: `https://mcp.platform.opentargets.org/mcp`
+* **ClinicalTrials.gov**: `https://hcls.mcp.claude.com/clinical_trials/mcp`
+* **BioRender**: `https://mcp.services.biorender.com/mcp`
+* **Consensus AI**: `https://mcp.consensus.app/mcp`
+* **Wiley Online Library**: `https://connector.scholargateway.ai/mcp`
+* **Owkin Precision Medicine**: `https://mcp.k.owkin.com/mcp`
+* **Synapse**: `https://mcp.synapse.org/mcp`
+
+### 3. Optional Elevated Rate-Limit Credentials
+To raise rate limits or connect enterprise lab platforms, copy `.env.example` to `.env` and run:
+```bash
+python scripts/auth_helper.py --status
+```
+
+---
+
+## 🏛️ Architecture: Single Source of Truth (SSOT)
+
+All client configurations across Codex, Claude, Cursor, and Python packages are deterministically compiled from [`bionexus.registry.yaml`](bionexus.registry.yaml):stMCP) with deterministic, non-overlapping routing:
 
 ### 1. Local Stdio MCP Server (`bionexus-local-mcp`)
 *Zero API keys required for all core endpoints:*

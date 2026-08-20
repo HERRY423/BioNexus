@@ -62,7 +62,7 @@ backend: "<Primary execution engine>"  # Required: e.g. "scanpy", "squidpy", "sc
 
 AI coding agents need more than human-readable markdown: they need **machine-actionable scientific contracts** that specify *when an analysis is scientifically valid* and *when it is statistically/biologically invalid and must be refused*.
 
-In BioNexus, every biological capability defines a formal `CapabilityContract` ([`src/bionexus/capabilities.py`](file:///c:/Plugin/BioNexus/src/bionexus/capabilities.py)):
+In BioNexus, every biological capability defines a formal `CapabilityContract` ([`src/bionexus/capabilities.py`](../src/bionexus/capabilities.py)):
 
 ```yaml
 capability:
@@ -143,7 +143,7 @@ bionexus capability check scrna.pseudobulk_de --min-replicates 1
 
 ## 🚦 4. The 6-Stage Scientific Intent & Invariant Router
 
-BioNexus replaces static skill lookup with a validated 6-stage **Scientific Intent Routing Pipeline** ([`src/bionexus/intent_router.py`](file:///c:/Plugin/BioNexus/src/bionexus/intent_router.py)):
+BioNexus replaces static skill lookup with a validated 6-stage **Scientific Intent Routing Pipeline** ([`src/bionexus/intent_router.py`](../src/bionexus/intent_router.py)):
 
 ```text
 User Scientific Prompt ("compare tumor vs normal in my scRNA data")

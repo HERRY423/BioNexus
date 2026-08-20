@@ -78,6 +78,31 @@ BioNexus categorizes skills into clear lifecycle tiers:
 
 ---
 
+## 🔬 Scientific Rule Challenge & Closed-Loop Governance Lifecycle
+
+BioNexus treats scientific rules not as dogma, but as falsifiable empirical hypotheses. We encourage external researchers to challenge existing rules, propose biological counterexamples, and refine warrant boundaries.
+
+### The 7-Stage Governance Closed Loop
+
+```mermaid
+flowchart TD
+    Step1["1. External Rule Challenge\nSubmitted via Issue Form or Discussion\nwith Biological Context & Literature DOI"] --> Step2["2. Maintainer Triage\nClassified: Methodological Bug / Epistemic Incompleteness / Domain Counterexample"]
+    Step2 --> Step3["3. Domain Reviewer Assessment\nIndependent peer-evaluation of statistical assumptions & biological mechanism"]
+    Step3 --> Step4["4. Stress Benchmark & Counterexample Test\nAutomated evaluation case added to evals/ or tests/unit/"]
+    Step4 --> Step5["5. Warrant Rule / Invariant Refinement\nUpdate context_factors, exceptions, or epistemic ceilings in Rule Registry"]
+    Step5 --> Step6["6. Release Notes & Audit Evidence\nRule provenance updated with new citation and benchmark SHA-256 hash"]
+    Step6 --> Step7["7. Traceable Issue Closure\nOriginal issue closed with reference to passing test & updated rule ID"]
+```
+
+1. **Submit a Challenge**: Use the [Scientific Rule Challenge Form](.github/ISSUE_TEMPLATE/scientific_rule_challenge.yml) or open a thread in [GitHub Discussions](https://github.com/HERRY423/BioNexus/discussions).
+2. **Required Evidence**:
+   - Rule ID (e.g., `INV-001`, `INV-004`, `BN-F002`).
+   - Biological context (e.g., paired isogenic tumor vs normal, high-throughput combinatorial CRISPR screen).
+   - Peer-reviewed literature citation (with DOI).
+   - Proposed alternative formulation (e.g., context condition or biological exception).
+
+---
+
 ## 🛠️ Contributor Development Workflow
 
 ### 1. Fork and Clone the Repository
@@ -147,10 +172,10 @@ python scripts/goldchain_smoke.py
 ```
 
 ### 7. Governance, Versioning & Releases
-- **Semantic Versioning**: Adhere to [`docs/versioning-policy.md`](file:///c:/Plugin/BioNexus/docs/versioning-policy.md).
-- **Compatibility Matrix**: Verify platform & library support in [`docs/compatibility-matrix.md`](file:///c:/Plugin/BioNexus/docs/compatibility-matrix.md).
-- **Deprecation Rules**: Consult [`docs/deprecation-policy.md`](file:///c:/Plugin/BioNexus/docs/deprecation-policy.md).
-- **Changelog**: Add an entry under `## [Unreleased]` in [`CHANGELOG.md`](file:///c:/Plugin/BioNexus/CHANGELOG.md).
+- **Semantic Versioning**: Adhere to [`docs/versioning-policy.md`](docs/versioning-policy.md).
+- **Compatibility Matrix**: Verify platform & library support in [`docs/compatibility-matrix.md`](docs/compatibility-matrix.md).
+- **Deprecation Rules**: Consult [`docs/deprecation-policy.md`](docs/deprecation-policy.md).
+- **Changelog**: Add an entry under `## [Unreleased]` in [`CHANGELOG.md`](CHANGELOG.md).
 
 ### 8. Submit Your Pull Request
 Push your branch to GitHub and open a Pull Request against `main`. Ensure your PR description includes:
