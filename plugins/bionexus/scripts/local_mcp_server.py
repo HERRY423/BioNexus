@@ -1073,6 +1073,7 @@ async def tool_bionexus_host_probe(
         "plugin_version": event["plugin_version"],
         "git_commit": event["git_commit"],
         "git_dirty": event["git_dirty"],
+        "git_dirty_source": event["git_dirty_source"],
         "tool_catalog_sha256": event["tool_catalog_sha256"],
         "boundary": (
             "This receipt proves one local MCP server call and a tamper-evident log entry only; "

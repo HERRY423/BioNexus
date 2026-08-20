@@ -72,3 +72,15 @@ def test_git_helpers_use_explicit_executable_and_repo_local_ignore(monkeypatch, 
     assert calls[0][0][0] == r"D:\Git\cmd\git.exe"
     assert calls[1][0][0] == r"D:\Git\cmd\git.exe"
     assert calls[1][0][1:3] == ["-c", "core.excludesFile="]
+
+
+def test_configured_git_snapshot_is_explicit_and_fail_closed(monkeypatch, tmp_path):
+    monkeypatch.setenv("BIONEXUS_GIT_DIRTY", "false")
+    event = _append(tmp_path / "audit.jsonl")
+    assert event["git_dirty"] is False
+    assert event["git_dirty_source"] == "configured_snapshot"
+
+    monkeypatch.setenv("BIONEXUS_GIT_DIRTY", "not-a-boolean")
+    invalid = _append(tmp_path / "invalid.jsonl", session_id="ag-session-invalid")
+    assert invalid["git_dirty"] is None
+    assert invalid["git_dirty_source"] == "configured_snapshot"

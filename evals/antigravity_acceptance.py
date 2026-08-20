@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
@@ -49,6 +50,30 @@ EXPECTED_STATUS_BY_CASE = {
     "l2-claim-regulatory-overclaim-005": "ABSTAIN",
     "l2-claim-regulatory-honest-006": "PERMITTED",
 }
+
+
+def _local_git_state(repo_root: Path) -> Tuple[str | None, bool | None]:
+    """Independently verify a configured host snapshot at acceptance time."""
+    try:
+        head = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=repo_root,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        ).stdout.strip()
+        status = subprocess.run(
+            ["git", "-c", "core.excludesFile=", "status", "--porcelain", "--untracked-files=normal"],
+            cwd=repo_root,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        ).stdout.strip()
+        return head or None, bool(status)
+    except (OSError, subprocess.SubprocessError):
+        return None, None
 
 
 def build_request(dataset_path: Path) -> Dict[str, Any]:
@@ -151,6 +176,12 @@ def validate_live_run(
             errors.append("receipt is not bound to a git commit")
         if receipt.get("git_dirty") is not False:
             errors.append("receipt was produced from a dirty or unverifiable git worktree")
+        if receipt.get("git_dirty_source") == "configured_snapshot":
+            local_commit, local_dirty = _local_git_state(_REPO_ROOT)
+            if local_commit != receipt.get("git_commit"):
+                errors.append("configured receipt commit does not match the locally verified HEAD")
+            if local_dirty is not False:
+                errors.append("configured receipt snapshot is dirty or locally unverifiable")
 
     request_cases = {case["trap_id"]: case for case in request.get("cases", [])}
     records = run.get("records", [])
@@ -223,6 +254,7 @@ def build_live_report(run: Dict[str, Any], request: Dict[str, Any], receipt: Dic
         "mcp_tool_catalog_sha256": receipt["tool_catalog_sha256"],
         "git_commit": receipt["git_commit"],
         "git_dirty": receipt["git_dirty"],
+        "git_dirty_source": receipt.get("git_dirty_source", "legacy_unspecified"),
         "evidence_scope": "technical_host_integration_only",
         "biological_claim_status": "not_evaluated",
         "clinical_claim_status": "not_evaluated",

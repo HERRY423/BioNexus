@@ -88,6 +88,7 @@ work/
 .pytest_temp/
 .pytest_tmp/
 .pytest_tmp_run/
+.pytest_tmp_host_live_*/
 .bionexus-doctor.json
 .codex*
 .agents/mcp_config.json

@@ -3,6 +3,7 @@
 from datetime import datetime, timezone
 from pathlib import Path
 
+import evals.antigravity_acceptance as antigravity_acceptance
 from evals.antigravity_acceptance import (
     RUN_SCHEMA,
     build_live_report,
@@ -122,3 +123,20 @@ def test_changed_fixed_input_is_detected(tmp_path, monkeypatch):
 
     errors, _receipt_event = validate_live_run(run, request, audit_path)
     assert any("input_hash" in error for error in errors)
+
+
+def test_configured_snapshot_requires_independent_local_verification(tmp_path, monkeypatch):
+    request = build_request(REPO_ROOT / "evals" / "datasets" / "l2_agent_claims.yaml")
+    audit_path, event = _receipt(tmp_path, monkeypatch)
+    event["git_dirty_source"] = "configured_snapshot"
+    event["event_hash"] = mcp_host_audit._event_hash(event)
+    audit_path.write_text(mcp_host_audit.canonical_json(event) + "\n", encoding="utf-8")
+    run = _run(request, event)
+
+    monkeypatch.setattr(antigravity_acceptance, "_local_git_state", lambda _root: ("b" * 40, False))
+    errors, _receipt_event = validate_live_run(run, request, audit_path)
+    assert any("does not match" in error for error in errors)
+
+    monkeypatch.setattr(antigravity_acceptance, "_local_git_state", lambda _root: ("a" * 40, False))
+    errors, _receipt_event = validate_live_run(run, request, audit_path)
+    assert errors == []

@@ -106,6 +106,13 @@ def _git_commit(repo_root: Optional[Path]) -> str:
 
 
 def _git_dirty(repo_root: Optional[Path]) -> Optional[bool]:
+    configured = os.environ.get("BIONEXUS_GIT_DIRTY", "").strip().lower()
+    if configured:
+        if configured in {"false", "0", "no"}:
+            return False
+        if configured in {"true", "1", "yes"}:
+            return True
+        return None
     if repo_root is None:
         return None
     try:
@@ -172,6 +179,7 @@ def append_host_probe(
             raise ValueError("refusing to append to invalid audit chain: " + "; ".join(errors))
 
         previous_hash = events[-1]["event_hash"] if events else GENESIS_HASH
+        configured_dirty = bool(os.environ.get("BIONEXUS_GIT_DIRTY", "").strip())
         event: Dict[str, Any] = {
             "schema_version": AUDIT_SCHEMA,
             "sequence": len(events) + 1,
@@ -188,6 +196,7 @@ def append_host_probe(
             "server_version": server_version,
             "git_commit": _git_commit(repo_root),
             "git_dirty": _git_dirty(repo_root),
+            "git_dirty_source": "configured_snapshot" if configured_dirty else "git_status",
             "tool_catalog_sha256": sha256_json(list(tool_catalog)),
             "previous_event_hash": previous_hash,
         }
