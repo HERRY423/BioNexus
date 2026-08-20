@@ -35,11 +35,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `Design Identifiability?` $\to$ `Dispersion Estimability?` $\to$ `Uncertainty Quantified?` $\to$ `Power & Effect-Size Regime?` $\to$ `Claim Class Evaluated?` $\to$ `Evidence Ceiling Assigned`.
 - **Enriched Rule Provenance & Registry**: `RuleProvenance` (`src/bionexus/rule_provenance.py`), `src/bionexus/data/rule_registry.json`, and `review/SCIENTIFIC_RULE_CATALOG.json` now explicitly model `context_factors`, `biological_exceptions`, and peer-reviewed `literature_provenance` citations.
 
-### 🔬 Added (Flagship Capabilities Empirical Credibility Closed Loop — 12/14 Criteria / VALIDATED Tier)
+### 🔬 Added (Flagship Capabilities Empirical Credibility Closed Loop — VALIDATED Tier)
 
-- **10-Dimensional Spatial Validity Confounder Benchmark (`evals/spatial_stress_test.py`)**: actively tests 10 spatial confounder mechanisms: baseline, segmentation leakage, cell density, cell area morphology, nuclear eccentricity, tissue boundary effects, neighborhood radius sweep (15–100 $\mu m$), transcript spillover, FOV batch confounding, and coordinate permutation null.
-- **10-Dimensional Annotation Multimodal Evidence Benchmark (`evals/annotation_stress_test.py`)**: tests circular marker trap (BN-F002), negative marker lineage violations, independent reference mapping ($\ge 0.70$), CITE-seq surface protein concordance ($\ge 0.75 \to \text{ROBUST}$), discordant modalities (`CONFLICTED`), open-set gating (`ABSTAIN`), doublet artifacts, clustering resolution sweep, and adversarial overclaim interception.
-- **Elevation to VALIDATED Tier**: elevated `scrna.annotation_evidence` and `spatial.inference_validity` alongside `scrna.pseudobulk_de` to `VALIDATED` tier with 12/14 criteria satisfied.
+- **10-Dimensional Spatial Validity Confounder Benchmark (`evals/spatial_stress_test.py`)**: actively tests 10 spatial confounder mechanisms in synthetic technical acceptance track: baseline, segmentation leakage, cell density, cell area morphology, nuclear eccentricity, tissue boundary effects, neighborhood radius sweep (15–100 $\mu m$), transcript spillover, FOV batch confounding, and coordinate permutation null (10/14 criteria satisfied).
+- **10-Dimensional Annotation Multimodal Evidence Benchmark (`evals/annotation_stress_test.py`)**: tests circular marker trap (BN-F002), negative marker lineage violations, independent reference mapping ($\ge 0.70$), in-silico surface protein concordance ($\ge 0.75 \to \text{ROBUST}$), discordant modalities (`CONFLICTED`), open-set gating (`ABSTAIN`), doublet artifacts, clustering resolution sweep, and adversarial overclaim interception (10/14 criteria satisfied).
+- **Elevation to VALIDATED Tier**: elevated `scrna.pseudobulk_de` (12/14 criteria satisfied with real GEO GSE96583 data), alongside `scrna.annotation_evidence` (10/14) and `spatial.inference_validity` (10/14) under synthetic technical acceptance, to `VALIDATED` tier satisfying all 6 core criteria.
+
 
 ### 🚦 Changed (CI Matrix Overhaul — Zero `|| true`, Explicit Reliability Tiers)
 

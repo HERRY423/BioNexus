@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import importlib.metadata
 import platform
+import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -79,6 +80,103 @@ def capture_environment() -> Dict[str, Any]:
     return snapshot
 
 
+def get_git_info(repo_root: Optional[PathLike] = None) -> Dict[str, Any]:
+
+    """Retrieve git commit SHA and dirty status safely."""
+    commit = "unknown"
+    dirty = False
+    cwd = str(repo_root) if repo_root else None
+    try:
+        res = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            cwd=cwd,
+            timeout=5,
+        )
+        if res.returncode == 0:
+            commit = res.stdout.strip()
+    except Exception:
+        pass
+
+    try:
+        res_status = subprocess.run(
+            ["git", "status", "--porcelain"],
+            capture_output=True,
+            text=True,
+            cwd=cwd,
+            timeout=5,
+        )
+        if res_status.returncode == 0:
+            dirty = bool(res_status.stdout.strip())
+    except Exception:
+        pass
+
+    return {"commit_sha": commit, "dirty": dirty}
+
+
+def compute_lockfile_hash(repo_root: Optional[PathLike] = None) -> Dict[str, str]:
+    """Compute sha256 hashes of repository environment / lock files."""
+    root = Path(repo_root) if repo_root else Path(__file__).resolve().parents[2]
+    candidate_files = [
+        "pyproject.toml",
+        "requirements-dev.txt",
+        "requirements.txt",
+        "poetry.lock",
+        "Pipfile.lock",
+    ]
+    hashes: Dict[str, str] = {}
+    for name in candidate_files:
+        f = root / name
+        if f.is_file():
+            hashes[name] = sha256_file(f)
+    return hashes
+
+
+def capture_execution_provenance(
+    *,
+    data_source: str = "unknown",
+    download_date: Optional[str] = None,
+    repo_root: Optional[PathLike] = None,
+    generator_version: Optional[str] = None,
+    extra_metadata: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Capture full runtime execution provenance for validation reports.
+
+    Records:
+    - Data source & download/generation date
+    - Git commit SHA and dirty status
+    - Environment lockfile / dependency file hashes
+    - Full command line invocation (sys.argv)
+    - Report generator / code version
+    """
+    git_info = get_git_info(repo_root)
+    lock_hashes = compute_lockfile_hash(repo_root)
+
+    if generator_version is None:
+        try:
+            from bionexus.versions import VERSION
+            generator_version = VERSION
+        except Exception:
+            generator_version = "0.10.0"
+
+    now_iso = datetime.now(timezone.utc).isoformat()
+    return {
+        "data_source": data_source,
+        "download_date": download_date or now_iso,
+        "commit_sha": git_info["commit_sha"],
+        "git_dirty": git_info["dirty"],
+        "environment_lockfile_hashes": lock_hashes,
+        "command": sys.argv,
+        "command_str": " ".join(sys.argv),
+        "generator_version": generator_version,
+        "python_version": sys.version.split()[0],
+        "platform": platform.platform(),
+        "timestamp": now_iso,
+        "extra_metadata": extra_metadata or {},
+    }
+
+
 def sidecar(
     *,
     activity_name: str,
@@ -115,8 +213,10 @@ def sidecar(
         "input_files": _hash_existing(input_files or [], "input"),
         "output_files": _hash_existing(output_files or [], "output"),
         "environment_snapshot": capture_environment(),
+        "execution_provenance": capture_execution_provenance(),
         "compliance_note": (
             "SHA-256 + package versions for reproducibility. "
             "This is not 21 CFR Part 11, GxP, ALCOA+, or CLIA audit evidence."
         ),
     }
+

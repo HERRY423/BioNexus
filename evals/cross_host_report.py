@@ -21,6 +21,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from bionexus.versions import VERSION
+
 
 @dataclass
 class CrossHostExecutionRecord:
@@ -82,7 +84,7 @@ def generate_host_report(
     records: List[CrossHostExecutionRecord],
     host_name: str,
     host_version: str = "",
-    plugin_version: str = "0.10.0",
+    plugin_version: str = VERSION,
 ) -> Dict[str, Any]:
     """
     Generate a single-host REPORT.json from execution records.
@@ -133,10 +135,11 @@ def generate_host_report(
     }
 
 
+
 def generate_comparison_report(
     codex_report: Dict[str, Any],
     claude_report: Dict[str, Any],
-    plugin_version: str = "0.10.0",
+    plugin_version: str = VERSION,
 ) -> Dict[str, Any]:
     """
     Generate COMPARISON.json comparing two host execution reports.

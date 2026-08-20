@@ -103,16 +103,19 @@ jobs:
         shell: bash
         run: |
           python -m bionexus.cli doctor --require-scverse --require-spatial
-      - name: Run Complete Test Suite
-        shell: bash
-        run: |
-          pytest tests/ -v --ignore=tests/unit/test_scvi_smoke.py
-      - name: Run Flagship Empirical Stress Tests
+      - name: Run Flagship Empirical Stress Tests & Generate Artifacts
         shell: bash
         run: |
           python evals/pseudobulk_stress_test.py
           python evals/spatial_stress_test.py
           python evals/annotation_stress_test.py
+          python scripts/verify_validation_artifacts.py
+
+      - name: Run Complete Test Suite & Audit Validation Artifacts
+        shell: bash
+        run: |
+          pytest tests/ -v --ignore=tests/unit/test_scvi_smoke.py
+
       - name: Run Strict L3 Benchmark Eval (Skips Turn Red)
         shell: bash
         env:

@@ -35,13 +35,17 @@ if str(REPO_ROOT / "src") not in sys.path:
 import anndata as ad
 
 from bionexus.claim_checker import audit_prohibited_claims
+from bionexus.provenance import capture_execution_provenance, sha256_file
 from bionexus.pseudobulk_warrant import (
     InferentialRegime,
     evaluate_pseudobulk_inferential_warrant,
 )
+from bionexus.versions import VERSION
+from evals.flagship_validation import FLAGSHIP_DATASETS
 
 DATA_DIR = REPO_ROOT / "data" / "flagship" / "kang2018_pbmc_ifnb"
 OUTPUT_PATH = REPO_ROOT / "validation" / "pseudobulk" / "INFERENTIAL_STRESS_REPORT.json"
+VALIDATION_REPORT = REPO_ROOT / "validation" / "pseudobulk" / "REPORT.json"
 
 SCRIPT_DIR = REPO_ROOT / "skills" / "single-cell-rna-qc" / "scripts"
 if str(SCRIPT_DIR) not in sys.path:
@@ -387,6 +391,19 @@ def main() -> int:
     adata, truth = load_gse96583_data()
     print(f"Loaded GSE96583: {adata.n_obs} cells x {adata.n_vars} genes, {adata.obs['donor'].nunique()} donors.\n")
 
+    # Compute runtime checksums of the real GSE96583 files
+    h5ad_cs = sha256_file(DATA_DIR / "pbmc_ifnb_counts.h5ad")
+    truth_cs = sha256_file(DATA_DIR / "published_de_truth.csv")
+    acq_date = FLAGSHIP_DATASETS.get("kang2018_pbmc_ifnb", {}).get("acquisition_date", "2026-08-19T00:00:00+00:00")
+    prov = capture_execution_provenance(
+        data_source="GEO GSE96583 (Kang et al. 2018, Nat Biotechnol doi:10.1038/nbt.4042)",
+        download_date=acq_date,
+        repo_root=REPO_ROOT,
+        generator_version=VERSION,
+        extra_metadata={"n_cells": adata.n_obs, "n_donors": int(adata.obs["donor"].nunique())},
+    )
+
+
     # Run Dimension 1
     dim1 = test_dim1_public_reference(adata, truth)
     counts, design = aggregate_pseudobulk(adata)
@@ -408,6 +425,11 @@ def main() -> int:
         "schema_version": "1.0",
         "capability_id": "scrna.pseudobulk_de",
         "test_suite": "7_dimensional_inferential_stress_test",
+        "dataset_checksum_sha256": {
+            "pbmc_ifnb_counts.h5ad": h5ad_cs,
+            "published_de_truth.csv": truth_cs,
+        },
+        "provenance": prov,
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "elapsed_seconds": round(time.time() - start_time, 2),
         "overall_status": "PASS" if all_passed else "FAIL",
@@ -435,6 +457,7 @@ def main() -> int:
     print(f"Overall Result: {'ALL 7 DIMENSIONS PASSED' if all_passed else 'SOME DIMENSIONS FAILED'}")
 
     return 0 if all_passed else 1
+
 
 
 if __name__ == "__main__":

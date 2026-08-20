@@ -1,19 +1,45 @@
 {
   "capability": "spatial.inference_validity",
   "dataset": {
-    "name": "xenium_spatial_truth",
-    "version": "1.0",
-    "accession": "10x Genomics Xenium / Vizgen MERSCOPE public benchmark slice",
-    "checksum_sha256": "3a8b2f91e4d07c62b58ef1411b7a2d8329ecb7891fa39e6a718b5b821422780e"
+    "name": "spatial_synthetic_technical_acceptance",
+    "dataset_track": "synthetic_technical_acceptance",
+    "version": "1.0-synthetic",
+    "accession": "synthetic_technical_acceptance (in-silico manufactured spatial slice; not 10x Genomics Xenium / Vizgen MERSCOPE)",
+    "data_source": "in_silico_generator",
+    "checksum_sha256": "72dbb054e8c2a2b75160678c33782c25db2eeb7c265c4e6d3049ef49a6ec8762"
   },
   "pipeline": {
-    "version": "0.10.0",
+    "version": "1.0.0-rc.1",
     "backend_identity": {
       "capability_id": "spatial.inference_validity",
       "track": "canonical",
       "claimed_backend": "local deterministic alternative-explanation tester",
       "observed_backend": "bionexus",
       "state": "CONFORMANT"
+    },
+    "provenance": {
+      "data_source": "synthetic_generator (in-silico manufactured spatial slice)",
+      "download_date": "2026-08-20T12:40:14.303770+00:00",
+      "commit_sha": "db8ea304cc5fceef5d97b26c8a31400e1a810e33",
+      "git_dirty": true,
+      "environment_lockfile_hashes": {
+        "pyproject.toml": "8db6278b4c70ef63c55efd13bc39678d36c18981841e31ba4d54c77fbc02c036",
+        "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
+        "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
+      },
+      "command": [
+        "evals/spatial_stress_test.py"
+      ],
+      "command_str": "evals/spatial_stress_test.py",
+      "generator_version": "1.0.0-rc.1",
+      "python_version": "3.13.9",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "timestamp": "2026-08-20T12:40:14.428603+00:00",
+      "extra_metadata": {
+        "dataset_track": "synthetic_technical_acceptance",
+        "n_cells": 1000,
+        "n_genes": 200
+      }
     }
   },
   "metrics": [
@@ -42,7 +68,10 @@
       "result": "pass"
     }
   ],
-  "timestamp": "2026-08-20T08:00:05.982015+00:00",
+  "limitations": [
+    "Synthetic technical acceptance only: evaluated on in-silico spatial fixture; does not satisfy public_reference_dataset or independent_ground_truth external validation (BNS-010)."
+  ],
+  "timestamp": "2026-08-20T12:40:14.473705+00:00",
   "evidence_files": [
     "validation/spatial/INFERENTIAL_STRESS_REPORT.json"
   ],

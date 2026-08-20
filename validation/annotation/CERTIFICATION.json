@@ -2,8 +2,8 @@
   "schema_version": "1.0",
   "capability_id": "scrna.annotation_evidence",
   "certification_level": "VALIDATED",
-  "assessment_date": "2026-08-20",
-  "project_version": "0.10.0",
+  "assessment_date": "2026-08-19",
+  "project_version": "1.0.0-rc.1",
   "standards": [
     {
       "standard_id": "reference_backend",
@@ -49,15 +49,15 @@
     },
     {
       "standard_id": "public_reference_dataset",
-      "satisfied": true,
-      "evidence": "validation/annotation/REPORT.json -> dataset.accession = 10x Genomics CITE-seq PBMC (Hao et al. 2021); status pass",
-      "notes": "Executed on real multimodal CITE-seq benchmark (RNA markers + surface protein ADT modal channels)"
+      "satisfied": false,
+      "evidence": "validation/annotation/REPORT.json -> synthetic technical acceptance; no real CITE-seq dataset vendored or executed",
+      "notes": "Synthetic multimodal fixture only (synthetic technical acceptance); does not satisfy public reference dataset standard"
     },
     {
       "standard_id": "independent_ground_truth",
-      "satisfied": true,
-      "evidence": "evals/annotation_stress_test.py -> Orthogonal surface protein ADT modal data (CITE-seq) + negative lineage markers",
-      "notes": "Ground truth established orthogonally through surface antibody markers independent of RNA clustering"
+      "satisfied": false,
+      "evidence": "evals/annotation_stress_test.py -> in-silico synthetic fixture truth",
+      "notes": "Synthetic fixture truth generated alongside test; no independent external ground truth dataset executed"
     },
     {
       "standard_id": "parameter_perturbation",
@@ -92,14 +92,16 @@
   ],
   "summary": {
     "total_standards": 14,
-    "satisfied": 12,
-    "unsatisfied": 2,
+    "satisfied": 10,
+    "unsatisfied": 4,
     "unsatisfied_list": [
+      "public_reference_dataset",
+      "independent_ground_truth",
       "cross_host_test",
       "external_reviewer"
     ],
     "verdict": "VALIDATED",
-    "verdict_rationale": "12/14 criteria satisfied including all 6 core criteria plus multimodal public reference validation (CITE-seq executed, status pass), parameter perturbation, and degradation tests. 2 remain unsatisfied (cross-host test, external reviewer)."
+    "verdict_rationale": "10/14 criteria satisfied including all 6 core criteria plus adversarial test, parameter perturbation, degradation test, and provenance test. 4 remain unsatisfied (public reference dataset and independent ground truth revoked pending real CITE-seq dataset execution; cross-host test and external reviewer pending)."
   },
   "evidence_bundle": {
     "validation_report": "validation/annotation/REPORT.json",

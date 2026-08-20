@@ -27,6 +27,8 @@ if str(REPO_ROOT) not in sys.path:
 if str(REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(REPO_ROOT / "src"))
 
+from bionexus.provenance import capture_execution_provenance
+from bionexus.versions import VERSION
 from evals.flagship_validation import (
     FLAGSHIP_DATASETS,
     ValidationArtifact,
@@ -41,7 +43,7 @@ from evals.schema import EvalCase, EvalCategory, EvalLevel, ExpectedStatus
 
 VALIDATION_ROOT = REPO_ROOT / "validation"
 YAML_PATH = REPO_ROOT / "evals" / "datasets" / "flagship_validation.yaml"
-PIPELINE_VERSION = "0.10.0"
+PIPELINE_VERSION = VERSION
 
 
 def load_flagship_cases() -> List[EvalCase]:
@@ -236,12 +238,22 @@ def run_single_capability(
                 "note": "Available PBMC data; not the designated kang2018 flagship dataset",
             }
 
-    # Backend identity
+    # Backend identity & provenance
     backend_info = _resolve_backend_identity(capability)
+    prov = capture_execution_provenance(
+        data_source=manifest.get("source", "unknown"),
+        download_date=manifest.get("acquisition_date"),
+        repo_root=REPO_ROOT,
+        generator_version=PIPELINE_VERSION,
+        extra_metadata={"capability": capability, "dataset_id": dataset_id, "present": present},
+    )
+
     pipeline_info: Dict[str, Any] = {
         "version": PIPELINE_VERSION,
         "backend_identity": backend_info,
+        "provenance": prov,
     }
+
 
     # Metrics and limitations: reflect the actual execution state honestly.
     executed = bool(run_results) and not run_results[0].get("skipped") if run_results else False
@@ -271,13 +283,23 @@ def run_single_capability(
 
 
 def write_report(artifact: ValidationArtifact) -> Path:
-    """Write a ValidationArtifact as REPORT.json in the correct subdir."""
+    """Write a ValidationArtifact in the correct subdir.
+
+    If the flagship dataset is not present (status=skipped), writes FLAGSHIP_REPORT.json
+    to avoid clobbering the synthetic technical acceptance evidence REPORT.json.
+    """
     subdir = _capability_to_subdir(artifact.capability)
     target_dir = VALIDATION_ROOT / subdir
     target_dir.mkdir(parents=True, exist_ok=True)
+    if artifact.status == "skipped":
+        out_path = target_dir / "FLAGSHIP_REPORT.json"
+        out_path.write_text(artifact.to_json(), encoding="utf-8")
+        return out_path
     out_path = target_dir / "REPORT.json"
     out_path.write_text(artifact.to_json(), encoding="utf-8")
     return out_path
+
+
 
 
 def main() -> int:

@@ -53,6 +53,7 @@ FLAGSHIP_DATASETS: Dict[str, Dict[str, Any]] = {
             "knowledge of the type-I IFN response."
         ),
         "source": "GEO GSE96583; Kang et al. 2018 doi:10.1038/nbt.4042",
+        "acquisition_date": "2026-08-19T00:00:00+00:00",
         "required_files": ["pbmc_ifnb_counts.h5ad", "published_de_truth.csv"],
         "notes": (
             "h5ad must carry raw integer counts with obs columns 'donor' and "

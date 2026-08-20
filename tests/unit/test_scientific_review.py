@@ -65,10 +65,13 @@ class TestScientificReviewSchema:
 
     def test_project_metadata(self, scientific_review):
         """Project name and version must be present."""
+        from bionexus.versions import VERSION
+
         assert "project" in scientific_review
         assert scientific_review["project"] == "bionexus-reliability"
         assert "project_version" in scientific_review
-        assert scientific_review["project_version"] == "0.10.0"
+        assert scientific_review["project_version"] == VERSION
+
 
     def test_review_date_present(self, scientific_review):
         """Review date must be declared in ISO format."""

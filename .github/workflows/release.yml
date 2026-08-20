@@ -86,6 +86,17 @@ jobs:
           pytest tests/unit/ -q -p no:cacheprovider --ignore=tests/unit/test_scvi_smoke.py
 
       # -------------------------------------------------------------------
+      # Gate 3: validation artifacts & provenance audit
+      # -------------------------------------------------------------------
+      - name: Validation Artifacts & Stress Benchmark Audit
+        run: |
+          python evals/annotation_stress_test.py
+          python evals/spatial_stress_test.py
+          python scripts/verify_validation_artifacts.py
+          pytest tests/unit/test_validation_verifier.py tests/unit/test_validation_artifacts.py tests/unit/test_certification.py -q
+
+
+      # -------------------------------------------------------------------
       # Gate 4: strict benchmark on the source tree.
       # flagship_validation is excluded (disclosed): its real external
       # datasets require manual acquisition and are absent in CI.
@@ -93,6 +104,7 @@ jobs:
       - name: Strict Benchmark (source)
         run: |
           python -m bionexus.cli eval --strict --exclude flagship_validation --report dist/benchmark_report.md
+
 
       # -------------------------------------------------------------------
       # Gate 5: build the artifacts that will actually ship

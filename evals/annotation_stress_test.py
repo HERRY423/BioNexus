@@ -1,8 +1,9 @@
 """
-BioNexus 10-Dimensional Cell Annotation Evidence & Multimodal Benchmark Suite.
+BioNexus 10-Dimensional Cell Annotation Evidence Benchmark Suite.
+Track: Synthetic Technical Acceptance (In-Silico Multimodal Benchmark).
 
 Tests the full evidence hierarchy and epistemic gating for cell type annotation:
-1. Public Reference Baseline (Multimodal CITE-seq PBMC RNA + Protein ADT data)
+1. Synthetic Technical Acceptance Baseline (Multimodal in-silico CITE-seq fixture)
 2. Circular Marker Reasoning Trap (BN-F002: Marker-only expression capped at TENTATIVE)
 3. Negative Marker Lineage Violation (Lineage-exclusive markers express -> blocked)
 4. Independent Reference Atlas Mapping (Transfer score >= 0.70 -> SUPPORTED)
@@ -44,19 +45,19 @@ from bionexus.annotation_evidence import (
     assess_annotation_evidence,
 )
 from bionexus.claim_checker import audit_prohibited_claims
+from bionexus.provenance import capture_execution_provenance, sha256_file
+from bionexus.versions import VERSION
 
-DATA_DIR = REPO_ROOT / "data" / "flagship" / "citeseq_pbmc_sorted"
+SYNTHETIC_DATA_DIR = REPO_ROOT / "validation" / "annotation" / "evidence"
+SYNTHETIC_H5AD_PATH = SYNTHETIC_DATA_DIR / "citeseq_synthetic_technical_acceptance.h5ad"
 OUTPUT_REPORT = REPO_ROOT / "validation" / "annotation" / "INFERENTIAL_STRESS_REPORT.json"
 VALIDATION_REPORT = REPO_ROOT / "validation" / "annotation" / "REPORT.json"
 
 
-def generate_or_load_citeseq_dataset() -> ad.AnnData:
-    """Load or generate a standardized multimodal benchmark PBMC dataset."""
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    h5ad_path = DATA_DIR / "citeseq_pbmc.h5ad"
-
-    if h5ad_path.is_file():
-        return ad.read_h5ad(h5ad_path)
+def generate_synthetic_citeseq_dataset(output_path: Path | None = None) -> ad.AnnData:
+    """Generate a standardized multimodal synthetic technical acceptance benchmark PBMC dataset."""
+    target_path = output_path or SYNTHETIC_H5AD_PATH
+    target_path.parent.mkdir(parents=True, exist_ok=True)
 
     # 1,200 cells x 300 genes + 10 surface protein channels
     rng = np.random.default_rng(42)
@@ -117,17 +118,28 @@ def generate_or_load_citeseq_dataset() -> ad.AnnData:
         obsm={"protein": adt_counts},
     )
 
-    adata.write_h5ad(h5ad_path)
-    print(f"Saved benchmark CITE-seq dataset to {h5ad_path.relative_to(REPO_ROOT)}")
+    adata.write_h5ad(target_path)
+    print(f"Generated synthetic benchmark CITE-seq dataset: {target_path.relative_to(REPO_ROOT)}")
     return adata
 
 
 # ==============================================================================
-# Dimension 1: Public Reference Benchmark Baseline
+# Dimension 1: Synthetic Technical Acceptance Baseline
 # ==============================================================================
 
 def test_dim1_reference_baseline(adata: ad.AnnData) -> Dict[str, Any]:
-    print("  [Dim 1] Running Public Reference Baseline (CITE-seq Multimodal)...")
+    print("  [Dim 1] Running Synthetic Technical Acceptance Baseline (CITE-seq Multimodal Fixture)...")
+    has_prot = "protein" in adata.obsm
+    passed = adata.n_obs == 1200 and has_prot
+    return {
+        "dimension": "1_synthetic_technical_acceptance_baseline",
+        "dataset_track": "synthetic_technical_acceptance",
+        "n_cells": int(adata.n_obs),
+        "n_genes": int(adata.n_vars),
+        "protein_channels": int(adata.obsm["protein"].shape[1]),
+        "passed": passed,
+    }
+
     has_prot = "protein" in adata.obsm
     passed = adata.n_obs == 1200 and has_prot
     return {
@@ -349,12 +361,22 @@ def test_dim10_claim_interception() -> Dict[str, Any]:
 
 def main() -> int:
     print("=" * 75)
-    print("BioNexus 10-Dimensional Cell Annotation Evidence Benchmark")
+    print("BioNexus 10-Dimensional Cell Annotation Evidence Benchmark (Synthetic Technical Acceptance)")
     print("=" * 75)
     start_time = time.time()
 
-    adata = generate_or_load_citeseq_dataset()
-    print(f"Loaded multimodal benchmark: {adata.n_obs} cells x {adata.n_vars} genes.\n")
+    adata = generate_synthetic_citeseq_dataset()
+    print(f"Generated multimodal benchmark fixture: {adata.n_obs} cells x {adata.n_vars} genes.\n")
+
+    # Compute runtime checksum and provenance
+    dataset_checksum = sha256_file(SYNTHETIC_H5AD_PATH)
+    prov = capture_execution_provenance(
+        data_source="synthetic_generator (in-silico generated multimodal fixture)",
+        download_date=datetime.now(timezone.utc).isoformat(),
+        repo_root=REPO_ROOT,
+        generator_version=VERSION,
+        extra_metadata={"dataset_track": "synthetic_technical_acceptance", "n_cells": adata.n_obs, "n_genes": adata.n_vars},
+    )
 
     dim1 = test_dim1_reference_baseline(adata)
     dim2 = test_dim2_circular_marker_trap()
@@ -373,7 +395,10 @@ def main() -> int:
     report = {
         "schema_version": "1.0",
         "capability_id": "scrna.annotation_evidence",
-        "test_suite": "10_dimensional_annotation_evidence_benchmark",
+        "test_suite": "10_dimensional_annotation_evidence_synthetic_benchmark",
+        "dataset_track": "synthetic_technical_acceptance",
+        "dataset_checksum_sha256": dataset_checksum,
+        "provenance": prov,
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "elapsed_seconds": round(time.time() - start_time, 2),
         "overall_status": "PASS" if all_passed else "FAIL",
@@ -386,17 +411,28 @@ def main() -> int:
     OUTPUT_REPORT.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"\nWritten complete stress test report to {OUTPUT_REPORT.relative_to(REPO_ROOT)}")
 
-    # Also update standard validation REPORT.json
+    # Standard validation REPORT.json (explicitly labeled synthetic technical acceptance)
+    metrics = [
+        {"name": "distrust_under_evidenced", "expected": "TENTATIVE", "observed": dim2["verdict"], "result": "pass" if dim2["passed"] else "fail"},
+        {"name": "negative_marker_violation", "expected": "TENTATIVE", "observed": dim3["verdict"], "result": "pass" if dim3["passed"] else "fail"},
+        {"name": "orthogonal_protein_robust", "expected": "ROBUST", "observed": dim5["verdict"], "result": "pass" if dim5["passed"] else "fail"},
+        {"name": "open_set_abstain", "expected": "ABSTAIN", "observed": dim7["verdict"], "result": "pass" if dim7["passed"] else "fail"},
+        {"name": "discordant_conflicted", "expected": "CONFLICTED", "observed": dim6["verdict"], "result": "pass" if dim6["passed"] else "fail"},
+    ]
+    all_metrics_pass = all(m["result"] == "pass" for m in metrics)
+
     val_report = {
         "capability": "scrna.annotation_evidence",
         "dataset": {
-            "name": "citeseq_pbmc_sorted",
-            "version": "1.0",
-            "accession": "10x Genomics CITE-seq PBMC multimodal reference (Hao et al. 2021)",
-            "checksum_sha256": "7d9e4a11b6c08e52a48ef2311b7a2d8329ecb7891fa39e6a718b5b821422990f",
+            "name": "citeseq_synthetic_technical_acceptance",
+            "dataset_track": "synthetic_technical_acceptance",
+            "version": "1.0-synthetic",
+            "accession": "synthetic_technical_acceptance (in-silico generated multimodal fixture; not 10x Genomics / Hao et al. 2021)",
+            "data_source": "in_silico_generator",
+            "checksum_sha256": dataset_checksum,
         },
         "pipeline": {
-            "version": "0.10.0",
+            "version": VERSION,
             "backend_identity": {
                 "capability_id": "scrna.annotation_evidence",
                 "track": "canonical",
@@ -404,18 +440,19 @@ def main() -> int:
                 "observed_backend": "bionexus",
                 "state": "CONFORMANT",
             },
+            "provenance": prov,
         },
-        "metrics": [
-            {"name": "distrust_under_evidenced", "expected": "TENTATIVE", "observed": "TENTATIVE", "result": "pass"},
-            {"name": "negative_marker_violation", "expected": "TENTATIVE", "observed": "TENTATIVE", "result": "pass"},
-            {"name": "orthogonal_protein_robust", "expected": "ROBUST", "observed": "ROBUST", "result": "pass"},
-            {"name": "open_set_abstain", "expected": "ABSTAIN", "observed": "ABSTAIN", "result": "pass"},
-            {"name": "discordant_conflicted", "expected": "CONFLICTED", "observed": "CONFLICTED", "result": "pass"},
+        "metrics": metrics,
+        "limitations": [
+            "Synthetic technical acceptance only: evaluated on in-silico multimodal fixture; does not satisfy public_reference_dataset or independent_ground_truth external validation (BNS-010).",
         ],
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "evidence_files": ["validation/annotation/INFERENTIAL_STRESS_REPORT.json"],
-        "status": "pass",
+        "evidence_files": [
+            "validation/annotation/INFERENTIAL_STRESS_REPORT.json",
+        ],
+        "status": "pass" if (all_passed and all_metrics_pass) else "fail",
     }
+
     VALIDATION_REPORT.parent.mkdir(parents=True, exist_ok=True)
     VALIDATION_REPORT.write_text(json.dumps(val_report, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"Written validation report to {VALIDATION_REPORT.relative_to(REPO_ROOT)}")
@@ -433,3 +470,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+

@@ -2,8 +2,8 @@
   "schema_version": "1.0",
   "capability_id": "spatial.inference_validity",
   "certification_level": "VALIDATED",
-  "assessment_date": "2026-08-20",
-  "project_version": "0.10.0",
+  "assessment_date": "2026-08-19",
+  "project_version": "1.0.0-rc.1",
   "standards": [
     {
       "standard_id": "reference_backend",
@@ -49,15 +49,15 @@
     },
     {
       "standard_id": "public_reference_dataset",
-      "satisfied": true,
-      "evidence": "validation/spatial/REPORT.json -> dataset.accession = 10x Genomics Xenium / Vizgen MERSCOPE; status pass",
-      "notes": "Executed on real spatial benchmark slice with physical coordinates and morphological covariates"
+      "satisfied": false,
+      "evidence": "validation/spatial/REPORT.json -> synthetic technical acceptance; no real Xenium/MERSCOPE dataset vendored or executed",
+      "notes": "Synthetic spatial fixture only (synthetic technical acceptance); does not satisfy public reference dataset standard"
     },
     {
       "standard_id": "independent_ground_truth",
-      "satisfied": true,
-      "evidence": "evals/spatial_stress_test.py -> Coordinate permutation null model + physical distance truth set",
-      "notes": "Ground truth established independently via coordinate permutation null and geometric distance baselines"
+      "satisfied": false,
+      "evidence": "evals/spatial_stress_test.py -> in-silico permutation/distance truth",
+      "notes": "Synthetic permutation/distance truth generated alongside test; no independent external ground truth dataset executed"
     },
     {
       "standard_id": "parameter_perturbation",
@@ -92,14 +92,16 @@
   ],
   "summary": {
     "total_standards": 14,
-    "satisfied": 12,
-    "unsatisfied": 2,
+    "satisfied": 10,
+    "unsatisfied": 4,
     "unsatisfied_list": [
+      "public_reference_dataset",
+      "independent_ground_truth",
       "cross_host_test",
       "external_reviewer"
     ],
     "verdict": "VALIDATED",
-    "verdict_rationale": "12/14 criteria satisfied including all 6 core criteria plus 10-dimensional spatial confounder benchmark (Xenium/MERSCOPE benchmark executed, status pass), parameter perturbation, and degradation tests. 2 remain unsatisfied (cross-host test, external reviewer)."
+    "verdict_rationale": "10/14 criteria satisfied including all 6 core criteria plus adversarial test, parameter perturbation, degradation test, and provenance test. 4 remain unsatisfied (public reference dataset and independent ground truth revoked pending real Xenium dataset execution; cross-host test and external reviewer pending)."
   },
   "evidence_bundle": {
     "validation_report": "validation/spatial/REPORT.json",

@@ -1,8 +1,9 @@
 """
 BioNexus 10-Dimensional Spatial Validity & Confounder Benchmark Suite.
+Track: Synthetic Technical Acceptance (In-Silico Spatial Benchmark).
 
 Actively manufactures and tests the 10 canonical spatial alternative explanations:
-1. Public Reference Dataset Baseline (Physical spatial coordinates & gene expression)
+1. Synthetic Technical Acceptance Baseline (In-silico spatial coordinates & gene expression)
 2. Segmentation Leakage Confounder (Inter-cellular transcript diffusion)
 3. Cell-Density Confounding (Local packing density driving pseudo-enrichment)
 4. Morphology & Cell Size Bias (Cell area scaling total UMI counts)
@@ -45,22 +46,22 @@ if str(REPO_ROOT / "src") not in sys.path:
 import anndata as ad
 from scipy import sparse
 
+from bionexus.provenance import capture_execution_provenance, sha256_file
 from bionexus.spatial_inference import (
     assess_spatial_inference,
 )
+from bionexus.versions import VERSION
 
-DATA_DIR = REPO_ROOT / "data" / "flagship" / "xenium_spatial_truth"
+SYNTHETIC_DATA_DIR = REPO_ROOT / "validation" / "spatial" / "evidence"
+SYNTHETIC_H5AD_PATH = SYNTHETIC_DATA_DIR / "spatial_synthetic_technical_acceptance.h5ad"
 OUTPUT_REPORT = REPO_ROOT / "validation" / "spatial" / "INFERENTIAL_STRESS_REPORT.json"
 VALIDATION_REPORT = REPO_ROOT / "validation" / "spatial" / "REPORT.json"
 
 
-def generate_or_load_spatial_dataset() -> ad.AnnData:
-    """Load or generate a standardized benchmark spatial transcriptomics slice."""
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    h5ad_path = DATA_DIR / "spatial_truth.h5ad"
-
-    if h5ad_path.is_file():
-        return ad.read_h5ad(h5ad_path)
+def generate_synthetic_spatial_dataset(output_path: Path | None = None) -> ad.AnnData:
+    """Generate a standardized benchmark synthetic spatial transcriptomics slice."""
+    target_path = output_path or SYNTHETIC_H5AD_PATH
+    target_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Generate realistic spatial benchmark with 1,000 cells x 200 genes
     rng = np.random.default_rng(42)
@@ -108,33 +109,35 @@ def generate_or_load_spatial_dataset() -> ad.AnnData:
         obsm={"spatial": coords},
     )
 
-    adata.write_h5ad(h5ad_path)
-    print(f"Saved benchmark spatial dataset to {h5ad_path.relative_to(REPO_ROOT)}")
+    adata.write_h5ad(target_path)
+    print(f"Generated synthetic benchmark spatial dataset: {target_path.relative_to(REPO_ROOT)}")
     return adata
 
 
 # ==============================================================================
-# Dimension 1: Public Reference Benchmark
+# Dimension 1: Synthetic Technical Acceptance Baseline
 # ==============================================================================
 
 def test_dim1_baseline(adata: ad.AnnData) -> Dict[str, Any]:
-    print("  [Dim 1] Running Public Reference Spatial Baseline...")
+    print("  [Dim 1] Running Synthetic Technical Acceptance Spatial Baseline...")
     n_cells = adata.n_obs
     coords = adata.obsm["spatial"]
     has_coords = coords is not None and coords.shape[0] == n_cells
 
-    # Baseline with no controls evaluates to FRAGILE (honest default)
+    # Baseline with no controls evaluates to FRAGILE / ABSTAIN (honest default)
     verdict_uncontrolled = assess_spatial_inference("SVG_0 gradient across x-axis", controls=None)
     passed = has_coords and verdict_uncontrolled.verdict == "ABSTAIN"
 
     return {
-        "dimension": "1_public_reference_baseline",
+        "dimension": "1_synthetic_technical_acceptance_baseline",
+        "dataset_track": "synthetic_technical_acceptance",
         "n_cells": int(n_cells),
         "n_genes": int(adata.n_vars),
         "spatial_coordinates_present": bool(has_coords),
         "uncontrolled_verdict": verdict_uncontrolled.verdict,
         "passed": passed,
     }
+
 
 
 # ==============================================================================
@@ -391,12 +394,22 @@ def test_dim10_permutation_null(adata: ad.AnnData) -> Dict[str, Any]:
 
 def main() -> int:
     print("=" * 75)
-    print("BioNexus 10-Dimensional Spatial Validity & Confounder Benchmark")
+    print("BioNexus 10-Dimensional Spatial Validity & Confounder Benchmark (Synthetic Technical Acceptance)")
     print("=" * 75)
     start_time = time.time()
 
-    adata = generate_or_load_spatial_dataset()
-    print(f"Loaded spatial benchmark: {adata.n_obs} cells x {adata.n_vars} genes.\n")
+    adata = generate_synthetic_spatial_dataset()
+    print(f"Generated spatial benchmark fixture: {adata.n_obs} cells x {adata.n_vars} genes.\n")
+
+    # Compute runtime checksum and provenance
+    dataset_checksum = sha256_file(SYNTHETIC_H5AD_PATH)
+    prov = capture_execution_provenance(
+        data_source="synthetic_generator (in-silico manufactured spatial slice)",
+        download_date=datetime.now(timezone.utc).isoformat(),
+        repo_root=REPO_ROOT,
+        generator_version=VERSION,
+        extra_metadata={"dataset_track": "synthetic_technical_acceptance", "n_cells": adata.n_obs, "n_genes": adata.n_vars},
+    )
 
     dim1 = test_dim1_baseline(adata)
     dim2 = test_dim2_segmentation_leakage(adata)
@@ -415,7 +428,10 @@ def main() -> int:
     report = {
         "schema_version": "1.0",
         "capability_id": "spatial.inference_validity",
-        "test_suite": "10_dimensional_spatial_validity_confounder_benchmark",
+        "test_suite": "10_dimensional_spatial_validity_synthetic_benchmark",
+        "dataset_track": "synthetic_technical_acceptance",
+        "dataset_checksum_sha256": dataset_checksum,
+        "provenance": prov,
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "elapsed_seconds": round(time.time() - start_time, 2),
         "overall_status": "PASS" if all_passed else "FAIL",
@@ -428,17 +444,27 @@ def main() -> int:
     OUTPUT_REPORT.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"\nWritten complete stress test report to {OUTPUT_REPORT.relative_to(REPO_ROOT)}")
 
-    # Also update standard validation REPORT.json
+    # Standard validation REPORT.json (explicitly labeled synthetic technical acceptance)
+    metrics = [
+        {"name": "confounder_leakage_detection", "expected": "ABSTAIN", "observed": dim2["warrant_verdict"], "result": "pass" if dim2["passed"] else "fail"},
+        {"name": "cell_density_confounding", "expected": "ABSTAIN", "observed": dim3["confounded_verdict"], "result": "pass" if dim3["passed"] else "fail"},
+        {"name": "radius_perturbation_fragile", "expected": "FRAGILE", "observed": dim7["untested_radius_verdict"], "result": "pass" if dim7["passed"] else "fail"},
+        {"name": "permutation_null_robust", "expected": "ROBUST", "observed": dim10["with_permutation_null_verdict"], "result": "pass" if dim10["passed"] else "fail"},
+    ]
+    all_metrics_pass = all(m["result"] == "pass" for m in metrics)
+
     val_report = {
         "capability": "spatial.inference_validity",
         "dataset": {
-            "name": "xenium_spatial_truth",
-            "version": "1.0",
-            "accession": "10x Genomics Xenium / Vizgen MERSCOPE public benchmark slice",
-            "checksum_sha256": "3a8b2f91e4d07c62b58ef1411b7a2d8329ecb7891fa39e6a718b5b821422780e",
+            "name": "spatial_synthetic_technical_acceptance",
+            "dataset_track": "synthetic_technical_acceptance",
+            "version": "1.0-synthetic",
+            "accession": "synthetic_technical_acceptance (in-silico manufactured spatial slice; not 10x Genomics Xenium / Vizgen MERSCOPE)",
+            "data_source": "in_silico_generator",
+            "checksum_sha256": dataset_checksum,
         },
         "pipeline": {
-            "version": "0.10.0",
+            "version": VERSION,
             "backend_identity": {
                 "capability_id": "spatial.inference_validity",
                 "track": "canonical",
@@ -446,16 +472,17 @@ def main() -> int:
                 "observed_backend": "bionexus",
                 "state": "CONFORMANT",
             },
+            "provenance": prov,
         },
-        "metrics": [
-            {"name": "confounder_leakage_detection", "expected": "ABSTAIN", "observed": "ABSTAIN", "result": "pass"},
-            {"name": "cell_density_confounding", "expected": "ABSTAIN", "observed": "ABSTAIN", "result": "pass"},
-            {"name": "radius_perturbation_fragile", "expected": "FRAGILE", "observed": "FRAGILE", "result": "pass"},
-            {"name": "permutation_null_robust", "expected": "ROBUST", "observed": "ROBUST", "result": "pass"},
+        "metrics": metrics,
+        "limitations": [
+            "Synthetic technical acceptance only: evaluated on in-silico spatial fixture; does not satisfy public_reference_dataset or independent_ground_truth external validation (BNS-010).",
         ],
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "evidence_files": ["validation/spatial/INFERENTIAL_STRESS_REPORT.json"],
-        "status": "pass",
+        "evidence_files": [
+            "validation/spatial/INFERENTIAL_STRESS_REPORT.json",
+        ],
+        "status": "pass" if (all_passed and all_metrics_pass) else "fail",
     }
     VALIDATION_REPORT.parent.mkdir(parents=True, exist_ok=True)
     VALIDATION_REPORT.write_text(json.dumps(val_report, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -474,3 +501,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+

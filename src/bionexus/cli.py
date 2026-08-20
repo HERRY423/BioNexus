@@ -2441,7 +2441,18 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_sec_sbom = sec_subs.add_parser("sbom", help="Generate CycloneDX Software Bill of Materials (SBOM)")
     p_sec_sbom.add_argument("-o", "--output", default="sbom.json", help="Output JSON path (default: sbom.json)")
 
+    # 16. verify-artifacts (Validation Artifacts & Certification Verifier)
+    p_verify_art = subparsers.add_parser(
+        "verify-artifacts",
+        aliases=["verify_validation_artifacts"],
+        help="Verify validation artifacts, checksums, provenance, and certification consistency",
+    )
+    p_verify_art.add_argument("--root", type=Path, default=None, help="Repository root path")
+    p_verify_art.add_argument("--enforce-version", type=str, default=None, help="Enforce specific version string")
+    p_verify_art.add_argument("--json", action="store_true", help="Output result as JSON")
+
     args = parser.parse_args(argv)
+
 
     if not args.command:
         parser.print_help()
@@ -2540,8 +2551,20 @@ def main(argv: Optional[list[str]] = None) -> int:
             p_security.print_help()
             return 0
         return handle_security(args)
+    elif args.command in ("verify-artifacts", "verify_validation_artifacts"):
+        from bionexus.validation_verifier import verify_validation_artifacts
+
+        repo_root = getattr(args, "root", None)
+        enforce_ver = getattr(args, "enforce_version", None)
+        res = verify_validation_artifacts(repo_root=repo_root, enforce_version=enforce_ver)
+        if getattr(args, "json", False):
+            print(json.dumps(res.to_dict(), indent=2, ensure_ascii=False))
+        else:
+            print(res.summary_str())
+        return 0 if res.passed else 1
 
     return 0
+
 
 
 if __name__ == "__main__":

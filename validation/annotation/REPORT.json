@@ -1,19 +1,45 @@
 {
   "capability": "scrna.annotation_evidence",
   "dataset": {
-    "name": "citeseq_pbmc_sorted",
-    "version": "1.0",
-    "accession": "10x Genomics CITE-seq PBMC multimodal reference (Hao et al. 2021)",
-    "checksum_sha256": "7d9e4a11b6c08e52a48ef2311b7a2d8329ecb7891fa39e6a718b5b821422990f"
+    "name": "citeseq_synthetic_technical_acceptance",
+    "dataset_track": "synthetic_technical_acceptance",
+    "version": "1.0-synthetic",
+    "accession": "synthetic_technical_acceptance (in-silico generated multimodal fixture; not 10x Genomics / Hao et al. 2021)",
+    "data_source": "in_silico_generator",
+    "checksum_sha256": "d3ecbf0e65a40e783c1c80ef4e9c21872cf0d8b8544de48ec5c9f7c32fa24bed"
   },
   "pipeline": {
-    "version": "0.10.0",
+    "version": "1.0.0-rc.1",
     "backend_identity": {
       "capability_id": "scrna.annotation_evidence",
       "track": "canonical",
       "claimed_backend": "local deterministic evidence combiner",
       "observed_backend": "bionexus",
       "state": "CONFORMANT"
+    },
+    "provenance": {
+      "data_source": "synthetic_generator (in-silico generated multimodal fixture)",
+      "download_date": "2026-08-20T12:40:10.280044+00:00",
+      "commit_sha": "db8ea304cc5fceef5d97b26c8a31400e1a810e33",
+      "git_dirty": true,
+      "environment_lockfile_hashes": {
+        "pyproject.toml": "8db6278b4c70ef63c55efd13bc39678d36c18981841e31ba4d54c77fbc02c036",
+        "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
+        "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
+      },
+      "command": [
+        "evals/annotation_stress_test.py"
+      ],
+      "command_str": "evals/annotation_stress_test.py",
+      "generator_version": "1.0.0-rc.1",
+      "python_version": "3.13.9",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "timestamp": "2026-08-20T12:40:10.400197+00:00",
+      "extra_metadata": {
+        "dataset_track": "synthetic_technical_acceptance",
+        "n_cells": 1200,
+        "n_genes": 300
+      }
     }
   },
   "metrics": [
@@ -48,7 +74,10 @@
       "result": "pass"
     }
   ],
-  "timestamp": "2026-08-20T08:00:38.530140+00:00",
+  "limitations": [
+    "Synthetic technical acceptance only: evaluated on in-silico multimodal fixture; does not satisfy public_reference_dataset or independent_ground_truth external validation (BNS-010)."
+  ],
+  "timestamp": "2026-08-20T12:40:10.432700+00:00",
   "evidence_files": [
     "validation/annotation/INFERENTIAL_STRESS_REPORT.json"
   ],
