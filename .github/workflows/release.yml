@@ -144,16 +144,18 @@ jobs:
           python -c "
           import json, pathlib
           v = '$RELEASE_VERSION'
-          for name in ('plugin.json', 'mcp.json'):
-              data = json.loads(pathlib.Path(name).read_text(encoding='utf-8'))
-              if not isinstance(data, dict) or not data.get('name'):
-                  raise SystemExit(f'[BLOCK] {name} is not a valid manifest (missing name)')
-              print(f'[OK] {name} is valid JSON with name={data[\"name\"]}')
-          pkg = json.loads(pathlib.Path('plugin.json').read_text(encoding='utf-8'))
-          pv = str(pkg.get('version', ''))
+          plugin_data = json.loads(pathlib.Path('plugin.json').read_text(encoding='utf-8'))
+          if not isinstance(plugin_data, dict) or not plugin_data.get('name'):
+              raise SystemExit('[BLOCK] plugin.json is not a valid manifest (missing name)')
+          pv = str(plugin_data.get('version', ''))
           if pv and pv != v:
               raise SystemExit(f'[BLOCK] plugin.json version {pv} != release version {v}')
-          print(f'[OK] plugin manifest version locked to {v}')
+          print(f'[OK] plugin.json is valid with name={plugin_data[\"name\"]} and version={pv}')
+
+          mcp_data = json.loads(pathlib.Path('mcp.json').read_text(encoding='utf-8'))
+          if not isinstance(mcp_data, dict) or not mcp_data.get('mcpServers'):
+              raise SystemExit('[BLOCK] mcp.json is not a valid manifest (missing mcpServers)')
+          print(f'[OK] mcp.json is valid with {len(mcp_data[\"mcpServers\"])} mcpServers')
           "
 
       - name: Generate SHA-256 Checksums
