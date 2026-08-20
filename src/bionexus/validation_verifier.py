@@ -1,12 +1,14 @@
-﻿"""Unified validation artifact and certification integrity verifier (BNS-010, BNS-015).
+"""Unified validation artifact and certification integrity verifier (BNS-010, BNS-015).
 
 Checks:
-1. File existence (REPORT.json, INFERENTIAL_STRESS_REPORT.json, CERTIFICATION.json, and referenced evidence files).
-2. Runtime SHA-256 checksums match observed file contents.
-3. Version and Git Commit consistency (strictly matches bionexus.versions.VERSION).
-4. Evidence track consistency (synthetic technical acceptance vs real reference dataset).
-5. Certification consistency (standards, summary, and _EVIDENCE mapping agreement).
-6. Flagship directory cleanliness (no synthetic pretenders masquerading in data/flagship).
+1. File existence (REPORT.json, INFERENTIAL_STRESS_REPORT.json, CERTIFICATION.json, declared data files, and referenced evidence files).
+2. Runtime SHA-256 checksums match observed file contents (fail-closed on missing or tampered files).
+3. Version and Git Commit consistency (strictly matches bionexus.versions.VERSION and verified commit SHA).
+4. Git dirty policy enforcement (release evidence cannot silently accept dirty provenance).
+5. Evidence track consistency (synthetic technical acceptance vs real reference dataset).
+6. Certification consistency (standards, summary, tier, verdict, and _EVIDENCE mapping agreement).
+7. Stress test deep verification (JSON integrity, overall PASS, and all dimension gates passed).
+8. Flagship directory cleanliness (no synthetic pretenders masquerading in data/flagship).
 """
 
 from __future__ import annotations
@@ -16,8 +18,8 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from bionexus.certification import _EVIDENCE
-from bionexus.provenance import sha256_file
+from bionexus.certification import _EVIDENCE, certify_capability
+from bionexus.provenance import get_git_info, sha256_file
 from bionexus.versions import VERSION
 
 FLAGSHIP_CAPABILITIES = (
@@ -66,6 +68,8 @@ class VerificationResult:
 def verify_validation_artifacts(
     repo_root: Optional[Union[Path, str]] = None,
     enforce_version: Optional[str] = None,
+    enforce_commit: Optional[str] = None,
+    allow_dirty: bool = False,
 ) -> VerificationResult:
     """Verify all validation artifacts, checksums, provenance, and certification consistency.
 
@@ -75,6 +79,10 @@ def verify_validation_artifacts(
         Repository root path. If None, resolves from file location.
     enforce_version : str, optional
         Expected version string. Defaults to bionexus.versions.VERSION.
+    enforce_commit : str, optional
+        Expected commit SHA string. If provided, strictly verified.
+    allow_dirty : bool, default False
+        Whether to allow git_dirty=True in provenance records.
 
     Returns
     -------
@@ -83,6 +91,11 @@ def verify_validation_artifacts(
     """
     root = Path(repo_root) if repo_root else Path(__file__).resolve().parents[2]
     expected_version = enforce_version or VERSION
+    git_info = get_git_info(root)
+    current_commit = enforce_commit or git_info.get("commit_sha")
+    if current_commit == "unknown":
+        current_commit = None
+
     checked: List[str] = []
     errors: List[str] = []
     warnings: List[str] = []
@@ -142,6 +155,15 @@ def verify_validation_artifacts(
             errors.append(f"Corrupt JSON in {cert_path}: {exc}")
             continue
 
+        stress_data = None
+        if stress_path.is_file():
+            try:
+                stress_data = json.loads(stress_path.read_text(encoding="utf-8"))
+            except Exception as exc:
+                errors.append(f"Corrupt JSON in {stress_path}: {exc}")
+        else:
+            errors.append(f"Missing required artifact: {cap_id} INFERENTIAL_STRESS_REPORT.json")
+
         # Version checks
         pipeline_ver = report_data.get("pipeline", {}).get("version")
         if pipeline_ver != expected_version:
@@ -160,12 +182,67 @@ def verify_validation_artifacts(
         if not prov:
             errors.append(f"{cap_id} REPORT.json missing pipeline.provenance")
         else:
-            if not prov.get("commit_sha"):
+            prov_commit = prov.get("commit_sha")
+            if not prov_commit:
                 errors.append(f"{cap_id} REPORT.json missing provenance.commit_sha")
+            elif current_commit and prov_commit != current_commit:
+                errors.append(
+                    f"{cap_id} REPORT.json provenance.commit_sha '{prov_commit}' != current commit '{current_commit}'"
+                )
             if prov.get("generator_version") != expected_version:
                 errors.append(
                     f"{cap_id} REPORT.json provenance.generator_version '{prov.get('generator_version')}' != '{expected_version}'"
                 )
+            if not allow_dirty and prov.get("git_dirty") is True:
+                errors.append(
+                    f"{cap_id} REPORT.json provenance has git_dirty=True (dirty provenance rejected)"
+                )
+
+        # Stress report deep checks
+        if stress_data is not None:
+            stress_cap = stress_data.get("capability_id")
+            if stress_cap != cap_id:
+                errors.append(
+                    f"{cap_id} INFERENTIAL_STRESS_REPORT.json capability_id '{stress_cap}' != expected '{cap_id}'"
+                )
+            if stress_data.get("overall_status") != "PASS":
+                errors.append(
+                    f"{cap_id} INFERENTIAL_STRESS_REPORT.json overall_status is '{stress_data.get('overall_status')}', expected 'PASS'"
+                )
+            dims = stress_data.get("dimensions")
+            if not isinstance(dims, dict) or len(dims) == 0:
+                errors.append(
+                    f"{cap_id} INFERENTIAL_STRESS_REPORT.json has empty or missing dimensions"
+                )
+            else:
+                for d_key, d_val in dims.items():
+                    if isinstance(d_val, dict):
+                        if not d_val.get("passed", False):
+                            errors.append(
+                                f"{cap_id} INFERENTIAL_STRESS_REPORT.json dimension '{d_val.get('dimension', d_key)}' did not pass"
+                            )
+                    else:
+                        errors.append(
+                            f"{cap_id} INFERENTIAL_STRESS_REPORT.json dimension '{d_key}' is not a valid dict"
+                        )
+
+            stress_prov = stress_data.get("provenance", {})
+            if not stress_prov:
+                errors.append(f"{cap_id} INFERENTIAL_STRESS_REPORT.json missing provenance")
+            else:
+                if stress_prov.get("generator_version") != expected_version:
+                    errors.append(
+                        f"{cap_id} INFERENTIAL_STRESS_REPORT.json generator_version '{stress_prov.get('generator_version')}' != '{expected_version}'"
+                    )
+                stress_commit = stress_prov.get("commit_sha")
+                if current_commit and stress_commit and stress_commit != current_commit:
+                    errors.append(
+                        f"{cap_id} INFERENTIAL_STRESS_REPORT.json commit_sha '{stress_commit}' != current commit '{current_commit}'"
+                    )
+                if not allow_dirty and stress_prov.get("git_dirty") is True:
+                    errors.append(
+                        f"{cap_id} INFERENTIAL_STRESS_REPORT.json provenance has git_dirty=True (dirty provenance rejected)"
+                    )
 
         # Evidence track and accession checks
         dataset_info = report_data.get("dataset", {})
@@ -189,17 +266,27 @@ def verify_validation_artifacts(
             # Check that gitignored .h5ad is NOT listed as a permanent evidence_file in REPORT.json
             evidence_files = report_data.get("evidence_files", [])
             for ef in evidence_files:
-                if ef.endswith(".h5ad"):
-                    errors.append(f"{cap_id} REPORT.json evidence_files should not list ignored .h5ad: '{ef}'")
+                if ef.endswith(".h5ad") or ef.endswith(".zarr"):
+                    errors.append(f"{cap_id} REPORT.json evidence_files should not list ignored artifact: '{ef}'")
 
         elif cap_id == "scrna.pseudobulk_de":
-            # Real dataset checksum verification
+            # Real dataset checksum verification (fail-closed on missing files)
             cs_dict = dataset_info.get("checksum_sha256")
-            if isinstance(cs_dict, dict):
-                ds_dir = root / "data" / "flagship" / "kang2018_pbmc_ifnb"
+            if not isinstance(cs_dict, dict) or not cs_dict:
+                errors.append(f"{cap_id} missing or invalid dataset.checksum_sha256 dictionary")
+            else:
+                ds_dir = root / "data" / "flagship" / dataset_info.get("name", "kang2018_pbmc_ifnb")
                 for fname, expected_hash in cs_dict.items():
                     target_file = ds_dir / fname
-                    if target_file.is_file():
+                    if not target_file.is_file():
+                        try:
+                            rel_tf = str(target_file.relative_to(root))
+                        except ValueError:
+                            rel_tf = str(target_file)
+                        errors.append(
+                            f"{cap_id} declared real data file missing: {rel_tf}"
+                        )
+                    else:
                         actual_hash = sha256_file(target_file)
                         try:
                             rel_tf = str(target_file.relative_to(root))
@@ -211,10 +298,41 @@ def verify_validation_artifacts(
                                 f"Checksum mismatch for {fname}: recorded {expected_hash}, recomputed {actual_hash}"
                             )
 
+            # Check supplementary_data if present
+            supp = dataset_info.get("supplementary_data")
+            if isinstance(supp, dict) and "file" in supp and "checksum_sha256" in supp:
+                supp_file = root / supp["file"]
+                if supp_file.is_file():
+                    actual_supp_hash = sha256_file(supp_file)
+                    checked.append(str(supp_file.relative_to(root)))
+                    if actual_supp_hash != supp["checksum_sha256"]:
+                        errors.append(
+                            f"Checksum mismatch for supplementary file {supp['file']}: recorded {supp['checksum_sha256']}, recomputed {actual_supp_hash}"
+                        )
+
+        # Check all evidence_files exist, are within repository, and not missing
+        evidence_files = report_data.get("evidence_files", [])
+        for ef in evidence_files:
+            ef_clean = ef.replace("\\", "/")
+            ef_path = root / Path(ef)
+            if not ef_path.is_file():
+                errors.append(f"{cap_id} REPORT.json evidence_files references missing file: '{ef_clean}'")
+            else:
+                try:
+                    rel_ef = str(ef_path.relative_to(root))
+                    checked.append(rel_ef)
+                except ValueError:
+                    errors.append(f"{cap_id} evidence_file '{ef_clean}' is outside repository root")
+
         # Certification consistency
+        rec = certify_capability(cap_id)
+        if cert_data.get("certification_level") != rec.tier.value:
+            errors.append(
+                f"{cap_id} CERTIFICATION.json certification_level '{cert_data.get('certification_level')}' != computed tier '{rec.tier.value}'"
+            )
+
         standards = {s["standard_id"]: s for s in cert_data.get("standards", [])}
-        expected_ev = _EVIDENCE.get(cap_id, {})
-        for std_id, ev_tuple in expected_ev.items():
+        for std_id, ev_tuple in _EVIDENCE.get(cap_id, {}).items():
             exp_satisfied, _, _ = ev_tuple
             if std_id not in standards:
                 errors.append(f"{cap_id} CERTIFICATION.json missing standard '{std_id}'")
@@ -236,6 +354,18 @@ def verify_validation_artifacts(
         if summary.get("satisfied") != satisfied_count:
             errors.append(
                 f"{cap_id} summary.satisfied ({summary.get('satisfied')}) != count of satisfied standards ({satisfied_count})"
+            )
+        if summary.get("satisfied") != rec.satisfied_count:
+            errors.append(
+                f"{cap_id} summary.satisfied ({summary.get('satisfied')}) != computed satisfied count ({rec.satisfied_count})"
+            )
+        if summary.get("verdict") != rec.tier.value:
+            errors.append(
+                f"{cap_id} summary.verdict ({summary.get('verdict')}) != computed tier ({rec.tier.value})"
+            )
+        if set(summary.get("unsatisfied_list", [])) != set(rec.blocking_for_certified):
+            errors.append(
+                f"{cap_id} summary.unsatisfied_list mismatch: {summary.get('unsatisfied_list')} != computed blocking {rec.blocking_for_certified}"
             )
 
         details[cap_id] = cap_details

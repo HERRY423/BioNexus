@@ -124,7 +124,7 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "-v --tb=short --basetemp=.pytest_temp"
+addopts = "-v --tb=short"
 
 [tool.ruff]
 line-length = 120

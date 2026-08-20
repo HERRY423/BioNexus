@@ -8,10 +8,11 @@ Verifies strict compliance with BioNexus Epistemic Honesty (BNS-EF-002 / BNS-CC-
 """
 
 
-import anndata as ad
+import pytest
+
+ad = pytest.importorskip("anndata")
 import numpy as np
 import pandas as pd
-import pytest
 from scipy import sparse
 
 from bionexus.abi import capability_abis, get_capability_abi

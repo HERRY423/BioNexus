@@ -87,7 +87,11 @@ work/
 # Temporary test outputs
 .pytest_temp/
 .pytest_tmp/
+.pytest_tmp_run/
 .bionexus-doctor.json
+.codex*
+.agents/mcp_config.json
+plugins/**/.agents/
 
 # Submission and manuscript materials (DO NOT COMMIT)
 figures/
@@ -102,4 +106,4 @@ figures/
 *.pptx
 *.pdf
 
-.pytest_tmp_run/
+

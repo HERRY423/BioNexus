@@ -4,10 +4,11 @@ Unit tests for BioNexus Tangram Spatial Deconvolution & Cell-to-Space Mapping (b
 
 from unittest.mock import patch
 
-import anndata as ad
+import pytest
+
+ad = pytest.importorskip("anndata")
 import numpy as np
 import pandas as pd
-import pytest
 from scipy import sparse
 
 from bionexus.abi import capability_abis, get_capability_abi

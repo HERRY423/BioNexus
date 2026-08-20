@@ -14,9 +14,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-import shutil
 import sys
-import tempfile
 from pathlib import Path
 from typing import Dict
 
@@ -37,23 +35,6 @@ from evals.flagship_validation import (
     compute_file_checksum,
     generate_validation_report,
 )
-
-# ---------------------------------------------------------------------------
-# Fixtures — use workspace-local temp dir to avoid Windows system-temp issues
-# ---------------------------------------------------------------------------
-
-_REPO_ROOT = Path(__file__).resolve().parents[2]
-
-
-@pytest.fixture
-def tmp_path(tmp_path_factory: pytest.TempPathFactory) -> Path:
-    """Override pytest's tmp_path to use a workspace-local directory."""
-    base = _REPO_ROOT / ".pytest_tmp" / "test_validation_artifacts"
-    base.mkdir(parents=True, exist_ok=True)
-    p = Path(tempfile.mkdtemp(dir=str(base), prefix="run_"))
-    yield p
-    shutil.rmtree(p, ignore_errors=True)
-
 
 # ---------------------------------------------------------------------------
 # Fixtures

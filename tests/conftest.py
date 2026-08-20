@@ -22,6 +22,22 @@ sys.path.insert(0, str(PROJECT_ROOT / "skills" / "nextflow-development" / "scrip
 sys.path.insert(0, str(PROJECT_ROOT / "skills" / "instrument-data-to-allotrope" / "scripts"))
 
 
+def pytest_configure(config):
+    """Ensure pytest tmp_path works gracefully even if Windows Temp/pytest-of-<user> is permission-locked."""
+    if config.option.basetemp is None:
+        try:
+            import getpass
+            import os
+
+            user = getpass.getuser()
+            candidate = Path(tempfile.gettempdir()) / f"pytest-of-{user}"
+            if candidate.exists():
+                list(os.scandir(candidate))
+        except (PermissionError, OSError):
+            config.option.basetemp = tempfile.mkdtemp(prefix="pytest_basetemp_")
+
+
+
 @pytest.fixture
 def synthetic_sparse_counts():
     """Generate a reproducible synthetic sparse count matrix (cells x genes)."""

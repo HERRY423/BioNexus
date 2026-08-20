@@ -31,13 +31,29 @@ def main() -> int:
         help="Enforce a specific version string (default: bionexus.versions.VERSION)",
     )
     parser.add_argument(
+        "--enforce-commit",
+        type=str,
+        default=None,
+        help="Enforce a specific commit SHA",
+    )
+    parser.add_argument(
+        "--allow-dirty",
+        action="store_true",
+        help="Allow git_dirty=True in provenance records (default: fail-closed)",
+    )
+    parser.add_argument(
         "--json",
         action="store_true",
         help="Output result as JSON",
     )
     args = parser.parse_args()
 
-    result = verify_validation_artifacts(repo_root=args.root, enforce_version=args.enforce_version)
+    result = verify_validation_artifacts(
+        repo_root=args.root,
+        enforce_version=args.enforce_version,
+        enforce_commit=args.enforce_commit,
+        allow_dirty=args.allow_dirty,
+    )
 
     if args.json:
         import json

@@ -161,3 +161,38 @@ def test_mcp_notification_no_response():
 
     resp = asyncio.run(_run())
     assert resp is None
+
+
+def test_mcp_tools_call_readonly():
+    """Verify read-only tools/call via JSON-RPC returns structured result."""
+    from unittest.mock import patch
+
+    async def _run():
+        with patch("local_mcp_server.async_http_request") as mock_http:
+            mock_http.return_value = [
+                {
+                    "entryId": "AF-P04637-F1",
+                    "gene": "TP53",
+                    "organismScientificName": "Homo sapiens",
+                    "uniprotSequenceLength": 393,
+                    "globalPlddt": 68.4,
+                    "pdbUrl": "https://alphafold.ebi.ac.uk/files/AF-P04637-F1-model_v4.pdb",
+                }
+            ]
+            req = {
+                "jsonrpc": "2.0",
+                "id": "call-1",
+                "method": "tools/call",
+                "params": {"name": "search_alphafold", "arguments": {"uniprot_id": "P04637"}},
+            }
+            return await handle_rpc_request_async(req)
+
+    resp = asyncio.run(_run())
+    assert resp is not None
+    assert resp["jsonrpc"] == "2.0"
+    assert resp["id"] == "call-1"
+    assert "result" in resp
+    assert not resp["result"].get("isError")
+    content = resp["result"]["content"]
+    assert len(content) >= 1
+    assert "P04637" in content[0]["text"]

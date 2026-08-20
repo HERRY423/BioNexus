@@ -388,7 +388,12 @@ def main() -> int:
     print("=" * 75)
     start_time = time.time()
 
-    adata, truth = load_gse96583_data()
+    try:
+        adata, truth = load_gse96583_data()
+    except FileNotFoundError as e:
+        print(f"[SKIPPED_MISSING_EXTERNAL_DATA] {e}")
+        print("External GSE96583 dataset not present; cannot execute real-data flagship validation.")
+        return 1
     print(f"Loaded GSE96583: {adata.n_obs} cells x {adata.n_vars} genes, {adata.obs['donor'].nunique()} donors.\n")
 
     # Compute runtime checksums of the real GSE96583 files
