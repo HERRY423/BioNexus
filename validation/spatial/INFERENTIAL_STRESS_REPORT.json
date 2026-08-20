@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "spatial.inference_validity",
+  "test_suite": "10_dimensional_spatial_validity_confounder_benchmark",
+  "timestamp": "2026-08-20T08:00:05.980763+00:00",
+  "elapsed_seconds": 0.04,
+  "overall_status": "PASS",
+  "dimensions": {
+    "dim1_1_public_reference_baseline": {
+      "dimension": "1_public_reference_baseline",
+      "n_cells": 1000,
+      "n_genes": 200,
+      "spatial_coordinates_present": true,
+      "uncontrolled_verdict": "ABSTAIN",
+      "passed": true
+    },
+    "dim2_2_segmentation_leakage_confounder": {
+      "dimension": "2_segmentation_leakage_confounder",
+      "mean_neighbor_correlation": 0.6779,
+      "leakage_control_status": "FAILED",
+      "warrant_verdict": "ABSTAIN",
+      "failed_controls": [
+        "segmentation_uncertainty"
+      ],
+      "passed": true
+    },
+    "dim3_3_cell_density_confounding": {
+      "dimension": "3_cell_density_confounding",
+      "confounded_verdict": "ABSTAIN",
+      "controlled_verdict": "SUPPORTED",
+      "passed": true
+    },
+    "dim4_4_morphology_cell_size_bias": {
+      "dimension": "4_morphology_cell_size_bias",
+      "area_count_correlation": -0.0537,
+      "control_status": "TESTED",
+      "warrant_verdict": "FRAGILE",
+      "passed": true
+    },
+    "dim5_5_nuclear_eccentricity_aspect_ratio": {
+      "dimension": "5_nuclear_eccentricity_aspect_ratio",
+      "mean_eccentricity": 0.2913,
+      "untested_eccentricity_verdict": "FRAGILE",
+      "passed": true
+    },
+    "dim6_6_tissue_edge_effects": {
+      "dimension": "6_tissue_edge_effects",
+      "edge_cell_fraction": 0.21,
+      "edge_failed_verdict": "ABSTAIN",
+      "passed": true
+    },
+    "dim7_7_neighborhood_radius_sensitivity_grid": {
+      "dimension": "7_neighborhood_radius_sensitivity_grid",
+      "tested_radii_um": [
+        15.0,
+        30.0,
+        50.0,
+        100.0
+      ],
+      "mean_neighbors_by_radius": [
+        0.16,
+        0.4,
+        1.1,
+        3.64
+      ],
+      "untested_radius_verdict": "FRAGILE",
+      "passed": true
+    },
+    "dim8_8_transcript_spillover_control": {
+      "dimension": "8_transcript_spillover_control",
+      "spillover_failed_verdict": "ABSTAIN",
+      "passed": true
+    },
+    "dim9_9_batch_fov_confounding": {
+      "dimension": "9_batch_fov_confounding",
+      "fov_confounded_verdict": "ABSTAIN",
+      "passed": true
+    },
+    "dim10_10_coordinate_permutation_null_robustness": {
+      "dimension": "10_coordinate_permutation_null_robustness",
+      "with_permutation_null_verdict": "ROBUST",
+      "without_permutation_null_verdict": "SUPPORTED",
+      "passed": true
+    }
+  }
+}

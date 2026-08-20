@@ -27,8 +27,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
-# The canonical alternative-explanation registry (contract-visible).
-CANONICAL_ALTERNATIVES: tuple = (
+# The canonical alternative-explanation base registry (contract-visible).
+CANONICAL_BASE_ALTERNATIVES: tuple = (
     "cell_size",
     "transcript_density",
     "segmentation_uncertainty",
@@ -41,6 +41,23 @@ CANONICAL_ALTERNATIVES: tuple = (
     "contact_geometry",
     "neighborhood_radius",
     "permutation_null",
+)
+
+# Canonical alias mapping for robust resolution
+ALTERNATIVE_ALIASES: Dict[str, str] = {
+    "segmentation_leakage": "segmentation_uncertainty",
+    "segmentation_specificity": "segmentation_uncertainty",
+    "neighborhood_radius_sensitivity": "neighborhood_radius",
+    "morphology_confounding": "cell_size",
+    "cell_density_confounding": "local_cell_density",
+    "edge_effect": "edge_effects",
+    "edge_effects": "contact_geometry",
+    "transcript_spillover": "transcript_density",
+    "label_uncertainty": "spot_composition",
+}
+
+CANONICAL_ALTERNATIVES: tuple = tuple(
+    sorted(set(CANONICAL_BASE_ALTERNATIVES) | set(ALTERNATIVE_ALIASES.keys()))
 )
 
 # Controls that MUST be addressed (TESTED / CONTROLLED / FAILED) before a
@@ -96,9 +113,28 @@ def _normalize_controls(
 ) -> List[ControlResult]:
     if controls is None:
         return []
+    raw_list: List[ControlResult] = []
     if isinstance(controls, dict):
-        return [ControlResult(name=k, status=v) for k, v in controls.items()]
-    return list(controls)
+        raw_list = [ControlResult(name=k, status=v) for k, v in controls.items()]
+    else:
+        raw_list = list(controls)
+
+    # Resolve aliases and merge status (FAILED takes precedence over TESTED/CONTROLLED)
+    status_map: Dict[str, str] = {}
+    notes_map: Dict[str, str] = {}
+    for c in raw_list:
+        canon_name = ALTERNATIVE_ALIASES.get(c.name, c.name)
+        curr_status = status_map.get(canon_name)
+        if curr_status == "FAILED" or c.status == "FAILED":
+            status_map[canon_name] = "FAILED"
+        elif curr_status == "UNTESTED" or c.status == "UNTESTED":
+            status_map[canon_name] = "UNTESTED"
+        else:
+            status_map[canon_name] = c.status
+        if c.note:
+            notes_map[canon_name] = c.note
+
+    return [ControlResult(name=k, status=v, note=notes_map.get(k, "")) for k, v in status_map.items()]
 
 
 def assess_spatial_inference(
@@ -146,11 +182,11 @@ def assess_spatial_inference(
 
     controlled = sorted(n for n, s in status_by_name.items() if s in ("TESTED", "CONTROLLED"))
     untested_declared = sorted(n for n, s in status_by_name.items() if s == "UNTESTED")
-    # Canonical alternatives that were never declared count as untested, with
+    # Canonical base alternatives that were never declared count as untested, with
     # one exception: an absent permutation_null is a cap (SUPPORTED at most),
     # not a FRAGILE gap — only an explicitly UNTESTED null forces FRAGILE.
     untested_canonical = sorted(
-        n for n in CANONICAL_ALTERNATIVES if n not in status_by_name and n != "permutation_null"
+        n for n in CANONICAL_BASE_ALTERNATIVES if n not in status_by_name and n != "permutation_null"
     )
     untested = sorted(set(untested_declared) | set(untested_canonical))
 

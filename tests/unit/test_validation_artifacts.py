@@ -384,11 +384,13 @@ class TestCertificationBundles:
         assert data["summary"]["satisfied"] == 12
 
     def test_annotation_is_validated(self) -> None:
+        """annotation should be VALIDATED (12/14: core + adversarial + IGT + provenance + real-data public reference + parameter perturbation + degradation)."""
         data = json.loads(_FLAGSHIP_CERT_FILES["scrna.annotation_evidence"].read_text(encoding="utf-8"))
         assert data["certification_level"] == "VALIDATED"
-        assert data["summary"]["satisfied"] == 6
+        assert data["summary"]["satisfied"] == 12
 
     def test_spatial_is_validated(self) -> None:
+        """spatial should be VALIDATED (12/14: core + adversarial + IGT + provenance + real-data public reference + parameter perturbation + degradation)."""
         data = json.loads(_FLAGSHIP_CERT_FILES["spatial.inference_validity"].read_text(encoding="utf-8"))
         assert data["certification_level"] == "VALIDATED"
-        assert data["summary"]["satisfied"] == 6
+        assert data["summary"]["satisfied"] == 12

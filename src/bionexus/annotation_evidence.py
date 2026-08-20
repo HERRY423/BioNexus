@@ -29,16 +29,16 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
-# Published, deterministic thresholds (contract-visible; see module docstring).
 THRESHOLDS: Dict[str, float] = {
     "marker_consistency_min": 0.60,
     "negative_marker_violation_max": 0.20,
     "reference_mapping_min": 0.70,
     "cross_method_agreement_min": 0.80,
     "doublet_rate_max": 0.15,
+    "orthogonal_protein_min": 0.75,
 }
 
-VERDICT_LADDER = ("SUPPORTED", "TENTATIVE", "ABSTAIN")
+VERDICT_LADDER = ("ROBUST", "SUPPORTED", "TENTATIVE", "CONFLICTED", "ABSTAIN")
 
 
 @dataclass
@@ -51,6 +51,8 @@ class AnnotationEvidence:
     doublet_rate: Optional[float] = None  # 0..1
     ontology_compatible: Optional[bool] = None
     cross_method_agreement: Optional[float] = None  # 0..1
+    orthogonal_protein_evidence: Optional[float] = None  # 0..1 (CITE-seq / FACS)
+    protein_concordant: Optional[bool] = None
     open_set_detected: bool = False
 
 
@@ -94,6 +96,8 @@ def assess_annotation_evidence(label: str, evidence: AnnotationEvidence) -> Anno
             "doublet_rate",
             "ontology_compatible",
             "cross_method_agreement",
+            "orthogonal_protein_evidence",
+            "protein_concordant",
             "open_set_detected",
         )
     }
@@ -110,6 +114,18 @@ def assess_annotation_evidence(label: str, evidence: AnnotationEvidence) -> Anno
                 "report it as unknown/novel rather than the nearest known label (BN-F003)."
             ],
             missing_evidence=["orthogonal evidence for a novel population (sorted bulk profile, spatial markers)"],
+            evidence=ev,
+        )
+
+    if evidence.protein_concordant is False:
+        return AnnotationVerdict(
+            label=label,
+            verdict="CONFLICTED",
+            reasons=[
+                "Orthogonal surface protein modal data (CITE-seq / FACS) contradicts RNA marker expression; "
+                "epistemic state is CONFLICTED."
+            ],
+            missing_evidence=["resolution of RNA vs Protein discordance"],
             evidence=ev,
         )
 
@@ -213,6 +229,17 @@ def assess_annotation_evidence(label: str, evidence: AnnotationEvidence) -> Anno
     )
 
     if independent_identity and marker_support and negatives_checked:
+        # Check if orthogonal protein evidence upgrades to ROBUST
+        if (
+            evidence.orthogonal_protein_evidence is not None
+            and evidence.orthogonal_protein_evidence >= THRESHOLDS["orthogonal_protein_min"]
+        ):
+            reasons.append(
+                f"orthogonal protein concordance {evidence.orthogonal_protein_evidence:.2f} "
+                f">= {THRESHOLDS['orthogonal_protein_min']:.2f} (ROBUST)"
+            )
+            return AnnotationVerdict(label=label, verdict="ROBUST", reasons=reasons, missing_evidence=[], evidence=ev)
+
         return AnnotationVerdict(label=label, verdict="SUPPORTED", reasons=reasons, missing_evidence=[], evidence=ev)
 
     if not independent_identity:

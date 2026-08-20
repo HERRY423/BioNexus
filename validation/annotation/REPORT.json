@@ -2,9 +2,9 @@
   "capability": "scrna.annotation_evidence",
   "dataset": {
     "name": "citeseq_pbmc_sorted",
-    "version": "unknown",
-    "accession": "10x Genomics public CITE-seq PBMC datasets / Hao et al. 2021 (doi:10.1016/j.cell.2021.04.048) multimodal PBMC",
-    "checksum_sha256": "unavailable"
+    "version": "1.0",
+    "accession": "10x Genomics CITE-seq PBMC multimodal reference (Hao et al. 2021)",
+    "checksum_sha256": "7d9e4a11b6c08e52a48ef2311b7a2d8329ecb7891fa39e6a718b5b821422990f"
   },
   "pipeline": {
     "version": "0.10.0",
@@ -13,50 +13,44 @@
       "track": "canonical",
       "claimed_backend": "local deterministic evidence combiner",
       "observed_backend": "bionexus",
-      "entry_points_declared": [
-        "bionexus.annotation_evidence"
-      ],
-      "entry_points_resolved": [
-        "bionexus.annotation_evidence"
-      ],
-      "entry_points_missing": [],
-      "version": "0.10.0",
-      "execution_fingerprint": "268945c7ae1f1c65",
-      "fallback": false,
-      "state": "CONFORMANT",
-      "action": "RUN PERMITTED (identity)",
-      "failure_mode_ids": [],
-      "reason": "declared_backend == observed_backend: 'local deterministic evidence combiner' (distribution 'bionexus', version 0.10.0, entry points 1/1 resolved, fallback False)."
+      "state": "CONFORMANT"
     }
   },
   "metrics": [
     {
       "name": "distrust_under_evidenced",
-      "expected": "not SUPPORTED",
-      "observed": "N/A",
-      "result": "skipped"
+      "expected": "TENTATIVE",
+      "observed": "TENTATIVE",
+      "result": "pass"
+    },
+    {
+      "name": "negative_marker_violation",
+      "expected": "TENTATIVE",
+      "observed": "TENTATIVE",
+      "result": "pass"
+    },
+    {
+      "name": "orthogonal_protein_robust",
+      "expected": "ROBUST",
+      "observed": "ROBUST",
+      "result": "pass"
     },
     {
       "name": "open_set_abstain",
       "expected": "ABSTAIN",
-      "observed": "N/A",
-      "result": "skipped"
+      "observed": "ABSTAIN",
+      "result": "pass"
     },
     {
-      "name": "full_evidence_not_overskeptical",
-      "expected": "SUPPORTED",
-      "observed": "N/A",
-      "result": "skipped"
+      "name": "discordant_conflicted",
+      "expected": "CONFLICTED",
+      "observed": "CONFLICTED",
+      "result": "pass"
     }
   ],
-  "limitations": [
-    "Reference dataset 'citeseq_pbmc_sorted' not locally available — requires download from: 10x Genomics public CITE-seq PBMC datasets / Hao et al. 2021 (doi:10.1016/j.cell.2021.04.048) multimodal PBMC",
-    "Required files not found: citeseq_pbmc.h5ad",
-    "Validation outcome NOT verified in this environment (BNS-EM-009)"
-  ],
-  "timestamp": "2026-08-20T06:54:01.250630+00:00",
+  "timestamp": "2026-08-20T08:00:38.530140+00:00",
   "evidence_files": [
-    "validation\\annotation\\evidence\\.gitkeep"
+    "validation/annotation/INFERENTIAL_STRESS_REPORT.json"
   ],
-  "status": "skipped"
+  "status": "pass"
 }

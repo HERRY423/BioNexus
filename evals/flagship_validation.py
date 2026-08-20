@@ -416,6 +416,15 @@ def _suite_pseudobulk_external_truth(case, meta: Dict[str, Any]) -> Dict[str, An
 
 def _suite_annotation_distrust(case, meta: Dict[str, Any]) -> Dict[str, Any]:
     """B: the benchmark is knowing when an annotation is NOT worth believing."""
+    try:
+        import anndata
+    except ImportError as exc:
+        return {
+            "actual_status": "SKIPPED_NO_BACKEND",
+            "skipped": True,
+            "skip_reason": f"L3 backend unavailable for scrna.annotation_evidence ({exc}).",
+        }
+
     dataset_id = meta.get("dataset_id", "citeseq_pbmc_sorted")
     if not flagship_dataset_present(dataset_id):
         return _skip_no_dataset(dataset_id, "annotation_distrust")
@@ -486,11 +495,18 @@ def _suite_annotation_distrust(case, meta: Dict[str, Any]) -> Dict[str, Any]:
 
 def _suite_spatial_artifact_downgrade(case, meta: Dict[str, Any]) -> Dict[str, Any]:
     """C: manufactured artifacts must correctly downgrade the conclusion."""
+    try:
+        import anndata as ad
+    except ImportError as exc:
+        return {
+            "actual_status": "SKIPPED_NO_BACKEND",
+            "skipped": True,
+            "skip_reason": f"L3 backend unavailable for spatial.inference_validity ({exc}).",
+        }
+
     dataset_id = meta.get("dataset_id", "xenium_spatial_truth")
     if not flagship_dataset_present(dataset_id):
         return _skip_no_dataset(dataset_id, "spatial_artifact_downgrade")
-
-    import anndata as ad
 
     from bionexus.spatial_inference import assess_spatial_inference
 

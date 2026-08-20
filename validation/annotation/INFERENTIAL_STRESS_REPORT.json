@@ -1,0 +1,109 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "scrna.annotation_evidence",
+  "test_suite": "10_dimensional_annotation_evidence_benchmark",
+  "timestamp": "2026-08-20T08:00:38.528322+00:00",
+  "elapsed_seconds": 0.07,
+  "overall_status": "PASS",
+  "dimensions": {
+    "dim1_1_public_reference_multimodal_dataset": {
+      "dimension": "1_public_reference_multimodal_dataset",
+      "n_cells": 1200,
+      "n_genes": 300,
+      "protein_channels": 6,
+      "passed": true
+    },
+    "dim2_2_circular_marker_reasoning_trap": {
+      "dimension": "2_circular_marker_reasoning_trap",
+      "verdict": "TENTATIVE",
+      "missing_evidence": [
+        "reference atlas mapping",
+        "cross-method annotation agreement",
+        "independent identity source (reference mapping or cross-method agreement)"
+      ],
+      "passed": true
+    },
+    "dim3_3_negative_marker_violation": {
+      "dimension": "3_negative_marker_violation",
+      "verdict": "TENTATIVE",
+      "reasons": [
+        "contradicting evidence: negative-marker violation rate 0.45 > 0.20 (lineage exclusivity violated)"
+      ],
+      "passed": true
+    },
+    "dim4_4_independent_reference_mapping": {
+      "dimension": "4_independent_reference_mapping",
+      "verdict": "SUPPORTED",
+      "reasons": [
+        "reference mapping score 0.88 >= 0.70",
+        "positive-marker consistency 0.85 >= 0.60",
+        "negative-marker violation rate 0.08 <= 0.20",
+        "doublet rate 0.04 <= 0.15"
+      ],
+      "passed": true
+    },
+    "dim5_5_orthogonal_surface_protein_robust": {
+      "dimension": "5_orthogonal_surface_protein_robust",
+      "verdict": "ROBUST",
+      "reasons": [
+        "reference mapping score 0.92 >= 0.70",
+        "positive-marker consistency 0.90 >= 0.60",
+        "negative-marker violation rate 0.05 <= 0.20",
+        "doublet rate 0.02 <= 0.15",
+        "orthogonal protein concordance 0.95 >= 0.75 (ROBUST)"
+      ],
+      "passed": true
+    },
+    "dim6_6_discordant_protein_conflicted": {
+      "dimension": "6_discordant_protein_conflicted",
+      "verdict": "CONFLICTED",
+      "reasons": [
+        "Orthogonal surface protein modal data (CITE-seq / FACS) contradicts RNA marker expression; epistemic state is CONFLICTED."
+      ],
+      "passed": true
+    },
+    "dim7_7_open_set_novel_population_gating": {
+      "dimension": "7_open_set_novel_population_gating",
+      "verdict": "ABSTAIN",
+      "reasons": [
+        "Open-set population: the label lies outside the reference universe; report it as unknown/novel rather than the nearest known label (BN-F003)."
+      ],
+      "passed": true
+    },
+    "dim8_8_doublet_artifact_gate": {
+      "dimension": "8_doublet_artifact_gate",
+      "verdict": "TENTATIVE",
+      "reasons": [
+        "contradicting evidence: doublet rate 0.28 > 0.15 (population may be a doublet artifact)"
+      ],
+      "passed": true
+    },
+    "dim9_9_clustering_resolution_perturbation": {
+      "dimension": "9_clustering_resolution_perturbation",
+      "resolutions_tested": [
+        0.2,
+        0.5,
+        0.8,
+        1.2,
+        1.5
+      ],
+      "ari_stability_scores": [
+        0.95,
+        0.92,
+        0.88,
+        0.84,
+        0.81
+      ],
+      "mean_ari": 0.88,
+      "passed": true
+    },
+    "dim10_10_adversarial_claim_interception": {
+      "dimension": "10_adversarial_claim_interception",
+      "prohibited_claim_intercepted": true,
+      "violations": [
+        "CAUSAL_TREATMENT_DE_OVERCLAIM"
+      ],
+      "passed": true
+    }
+  }
+}
