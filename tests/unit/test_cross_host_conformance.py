@@ -244,6 +244,23 @@ class TestGenerateComparisonReport:
         errors = validate_cross_host_schema(comparison, report_type="comparison")
         assert errors == []
 
+    def test_antigravity_comparison_uses_generic_host_mapping(self):
+        """The comparison schema must not treat Codex/Claude as the only real hosts."""
+        records_codex = [_make_record(host_name="codex", trap_id="BF-001")]
+        records_antigravity = [_make_record(host_name="antigravity", trap_id="BF-001")]
+        codex_report = generate_host_report(records_codex, host_name="codex")
+        antigravity_report = generate_host_report(records_antigravity, host_name="antigravity")
+
+        comparison = generate_comparison_report(codex_report, antigravity_report)
+
+        assert comparison["hosts"] == ["codex", "antigravity"]
+        assert comparison["per_trap"][0]["statuses"] == {
+            "codex": "ABSTAIN",
+            "antigravity": "ABSTAIN",
+        }
+        assert "claude_code_status" not in comparison["per_trap"][0]
+        assert validate_cross_host_schema(comparison, report_type="comparison") == []
+
 
 class TestValidateCrossHostSchema:
     """Test validate_cross_host_schema function."""

@@ -31,7 +31,10 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+from mcp_host_audit import append_host_probe
 
 try:
     from mcp.server.fastmcp import FastMCP
@@ -44,6 +47,9 @@ LOG_FILE = os.environ.get(
 )
 logger = logging.getLogger("BioNexusMCP")
 logger.setLevel(logging.INFO)
+
+SERVER_VERSION = "2.1.0"
+PLUGIN_VERSION = "1.0.0-rc.1"
 
 # Use file handler only to keep stdout clean for JSON-RPC
 try:
@@ -1023,6 +1029,58 @@ async def tool_get_gene_expression(gene_symbol: str, tissue_site: Optional[str] 
         return {"gene_symbol": symbol, "error": str(e)}
 
 
+async def tool_bionexus_host_probe(
+    host_name: str,
+    host_version: str,
+    model: str,
+    session_id: str,
+    challenge: str,
+    human_approved: bool,
+) -> Dict[str, Any]:
+    """Record a bounded server-side receipt for a live MCP host session."""
+    configured_path = os.environ.get("BIONEXUS_MCP_AUDIT_LOG", "").strip()
+    if not configured_path:
+        raise ValueError(
+            "BIONEXUS_MCP_AUDIT_LOG is not configured; refusing to claim a live host receipt"
+        )
+
+    repo_root = Path(__file__).resolve().parent.parent
+    audit_path = Path(configured_path)
+    if not audit_path.is_absolute():
+        audit_path = repo_root / audit_path
+
+    event = append_host_probe(
+        audit_path=audit_path,
+        host_name=host_name,
+        host_version=host_version,
+        model=model,
+        session_id=session_id,
+        challenge=challenge,
+        human_approved=human_approved,
+        plugin_version=PLUGIN_VERSION,
+        server_version=SERVER_VERSION,
+        tool_catalog=public_tools_schema(),
+        repo_root=repo_root,
+    )
+    return {
+        "status": "RECORDED",
+        "acceptance_verdict": "pending_run_validation",
+        "receipt_event_hash": event["event_hash"],
+        "sequence": event["sequence"],
+        "timestamp": event["timestamp"],
+        "host_name": event["host_name"],
+        "session_id": event["session_id"],
+        "plugin_version": event["plugin_version"],
+        "git_commit": event["git_commit"],
+        "git_dirty": event["git_dirty"],
+        "tool_catalog_sha256": event["tool_catalog_sha256"],
+        "boundary": (
+            "This receipt proves one local MCP server call and a tamper-evident log entry only; "
+            "it is not biological validation, clinical validation, or cryptographic attestation."
+        ),
+    }
+
+
 # --- MCP Tool Schemas (16 Total Tools) ---
 
 _HOSTED_FALLBACK_TOOLS = {
@@ -1371,6 +1429,28 @@ TOOLS_SCHEMA = [
             "required": ["gene_symbol"],
         },
     },
+    {
+        "name": "bionexus_host_probe",
+        "description": (
+            "Record a server-side, tamper-evident receipt proving that a named host reached this local MCP server. "
+            "This is integration evidence only and never biological or clinical evidence."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "host_name": {"type": "string", "description": "Lowercase host identifier, e.g. antigravity."},
+                "host_version": {"type": "string", "description": "Visible host application version."},
+                "model": {"type": "string", "description": "Model selected by the host for this run."},
+                "session_id": {"type": "string", "description": "Unique acceptance-run session identifier."},
+                "challenge": {"type": "string", "description": "Unique 16-256 character challenge for this run."},
+                "human_approved": {
+                    "type": "boolean",
+                    "description": "Whether the researcher explicitly approved this bounded acceptance run.",
+                },
+            },
+            "required": ["host_name", "host_version", "model", "session_id", "challenge", "human_approved"],
+        },
+    },
 ]
 
 
@@ -1583,6 +1663,14 @@ TOOL_ADAPTER_MAP = {
         args.get("gene_symbol", ""),
         args.get("tissue_site"),
     ),
+    "bionexus_host_probe": lambda args: tool_bionexus_host_probe(
+        args.get("host_name", ""),
+        args.get("host_version", ""),
+        args.get("model", ""),
+        args.get("session_id", ""),
+        args.get("challenge", ""),
+        args.get("human_approved"),
+    ),
 }
 
 
@@ -1763,6 +1851,31 @@ def create_mcp_server():
         res = await tool_get_gene_expression(gene_symbol=gene_symbol, tissue_site=tissue_site)
         return json.dumps(res, indent=2, ensure_ascii=False)
 
+    @mcp.tool(
+        name="bionexus_host_probe",
+        description=(
+            "Record a server-side, tamper-evident receipt proving that this host reached the local BioNexus MCP. "
+            "Integration evidence only; not biological or clinical validation."
+        ),
+    )
+    async def bionexus_host_probe(
+        host_name: str,
+        host_version: str,
+        model: str,
+        session_id: str,
+        challenge: str,
+        human_approved: bool,
+    ) -> str:
+        res = await tool_bionexus_host_probe(
+            host_name=host_name,
+            host_version=host_version,
+            model=model,
+            session_id=session_id,
+            challenge=challenge,
+            human_approved=human_approved,
+        )
+        return json.dumps(res, indent=2, ensure_ascii=False)
+
     flag = os.environ.get("BIONEXUS_LOCAL_HOSTED_FALLBACKS", "").strip().lower()
     if flag in {"1", "true", "yes"}:
         @mcp.tool(
@@ -1922,7 +2035,7 @@ async def handle_rpc_request_async(req: Dict[str, Any]) -> Optional[Dict[str, An
                 },
                 "serverInfo": {
                     "name": "bionexus-local-mcp",
-                    "version": "2.0.0",
+                    "version": SERVER_VERSION,
                 },
             },
         }
@@ -1936,7 +2049,7 @@ async def handle_rpc_request_async(req: Dict[str, Any]) -> Optional[Dict[str, An
             "result": {
                 "serverInfo": {
                     "name": "bionexus-local-mcp",
-                    "version": "2.0.0",
+                    "version": SERVER_VERSION,
                     "sdk": "official-mcp-python-sdk",
                 },
                 "capabilities": {

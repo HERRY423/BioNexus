@@ -50,6 +50,7 @@ from bionexus.provenance import capture_execution_provenance, sha256_file
 from bionexus.spatial_inference import (
     assess_spatial_inference,
 )
+from bionexus.validation_verifier import bind_validation_source_provenance
 from bionexus.versions import VERSION
 
 SYNTHETIC_DATA_DIR = REPO_ROOT / "validation" / "spatial" / "evidence"
@@ -410,6 +411,7 @@ def main() -> int:
         generator_version=VERSION,
         extra_metadata={"dataset_track": "synthetic_technical_acceptance", "n_cells": adata.n_obs, "n_genes": adata.n_vars},
     )
+    bind_validation_source_provenance(prov, REPO_ROOT)
 
     dim1 = test_dim1_baseline(adata)
     dim2 = test_dim2_segmentation_leakage(adata)
@@ -501,4 +503,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

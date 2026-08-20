@@ -13,7 +13,9 @@ Checks:
 
 from __future__ import annotations
 
+import hashlib
 import json
+import subprocess
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
@@ -33,6 +35,117 @@ CAPABILITY_TO_SUBDIR: Dict[str, str] = {
     "scrna.annotation_evidence": "annotation",
     "spatial.inference_validity": "spatial",
 }
+
+_VALIDATION_SOURCE_DIRS = (
+    "src/bionexus",
+    "skills/single-cell-rna-qc",
+    "skills/spatial-transcriptomics",
+)
+_VALIDATION_SOURCE_FILES = (
+    "evals/pseudobulk_stress_test.py",
+    "evals/annotation_stress_test.py",
+    "evals/spatial_stress_test.py",
+    "evals/flagship_validation.py",
+    "scripts/run_flagship_validation.py",
+    "pyproject.toml",
+    "requirements.txt",
+    "requirements-dev.txt",
+)
+_SOURCE_IGNORED_PARTS = {"__pycache__", ".pytest_cache", ".ruff_cache"}
+
+
+def compute_validation_source_snapshot(repo_root: Union[Path, str]) -> str:
+    """Hash validation-relevant source content without self-referential reports.
+
+    A tracked REPORT.json cannot contain the SHA of the Git commit that contains
+    that same REPORT.json. This stable content snapshot binds evidence to the
+    scientific implementations and stress harnesses while data inputs retain
+    their independent runtime SHA-256 checks.
+    """
+    root = Path(repo_root)
+    paths = _validation_source_paths(root)
+
+    digest = hashlib.sha256()
+    for path in paths:
+        rel = path.relative_to(root).as_posix()
+        digest.update(rel.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(hashlib.sha256(path.read_bytes()).digest())
+        digest.update(b"\n")
+    return digest.hexdigest()
+
+
+def _validation_source_paths(root: Path) -> List[Path]:
+    paths: List[Path] = []
+    for rel_dir in _VALIDATION_SOURCE_DIRS:
+        directory = root / rel_dir
+        if directory.is_dir():
+            paths.extend(
+                path
+                for path in directory.rglob("*")
+                if path.is_file() and not any(part in _SOURCE_IGNORED_PARTS for part in path.parts)
+            )
+    for rel_file in _VALIDATION_SOURCE_FILES:
+        path = root / rel_file
+        if path.is_file():
+            paths.append(path)
+
+    return sorted(set(paths), key=lambda item: item.relative_to(root).as_posix())
+
+
+def compute_validation_source_dirty(repo_root: Union[Path, str]) -> Optional[bool]:
+    """Return whether validation-relevant sources differ from HEAD."""
+    root = Path(repo_root)
+    try:
+        result = subprocess.run(
+            ["git", "status", "--porcelain", "--untracked-files=all"],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+    for raw_line in result.stdout.splitlines():
+        rel = raw_line[3:].strip().replace("\\", "/")
+        if " -> " in rel:
+            rel = rel.split(" -> ", 1)[1]
+        if rel in _VALIDATION_SOURCE_FILES or any(
+            rel == prefix or rel.startswith(prefix + "/") for prefix in _VALIDATION_SOURCE_DIRS
+        ):
+            return True
+    return False
+
+
+def bind_validation_source_provenance(provenance: Dict[str, Any], repo_root: Union[Path, str]) -> Dict[str, Any]:
+    """Attach stable source identity while retaining whole-repository dirtiness."""
+    repository_dirty = provenance.get("git_dirty")
+    source_dirty = compute_validation_source_dirty(repo_root)
+    provenance["repository_dirty_at_execution"] = repository_dirty
+    provenance["validation_source_dirty"] = source_dirty
+    provenance["git_dirty"] = source_dirty if source_dirty is not None else repository_dirty
+    provenance["source_snapshot_sha256"] = compute_validation_source_snapshot(repo_root)
+    return provenance
+
+
+def _git_is_ancestor(root: Path, ancestor: str, descendant: str) -> Optional[bool]:
+    """Return whether ancestor is reachable from descendant, or None without Git."""
+    try:
+        result = subprocess.run(
+            ["git", "merge-base", "--is-ancestor", ancestor, descendant],
+            cwd=root,
+            capture_output=True,
+            timeout=10,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if result.returncode == 0:
+        return True
+    if result.returncode == 1:
+        return False
+    return None
 
 
 @dataclass
@@ -100,6 +213,8 @@ def verify_validation_artifacts(
     errors: List[str] = []
     warnings: List[str] = []
     details: Dict[str, Any] = {}
+    current_source_snapshot = compute_validation_source_snapshot(root)
+    details["validation_source_snapshot_sha256"] = current_source_snapshot
 
     # Check 1: data/flagship directory integrity (no synthetic pretenders)
     flagship_dir = root / "data" / "flagship"
@@ -186,8 +301,20 @@ def verify_validation_artifacts(
             if not prov_commit:
                 errors.append(f"{cap_id} REPORT.json missing provenance.commit_sha")
             elif current_commit and prov_commit != current_commit:
+                if enforce_commit:
+                    errors.append(
+                        f"{cap_id} REPORT.json provenance.commit_sha '{prov_commit}' != enforced commit '{current_commit}'"
+                    )
+                else:
+                    is_ancestor = _git_is_ancestor(root, prov_commit, current_commit)
+                    if is_ancestor is not True:
+                        errors.append(
+                            f"{cap_id} REPORT.json provenance.commit_sha '{prov_commit}' is not a verified ancestor of current commit '{current_commit}'"
+                        )
+            recorded_snapshot = prov.get("source_snapshot_sha256")
+            if recorded_snapshot != current_source_snapshot:
                 errors.append(
-                    f"{cap_id} REPORT.json provenance.commit_sha '{prov_commit}' != current commit '{current_commit}'"
+                    f"{cap_id} REPORT.json source_snapshot_sha256 '{recorded_snapshot}' != current validation source snapshot '{current_source_snapshot}'"
                 )
             if prov.get("generator_version") != expected_version:
                 errors.append(
@@ -236,8 +363,20 @@ def verify_validation_artifacts(
                     )
                 stress_commit = stress_prov.get("commit_sha")
                 if current_commit and stress_commit and stress_commit != current_commit:
+                    if enforce_commit:
+                        errors.append(
+                            f"{cap_id} INFERENTIAL_STRESS_REPORT.json commit_sha '{stress_commit}' != enforced commit '{current_commit}'"
+                        )
+                    else:
+                        is_ancestor = _git_is_ancestor(root, stress_commit, current_commit)
+                        if is_ancestor is not True:
+                            errors.append(
+                                f"{cap_id} INFERENTIAL_STRESS_REPORT.json commit_sha '{stress_commit}' is not a verified ancestor of current commit '{current_commit}'"
+                            )
+                stress_snapshot = stress_prov.get("source_snapshot_sha256")
+                if stress_snapshot != current_source_snapshot:
                     errors.append(
-                        f"{cap_id} INFERENTIAL_STRESS_REPORT.json commit_sha '{stress_commit}' != current commit '{current_commit}'"
+                        f"{cap_id} INFERENTIAL_STRESS_REPORT.json source_snapshot_sha256 '{stress_snapshot}' != current validation source snapshot '{current_source_snapshot}'"
                     )
                 if not allow_dirty and stress_prov.get("git_dirty") is True:
                     errors.append(

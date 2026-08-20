@@ -28,6 +28,7 @@ if str(REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from bionexus.provenance import capture_execution_provenance
+from bionexus.validation_verifier import bind_validation_source_provenance
 from bionexus.versions import VERSION
 from evals.flagship_validation import (
     FLAGSHIP_DATASETS,
@@ -247,6 +248,7 @@ def run_single_capability(
         generator_version=PIPELINE_VERSION,
         extra_metadata={"capability": capability, "dataset_id": dataset_id, "present": present},
     )
+    bind_validation_source_provenance(prov, REPO_ROOT)
 
     pipeline_info: Dict[str, Any] = {
         "version": PIPELINE_VERSION,

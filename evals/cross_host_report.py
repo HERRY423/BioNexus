@@ -34,7 +34,7 @@ class CrossHostExecutionRecord:
     invoked it.
     """
 
-    host_name: str  # "codex" | "claude-code"
+    host_name: str  # e.g. "codex" | "claude-code" | "antigravity"
     host_version: str  # host agent version string
     capability_id: str  # e.g. "scrna.pseudobulk_de"
     input_hash: str  # SHA-256 of canonical input (prompt + metadata)
@@ -85,6 +85,7 @@ def generate_host_report(
     host_name: str,
     host_version: str = "",
     plugin_version: str = VERSION,
+    integration: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
     Generate a single-host REPORT.json from execution records.
@@ -93,7 +94,7 @@ def generate_host_report(
     metrics (correct refusals, false positives, agreement rate).
     """
     if not records:
-        return {
+        report = {
             "host": host_name,
             "host_version": host_version,
             "execution_date": datetime.now(timezone.utc).isoformat(),
@@ -107,6 +108,9 @@ def generate_host_report(
                 "agreement_rate": None,
             },
         }
+        if integration is not None:
+            report["integration"] = integration
+        return report
 
     # Verify all records belong to the same host
     host_names = {r.host_name for r in records}
@@ -119,7 +123,7 @@ def generate_host_report(
     false_positives = sum(1 for r in records if not r.refusal_correct and r.expected_status != "ABSTAIN")
     agreement_rate = sum(1 for r in records if r.refusal_correct) / total if total > 0 else None
 
-    return {
+    report = {
         "host": host_name,
         "host_version": host_version,
         "execution_date": datetime.now(timezone.utc).isoformat(),
@@ -133,12 +137,15 @@ def generate_host_report(
             "agreement_rate": round(agreement_rate, 4) if agreement_rate is not None else None,
         },
     }
+    if integration is not None:
+        report["integration"] = integration
+    return report
 
 
 
 def generate_comparison_report(
-    codex_report: Dict[str, Any],
-    claude_report: Dict[str, Any],
+    first_report: Dict[str, Any],
+    second_report: Dict[str, Any],
     plugin_version: str = VERSION,
 ) -> Dict[str, Any]:
     """
@@ -147,33 +154,39 @@ def generate_comparison_report(
     Compares per-trap behavior across hosts and computes overall consistency.
     Single-host reports are not compared (consistency requires >= 2 hosts).
     """
-    codex_records = {r["trap_id"]: r for r in codex_report.get("records", [])}
-    claude_records = {r["trap_id"]: r for r in claude_report.get("records", [])}
+    first_host = str(first_report.get("host", "first-host"))
+    second_host = str(second_report.get("host", "second-host"))
+    first_records = {r["trap_id"]: r for r in first_report.get("records", [])}
+    second_records = {r["trap_id"]: r for r in second_report.get("records", [])}
 
     # Find common traps
-    common_trap_ids = sorted(set(codex_records.keys()) & set(claude_records.keys()))
+    common_trap_ids = sorted(set(first_records.keys()) & set(second_records.keys()))
 
     per_trap: List[Dict[str, Any]] = []
     consistent_count = 0
 
     for trap_id in common_trap_ids:
-        codex_rec = codex_records[trap_id]
-        claude_rec = claude_records[trap_id]
+        first_rec = first_records[trap_id]
+        second_rec = second_records[trap_id]
 
-        codex_status = codex_rec.get("observed_status", "")
-        claude_status = claude_rec.get("observed_status", "")
-        consistent = codex_status == claude_status
+        first_status = first_rec.get("observed_status", "")
+        second_status = second_rec.get("observed_status", "")
+        consistent = first_status == second_status
 
         if consistent:
             consistent_count += 1
 
-        per_trap.append({
+        comparison_row = {
             "trap_id": trap_id,
-            "codex_status": codex_status,
-            "claude_code_status": claude_status,
+            "statuses": {first_host: first_status, second_host: second_status},
             "consistent": consistent,
             "notes": "",
-        })
+        }
+        # Preserve the original BNS-HC-007 wire fields for existing consumers.
+        if [first_host, second_host] == ["codex", "claude-code"]:
+            comparison_row["codex_status"] = first_status
+            comparison_row["claude_code_status"] = second_status
+        per_trap.append(comparison_row)
 
     total_compared = len(common_trap_ids)
     inconsistent_count = total_compared - consistent_count
@@ -189,7 +202,7 @@ def generate_comparison_report(
 
     return {
         "comparison_date": datetime.now(timezone.utc).isoformat(),
-        "hosts": ["codex", "claude-code"],
+        "hosts": [first_host, second_host],
         "plugin_version": plugin_version,
         "traps_compared": total_compared,
         "per_trap": per_trap,
@@ -261,11 +274,15 @@ def validate_cross_host_schema(report: Dict[str, Any], report_type: str = "host"
         if not isinstance(per_trap, list):
             errors.append("'per_trap' must be a list")
         else:
-            trap_required_fields = ["trap_id", "codex_status", "claude_code_status", "consistent", "notes"]
+            trap_required_fields = ["trap_id", "consistent", "notes"]
             for i, trap in enumerate(per_trap):
                 for field_name in trap_required_fields:
                     if field_name not in trap:
                         errors.append(f"Per-trap {i}: missing required field '{field_name}'")
+                statuses = trap.get("statuses")
+                has_legacy_statuses = "codex_status" in trap and "claude_code_status" in trap
+                if not isinstance(statuses, dict) and not has_legacy_statuses:
+                    errors.append(f"Per-trap {i}: missing generic 'statuses' mapping")
 
         # Validate overall structure
         overall = report.get("overall", {})

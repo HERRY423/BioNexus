@@ -40,6 +40,7 @@ from bionexus.pseudobulk_warrant import (
     InferentialRegime,
     evaluate_pseudobulk_inferential_warrant,
 )
+from bionexus.validation_verifier import bind_validation_source_provenance
 from bionexus.versions import VERSION
 from evals.flagship_validation import FLAGSHIP_DATASETS
 
@@ -407,6 +408,7 @@ def main() -> int:
         generator_version=VERSION,
         extra_metadata={"n_cells": adata.n_obs, "n_donors": int(adata.obs["donor"].nunique())},
     )
+    bind_validation_source_provenance(prov, REPO_ROOT)
 
 
     # Run Dimension 1

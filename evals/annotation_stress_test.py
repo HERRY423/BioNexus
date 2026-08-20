@@ -46,6 +46,7 @@ from bionexus.annotation_evidence import (
 )
 from bionexus.claim_checker import audit_prohibited_claims
 from bionexus.provenance import capture_execution_provenance, sha256_file
+from bionexus.validation_verifier import bind_validation_source_provenance
 from bionexus.versions import VERSION
 
 SYNTHETIC_DATA_DIR = REPO_ROOT / "validation" / "annotation" / "evidence"
@@ -377,6 +378,7 @@ def main() -> int:
         generator_version=VERSION,
         extra_metadata={"dataset_track": "synthetic_technical_acceptance", "n_cells": adata.n_obs, "n_genes": adata.n_vars},
     )
+    bind_validation_source_provenance(prov, REPO_ROOT)
 
     dim1 = test_dim1_reference_baseline(adata)
     dim2 = test_dim2_circular_marker_trap()
@@ -470,4 +472,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

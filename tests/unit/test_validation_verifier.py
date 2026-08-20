@@ -26,7 +26,24 @@ if str(_REPO_ROOT) not in sys.path:
 if str(_REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT / "src"))
 
-from bionexus.validation_verifier import verify_validation_artifacts
+from bionexus.validation_verifier import compute_validation_source_snapshot, verify_validation_artifacts
+
+
+def test_validation_source_snapshot_excludes_report_self_reference(tmp_path: Path):
+    """Editing a generated report must not change the scientific source identity."""
+    (tmp_path / "src" / "bionexus").mkdir(parents=True)
+    source = tmp_path / "src" / "bionexus" / "scientific.py"
+    source.write_text("VALUE = 1\n", encoding="utf-8")
+    report = tmp_path / "validation" / "pseudobulk" / "REPORT.json"
+    report.parent.mkdir(parents=True)
+    report.write_text('{"run": 1}\n', encoding="utf-8")
+
+    first = compute_validation_source_snapshot(tmp_path)
+    report.write_text('{"run": 2}\n', encoding="utf-8")
+    assert compute_validation_source_snapshot(tmp_path) == first
+
+    source.write_text("VALUE = 2\n", encoding="utf-8")
+    assert compute_validation_source_snapshot(tmp_path) != first
 
 
 @pytest.fixture

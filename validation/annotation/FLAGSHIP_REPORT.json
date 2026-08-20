@@ -30,11 +30,11 @@
     },
     "provenance": {
       "data_source": "10x Genomics public CITE-seq PBMC datasets / Hao et al. 2021 (doi:10.1016/j.cell.2021.04.048) multimodal PBMC",
-      "download_date": "2026-08-20T12:41:28.668338+00:00",
-      "commit_sha": "db8ea304cc5fceef5d97b26c8a31400e1a810e33",
+      "download_date": "2026-08-20T14:23:35.311271+00:00",
+      "commit_sha": "aafba1dd2e621d13f205a029a1bded32677d88d1",
       "git_dirty": true,
       "environment_lockfile_hashes": {
-        "pyproject.toml": "8db6278b4c70ef63c55efd13bc39678d36c18981841e31ba4d54c77fbc02c036",
+        "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
         "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
         "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
       },
@@ -45,12 +45,13 @@
       "generator_version": "1.0.0-rc.1",
       "python_version": "3.13.9",
       "platform": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-08-20T12:41:28.668338+00:00",
+      "timestamp": "2026-08-20T14:23:35.311271+00:00",
       "extra_metadata": {
         "capability": "scrna.annotation_evidence",
         "dataset_id": "citeseq_pbmc_sorted",
         "present": false
-      }
+      },
+      "source_snapshot_sha256": "7ccfb1ab695b0d279d5e66e70d870f4d8f7d2d67396faab132d21b8ac6cbd411"
     }
   },
   "metrics": [
@@ -78,7 +79,7 @@
     "Required files not found: citeseq_pbmc.h5ad",
     "Validation outcome NOT verified in this environment (BNS-EM-009)"
   ],
-  "timestamp": "2026-08-20T12:41:28.668703+00:00",
+  "timestamp": "2026-08-20T14:23:35.335788+00:00",
   "evidence_files": [
     "validation\\annotation\\evidence\\.gitkeep",
     "validation\\annotation\\evidence\\citeseq_synthetic_technical_acceptance.h5ad"

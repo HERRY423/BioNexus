@@ -27,7 +27,7 @@ def test_official_fastmcp_server_sdk(monkeypatch):
     assert server is not None
     assert server.name == "bionexus-local-mcp"
     tools = server._tool_manager.list_tools()
-    assert len(tools) == 9
+    assert len(tools) == 10
     tool_names = {t.name for t in tools}
     assert "search_uniprot" in tool_names
     assert "search_ensembl" in tool_names
@@ -38,6 +38,7 @@ def test_official_fastmcp_server_sdk(monkeypatch):
     assert "search_string" in tool_names
     assert "search_geo" in tool_names
     assert "get_gene_expression" in tool_names
+    assert "bionexus_host_probe" in tool_names
     assert "search_pubmed" not in tool_names
     assert "search_chembl" not in tool_names
 
@@ -45,7 +46,7 @@ def test_official_fastmcp_server_sdk(monkeypatch):
     monkeypatch.setenv("BIONEXUS_LOCAL_HOSTED_FALLBACKS", "1")
     server_with_fallbacks = create_mcp_server()
     tools_all = server_with_fallbacks._tool_manager.list_tools()
-    assert len(tools_all) == 16
+    assert len(tools_all) == 17
     tool_names_all = {t.name for t in tools_all}
     assert "search_pubmed" in tool_names_all
     assert "search_chembl" in tool_names_all
@@ -84,7 +85,7 @@ def test_mcp_initialize():
     result = resp["result"]
     assert result["protocolVersion"] == "2024-11-05"
     assert result["serverInfo"]["name"] == "bionexus-local-mcp"
-    assert result["serverInfo"]["version"] == "2.0.0"
+    assert result["serverInfo"]["version"] == "2.1.0"
 
 
 def test_mcp_ping():
@@ -196,3 +197,71 @@ def test_mcp_tools_call_readonly():
     content = resp["result"]["content"]
     assert len(content) >= 1
     assert "P04637" in content[0]["text"]
+
+
+def test_mcp_host_probe_records_server_receipt(tmp_path, monkeypatch):
+    """A live-host probe must append a verifiable server-side audit event."""
+    import json
+
+    from mcp_host_audit import verify_audit_log
+
+    audit_path = tmp_path / "mcp-audit.jsonl"
+    monkeypatch.setenv("BIONEXUS_MCP_AUDIT_LOG", str(audit_path))
+
+    async def _run():
+        req = {
+            "jsonrpc": "2.0",
+            "id": "host-probe-1",
+            "method": "tools/call",
+            "params": {
+                "name": "bionexus_host_probe",
+                "arguments": {
+                    "host_name": "antigravity",
+                    "host_version": "test-version",
+                    "model": "test-model",
+                    "session_id": "ag-session-0001",
+                    "challenge": "challenge-0000000001",
+                    "human_approved": True,
+                },
+            },
+        }
+        return await handle_rpc_request_async(req)
+
+    resp = asyncio.run(_run())
+    payload = json.loads(resp["result"]["content"][0]["text"])
+    events, errors = verify_audit_log(audit_path)
+
+    assert errors == []
+    assert len(events) == 1
+    assert payload["status"] == "RECORDED"
+    assert payload["receipt_event_hash"] == events[0]["event_hash"]
+    assert events[0]["host_name"] == "antigravity"
+    assert events[0]["human_approved"] is True
+
+
+def test_mcp_host_probe_fails_closed_without_audit_log(monkeypatch):
+    """No audit destination means no live-host receipt can be claimed."""
+    monkeypatch.delenv("BIONEXUS_MCP_AUDIT_LOG", raising=False)
+
+    async def _run():
+        req = {
+            "jsonrpc": "2.0",
+            "id": "host-probe-no-log",
+            "method": "tools/call",
+            "params": {
+                "name": "bionexus_host_probe",
+                "arguments": {
+                    "host_name": "antigravity",
+                    "host_version": "test-version",
+                    "model": "test-model",
+                    "session_id": "ag-session-0002",
+                    "challenge": "challenge-0000000002",
+                    "human_approved": True,
+                },
+            },
+        }
+        return await handle_rpc_request_async(req)
+
+    resp = asyncio.run(_run())
+    assert resp["result"]["isError"] is True
+    assert "BIONEXUS_MCP_AUDIT_LOG" in resp["result"]["content"][0]["text"]
