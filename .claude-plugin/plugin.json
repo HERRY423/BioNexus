@@ -1,6 +1,6 @@
 {
   "name": "bionexus-reliability",
-  "version": "0.10.0",
+  "version": "1.0.0-rc.1",
   "description": "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents (Warrant-First Evidence Assessment, Fail-Closed Invariants, Evidence-Capped Claims, Zero Silent Substitution).",
   "author": {
     "name": "BioNexus Team"

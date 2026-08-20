@@ -176,6 +176,13 @@ jobs:
           fi
           VERSION="${TAG#v}"
           echo "Building release for version: $VERSION"
+          if [[ "$TAG" == *"-rc"* ]] || [[ "$TAG" == *"-alpha"* ]] || [[ "$TAG" == *"-beta"* ]] || [[ "$TAG" == *"-pre"* ]]; then
+            echo "IS_PRERELEASE=true" >> "$GITHUB_ENV"
+            echo "[INFO] Tag $TAG detected as pre-release"
+          else
+            echo "IS_PRERELEASE=false" >> "$GITHUB_ENV"
+            echo "[INFO] Tag $TAG detected as full GA release"
+          fi
           python -c "
           from pathlib import Path
           changelog = Path('CHANGELOG.md').read_text(encoding='utf-8')
@@ -200,7 +207,7 @@ jobs:
           name: "BioNexus ${{ github.ref_name || github.event.inputs.tag_name }}"
           body_path: dist/RELEASE_NOTES.md
           draft: false
-          prerelease: false
+          prerelease: ${{ env.IS_PRERELEASE == 'true' }}
           files: |
             dist/*.whl
             dist/*.tar.gz

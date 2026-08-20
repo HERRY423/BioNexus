@@ -9,7 +9,7 @@ from typing import Dict, List, TypedDict
 
 from .provenance import package_version
 
-VERSION = "0.10.0"
+VERSION = "1.0.0-rc.1"
 PLUGIN_VERSION = VERSION
 
 

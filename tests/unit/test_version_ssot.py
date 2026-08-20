@@ -30,9 +30,9 @@ from bionexus.versions import PLUGIN_VERSION, VERSION
 
 
 def test_bionexus_module_version_matches_ssot():
-    """bionexus.__version__ and versions.VERSION MUST match 0.10.0."""
-    assert bionexus.__version__ == "0.10.0"
-    assert VERSION == "0.10.0"
+    """bionexus.__version__ and versions.VERSION MUST match SSOT."""
+    assert bionexus.__version__ == VERSION
+    assert VERSION == "1.0.0-rc.1"
     assert PLUGIN_VERSION == VERSION
 
 
