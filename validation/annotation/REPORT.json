@@ -19,9 +19,9 @@
     },
     "provenance": {
       "data_source": "synthetic_generator (in-silico generated multimodal fixture)",
-      "download_date": "2026-08-20T14:22:00.416499+00:00",
-      "commit_sha": "aafba1dd2e621d13f205a029a1bded32677d88d1",
-      "git_dirty": true,
+      "download_date": "2026-08-20T14:28:11.176654+00:00",
+      "commit_sha": "8344a6bbf2152b12157d8f28b07324aa76d9d1b9",
+      "git_dirty": false,
       "environment_lockfile_hashes": {
         "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
         "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
@@ -34,13 +34,15 @@
       "generator_version": "1.0.0-rc.1",
       "python_version": "3.13.9",
       "platform": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-08-20T14:22:00.538387+00:00",
+      "timestamp": "2026-08-20T14:28:11.303139+00:00",
       "extra_metadata": {
         "dataset_track": "synthetic_technical_acceptance",
         "n_cells": 1200,
         "n_genes": 300
       },
-      "source_snapshot_sha256": "7ccfb1ab695b0d279d5e66e70d870f4d8f7d2d67396faab132d21b8ac6cbd411"
+      "repository_dirty_at_execution": false,
+      "validation_source_dirty": false,
+      "source_snapshot_sha256": "1e6b1bf0fb941592c100d5e164b2f4f00fa4a8bd75730a7b0ed287c99e552fbc"
     }
   },
   "metrics": [
@@ -78,7 +80,7 @@
   "limitations": [
     "Synthetic technical acceptance only: evaluated on in-silico multimodal fixture; does not satisfy public_reference_dataset or independent_ground_truth external validation (BNS-010)."
   ],
-  "timestamp": "2026-08-20T14:22:00.576298+00:00",
+  "timestamp": "2026-08-20T14:28:11.418847+00:00",
   "evidence_files": [
     "validation/annotation/INFERENTIAL_STRESS_REPORT.json"
   ],

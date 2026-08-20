@@ -30,9 +30,9 @@
     },
     "provenance": {
       "data_source": "10x Genomics Xenium public datasets (e.g. Human Breast FFPE) / Vizgen MERSCOPE public releases (Moffitt et al. 2016-style MERFISH)",
-      "download_date": "2026-08-20T14:23:39.194058+00:00",
-      "commit_sha": "aafba1dd2e621d13f205a029a1bded32677d88d1",
-      "git_dirty": true,
+      "download_date": "2026-08-20T14:29:50.251902+00:00",
+      "commit_sha": "8344a6bbf2152b12157d8f28b07324aa76d9d1b9",
+      "git_dirty": false,
       "environment_lockfile_hashes": {
         "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
         "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
@@ -45,13 +45,15 @@
       "generator_version": "1.0.0-rc.1",
       "python_version": "3.13.9",
       "platform": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-08-20T14:23:39.194058+00:00",
+      "timestamp": "2026-08-20T14:29:50.251902+00:00",
       "extra_metadata": {
         "capability": "spatial.inference_validity",
         "dataset_id": "xenium_spatial_truth",
         "present": false
       },
-      "source_snapshot_sha256": "7ccfb1ab695b0d279d5e66e70d870f4d8f7d2d67396faab132d21b8ac6cbd411"
+      "repository_dirty_at_execution": true,
+      "validation_source_dirty": false,
+      "source_snapshot_sha256": "1e6b1bf0fb941592c100d5e164b2f4f00fa4a8bd75730a7b0ed287c99e552fbc"
     }
   },
   "metrics": [
@@ -79,7 +81,7 @@
     "Required files not found: spatial_truth.h5ad",
     "Validation outcome NOT verified in this environment (BNS-EM-009)"
   ],
-  "timestamp": "2026-08-20T14:23:39.213987+00:00",
+  "timestamp": "2026-08-20T14:29:50.344920+00:00",
   "evidence_files": [
     "validation\\spatial\\evidence\\.gitkeep",
     "validation\\spatial\\evidence\\spatial_synthetic_technical_acceptance.h5ad"
