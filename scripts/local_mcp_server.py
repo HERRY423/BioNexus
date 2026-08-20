@@ -2186,6 +2186,26 @@ async def handle_rpc_request_async(req: Dict[str, Any]) -> Optional[Dict[str, An
 # --- Async Stdio Main Loop & Entry Point ---
 
 
+def configure_runtime_from_argv(argv: Optional[List[str]] = None) -> None:
+    """Bind explicit host-launch options without weakening fail-closed defaults."""
+    args = list(sys.argv[1:] if argv is None else argv)
+    option = "--audit-log"
+    if option not in args:
+        return
+
+    index = args.index(option)
+    if index + 1 >= len(args) or not args[index + 1].strip() or args[index + 1].startswith("-"):
+        raise ValueError("--audit-log requires an explicit non-empty path")
+    if option in args[index + 2 :]:
+        raise ValueError("--audit-log may be specified only once")
+
+    configured_path = args[index + 1].strip()
+    environment_path = os.environ.get("BIONEXUS_MCP_AUDIT_LOG", "").strip()
+    if environment_path and Path(environment_path) != Path(configured_path):
+        raise ValueError("conflicting MCP audit log paths in environment and command line")
+    os.environ["BIONEXUS_MCP_AUDIT_LOG"] = configured_path
+
+
 async def async_stdio_reader():
     """Asynchronous stdin reader supporting standard input lines."""
     loop = asyncio.get_running_loop()
@@ -2243,6 +2263,7 @@ async def process_single_rpc(req: Dict[str, Any]):
 
 def main():
     """Main process entry point."""
+    configure_runtime_from_argv()
     logger.info("BioNexus Local MCP Server starting...")
     if "--legacy" in sys.argv or os.environ.get("BIONEXUS_MCP_LEGACY_MODE") == "1" or FastMCP is None:
         try:

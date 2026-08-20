@@ -5,13 +5,35 @@ Uses native asyncio.run() for universal compatibility without requiring external
 """
 
 import asyncio
+import os
 import sys
 from pathlib import Path
 
 # Ensure scripts dir is on sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
 
-from local_mcp_server import create_mcp_server, handle_rpc_request_async
+from local_mcp_server import configure_runtime_from_argv, create_mcp_server, handle_rpc_request_async
+
+
+def test_explicit_audit_log_cli_option_supports_hosts_that_drop_env(monkeypatch, tmp_path):
+    audit_path = tmp_path / "antigravity-audit.jsonl"
+    monkeypatch.delenv("BIONEXUS_MCP_AUDIT_LOG", raising=False)
+
+    configure_runtime_from_argv(["--audit-log", str(audit_path)])
+
+    assert os.environ["BIONEXUS_MCP_AUDIT_LOG"] == str(audit_path)
+
+
+def test_explicit_audit_log_cli_option_rejects_missing_or_conflicting_paths(monkeypatch, tmp_path):
+    import pytest
+
+    monkeypatch.delenv("BIONEXUS_MCP_AUDIT_LOG", raising=False)
+    with pytest.raises(ValueError, match="requires an explicit"):
+        configure_runtime_from_argv(["--audit-log"])
+
+    monkeypatch.setenv("BIONEXUS_MCP_AUDIT_LOG", str(tmp_path / "environment.jsonl"))
+    with pytest.raises(ValueError, match="conflicting"):
+        configure_runtime_from_argv(["--audit-log", str(tmp_path / "command-line.jsonl")])
 
 
 def test_official_fastmcp_server_sdk(monkeypatch):
