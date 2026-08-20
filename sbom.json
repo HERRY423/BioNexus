@@ -1,0 +1,324 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:bionexus-sbom-0.10.0",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-08-20T08:34:24.804152+00:00",
+    "tools": [
+      {
+        "vendor": "BioNexus",
+        "name": "bionexus-sbom-generator",
+        "version": "0.10.0"
+      }
+    ],
+    "component": {
+      "type": "application",
+      "name": "bionexus-reliability",
+      "version": "0.10.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "type": "application",
+      "name": "bionexus-reliability",
+      "version": "0.10.0",
+      "description": "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:pypi/bionexus-reliability@0.10.0"
+    },
+    {
+      "type": "library",
+      "name": "numpy",
+      "version": "declared_in_pyproject",
+      "scope": "required",
+      "purl": "pkg:pypi/numpy"
+    },
+    {
+      "type": "library",
+      "name": "pandas",
+      "version": "declared_in_pyproject",
+      "scope": "required",
+      "purl": "pkg:pypi/pandas"
+    },
+    {
+      "type": "library",
+      "name": "scipy",
+      "version": "declared_in_pyproject",
+      "scope": "required",
+      "purl": "pkg:pypi/scipy"
+    },
+    {
+      "type": "library",
+      "name": "requests",
+      "version": "declared_in_pyproject",
+      "scope": "required",
+      "purl": "pkg:pypi/requests"
+    },
+    {
+      "type": "library",
+      "name": "pyyaml",
+      "version": "declared_in_pyproject",
+      "scope": "required",
+      "purl": "pkg:pypi/pyyaml"
+    },
+    {
+      "type": "library",
+      "name": "tqdm",
+      "version": "declared_in_pyproject",
+      "scope": "required",
+      "purl": "pkg:pypi/tqdm"
+    },
+    {
+      "type": "library",
+      "name": "jsonschema",
+      "version": "declared_in_pyproject",
+      "scope": "required",
+      "purl": "pkg:pypi/jsonschema"
+    },
+    {
+      "type": "library",
+      "name": "scikit-learn",
+      "version": "declared_in_pyproject",
+      "scope": "required",
+      "purl": "pkg:pypi/scikit-learn"
+    },
+    {
+      "type": "library",
+      "name": "scanpy",
+      "version": "declared_in_pyproject",
+      "scope": "optional:goldchain",
+      "purl": "pkg:pypi/scanpy"
+    },
+    {
+      "type": "library",
+      "name": "anndata",
+      "version": "declared_in_pyproject",
+      "scope": "optional:goldchain",
+      "purl": "pkg:pypi/anndata"
+    },
+    {
+      "type": "library",
+      "name": "matplotlib",
+      "version": "declared_in_pyproject",
+      "scope": "optional:goldchain",
+      "purl": "pkg:pypi/matplotlib"
+    },
+    {
+      "type": "library",
+      "name": "seaborn",
+      "version": "declared_in_pyproject",
+      "scope": "optional:goldchain",
+      "purl": "pkg:pypi/seaborn"
+    },
+    {
+      "type": "library",
+      "name": "h5py",
+      "version": "declared_in_pyproject",
+      "scope": "optional:goldchain",
+      "purl": "pkg:pypi/h5py"
+    },
+    {
+      "type": "library",
+      "name": "leidenalg",
+      "version": "declared_in_pyproject",
+      "scope": "optional:goldchain",
+      "purl": "pkg:pypi/leidenalg"
+    },
+    {
+      "type": "library",
+      "name": "igraph",
+      "version": "declared_in_pyproject",
+      "scope": "optional:goldchain",
+      "purl": "pkg:pypi/igraph"
+    },
+    {
+      "type": "library",
+      "name": "harmonypy",
+      "version": "declared_in_pyproject",
+      "scope": "optional:goldchain",
+      "purl": "pkg:pypi/harmonypy"
+    },
+    {
+      "type": "library",
+      "name": "pydeseq2",
+      "version": "declared_in_pyproject",
+      "scope": "optional:goldchain",
+      "purl": "pkg:pypi/pydeseq2"
+    },
+    {
+      "type": "library",
+      "name": "pydeseq2",
+      "version": "declared_in_pyproject",
+      "scope": "optional:deseq",
+      "purl": "pkg:pypi/pydeseq2"
+    },
+    {
+      "type": "library",
+      "name": "scvi-tools",
+      "version": "declared_in_pyproject",
+      "scope": "optional:scverse",
+      "purl": "pkg:pypi/scvi-tools"
+    },
+    {
+      "type": "library",
+      "name": "torch",
+      "version": "declared_in_pyproject",
+      "scope": "optional:scverse",
+      "purl": "pkg:pypi/torch"
+    },
+    {
+      "type": "library",
+      "name": "optuna",
+      "version": "declared_in_pyproject",
+      "scope": "optional:scverse",
+      "purl": "pkg:pypi/optuna"
+    },
+    {
+      "type": "library",
+      "name": "squidpy",
+      "version": "declared_in_pyproject",
+      "scope": "optional:spatial",
+      "purl": "pkg:pypi/squidpy"
+    },
+    {
+      "type": "library",
+      "name": "anndata",
+      "version": "declared_in_pyproject",
+      "scope": "optional:spatial",
+      "purl": "pkg:pypi/anndata"
+    },
+    {
+      "type": "library",
+      "name": "lifelines",
+      "version": "declared_in_pyproject",
+      "scope": "optional:survival",
+      "purl": "pkg:pypi/lifelines"
+    },
+    {
+      "type": "library",
+      "name": "transformers",
+      "version": "declared_in_pyproject",
+      "scope": "optional:plm",
+      "purl": "pkg:pypi/transformers"
+    },
+    {
+      "type": "library",
+      "name": "torch",
+      "version": "declared_in_pyproject",
+      "scope": "optional:plm",
+      "purl": "pkg:pypi/torch"
+    },
+    {
+      "type": "library",
+      "name": "abnumber",
+      "version": "declared_in_pyproject",
+      "scope": "optional:structure",
+      "purl": "pkg:pypi/abnumber"
+    },
+    {
+      "type": "library",
+      "name": "biotite",
+      "version": "declared_in_pyproject",
+      "scope": "optional:structure",
+      "purl": "pkg:pypi/biotite"
+    },
+    {
+      "type": "library",
+      "name": "ViennaRNA",
+      "version": "declared_in_pyproject",
+      "scope": "optional:biologics",
+      "purl": "pkg:pypi/ViennaRNA"
+    },
+    {
+      "type": "library",
+      "name": "allotropy",
+      "version": "declared_in_pyproject",
+      "scope": "optional:allotrope",
+      "purl": "pkg:pypi/allotropy"
+    },
+    {
+      "type": "library",
+      "name": "polars",
+      "version": "declared_in_pyproject",
+      "scope": "optional:allotrope",
+      "purl": "pkg:pypi/polars"
+    },
+    {
+      "type": "library",
+      "name": "openpyxl",
+      "version": "declared_in_pyproject",
+      "scope": "optional:allotrope",
+      "purl": "pkg:pypi/openpyxl"
+    },
+    {
+      "type": "library",
+      "name": "xlrd",
+      "version": "declared_in_pyproject",
+      "scope": "optional:allotrope",
+      "purl": "pkg:pypi/xlrd"
+    },
+    {
+      "type": "library",
+      "name": "pypdf",
+      "version": "declared_in_pyproject",
+      "scope": "optional:allotrope",
+      "purl": "pkg:pypi/pypdf"
+    },
+    {
+      "type": "library",
+      "name": "mcp",
+      "version": "declared_in_pyproject",
+      "scope": "optional:mcp",
+      "purl": "pkg:pypi/mcp"
+    },
+    {
+      "type": "library",
+      "name": "pytest",
+      "version": "declared_in_pyproject",
+      "scope": "optional:dev",
+      "purl": "pkg:pypi/pytest"
+    },
+    {
+      "type": "library",
+      "name": "pytest-cov",
+      "version": "declared_in_pyproject",
+      "scope": "optional:dev",
+      "purl": "pkg:pypi/pytest-cov"
+    },
+    {
+      "type": "library",
+      "name": "pytest-asyncio",
+      "version": "declared_in_pyproject",
+      "scope": "optional:dev",
+      "purl": "pkg:pypi/pytest-asyncio"
+    },
+    {
+      "type": "library",
+      "name": "ruff",
+      "version": "declared_in_pyproject",
+      "scope": "optional:dev",
+      "purl": "pkg:pypi/ruff"
+    },
+    {
+      "type": "library",
+      "name": "mcp",
+      "version": "declared_in_pyproject",
+      "scope": "optional:dev",
+      "purl": "pkg:pypi/mcp"
+    }
+  ]
+}

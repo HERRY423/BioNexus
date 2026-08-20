@@ -1828,6 +1828,90 @@ def handle_closed_loop(args: argparse.Namespace) -> int:
     return 0
 
 
+def handle_security(args: argparse.Namespace) -> int:
+    """Handle BioNexus Data Governance & Security commands."""
+    import json
+    from pathlib import Path
+
+    from bionexus.egress_guard import get_egress_guard
+
+    action = getattr(args, "security_action", None)
+    guard = get_egress_guard()
+
+    if action in ("egress-policy", "policy"):
+        if getattr(args, "mode", None):
+            guard.set_mode(args.mode)
+            print(f"[OK] Data Egress Mode updated to: {guard.mode.value}")
+
+        if getattr(args, "json", False):
+            print(json.dumps({
+                "mode": guard.mode.value,
+                "audit_log_path": str(guard.audit_log_path),
+                "approved_domains_count": len(guard.allowed_domains),
+                "approved_domains": sorted(list(guard.allowed_domains)),
+            }, indent=2))
+        else:
+            print("\n=== BioNexus Data Governance & Egress Policy (BNS-SEC-001) ===")
+            print(f"Active Egress Mode:      {guard.mode.value}")
+            print(f"Audit Log Destination:   {guard.audit_log_path}")
+            print(f"Approved Knowledge APIs: {len(guard.allowed_domains)} domains")
+            print("\nMode Guidelines:")
+            print("  * OFFLINE_STRICT : Zero network access. Air-gapped local compute only.")
+            print("  * ALLOWLIST      : Approved scientific services only. Raw biological matrices & PHI blocked.")
+            print("  * CONNECTED      : External calls permitted with mandatory cryptographic audit logging.")
+            print()
+        return 0
+
+    elif action == "audit":
+        audit_file = guard.audit_log_path
+        records = []
+        if audit_file.is_file():
+            with open(audit_file, "r", encoding="utf-8") as f:
+                for line in f:
+                    if line.strip():
+                        try:
+                            records.append(json.loads(line.strip()))
+                        except Exception:
+                            pass
+        records.extend([r.to_dict() for r in guard.get_audit_trail()])
+        seen = set()
+        deduped = []
+        for r in records:
+            rid = r.get("record_id")
+            if rid not in seen:
+                seen.add(rid)
+                deduped.append(r)
+
+        limit = getattr(args, "limit", 20)
+        sliced = deduped[-limit:] if limit else deduped
+
+        if getattr(args, "json", False):
+            print(json.dumps({"total_records": len(deduped), "audit_records": sliced}, indent=2))
+        else:
+            print(f"\n=== BioNexus Cryptographic Egress Audit Trail ({len(deduped)} total events) ===")
+            if not sliced:
+                print("  No external egress calls recorded in this session.")
+            for r in sliced:
+                outcome_color = "[PERMITTED]" if r.get("outcome") == "PERMITTED" else "[BLOCKED]  "
+                print(f"{outcome_color} {r.get('timestamp')} | {r.get('egress_mode'):<14} | {r.get('endpoint')}")
+                print(f"    Purpose: {r.get('purpose')} | SHA256: {r.get('payload_sha256', '')[:12]}...")
+                if r.get("block_reason"):
+                    print(f"    Block Reason: {r.get('block_reason')}")
+            print()
+        return 0
+
+    elif action == "sbom":
+        from scripts.generate_sbom import generate_cyclonedx_sbom
+        sbom = generate_cyclonedx_sbom()
+        out_path = Path(args.output) if args.output else Path("sbom.json")
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(json.dumps(sbom, indent=2), encoding="utf-8")
+        print(f"[OK] Generated CycloneDX SBOM ({len(sbom['components'])} components) -> {out_path}")
+        return 0
+
+    return 0
+
+
 # ==============================================================================
 # Main Parser & Router
 # ==============================================================================
@@ -2334,7 +2418,28 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_cl_run.add_argument("--spatial", required=True, help="Path to spatial reference .h5ad dataset")
     p_cl_run.add_argument("--genes", required=True, help="Comma-separated target gene symbols (e.g. TP53,CDKN1A)")
     p_cl_run.add_argument("--mode", default="knockout", choices=["knockout", "overexpression"], help="Perturbation mode")
-    p_cl_run.add_argument("--json", action="store_true", help="Output closed-loop report and hypothesis card as JSON")
+    # 15. security (Data Governance, Egress Policy, Cryptographic Audit, SBOM)
+    p_security = subparsers.add_parser("security", help="Data governance, egress control policy, and cryptographic audit")
+    sec_subs = p_security.add_subparsers(dest="security_action", help="Security actions")
+
+    # security egress-policy
+    p_sec_policy = sec_subs.add_parser("egress-policy", aliases=["policy"], help="Display or update active Data Egress policy")
+    p_sec_policy.add_argument(
+        "--mode",
+        choices=["OFFLINE_STRICT", "ALLOWLIST", "CONNECTED"],
+        default=None,
+        help="Update active egress mode (OFFLINE_STRICT / ALLOWLIST / CONNECTED)",
+    )
+    p_sec_policy.add_argument("--json", action="store_true", help="Output policy as JSON")
+
+    # security audit
+    p_sec_audit = sec_subs.add_parser("audit", help="Display cryptographic egress audit trail")
+    p_sec_audit.add_argument("--limit", type=int, default=20, help="Number of recent records to display (default: 20)")
+    p_sec_audit.add_argument("--json", action="store_true", help="Output audit log as JSON")
+
+    # security sbom
+    p_sec_sbom = sec_subs.add_parser("sbom", help="Generate CycloneDX Software Bill of Materials (SBOM)")
+    p_sec_sbom.add_argument("-o", "--output", default="sbom.json", help="Output JSON path (default: sbom.json)")
 
     args = parser.parse_args(argv)
 
@@ -2430,6 +2535,11 @@ def main(argv: Optional[list[str]] = None) -> int:
             p_closed.print_help()
             return 0
         return handle_closed_loop(args)
+    elif args.command == "security":
+        if not getattr(args, "security_action", None):
+            p_security.print_help()
+            return 0
+        return handle_security(args)
 
     return 0
 

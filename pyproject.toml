@@ -124,7 +124,7 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "-v --tb=short"
+addopts = "-v --tb=short --basetemp=.pytest_temp"
 
 [tool.ruff]
 line-length = 120
@@ -148,6 +148,8 @@ ignore = ["E501"]
 "scripts/sync_version.py" = ["E402"]
 "plugins/**/doctor.py" = ["E402"]
 "plugins/**/goldchain_smoke.py" = ["E402"]
+"scripts/generate_sbom.py" = ["E402"]
+"plugins/**/generate_sbom.py" = ["E402"]
 "tests/**/*.py" = ["E402"]
 "evals/**/*.py" = ["E402"]
 
