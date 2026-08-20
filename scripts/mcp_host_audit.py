@@ -24,6 +24,11 @@ _APPEND_LOCK = threading.Lock()
 _HOST_RE = re.compile(r"^[a-z0-9][a-z0-9._-]{1,63}$")
 
 
+def _git_executable() -> str:
+    """Return an explicit Git binary when GUI hosts do not inherit PATH."""
+    return os.environ.get("BIONEXUS_GIT_EXECUTABLE", "").strip() or "git"
+
+
 def canonical_json(value: Any) -> str:
     """Return stable JSON used by every audit hash."""
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
@@ -88,7 +93,7 @@ def _git_commit(repo_root: Optional[Path]) -> str:
         return "unknown"
     try:
         result = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
+            [_git_executable(), "rev-parse", "HEAD"],
             cwd=repo_root,
             check=True,
             capture_output=True,
@@ -105,7 +110,14 @@ def _git_dirty(repo_root: Optional[Path]) -> Optional[bool]:
         return None
     try:
         result = subprocess.run(
-            ["git", "status", "--porcelain", "--untracked-files=normal"],
+            [
+                _git_executable(),
+                "-c",
+                "core.excludesFile=NUL" if os.name == "nt" else "core.excludesFile=/dev/null",
+                "status",
+                "--porcelain",
+                "--untracked-files=normal",
+            ],
             cwd=repo_root,
             check=True,
             capture_output=True,
@@ -183,7 +195,11 @@ def append_host_probe(
         with audit_path.open("a", encoding="utf-8", newline="\n") as handle:
             handle.write(canonical_json(event) + "\n")
             handle.flush()
-            os.fsync(handle.fileno())
+            # Flush is sufficient for this tamper-evident technical receipt.
+            # Windows GUI-hosted stdio processes can block indefinitely in
+            # FlushFileBuffers/os.fsync even after the bytes are readable.
+            if os.name != "nt":
+                os.fsync(handle.fileno())
         return event
 
 

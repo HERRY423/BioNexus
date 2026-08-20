@@ -1874,7 +1874,9 @@ def create_mcp_server():
             challenge=challenge,
             human_approved=human_approved,
         )
-        return json.dumps(res, indent=2, ensure_ascii=False)
+        # Keep the success payload compact for older GUI MCP clients. The
+        # tamper-evident audit log remains the authoritative full receipt.
+        return json.dumps(res, separators=(",", ":"), ensure_ascii=False)
 
     flag = os.environ.get("BIONEXUS_LOCAL_HOSTED_FALLBACKS", "").strip().lower()
     if flag in {"1", "true", "yes"}:

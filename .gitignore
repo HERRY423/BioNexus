@@ -93,6 +93,13 @@ work/
 .agents/mcp_config.json
 plugins/**/.agents/
 
+# Machine-local evidence produced by the real Antigravity acceptance run.
+# REQUEST.json and the workflow remain tracked; receipts and generated results
+# must not make the source snapshot dirty while the host is being evaluated.
+cross-host/antigravity/mcp-audit.jsonl
+cross-host/antigravity/RUN.json
+cross-host/antigravity/REPORT.json
+
 # Submission and manuscript materials (DO NOT COMMIT)
 figures/
 *投稿*
