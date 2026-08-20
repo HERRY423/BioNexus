@@ -149,4 +149,5 @@ ignore = ["E501"]
 "plugins/**/doctor.py" = ["E402"]
 "plugins/**/goldchain_smoke.py" = ["E402"]
 "tests/**/*.py" = ["E402"]
+"evals/**/*.py" = ["E402"]
 

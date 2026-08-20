@@ -417,7 +417,7 @@ def _suite_pseudobulk_external_truth(case, meta: Dict[str, Any]) -> Dict[str, An
 def _suite_annotation_distrust(case, meta: Dict[str, Any]) -> Dict[str, Any]:
     """B: the benchmark is knowing when an annotation is NOT worth believing."""
     try:
-        import anndata
+        import anndata  # noqa: F401
     except ImportError as exc:
         return {
             "actual_status": "SKIPPED_NO_BACKEND",

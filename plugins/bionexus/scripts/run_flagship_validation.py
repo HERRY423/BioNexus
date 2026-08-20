@@ -119,7 +119,7 @@ def _build_metrics_for_pseudobulk_run(observed: Dict[str, Any]) -> List[Dict[str
         },
         {
             "name": "donor_aware_design",
-            "expected": f"donor x condition pseudobulk, >=4 samples",
+            "expected": "donor x condition pseudobulk, >=4 samples",
             "observed": (
                 f"{observed.get('n_donors')} donors, "
                 f"{observed.get('n_pseudobulk_samples')} pseudobulk samples, "

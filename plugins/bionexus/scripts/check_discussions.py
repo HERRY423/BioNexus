@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import json
 import os
-import sys
 import time
 import urllib.error
 import urllib.request
@@ -30,7 +29,7 @@ def graphql_query(query: str, variables: dict | None = None, max_retries: int = 
             req = urllib.request.Request(GRAPHQL_URL, data=payload, headers=headers, method="POST")
             with urllib.request.urlopen(req, timeout=30) as resp:
                 return json.loads(resp.read().decode("utf-8"))
-        except Exception as e:
+        except Exception:
             if attempt == max_retries:
                 raise
             time.sleep(2 * attempt)

@@ -25,7 +25,7 @@ import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict
 
 import numpy as np
 import pandas as pd
@@ -40,7 +40,6 @@ import anndata as ad
 from scipy import sparse
 
 from bionexus.annotation_evidence import (
-    THRESHOLDS,
     AnnotationEvidence,
     assess_annotation_evidence,
 )
@@ -77,7 +76,7 @@ def generate_or_load_citeseq_dataset() -> ad.AnnData:
     # Plant RNA markers
     # CD3D (idx 0), CD4 (idx 1), CD8A (idx 2), MS4A1 (idx 3), NCAM1 (idx 4), CD14 (idx 5)
     gene_names = ["CD3D", "CD4", "CD8A", "MS4A1", "NCAM1", "CD14"] + [f"GENE_{i}" for i in range(6, n_genes)]
-    
+
     for i, ct in enumerate(cell_types):
         if ct == "CD4_T":
             counts[i, 0] += rng.poisson(15.0)  # CD3D

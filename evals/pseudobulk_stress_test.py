@@ -21,7 +21,7 @@ import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, Tuple
 
 import numpy as np
 import pandas as pd
@@ -227,7 +227,7 @@ def test_dim3_donor_perturbation(adata: ad.AnnData) -> Dict[str, Any]:
 def test_dim4_effect_size_sensitivity(adata: ad.AnnData) -> Dict[str, Any]:
     print("  [Dim 4] Running Effect Size Sensitivity Grid (Log2FC 0.5, 1.0, 2.0, 4.0)...")
     counts, design = aggregate_pseudobulk(adata)
-    
+
     # Pick expressed genes with healthy baseline counts (mean > 50 in ctrl) and low variance
     ctrl_samples = design.loc[design["condition"] == "ctrl", "sample_id"]
     ctrl_means = counts.loc[ctrl_samples].mean(axis=0)

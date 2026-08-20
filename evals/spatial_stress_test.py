@@ -31,7 +31,7 @@ import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict
 
 import numpy as np
 import pandas as pd
@@ -46,8 +46,6 @@ import anndata as ad
 from scipy import sparse
 
 from bionexus.spatial_inference import (
-    CANONICAL_ALTERNATIVES,
-    ControlResult,
     assess_spatial_inference,
 )
 
@@ -146,10 +144,9 @@ def test_dim1_baseline(adata: ad.AnnData) -> Dict[str, Any]:
 def test_dim2_segmentation_leakage(adata: ad.AnnData) -> Dict[str, Any]:
     print("  [Dim 2] Testing Segmentation Leakage Confounder...")
     # Inject transcript leakage into neighbor cells
-    rng = np.random.default_rng(101)
     X = adata.X.toarray().copy()
     coords = np.asarray(adata.obsm["spatial"])
-    
+
     # Calculate inter-cellular correlation between physical nearest neighbors
     sims = []
     for i in range(min(200, adata.n_obs)):
@@ -157,10 +154,6 @@ def test_dim2_segmentation_leakage(adata: ad.AnnData) -> Dict[str, Any]:
         dists[i] = np.inf
         nn = int(np.argmin(dists))
         sims.append(np.corrcoef(X[i], X[nn])[0, 1])
-
-    # When leakage is detected (e.g. NN correlation > 0.60), control fails
-    leakage_failed = float(np.mean(sims)) > 0.60
-    control_status = "FAILED" if leakage_failed else "TESTED"
 
     verdict = assess_spatial_inference(
         "SVG_0 localization",
@@ -234,7 +227,7 @@ def test_dim4_morphology_cell_size(adata: ad.AnnData) -> Dict[str, Any]:
         "area_count_correlation": round(r, 4),
         "control_status": status,
         "warrant_verdict": verdict.verdict,
-        "passed": True,
+        "passed": passed,
     }
 
 
@@ -294,7 +287,7 @@ def test_dim7_radius_sensitivity(adata: ad.AnnData) -> Dict[str, Any]:
     print("  [Dim 7] Testing Neighborhood Radius Sensitivity Grid (15, 30, 50, 100 um)...")
     radii = [15.0, 30.0, 50.0, 100.0]
     coords = np.asarray(adata.obsm["spatial"])
-    
+
     mean_neighbors = []
     for r in radii:
         n_nbrs = [np.sum(np.linalg.norm(coords[:100] - coords[i], axis=1) < r) - 1 for i in range(100)]

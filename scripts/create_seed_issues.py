@@ -6,10 +6,9 @@ from __future__ import annotations
 
 import json
 import os
-import sys
 import urllib.error
 import urllib.request
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 TOKEN = os.environ.get("GH_TOKEN", "")
 REPO = "HERRY423/BioNexus"
@@ -154,7 +153,7 @@ Submit a new YAML trap definition following the schema in `evals/datasets/`.
     {
         "title": "[Scientific Rule Challenge] Formalize survival analysis Hazard Ratio vs Empirical Event Rate boundary",
         "labels": ["scientific-rule", "epistemic-warrant", "help-wanted"],
-        "body": """### Epistemic Rule Under Design
+        "body": r"""### Epistemic Rule Under Design
 Survival Analysis Warrant Ceiling (`clinical.survival_analysis`).
 
 ### Problem Statement
@@ -222,7 +221,7 @@ def github_request(endpoint: str, data: Dict[str, Any] | None = None, method: st
         "Content-Type": "application/json",
     }
     body = json.dumps(data).encode("utf-8") if data else None
-    
+
     for attempt in range(1, max_retries + 1):
         try:
             req = urllib.request.Request(url, data=body, headers=headers, method=method)
@@ -234,7 +233,7 @@ def github_request(endpoint: str, data: Dict[str, Any] | None = None, method: st
             if attempt == max_retries:
                 raise
             time.sleep(2 * attempt)
-        except Exception as e:
+        except Exception:
             if attempt == max_retries:
                 raise
             time.sleep(2 * attempt)

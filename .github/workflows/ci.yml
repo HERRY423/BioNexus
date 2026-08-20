@@ -9,6 +9,9 @@ on:
     - cron: '0 2 * * *'
 
 jobs:
+  # --------------------------------------------------------------------------
+  # 1. Code Quality & Config Integrity
+  # --------------------------------------------------------------------------
   lint:
     name: Code Quality & Config Integrity
     runs-on: ubuntu-latest
@@ -29,8 +32,11 @@ jobs:
           python scripts/registry_compiler.py --check
           python scripts/registry_compiler.py --validate-endpoints
 
-  test:
-    name: Unit & Integration Tests (${{ matrix.os }}, Python ${{ matrix.python-version }})
+  # --------------------------------------------------------------------------
+  # 2. Core Reliability Matrix: Python 3.10-3.12 x Win/macOS/Linux (Must be 100% Green)
+  # --------------------------------------------------------------------------
+  core-matrix:
+    name: Core Reliability (${{ matrix.os }}, Python ${{ matrix.python-version }})
     needs: lint
     runs-on: ${{ matrix.os }}
     strategy:
@@ -45,92 +51,131 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
-      - name: Install Dependencies
+      - name: Install Core Dependencies
         shell: bash
         run: |
           python -m pip install --upgrade pip setuptools wheel
-          pip install -r requirements-dev.txt
           pip install -e .
-          pip install -e ".[goldchain,spatial]" || true
-      - name: Run Pytest Test Suite
+          pip install pytest pytest-cov pytest-asyncio
+      - name: Run Core Unit Test Suite
         shell: bash
         run: |
-          pytest tests/ -v
-      - name: Verify BioNexus CLI & Commands
+          pytest tests/unit/ -v --ignore=tests/unit/test_scvi_smoke.py
+      - name: Verify Core CLI & Warrant Diagnostics (Strict, No || true)
+        shell: bash
         run: |
           python -m bionexus.cli --version
-          python -m bionexus.cli doctor || true
+          python -m bionexus.cli doctor
           python -m bionexus.cli list-skills
           python -m bionexus.cli registry --check
-          python -m bionexus.cli eval --level all --provider replay
+          python -m bionexus.cli eval --level L1 --provider replay
 
-      - name: Fixture gold-chain smoke
-        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
-        shell: bash
-        run: python scripts/goldchain_smoke.py
-
-      - name: Verify FastMCP SDK & Local MCP Server Protocol
-        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
-        shell: bash
-        run: |
-          pip install mcp
-          python -c "
-          import sys
-          sys.path.insert(0, 'scripts')
-          from local_mcp_server import create_mcp_server
-          try:
-              s = create_mcp_server()
-              name = getattr(s, 'name', getattr(s, '_name', 'bionexus-local-mcp'))
-              assert 'bionexus' in str(name).lower() or 'bionexus' in str(s).lower()
-              print('[OK] FastMCP server initialized successfully:', name)
-          except Exception as e:
-              print('[NOTE] FastMCP server test:', e)
-          print('Official FastMCP Server initialization PASSED.')
-          "
-          python -c "
-          import subprocess, json
-          p = subprocess.Popen(['python', 'scripts/local_mcp_server.py', '--legacy'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
-          req = {'jsonrpc': '2.0', 'id': 1, 'method': 'initialize', 'params': {}}
-          out, _ = p.communicate(json.dumps(req) + '\n', timeout=10)
-          resp = json.loads(out.strip())
-          assert resp['result']['serverInfo']['name'] == 'bionexus-local-mcp'
-          print('Local MCP Server legacy stdio protocol PASSED.')
-          "
-
-  eval-strict:
-    name: Strict L3 outcome eval (no skips allowed)
+  # --------------------------------------------------------------------------
+  # 3. Canonical Scientific Stack Matrix: Promised Combinations (Failures Turn Red)
+  # --------------------------------------------------------------------------
+  scientific-matrix:
+    name: Canonical Scientific Stack (${{ matrix.os }}, Python ${{ matrix.python-version }})
     needs: lint
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.10", "3.11", "3.12"]
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
           cache: "pip"
-      - name: Install full scientific backend stack (no graceful degradation)
+      - name: Install Canonical Scientific Dependencies (Strict, No Silent Failures)
+        shell: bash
         run: |
           python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements-dev.txt
-          pip install -e .
-          pip install -e ".[goldchain,spatial]"
-      - name: Require gold-chain backends present
+          pip install -e ".[dev,goldchain,spatial]"
+      - name: Assert Scientific Backends Import Cleanly
+        shell: bash
         run: |
-          python -c "import scanpy, anndata, squidpy, pydeseq2, leidenalg; print('L3 backends OK')"
-      - name: Run benchmark in strict mode (SKIPPED_NO_BACKEND fails)
+          python -c "import scanpy, anndata, squidpy, pydeseq2, leidenalg, igraph; print('Canonical scientific backends loaded successfully')"
+      - name: Enforce Scientific Doctor Diagnostics
+        shell: bash
+        run: |
+          python -m bionexus.cli doctor --require-scverse --require-spatial
+      - name: Run Complete Test Suite
+        shell: bash
+        run: |
+          pytest tests/ -v --ignore=tests/unit/test_scvi_smoke.py
+      - name: Run Flagship Empirical Stress Tests
+        shell: bash
+        run: |
+          python evals/pseudobulk_stress_test.py
+          python evals/spatial_stress_test.py
+          python evals/annotation_stress_test.py
+      - name: Run Strict L3 Benchmark Eval (Skips Turn Red)
+        shell: bash
         env:
           BIONEXUS_EVAL_STRICT: "1"
         run: |
-          python -m bionexus.cli eval --level all --provider replay --strict --report evals/reports/benchmark_report.md
-      - name: Upload strict benchmark report
+          python -m bionexus.cli eval --level all --provider replay --strict --report evals/reports/benchmark_${{ matrix.os }}_py${{ matrix.python-version }}.md
+      - name: Upload Strict Benchmark Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: strict-benchmark-report
-          path: evals/reports/benchmark_report.md
+          name: benchmark-report-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: evals/reports/benchmark_${{ matrix.os }}_py${{ matrix.python-version }}.md
 
+  # --------------------------------------------------------------------------
+  # 4. Graceful Degradation Matrix: Tested As Epistemic Results, Never Shell Ignorance
+  # --------------------------------------------------------------------------
+  degradation-matrix:
+    name: Audited Graceful Degradation (${{ matrix.os }}, Python ${{ matrix.python-version }})
+    needs: lint
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.11"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+      - name: Install Core Only (Without Scientific Backends)
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -e .
+          pip install pytest pytest-cov pytest-asyncio
+      - name: Verify Doctor Accurately Reports Degraded Tier
+        shell: bash
+        run: |
+          python -c "
+          from bionexus.doctor import run_doctor
+          rep = run_doctor()
+          assert rep['tier'] == 'degraded', f'Expected degraded tier without scverse, got {rep[\"tier\"]}'
+          assert rep['ready']['core_ready'] is True
+          assert rep['ready']['scverse_ready'] is False
+          print('[OK] Environment doctor accurately reports DEGRADED tier without silent crashes.')
+          "
+      - name: Verify Missing Backends Result in Explicit SKIPPED_NO_BACKEND (Never Fake Pass)
+        shell: bash
+        run: |
+          pytest tests/unit/test_eval_harness.py -k "test_l3_missing_backend_never_counts_as_pass" -v
+      - name: Run Standard Eval with Audited Degradation Accounting
+        shell: bash
+        run: |
+          python -m bionexus.cli eval --level all --provider replay
+
+  # --------------------------------------------------------------------------
+  # 5. Frontier & Optional Extras Matrix
+  # --------------------------------------------------------------------------
   scvi-smoke:
-    name: scVI one-epoch smoke
+    name: scVI Probabilistic VAE Smoke
     needs: lint
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -150,7 +195,7 @@ jobs:
         run: pytest tests/unit/test_scvi_smoke.py -q --tb=short
 
   nextflow-launch:
-    name: nf-core launch artifact
+    name: nf-core Launch Artifact Verification
     needs: lint
     runs-on: ubuntu-latest
     steps:
@@ -175,3 +220,37 @@ jobs:
           assert "nf-core/scrnaseq" in text
           print(text)
           PY
+
+  mcp-protocol:
+    name: FastMCP SDK & Local Protocol
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev,mcp]"
+          pip install mcp
+      - name: Verify FastMCP Server Protocol
+        run: |
+          python -c "
+          import sys
+          sys.path.insert(0, 'scripts')
+          from local_mcp_server import create_mcp_server
+          s = create_mcp_server()
+          name = getattr(s, 'name', getattr(s, '_name', 'bionexus-local-mcp'))
+          assert 'bionexus' in str(name).lower() or 'bionexus' in str(s).lower()
+          print('[OK] FastMCP server initialized successfully:', name)
+          "
+          python -c "
+          import subprocess, json
+          p = subprocess.Popen(['python', 'scripts/local_mcp_server.py', '--legacy'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+          req = {'jsonrpc': '2.0', 'id': 1, 'method': 'initialize', 'params': {}}
+          out, _ = p.communicate(json.dumps(req) + '\n', timeout=10)
+          resp = json.loads(out.strip())
+          assert resp['result']['serverInfo']['name'] == 'bionexus-local-mcp'
+          print('[OK] Local MCP Server legacy stdio protocol PASSED.')
+          "

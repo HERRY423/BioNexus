@@ -4,8 +4,6 @@ Unit tests for Pseudobulk Inferential Warrant & Epistemic Boundary Engine.
 
 from __future__ import annotations
 
-import pytest
-
 from bionexus.claim_checker import audit_prohibited_claims
 from bionexus.contracts import ConclusionMaturity
 from bionexus.pseudobulk_warrant import (
