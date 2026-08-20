@@ -117,7 +117,7 @@ jobs:
           rm -rf .wheelws
           mkdir .wheelws
           cp -r evals data bionexus.registry.yaml mcp.json plugin.json marketplace.json .wheelws/
-          cp -r skills scripts plugins .wheelws/ 2>/dev/null || true
+          cp -r skills scripts plugins tests .wheelws/ 2>/dev/null || true
           cp -r .claude-plugin .codex .codex-plugin .agents .mcp.json .wheelws/ 2>/dev/null || true
           cd .wheelws
 
