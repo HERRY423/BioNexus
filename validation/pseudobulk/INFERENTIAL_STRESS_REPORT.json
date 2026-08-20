@@ -1,0 +1,198 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "scrna.pseudobulk_de",
+  "test_suite": "7_dimensional_inferential_stress_test",
+  "timestamp": "2026-08-20T07:11:40.897098+00:00",
+  "elapsed_seconds": 46.37,
+  "overall_status": "PASS",
+  "dimensions": {
+    "dim1_public_reference": {
+      "dimension": "1_public_reference_dataset",
+      "dataset": "GEO GSE96583 (Kang et al. 2018)",
+      "n_cells": 13487,
+      "n_donors": 8,
+      "n_samples": 16,
+      "top100_truth_overlap": 0.66,
+      "threshold_required": 0.5,
+      "warrant_regime": "POPULATION_INFERENCE",
+      "maturity_ceiling": "SUPPORTED",
+      "passed": true
+    },
+    "dim2_cell_downsampling": {
+      "dimension": "2_cell_downsampling_grid",
+      "grid": [
+        {
+          "cell_fraction": 1.0,
+          "total_cells": 13487,
+          "min_cells_per_sample": 272,
+          "jaccard_vs_baseline_top100": 1.0,
+          "warrant_regime": "POPULATION_INFERENCE",
+          "warnings": []
+        },
+        {
+          "cell_fraction": 0.5,
+          "total_cells": 6743,
+          "min_cells_per_sample": 135,
+          "jaccard_vs_baseline_top100": 0.7857,
+          "warrant_regime": "POPULATION_INFERENCE",
+          "warnings": []
+        },
+        {
+          "cell_fraction": 0.2,
+          "total_cells": 2697,
+          "min_cells_per_sample": 61,
+          "jaccard_vs_baseline_top100": 0.6,
+          "warrant_regime": "POPULATION_INFERENCE",
+          "warnings": []
+        },
+        {
+          "cell_fraction": 0.05,
+          "total_cells": 674,
+          "min_cells_per_sample": 10,
+          "jaccard_vs_baseline_top100": 0.5152,
+          "warrant_regime": "POPULATION_INFERENCE",
+          "warnings": []
+        }
+      ],
+      "passed": true
+    },
+    "dim3_donor_perturbation_phase_transition": {
+      "dimension": "3_donor_number_perturbation_phase_transition",
+      "grid": [
+        {
+          "donor_subset": "8_donors",
+          "n_donors": 8,
+          "regime": "POPULATION_INFERENCE",
+          "maturity_ceiling": "SUPPORTED",
+          "population_claims_allowed": true,
+          "permitted": true,
+          "regime_correct": true
+        },
+        {
+          "donor_subset": "6_donors",
+          "n_donors": 6,
+          "regime": "POPULATION_INFERENCE",
+          "maturity_ceiling": "SUPPORTED",
+          "population_claims_allowed": true,
+          "permitted": true,
+          "regime_correct": true
+        },
+        {
+          "donor_subset": "4_donors",
+          "n_donors": 4,
+          "regime": "POPULATION_INFERENCE",
+          "maturity_ceiling": "SUPPORTED",
+          "population_claims_allowed": true,
+          "permitted": true,
+          "regime_correct": true
+        },
+        {
+          "donor_subset": "3_donors",
+          "n_donors": 3,
+          "regime": "POPULATION_INFERENCE",
+          "maturity_ceiling": "SUPPORTED",
+          "population_claims_allowed": true,
+          "permitted": true,
+          "regime_correct": true
+        },
+        {
+          "donor_subset": "2_donors",
+          "n_donors": 2,
+          "regime": "DESCRIPTIVE_ONLY",
+          "maturity_ceiling": "PRELIMINARY",
+          "population_claims_allowed": false,
+          "permitted": true,
+          "regime_correct": true
+        },
+        {
+          "donor_subset": "1_donor",
+          "n_donors": 1,
+          "regime": "ABSTAIN_UNREPLICATED",
+          "maturity_ceiling": "ABSTAIN",
+          "population_claims_allowed": false,
+          "permitted": false,
+          "regime_correct": true
+        }
+      ],
+      "phase_transitions_verified": true,
+      "passed": true
+    },
+    "dim4_effect_size_sensitivity": {
+      "dimension": "4_effect_size_sensitivity_power_curve",
+      "grid": [
+        {
+          "injected_log2fc": 0.5,
+          "n_spike_genes": 10,
+          "recovered_sig_padj_05": 5,
+          "statistical_power": 0.5
+        },
+        {
+          "injected_log2fc": 1.0,
+          "n_spike_genes": 10,
+          "recovered_sig_padj_05": 4,
+          "statistical_power": 0.4
+        },
+        {
+          "injected_log2fc": 2.0,
+          "n_spike_genes": 10,
+          "recovered_sig_padj_05": 9,
+          "statistical_power": 0.9
+        },
+        {
+          "injected_log2fc": 4.0,
+          "n_spike_genes": 10,
+          "recovered_sig_padj_05": 10,
+          "statistical_power": 1.0
+        }
+      ],
+      "passed": true
+    },
+    "dim5_permutation_null_fdr": {
+      "dimension": "5_permutation_null_fdr_control",
+      "n_genes_tested": 14053,
+      "n_false_positive_degs_padj_05": 0,
+      "empirical_false_positive_rate": 0.0,
+      "fdr_controlled": true,
+      "passed": true
+    },
+    "dim6_backend_degradation": {
+      "dimension": "6_backend_degradation_simulation",
+      "simulated_state": "NOT_INSTALLED",
+      "conformant": false,
+      "action_taken": "REFUSE_EXECUTION (ABSTAIN with pip-install remedy)",
+      "zero_silent_substitution_enforced": true,
+      "passed": true
+    },
+    "dim7_claim_interception": {
+      "dimension": "7_host_variation_claim_interception",
+      "test_cases": [
+        {
+          "test_id": "causal_treatment_claim",
+          "expected_violation": true,
+          "detected_violation": true,
+          "correct": true
+        },
+        {
+          "test_id": "unverified_cell_type_claim",
+          "expected_violation": true,
+          "detected_violation": true,
+          "correct": true
+        },
+        {
+          "test_id": "prohibited_causal_mechanism",
+          "expected_violation": true,
+          "detected_violation": true,
+          "correct": true
+        },
+        {
+          "test_id": "compliant_associational_claim",
+          "expected_violation": false,
+          "detected_violation": false,
+          "correct": true
+        }
+      ],
+      "interception_accuracy": 1.0,
+      "passed": true
+    }
+  }
+}

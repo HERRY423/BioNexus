@@ -54,3 +54,16 @@
     planted_signal: "clustering_stability"
     target_ari_min: 0.80
   description: "L3 Outcome: Parameter perturbation audit achieves ARI >= 0.80 on stable clusters"
+
+- id: l3-outcome-pseudobulk-stability-005
+  level: L3
+  expected_maturity: SUPPORTED
+  category: scientific_outcome
+  prompt: "Evaluate parameter robustness of pseudobulk DE calls across a declared sample-composition perturbation grid."
+  expected_status: PERMITTED
+  expected_capability: scrna.pseudobulk_de
+  data_metadata:
+    planted_signal: "pseudobulk_de_stability"
+    drop_samples: ["s0", "s4", "s3"]
+    target_stability_min: 0.80
+  description: "L3 Outcome: Parameter perturbation audit of PyDESeq2 DEG calls under leave-one-out sample composition (Jaccard >= 0.80)"

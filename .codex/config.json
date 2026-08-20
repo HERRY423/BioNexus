@@ -1,5 +1,5 @@
 {
-  "name": "bionexus",
+  "name": "bionexus-reliability",
   "version": "0.10.0",
   "provider": "BioNexus",
   "mcpServers": {

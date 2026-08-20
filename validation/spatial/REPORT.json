@@ -20,13 +20,13 @@
         "bionexus.spatial_inference"
       ],
       "entry_points_missing": [],
-      "version": "2.7.0",
-      "execution_fingerprint": "e20d607d73e9f342",
+      "version": "0.10.0",
+      "execution_fingerprint": "45eb0c88e482142c",
       "fallback": false,
       "state": "CONFORMANT",
       "action": "RUN PERMITTED (identity)",
       "failure_mode_ids": [],
-      "reason": "declared_backend == observed_backend: 'local deterministic alternative-explanation tester' (distribution 'bionexus', version 2.7.0, entry points 1/1 resolved, fallback False)."
+      "reason": "declared_backend == observed_backend: 'local deterministic alternative-explanation tester' (distribution 'bionexus', version 0.10.0, entry points 1/1 resolved, fallback False)."
     }
   },
   "metrics": [
@@ -54,7 +54,7 @@
     "Required files not found: spatial_truth.h5ad",
     "Validation outcome NOT verified in this environment (BNS-EM-009)"
   ],
-  "timestamp": "2026-08-19T07:11:06.785178+00:00",
+  "timestamp": "2026-08-20T06:54:05.792498+00:00",
   "evidence_files": [
     "validation\\spatial\\evidence\\.gitkeep"
   ],

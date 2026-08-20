@@ -99,7 +99,7 @@ _CELL_TYPE_ASSERTION_PATTERNS = [
     ),
 ]
 
-# 2. Causal Treatment DE Claims from rank_genes_groups / cell markers
+# 2. Causal Treatment DE Claims from rank_genes_groups / cell markers / observational scRNA
 _CAUSAL_DE_PATTERNS = [
     re.compile(
         r"\b(?:rank_genes_groups|marker\s*genes?|marker\s*p-?values?)\s*(?:(?:proves?|demonstrates?|confirms?)(?:\s*that)?)\s*(?:(?:drug|treatment|compound|condition)\s*)+(?:caused|induced|altered|triggered)\b",
@@ -111,6 +111,14 @@ _CAUSAL_DE_PATTERNS = [
     ),
     re.compile(
         r"\b(?:caused|induced)\s*\d+\s*(?:differential(?:ly)?\s*expressed\s*genes|degs|genes)\s*(?:without\s*replicates|at\s*single-cell\s*level|from\s*marker)?\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(?:proves?|establishes?|confirms?)\s+(?:a\s+)?causal\s+(?:mechanism|relationship|link|role|effect)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\bcausally\s+(?:drives?|induced?|altered?|repressed?|activated?)\s+(?:the\s+)?(?:disease|phenotype|condition|expression)\b",
         re.IGNORECASE,
     ),
 ]

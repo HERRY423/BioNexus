@@ -378,10 +378,10 @@ class TestCertificationBundles:
                 )
 
     def test_pseudobulk_is_validated(self) -> None:
-        """pseudobulk should be VALIDATED (9/14, all core + adversarial + IGT + provenance)."""
+        """pseudobulk should be VALIDATED (12/14: core + adversarial + IGT + provenance + real-data public reference + parameter perturbation + degradation)."""
         data = json.loads(_FLAGSHIP_CERT_FILES["scrna.pseudobulk_de"].read_text(encoding="utf-8"))
         assert data["certification_level"] == "VALIDATED"
-        assert data["summary"]["satisfied"] == 9
+        assert data["summary"]["satisfied"] == 12
 
     def test_annotation_is_validated(self) -> None:
         data = json.loads(_FLAGSHIP_CERT_FILES["scrna.annotation_evidence"].read_text(encoding="utf-8"))

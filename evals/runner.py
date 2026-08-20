@@ -226,6 +226,10 @@ def run_single_case(
                 from evals.flagship_validation import run_flagship_case
 
                 fres = run_flagship_case(case)
+            except (ImportError, ModuleNotFoundError, BackendUnavailable) as exc:
+                # A missing scientific backend is never a verified outcome
+                # (BNS-EM-009): honest skip, same policy as other L3 tracks.
+                fres = _l3_backend_unavailable(exc)
             except Exception as e:
                 fres = {
                     "actual_status": "EXECUTION_FAILURE",
@@ -377,6 +381,68 @@ def run_single_case(
                 actual_maturity = "ABSTAIN"
                 failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
 
+        elif signal_type == "pseudobulk_de_stability":
+            # 3b. Declared parameter perturbation audit for the DE model:
+            # re-run PyDESeq2 across a leave-one-out sample-composition grid
+            # and require the significant-DEG call set to stay stable
+            # (pairwise Jaccard, audited by audit_parameter_stability).
+            try:
+                import numpy as np
+                import pandas as pd
+                from scrna_deseq import run_pydeseq2
+
+                rng = np.random.default_rng(1)
+                genes = [f"g{i}" for i in range(20)]
+                samples = [f"s{i}" for i in range(8)]
+                cond = ["A"] * 4 + ["B"] * 4
+                mat = rng.poisson(20, size=(8, 20)).astype(int)
+                mat[4:, 0] += 80  # g0 is the true planted condition DEG
+                counts_full = pd.DataFrame(mat, index=samples, columns=genes)
+
+                drop_samples = case.data_metadata.get("drop_samples", ["s0", "s4"])
+                grids = [list(samples)]
+                for drop in drop_samples:
+                    grids.append([s for s in samples if s != drop])
+
+                sig_sets = []
+                for grid in grids:
+                    sub_counts = counts_full.loc[grid]
+                    sub_design = pd.DataFrame(
+                        {"sample_id": grid, "condition": [cond[samples.index(s)] for s in grid]}
+                    )
+                    table, _contract = run_pydeseq2(
+                        sub_counts, sub_design, condition="condition", reference="A", contrast_level="B"
+                    )
+                    sig = table[table["padj"] < 0.05]["gene"].astype(str).tolist()
+                    sig_sets.append(sig)
+
+                target = case.data_metadata.get("target_stability_min", 0.80)
+                grade, _notes, stats = audit_parameter_stability(
+                    sig_sets, metric="jaccard", tolerance_threshold=target
+                )
+                mean_jaccard = stats.get("mean_similarity", 0.0)
+                if mean_jaccard < target:
+                    failure_reasons.append(
+                        f"L3 Failure: Pseudobulk DE stability Jaccard {mean_jaccard:.3f} < target {target:.3f} "
+                        f"across {len(grids)} composition grids (grade {grade})"
+                    )
+                if len(failure_reasons) == 0:
+                    actual_status = "PERMITTED"
+                    actual_maturity = "SUPPORTED"
+                else:
+                    actual_status = "OUTCOME_MISMATCH"
+                    actual_maturity = "FRAGILE"
+            except (ImportError, ModuleNotFoundError, BackendUnavailable) as exc:
+                skip = _l3_backend_unavailable(exc)
+                actual_status = skip["actual_status"]
+                skipped = skip["skipped"]
+                skip_reason = skip["skip_reason"]
+                actual_maturity = "NOT_EVALUATED_NO_BACKEND"
+            except Exception as e:
+                actual_status = "EXECUTION_FAILURE"
+                actual_maturity = "ABSTAIN"
+                failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
+
         elif signal_type == "clustering_stability":
             # 4. Run parameter resolution sweep and compute actual Adjusted Rand Index
             try:
@@ -435,12 +501,41 @@ def run_single_case(
     # L1: Router & Precondition Contract Regression
     # =========================================================================
     else:
-        decision = route_scientific_intent(
-            query=case.prompt,
-            data_metadata=case.data_metadata,
-            allow_degraded=case.allow_degraded,
-            allow_frontier=case.allow_frontier,
-        )
+        # Optional deterministic backend-absence simulation (eval category
+        # backend_failure): the case forces a named backend to probe as
+        # missing so degradation behavior is auditable even on hosts where
+        # the package is installed (BNS-EF-007).
+        simulated_missing = case.data_metadata.get("simulate_missing_backend")
+        _caps_module = None
+        _real_probe = None
+        if simulated_missing:
+            from bionexus import backends as _backends
+            from bionexus import capabilities as _caps_module
+
+            _real_probe = _caps_module.probe
+
+            def _simulated_probe(name, *args, **kwargs):
+                if name == simulated_missing:
+                    return _backends.BackendStatus(
+                        name=name,
+                        available=False,
+                        import_name=name,
+                        extra=None,
+                        note=f"simulated absence for eval case {case.id}",
+                    )
+                return _real_probe(name, *args, **kwargs)
+
+            _caps_module.probe = _simulated_probe
+        try:
+            decision = route_scientific_intent(
+                query=case.prompt,
+                data_metadata=case.data_metadata,
+                allow_degraded=case.allow_degraded,
+                allow_frontier=case.allow_frontier,
+            )
+        finally:
+            if simulated_missing and _caps_module is not None and _real_probe is not None:
+                _caps_module.probe = _real_probe
         actual_status = decision.status.value
         actual_cap = decision.matched_capability.id if decision.matched_capability else None
 

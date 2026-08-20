@@ -4,7 +4,7 @@
 # ==============================================================================
 
 package:
-  name: "BioNexus"
+  name: "bionexus-reliability"
   display_name: "BioNexus"
   version: "0.10.0"
   description: "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents (Warrant-First Evidence Assessment, Fail-Closed Invariants, Evidence-Capped Claims, Zero Silent Substitution)."

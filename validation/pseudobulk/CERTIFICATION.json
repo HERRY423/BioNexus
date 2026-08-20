@@ -49,27 +49,27 @@
     },
     {
       "standard_id": "public_reference_dataset",
-      "satisfied": false,
-      "evidence": "validation/pseudobulk/REPORT.json -> dataset.accession = GEO GSE96583",
-      "notes": "Target dataset GSE96583 (Kang et al. 2018) recorded as designated reference, but not locally available — validation status is 'skipped'. Minimum supplement: download GSE96583 count matrix, run validation pipeline, record verified metrics."
+      "satisfied": true,
+      "evidence": "validation/pseudobulk/REPORT.json -> dataset.accession = GEO GSE96583 (Kang et al. 2018, Nat Biotechnol doi:10.1038/nbt.4042); status PASS, published_support_fraction 0.66 >= 0.50",
+      "notes": "Executed on real data: donor-aware pseudobulk DE (PyDESeq2 0.5.4) on 13487 singlets / 8 donors / 2 conditions built from SeuratData ifnb counts + GEO GSE96583 donor metadata; top-100 DE calls validated against an independent published-knowledge truth set (MSigDB Hallmark IFN-alpha/gamma + QuickGO curated GO annotations). Evidence CSVs in validation/pseudobulk/evidence/."
     },
     {
       "standard_id": "independent_ground_truth",
       "satisfied": true,
-      "evidence": "evals/datasets/ -> Planted DEG with known fold change (truth independent of PyDESeq2)",
-      "notes": "Planted DEG with known fold change; ground truth independent of the implementation under test"
+      "evidence": "evals/datasets/ -> Planted DEG with known fold change (truth independent of PyDESeq2); flagship truth = published-knowledge membership set independent of the DE implementation",
+      "notes": "Planted DEG with known fold change; ground truth independent of the implementation under test. Flagship truth set assembled only from citable published sources (Enrichr/MSigDB, EBI QuickGO), never from BioNexus computation."
     },
     {
       "standard_id": "parameter_perturbation",
-      "satisfied": false,
-      "evidence": "",
-      "notes": "No declared parameter sweep audit for the DE model. Minimum supplement: define a parameter grid (e.g. min_replicates, lfc_threshold, alpha), run eval across grid, record stability of DEG calls."
+      "satisfied": true,
+      "evidence": "evals/datasets/l3_scientific_outcomes.yaml -> l3-outcome-pseudobulk-stability-005 (passed)",
+      "notes": "Declared leave-one-out sample-composition perturbation grid (full + 3 dropped-sample grids); significant-DEG call sets audited with audit_parameter_stability (Jaccard >= 0.80 required)."
     },
     {
       "standard_id": "degradation_test",
-      "satisfied": false,
-      "evidence": "",
-      "notes": "No dedicated missing-pydeseq2 behavior case in the eval suites. Minimum supplement: add eval case that removes pydeseq2 backend and verifies refusal or disclose-degrade behavior per BNS-AD-006/007."
+      "satisfied": true,
+      "evidence": "evals/datasets/backend_failure.yaml -> backend-pydeseq2-missing-001 (passed)",
+      "notes": "Deterministic backend-absence simulation (simulate_missing_backend) forces pydeseq2 to probe as missing; canonical capability refuses (ABSTAIN, backend violation, pip-install remedy) even under allow_degraded consent, per BNS-AD-006/007. Case is environment-independent."
     },
     {
       "standard_id": "provenance_test",
@@ -81,28 +81,25 @@
       "standard_id": "cross_host_test",
       "satisfied": false,
       "evidence": "cross-host/COMPARISON.json (framework created, 0 traps compared, agreement_rate null)",
-      "notes": "Cross-host framework established (cross-host/ directory, codex + claude-code hosts, report generator). However, no L2 claim audit has been executed: traps_compared=0, conformance_verdict='not_evaluated'. Minimum supplement: run L2 replay on >= 2 hosts, populate COMPARISON.json with per-trap agreement data."
+      "notes": "Cross-host framework established (cross-host/ directory, codex + claude-code hosts, report generator). However, no L2 claim audit has been executed: traps_compared=0, conformance_verdict='not_evaluated'. Blocked in current environment: no provider API keys and no codex CLI (only claude-code installed), and consistency requires >= 2 hosts. Minimum supplement: run L2 audits on >= 2 hosts, populate COMPARISON.json with per-trap agreement data."
     },
     {
       "standard_id": "external_reviewer",
       "satisfied": false,
       "evidence": "review/SCIENTIFIC_REVIEW.json (framework created, reviewers [PENDING])",
-      "notes": "Scientific review framework established with 3 reviewer slots (single-cell, spatial, biostatistics). However, all reviewers are [PENDING] and no review cases have been conducted (status: 'framework_created_pending_review'). Minimum supplement: identify and invite qualified independent reviewers, conduct review of pseudobulk invariants and eval cases, record findings."
+      "notes": "Scientific review framework established with 3 reviewer slots (single-cell, spatial, biostatistics). However, all reviewers are [PENDING] and no review cases have been conducted (status: 'framework_created_pending_review'). Requires human domain reviewers; not automatable. Minimum supplement: identify and invite qualified independent reviewers, conduct review of pseudobulk invariants and eval cases, record findings."
     }
   ],
   "summary": {
     "total_standards": 14,
-    "satisfied": 9,
-    "unsatisfied": 5,
+    "satisfied": 12,
+    "unsatisfied": 2,
     "unsatisfied_list": [
-      "public_reference_dataset",
-      "parameter_perturbation",
-      "degradation_test",
       "cross_host_test",
       "external_reviewer"
     ],
     "verdict": "VALIDATED",
-    "verdict_rationale": "All 6 core criteria satisfied (reference_backend, formal_input_contract, invariants, known_failure_modes, positive_test, negative_test) plus adversarial_test, independent_ground_truth, and provenance_test. Per BNS-CF-001, VALIDATED requires all core criteria. CERTIFIED requires all 14 — 5 remain unsatisfied with only framework-level scaffolding, no executed evidence."
+    "verdict_rationale": "12/14 criteria satisfied including all 6 core criteria plus real-data public-reference validation (GSE96583 executed, not skipped), parameter perturbation, and degradation tests. Per BNS-CF-001, VALIDATED requires all core criteria. CERTIFIED requires all 14 — 2 remain unsatisfied and both are blocked on external resources (a second host provider for cross-host L2 audits; human domain reviewers), not on automatable work."
   },
   "evidence_bundle": {
     "validation_report": "validation/pseudobulk/REPORT.json",
@@ -114,23 +111,8 @@
   "certification_roadmap": {
     "next_milestones": [
       {
-        "criterion": "public_reference_dataset",
-        "effort": "Download GSE96583 count matrix from GEO; run validation/pseudobulk pipeline; populate REPORT.json metrics (fdr_control, top100_overlap, donor_design_concordance)",
-        "estimated_files": ["validation/pseudobulk/REPORT.json (updated)"]
-      },
-      {
-        "criterion": "parameter_perturbation",
-        "effort": "Define parameter grid for PyDESeq2 DE (alpha, lfc_threshold, min_replicates); run eval across grid; record ARI or DEG overlap stability",
-        "estimated_files": ["evals/datasets/parameter_sweep_pseudobulk.json"]
-      },
-      {
-        "criterion": "degradation_test",
-        "effort": "Add eval case: remove pydeseq2, verify refusal or disclose-degrade per BNS-AD-006/007",
-        "estimated_files": ["evals/datasets/degradation_pseudobulk.json"]
-      },
-      {
         "criterion": "cross_host_test",
-        "effort": "Execute L2 claim replay on codex + claude-code; populate cross-host/COMPARISON.json with per-trap results",
+        "effort": "Obtain provider API keys (or a second local host CLI); execute L2 claim audits on codex + claude-code; populate cross-host/COMPARISON.json with per-trap results",
         "estimated_files": ["cross-host/COMPARISON.json (updated)"]
       },
       {

@@ -26,6 +26,22 @@
     - "pip install"
   description: "Backend gate: refusal when backend is missing, with pip install remedy"
 
+- id: backend-pydeseq2-missing-001
+  category: backend_failure
+  prompt: "Run donor-aware pseudobulk differential expression with PyDESeq2"
+  expected_status: ABSTAIN
+  expected_capability: scrna.pseudobulk_de
+  allow_degraded: true
+  expected_violations:
+    - "backend"
+  required_remedies:
+    - "pip install"
+  data_metadata:
+    simulate_missing_backend: "pydeseq2"
+    min_replicates_per_condition: 3
+    is_integer_like: true
+  description: "Deterministic degradation audit: with pydeseq2 forced absent, canonical pseudobulk DE refuses even under allow_degraded consent (BNS-AD-006/007); simulation makes the case environment-independent"
+
 - id: backend-frontier-fallback-001
   category: backend_failure
   prompt: "predict combinatorial knockout of TP53 and CDKN1A with GEARS"

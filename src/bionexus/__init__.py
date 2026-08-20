@@ -136,6 +136,11 @@ from .preflight import (
     run_preflight,
 )
 from .provenance import capture_environment, sha256_file, sidecar
+from .pseudobulk_warrant import (
+    InferentialRegime,
+    PseudobulkWarrantVerdict,
+    evaluate_pseudobulk_inferential_warrant,
+)
 from .research_purpose import (
     OVERRIDABLE_PURPOSES,
     PURPOSE_EVIDENCE_CEILING,
@@ -329,6 +334,9 @@ __all__ = [
     "discoverable_skill_names",
     "ENFORCED_LAB",
     "EnforcementMode",
+    "InferentialRegime",
+    "PseudobulkWarrantVerdict",
+    "evaluate_pseudobulk_inferential_warrant",
     "evaluate_capability_preconditions",
     "extract_scientific_capability",
     "find_capabilities_by_intent",

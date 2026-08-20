@@ -59,6 +59,12 @@ ehthumbs.db
 *.h5
 tests/_tmp_*
 evals/datasets/benchmarks/*.h5ad
+# Flagship dataset raw inputs: large and re-downloadable (audit trail is the
+# checksum + provenance notes in validation/*/REPORT.json); small provenance
+# files (GEO metadata, truth CSVs, DE result CSVs) stay tracked.
+data/flagship/*/*.tar.gz
+data/flagship/*/*.tar
+data/flagship/*/ifnb.SeuratData/
 .coverage
 coverage.xml
 htmlcov/
