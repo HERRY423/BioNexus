@@ -121,6 +121,7 @@ class RuleProvenance:
     evidence: List[EvidenceReference] = field(default_factory=list)
     consensus: ConsensusLevel = ConsensusLevel.STRONG
     exceptions: List[str] = field(default_factory=list)
+    context_factors: List[str] = field(default_factory=list)
     last_verified: str = ""
     hard_rule: bool = False
     classification: Optional[RuleClassification] = None
@@ -132,6 +133,7 @@ class RuleProvenance:
             "evidence": [e.to_dict() for e in self.evidence],
             "consensus": self.consensus.value,
             "exceptions": self.exceptions,
+            "context_factors": self.context_factors,
             "last_verified": self.last_verified,
             "hard_rule": self.hard_rule,
         }
@@ -183,6 +185,7 @@ def _build_provenance(record: Dict[str, Any]) -> RuleProvenance:
         evidence=[EvidenceReference(**e) for e in record.get("evidence", [])],
         consensus=ConsensusLevel(record["consensus"]),
         exceptions=list(record.get("exceptions", [])),
+        context_factors=list(record.get("context_factors", [])),
         last_verified=record.get("last_verified", ""),
         hard_rule=classification.category in (RuleCategory.INVARIANT_SAFETY, RuleCategory.INVARIANT_INTEGRITY),
         classification=classification,

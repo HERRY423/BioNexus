@@ -53,19 +53,49 @@ Agent:   Done. 2,341 cells vs 3,107 cells. 153 significant genes.
 ```text
 WARRANT: PERMITTED_WITH_LIMITS  (purpose=screening, ceiling=FRAGILE)
 
-Rule hit: missing_replicates [WARRANT_EPISTEMIC]
-  Not an execution invariant — the compute is legal. But 3 donors/condition
-  is not enough for population-level inference, so the CLAIM is capped.
+Epistemic Context Evaluation:
+  Design Identifiability:  Unpaired, 2 donors/group (within-donor variance unestimated)
+  Effect-Size Regime:      Polygenic moderate effect (requires dispersion shrinkage)
+  Claim Requested:         'population-level treatment effect' (EXCEEDS EVIDENCE)
 
-What you CAN still do:   run pseudobulk DE, rank markers, screen candidates.
-What is BLOCKED:         'population-level condition effect' claim.
+Verdict: Compute is fully PERMITTED, but CLAIM is capped to Cohort-Specific Descriptive.
+
+What you CAN still do:   run pseudobulk DE, rank candidates, explore within-sample shifts.
+What is BLOCKED:         'population-wide causal treatment effect' claim.
 Override:                allowed (screening purpose) — researcher records why,
                          and FRAGILE ceiling + blocked claim are preserved.
 
-Rule provenance: Fisher 1935; Soneson & Robinson 2018; consensus=ESTABLISHED.
+Rule provenance: Squair et al. 2021 (Nature Comms); Lun & Marioni 2017; Soneson & Robinson 2018.
 ```
 
 This is the product: telling you what the evidence warrants. A hard block fires only when an execution invariant is violated (garbage data, model masquerade, uncertified clinical claim) — otherwise BioNexus permits the compute and caps the claim.
+
+---
+
+## 🧭 Context-Conditioned Epistemic Ladder: Rejecting "Magic Number" Refusals
+
+A common failure mode of automated validation systems is confusing empirical rules of thumb with universal scientific laws (e.g. dogmatic `$N < 3 \to \text{refuse}, N \ge 3 \to \text{valid}$`).
+
+In real biological workflows, inferential validity is not a step function at an arbitrary sample size:
+- **Design Identifiability**: A paired or isogenic design (e.g., treated vs control within the same 2 donors or cell lines) can legitimately identify strong candidate signals with low within-donor dispersion.
+- **Effect-Size Regime**: A deterministic monogenic knockout ($\text{Log2FC} > 6, \text{FDR} < 10^{-15}$) requires far less replication to rule out technical noise than subtle polygenic shifts ($\text{Log2FC} = 0.3$).
+- **Confounding vs Power**: Having $N=10$ donors with unmodeled batch confounding or extreme uncorrected dispersion does not justify population claims.
+
+BioNexus structures rule enforcement around a 6-stage **Context-Conditioned Epistemic Ladder**:
+
+```mermaid
+flowchart TD
+    Step1["1. Design Identifiable?\nPaired vs Unpaired / Biological vs Technical / Batch Confounders"] --> Step2["2. Dispersion Estimable?\nEmpirical Bayes Shrinkage / Degrees of Freedom / Outlier Robustness"]
+    Step2 --> Step3["3. Uncertainty Quantified?\nWithin-group vs Between-donor Variance / Posterior Confidence Bounds"]
+    Step3 --> Step4["4. Power & Effect-Size Regime?\nObserved Log2FC vs Minimum Detectable Effect at Nominal FDR"]
+    Step4 --> Step5["5. Claim Class Evaluated?\nDescriptive Ranking → Sample Association → Population Generalization → Causal Mechanism"]
+    Step5 --> Step6["6. Evidence Ceiling Assigned\nROBUST / SUPPORTED / FRAGILE / ABSTAIN"]
+```
+
+### Community Governance: Scientific Rule Challenges & RFCs
+Scientific consensus evolves as experimental modalities and statistical models advance. BioNexus provides an open, auditable governance loop:
+- **Scientific Rule Catalog** ([`review/SCIENTIFIC_RULE_CATALOG.json`](review/SCIENTIFIC_RULE_CATALOG.json)): Explicitly documents the context conditions, uncertainty parameters, biological exceptions, and literature citations for every rule.
+- **Rule Challenge Mechanism**: Researchers can submit formal **Scientific Rule Challenges** via GitHub Issues and Discussions to propose counterexamples, novel biological contexts, or updated empirical bounds.
 
 ---
 

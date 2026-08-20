@@ -72,6 +72,10 @@
         "Exploratory marker ranking with normalized input (ceiling: PRELIMINARY)",
         "Pseudobulk aggregation from log-normalized data with explicit disclaimer"
       ],
+      "context_factors": [
+        "dispersion_estimation_model",
+        "continuous_log_norm_vs_raw_integer_counts"
+      ],
       "last_verified": "2025-06",
       "classification": {
         "category": "WARRANT_EPISTEMIC",
@@ -94,6 +98,12 @@
         "Exploratory per-sample descriptive statistics (no population claim)",
         "Screening with explicit 'no inferential claims' disclaimer"
       ],
+      "context_factors": [
+        "paired_vs_unpaired_design",
+        "within_donor_dispersion",
+        "observed_effect_size",
+        "covariate_batch_adjustment"
+      ],
       "last_verified": "2025-06",
       "classification": {
         "category": "WARRANT_EPISTEMIC",
@@ -113,6 +123,10 @@
       "consensus": "STRONG",
       "exceptions": [
         "Embedding coordinates with explicit spatial justification and FRAGILE ceiling"
+      ],
+      "context_factors": [
+        "physical_micron_coordinates_vs_latent_embedding",
+        "spot_density_and_segmentation_geometry"
       ],
       "last_verified": "2025-06",
       "classification": {
@@ -134,6 +148,11 @@
       "exceptions": [
         "Numeric cluster labels without biological identity claims",
         "Exploratory annotation with explicit 'candidate only' disclaimer"
+      ],
+      "context_factors": [
+        "marker_concordance",
+        "independent_reference_mapping",
+        "orthogonal_surface_protein"
       ],
       "last_verified": "2025-06",
       "classification": {

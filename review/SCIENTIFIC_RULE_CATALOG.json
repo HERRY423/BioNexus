@@ -12,6 +12,21 @@
       "source_file": "src/bionexus/capabilities.py",
       "source_line": 177,
       "rationale": "With fewer than 2 biological replicates per condition, reliable between-replicate variance estimation is not supported by the intended inferential design. Note the three distinct questions: the software can still compute, the negative binomial model is mathematically defined, but population-level statistical inference lacks a reliable design basis. The value 2 is the minimum at which within-group dispersion becomes estimable, not a universal law of biology.",
+      "context_factors": [
+        "paired_vs_unpaired_design",
+        "within_donor_dispersion",
+        "observed_effect_size",
+        "covariate_batch_adjustment"
+      ],
+      "biological_exceptions": [
+        "Paired isogenic controls with large deterministic effect size (LFC > 5)",
+        "Exploratory single-cell marker ranking (claim capped to DESCRIPTIVE)"
+      ],
+      "literature_provenance": [
+        {"citation": "Squair et al. 2021", "doi": "10.1038/s41467-021-25960-2"},
+        {"citation": "Soneson & Robinson 2018", "doi": "10.12688/f1000research.10570.2"},
+        {"citation": "Lun & Marioni 2017", "doi": "10.1038/nmeth.4612"}
+      ],
       "sensitivity": "high",
       "review_status": "pending"
     },
@@ -24,6 +39,17 @@
       "source_file": "src/bionexus/capabilities.py",
       "source_line": 193,
       "rationale": "An engineering minimum for neighborhood graph connectivity: below 5 spots the graph is degenerate and spatial statistics are numerically unstable. This is a calibrated implementation floor, platform- and protocol-dependent, not a cross-platform scientific law.",
+      "context_factors": [
+        "spot_density",
+        "physical_micron_radius",
+        "tissue_boundary_geometry"
+      ],
+      "biological_exceptions": [
+        "Single-spot / micro-dissected profiling with non-spatial analysis"
+      ],
+      "literature_provenance": [
+        {"citation": "Palla et al. 2022", "doi": "10.1038/s41592-021-01358-2"}
+      ],
       "sensitivity": "medium",
       "review_status": "pending"
     },
@@ -36,6 +62,17 @@
       "source_file": "src/bionexus/capabilities.py",
       "source_line": 99,
       "rationale": "Benjamini-Hochberg FDR control at 5% is adopted as the community-convention default for high-throughput genomics. It is a statistical policy default, legitimately replaceable per study design (e.g. stricter for confirmatory work); BioNexus flags its absence, not a specific alternative value.",
+      "context_factors": [
+        "hypothesis_count_m",
+        "exploratory_vs_confirmatory_intent",
+        "independent_orthogonal_validation_present"
+      ],
+      "biological_exceptions": [
+        "Hypothesis generation / screening with FDR < 0.10 or ranking by effect size"
+      ],
+      "literature_provenance": [
+        {"citation": "Benjamini & Hochberg 1995", "doi": "10.1111/j.2517-6161.1995.tb02031.x"}
+      ],
       "sensitivity": "high",
       "review_status": "pending"
     },
