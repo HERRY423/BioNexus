@@ -1,0 +1,58 @@
+name: 🔬 Scientific Rule Challenge
+description: Challenge or propose refinements to a BioNexus epistemic warrant rule, invariant, or statistical threshold.
+title: "[Rule Challenge]: "
+labels: ["scientific-rule", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## BioNexus Scientific Rule Registry Challenge
+        Use this form to dispute, refine, or extend a scientific invariant, epistemic warrant threshold, or statistical boundary in BioNexus.
+        All rule modifications are audited against peer-reviewed literature and benchmarked before merging.
+  - type: input
+    id: rule_id
+    attributes:
+      label: BioNexus Rule ID / Epistemic Condition
+      description: Specify the rule or condition under challenge (e.g., `INV-001`, `scrna.pseudobulk_de.min_donors`, `spatial.min_genes_per_spot`, `BFA-011`).
+      placeholder: "e.g., scrna.pseudobulk_de.min_donors >= 3"
+    validations:
+      required: true
+  - type: textarea
+    id: biological_context
+    attributes:
+      label: Biological & Experimental Context
+      description: Describe the biological system, organism, single-cell/spatial technology, or experimental design where this rule applies.
+      placeholder: "e.g., Rare stem cell subpopulations (<= 50 cells per sample) in longitudinal clinical trial biopsies..."
+    validations:
+      required: true
+  - type: textarea
+    id: scientific_rationale
+    attributes:
+      label: Scientific Rationale & Ground for Challenge
+      description: Explain why the current rule produces false refusals, incorrect warrant ceilings, or biologically unsound conclusions.
+      placeholder: "Explain the theoretical or statistical flaw under this specific biological regime..."
+    validations:
+      required: true
+  - type: textarea
+    id: literature_evidence
+    attributes:
+      label: Literature Evidence & Citable Benchmarks
+      description: Provide peer-reviewed citations, DOIs, PMIDs, or public benchmark datasets supporting your position.
+      placeholder: "e.g., Nature Methods (2023) doi:10.1038/s41592-023-01819-6; GEO accession GSE..."
+    validations:
+      required: true
+  - type: textarea
+    id: proposed_refinement
+    attributes:
+      label: Proposed Rule Refinement / Alternative Formulation
+      description: Propose the revised mathematical invariant, parameter threshold, or stratified warrant behavior.
+      placeholder: "e.g., When cell counts < 20, cap at PRELIMINARY instead of REFUSING if biological replicates N >= 5..."
+    validations:
+      required: true
+  - type: checkboxes
+    id: contribution_terms
+    attributes:
+      label: Epistemic Integrity Agreement
+      options:
+        - label: I confirm that this proposal is grounded in published empirical evidence or rigorous statistical theory, not convenience.
+          required: true

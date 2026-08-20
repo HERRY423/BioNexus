@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Scientific Discussions, Debates & RFCs
+    url: https://github.com/HERRY423/BioNexus/discussions
+    about: Please use GitHub Discussions for scientific rule debates, biological counterexamples, RFCs, and general usage questions.

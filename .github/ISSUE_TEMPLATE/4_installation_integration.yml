@@ -1,0 +1,45 @@
+name: 🛠️ Installation & Host Integration Issue
+description: Report installation errors, dependency conflicts, or host agent integration issues (Claude Code, Codex, Cursor).
+title: "[Integration]: "
+labels: ["integration", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Installation & Agent Host Integration
+        Report issues installing BioNexus, resolving Python dependencies, or integrating with AI agent hosts (Claude Code, OpenAI Codex, Cursor, etc.).
+  - type: dropdown
+    id: host_environment
+    attributes:
+      label: Host Environment / Agent Framework
+      options:
+        - "Claude Code"
+        - "OpenAI Codex"
+        - "Google Antigravity"
+        - "Cursor / VS Code"
+        - "Standalone CLI / Python SDK"
+        - "Other"
+    validations:
+      required: true
+  - type: input
+    id: os_and_python
+    attributes:
+      label: Operating System & Python Version
+      placeholder: "e.g., Windows 11 / Python 3.11.9 (or macOS Sonoma / Python 3.12)"
+    validations:
+      required: true
+  - type: textarea
+    id: installation_method
+    attributes:
+      label: Installation Command & Method
+      placeholder: "e.g., pip install bionexus or pip install -e ."
+    validations:
+      required: true
+  - type: textarea
+    id: error_trace
+    attributes:
+      label: Full Error Log & Traceback
+      description: Paste the complete terminal output or traceback.
+      placeholder: "Paste traceback here..."
+    validations:
+      required: true

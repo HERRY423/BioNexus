@@ -1,0 +1,43 @@
+name: 🔄 Reproducibility & Audit Report
+description: Report non-deterministic behavior, checksum mismatches, or audit trail discrepancies.
+title: "[Reproducibility]: "
+labels: ["reproducibility", "audit-trail", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Reproducibility & Provenance Audit
+        BioNexus enforces deterministic epistemic verdicts, SHA-256 provenance tracking, and reproducible statistical outcomes.
+        Use this form to report run-to-run discrepancies or audit sidecar validation failures.
+  - type: input
+    id: pipeline_or_capability
+    attributes:
+      label: Capability or Pipeline Script
+      description: The capability, script, or eval runner tested.
+      placeholder: "e.g., evals/pseudobulk_stress_test.py or scrna_deseq.py"
+    validations:
+      required: true
+  - type: textarea
+    id: environment_details
+    attributes:
+      label: Execution Environment Snapshot
+      description: OS, Python version, package versions (`pip freeze` or `conda list`), GPU/CPU.
+      placeholder: "OS: Ubuntu 22.04 / Windows 11\nPython: 3.11.8\nPyDESeq2: 0.5.4\nAnnData: 0.10.8\nScanpy: 1.10.1"
+    validations:
+      required: true
+  - type: textarea
+    id: dataset_provenance
+    attributes:
+      label: Dataset & Checksum Details
+      description: Dataset accession, download URL, or SHA-256 checksums of input files.
+      placeholder: "Dataset: GEO GSE96583\nInput SHA-256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    validations:
+      required: true
+  - type: textarea
+    id: discrepancy_details
+    attributes:
+      label: Observed Discrepancy
+      description: What differed between runs? (e.g. p-value drift, DEG call set mismatch, missing provenance sidecar fields).
+      placeholder: "Run 1 produced 120 DEGs, Run 2 produced 118 DEGs under identical seed..."
+    validations:
+      required: true

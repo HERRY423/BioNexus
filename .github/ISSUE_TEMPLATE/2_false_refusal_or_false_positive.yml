@@ -1,0 +1,63 @@
+name: ⚠️ False Refusal / False Positive (BioFailureBench)
+description: Report a case where BioNexus falsely refused valid science or failed to catch a biological trap.
+title: "[Failure Mode]: "
+labels: ["biofailurebench", "bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## BioFailureBench Discrepancy Report
+        Report a failure in BioNexus's epistemic gating:
+        - **False Refusal (Type I)**: Valid scientific analysis was inappropriately blocked or downgraded.
+        - **False Positive (Type II)**: Flawed data or methodological trap was permitted without proper warrant clamping.
+  - type: dropdown
+    id: discrepancy_type
+    attributes:
+      label: Discrepancy Type
+      options:
+        - "False Refusal: Legitimate biological analysis was blocked/refused"
+        - "False Positive: Biological failure trap was executed without refusal/warning"
+        - "Maturity Misclassification: Conclusion maturity ceiling was incorrect"
+        - "Silent Degradation: Execution degraded without proper notification"
+    validations:
+      required: true
+  - type: input
+    id: capability_id
+    attributes:
+      label: Target Capability ID
+      description: The BioNexus capability involved (e.g., `scrna.pseudobulk_de`, `scrna.annotation_evidence`, `spatial.inference_validity`).
+      placeholder: "e.g., scrna.annotation_evidence"
+    validations:
+      required: true
+  - type: textarea
+    id: input_data_description
+    attributes:
+      label: Input Data & Experimental Setup
+      description: Describe the input dataset, matrix dimensions, assay technology, and metadata structure.
+      placeholder: "e.g., 10x Genomics Visium data with 2,500 spots, 18,000 genes, 4 tissue sections..."
+    validations:
+      required: true
+  - type: textarea
+    id: observed_behavior
+    attributes:
+      label: Observed Behavior (Actual Output)
+      description: Include the returned EvidenceCard, ExecutionState, ConclusionMaturity, or error log.
+      placeholder: "Paste EvidenceCard JSON or terminal logs here..."
+    validations:
+      required: true
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected Scientific Behavior
+      description: What should BioNexus have done from a scientific perspective?
+      placeholder: "e.g., Should have permitted execution with ConclusionMaturity.SUPPORTED because..."
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction_steps
+    attributes:
+      label: Minimal Reproduction Code / Steps
+      description: Provide Python / CLI commands to reproduce this verdict.
+      placeholder: "```python\nimport bionexus as bn\n...\n```"
+    validations:
+      required: true
