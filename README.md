@@ -1,40 +1,25 @@
-# BioNexus: The Scientific Reliability Layer for Agentic Biology
 
-<div align="center">
-
-[![Agent Plugins 1.0.0](https://img.shields.io/badge/Agent%20Plugins-1.0.0-blue.svg?style=flat-square)](https://agent-plugins.org/)
-[![Model Context Protocol](https://img.shields.io/badge/MCP-Official%20SDK-orange.svg?style=flat-square)](https://modelcontextprotocol.io/)
-[![Codex Ready](https://img.shields.io/badge/Codex-Plugin%20Ready-green.svg?style=flat-square)](https://openai.com/)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-purple.svg?style=flat-square)](https://claude.ai/)
-[![Cursor MCP](https://img.shields.io/badge/Cursor-MCP%20Ready-black.svg?style=flat-square)](https://cursor.com/)
-[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg?style=flat-square)](https://www.python.org/)
-[![Tests](https://img.shields.io/badge/Tests-CI%20Enforced-success.svg?style=flat-square)](tests/)
-[![Eval](https://img.shields.io/badge/Eval-3--Tier%20Harness-blueviolet.svg?style=flat-square)](evals/)
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
-[![RUO](https://img.shields.io/badge/Status-Research%20Use%20Only-yellow.svg?style=flat-square)](#-regulatory-notice--compliance)
-
-<p align="center">
-  <b>BioNexus tells you what the evidence warrants — and blocks only what is truly invalid.</b><br/>
-  It is the <b>Scientific Warrant Engine</b> for agentic biology: it separates <em>execution invariants</em>
-  (rules that must block computation) from <em>warrant constraints</em> (limits on what claims your evidence justifies),
-  assesses evidence strength independently of purpose and compares it against the intended-use
-  requirement your declared research purpose sets, and carries every rule's provenance,
-  consensus level, and exceptions in an auditable registry — so BioNexus never looks like it invented
-  scientific law. The firewall is a subset of the warrant system, not the product.
-</p>
-
-```text
-✓ Evidence Strength ≠ Intended Use Requirement     ✓ Execution Invariant vs Warrant taxonomy
-✓ Purpose sets the evidence bar, never the value   ✓ Evidence-backed Rule Provenance Registry
-✓ Researcher Override with documented limits       ✓ Lab Policy: Shadow / Advisory / Enforced
-✓ EvidenceCard 2.0 epistemic evaluation            ✓ Biological Capability ABI & contracts
-✓ BN-Fxxx failure taxonomy + BioFailureBench       ✓ Fail-closed verification of final claims
-```
-
-</div>
-
----
-
+# BioNexus — Scientific Reliability for AI-Assisted Biology
+
+<div align="center">
+
+[![Release](https://img.shields.io/badge/Release-v1.0.0--rc.1-blue.svg?style=flat-square)](https://github.com/HERRY423/BioNexus/releases/tag/v1.0.0-rc.1)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg?style=flat-square)](https://www.python.org/)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
+[![CI/CD](https://img.shields.io/badge/CI%2FCD-Passing-success.svg?style=flat-square)](https://github.com/HERRY423/BioNexus/actions)
+[![Status: RUO](https://img.shields.io/badge/Status-Research%20Use%20Only-yellow.svg?style=flat-square)](#-regulatory-notice--compliance)
+
+</div>
+
+> **Know what your evidence actually warrants.**
+
+BioNexus is a warrant-first scientific reliability layer for AI-assisted bioinformatics. It audits analytical assumptions, calibrates evidence strength, caps unsupported claims, verifies execution provenance, and abstains when evidence is insufficient.
+
+**Not another AI scientist or workflow platform.**
+BioNexus sits between AI-generated analyses and scientific claims.
+
+---
+
 ## 🔬 Why scientists install it: warrant, not refusal
 
 Not "the firewall is strict." This:
