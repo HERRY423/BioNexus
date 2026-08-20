@@ -71,4 +71,4 @@ def test_git_helpers_use_explicit_executable_and_repo_local_ignore(monkeypatch, 
     assert mcp_host_audit._git_dirty(tmp_path) is False
     assert calls[0][0][0] == r"D:\Git\cmd\git.exe"
     assert calls[1][0][0] == r"D:\Git\cmd\git.exe"
-    assert calls[1][0][1:3] == ["-c", "core.excludesFile=NUL"]
+    assert calls[1][0][1:3] == ["-c", "core.excludesFile="]

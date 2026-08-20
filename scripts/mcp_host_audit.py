@@ -113,7 +113,7 @@ def _git_dirty(repo_root: Optional[Path]) -> Optional[bool]:
             [
                 _git_executable(),
                 "-c",
-                "core.excludesFile=NUL" if os.name == "nt" else "core.excludesFile=/dev/null",
+                "core.excludesFile=",
                 "status",
                 "--porcelain",
                 "--untracked-files=normal",
