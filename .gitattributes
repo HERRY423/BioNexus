@@ -1,10 +1,5 @@
-# Default text files to LF
+# Default text files to LF across Windows, Linux, macOS
 * text=auto eol=lf
-
-# Preserve byte-exact CRLF for pre-signed cryptographic validation fixtures and datasets
-validation/pseudobulk/studies/** text eol=crlf
-validation/pseudobulk/independent/** text eol=crlf
-data/flagship/** text eol=crlf
 
 # Binary files
 *.h5ad binary

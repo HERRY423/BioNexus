@@ -20,7 +20,7 @@
   "artifacts": [
     {
       "path": "REPORT.json",
-      "sha256": "3cdf249aba72c35c7579247310b500d859b39c66ba2a8b6802887af194b81c4c"
+      "sha256": "2907afbf989a68ee1d2c404c4812c24745b32afab1275908a922abbde706e275"
     },
     {
       "path": "PREREGISTRATION.json",
@@ -32,19 +32,19 @@
     },
     {
       "path": "PROVENANCE.json",
-      "sha256": "e08dbd4539a00454cb27fca6e0bf7255a0af77eb4073972b536fd7ad23e2089f"
+      "sha256": "b3ef99167313cbf400d6326fcd467c2413b191408c1b60dd03c6f1aa5527386e"
     },
     {
       "path": "evidence/locked_discovery_signature_platform_holdout.csv",
-      "sha256": "542b3f359227ae4c9ef8a7a9a522e0d84fd51759ebd315d8b564862f0a3255d8"
+      "sha256": "54de077eda290f02b29f6565b417d4b3b163fd7ed21ec7de1306f7b58446d20c"
     },
     {
       "path": "evidence/donor_leave_one_out_folds.csv",
-      "sha256": "c3e257be67eb8e963b6861b3cebb2edc6d6085fc0dee229a78ba8c2637fb3ca2"
+      "sha256": "441838c8322d53888bca61ae5dd299c41bd2ef5359c6ade958b18e0e86e1ca2e"
     },
     {
       "path": "evidence/negative_control_sign_flip_null.csv",
-      "sha256": "3ede2d869ddeefebc6107c67c78e9ad804e8fb6910e4fdf43f8eff72fafb1d6f"
+      "sha256": "7b5abd8f50f9657ca8a76d1acf05ef9cfd9955b1f32fc5c5770a5cbf212561cc"
     }
   ],
   "limitations": [

@@ -31,7 +31,7 @@
     "provenance": {
       "data_source": "10x Genomics public CITE-seq PBMC datasets / Hao et al. 2021 (doi:10.1016/j.cell.2021.04.048) multimodal PBMC",
       "download_date": "2026-08-21T09:59:31.725580+00:00",
-      "commit_sha": "669416977d386b83abc088d4a24fde7383c1c0fb",
+      "commit_sha": "0c539d0f94dfce3d0ee5891161c3000a918abd82",
       "git_dirty": false,
       "environment_lockfile_hashes": {
         "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
