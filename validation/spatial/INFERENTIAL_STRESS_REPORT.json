@@ -7,7 +7,7 @@
   "provenance": {
     "data_source": "synthetic_generator (in-silico manufactured spatial slice)",
     "download_date": "2026-08-20T14:28:15.690499+00:00",
-    "commit_sha": "32913aaf3823ce35d255d8ec51c15c922d63025e",
+    "commit_sha": "3739daca0001afd26cb21bdad0b36b51e90c29e3",
     "git_dirty": false,
     "environment_lockfile_hashes": {
       "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
@@ -27,9 +27,9 @@
       "n_cells": 1000,
       "n_genes": 200
     },
-    "repository_dirty_at_execution": true,
+    "repository_dirty_at_execution": false,
     "validation_source_dirty": false,
-    "source_snapshot_sha256": "6848990095c143404e1d945c8829f720166e0c08dfcbd48d0519ec42978913ad"
+    "source_snapshot_sha256": "475b79c36127828806bd2d181a8261600aad568dadaa31891d3885ae6f3c19a0"
   },
   "timestamp": "2026-08-20T14:28:15.935475+00:00",
   "elapsed_seconds": 0.3,
@@ -112,5 +112,6 @@
       "without_permutation_null_verdict": "SUPPORTED",
       "passed": true
     }
-  }
+  },
+  "source_snapshot_sha256": "475b79c36127828806bd2d181a8261600aad568dadaa31891d3885ae6f3c19a0"
 }

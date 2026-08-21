@@ -100,7 +100,7 @@
   "execution_provenance": {
     "data_source": "unknown",
     "download_date": "2026-08-21T09:21:41.116504+00:00",
-    "commit_sha": "362fdfde5026b64fffe803cf4a730585e1c1761c",
+    "commit_sha": "3739daca0001afd26cb21bdad0b36b51e90c29e3",
     "git_dirty": false,
     "environment_lockfile_hashes": {
       "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",

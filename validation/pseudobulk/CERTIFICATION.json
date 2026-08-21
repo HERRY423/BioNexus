@@ -99,7 +99,7 @@
       "external_reviewer"
     ],
     "verdict": "VALIDATED",
-    "verdict_rationale": "12/14 criteria satisfied including all 6 core criteria plus real-data public-reference validation (GSE96583 executed, not skipped), parameter perturbation, and degradation tests. Per BNS-CF-001, VALIDATED requires all core criteria. CERTIFIED requires all 14 — 2 remain unsatisfied and both are blocked on external resources (a second host provider for cross-host L2 audits; human domain reviewers), not on automatable work."
+    "verdict_rationale": "12/14 criteria satisfied including all 6 core criteria plus real-data public-reference validation (GSE96583 executed, not skipped), parameter perturbation, and degradation tests. Per BNS-CF-001, VALIDATED requires all core criteria. CERTIFIED requires all 14 \u2014 2 remain unsatisfied and both are blocked on external resources (a second host provider for cross-host L2 audits; human domain reviewers), not on automatable work."
   },
   "evidence_bundle": {
     "validation_report": "validation/pseudobulk/REPORT.json",
@@ -113,12 +113,16 @@
       {
         "criterion": "cross_host_test",
         "effort": "Obtain provider API keys (or a second local host CLI); execute L2 claim audits on codex + claude-code; populate cross-host/COMPARISON.json with per-trap results",
-        "estimated_files": ["cross-host/COMPARISON.json (updated)"]
+        "estimated_files": [
+          "cross-host/COMPARISON.json (updated)"
+        ]
       },
       {
         "criterion": "external_reviewer",
         "effort": "Invite 1+ independent scientific reviewers; conduct review of pseudobulk invariants and eval outcomes; record findings in SCIENTIFIC_REVIEW.json",
-        "estimated_files": ["review/SCIENTIFIC_REVIEW.json (updated)"]
+        "estimated_files": [
+          "review/SCIENTIFIC_REVIEW.json (updated)"
+        ]
       }
     ]
   }
