@@ -70,7 +70,8 @@ def compute_validation_source_snapshot(repo_root: Union[Path, str]) -> str:
         rel = path.relative_to(root).as_posix()
         digest.update(rel.encode("utf-8"))
         digest.update(b"\0")
-        digest.update(hashlib.sha256(path.read_bytes()).digest())
+        raw = path.read_bytes().replace(b"\r\n", b"\n") if path.suffix.lower() in {".py", ".json", ".yaml", ".yml", ".md", ".txt", ".csv"} else path.read_bytes()
+        digest.update(hashlib.sha256(raw).digest())
         digest.update(b"\n")
     return digest.hexdigest()
 

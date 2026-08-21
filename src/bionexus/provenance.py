@@ -33,9 +33,19 @@ KEY_PACKAGES = (
 )
 
 
+_TEXT_EXTS = {".json", ".csv", ".tsv", ".txt", ".md", ".yaml", ".yml", ".py", ".jsonld"}
+
+
 def sha256_file(path: PathLike) -> str:
+    p = Path(path)
+    if p.suffix.lower() in _TEXT_EXTS and p.is_file():
+        try:
+            raw = p.read_bytes().replace(b"\r\n", b"\n")
+            return hashlib.sha256(raw).hexdigest()
+        except Exception:
+            pass
     digest = hashlib.sha256()
-    with Path(path).open("rb") as handle:
+    with p.open("rb") as handle:
         while True:
             chunk = handle.read(65536)
             if not chunk:

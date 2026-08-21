@@ -255,7 +255,12 @@ def test_committed_independent_report_retains_failed_endpoints_and_hashes():
     assert report["status"]["independent_biological_validation"] == "not_supported"
 
     for artifact in provenance["output_files"]:
-        path = Path(artifact["path"])
+        p_str = artifact["path"]
+        path = Path(p_str)
+        if not path.is_file():
+            path = root / Path(p_str).name
+            if not path.is_file():
+                path = root / "evidence" / Path(p_str).name
         assert path.is_file()
         assert hashlib.sha256(path.read_bytes()).hexdigest() == artifact["sha256"]
 

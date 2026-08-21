@@ -20,7 +20,7 @@
     "provenance": {
       "data_source": "synthetic_generator (in-silico manufactured spatial slice)",
       "download_date": "2026-08-20T14:28:15.690499+00:00",
-      "commit_sha": "ecdced9fd2c3e61d7f5fc10fda1931884dd2a350",
+      "commit_sha": "37a8a8d87117814eadab5e603bf183dedd7b5415",
       "git_dirty": false,
       "environment_lockfile_hashes": {
         "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
@@ -42,7 +42,7 @@
       },
       "repository_dirty_at_execution": false,
       "validation_source_dirty": false,
-      "source_snapshot_sha256": "742095d112c7f40c610e0f00b0625079b7e87f2bacb1c15e235c6438ac047f6d"
+      "source_snapshot_sha256": "a320740271433049b4de6aea743cdd8f93445ee53414b1a0ced6cd6144b029e5"
     }
   },
   "metrics": [
@@ -79,5 +79,5 @@
     "validation/spatial/INFERENTIAL_STRESS_REPORT.json"
   ],
   "status": "pass",
-  "source_snapshot_sha256": "742095d112c7f40c610e0f00b0625079b7e87f2bacb1c15e235c6438ac047f6d"
+  "source_snapshot_sha256": "a320740271433049b4de6aea743cdd8f93445ee53414b1a0ced6cd6144b029e5"
 }
