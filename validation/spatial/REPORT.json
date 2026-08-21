@@ -20,7 +20,7 @@
     "provenance": {
       "data_source": "synthetic_generator (in-silico manufactured spatial slice)",
       "download_date": "2026-08-20T14:28:15.690499+00:00",
-      "commit_sha": "8344a6bbf2152b12157d8f28b07324aa76d9d1b9",
+      "commit_sha": "32913aaf3823ce35d255d8ec51c15c922d63025e",
       "git_dirty": false,
       "environment_lockfile_hashes": {
         "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",

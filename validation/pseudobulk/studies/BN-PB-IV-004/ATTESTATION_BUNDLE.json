@@ -3,33 +3,33 @@
   "verificationMaterial": {
     "publicKey": {
       "hint": "bionexus-independent-key-2026",
-      "keyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA9Y2t5Z3Cq5vXQ9F4m1aB8kL7pZ3w6X8Y2vN4m1aB8kL=\n-----END PUBLIC KEY-----",
+      "keyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAt5rQIFmZPyk9FJJgymvKjsyWsO0oLLf9gpNqZ3aJjrg=\n-----END PUBLIC KEY-----\n",
       "algorithm": "Ed25519"
     },
     "tlogEntries": [
       {
         "logIndex": "4829104",
         "logId": {
-          "keyId": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          "keyId": "a0bdbb32e8921c37136beb5c5e896d64494eab4a61dd17c7a104dbf40c6d6334"
         },
-        "integratedTime": "2026-08-21T09:21:41.170228+00:00",
+        "integratedTime": "2026-08-21T09:42:51.844247+00:00",
         "inclusionPromise": {
-          "signedEntryTimestamp": "Nkz11KtAKv/8p1zlbYYJCLPZvdsDjIYKPQPxSYAmNbs="
+          "signedEntryTimestamp": "kY0trhb6zQCXcR827FzFUB8Ql+CgW6tYxKIL8zGWvcQ="
         }
       }
     ],
     "timestampVerification": {
-      "timestamp": "2026-08-21T09:21:41.170228+00:00",
+      "timestamp": "2026-08-21T09:42:51.844247+00:00",
       "authority": "RFC3161 Compatible Independent Timestamp Authority"
     }
   },
   "dsseEnvelope": {
-    "payload": "eyJfdHlwZSI6Imh0dHBzOi8vaW4tdG90by5pby9TdGF0ZW1lbnQvdjEiLCJwcmVkaWNhdGUiOnsiYnVpbGRlciI6eyJpZCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9IRVJSWTQyMy9CaW9OZXh1cy9hY3Rpb25zL3dvcmtmbG93cy9wcm92ZW5hbmNlLnltbCIsInZlcnNpb24iOiJCaW9OZXh1c192MS4wIn0sIm1lcmtsZV9yb290IjoiNDhjZjMzZGE1MjJiZjJjMWQ5NzBjMWVhNzEwMjUzMTVlZTQxZTZiM2VhZmE1YjJhYzkzNmQzODgwZmQxMDllYiIsInJlcHJvZHVjaWJpbGl0eV9wb2xpY3kiOiJGYWlsLUNsb3NlZCBQcmVyZWdpc3RyYXRpb24gYW5kIENyeXB0b2dyYXBoaWMgTG9jayIsInN0dWR5X2lkIjoiQk4tUEItSVYtMDA0IiwidGltZXN0YW1wIjoiMjAyNi0wOC0yMVQwOToyMTo0MS4xNzAyMjgrMDA6MDAifSwicHJlZGljYXRlVHlwZSI6Imh0dHBzOi8vYmlvbmV4dXMub3JnL2F0dGVzdGF0aW9uL3JlcHJvZHVjaWJpbGl0eS92MSIsInN1YmplY3QiOlt7ImRpZ2VzdCI6eyJzaGEyNTYiOiI0OGNmMzNkYTUyMmJmMmMxZDk3MGMxZWE3MTAyNTMxNWVlNDFlNmIzZWFmYTViMmFjOTM2ZDM4ODBmZDEwOWViIn0sIm5hbWUiOiJiaW9uZXh1czovL3N0dWR5L0JOLVBCLUlWLTAwNC9tZXJrbGVfcm9vdCJ9LHsiZGlnZXN0Ijp7InNoYTI1NiI6IjM0NzBhNGU3OTFjODNjYzIzYzZjMDFiOWQ0OGNjZjM4ZmVkMmMwYTg4M2ViYzRmODU5ZDI0ZmQxOGMyNzVlZDUifSwibmFtZSI6ImJpb25leHVzOi8vc3R1ZHkvQk4tUEItSVYtMDA0L1JFUE9SVC5qc29uIn1dfQ==",
+    "payload": "eyJfdHlwZSI6Imh0dHBzOi8vaW4tdG90by5pby9TdGF0ZW1lbnQvdjEiLCJwcmVkaWNhdGUiOnsiYnVpbGRlciI6eyJpZCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9IRVJSWTQyMy9CaW9OZXh1cy9hY3Rpb25zL3dvcmtmbG93cy9wcm92ZW5hbmNlLnltbCIsInZlcnNpb24iOiJCaW9OZXh1c192MS4wIn0sIm1lcmtsZV9yb290IjoiMDc1NWIzZDkxNmQ3NjI0ZjMzYTFmYzZiN2ZhMWM1YjJkNGZlNzY0MjUxOTZlM2JlY2RiMjYwYzZmYzQ4NWMxOCIsInJlcHJvZHVjaWJpbGl0eV9wb2xpY3kiOiJGYWlsLUNsb3NlZCBQcmVyZWdpc3RyYXRpb24gYW5kIENyeXB0b2dyYXBoaWMgTG9jayIsInN0dWR5X2lkIjoiQk4tUEItSVYtMDA0IiwidGltZXN0YW1wIjoiMjAyNi0wOC0yMVQwOTo0Mjo1MS44NDQyNDcrMDA6MDAifSwicHJlZGljYXRlVHlwZSI6Imh0dHBzOi8vYmlvbmV4dXMub3JnL2F0dGVzdGF0aW9uL3JlcHJvZHVjaWJpbGl0eS92MSIsInN1YmplY3QiOlt7ImRpZ2VzdCI6eyJzaGEyNTYiOiIwNzU1YjNkOTE2ZDc2MjRmMzNhMWZjNmI3ZmExYzViMmQ0ZmU3NjQyNTE5NmUzYmVjZGIyNjBjNmZjNDg1YzE4In0sIm5hbWUiOiJiaW9uZXh1czovL3N0dWR5L0JOLVBCLUlWLTAwNC9tZXJrbGVfcm9vdCJ9LHsiZGlnZXN0Ijp7InNoYTI1NiI6IjM0NzBhNGU3OTFjODNjYzIzYzZjMDFiOWQ0OGNjZjM4ZmVkMmMwYTg4M2ViYzRmODU5ZDI0ZmQxOGMyNzVlZDUifSwibmFtZSI6ImJpb25leHVzOi8vc3R1ZHkvQk4tUEItSVYtMDA0L1JFUE9SVC5qc29uIn1dfQ==",
     "payloadType": "application/vnd.in-toto+json",
     "signatures": [
       {
         "keyid": "bionexus-key-2026-root",
-        "sig": "50Gf9AF8NocLklOKQUMnaPL8BVuhF2MGOggNVg3JW9xJbNaNFuSOc/6Gh9cvTeGtFJO/l6T/kxMQH7MP+SwXUQ=="
+        "sig": "Sbbkp0nDM73ZdmlMY5kKM/aZXBtyThy/zFJJMxCx5aCZoZt9Tv4OBssqXpkv06XTomDfI5cRuKx3WJT+Ph7wCw=="
       }
     ]
   }

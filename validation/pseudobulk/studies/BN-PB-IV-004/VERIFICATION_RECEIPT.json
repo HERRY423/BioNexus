@@ -1,11 +1,11 @@
 {
   "schema_version": "bionexus.verification-receipt.v1",
   "study_id": "BN-PB-IV-004",
-  "verified_at": "2026-08-21T09:21:41.170793+00:00",
+  "verified_at": "2026-08-21T09:42:51.844690+00:00",
   "verification_status": "VALID_VERIFIED",
-  "merkle_root_verified": "48cf33da522bf2c1d970c1ea71025315ee41e6b3eafa5b2ac936d3880fd109eb",
-  "public_key_fingerprint": "1f373a744c940fae0c0e23131ecda3f2ed583c8baac6697be0346ab69d14d543",
+  "merkle_root_verified": "0755b3d916d7624f33a1fc6b7fa1c5b2d4fe76425196e3becdb260c6fc485c18",
+  "public_key_fingerprint": "a0bdbb32e8921c37136beb5c5e896d64494eab4a61dd17c7a104dbf40c6d6334",
   "signature_verified": true,
-  "timestamp_authenticated": true,
+  "errors": [],
   "policy_compliance": "PASS_FAIL_CLOSED_VERIFIED"
 }
