@@ -55,6 +55,9 @@ class ProvenanceVerificationReport:
         }
 
 
+from bionexus.attestation_authority import verify_attestation_bundle
+
+
 def verify_study_provenance(study_dir: PathLike) -> ProvenanceVerificationReport:
     root = Path(study_dir).resolve()
     issues: List[str] = []
@@ -68,6 +71,8 @@ def verify_study_provenance(study_dir: PathLike) -> ProvenanceVerificationReport
     attestation_path = root / 'INDEPENDENT_BIOSTATISTICIAN_ATTESTATION.json'
     unblind_path = root / 'UNBLINDING_MANIFEST.json'
     prov_path = root / 'PROVENANCE.json'
+    bundle_path = root / 'ATTESTATION_BUNDLE.json'
+    receipt_path = root / 'VERIFICATION_RECEIPT.json'
 
     study_id = 'UNKNOWN'
     if not prereg_path.is_file():
@@ -120,12 +125,69 @@ def verify_study_provenance(study_dir: PathLike) -> ProvenanceVerificationReport
         file_hashes['NEGATIVE_RESULT_FREEZE.json'] = freeze_sha
         verified_files.append({'role': 'negative_result_freeze', 'path': 'NEGATIVE_RESULT_FREEZE.json', 'sha256': freeze_sha})
 
+    bundle_sha: Optional[str] = None
+    receipt_sha: Optional[str] = None
+    if bundle_path.is_file():
+        bundle_sha = compute_file_sha256(bundle_path)
+        verified_files.append({'role': 'attestation_bundle', 'path': 'ATTESTATION_BUNDLE.json', 'sha256': bundle_sha})
+    else:
+        issues.append('missing ATTESTATION_BUNDLE.json')
+
+    if receipt_path.is_file():
+        receipt_sha = compute_file_sha256(receipt_path)
+        verified_files.append({'role': 'verification_receipt', 'path': 'VERIFICATION_RECEIPT.json', 'sha256': receipt_sha})
+    else:
+        issues.append('missing VERIFICATION_RECEIPT.json')
+
     if prov_path.is_file():
         prov_sha = compute_file_sha256(prov_path)
         file_hashes['PROVENANCE.json'] = prov_sha
         verified_files.append({'role': 'provenance_sidecar', 'path': 'PROVENANCE.json', 'sha256': prov_sha})
 
+        try:
+            prov_data = json.loads(prov_path.read_text(encoding='utf-8'))
+            exec_prov = prov_data.get('execution_provenance', {})
+            if exec_prov.get('git_dirty') is True:
+                issues.append('PROVENANCE.json execution_provenance has git_dirty=True')
+
+            crypto_att = prov_data.get('cryptographic_attestation')
+            if not crypto_att:
+                issues.append('PROVENANCE.json is missing cryptographic_attestation section')
+            else:
+                if crypto_att.get('bundle_file') != 'ATTESTATION_BUNDLE.json':
+                    issues.append("PROVENANCE.json cryptographic_attestation bundle_file must be 'ATTESTATION_BUNDLE.json'")
+                if crypto_att.get('receipt_file') != 'VERIFICATION_RECEIPT.json':
+                    issues.append("PROVENANCE.json cryptographic_attestation receipt_file must be 'VERIFICATION_RECEIPT.json'")
+                if crypto_att.get('trust_root_id') != 'bionexus-independent-root-2026':
+                    issues.append(f"PROVENANCE.json unexpected trust_root_id: {crypto_att.get('trust_root_id')}")
+        except Exception as e:
+            issues.append(f'PROVENANCE.json parse error: {e}')
+
     merkle_root = compute_merkle_root(file_hashes)
+
+    # Verify ATTESTATION_BUNDLE cryptographic validity against Merkle root
+    if bundle_path.is_file():
+        try:
+            bundle_data = json.loads(bundle_path.read_text(encoding='utf-8'))
+            bundle_valid, bundle_errs = verify_attestation_bundle(bundle_data, expected_merkle_root=merkle_root)
+            if not bundle_valid:
+                issues.extend(bundle_errs)
+        except Exception as e:
+            issues.append(f'ATTESTATION_BUNDLE.json verification error: {e}')
+
+    # Verify VERIFICATION_RECEIPT validity
+    if receipt_path.is_file():
+        try:
+            receipt_data = json.loads(receipt_path.read_text(encoding='utf-8'))
+            if receipt_data.get('verification_status') != 'VALID_VERIFIED':
+                issues.append(f"VERIFICATION_RECEIPT.json status is {receipt_data.get('verification_status')}, expected VALID_VERIFIED")
+            if receipt_data.get('merkle_root_verified') != merkle_root:
+                issues.append(f"VERIFICATION_RECEIPT.json merkle root mismatch: expected {merkle_root}, got {receipt_data.get('merkle_root_verified')}")
+            if not receipt_data.get('signature_verified'):
+                issues.append('VERIFICATION_RECEIPT.json signature_verified is false')
+        except Exception as e:
+            issues.append(f'VERIFICATION_RECEIPT.json parse error: {e}')
+
     status = 'PASS_VERIFIED' if not issues else 'FAIL_TAMPER_DETECTED'
 
     return ProvenanceVerificationReport(

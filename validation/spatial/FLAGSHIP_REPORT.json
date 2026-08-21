@@ -30,8 +30,8 @@
     },
     "provenance": {
       "data_source": "10x Genomics Xenium public datasets (e.g. Human Breast FFPE) / Vizgen MERSCOPE public releases (Moffitt et al. 2016-style MERFISH)",
-      "download_date": "2026-08-21T09:37:32.707782+00:00",
-      "commit_sha": "890446356a1eb79751eb7dcedda75f3aad1a7879",
+      "download_date": "2026-08-21T09:59:35.160183+00:00",
+      "commit_sha": "362fdfde5026b64fffe803cf4a730585e1c1761c",
       "git_dirty": true,
       "environment_lockfile_hashes": {
         "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
@@ -39,14 +39,13 @@
         "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
       },
       "command": [
-        "scripts/run_flagship_validation.py",
-        "--help"
+        "scripts/run_flagship_validation.py"
       ],
-      "command_str": "scripts/run_flagship_validation.py --help",
+      "command_str": "scripts/run_flagship_validation.py",
       "generator_version": "1.0.0-rc.1",
       "python_version": "3.13.9",
       "platform": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-08-21T09:37:32.707782+00:00",
+      "timestamp": "2026-08-21T09:59:35.160183+00:00",
       "extra_metadata": {
         "capability": "spatial.inference_validity",
         "dataset_id": "xenium_spatial_truth",
@@ -54,7 +53,7 @@
       },
       "repository_dirty_at_execution": true,
       "validation_source_dirty": true,
-      "source_snapshot_sha256": "6601775429bc51823f88e526210c2889c4c3209b1fa8e2a40be55edb3b8de749"
+      "source_snapshot_sha256": "475b79c36127828806bd2d181a8261600aad568dadaa31891d3885ae6f3c19a0"
     }
   },
   "metrics": [
@@ -82,7 +81,7 @@
     "Required files not found: spatial_truth.h5ad",
     "Validation outcome NOT verified in this environment (BNS-EM-009)"
   ],
-  "timestamp": "2026-08-21T09:37:32.818993+00:00",
+  "timestamp": "2026-08-21T09:59:35.251651+00:00",
   "evidence_files": [
     "validation\\spatial\\evidence\\.gitkeep",
     "validation\\spatial\\evidence\\spatial_synthetic_technical_acceptance.h5ad"

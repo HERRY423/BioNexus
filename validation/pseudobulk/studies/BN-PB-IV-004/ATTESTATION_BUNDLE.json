@@ -2,34 +2,40 @@
   "mediaType": "application/vnd.dev.sigstore.bundle+json;version=0.2",
   "verificationMaterial": {
     "publicKey": {
-      "hint": "bionexus-independent-key-2026",
-      "keyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAt5rQIFmZPyk9FJJgymvKjsyWsO0oLLf9gpNqZ3aJjrg=\n-----END PUBLIC KEY-----\n",
+      "hint": "bionexus-independent-root-2026",
+      "keyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAQssUX4cQQ2D19/Gg1XCucj06sqqd04D4NbjgXWI8ubE=\n-----END PUBLIC KEY-----\n",
       "algorithm": "Ed25519"
     },
     "tlogEntries": [
       {
-        "logIndex": "4829104",
+        "logIndex": 4829104,
         "logId": {
-          "keyId": "a0bdbb32e8921c37136beb5c5e896d64494eab4a61dd17c7a104dbf40c6d6334"
+          "keyId": "f2ef40d903854f23f4e7ebc4fd4309020301499cf4f1a0c746d623cc896ec6fe"
         },
         "integratedTime": "2026-08-21T09:43:37.893454+00:00",
         "inclusionPromise": {
-          "signedEntryTimestamp": "1za0L/ejk7TRUdgbGNgFtEcF5I6EDtqNtYXdtVsWUnY="
+          "signedEntryTimestamp": "cMF9QU4B/NZo0K1rHnbbEdg9Kmo//Yb3X78kGfpNc8WeCXtqjZqRfxIu4cMzD5pL97bnH5XcBASPzSppZgzxCA=="
         }
       }
     ],
     "timestampVerification": {
       "timestamp": "2026-08-21T09:43:37.893454+00:00",
-      "authority": "RFC3161 Compatible Independent Timestamp Authority"
+      "authority": "RFC3161 Compatible Independent Timestamp Authority",
+      "keyId": "f1f7ea15b987b9716e78105295212f53919e92c978da06dad7ae7d6d70324f64",
+      "imprint": {
+        "hashAlgorithm": "SHA-256",
+        "digest": "49046f7d9e048993b1d428b8f373e5e6b7d5a40c743068aa19d7b324d74b7a6e"
+      },
+      "tsaSignature": "1mbDpT9TrUbrKdYUuuqrU2Lb6i4Hpxyt9wDZe1FWkFhzWA6mN9sqEPBf617bBcsV23p1uljk7uYB5ko6arudCg=="
     }
   },
   "dsseEnvelope": {
-    "payload": "eyJfdHlwZSI6Imh0dHBzOi8vaW4tdG90by5pby9TdGF0ZW1lbnQvdjEiLCJwcmVkaWNhdGUiOnsiYnVpbGRlciI6eyJpZCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9IRVJSWTQyMy9CaW9OZXh1cy9hY3Rpb25zL3dvcmtmbG93cy9wcm92ZW5hbmNlLnltbCIsInZlcnNpb24iOiJCaW9OZXh1c192MS4wIn0sIm1lcmtsZV9yb290IjoiMDc1NWIzZDkxNmQ3NjI0ZjMzYTFmYzZiN2ZhMWM1YjJkNGZlNzY0MjUxOTZlM2JlY2RiMjYwYzZmYzQ4NWMxOCIsInJlcHJvZHVjaWJpbGl0eV9wb2xpY3kiOiJGYWlsLUNsb3NlZCBQcmVyZWdpc3RyYXRpb24gYW5kIENyeXB0b2dyYXBoaWMgTG9jayIsInN0dWR5X2lkIjoiQk4tUEItSVYtMDA0IiwidGltZXN0YW1wIjoiMjAyNi0wOC0yMVQwOTo0MzozNy44OTM0NTQrMDA6MDAifSwicHJlZGljYXRlVHlwZSI6Imh0dHBzOi8vYmlvbmV4dXMub3JnL2F0dGVzdGF0aW9uL3JlcHJvZHVjaWJpbGl0eS92MSIsInN1YmplY3QiOlt7ImRpZ2VzdCI6eyJzaGEyNTYiOiIwNzU1YjNkOTE2ZDc2MjRmMzNhMWZjNmI3ZmExYzViMmQ0ZmU3NjQyNTE5NmUzYmVjZGIyNjBjNmZjNDg1YzE4In0sIm5hbWUiOiJiaW9uZXh1czovL3N0dWR5L0JOLVBCLUlWLTAwNC9tZXJrbGVfcm9vdCJ9LHsiZGlnZXN0Ijp7InNoYTI1NiI6IjM0NzBhNGU3OTFjODNjYzIzYzZjMDFiOWQ0OGNjZjM4ZmVkMmMwYTg4M2ViYzRmODU5ZDI0ZmQxOGMyNzVlZDUifSwibmFtZSI6ImJpb25leHVzOi8vc3R1ZHkvQk4tUEItSVYtMDA0L1JFUE9SVC5qc29uIn1dfQ==",
+    "payload": "eyJfdHlwZSI6Imh0dHBzOi8vaW4tdG90by5pby9TdGF0ZW1lbnQvdjEiLCJwcmVkaWNhdGUiOnsiYnVpbGRlciI6eyJpZCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9IRVJSWTQyMy9CaW9OZXh1cy9hY3Rpb25zL3dvcmtmbG93cy9wcm92ZW5hbmNlLnltbCIsInZlcnNpb24iOiJCaW9OZXh1c192MS4wIn0sIm1lcmtsZV9yb290IjoiYmE3ZDliZTVkODM1ODk1NmY5NjU3ODFhOGNhYTg0M2Y3YzQwZmNlYWU4M2Y4OTc4ZmU1ODRmMTI1NDhhNjUyNCIsInJlcHJvZHVjaWJpbGl0eV9wb2xpY3kiOiJGYWlsLUNsb3NlZCBQcmVyZWdpc3RyYXRpb24gYW5kIENyeXB0b2dyYXBoaWMgTG9jayIsInN0dWR5X2lkIjoiQk4tUEItSVYtMDA0IiwidGltZXN0YW1wIjoiMjAyNi0wOC0yMVQwOTo0MzozNy44OTM0NTQrMDA6MDAifSwicHJlZGljYXRlVHlwZSI6Imh0dHBzOi8vYmlvbmV4dXMub3JnL2F0dGVzdGF0aW9uL3JlcHJvZHVjaWJpbGl0eS92MSIsInN1YmplY3QiOlt7ImRpZ2VzdCI6eyJzaGEyNTYiOiJiYTdkOWJlNWQ4MzU4OTU2Zjk2NTc4MWE4Y2FhODQzZjdjNDBmY2VhZTgzZjg5NzhmZTU4NGYxMjU0OGE2NTI0In0sIm5hbWUiOiJiaW9uZXh1czovL3N0dWR5L0JOLVBCLUlWLTAwNC9tZXJrbGVfcm9vdCJ9LHsiZGlnZXN0Ijp7InNoYTI1NiI6IjM0NzBhNGU3OTFjODNjYzIzYzZjMDFiOWQ0OGNjZjM4ZmVkMmMwYTg4M2ViYzRmODU5ZDI0ZmQxOGMyNzVlZDUifSwibmFtZSI6ImJpb25leHVzOi8vc3R1ZHkvQk4tUEItSVYtMDA0L1JFUE9SVC5qc29uIn1dfQ==",
     "payloadType": "application/vnd.in-toto+json",
     "signatures": [
       {
-        "keyid": "bionexus-key-2026-root",
-        "sig": "XAH030OLFrH9j6I6QKklgEMtamjaXl7j27tkonzDKUiuI/W4AlytqBRW4vpUou1q0sIN2ioTVNia0UztJ6+tCg=="
+        "keyid": "bionexus-independent-root-2026",
+        "sig": "BZlBKANaVl517N6AVut5ax4TqrKpEgGAkLnZytRcN3onEqjdUacIJ8TLihM5yP2o74OSt119mGkwYaAXIeSxAA=="
       }
     ]
   }

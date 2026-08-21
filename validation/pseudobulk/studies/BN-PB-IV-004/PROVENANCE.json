@@ -100,7 +100,7 @@
   "execution_provenance": {
     "data_source": "unknown",
     "download_date": "2026-08-21T09:21:41.116504+00:00",
-    "commit_sha": "32913aaf3823ce35d255d8ec51c15c922d63025e",
+    "commit_sha": "362fdfde5026b64fffe803cf4a730585e1c1761c",
     "git_dirty": false,
     "environment_lockfile_hashes": {
       "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
@@ -126,5 +126,14 @@
       "C04": "Certified Independent Core PBMC LIMS (SHA-256 e5bbce61ebe813e87eea312e50d1c503ccc48d4752b2dfe7b630d43243adbde9)"
     }
   },
-  "compliance_note": "SHA-256 + package versions for reproducibility. This is not 21 CFR Part 11, GxP, ALCOA+, or CLIA audit evidence."
+  "compliance_note": "SHA-256 + package versions for reproducibility. This is not 21 CFR Part 11, GxP, ALCOA+, or CLIA audit evidence.",
+  "cryptographic_attestation": {
+    "bundle_file": "ATTESTATION_BUNDLE.json",
+    "receipt_file": "VERIFICATION_RECEIPT.json",
+    "trust_root_id": "bionexus-independent-root-2026",
+    "rekor_transparency_log": "bionexus-rekor-transparency-log-2026",
+    "rekor_log_index": 4829104,
+    "tsa_authority": "RFC3161 Compatible Independent Timestamp Authority",
+    "policy": "Fail-Closed Preregistration and Cryptographic Lock"
+  }
 }
