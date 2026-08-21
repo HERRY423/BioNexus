@@ -28,7 +28,7 @@
     },
     {
       "path": "PREREGISTRATION_LOCK.json",
-      "sha256": "b058a8c2ea80d317b1b0f1065ea6db47fe4db658bc4fc44a628a9f002dd42dec"
+      "sha256": "679067a9d75accce59430ee5e27f93aedeb38e7d96a829945e9f08bd6b88f37c"
     },
     {
       "path": "blinded_packet/BLINDED_PACKET_MANIFEST.json",
@@ -36,15 +36,15 @@
     },
     {
       "path": "INDEPENDENT_BIOSTATISTICIAN_ATTESTATION.json",
-      "sha256": "25f5e502e5b5a3f3b472e177c737708ab3213fc7b1c6ba720369b91415c38d44"
+      "sha256": "a66570cc802f9fe7b43a0fa24d554041062d05cda34e4e3abad8b7ee89fc2503"
     },
     {
       "path": "UNBLINDING_MANIFEST.json",
-      "sha256": "26705a8a96488920da07dd001a1a13b9bda2c3b3d02cbea6ac14ea54f33a2796"
+      "sha256": "2c17c1b22b07428bc5ec929ef2078281e340d1b0376fe65c6a083e91c7952926"
     },
     {
       "path": "REPORT.json",
-      "sha256": "80a22364cab09a1732b7f04aa7655bb3dcf77a9b46de915d3b840b66c82b1f78"
+      "sha256": "3e4b07c162d81f85f7f38c660cbe96a3e0904ba330b216d0cb22deff7527f839"
     }
   ]
 }

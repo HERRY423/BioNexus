@@ -121,7 +121,7 @@
     "attestation_path": "validation/pseudobulk/studies/BN-PB-IV-004/INDEPENDENT_BIOSTATISTICIAN_ATTESTATION.json",
     "status": "SIGNED_COMPLETE",
     "decision": "NEGATIVE_RESULT",
-    "sha256": "9b8cfc049e26e8533cd185e8b2a90b1664ceb80ff08647d467d0d5726ddfc7ed"
+    "sha256": "1816f461f65b6215bb720428b8060bc45a74e36e6aaf750b2573029b75a73a39"
   },
   "evidence_files": [
     "validation/pseudobulk/studies/BN-PB-IV-004/evidence/c04_donor_effects.csv",

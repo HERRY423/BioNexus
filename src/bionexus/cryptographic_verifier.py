@@ -75,6 +75,7 @@ def verify_study_provenance(study_dir: PathLike) -> ProvenanceVerificationReport
     receipt_path = root / 'VERIFICATION_RECEIPT.json'
 
     study_id = 'UNKNOWN'
+    prereg_sha: Optional[str] = None
     if not prereg_path.is_file():
         issues.append('missing PREREGISTRATION.json')
     else:
@@ -97,33 +98,81 @@ def verify_study_provenance(study_dir: PathLike) -> ProvenanceVerificationReport
 
     packet_dir = root / 'blinded_packet'
     packet_manifest_path = packet_dir / 'BLINDED_PACKET_MANIFEST.json'
+    packet_manifest_sha: Optional[str] = None
     if packet_manifest_path.is_file():
         packet_manifest_sha = compute_file_sha256(packet_manifest_path)
         file_hashes['blinded_packet/BLINDED_PACKET_MANIFEST.json'] = packet_manifest_sha
         verified_files.append({'role': 'blinded_packet_manifest', 'path': 'blinded_packet/BLINDED_PACKET_MANIFEST.json', 'sha256': packet_manifest_sha})
+        try:
+            p_man = json.loads(packet_manifest_path.read_text(encoding='utf-8'))
+            for f_entry in p_man.get('files', []):
+                sub_f = packet_dir / f_entry.get('file', '')
+                if not sub_f.is_file():
+                    issues.append(f"blinded packet file missing: {f_entry.get('file')}")
+                else:
+                    sub_sha = compute_file_sha256(sub_f)
+                    if sub_sha != f_entry.get('sha256', ''):
+                        issues.append(f"blinded packet file SHA mismatch for {f_entry.get('file')}: expected {f_entry.get('sha256')}, observed {sub_sha}")
+        except Exception as e:
+            issues.append(f'blinded packet manifest parse error: {e}')
 
+    att_sha: Optional[str] = None
     if attestation_path.is_file():
         att_sha = compute_file_sha256(attestation_path)
         file_hashes['INDEPENDENT_BIOSTATISTICIAN_ATTESTATION.json'] = att_sha
         verified_files.append({'role': 'biostatistician_attestation', 'path': 'INDEPENDENT_BIOSTATISTICIAN_ATTESTATION.json', 'sha256': att_sha})
-        att = json.loads(attestation_path.read_text(encoding='utf-8'))
-        if att.get('status') != 'SIGNED_COMPLETE':
-            issues.append('biostatistician attestation status is not SIGNED_COMPLETE')
+        try:
+            att = json.loads(attestation_path.read_text(encoding='utf-8'))
+            if att.get('status') != 'SIGNED_COMPLETE':
+                issues.append('biostatistician attestation status is not SIGNED_COMPLETE')
+            materials = att.get('materials', {})
+            if prereg_sha and materials.get('preregistration_sha256') != prereg_sha:
+                issues.append(f"attestation preregistration_sha256 mismatch: expected {prereg_sha}, got {materials.get('preregistration_sha256')}")
+            if packet_manifest_sha and materials.get('blinded_packet_sha256') != packet_manifest_sha:
+                issues.append(f"attestation blinded_packet_sha256 mismatch: expected {packet_manifest_sha}, got {materials.get('blinded_packet_sha256')}")
+        except Exception as e:
+            issues.append(f'attestation parse error: {e}')
 
     if unblind_path.is_file():
         unblind_sha = compute_file_sha256(unblind_path)
         file_hashes['UNBLINDING_MANIFEST.json'] = unblind_sha
         verified_files.append({'role': 'unblinding_manifest', 'path': 'UNBLINDING_MANIFEST.json', 'sha256': unblind_sha})
+        try:
+            unb = json.loads(unblind_path.read_text(encoding='utf-8'))
+            if att_sha and unb.get('biostatistician_attestation_sha256') != att_sha:
+                issues.append(f"unblinding manifest biostatistician_attestation_sha256 mismatch: expected {att_sha}, got {unb.get('biostatistician_attestation_sha256')}")
+        except Exception as e:
+            issues.append(f'unblinding manifest parse error: {e}')
 
     if report_path.is_file():
         report_sha = compute_file_sha256(report_path)
         file_hashes['REPORT.json'] = report_sha
         verified_files.append({'role': 'study_report', 'path': 'REPORT.json', 'sha256': report_sha})
+        try:
+            rep = json.loads(report_path.read_text(encoding='utf-8'))
+            if prereg_sha and rep.get('preregistration', {}).get('sha256') != prereg_sha:
+                issues.append(f"REPORT.json preregistration sha256 mismatch: expected {prereg_sha}, got {rep.get('preregistration', {}).get('sha256')}")
+            if att_sha and rep.get('biostatistician_review', {}).get('sha256') != att_sha:
+                issues.append(f"REPORT.json biostatistician_review sha256 mismatch: expected {att_sha}, got {rep.get('biostatistician_review', {}).get('sha256')}")
+        except Exception as e:
+            issues.append(f'REPORT.json parse error: {e}')
 
     if freeze_path.is_file():
         freeze_sha = compute_file_sha256(freeze_path)
         file_hashes['NEGATIVE_RESULT_FREEZE.json'] = freeze_sha
         verified_files.append({'role': 'negative_result_freeze', 'path': 'NEGATIVE_RESULT_FREEZE.json', 'sha256': freeze_sha})
+        try:
+            frz = json.loads(freeze_path.read_text(encoding='utf-8'))
+            for art_entry in frz.get('artifacts', []):
+                art_file = root / art_entry.get('path', '')
+                if not art_file.is_file():
+                    issues.append(f"frozen artifact file missing: {art_entry.get('path')}")
+                else:
+                    observed_art_sha = compute_file_sha256(art_file)
+                    if observed_art_sha != art_entry.get('sha256', ''):
+                        issues.append(f"frozen artifact hash mismatch for {art_entry.get('path')}: expected {art_entry.get('sha256')}, observed {observed_art_sha}")
+        except Exception as e:
+            issues.append(f'NEGATIVE_RESULT_FREEZE.json parse error: {e}')
 
     bundle_sha: Optional[str] = None
     receipt_sha: Optional[str] = None
@@ -149,6 +198,31 @@ def verify_study_provenance(study_dir: PathLike) -> ProvenanceVerificationReport
             exec_prov = prov_data.get('execution_provenance', {})
             if exec_prov.get('git_dirty') is True:
                 issues.append('PROVENANCE.json execution_provenance has git_dirty=True')
+
+            # Deep check all input_files declared in PROVENANCE.json
+            for in_entry in prov_data.get('input_files', []):
+                in_p = Path(in_entry.get('path', ''))
+                if not in_p.is_file():
+                    # Fallback relative to study dir or root
+                    in_p = root / in_entry.get('file_name', '')
+                if not in_p.is_file():
+                    issues.append(f"PROVENANCE.json declared input file missing: {in_entry.get('file_name')}")
+                else:
+                    observed_in_sha = compute_file_sha256(in_p)
+                    if observed_in_sha != in_entry.get('sha256', ''):
+                        issues.append(f"PROVENANCE.json input file SHA mismatch for {in_entry.get('file_name')}: expected {in_entry.get('sha256')}, observed {observed_in_sha}")
+
+            # Deep check all output_files declared in PROVENANCE.json
+            for out_entry in prov_data.get('output_files', []):
+                out_p = Path(out_entry.get('path', ''))
+                if not out_p.is_file():
+                    out_p = root / out_entry.get('file_name', '')
+                if not out_p.is_file():
+                    issues.append(f"PROVENANCE.json declared output file missing: {out_entry.get('file_name')}")
+                else:
+                    observed_out_sha = compute_file_sha256(out_p)
+                    if observed_out_sha != out_entry.get('sha256', ''):
+                        issues.append(f"PROVENANCE.json output file SHA mismatch for {out_entry.get('file_name')}: expected {out_entry.get('sha256')}, observed {observed_out_sha}")
 
             crypto_att = prov_data.get('cryptographic_attestation')
             if not crypto_att:

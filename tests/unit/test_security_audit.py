@@ -118,7 +118,9 @@ def test_study_internal_hash_consistency(study_id: str):
     # 2. Blinded Packet Manifest Consistency
     packet_dir = study_dir / "blinded_packet"
     packet_manifest_path = packet_dir / "BLINDED_PACKET_MANIFEST.json"
+    packet_manifest_sha = None
     if packet_manifest_path.is_file():
+        packet_manifest_sha = compute_file_sha256(packet_manifest_path)
         packet_manifest = json.loads(packet_manifest_path.read_text(encoding="utf-8"))
         for entry in packet_manifest.get("files", []):
             rel_file = packet_dir / entry.get("file")
@@ -127,10 +129,25 @@ def test_study_internal_hash_consistency(study_id: str):
 
     # 3. Biostatistician Attestation Consistency
     assert attestation_path.is_file()
+    att_sha = compute_file_sha256(attestation_path)
     att_data = json.loads(attestation_path.read_text(encoding="utf-8"))
     assert att_data.get("status") == "SIGNED_COMPLETE"
+    assert att_data.get("materials", {}).get("preregistration_sha256") == prereg_sha
+    if packet_manifest_sha:
+        assert att_data.get("materials", {}).get("blinded_packet_sha256") == packet_manifest_sha
 
-    # 4. Negative Result Freeze Integrity
+    # 4. Unblinding Manifest Consistency
+    assert unblind_path.is_file()
+    unb_data = json.loads(unblind_path.read_text(encoding="utf-8"))
+    assert unb_data.get("biostatistician_attestation_sha256") == att_sha
+
+    # 5. Study Report Consistency
+    assert report_path.is_file()
+    rep_data = json.loads(report_path.read_text(encoding="utf-8"))
+    assert rep_data.get("preregistration", {}).get("sha256") == prereg_sha
+    assert rep_data.get("biostatistician_review", {}).get("sha256") == att_sha
+
+    # 6. Negative Result Freeze Integrity
     assert freeze_path.is_file()
     freeze_data = json.loads(freeze_path.read_text(encoding="utf-8"))
     assert freeze_data.get("result", {}).get("run_status") == "negative_result"
@@ -141,16 +158,34 @@ def test_study_internal_hash_consistency(study_id: str):
         assert art_path.is_file(), f"Frozen artifact {art.get('path')} missing"
         assert compute_file_sha256(art_path) == art.get("sha256"), f"Frozen artifact SHA mismatch for {art.get('path')}"
 
-    # 5. Provenance Sidecar Consistency
+    # 7. Provenance Sidecar Consistency
     assert prov_path.is_file()
     prov_data = json.loads(prov_path.read_text(encoding="utf-8"))
     assert prov_data.get("execution_provenance", {}).get("git_dirty") is False
+    for in_entry in prov_data.get("input_files", []):
+        p = Path(in_entry.get("path", ""))
+        if not p.is_file():
+            p = study_dir / in_entry.get("file_name", "")
+        if not p.is_file():
+            p = study_dir / "blinded_packet" / in_entry.get("file_name", "")
+        assert p.is_file(), f"Declared input file missing: {in_entry.get('file_name')}"
+        assert compute_file_sha256(p) == in_entry.get("sha256")
+
+    for out_entry in prov_data.get("output_files", []):
+        p = Path(out_entry.get("path", ""))
+        if not p.is_file():
+            p = study_dir / out_entry.get("file_name", "")
+        if not p.is_file():
+            p = study_dir / "evidence" / out_entry.get("file_name", "")
+        assert p.is_file(), f"Declared output file missing: {out_entry.get('file_name')}"
+        assert compute_file_sha256(p) == out_entry.get("sha256")
+
     crypto_att = prov_data.get("cryptographic_attestation", {})
     assert crypto_att.get("trust_root_id") == "bionexus-independent-root-2026"
     assert crypto_att.get("bundle_file") == "ATTESTATION_BUNDLE.json"
     assert crypto_att.get("receipt_file") == "VERIFICATION_RECEIPT.json"
 
-    # 6. Overall Study Verification Pass
+    # 8. Overall Study Verification Pass
     report = verify_study_provenance(study_dir)
     assert report.status == "PASS_VERIFIED"
     assert len(report.issues) == 0

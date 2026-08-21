@@ -27,7 +27,7 @@
   "artifacts": [
     {
       "path": "REPORT.json",
-      "sha256": "3470a4e791c83cc23c6c01b9d48ccf38fed2c0a883ebc4f859d24fd18c275ed5"
+      "sha256": "81f5d853a523f63c3262b83f61cce458f5471ec31c74ff39664c9febca955fd7"
     },
     {
       "path": "PREREGISTRATION.json",
@@ -35,19 +35,19 @@
     },
     {
       "path": "PREREGISTRATION_LOCK.json",
-      "sha256": "d9d45fb2f7751222878259c904d3e4089d247b64c05c07a57ab974803ef74519"
+      "sha256": "22b6bb193c0613b0a99cde1dc48d9e6bb1bdb19e754d42a925bfd0d26a301f0c"
     },
     {
       "path": "INDEPENDENT_BIOSTATISTICIAN_ATTESTATION.json",
-      "sha256": "9b8cfc049e26e8533cd185e8b2a90b1664ceb80ff08647d467d0d5726ddfc7ed"
+      "sha256": "1816f461f65b6215bb720428b8060bc45a74e36e6aaf750b2573029b75a73a39"
     },
     {
       "path": "UNBLINDING_MANIFEST.json",
-      "sha256": "25f73f98c715243617a0d936e8e58caaf8fc4258d1f5aa63cfe622ac8d7b9862"
+      "sha256": "400983d6469fb43eb70d84c61ddc5ddf9db69f7b84d4a41deb2c52448e625a5c"
     },
     {
       "path": "PROVENANCE.json",
-      "sha256": "cf3c35e58344ae602a7f530f1d66baf1e7548bc365b74bdc960c1e672935d029"
+      "sha256": "03ddddaf2b6a71b30d994fa328ae3102b585416aae888be35213fbf7c4c03b45"
     },
     {
       "path": "evidence/c04_donor_effects.csv",
