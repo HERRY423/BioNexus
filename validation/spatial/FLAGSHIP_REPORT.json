@@ -31,7 +31,7 @@
     "provenance": {
       "data_source": "10x Genomics Xenium public datasets (e.g. Human Breast FFPE) / Vizgen MERSCOPE public releases (Moffitt et al. 2016-style MERFISH)",
       "download_date": "2026-08-21T09:59:35.160183+00:00",
-      "commit_sha": "572c7e7c6fba30ec397fbea7a560c5034dc2faa9",
+      "commit_sha": "5b0ee0eb88488fd4374d86122759d2d34f655ffb",
       "git_dirty": false,
       "environment_lockfile_hashes": {
         "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
@@ -53,7 +53,7 @@
       },
       "repository_dirty_at_execution": false,
       "validation_source_dirty": false,
-      "source_snapshot_sha256": "b4919ee5b8d0b7c8e602d6cc550f6e650234ed979b61f3ceb5f2c92609653410"
+      "source_snapshot_sha256": "0721371bb823a3d3a1e0c3edc95994be437edf9759f13179cfe32eb8a28a3e6a"
     }
   },
   "metrics": [
