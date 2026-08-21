@@ -1,7 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-*$py.class
+*.class
 
 # C extensions
 *.so
@@ -56,12 +56,16 @@ ehthumbs.db
 # Large temporary datasets & results
 *.h5ad
 !tests/fixtures/*.h5ad
+!data/flagship/kang2018_pbmc_ifnb/*.h5ad
+!data/pbmc3k_raw.h5ad
+!data/independent/BN-PB-IV-004_blinded_inputs/*.h5ad
+!data/independent/BN-PB-IV-005_blinded_inputs/*.h5ad
+!data/independent/parse10m_pbmc_ifnb_natural_v1/*.h5ad
+!validation/pseudobulk/studies/**/*.h5ad
 *.h5
 tests/_tmp_*
 evals/datasets/benchmarks/*.h5ad
-# Flagship dataset raw inputs: large and re-downloadable (audit trail is the
-# checksum + provenance notes in validation/*/REPORT.json); small provenance
-# files (GEO metadata, truth CSVs, DE result CSVs) stay tracked.
+
 data/flagship/*/*.tar.gz
 data/flagship/*/*.tar
 data/flagship/*/ifnb.SeuratData/
@@ -105,8 +109,6 @@ pylance-*.whl
 data/independent/**/checkpoints/
 
 # Machine-local evidence produced by the real Antigravity acceptance run.
-# REQUEST.json and the workflow remain tracked; receipts and generated results
-# must not make the source snapshot dirty while the host is being evaluated.
 cross-host/antigravity/mcp-audit.jsonl
 cross-host/antigravity/RUN.json
 cross-host/antigravity/REPORT.json
@@ -123,5 +125,3 @@ figures/
 *.docx
 *.pptx
 *.pdf
-
-
