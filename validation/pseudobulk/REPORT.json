@@ -41,7 +41,7 @@
     "provenance": {
       "data_source": "GEO GSE96583; Kang et al. 2018 doi:10.1038/nbt.4042",
       "download_date": "2026-08-19T00:00:00+00:00",
-      "commit_sha": "bc4b416e0b224a3ea68e7457d4e3c33a4815842b",
+      "commit_sha": "8fbf4c49738241507ee9214765cdd086658d43f4",
       "git_dirty": false,
       "environment_lockfile_hashes": {
         "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
@@ -63,7 +63,7 @@
       },
       "repository_dirty_at_execution": false,
       "validation_source_dirty": false,
-      "source_snapshot_sha256": "7e7437f0c959b810db2b65aac3a44a547c64ac8573919fed53a7d987e6eb1bb7"
+      "source_snapshot_sha256": "e5e1e429fa264dc3f2e55deced25ed0deafb38feda2407693b978fef9cb65c96"
     }
   },
   "metrics": [
@@ -97,5 +97,5 @@
     "validation\\pseudobulk\\evidence\\bionexus_pseudobulk_top100.csv"
   ],
   "status": "pass",
-  "source_snapshot_sha256": "7e7437f0c959b810db2b65aac3a44a547c64ac8573919fed53a7d987e6eb1bb7"
+  "source_snapshot_sha256": "e5e1e429fa264dc3f2e55deced25ed0deafb38feda2407693b978fef9cb65c96"
 }
