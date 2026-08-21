@@ -7,7 +7,7 @@
   "provenance": {
     "data_source": "synthetic_generator (in-silico generated multimodal fixture)",
     "download_date": "2026-08-20T14:28:11.176654+00:00",
-    "commit_sha": "5b0ee0eb88488fd4374d86122759d2d34f655ffb",
+    "commit_sha": "4c38c33d1903d5447c4ab5f5b558eed913be6693",
     "git_dirty": false,
     "environment_lockfile_hashes": {
       "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
@@ -29,7 +29,7 @@
     },
     "repository_dirty_at_execution": false,
     "validation_source_dirty": false,
-    "source_snapshot_sha256": "0721371bb823a3d3a1e0c3edc95994be437edf9759f13179cfe32eb8a28a3e6a"
+    "source_snapshot_sha256": "17fc0642672bd36676ef9dca66d9ff4ecc4f7c5908f14f373fcef2a1d5589564"
   },
   "timestamp": "2026-08-20T14:28:11.417831+00:00",
   "elapsed_seconds": 0.31,
@@ -136,5 +136,5 @@
       "passed": true
     }
   },
-  "source_snapshot_sha256": "0721371bb823a3d3a1e0c3edc95994be437edf9759f13179cfe32eb8a28a3e6a"
+  "source_snapshot_sha256": "17fc0642672bd36676ef9dca66d9ff4ecc4f7c5908f14f373fcef2a1d5589564"
 }
