@@ -6,8 +6,8 @@
   "policy_oid": "1.3.6.1.4.1.58499.1.1.2026",
   "timestamp": "2026-08-21T09:43:37.893454+00:00",
   "imprint_hash_algorithm": "SHA-256",
-  "imprint_digest": "240f0bb1c19c26b43be2a5819f3809f426b495a4c747c9adeeadee548487f337",
-  "tsa_signature": "VY3rr5GlJgOgeTe+VTIL5jR4XtPCoShpXJ/DjsZDASreyg5VsmdrTD5hmRm9UhexNnEr9ETAAKug46k6Va8EDg==",
+  "imprint_digest": "f9e8755ba0da55b0b11891fc13e3351737bbc8fb7355e27c1eeb9982c4f6a6bb",
+  "tsa_signature": "oQU7IqDXrJwUMivXN0SB7pj9H5oQUWjHfw1trb7hbJ60Uabq96q6d84cMsnTQTxU/mQh2A4lFO1du6U0SB8qAw==",
   "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAKyoNikf/NumpvJA2Mdi38ELXkNKzcyeRLwAf10ZqQeg=\n-----END PUBLIC KEY-----\n",
   "verification_status": "VERIFIED_TIMESTAMP"
 }

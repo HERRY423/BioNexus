@@ -5,18 +5,18 @@
   "log_index": 4829104,
   "tree_size": 4829105,
   "integrated_time": "2026-08-21T09:43:37.893454+00:00",
-  "body_sha256": "0ae826555ab380f35df680ee2234095c313e9682373af4661ae5889b93db2a71",
-  "signed_entry_timestamp": "VVX1qRY0gQcDQ5wERlbfVrw+jn83voxwWTD5I6reyyvhnWwRo3JYl9OnDlh9McsF8PoN+A6M88uJ4B0BEgvXCw==",
+  "body_sha256": "afb648e60062d6e1af33c4bb807d36ba66785d78cff33f34c3e908614a37abbd",
+  "signed_entry_timestamp": "Z2JoaoQqdaxHmBQ84slg3cxWZmAxb6aApinrFU7JgSSRtVVosV6puAG1PQoYP2MfFw4Qrg3l4LvEEfYKUdniCw==",
   "inclusion_proof": {
     "log_index": 4829104,
     "tree_size": 4829105,
-    "root_hash": "5ee62430d3b1a4c501d594625c1741f32f94511087631a0bccc035493f9fe890",
-    "leaf_hash": "c964aff7444ecf278b508849c3bb0dc156af1c0a334aa51b4d071f5704816386",
+    "root_hash": "bafd0f8c22d4346848748ee58fe374ad311b52f7fae85d40df66625ff5aa4d82",
+    "leaf_hash": "64771da43e6a23351d10fa65a3070750e37ba32251d31a0311c37884f76cf79e",
     "audit_path": [
-      "65f80e6be71276232300a7265b0de19a1ab5c0b771edf2aa6c4ab094c6e2b534",
-      "23b3c05aae41dbd206a758aa8ac8c06d956258066c192b5728563693a525be62",
-      "9fd9b351f34c35033186f27f7543c41d8a44b4d30a09c7f9dbca985c6816cf56",
-      "9223ac4a98da26abc151d7aa9ccf363687f16d850c02be645d2e2c080604c48f"
+      "4bee19a4becfc1f87ec106acfa1071d6366c8f40ceb909d386d85204e72499b3",
+      "e6fb3f24fc9a0c3f5f9b27d0a3058402362076606bdb15c47eb181540262fe63",
+      "b558063f427e62398ea70eb00c44ae14657c082df7ccffe337f9cf39545c3ac4",
+      "7ef76939bc5c57787d9f197c7ff10015f709e35900772ceaeb24d2d8c75b4778"
     ]
   },
   "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAmBhoiqYyZIpoCGH6Km1lUesgvsMd6MIGa+Daz8LBGHA=\n-----END PUBLIC KEY-----\n",

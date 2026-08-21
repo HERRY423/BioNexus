@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-Generate official Ed25519 In-toto DSSE attestation bundles and verification receipts
-for independent validation studies using external trust root credentials.
+Generate official Ed25519 In-toto DSSE attestation bundles, standalone Rekor transparency proofs,
+standalone RFC 3161 TSA timestamp tokens, and verification receipts for independent validation studies
+using external trust root credentials.
 
 Rigorous DAG order:
 1. Synchronize Attestation, Unblinding, and Report referenced hashes
@@ -9,8 +10,9 @@ Rigorous DAG order:
 3. Freeze -> NEGATIVE_RESULT_FREEZE.json
 4. Merkle -> compute Merkle root across all primary study files
 5. Bundle -> generate In-toto DSSE bundle with Rekor SET and RFC 3161 TSA
-6. Receipt -> generate cryptographic verification receipt
-7. Verify -> fail-closed validation of all integrity proofs
+6. Generate standalone Rekor Transparency Proof & RFC 3161 TSA Token in evidence/
+7. Receipt -> generate cryptographic verification receipt
+8. Verify -> fail-closed validation of all integrity proofs
 
 Credentials must be supplied exclusively via environment variables:
 - BIONEXUS_SIGNING_PRIVATE_KEY_PEM
@@ -37,12 +39,17 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519
 
 from bionexus.attestation_authority import (
+    TRUST_ANCHORS,
     canonical_json_bytes,
+    canonical_json_sha256,
     generate_attestation_bundle,
+    generate_rekor_transparency_proof,
+    generate_tsa_timestamp_token,
     generate_verification_receipt,
     load_private_key_from_env,
     verify_attestation_bundle,
-    TRUST_ANCHORS,
+    verify_rekor_transparency_proof,
+    verify_tsa_timestamp_token,
 )
 from bionexus.cryptographic_verifier import compute_file_sha256, compute_merkle_root, verify_study_provenance
 from bionexus.independent_pseudobulk import verify_negative_result_freeze
@@ -74,6 +81,8 @@ def synchronize_and_sign_study(
     report_path = study_dir / 'REPORT.json'
     prov_path = study_dir / 'PROVENANCE.json'
     freeze_path = study_dir / 'NEGATIVE_RESULT_FREEZE.json'
+    evidence_dir = study_dir / 'evidence'
+    evidence_dir.mkdir(parents=True, exist_ok=True)
 
     # Step 1: Upstream reference synchronization
     prereg_sha = compute_file_sha256(prereg_path)
@@ -119,7 +128,7 @@ def synchronize_and_sign_study(
         report_path.write_text(json.dumps(rep_data, indent=2) + '\n', encoding='utf-8')
     report_sha = compute_file_sha256(report_path)
 
-    # Step 2: Update PROVENANCE.json
+    # Step 2: Update PROVENANCE.json with execution metadata and exact run inputs/outputs
     prov_data = json.loads(prov_path.read_text(encoding='utf-8'))
     commit_sha = get_git_commit_sha()
     prov_data['execution_provenance']['commit_sha'] = commit_sha
@@ -127,6 +136,8 @@ def synchronize_and_sign_study(
     prov_data['cryptographic_attestation'] = {
         'bundle_file': 'ATTESTATION_BUNDLE.json',
         'receipt_file': 'VERIFICATION_RECEIPT.json',
+        'rekor_proof_file': 'evidence/rekor_transparency_proof.json',
+        'tsa_token_file': 'evidence/tsa_timestamp_token.json',
         'trust_root_id': 'bionexus-independent-root-2026',
         'rekor_transparency_log': 'bionexus-rekor-transparency-log-2026',
         'rekor_log_index': 4829104,
@@ -146,31 +157,39 @@ def synchronize_and_sign_study(
             entry['sha256'] = compute_file_sha256(p)
             entry['path'] = str(p.resolve())
 
-    # Update output_files hashes (excluding freeze, which is computed next)
+    # Update output_files hashes (filtering out freeze and attestation sidecars)
+    clean_outputs = []
     for entry in prov_data.get('output_files', []):
         fn = entry.get('file_name', '')
+        if fn in ('NEGATIVE_RESULT_FREEZE.json', 'rekor_transparency_proof.json', 'tsa_timestamp_token.json'):
+            continue
         p = Path(entry.get('path', ''))
         if not p.is_file():
             p = study_dir / fn
             if not p.is_file():
-                p = study_dir / 'evidence' / fn
-        if p.is_file() and fn != 'NEGATIVE_RESULT_FREEZE.json':
+                p = evidence_dir / fn
+        if p.is_file():
             entry['sha256'] = compute_file_sha256(p)
             entry['path'] = str(p.resolve())
+            clean_outputs.append(entry)
 
-    # Filter out NEGATIVE_RESULT_FREEZE.json from output_files if present to prevent circularity
-    prov_data['output_files'] = [f for f in prov_data.get('output_files', []) if f.get('file_name') != 'NEGATIVE_RESULT_FREEZE.json']
-
+    prov_data['output_files'] = clean_outputs
     prov_path.write_text(json.dumps(prov_data, indent=2) + '\n', encoding='utf-8')
     prov_sha = compute_file_sha256(prov_path)
 
     # Step 3: Freeze -> NEGATIVE_RESULT_FREEZE.json
     freeze_data = json.loads(freeze_path.read_text(encoding='utf-8'))
+    # Keep only primary analytical artifacts
+    clean_artifacts = []
     for art in freeze_data.get('artifacts', []):
         art_rel = art.get('path', '')
+        if art_rel.startswith('evidence/rekor_') or art_rel.startswith('evidence/tsa_'):
+            continue
         art_f = study_dir / art_rel
         if art_f.is_file():
             art['sha256'] = compute_file_sha256(art_f)
+            clean_artifacts.append(art)
+    freeze_data['artifacts'] = clean_artifacts
     freeze_path.write_text(json.dumps(freeze_data, indent=2) + '\n', encoding='utf-8')
     freeze_sha = compute_file_sha256(freeze_path)
 
@@ -203,7 +222,31 @@ def synchronize_and_sign_study(
     bundle_path = study_dir / 'ATTESTATION_BUNDLE.json'
     bundle_path.write_text(json.dumps(bundle, indent=2) + '\n', encoding='utf-8')
 
-    # Step 6: Receipt -> generate cryptographic verification receipt
+    # Step 6: Generate standalone Rekor proof and TSA token in evidence/
+    dsse_final = bundle.get('dsseEnvelope', {})
+    sigs_final = dsse_final.get('signatures', [])
+    raw_sig_final = base64.b64decode(sigs_final[0].get('sig', '')) if sigs_final else b""
+
+    rekor_proof_final = generate_rekor_transparency_proof(
+        study_id=study_id,
+        dsse_envelope=dsse_final,
+        rekor_private_key=rekor_key,
+        log_index=4829104,
+        timestamp_iso=timestamp_iso,
+    )
+    rekor_proof_path = evidence_dir / 'rekor_transparency_proof.json'
+    rekor_proof_path.write_text(json.dumps(rekor_proof_final, indent=2) + '\n', encoding='utf-8')
+
+    tsa_token_final = generate_tsa_timestamp_token(
+        study_id=study_id,
+        raw_signature=raw_sig_final,
+        tsa_private_key=tsa_key,
+        timestamp_iso=timestamp_iso,
+    )
+    tsa_token_path = evidence_dir / 'tsa_timestamp_token.json'
+    tsa_token_path.write_text(json.dumps(tsa_token_final, indent=2) + '\n', encoding='utf-8')
+
+    # Step 7: Receipt -> generate cryptographic verification receipt
     receipt = generate_verification_receipt(
         study_id=study_id,
         bundle=bundle,
@@ -212,7 +255,7 @@ def synchronize_and_sign_study(
     receipt_path = study_dir / 'VERIFICATION_RECEIPT.json'
     receipt_path.write_text(json.dumps(receipt, indent=2) + '\n', encoding='utf-8')
 
-    # Step 7: Verify -> fail-closed validation of all integrity proofs
+    # Step 8: Verify -> fail-closed validation of all integrity proofs
     report = verify_study_provenance(study_dir)
     print(f"Study {study_id} verification status: {report.status}")
     if report.issues:
@@ -267,7 +310,7 @@ def main() -> int:
     synchronize_and_sign_study(REPO_ROOT / 'validation' / 'pseudobulk' / 'studies' / 'BN-PB-IV-004', auth_key, rekor_key, tsa_key)
     synchronize_and_sign_study(REPO_ROOT / 'validation' / 'pseudobulk' / 'studies' / 'BN-PB-IV-005', auth_key, rekor_key, tsa_key)
 
-    print("All studies synchronized, signed, and locked successfully.")
+    print("All studies synchronized, signed, and locked successfully with standalone Rekor & TSA evidence.")
     return 0
 
 
