@@ -26,6 +26,7 @@ KEY_PACKAGES = (
     "polars",
     "lifelines",
     "squidpy",
+    "pydeseq2",
     "abnumber",
     "biotite",
     "scikit-learn",
@@ -219,4 +220,3 @@ def sidecar(
             "This is not 21 CFR Part 11, GxP, ALCOA+, or CLIA audit evidence."
         ),
     }
-

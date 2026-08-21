@@ -1,0 +1,7 @@
+{
+  "schema_version": "bionexus.blinded-packet-gate.v1",
+  "study_id": "BN-PB-IV-005",
+  "status": "PASS",
+  "packet_frozen": true,
+  "packet_manifest_sha256": "b1f11e03c780c8c201ac54a852169c81eef5d04ccb233569d54b066e116ab3b6"
+}

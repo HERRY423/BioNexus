@@ -1,0 +1,65 @@
+{
+  "schema_version": "bionexus.negative-result-freeze.v1",
+  "study_id": "BN-PB-IV-004",
+  "frozen_at": "2026-08-21T09:03:55.427341+00:00",
+  "result": {
+    "run_status": "negative_result",
+    "conclusion_maturity": "FRAGILE",
+    "independent_biological_validation": "not_supported",
+    "failed_endpoints": [
+      "matched_6h_holdout",
+      "multi_cohort",
+      "negative_control"
+    ],
+    "c04_concordance": 0.5531914893617021,
+    "c04_concordance_threshold": 0.65,
+    "c04_empirical_p_value": 0.220947265625,
+    "p_value_threshold": 0.05,
+    "permutations_executed": 4095,
+    "empirical_p_value": 0.220947265625
+  },
+  "policy": {
+    "overwrite_prohibited": true,
+    "reinterpret_as_pass_prohibited": true,
+    "post_hoc_permutation_increase_prohibited": true,
+    "successor_studies_must_reference_this_freeze": true
+  },
+  "artifacts": [
+    {
+      "path": "REPORT.json",
+      "sha256": "3470a4e791c83cc23c6c01b9d48ccf38fed2c0a883ebc4f859d24fd18c275ed5"
+    },
+    {
+      "path": "PREREGISTRATION.json",
+      "sha256": "43091d359320611f07bdda0b5815f8e2318020c3aee7e2af170042f33b49e308"
+    },
+    {
+      "path": "PREREGISTRATION_LOCK.json",
+      "sha256": "d9d45fb2f7751222878259c904d3e4089d247b64c05c07a57ab974803ef74519"
+    },
+    {
+      "path": "INDEPENDENT_BIOSTATISTICIAN_ATTESTATION.json",
+      "sha256": "9b8cfc049e26e8533cd185e8b2a90b1664ceb80ff08647d467d0d5726ddfc7ed"
+    },
+    {
+      "path": "UNBLINDING_MANIFEST.json",
+      "sha256": "25f73f98c715243617a0d936e8e58caaf8fc4258d1f5aa63cfe622ac8d7b9862"
+    },
+    {
+      "path": "PROVENANCE.json",
+      "sha256": "c583808aae1791fa552730cfb97b3409e41293e16b6b86c8f2af10d356e710be"
+    },
+    {
+      "path": "evidence/c04_donor_effects.csv",
+      "sha256": "3a11284d0948f84bb7b43e981e145ef06e6101a893616802a5da3304838f160b"
+    },
+    {
+      "path": "evidence/c04_exact_sign_flip_null.csv",
+      "sha256": "63be370a1f3ff516f116f337a2170b54248240993b721d05addfca6ac26cf66e"
+    }
+  ],
+  "limitations": [
+    "This is a repository-local SHA-256 negative result freeze complying with preregistration lock rules.",
+    "Failed endpoints must be retained in perpetuity and cannot be overwritten by post-hoc re-analysis."
+  ]
+}

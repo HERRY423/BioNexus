@@ -1,0 +1,36 @@
+{
+  "schema_version": "bionexus.blinded-packet.v1",
+  "study_id": "BN-PB-IV-005",
+  "frozen_at": "2026-08-21T09:21:41.432737+00:00",
+  "condition_key_included": false,
+  "artifacts": [
+    {
+      "file": "BN_PB_IV_004_NEGATIVE_RESULT_FREEZE.json",
+      "sha256": "ccaf811d2055a0c97769dfdfb1d32a2e9057caf624fb8f5baed79e69553806e0"
+    },
+    {
+      "file": "C05_BLINDED_PSEUDOBULK.h5ad",
+      "sha256": "254ae16e2352d9d87ed7604f925cf392be0076e81a5c638cf85c657e7b2dcc01"
+    },
+    {
+      "file": "C05_BLINDED_SAMPLE_MANIFEST.csv",
+      "sha256": "7e20eab2905334c2b97a98d69aaab675390705417cd5c76cd235ce81758db3f3"
+    },
+    {
+      "file": "CUSTODIAN_DATA_GATE_ATTESTATION.json",
+      "sha256": "8914d3675c369e21601269ad246aef85aad440a413e17b8706c74706e826da8b"
+    },
+    {
+      "file": "locked_discovery_signature_platform_holdout.csv",
+      "sha256": "542b3f359227ae4c9ef8a7a9a522e0d84fd51759ebd315d8b564862f0a3255d8"
+    },
+    {
+      "file": "PREREGISTRATION.json",
+      "sha256": "84dfc421043c414c3832d1e4824d572d66b05fcf1a4a94c83666b5447142a5cf"
+    },
+    {
+      "file": "PREREGISTRATION_LOCK.json",
+      "sha256": "b058a8c2ea80d317b1b0f1065ea6db47fe4db658bc4fc44a628a9f002dd42dec"
+    }
+  ]
+}

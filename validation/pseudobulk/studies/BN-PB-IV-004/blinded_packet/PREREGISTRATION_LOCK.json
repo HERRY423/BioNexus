@@ -1,0 +1,15 @@
+{
+  "schema_version": "bionexus.preregistration-lock.v1",
+  "study_id": "BN-PB-IV-004",
+  "locked_at": "2026-08-21T01:46:56.2054741Z",
+  "preregistration_path": "validation/pseudobulk/studies/BN-PB-IV-004/PREREGISTRATION.json",
+  "preregistration_sha256": "43091d359320611f07bdda0b5815f8e2318020c3aee7e2af170042f33b49e308",
+  "predecessor_negative_result_preserved": true,
+  "outcome_data_accessed_before_lock": false,
+  "sample_manifest_existed_before_lock": false,
+  "external_timestamp_authority": null,
+  "limitations": [
+    "Repository SHA-256 is not a public third-party timestamp.",
+    "The data custodian and independent biostatistician must record this hash before receiving samples or the condition key."
+  ]
+}

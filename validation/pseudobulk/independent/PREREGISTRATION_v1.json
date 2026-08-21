@@ -1,0 +1,111 @@
+{
+  "schema_version": "bionexus.pseudobulk-independent-preregistration.v1",
+  "study_id": "BN-PB-IV-001",
+  "title": "Donor- and platform-held-out pseudobulk interferon-response validation",
+  "locked": true,
+  "registration_scope": "local_hash_locked_before_outcome_analysis",
+  "claim_boundary": {
+    "target": "technical-biological reproducibility of donor-aware pseudobulk differential expression",
+    "not_target": [
+      "clinical validity",
+      "causal mechanism",
+      "cell-type identity assignment",
+      "accuracy superiority over another method",
+      "full-cohort validation when a documented subsample is used"
+    ],
+    "maximum_maturity_with_subsample": "PRELIMINARY",
+    "maximum_maturity_without_independent_blinding_attestation": "PRELIMINARY"
+  },
+  "analysis_population": {
+    "organism": "Homo sapiens",
+    "material": "PBMC",
+    "contrast_family": "interferon stimulation versus matched unstimulated control",
+    "unit_of_inference": "biological donor",
+    "cell_level_p_values_for_condition_de": false
+  },
+  "cohorts": [
+    {
+      "cohort_id": "C01",
+      "role": "discovery_and_donor_holdout",
+      "dataset_id": "kang2018_pbmc_ifnb",
+      "source": "GEO GSE96583",
+      "platform_family": "10x_chromium_droplet",
+      "assay": "3prime_scRNA_seq",
+      "stimulus": "IFN-beta",
+      "duration_hours": 6,
+      "data_path": "data/flagship/kang2018_pbmc_ifnb/pbmc_ifnb_counts.h5ad",
+      "donor_column": "donor",
+      "condition_column": "condition",
+      "reference_level": "ctrl",
+      "contrast_level": "stim",
+      "is_documented_subsample": false,
+      "minimum_paired_donors": 3
+    },
+    {
+      "cohort_id": "C02",
+      "role": "independent_platform_holdout",
+      "dataset_id": "parse10k_pbmc_ifng",
+      "source": "Parse Biosciences 10M PBMC cytokine atlas; public 10K raw-count subset",
+      "platform_family": "parse_split_pool_combinatorial",
+      "assay": "whole_transcriptome_scRNA_seq",
+      "stimulus": "IFN-gamma",
+      "duration_hours": 24,
+      "data_path": "data/independent/parse10k_pbmc_ifng/Parse_10K_PBMC_cytokines.h5ad",
+      "donor_column": "donor",
+      "condition_column": "treatment",
+      "reference_level": "control",
+      "contrast_level": "treated",
+      "is_documented_subsample": true,
+      "minimum_paired_donors": 3
+    }
+  ],
+  "input_gates": {
+    "raw_nonnegative_integer_counts": true,
+    "paired_conditions_per_donor": true,
+    "minimum_cells_per_pseudobulk_sample": 10,
+    "distinct_dataset_sources": true,
+    "distinct_platform_families": true,
+    "no_declared_donor_overlap": true,
+    "backend": "pydeseq2",
+    "nominal_fdr": 0.05
+  },
+  "blinding": {
+    "analysis_labels": "opaque cohort identifiers C01 and C02",
+    "thresholds_locked_before_outcome_analysis": true,
+    "independent_analyst_attestation_required_for_full_claim": true,
+    "attestation_path": "validation/pseudobulk/independent/INDEPENDENT_BLINDING_ATTESTATION.json",
+    "missing_attestation_action": "cap maturity at PRELIMINARY and record ABSTAIN for independent-blinded claim"
+  },
+  "primary_endpoints": {
+    "discovery_top_n": 100,
+    "donor_leave_one_out": {
+      "metric": "held_donor_direction_concordance_on_training_top_genes",
+      "minimum_evaluable_genes_per_fold": 80,
+      "minimum_median_concordance": 0.65,
+      "minimum_passing_fold_fraction": 0.75
+    },
+    "platform_holdout": {
+      "metric": "direction_concordance_for_C01_top_genes_in_C02",
+      "minimum_evaluable_genes": 80,
+      "minimum_concordance": 0.65
+    },
+    "multi_cohort": {
+      "metric": "fraction_of_discovery_signature_with_consistent_direction_across_cohorts",
+      "minimum_fraction": 0.65
+    },
+    "negative_control": {
+      "method": "paired_donor_condition_label_sign_flip",
+      "permutations": 255,
+      "seed": 20260820,
+      "maximum_empirical_p_value": 0.05
+    }
+  },
+  "decision_policy": {
+    "all_primary_endpoints_required": true,
+    "failed_endpoint": "retain result and set status to negative_result",
+    "missing_or_invalid_input": "ABSTAIN",
+    "threshold_changes_after_lock": "prohibited; create a new study_id instead",
+    "missing_full_platform_cohort": "incomplete_not_claim_ready",
+    "report_all_folds_and_negative_controls": true
+  }
+}

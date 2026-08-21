@@ -1,0 +1,14 @@
+{
+  "schema_version": "bionexus.preregistration-lock.v1",
+  "study_id": "BN-PB-IV-001",
+  "preregistration_path": "validation/pseudobulk/independent/PREREGISTRATION.json",
+  "preregistration_sha256": "f7e20ee50872f257447dbad2aa95889992848ea5e7a38583f389a783b0f11a20",
+  "locked_at": "2026-08-20T16:15:00Z",
+  "source_commit_before_analysis": "890446356a1eb79751eb7dcedda75f3aad1a7879",
+  "lock_strength": "local_hash_lock",
+  "limitations": [
+    "This is not a third-party registry or cryptographic timestamp authority.",
+    "The lock establishes local file integrity and analysis ordering only.",
+    "Full independent preregistration requires an externally timestamped record."
+  ]
+}

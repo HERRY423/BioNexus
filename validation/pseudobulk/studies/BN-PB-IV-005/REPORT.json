@@ -1,0 +1,125 @@
+{
+  "schema_version": "bionexus.pseudobulk-independent-report.v1",
+  "study_id": "BN-PB-IV-005",
+  "generated_at": "2026-08-21T09:39:00.655898+00:00",
+  "preregistration": {
+    "path": "validation/pseudobulk/studies/BN-PB-IV-005/PREREGISTRATION.json",
+    "sha256": "84dfc421043c414c3832d1e4824d572d66b05fcf1a4a94c83666b5447142a5cf",
+    "lock_path": "validation/pseudobulk/studies/BN-PB-IV-005/PREREGISTRATION_LOCK.json",
+    "lock_strength": "repository_hash_lock_before_sample_manifest_or_outcome_access",
+    "thresholds_changed_after_lock": false
+  },
+  "cohort_audits": {
+    "C01": {
+      "cohort_id": "C01",
+      "role": "frozen_signature_source_only",
+      "passed": true
+    },
+    "C02": {
+      "cohort_id": "C02",
+      "role": "frozen_independent_platform_context",
+      "passed": true
+    },
+    "C04": {
+      "cohort_id": "C04",
+      "role": "retained_frozen_predecessor_negative_context",
+      "passed": true
+    },
+    "C05": {
+      "cohort_id": "C05",
+      "n_cells": 76800,
+      "n_genes": 40352,
+      "n_paired_donors": 12,
+      "donors_by_condition": {
+        "recombinant human IFN-beta-1a (1000 IU/mL)": 12,
+        "vehicle": 12
+      },
+      "min_cells_per_sample": 3200,
+      "raw_nonnegative_integer_counts": true,
+      "paired_conditions_complete": true,
+      "issues": [],
+      "passed": true,
+      "dataset_id": "prospective_cell_type_resolved_healthy_pbmc_6h_ifnb",
+      "role": "prospective_cell_type_resolved_holdout",
+      "platform_family": "10x_chromium_droplet",
+      "is_documented_subsample": false,
+      "input_sha256": "254ae16e2352d9d87ed7604f925cf392be0076e81a5c638cf85c657e7b2dcc01"
+    }
+  },
+  "independence_gates": {
+    "distinct_dataset_sources": true,
+    "distinct_platform_families": true,
+    "declared_no_donor_overlap": true,
+    "full_cohorts_used": true,
+    "independent_blinding_attested": true
+  },
+  "endpoints": {
+    "donor_leave_one_out": {
+      "role": "carried frozen from predecessor",
+      "passed": true
+    },
+    "platform_holdout": {
+      "role": "C02 platform context retained",
+      "direction_concordance": 0.9893617021276596,
+      "passed": true
+    },
+    "matched_6h_holdout": {
+      "metric": "median paired-donor direction concordance for frozen C01 top-100 genes in C05 cell-type resolved subsets",
+      "n_evaluable_genes": 94,
+      "direction_concordance": 1.0,
+      "thresholds": {
+        "minimum_evaluable_genes": 80,
+        "minimum_concordance": 0.65
+      },
+      "passed": true
+    },
+    "multi_cohort": {
+      "metric": "fraction of frozen signature genes with consistent direction in C01, complete C02, and C05",
+      "n_evaluable_genes": 94,
+      "consistent_direction_fraction": 1.0,
+      "minimum_fraction": 0.65,
+      "passed": true
+    },
+    "negative_control": {
+      "method": "paired_donor_condition_label_exact_sign_flip",
+      "observed_direction_concordance": 1.0,
+      "empirical_p_value": 0.38720703125,
+      "permutations_executed": 4095,
+      "enumeration": "all_nonidentity_assignments",
+      "maximum_empirical_p_value": 0.05,
+      "passed": false
+    }
+  },
+  "status": {
+    "run_status": "negative_result",
+    "conclusion_maturity": "FRAGILE",
+    "independent_biological_validation": "not_supported"
+  },
+  "negative_results": [
+    {
+      "endpoint": "negative_control",
+      "observed": 1.0,
+      "empirical_p_value": 0.38720703125,
+      "threshold": 0.05,
+      "reason": "Exact sign-flip permutation empirical p-value 0.3872 exceeds maximum significance threshold 0.05"
+    }
+  ],
+  "biostatistician_review": {
+    "attestation_path": "validation/pseudobulk/studies/BN-PB-IV-005/INDEPENDENT_BIOSTATISTICIAN_ATTESTATION.json",
+    "status": "SIGNED_COMPLETE",
+    "decision": "NEGATIVE_RESULT",
+    "sha256": "25f5e502e5b5a3f3b472e177c737708ab3213fc7b1c6ba720369b91415c38d44"
+  },
+  "evidence_files": [
+    "validation/pseudobulk/studies/BN-PB-IV-005/evidence/c05_donor_effects.csv",
+    "validation/pseudobulk/studies/BN-PB-IV-005/evidence/c05_exact_sign_flip_null.csv",
+    "validation/pseudobulk/studies/BN-PB-IV-005/PROVENANCE.json"
+  ],
+  "claim_boundary": {
+    "target": "donor-aware directional reproducibility of the frozen IFN-beta pseudobulk signature in cell-type resolved holdout",
+    "not_target": [
+      "clinical validity",
+      "causal mechanism"
+    ]
+  }
+}

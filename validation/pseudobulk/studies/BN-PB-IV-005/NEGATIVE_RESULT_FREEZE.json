@@ -1,0 +1,50 @@
+{
+  "schema_version": "bionexus.negative-result-freeze.v1",
+  "study_id": "BN-PB-IV-005",
+  "frozen_at": "2026-08-21T09:39:29.787644+00:00",
+  "predecessor_negative_results_carried": [
+    "BN-PB-IV-002",
+    "BN-PB-IV-004"
+  ],
+  "result": {
+    "run_status": "negative_result",
+    "conclusion_maturity": "FRAGILE",
+    "independent_biological_validation": "not_supported",
+    "empirical_p_value": 0.38720703125,
+    "failed_endpoints": [
+      "negative_control"
+    ],
+    "reason": "Exact sign-flip permutation empirical p-value (0.3872) exceeds maximum alpha threshold (0.05)"
+  },
+  "policy": {
+    "overwrite_prohibited": true,
+    "reinterpret_as_pass_prohibited": true,
+    "post_hoc_permutation_increase_prohibited": true
+  },
+  "artifacts": [
+    {
+      "path": "PREREGISTRATION.json",
+      "sha256": "84dfc421043c414c3832d1e4824d572d66b05fcf1a4a94c83666b5447142a5cf"
+    },
+    {
+      "path": "PREREGISTRATION_LOCK.json",
+      "sha256": "b058a8c2ea80d317b1b0f1065ea6db47fe4db658bc4fc44a628a9f002dd42dec"
+    },
+    {
+      "path": "blinded_packet/BLINDED_PACKET_MANIFEST.json",
+      "sha256": "b1f11e03c780c8c201ac54a852169c81eef5d04ccb233569d54b066e116ab3b6"
+    },
+    {
+      "path": "INDEPENDENT_BIOSTATISTICIAN_ATTESTATION.json",
+      "sha256": "25f5e502e5b5a3f3b472e177c737708ab3213fc7b1c6ba720369b91415c38d44"
+    },
+    {
+      "path": "UNBLINDING_MANIFEST.json",
+      "sha256": "26705a8a96488920da07dd001a1a13b9bda2c3b3d02cbea6ac14ea54f33a2796"
+    },
+    {
+      "path": "REPORT.json",
+      "sha256": "80a22364cab09a1732b7f04aa7655bb3dcf77a9b46de915d3b840b66c82b1f78"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+held_out_donor,training_donors,n_evaluable_genes,direction_concordance,passed,error
+101,7,100,1.0,True,
+1015,7,100,1.0,True,
+1016,7,100,1.0,True,
+1039,7,100,1.0,True,
+107,7,100,1.0,True,
+1244,7,100,1.0,True,
+1256,7,100,1.0,True,
+1488,7,100,1.0,True,

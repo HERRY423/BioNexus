@@ -1,0 +1,144 @@
+{
+  "schema_version": "bionexus.pseudobulk-independent-report.v1",
+  "study_id": "BN-PB-IV-004",
+  "generated_at": "2026-08-21T09:03:53.161369+00:00",
+  "preregistration": {
+    "path": "validation/pseudobulk/studies/BN-PB-IV-004/PREREGISTRATION.json",
+    "sha256": "43091d359320611f07bdda0b5815f8e2318020c3aee7e2af170042f33b49e308",
+    "lock_path": "validation/pseudobulk/studies/BN-PB-IV-004/PREREGISTRATION_LOCK.json",
+    "lock_strength": "repository_hash_lock_before_sample_manifest_or_outcome_access",
+    "thresholds_changed_after_lock": false
+  },
+  "cohort_audits": {
+    "C01": {
+      "cohort_id": "C01",
+      "role": "frozen_signature_source_only",
+      "dataset_id": "kang2018_pbmc_ifnb",
+      "platform_family": "10x_chromium_droplet",
+      "passed": true
+    },
+    "C02": {
+      "cohort_id": "C02",
+      "n_cells": 725031,
+      "n_genes": 40352,
+      "n_paired_donors": 12,
+      "donors_by_condition": {
+        "IFN-beta": 12,
+        "PBS": 12
+      },
+      "min_cells_per_sample": 3349,
+      "raw_nonnegative_integer_counts": true,
+      "paired_conditions_complete": true,
+      "issues": [],
+      "passed": true,
+      "dataset_id": "parse10m_pbmc_ifnb_natural_v1",
+      "role": "frozen_independent_platform_context",
+      "platform_family": "parse_split_pool_combinatorial",
+      "is_documented_subsample": false,
+      "input_sha256": "647081c352e94f142da667144ae1547b3cb629d1c8fd53df0107a6f17c22395e"
+    },
+    "C04": {
+      "cohort_id": "C04",
+      "n_cells": 64600,
+      "n_genes": 40352,
+      "n_paired_donors": 12,
+      "donors_by_condition": {
+        "recombinant human IFN-beta-1a": 12,
+        "vehicle": 12
+      },
+      "min_cells_per_sample": 2500,
+      "raw_nonnegative_integer_counts": true,
+      "paired_conditions_complete": true,
+      "issues": [],
+      "passed": true,
+      "dataset_id": "prospective_healthy_pbmc_6h_ifnb",
+      "role": "prospective_independent_time_ligand_matched_holdout",
+      "platform_family": "10x_chromium_droplet",
+      "is_documented_subsample": false,
+      "input_sha256": "3351e4ed6153955effe1e578eb8314666ca72595486bf7fb91be702af0923e96"
+    }
+  },
+  "independence_gates": {
+    "distinct_dataset_sources": true,
+    "distinct_platform_families": true,
+    "declared_no_donor_overlap": true,
+    "full_cohorts_used": true,
+    "independent_blinding_attested": true
+  },
+  "endpoints": {
+    "donor_leave_one_out": {
+      "role": "carried frozen from predecessor",
+      "passed": true
+    },
+    "platform_holdout": {
+      "metric": "direction_concordance_for_C01_top_genes_in_C02",
+      "n_evaluable_genes": 94,
+      "direction_concordance": 0.9893617021276596,
+      "thresholds": {
+        "minimum_evaluable_genes": 80,
+        "minimum_concordance": 0.65
+      },
+      "passed": true
+    },
+    "matched_6h_holdout": {
+      "metric": "median paired-donor direction concordance for frozen C01 top-100 genes in C04",
+      "n_evaluable_genes": 94,
+      "direction_concordance": 0.5531914893617021,
+      "thresholds": {
+        "minimum_evaluable_genes": 80,
+        "minimum_concordance": 0.65
+      },
+      "passed": false
+    },
+    "multi_cohort": {
+      "metric": "fraction of frozen signature genes with consistent direction in C01, complete C02, and C04",
+      "n_evaluable_genes": 94,
+      "consistent_direction_fraction": 0.5425531914893617,
+      "minimum_fraction": 0.65,
+      "passed": false
+    },
+    "negative_control": {
+      "method": "paired_donor_condition_label_exact_sign_flip",
+      "observed_direction_concordance": 0.5531914893617021,
+      "empirical_p_value": 0.220947265625,
+      "permutations_executed": 4095,
+      "enumeration": "all_nonidentity_assignments",
+      "maximum_empirical_p_value": 0.05,
+      "passed": false
+    }
+  },
+  "status": {
+    "run_status": "negative_result",
+    "conclusion_maturity": "FRAGILE",
+    "independent_biological_validation": "not_supported"
+  },
+  "negative_results": [
+    "matched_6h_holdout",
+    "multi_cohort",
+    "negative_control"
+  ],
+  "biostatistician_review": {
+    "attestation_path": "validation/pseudobulk/studies/BN-PB-IV-004/INDEPENDENT_BIOSTATISTICIAN_ATTESTATION.json",
+    "status": "SIGNED_COMPLETE",
+    "decision": "NEGATIVE_RESULT",
+    "sha256": "9b8cfc049e26e8533cd185e8b2a90b1664ceb80ff08647d467d0d5726ddfc7ed"
+  },
+  "evidence_files": [
+    "validation/pseudobulk/studies/BN-PB-IV-004/evidence/c04_donor_effects.csv",
+    "validation/pseudobulk/studies/BN-PB-IV-004/evidence/c04_exact_sign_flip_null.csv",
+    "validation/pseudobulk/studies/BN-PB-IV-004/evidence/c02_exact_sign_flip_null.csv",
+    "validation/pseudobulk/studies/BN-PB-IV-004/PROVENANCE.json"
+  ],
+  "claim_boundary": {
+    "target": "donor-aware directional reproducibility of the frozen IFN-beta pseudobulk signature in a new independent healthy-PBMC 6-hour experiment",
+    "not_target": [
+      "clinical validity",
+      "causal mechanism",
+      "cell-type identity assignment",
+      "method superiority",
+      "independence of assay platform from the discovery cohort"
+    ],
+    "maximum_maturity_without_independent_biostatistician_signature": "PRELIMINARY",
+    "maximum_maturity_if_any_pairing_or_timing_gate_fails": "ABSTAIN"
+  }
+}

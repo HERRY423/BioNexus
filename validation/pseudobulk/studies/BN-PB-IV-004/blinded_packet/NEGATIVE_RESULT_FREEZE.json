@@ -1,0 +1,54 @@
+{
+  "schema_version": "bionexus.negative-result-freeze.v1",
+  "study_id": "BN-PB-IV-002",
+  "frozen_at": "2026-08-20T16:36:00Z",
+  "result": {
+    "run_status": "negative_result",
+    "conclusion_maturity": "FRAGILE",
+    "independent_biological_validation": "not_supported",
+    "failed_endpoint": "negative_control",
+    "empirical_p_value": 0.05859375,
+    "locked_threshold": 0.05,
+    "permutations": 255
+  },
+  "policy": {
+    "overwrite_prohibited": true,
+    "reinterpret_as_pass_prohibited": true,
+    "post_hoc_permutation_increase_prohibited": true,
+    "successor_studies_must_reference_this_freeze": true
+  },
+  "artifacts": [
+    {
+      "path": "REPORT.json",
+      "sha256": "3cdf249aba72c35c7579247310b500d859b39c66ba2a8b6802887af194b81c4c"
+    },
+    {
+      "path": "PREREGISTRATION.json",
+      "sha256": "5a244287fbd0e4a9f577c6cdcd5e2d7b30987cd89b6ee71c39ae90e77816ddd7"
+    },
+    {
+      "path": "PREREGISTRATION_LOCK.json",
+      "sha256": "bc644b04707cd9f78e058e432278283bf2228f90c836e85cbc9b56a4dce011bc"
+    },
+    {
+      "path": "PROVENANCE.json",
+      "sha256": "e08dbd4539a00454cb27fca6e0bf7255a0af77eb4073972b536fd7ad23e2089f"
+    },
+    {
+      "path": "evidence/locked_discovery_signature_platform_holdout.csv",
+      "sha256": "542b3f359227ae4c9ef8a7a9a522e0d84fd51759ebd315d8b564862f0a3255d8"
+    },
+    {
+      "path": "evidence/donor_leave_one_out_folds.csv",
+      "sha256": "c3e257be67eb8e963b6861b3cebb2edc6d6085fc0dee229a78ba8c2637fb3ca2"
+    },
+    {
+      "path": "evidence/negative_control_sign_flip_null.csv",
+      "sha256": "3ede2d869ddeefebc6107c67c78e9ad804e8fb6910e4fdf43f8eff72fafb1d6f"
+    }
+  ],
+  "limitations": [
+    "This is a repository-local SHA-256 freeze, not an external timestamp authority or digital signature.",
+    "Git history and remote publication are required for durable third-party auditability."
+  ]
+}

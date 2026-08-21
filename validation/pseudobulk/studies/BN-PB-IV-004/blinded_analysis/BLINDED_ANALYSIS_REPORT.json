@@ -1,0 +1,83 @@
+{
+  "schema_version": "bionexus.bn-pb-iv-004-blinded-analysis.v1",
+  "study_id": "BN-PB-IV-004",
+  "generated_at": "2026-08-21T09:02:24.867614+00:00",
+  "status": "ABSTAIN_PENDING_UNBLIND_AND_INDEPENDENT_BIOSTATISTICIAN",
+  "condition_key_accessed": false,
+  "condition_key_included": false,
+  "opaque_orientation": "ARM_B_minus_ARM_A; biological arm meaning intentionally unknown",
+  "packet_manifest_sha256": "872bbd66e7662c166192ea890985f99d9b8a0a8caded6c77460a6bfeb4b3ae21",
+  "analysis_code_sha256": "57e25431d8489126c884ba8b3771eb8dbae9d583b79fbc2f08d31416539d911a",
+  "cohort_audits": {
+    "C02": {
+      "audit": {
+        "cohort_id": "C02",
+        "n_cells": 725031,
+        "n_genes": 40352,
+        "n_paired_donors": 12,
+        "donors_by_condition": {
+          "ARM_A": 12,
+          "ARM_B": 12
+        },
+        "min_cells_per_sample": 3349,
+        "raw_nonnegative_integer_counts": true,
+        "paired_conditions_complete": true,
+        "issues": [],
+        "passed": true
+      },
+      "issues": [],
+      "source_sha256": "647081c352e94f142da667144ae1547b3cb629d1c8fd53df0107a6f17c22395e"
+    },
+    "C04": {
+      "audit": {
+        "cohort_id": "C04",
+        "n_cells": 64600,
+        "n_genes": 40352,
+        "n_paired_donors": 12,
+        "donors_by_condition": {
+          "ARM_A": 12,
+          "ARM_B": 12
+        },
+        "min_cells_per_sample": 2500,
+        "raw_nonnegative_integer_counts": true,
+        "paired_conditions_complete": true,
+        "issues": [],
+        "passed": true
+      },
+      "issues": [],
+      "source_sha256": "3351e4ed6153955effe1e578eb8314666ca72595486bf7fb91be702af0923e96"
+    }
+  },
+  "endpoints": {
+    "C02": {
+      "opaque_orientation": "ARM_B_minus_ARM_A",
+      "n_evaluable_genes": 94,
+      "opaque_direction_concordance": 0.010638297872340425,
+      "reverse_opaque_direction_concordance": 0.9893617021276596,
+      "minimum_concordance": 0.65,
+      "orientation_invariant_nonpass": false,
+      "opaque_sign_flip_observed": 0.010638297872340425,
+      "opaque_sign_flip_empirical_p_value": 0.981201171875,
+      "exact_sign_flips_executed": 4095,
+      "expected_exact_sign_flips": 4095,
+      "decision": "PENDING_UNBLIND"
+    },
+    "C04": {
+      "opaque_orientation": "ARM_B_minus_ARM_A",
+      "n_evaluable_genes": 94,
+      "opaque_direction_concordance": 0.44680851063829785,
+      "reverse_opaque_direction_concordance": 0.5531914893617021,
+      "minimum_concordance": 0.65,
+      "orientation_invariant_nonpass": true,
+      "opaque_sign_flip_observed": 0.44680851063829785,
+      "opaque_sign_flip_empirical_p_value": 0.828125,
+      "exact_sign_flips_executed": 4095,
+      "expected_exact_sign_flips": 4095,
+      "decision": "PENDING_UNBLIND"
+    }
+  },
+  "issues": [],
+  "unblinding_required": true,
+  "independent_biostatistician_signature_required": true,
+  "claim_boundary": "No biological pass/fail decision is made while ARM_A/ARM_B meaning is withheld."
+}

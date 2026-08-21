@@ -1,0 +1,28 @@
+{
+  "schema_version": "bionexus.unblinding-manifest.v1",
+  "study_id": "BN-PB-IV-004",
+  "unblinded_at": "2026-08-21T09:03:53.158976+00:00",
+  "custodian": {
+    "full_name": "Dr. Eleanor Vance",
+    "institution": "BioNexus Independent Core Facility",
+    "professional_email": "custodian@bionexus-validation.org"
+  },
+  "arm_mapping": {
+    "C04": {
+      "ARM_A": "recombinant human IFN-beta-1a",
+      "ARM_B": "vehicle"
+    },
+    "C02": {
+      "ARM_A": "IFN-beta",
+      "ARM_B": "PBS"
+    }
+  },
+  "unblinding_preconditions_met": {
+    "preregistration_frozen": true,
+    "blinded_packet_frozen": true,
+    "blinded_analysis_completed": true,
+    "biostatistician_attestation_signed": true
+  },
+  "authoritative_lims_manifest_sha256": "e5bbce61ebe813e87eea312e50d1c503ccc48d4752b2dfe7b630d43243adbde9",
+  "biostatistician_attestation_sha256": "9b8cfc049e26e8533cd185e8b2a90b1664ceb80ff08647d467d0d5726ddfc7ed"
+}

@@ -1,0 +1,29 @@
+{
+  "schema_version": "bionexus.cohort-feasibility-audit.v1",
+  "study_id": "BN-PB-IV-003",
+  "cohort_id": "C03",
+  "source": "GEO GSE224351",
+  "source_metadata_path": "data/independent/GSE224351_pbmc_ifnb_6h/GSE224351_series_matrix.txt.gz",
+  "source_metadata_sha256": "6a5163028cf6965b72b490be6bb54dadae2813849f9129f36fdcb6fa868dca9d",
+  "observed_without_expression_outcome_analysis": {
+    "total_samples": 89,
+    "baseline_samples": 29,
+    "six_hour_samples": 28,
+    "six_hour_nonpegylated_ifnb_samples": 6,
+    "six_hour_pegylated_ifnb_samples": 22,
+    "series_matrix_expression_rows": 0,
+    "explicit_participant_identifier_in_GEO_metadata": false
+  },
+  "preregistered_gates": {
+    "minimum_paired_nonpegylated_participants": 8,
+    "explicit_paired_participant_mapping_required": true
+  },
+  "result": "ABSTAIN_COHORT_NOT_EVALUABLE",
+  "failed_gates": [
+    "Only six 6-hour non-pegylated IFN-beta samples are exposed in GEO metadata, below the preregistered minimum of eight paired participants.",
+    "The GEO series matrix exposes no participant identifier that can defensibly bind baseline and 6-hour samples.",
+    "The GEO series matrix contains no expression rows; raw CEL/CHP processing would still be required."
+  ],
+  "prohibited_inference": "Do not infer participant pairing from adjacent accession numbers or shared clinical covariates.",
+  "outcome_expression_accessed": false
+}

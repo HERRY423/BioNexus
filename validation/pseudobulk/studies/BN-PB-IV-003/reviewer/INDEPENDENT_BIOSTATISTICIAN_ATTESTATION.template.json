@@ -1,0 +1,31 @@
+{
+  "schema_version": "bionexus.independent-biostatistician-attestation.v1",
+  "study_id": "BN-PB-IV-003",
+  "status": "PENDING_EXTERNAL_REVIEW",
+  "reviewer": {
+    "full_name": "REQUIRED",
+    "institution": "REQUIRED",
+    "department_or_unit": "REQUIRED",
+    "professional_email": "REQUIRED",
+    "orcid_or_equivalent": "REQUIRED",
+    "conflicts_of_interest": "REQUIRED",
+    "independent_of_code_and_threshold_authors": "REQUIRED_BOOLEAN"
+  },
+  "materials": {
+    "preregistration_sha256": "TO_BE_FILLED_FROM_PREREGISTRATION_LOCK",
+    "blinded_packet_sha256": "TO_BE_FILLED_AFTER_PACKET_FREEZE",
+    "analysis_code_sha256": "TO_BE_FILLED_AFTER_CODE_FREEZE"
+  },
+  "review": {
+    "condition_key_available_during_analysis": false,
+    "all_4095_exact_sign_flips_verified": "REQUIRED_BOOLEAN",
+    "negative_and_abstention_results_retained": "REQUIRED_BOOLEAN",
+    "primary_endpoint_decision": "PASS_NEGATIVE_RESULT_OR_ABSTAIN",
+    "comments": "REQUIRED"
+  },
+  "signature": {
+    "signed_at_utc": "REQUIRED_ISO8601",
+    "signature_method": "REQUIRED",
+    "signature_value_or_detached_signature_sha256": "REQUIRED"
+  }
+}

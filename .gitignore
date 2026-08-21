@@ -87,12 +87,22 @@ work/
 # Temporary test outputs
 .pytest_temp/
 .pytest_tmp/
+.pytest_tmp_*/
 .pytest_tmp_run/
 .pytest_tmp_host_live_*/
 .bionexus-doctor.json
 .codex*
 .agents/mcp_config.json
 plugins/**/.agents/
+
+# Machine-local remote-columnar runtime and verified download parts.
+.vendor/
+.download_parts_pylance/
+runtime_lance/
+runtime_wheels/
+tools/lance_runtime/
+pylance-*.whl
+data/independent/**/checkpoints/
 
 # Machine-local evidence produced by the real Antigravity acceptance run.
 # REQUEST.json and the workflow remain tracked; receipts and generated results

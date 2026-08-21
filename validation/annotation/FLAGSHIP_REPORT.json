@@ -30,30 +30,31 @@
     },
     "provenance": {
       "data_source": "10x Genomics public CITE-seq PBMC datasets / Hao et al. 2021 (doi:10.1016/j.cell.2021.04.048) multimodal PBMC",
-      "download_date": "2026-08-20T14:29:46.350311+00:00",
-      "commit_sha": "8344a6bbf2152b12157d8f28b07324aa76d9d1b9",
-      "git_dirty": false,
+      "download_date": "2026-08-21T09:37:27.947915+00:00",
+      "commit_sha": "890446356a1eb79751eb7dcedda75f3aad1a7879",
+      "git_dirty": true,
       "environment_lockfile_hashes": {
         "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
         "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
         "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
       },
       "command": [
-        "scripts/run_flagship_validation.py"
+        "scripts/run_flagship_validation.py",
+        "--help"
       ],
-      "command_str": "scripts/run_flagship_validation.py",
+      "command_str": "scripts/run_flagship_validation.py --help",
       "generator_version": "1.0.0-rc.1",
       "python_version": "3.13.9",
       "platform": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-08-20T14:29:46.350311+00:00",
+      "timestamp": "2026-08-21T09:37:27.947915+00:00",
       "extra_metadata": {
         "capability": "scrna.annotation_evidence",
         "dataset_id": "citeseq_pbmc_sorted",
         "present": false
       },
       "repository_dirty_at_execution": true,
-      "validation_source_dirty": false,
-      "source_snapshot_sha256": "1e6b1bf0fb941592c100d5e164b2f4f00fa4a8bd75730a7b0ed287c99e552fbc"
+      "validation_source_dirty": true,
+      "source_snapshot_sha256": "6601775429bc51823f88e526210c2889c4c3209b1fa8e2a40be55edb3b8de749"
     }
   },
   "metrics": [
@@ -81,7 +82,7 @@
     "Required files not found: citeseq_pbmc.h5ad",
     "Validation outcome NOT verified in this environment (BNS-EM-009)"
   ],
-  "timestamp": "2026-08-20T14:29:46.441410+00:00",
+  "timestamp": "2026-08-21T09:37:28.071242+00:00",
   "evidence_files": [
     "validation\\annotation\\evidence\\.gitkeep",
     "validation\\annotation\\evidence\\citeseq_synthetic_technical_acceptance.h5ad"

@@ -1,0 +1,28 @@
+{
+  "schema_version": "bionexus.custodian-data-gate-attestation.v1",
+  "study_id": "BN-PB-IV-005",
+  "status": "PENDING",
+  "custodian": {
+    "full_name": "REQUIRED",
+    "institution": "REQUIRED",
+    "professional_email": "REQUIRED",
+    "independent_of_analysis": true
+  },
+  "gates": {
+    "authoritative_lims_pairing_verified": false,
+    "no_pair_inferred_from_accession_or_file_order": false,
+    "exactly_12_complete_donor_pairs": false,
+    "ifn_beta_1a_identity_and_lot_verified": false,
+    "six_hour_timing_within_five_minutes_verified": false,
+    "arm_key_held_outside_packet": false
+  },
+  "materials": {
+    "preregistration_sha256": "REQUIRED",
+    "C05_blinded_pseudobulk_sha256": "REQUIRED",
+    "C05_blinded_sample_manifest_sha256": "REQUIRED"
+  },
+  "signature": {
+    "signed_at_utc": "REQUIRED",
+    "signature_value_or_detached_sha256": "REQUIRED"
+  }
+}

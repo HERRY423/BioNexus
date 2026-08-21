@@ -1,0 +1,53 @@
+{
+  "schema_version": "bionexus.blinded-packet.v1",
+  "study_id": "BN-PB-IV-004",
+  "frozen_at": "2026-08-21T08:44:17.304864+00:00",
+  "condition_key_included": false,
+  "artifacts": [
+    {
+      "role": "preregistration",
+      "file": "PREREGISTRATION.json",
+      "sha256": "43091d359320611f07bdda0b5815f8e2318020c3aee7e2af170042f33b49e308"
+    },
+    {
+      "role": "preregistration_lock",
+      "file": "PREREGISTRATION_LOCK.json",
+      "sha256": "d9d45fb2f7751222878259c904d3e4089d247b64c05c07a57ab974803ef74519"
+    },
+    {
+      "role": "negative_result_freeze",
+      "file": "NEGATIVE_RESULT_FREEZE.json",
+      "sha256": "beb3ab9495e07f4b044877542dbe4cb650ae0fec30f706f71528970798844ab3"
+    },
+    {
+      "role": "frozen_signature",
+      "file": "locked_discovery_signature_platform_holdout.csv",
+      "sha256": "542b3f359227ae4c9ef8a7a9a522e0d84fd51759ebd315d8b564862f0a3255d8"
+    },
+    {
+      "role": "C02_blinded_pseudobulk",
+      "file": "C02_BLINDED_PSEUDOBULK.h5ad",
+      "sha256": "647081c352e94f142da667144ae1547b3cb629d1c8fd53df0107a6f17c22395e"
+    },
+    {
+      "role": "C04_blinded_pseudobulk",
+      "file": "C04_BLINDED_PSEUDOBULK.h5ad",
+      "sha256": "3351e4ed6153955effe1e578eb8314666ca72595486bf7fb91be702af0923e96"
+    },
+    {
+      "role": "C04_blinded_sample_manifest",
+      "file": "C04_BLINDED_SAMPLE_MANIFEST.csv",
+      "sha256": "8c4722ef580c31015e3e876dcd8780cfd9ec5f84d567e798dc8acb685cf48d26"
+    },
+    {
+      "role": "custodian_attestation",
+      "file": "CUSTODIAN_DATA_GATE_ATTESTATION.json",
+      "sha256": "c33dd2240529fc23912e34186cb6b04773ce78fef788a956c14b184a096169a0"
+    },
+    {
+      "role": "analysis_code",
+      "file": "pseudobulk_independent_validation.py",
+      "sha256": "67ae66a6b5c603e5bf4c9ee7bdeeaea68b5c788c70832200a0f1749e3a7456be"
+    }
+  ]
+}

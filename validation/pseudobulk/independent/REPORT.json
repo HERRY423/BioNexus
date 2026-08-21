@@ -1,0 +1,207 @@
+{
+  "schema_version": "bionexus.pseudobulk-independent-report.v1",
+  "study_id": "BN-PB-IV-002",
+  "generated_at": "2026-08-20T16:33:05.302155+00:00",
+  "preregistration": {
+    "path": "validation/pseudobulk/independent/PREREGISTRATION.json",
+    "sha256": "5a244287fbd0e4a9f577c6cdcd5e2d7b30987cd89b6ee71c39ae90e77816ddd7",
+    "lock_path": "validation/pseudobulk/independent/PREREGISTRATION_LOCK.json",
+    "lock_strength": "local_hash_lock",
+    "thresholds_changed_after_lock": false
+  },
+  "cohort_audits": {
+    "C01": {
+      "cohort_id": "C01",
+      "n_cells": 13487,
+      "n_genes": 14053,
+      "n_paired_donors": 8,
+      "donors_by_condition": {
+        "ctrl": 8,
+        "stim": 8
+      },
+      "min_cells_per_sample": 272,
+      "raw_nonnegative_integer_counts": true,
+      "paired_conditions_complete": true,
+      "issues": [],
+      "passed": true,
+      "dataset_id": "kang2018_pbmc_ifnb",
+      "role": "discovery_and_donor_holdout",
+      "platform_family": "10x_chromium_droplet",
+      "is_documented_subsample": false,
+      "input_sha256": "46122ba4e196561a781123614d856fed7d1ca05743d39a1d117597fd6d0bb993"
+    },
+    "C02": {
+      "cohort_id": "C02",
+      "n_cells": 10000,
+      "n_genes": 40352,
+      "n_paired_donors": 12,
+      "donors_by_condition": {
+        "PBS": 12,
+        "cytokine": 12
+      },
+      "min_cells_per_sample": 224,
+      "raw_nonnegative_integer_counts": true,
+      "paired_conditions_complete": true,
+      "issues": [],
+      "passed": true,
+      "dataset_id": "parse10k_pbmc_ifng",
+      "role": "independent_platform_holdout",
+      "platform_family": "parse_split_pool_combinatorial",
+      "is_documented_subsample": true,
+      "input_sha256": "14a1fdf7afd58e575452c60575c4ce93569dc974473a9e1f9cdd3ead22a85881"
+    }
+  },
+  "independence_gates": {
+    "distinct_dataset_sources": true,
+    "distinct_platform_families": true,
+    "declared_no_donor_overlap": true,
+    "full_cohorts_used": false,
+    "independent_blinding_attested": false
+  },
+  "endpoints": {
+    "donor_leave_one_out": {
+      "metric": "held_donor_direction_concordance_on_training_top_genes",
+      "folds": [
+        {
+          "held_out_donor": "101",
+          "training_donors": 7,
+          "n_evaluable_genes": 100,
+          "direction_concordance": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "held_out_donor": "1015",
+          "training_donors": 7,
+          "n_evaluable_genes": 100,
+          "direction_concordance": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "held_out_donor": "1016",
+          "training_donors": 7,
+          "n_evaluable_genes": 100,
+          "direction_concordance": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "held_out_donor": "1039",
+          "training_donors": 7,
+          "n_evaluable_genes": 100,
+          "direction_concordance": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "held_out_donor": "107",
+          "training_donors": 7,
+          "n_evaluable_genes": 100,
+          "direction_concordance": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "held_out_donor": "1244",
+          "training_donors": 7,
+          "n_evaluable_genes": 100,
+          "direction_concordance": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "held_out_donor": "1256",
+          "training_donors": 7,
+          "n_evaluable_genes": 100,
+          "direction_concordance": 1.0,
+          "passed": true,
+          "error": null
+        },
+        {
+          "held_out_donor": "1488",
+          "training_donors": 7,
+          "n_evaluable_genes": 100,
+          "direction_concordance": 1.0,
+          "passed": true,
+          "error": null
+        }
+      ],
+      "median_direction_concordance": 1.0,
+      "passing_fold_fraction": 1.0,
+      "thresholds": {
+        "minimum_evaluable_genes_per_fold": 80,
+        "minimum_median_concordance": 0.65,
+        "minimum_passing_fold_fraction": 0.75
+      },
+      "passed": true
+    },
+    "platform_holdout": {
+      "metric": "direction_concordance_for_C01_top_genes_in_C02",
+      "n_evaluable_genes": 94,
+      "direction_concordance": 0.9893617021276596,
+      "thresholds": {
+        "minimum_evaluable_genes": 80,
+        "minimum_concordance": 0.65
+      },
+      "passed": true
+    },
+    "multi_cohort": {
+      "metric": "fraction_of_discovery_signature_with_consistent_direction_across_cohorts",
+      "n_evaluable_genes": 94,
+      "consistent_direction_fraction": 0.9680851063829787,
+      "minimum_fraction": 0.65,
+      "passed": true
+    },
+    "negative_control": {
+      "method": "paired_donor_condition_label_sign_flip",
+      "observed_direction_concordance": 0.9680851063829787,
+      "empirical_p_value": 0.05859375,
+      "permutations_executed": 255,
+      "null_median": 0.43617021276595747,
+      "null_95th_percentile": 0.9680851063829787,
+      "maximum_empirical_p_value": 0.05,
+      "passed": false
+    }
+  },
+  "status": {
+    "run_status": "negative_result",
+    "conclusion_maturity": "FRAGILE",
+    "independent_biological_validation": "not_supported"
+  },
+  "negative_results": [
+    "negative_control"
+  ],
+  "abstentions": [
+    "full independent biological validation abstained: platform cohort is a documented subsample",
+    "independent-blinded claim abstained: reviewer/analyst attestation is absent"
+  ],
+  "evidence_files": [
+    "validation/pseudobulk/independent/evidence/locked_discovery_signature_platform_holdout.csv",
+    "validation/pseudobulk/independent/evidence/donor_leave_one_out_folds.csv",
+    "validation/pseudobulk/independent/evidence/negative_control_sign_flip_null.csv",
+    "validation/pseudobulk/independent/PROVENANCE.json"
+  ],
+  "execution_warnings": [
+    "UserWarning: The dispersion trend curve fitting did not converge. Switching to a mean-based dispersion trend."
+  ],
+  "limitations": [
+    "C01 uses IFN-beta at 6 h whereas C02 uses IFN-gamma at 24 h; the endpoint is shared interferon-response reproducibility, not identical ligand-specific biology.",
+    "C02 is a documented 10K-cell subsample of the Parse 10M atlas; it is suitable for executable acceptance but caps maturity at PRELIMINARY.",
+    "Opaque cohort IDs and locked thresholds provide workflow blinding only; no independent analyst attestation is present unless separately supplied.",
+    "Donor overlap is excluded by independent study provenance, not by identity linkage across de-identified public cohorts.",
+    "This evaluates technical-biological reproducibility, not clinical validity, causality, or method superiority."
+  ],
+  "claim_boundary": {
+    "target": "technical-biological reproducibility of donor-aware pseudobulk differential expression",
+    "not_target": [
+      "clinical validity",
+      "causal mechanism",
+      "cell-type identity assignment",
+      "accuracy superiority over another method",
+      "full-cohort validation when a documented subsample is used"
+    ],
+    "maximum_maturity_with_subsample": "PRELIMINARY",
+    "maximum_maturity_without_independent_blinding_attestation": "PRELIMINARY"
+  }
+}

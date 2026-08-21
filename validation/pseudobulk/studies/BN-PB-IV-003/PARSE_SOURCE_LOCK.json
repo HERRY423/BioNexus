@@ -1,0 +1,27 @@
+{
+  "schema_version": "bionexus.remote-dataset-source-lock.v1",
+  "study_id": "BN-PB-IV-003",
+  "cohort_id": "C02",
+  "repository": "slaf-project/Parse-10M",
+  "repository_type": "huggingface_dataset",
+  "revision": "93001c6a5b9db71ebe4237025c2a5c540e1d3674",
+  "format": "SLAF/Lance",
+  "license": "CC-BY-NC-4.0",
+  "declared_shape": {
+    "n_cells": 9697974,
+    "n_genes": 40352,
+    "nonzero_expression_records": 18830591942
+  },
+  "metadata_artifacts": [
+    {
+      "path": "config.json",
+      "sha256": "22522c500ff0a66942c966481df60b74a717b7b6438bdc24d1d0ccdf215207c5"
+    },
+    {
+      "path": "README.md",
+      "sha256": "bff6222fe72d20626e21d20b65b2e82fccfc653336734165a595f65ab7f82fd3"
+    }
+  ],
+  "outcome_columns_or_expression_accessed_while_locking": false,
+  "locked_at": "2026-08-20T17:06:00Z"
+}

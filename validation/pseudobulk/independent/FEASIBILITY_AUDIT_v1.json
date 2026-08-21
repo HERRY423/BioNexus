@@ -1,0 +1,26 @@
+{
+  "schema_version": "bionexus.pseudobulk-feasibility-audit.v1",
+  "study_id": "BN-PB-IV-001",
+  "audited_at": "2026-08-20T16:26:00Z",
+  "outcome": "ABSTAIN_LABEL_MISMATCH",
+  "outcome_analysis_started": false,
+  "preregistration_sha256": "f7e20ee50872f257447dbad2aa95889992848ea5e7a38583f389a783b0f11a20",
+  "cohort_id": "C02",
+  "input_sha256": "14a1fdf7afd58e575452c60575c4ce93569dc974473a9e1f9cdd3ead22a85881",
+  "observed_metadata": {
+    "n_cells": 10000,
+    "n_genes": 40352,
+    "donors": 12,
+    "treatment_levels": {
+      "PBS": 5000,
+      "cytokine": 5000
+    },
+    "cytokine_levels": {
+      "PBS": 5000,
+      "IFN-gamma": 5000
+    }
+  },
+  "reason": "The v1 preregistration expected aliases control/treated, but the immutable public h5ad uses PBS/cytokine.",
+  "action": "Preserve v1 and its lock; create BN-PB-IV-002 with native labels only and unchanged endpoints/thresholds.",
+  "gene_level_outcomes_examined": false
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": "bionexus.c04-lims-pairing-preflight.v1",
+  "assessed_at": "2026-08-21T08:53:30.826946+00:00",
+  "manifest_sha256": "e5bbce61ebe813e87eea312e50d1c503ccc48d4752b2dfe7b630d43243adbde9",
+  "status": "PASS",
+  "issues": [],
+  "row_count": 24,
+  "authoritative_pair_count": 12,
+  "condition_key_exported": false,
+  "participant_identifiers_in_report": false
+}

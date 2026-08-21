@@ -1,0 +1,20 @@
+{
+  "schema_version": "bionexus.remote-extraction-attempt.v1",
+  "study_id": "BN-PB-IV-003",
+  "cohort_id": "C02",
+  "attempted_at": "2026-08-20T17:19:10Z",
+  "source_revision": "93001c6a5b9db71ebe4237025c2a5c540e1d3674",
+  "eligible_population_count": 725031,
+  "eligible_population": "all released cells with cytokine IFN-beta or PBS",
+  "balancing_or_stratified_sampling": false,
+  "result": "DID_NOT_FINISH",
+  "failure_class": "REMOTE_LANCE_CONNECTION_STALLED",
+  "evidence": {
+    "process_had_cpu_activity": false,
+    "process_had_established_network_connection": false,
+    "partial_or_final_output_created": false,
+    "manual_interrupt_after_persistent_idle": true
+  },
+  "interpretation": "The 725031 count establishes feasibility population size only. It is not a completed pseudobulk artifact and cannot satisfy the C02 analysis gate.",
+  "next_implementation": "resume-safe donor-condition metadata checkpoints followed by bounded cell-id-range expression checkpoints"
+}

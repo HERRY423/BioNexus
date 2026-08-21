@@ -1,0 +1,50 @@
+{
+  "schema_version": "bionexus.validation-data-readiness.v1",
+  "study_id": "BN-PB-IV-003",
+  "assessed_at": "2026-08-20T17:00:00Z",
+  "overall_status": "INCOMPLETE_NOT_READY_FOR_UNBLINDING",
+  "cohorts": {
+    "C01": {
+      "status": "READY_FROM_PREDECESSOR",
+      "outcome_access_prohibited_until_packet_freeze": true
+    },
+    "C02": {
+      "status": "READY_FULL_725031_RESUME_SAFE_FRAGMENT_CHECKPOINTS_WITH_RETAINED_SOURCE_METADATA_DISCREPANCY",
+      "source_size_bytes": 53500000000,
+      "source_revision": "93001c6a5b9db71ebe4237025c2a5c540e1d3674",
+      "decision": "donor-condition metadata plus 2,054 immutable expression-fragment checkpoints; remote column projection; exact released natural proportions",
+      "balanced_10K_or_100K_export_accepted": false,
+      "eligible_population_count_verified": 725031,
+      "completed_pseudobulk_artifact": true,
+      "pseudobulk_artifact": "data/independent/parse10m_pbmc_ifnb_natural_v1/parse_ifnb_pbs_pseudobulk.h5ad",
+      "extraction_manifest": "data/independent/parse10m_pbmc_ifnb_natural_v1/EXTRACTION_MANIFEST.json",
+      "extraction_manifest_sha256": "2804c6b9601865ad672b727d9bf1f973a474c8aabb93ccb7fb2ae24db4647740",
+      "n_expression_fragments": 2054,
+      "expression_records_aggregated": 1373870697,
+      "metadata_gene_count_sum": 1373902599,
+      "per_cell_expression_record_mismatches": 30634,
+      "mismatch_policy": "retained_source_discrepancy; no imputation, balancing, or cell exclusion",
+      "output_sha256": "9da454ffb683df48b4fb4ce00986453969e1821cea942955d83f621d5304d07a"
+    },
+    "C03": {
+      "status": "ABSTAIN_COHORT_NOT_EVALUABLE",
+      "source": "GEO GSE224351",
+      "match": "PBMC, IFN-beta-1a, 6 hours",
+      "mismatches_retained": [
+        "bulk expression array rather than scRNA-seq",
+        "in-vivo treated multiple-sclerosis participants rather than healthy ex-vivo PBMC"
+      ],
+      "failed_preregistered_gates": [
+        "six non-pegylated 6-hour samples is below minimum eight paired participants",
+        "explicit baseline-to-6-hour participant mapping is absent from GEO metadata"
+      ]
+    }
+  },
+  "unblinding_allowed": false,
+  "blocking_gates": [
+    "C03 paired participant mapping and assay adapter not complete",
+    "BN-PB-IV-004 prospective independent 6-hour PBMC/IFN-beta data and signed custodian gate are not complete",
+    "blinded analysis packet not frozen",
+    "independent biostatistician has not signed"
+  ]
+}

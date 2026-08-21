@@ -1,0 +1,119 @@
+{
+  "activity_name": "bn_pb_iv_005_prospective_cell_type_resolved_validation",
+  "method": "prospective cell-type resolved donor-aware pseudobulk with exact 4095 sign-flip permutation test",
+  "backend": "scanpy/anndata + pydeseq2",
+  "parameters": {
+    "discovery_top_n": 100,
+    "permutations": 4095
+  },
+  "input_files": [
+    {
+      "file_name": "PREREGISTRATION.json",
+      "path": "C:\\Plugin\\BioNexus\\validation\\pseudobulk\\studies\\BN-PB-IV-005\\PREREGISTRATION.json",
+      "role": "input",
+      "sha256": "84dfc421043c414c3832d1e4824d572d66b05fcf1a4a94c83666b5447142a5cf"
+    },
+    {
+      "file_name": "PREREGISTRATION_LOCK.json",
+      "path": "C:\\Plugin\\BioNexus\\validation\\pseudobulk\\studies\\BN-PB-IV-005\\PREREGISTRATION_LOCK.json",
+      "role": "input",
+      "sha256": "b058a8c2ea80d317b1b0f1065ea6db47fe4db658bc4fc44a628a9f002dd42dec"
+    },
+    {
+      "file_name": "INDEPENDENT_BIOSTATISTICIAN_ATTESTATION.json",
+      "path": "C:\\Plugin\\BioNexus\\validation\\pseudobulk\\studies\\BN-PB-IV-005\\INDEPENDENT_BIOSTATISTICIAN_ATTESTATION.json",
+      "role": "input",
+      "sha256": "3aba6855cbac44b9cf6e12521ab5ad62ef77819caade841f091b5e0c1ce3145c"
+    },
+    {
+      "file_name": "UNBLINDING_MANIFEST.json",
+      "path": "C:\\Plugin\\BioNexus\\validation\\pseudobulk\\studies\\BN-PB-IV-005\\UNBLINDING_MANIFEST.json",
+      "role": "input",
+      "sha256": "26705a8a96488920da07dd001a1a13b9bda2c3b3d02cbea6ac14ea54f33a2796"
+    },
+    {
+      "file_name": "C05_BLINDED_PSEUDOBULK.h5ad",
+      "path": "C:\\Plugin\\BioNexus\\validation\\pseudobulk\\studies\\BN-PB-IV-005\\blinded_packet\\C05_BLINDED_PSEUDOBULK.h5ad",
+      "role": "input",
+      "sha256": "254ae16e2352d9d87ed7604f925cf392be0076e81a5c638cf85c657e7b2dcc01"
+    },
+    {
+      "file_name": "C05_BLINDED_SAMPLE_MANIFEST.csv",
+      "path": "C:\\Plugin\\BioNexus\\validation\\pseudobulk\\studies\\BN-PB-IV-005\\blinded_packet\\C05_BLINDED_SAMPLE_MANIFEST.csv",
+      "role": "input",
+      "sha256": "7e20eab2905334c2b97a98d69aaab675390705417cd5c76cd235ce81758db3f3"
+    }
+  ],
+  "output_files": [
+    {
+      "file_name": "REPORT.json",
+      "path": "C:\\Plugin\\BioNexus\\validation\\pseudobulk\\studies\\BN-PB-IV-005\\REPORT.json",
+      "role": "output",
+      "sha256": "8207e1d0891e91741b138ca4503d593eb46d290e56b5384eade4d613a5d2ba5c"
+    },
+    {
+      "file_name": "c05_donor_effects.csv",
+      "path": "C:\\Plugin\\BioNexus\\validation\\pseudobulk\\studies\\BN-PB-IV-005\\evidence\\c05_donor_effects.csv",
+      "role": "output",
+      "sha256": "6e9e8b5768f5d7b1c048986c6fbc8f86ceb40dfbf5c0fb3a87c34c21ee2c50f2"
+    },
+    {
+      "file_name": "c05_exact_sign_flip_null.csv",
+      "path": "C:\\Plugin\\BioNexus\\validation\\pseudobulk\\studies\\BN-PB-IV-005\\evidence\\c05_exact_sign_flip_null.csv",
+      "role": "output",
+      "sha256": "e699a3b68a63a26ca17363e37a793de8459e299ec86b4c3dad65efc49e11da55"
+    }
+  ],
+  "environment_snapshot": {
+    "os_name": "Windows",
+    "os_release": "11",
+    "os_version": "10.0.26200",
+    "architecture": "AMD64",
+    "python_version": "3.13.9",
+    "python_executable": "C:\\Users\\13264\\anaconda3\\python.exe",
+    "packages": {
+      "numpy": "2.3.5",
+      "scipy": "1.16.3",
+      "pandas": "2.3.3",
+      "scanpy": "1.12.2",
+      "anndata": "0.13.1",
+      "torch": "2.13.0+cpu",
+      "squidpy": "1.8.3",
+      "pydeseq2": "0.5.4",
+      "scikit-learn": "1.7.2"
+    },
+    "captured_at": "2026-08-21T09:21:43.704960+00:00",
+    "cuda_available": false
+  },
+  "execution_provenance": {
+    "data_source": "unknown",
+    "download_date": "2026-08-21T09:21:43.830561+00:00",
+    "commit_sha": "890446342880b91dfbb682b10ec9c79f82d5a3ef",
+    "git_dirty": false,
+    "environment_lockfile_hashes": {
+      "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
+      "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
+      "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
+    },
+    "command": [
+      "python",
+      "-m",
+      "evals.pseudobulk_independent_validation",
+      "--study",
+      "BN-PB-IV-005"
+    ],
+    "command_str": "python -m evals.pseudobulk_independent_validation --study BN-PB-IV-005",
+    "generator_version": "1.0.0-rc.1",
+    "python_version": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "timestamp": "2026-08-21T09:21:43.830561+00:00",
+    "extra_metadata": {},
+    "data_sources": {
+      "C01": "GEO GSE96583 (Kang et al. 2018), 10x Chromium 3prime v2",
+      "C02": "HuggingFace hf://datasets/slaf-project/Parse-10M (Revision 93001c6a5b9db71ebe4237025c2a5c540e1d3674)",
+      "C04": "BN-PB-IV-004 Retained Negative Result Reference Cohort",
+      "C05": "Prospective Cell-Type Resolved PBMC LIMS Registry (GLP Core Lot RH-IFNB-1000IU-2026B)"
+    }
+  },
+  "compliance_note": "SHA-256 + package versions for reproducibility. This is not 21 CFR Part 11, GxP, ALCOA+, or CLIA audit evidence."
+}

@@ -1,0 +1,129 @@
+{
+  "activity_name": "preregistered_pseudobulk_independent_validation",
+  "method": "donor-aware pseudobulk PyDESeq2 with leave-one-donor and platform holdout",
+  "backend": "scanpy/anndata + pydeseq2",
+  "parameters": {
+    "discovery_top_n": 100,
+    "donor_leave_one_out": {
+      "metric": "held_donor_direction_concordance_on_training_top_genes",
+      "minimum_evaluable_genes_per_fold": 80,
+      "minimum_median_concordance": 0.65,
+      "minimum_passing_fold_fraction": 0.75
+    },
+    "platform_holdout": {
+      "metric": "direction_concordance_for_C01_top_genes_in_C02",
+      "minimum_evaluable_genes": 80,
+      "minimum_concordance": 0.65
+    },
+    "multi_cohort": {
+      "metric": "fraction_of_discovery_signature_with_consistent_direction_across_cohorts",
+      "minimum_fraction": 0.65
+    },
+    "negative_control": {
+      "method": "paired_donor_condition_label_sign_flip",
+      "permutations": 255,
+      "seed": 20260820,
+      "maximum_empirical_p_value": 0.05
+    }
+  },
+  "input_files": [
+    {
+      "file_name": "PREREGISTRATION.json",
+      "path": "C:\\Plugin\\BioNexus\\validation\\pseudobulk\\independent\\PREREGISTRATION.json",
+      "role": "input",
+      "sha256": "5a244287fbd0e4a9f577c6cdcd5e2d7b30987cd89b6ee71c39ae90e77816ddd7"
+    },
+    {
+      "file_name": "PREREGISTRATION_LOCK.json",
+      "path": "C:\\Plugin\\BioNexus\\validation\\pseudobulk\\independent\\PREREGISTRATION_LOCK.json",
+      "role": "input",
+      "sha256": "bc644b04707cd9f78e058e432278283bf2228f90c836e85cbc9b56a4dce011bc"
+    },
+    {
+      "file_name": "pbmc_ifnb_counts.h5ad",
+      "path": "C:\\Plugin\\BioNexus\\data\\flagship\\kang2018_pbmc_ifnb\\pbmc_ifnb_counts.h5ad",
+      "role": "input",
+      "sha256": "46122ba4e196561a781123614d856fed7d1ca05743d39a1d117597fd6d0bb993"
+    },
+    {
+      "file_name": "Parse_10K_PBMC_cytokines.h5ad",
+      "path": "C:\\Plugin\\BioNexus\\data\\independent\\parse10k_pbmc_ifng\\Parse_10K_PBMC_cytokines.h5ad",
+      "role": "input",
+      "sha256": "14a1fdf7afd58e575452c60575c4ce93569dc974473a9e1f9cdd3ead22a85881"
+    },
+    {
+      "file_name": "pseudobulk_independent_validation.py",
+      "path": "C:\\Plugin\\BioNexus\\evals\\pseudobulk_independent_validation.py",
+      "role": "input",
+      "sha256": "70170fc562871746cf4376bc237d75a501c3184852fe9b61a7530c0ace51e981"
+    },
+    {
+      "file_name": "independent_pseudobulk.py",
+      "path": "C:\\Plugin\\BioNexus\\src\\bionexus\\independent_pseudobulk.py",
+      "role": "input",
+      "sha256": "dfa02e2adf0aecfe8c909e3af316cc051cf1f46a884749ef9eea20f18867bbe1"
+    }
+  ],
+  "output_files": [
+    {
+      "file_name": "locked_discovery_signature_platform_holdout.csv",
+      "path": "C:\\Plugin\\BioNexus\\validation\\pseudobulk\\independent\\evidence\\locked_discovery_signature_platform_holdout.csv",
+      "role": "output",
+      "sha256": "542b3f359227ae4c9ef8a7a9a522e0d84fd51759ebd315d8b564862f0a3255d8"
+    },
+    {
+      "file_name": "donor_leave_one_out_folds.csv",
+      "path": "C:\\Plugin\\BioNexus\\validation\\pseudobulk\\independent\\evidence\\donor_leave_one_out_folds.csv",
+      "role": "output",
+      "sha256": "c3e257be67eb8e963b6861b3cebb2edc6d6085fc0dee229a78ba8c2637fb3ca2"
+    },
+    {
+      "file_name": "negative_control_sign_flip_null.csv",
+      "path": "C:\\Plugin\\BioNexus\\validation\\pseudobulk\\independent\\evidence\\negative_control_sign_flip_null.csv",
+      "role": "output",
+      "sha256": "3ede2d869ddeefebc6107c67c78e9ad804e8fb6910e4fdf43f8eff72fafb1d6f"
+    }
+  ],
+  "environment_snapshot": {
+    "os_name": "Windows",
+    "os_release": "11",
+    "os_version": "10.0.26200",
+    "architecture": "AMD64",
+    "python_version": "3.13.9",
+    "python_executable": "C:\\Users\\13264\\anaconda3\\python.exe",
+    "packages": {
+      "numpy": "2.3.5",
+      "scipy": "1.16.3",
+      "pandas": "2.3.3",
+      "scanpy": "1.12.2",
+      "anndata": "0.13.1",
+      "torch": "2.13.0+cpu",
+      "squidpy": "1.8.3",
+      "pydeseq2": "0.5.4",
+      "scikit-learn": "1.7.2"
+    },
+    "captured_at": "2026-08-20T16:33:02.042199+00:00",
+    "cuda_available": false
+  },
+  "execution_provenance": {
+    "data_source": "unknown",
+    "download_date": "2026-08-20T16:33:05.281010+00:00",
+    "commit_sha": "890446356a1eb79751eb7dcedda75f3aad1a7879",
+    "git_dirty": true,
+    "environment_lockfile_hashes": {
+      "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
+      "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
+      "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
+    },
+    "command": [
+      "evals\\pseudobulk_independent_validation.py"
+    ],
+    "command_str": "evals\\pseudobulk_independent_validation.py",
+    "generator_version": "1.0.0-rc.1",
+    "python_version": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "timestamp": "2026-08-20T16:33:05.281010+00:00",
+    "extra_metadata": {}
+  },
+  "compliance_note": "SHA-256 + package versions for reproducibility. This is not 21 CFR Part 11, GxP, ALCOA+, or CLIA audit evidence."
+}

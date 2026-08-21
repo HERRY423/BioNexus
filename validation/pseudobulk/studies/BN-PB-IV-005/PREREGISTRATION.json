@@ -1,0 +1,172 @@
+{
+  "schema_version": "bionexus.pseudobulk-independent-preregistration.v1",
+  "study_id": "BN-PB-IV-005",
+  "title": "Prospective cell-type-resolved and dose-controlled healthy-PBMC recombinant IFN-beta validation (Successor to BN-PB-IV-004)",
+  "locked": true,
+  "registration_scope": "repository_hash_lock_before_sample_manifest_or_outcome_access",
+  "study_status_at_lock": "PROSPECTIVE_DATA_NOT_YET_COLLECTED",
+  "predecessor_results": {
+    "BN-PB-IV-002": {
+      "status": "negative_result",
+      "empirical_p_value": 0.05859375,
+      "freeze_path": "validation/pseudobulk/independent/NEGATIVE_RESULT_FREEZE.json",
+      "reinterpretation_or_post_hoc_extension_prohibited": true
+    },
+    "BN-PB-IV-003_C03": {
+      "status": "ABSTAIN_COHORT_NOT_EVALUABLE",
+      "reason": "GSE224351 lacks explicit baseline-to-6h participant mapping and is below locked threshold",
+      "adjacent_GSM_pairing_prohibited": true
+    },
+    "BN-PB-IV-004": {
+      "status": "negative_result",
+      "empirical_p_value": 0.220947265625,
+      "concordance": 0.5531914893617021,
+      "freeze_path": "validation/pseudobulk/studies/BN-PB-IV-004/NEGATIVE_RESULT_FREEZE.json",
+      "reason": "Unseparated whole-PBMC prospective cohort failed minimum 0.65 concordance threshold (observed 0.5532)",
+      "reinterpretation_or_post_hoc_threshold_adjustment_prohibited": true
+    }
+  },
+  "scientific_rationale": {
+    "mechanism_hypothesis": "C04 whole-PBMC aggregate exhibited non-concordance (55.3%) due to cell-type composition variation across resting vs activated lymphocytes. BN-PB-IV-005 tests cell-type resolved subsets (CD14+ Monocytes, CD4+ T Cells) alongside unseparated PBMC under standardized high-potency recombinant human IFN-beta-1a (1000 IU/mL, 6h).",
+    "prohibited_actions": [
+      "modifying BN-PB-IV-004 concordance threshold from 0.65",
+      "re-running BN-PB-IV-004 with different random seeds or subsetting",
+      "claiming biological validation from historical failed cohorts"
+    ]
+  },
+  "claim_boundary": {
+    "target": "donor-aware directional reproducibility of the frozen IFN-beta pseudobulk signature in cell-type resolved and dose-controlled prospective PBMC holdout",
+    "not_target": [
+      "clinical validity",
+      "causal mechanism",
+      "cell-type identity assignment without orthogonal markers",
+      "method superiority"
+    ],
+    "maximum_maturity_without_independent_biostatistician_signature": "PRELIMINARY",
+    "maximum_maturity_if_any_pairing_or_timing_gate_fails": "ABSTAIN"
+  },
+  "analysis_population": {
+    "organism": "Homo sapiens",
+    "material": "fresh healthy adult PBMC isolated within 2h of phlebotomy",
+    "donor_context": "healthy adult volunteers independent of GSE96583, Parse-10M, and BN-PB-IV-004",
+    "unit_of_inference": "biological donor",
+    "target_complete_paired_donors": 12,
+    "cell_level_p_values_for_condition_de": false
+  },
+  "cohorts": [
+    {
+      "cohort_id": "C01",
+      "role": "frozen_signature_source_only",
+      "dataset_id": "kang2018_pbmc_ifnb",
+      "source": "GEO GSE96583",
+      "outcome_reanalysis_before_blinded_packet_freeze": "prohibited"
+    },
+    {
+      "cohort_id": "C02",
+      "role": "frozen_independent_platform_context",
+      "dataset_id": "parse10m_pbmc_ifnb_natural_v1",
+      "source_revision": "93001c6a5b9db71ebe4237025c2a5c540e1d3674",
+      "required_population_cells": 725031,
+      "outcome_reanalysis_before_blinded_packet_freeze": "prohibited"
+    },
+    {
+      "cohort_id": "C04",
+      "role": "retained_frozen_predecessor_negative_context",
+      "dataset_id": "prospective_healthy_pbmc_6h_ifnb",
+      "outcome_reanalysis_before_blinded_packet_freeze": "prohibited"
+    },
+    {
+      "cohort_id": "C05",
+      "role": "prospective_cell_type_resolved_holdout",
+      "source": "prospective fresh PBMC multi-arm trial at certified GLP core facility",
+      "platform_family": "10x_chromium_droplet",
+      "assay": "3prime_scRNA_seq_v3.1",
+      "stimulus": "recombinant human IFN-beta-1a (1000 IU/mL)",
+      "vehicle_control": "matched carrier PBS + 0.1% human serum albumin",
+      "duration_hours": 6,
+      "duration_tolerance_minutes": 5,
+      "paired_design": "split-donor before incubation into opaque ARM_A and ARM_B",
+      "target_complete_paired_donors": 12,
+      "minimum_paired_donors": 12,
+      "is_documented_subsample": false
+    }
+  ],
+  "identity_and_pairing_contract": {
+    "authoritative_key": "participant_id_hash exported from source LIMS/consent registry before sequencing",
+    "required_fields": [
+      "participant_id_hash",
+      "aliquot_id",
+      "opaque_arm_id",
+      "collection_timestamp_utc",
+      "stimulation_start_utc",
+      "stimulation_stop_utc",
+      "reagent_name",
+      "reagent_lot",
+      "library_id",
+      "sequencing_run_id"
+    ],
+    "pair_definition": "two aliquots share exact authoritative participant_id_hash with distinct opaque arm IDs",
+    "forbidden_pairing_sources": [
+      "adjacent GSM accessions",
+      "adjacent filenames",
+      "sequencing lane order",
+      "plate position proximity",
+      "expression similarity"
+    ],
+    "missing_or_ambiguous_key_action": "ABSTAIN; do not infer or repair a pair"
+  },
+  "experimental_randomization_and_blinding": {
+    "aliquot_assignment": "computer-randomized within donor to opaque ARM_A or ARM_B before stimulation",
+    "condition_key_custodian": "independent certified laboratory data custodian",
+    "condition_key_repository_policy": "completed key held outside repository until independent review is complete",
+    "analysis_labels": "opaque cohort, participant, aliquot, library, and arm identifiers"
+  },
+  "input_gates": {
+    "C05_authoritative_pairing_manifest_required": true,
+    "C05_exactly_12_complete_donor_pairs_required": true,
+    "C05_IFN_beta_1a_reagent_identity_and_lot_required": true,
+    "C05_duration_6h_plus_or_minus_5min_required": true,
+    "C05_same_PBMC_handling_mode_for_all_donors": true,
+    "minimum_viability_percent_before_split": 85,
+    "minimum_cells_per_pseudobulk_sample_after_locked_QC": 1000,
+    "raw_nonnegative_integer_counts": true,
+    "paired_conditions_per_donor": true,
+    "no_declared_donor_overlap_with_predecessors": true,
+    "failed_or_missing_gate": "ABSTAIN"
+  },
+  "primary_endpoints": {
+    "discovery_top_n": 100,
+    "donor_leave_one_out": {
+      "role": "carried frozen from predecessor; no refitting"
+    },
+    "platform_holdout": {
+      "role": "C02 Parse platform context retained; not refitted"
+    },
+    "matched_6h_holdout": {
+      "metric": "median paired-donor direction concordance for the frozen C01 top-100 genes in C05 cell-type resolved subsets",
+      "minimum_evaluable_genes": 80,
+      "minimum_concordance": 0.65
+    },
+    "multi_cohort": {
+      "metric": "fraction of frozen signature genes with consistent direction in C01, complete C02, and C05",
+      "minimum_fraction": 0.65
+    },
+    "negative_control": {
+      "method": "paired_donor_condition_label_exact_sign_flip",
+      "donors": 12,
+      "permutations": 4095,
+      "identity_assignment_handling": "observed assignment excluded from null and included once by plus-one numerator_and_denominator",
+      "seed": null,
+      "maximum_empirical_p_value": 0.05
+    }
+  },
+  "decision_policy": {
+    "all_primary_endpoints_required": true,
+    "failed_endpoint": "retain result and set status to negative_result",
+    "missing_or_invalid_input": "ABSTAIN",
+    "threshold_changes_after_lock": "prohibited; create a new study_id",
+    "anything_other_than_4095_exact_sign_flips": "ABSTAIN",
+    "missing_independent_signature": "ABSTAIN",
+    "report_all_folds_negative_controls_and_abstentions": true
+  }
+}

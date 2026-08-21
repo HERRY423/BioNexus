@@ -1,0 +1,15 @@
+{
+  "schema_version": "bionexus.preregistration-lock.v1",
+  "study_id": "BN-PB-IV-003",
+  "locked_at": "2026-08-20T17:00:00Z",
+  "preregistration_path": "validation/pseudobulk/studies/BN-PB-IV-003/PREREGISTRATION.json",
+  "preregistration_sha256": "7321f1d9412890dd2fcfce60e1051705c548138d0956aa0e74dc185c81339795",
+  "predecessor_negative_result_freeze_sha256": "beb3ab9495e07f4b044877542dbe4cb650ae0fec30f706f71528970798844ab3",
+  "lock_strength": "repository_sha256_before_successor_outcome_access",
+  "outcome_data_accessed_before_lock": false,
+  "external_timestamp_authority": null,
+  "limitations": [
+    "Repository-local lock is not an external registration service timestamp.",
+    "The external biostatistician must independently record this hash before receiving the arm key."
+  ]
+}

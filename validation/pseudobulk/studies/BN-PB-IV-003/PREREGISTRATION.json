@@ -1,0 +1,163 @@
+{
+  "schema_version": "bionexus.pseudobulk-independent-preregistration.v1",
+  "study_id": "BN-PB-IV-003",
+  "title": "Preregistered natural-proportion Parse holdout and matched IFN-beta validation",
+  "locked": true,
+  "registration_scope": "repository_hash_lock_before_successor_outcome_access",
+  "predecessor_negative_result": {
+    "study_id": "BN-PB-IV-002",
+    "freeze_path": "validation/pseudobulk/independent/NEGATIVE_RESULT_FREEZE.json",
+    "freeze_sha256": "beb3ab9495e07f4b044877542dbe4cb650ae0fec30f706f71528970798844ab3",
+    "empirical_p_value": 0.05859375,
+    "interpretation": "negative_result",
+    "reinterpretation_or_post_hoc_extension_prohibited": true
+  },
+  "claim_boundary": {
+    "target": "donor-aware reproducibility of an IFN-beta pseudobulk response across an independent platform and an independent time-and-ligand-matched PBMC cohort",
+    "not_target": [
+      "clinical validity",
+      "causal mechanism",
+      "cell-type identity assignment",
+      "method superiority",
+      "exact replication across different disease contexts or assay technologies"
+    ],
+    "maximum_maturity_without_independent_biostatistician_signature": "PRELIMINARY",
+    "maximum_maturity_if_exact_time_ligand_cohort_is_not_evaluable": "ABSTAIN"
+  },
+  "analysis_population": {
+    "organism": "Homo sapiens",
+    "material": "PBMC",
+    "contrast_family": "IFN-beta versus matched unstimulated or baseline control",
+    "unit_of_inference": "biological donor or paired participant",
+    "cell_level_p_values_for_condition_de": false
+  },
+  "cohorts": [
+    {
+      "cohort_id": "C01",
+      "role": "discovery_and_donor_holdout",
+      "dataset_id": "kang2018_pbmc_ifnb",
+      "source": "GEO GSE96583",
+      "platform_family": "10x_chromium_droplet",
+      "assay": "3prime_scRNA_seq",
+      "stimulus": "IFN-beta",
+      "duration_hours": 6,
+      "data_path": "data/flagship/kang2018_pbmc_ifnb/pbmc_ifnb_counts.h5ad",
+      "donor_column": "donor",
+      "condition_column": "condition",
+      "reference_level": "ctrl",
+      "contrast_level": "stim",
+      "is_documented_subsample": false,
+      "minimum_paired_donors": 3
+    },
+    {
+      "cohort_id": "C02",
+      "role": "independent_platform_holdout",
+      "dataset_id": "parse10m_pbmc_ifnb_natural_v1",
+      "source": "slaf-project/Parse-10M pinned Hugging Face revision",
+      "platform_family": "parse_split_pool_combinatorial",
+      "assay": "whole_transcriptome_scRNA_seq",
+      "stimulus": "IFN-beta",
+      "duration_hours": 24,
+      "data_path": "data/independent/parse10m_pbmc_ifnb_natural_v1/parse_ifnb_pbs_pseudobulk.h5ad",
+      "donor_column": "donor",
+      "condition_column": "cytokine",
+      "reference_level": "PBS",
+      "contrast_level": "IFN-beta",
+      "sampling_contract": {
+        "eligible_population": "every released cell whose cytokine is PBS or IFN-beta",
+        "preferred": "all eligible cells",
+        "disk_bounded_fallback": "retain cells whose SHA256(cell_id || fixed_salt) begins with a preregistered hexadecimal prefix, increasing prefix length only before outcome access until projected local sparse export is at most 12 GiB",
+        "fixed_salt": "BN-PB-IV-003-Parse-natural-v1",
+        "stratification_or_balancing": "prohibited",
+        "minimum_total_cells": 100000,
+        "minimum_paired_donors": 12,
+        "preserve_native_donor_condition_counts": true
+      },
+      "is_documented_subsample": true,
+      "minimum_paired_donors": 12
+    },
+    {
+      "cohort_id": "C03",
+      "role": "independent_time_and_ligand_matched_orthogonal_holdout",
+      "dataset_id": "GSE224351_pbmc_ifnb_6h",
+      "source": "GEO GSE224351",
+      "platform_family": "affymetrix_clariom_d_array",
+      "assay": "bulk_expression_array",
+      "stimulus": "non-pegylated IFN-beta-1a",
+      "duration_hours": 6,
+      "population_context": "multiple-sclerosis participants receiving in-vivo therapy",
+      "reference_level": "paired_baseline",
+      "contrast_level": "paired_6h",
+      "minimum_paired_participants": 8,
+      "matching": {
+        "material": "PBMC",
+        "ligand": "IFN-beta",
+        "time_hours": 6,
+        "assay_and_context_are_not_matched": true
+      },
+      "is_documented_subsample": false,
+      "minimum_paired_donors": 8
+    }
+  ],
+  "input_gates": {
+    "C01_C02_raw_nonnegative_integer_counts": true,
+    "paired_conditions_per_donor": true,
+    "minimum_cells_per_pseudobulk_sample": 10,
+    "C02_all_12_donors_required": true,
+    "C02_minimum_total_cells": 100000,
+    "C02_balanced_public_10K_or_100K_exports_prohibited": true,
+    "C03_paired_participant_mapping_required": true,
+    "distinct_dataset_sources": true,
+    "no_declared_donor_overlap": true,
+    "backend": "pydeseq2_for_count_cohorts_and_paired_directional_validation_for_array_cohort",
+    "nominal_fdr": 0.05
+  },
+  "blinding": {
+    "outcome_access_boundary": "C02 and C03 condition keys remain unavailable to the independent biostatistician until the signed analysis plan and blinded packet hash are recorded",
+    "analysis_labels": "opaque cohort, participant, and arm identifiers",
+    "thresholds_locked_before_outcome_analysis": true,
+    "independent_biostatistician_required": true,
+    "attestation_path": "validation/pseudobulk/studies/BN-PB-IV-003/reviewer/INDEPENDENT_BIOSTATISTICIAN_ATTESTATION.json",
+    "missing_or_invalid_attestation_action": "ABSTAIN"
+  },
+  "primary_endpoints": {
+    "discovery_top_n": 100,
+    "donor_leave_one_out": {
+      "metric": "held_donor_direction_concordance_on_training_top_genes",
+      "minimum_evaluable_genes_per_fold": 80,
+      "minimum_median_concordance": 0.65,
+      "minimum_passing_fold_fraction": 0.75
+    },
+    "platform_holdout": {
+      "metric": "direction_concordance_for_C01_top_genes_in_C02",
+      "minimum_evaluable_genes": 80,
+      "minimum_concordance": 0.65
+    },
+    "matched_ifnb_holdout": {
+      "metric": "paired_6h_direction_concordance_for_C01_top_genes_in_C03",
+      "minimum_evaluable_genes": 80,
+      "minimum_concordance": 0.65
+    },
+    "multi_cohort": {
+      "metric": "fraction_of_discovery_signature_with_consistent_direction_in_C01_C02_C03",
+      "minimum_fraction": 0.65
+    },
+    "negative_control": {
+      "method": "paired_donor_condition_label_exact_sign_flip",
+      "donors": 12,
+      "permutations": 4095,
+      "identity_assignment_handling": "observed assignment excluded from null and included once by plus-one numerator_and_denominator",
+      "seed": null,
+      "maximum_empirical_p_value": 0.05
+    }
+  },
+  "decision_policy": {
+    "all_primary_endpoints_required": true,
+    "failed_endpoint": "retain result and set status to negative_result",
+    "missing_or_invalid_input": "ABSTAIN",
+    "threshold_changes_after_lock": "prohibited; create a new study_id",
+    "fewer_or_more_than_4095_C02_sign_flips": "ABSTAIN",
+    "missing_independent_signature": "ABSTAIN",
+    "report_all_folds_negative_controls_and_abstentions": true
+  }
+}

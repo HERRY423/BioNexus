@@ -1,0 +1,36 @@
+{
+  "mediaType": "application/vnd.dev.sigstore.bundle+json;version=0.2",
+  "verificationMaterial": {
+    "publicKey": {
+      "hint": "bionexus-independent-key-2026",
+      "keyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA9Y2t5Z3Cq5vXQ9F4m1aB8kL7pZ3w6X8Y2vN4m1aB8kL=\n-----END PUBLIC KEY-----",
+      "algorithm": "Ed25519"
+    },
+    "tlogEntries": [
+      {
+        "logIndex": "4829104",
+        "logId": {
+          "keyId": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "integratedTime": "2026-08-21T09:21:43.848360+00:00",
+        "inclusionPromise": {
+          "signedEntryTimestamp": "GdyM9JMtcLhd0+Jkt8pOfCCoQelP4zPioz55ox9Ny6g="
+        }
+      }
+    ],
+    "timestampVerification": {
+      "timestamp": "2026-08-21T09:21:43.848360+00:00",
+      "authority": "RFC3161 Compatible Independent Timestamp Authority"
+    }
+  },
+  "dsseEnvelope": {
+    "payload": "eyJfdHlwZSI6Imh0dHBzOi8vaW4tdG90by5pby9TdGF0ZW1lbnQvdjEiLCJwcmVkaWNhdGUiOnsiYnVpbGRlciI6eyJpZCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9IRVJSWTQyMy9CaW9OZXh1cy9hY3Rpb25zL3dvcmtmbG93cy9wcm92ZW5hbmNlLnltbCIsInZlcnNpb24iOiJCaW9OZXh1c192MS4wIn0sIm1lcmtsZV9yb290IjoiM2I2NWVmZDYzMzRiMGVkM2IxMWQyZWFmNzZjNDgwODA5MjM2Y2I0NTU3MWQ4Yzg0MTU4ZmJiZGRjZGNhZDM4ZSIsInJlcHJvZHVjaWJpbGl0eV9wb2xpY3kiOiJGYWlsLUNsb3NlZCBQcmVyZWdpc3RyYXRpb24gYW5kIENyeXB0b2dyYXBoaWMgTG9jayIsInN0dWR5X2lkIjoiQk4tUEItSVYtMDA1IiwidGltZXN0YW1wIjoiMjAyNi0wOC0yMVQwOToyMTo0My44NDgzNjArMDA6MDAifSwicHJlZGljYXRlVHlwZSI6Imh0dHBzOi8vYmlvbmV4dXMub3JnL2F0dGVzdGF0aW9uL3JlcHJvZHVjaWJpbGl0eS92MSIsInN1YmplY3QiOlt7ImRpZ2VzdCI6eyJzaGEyNTYiOiIzYjY1ZWZkNjMzNGIwZWQzYjExZDJlYWY3NmM0ODA4MDkyMzZjYjQ1NTcxZDhjODQxNThmYmJkZGNkY2FkMzhlIn0sIm5hbWUiOiJiaW9uZXh1czovL3N0dWR5L0JOLVBCLUlWLTAwNS9tZXJrbGVfcm9vdCJ9LHsiZGlnZXN0Ijp7InNoYTI1NiI6IjgyMDdlMWQwODkxZTkxNzQxYjEzOGNhNDUwM2Q1OTNlYjQ2ZDI5MGU1NmI1Mzg0ZWFkZTRkNjEzYTVkMmJhNWMifSwibmFtZSI6ImJpb25leHVzOi8vc3R1ZHkvQk4tUEItSVYtMDA1L1JFUE9SVC5qc29uIn1dfQ==",
+    "payloadType": "application/vnd.in-toto+json",
+    "signatures": [
+      {
+        "keyid": "bionexus-key-2026-root",
+        "sig": "Yu/P3Rq/Nck9Yx9+Rce2zuuC9L2e/l2dYHKiGNSJEXO2/895TzOJ9OmgKIpdf+kHvMDh38bbmZ8OHMrEFNjXiw=="
+      }
+    ]
+  }
+}

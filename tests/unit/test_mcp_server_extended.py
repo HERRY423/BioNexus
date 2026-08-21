@@ -31,14 +31,14 @@ def test_mcp_server_v2_initialize():
     assert resp["id"] == 1
     res = resp["result"]
     assert res["protocolVersion"] == "2024-11-05"
-    assert res["serverInfo"]["version"] == "2.0.0"
+    assert res["serverInfo"]["version"] == "2.1.0"
     assert "tools" in res["capabilities"]
     assert "resources" in res["capabilities"]
     assert "prompts" in res["capabilities"]
 
 
 def test_mcp_tools_list_count():
-    """Verify all 16 scientific tools are registered."""
+    """Verify all default core scientific tools + probe are registered."""
 
     async def _run():
         req = {"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}
@@ -48,6 +48,7 @@ def test_mcp_tools_list_count():
     tools = resp["result"]["tools"]
     tool_names = {t["name"] for t in tools}
     expected_unique = {
+        "bionexus_host_probe",
         "search_uniprot",
         "search_ensembl",
         "search_gnomad",
@@ -70,7 +71,7 @@ def test_mcp_hosted_fallbacks_opt_in(monkeypatch):
     names = {t["name"] for t in public_tools_schema()}
     assert "search_pubmed" in names
     assert "search_cosmic" in names
-    assert len(names) == 16
+    assert len(names) == 17
 
 
 def test_mcp_resources_primitives():
