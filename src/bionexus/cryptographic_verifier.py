@@ -212,28 +212,39 @@ def verify_study_provenance(study_dir: PathLike) -> ProvenanceVerificationReport
 
             # Deep check all input_files declared in PROVENANCE.json
             for in_entry in prov_data.get('input_files', []):
-                in_p = Path(in_entry.get('path', ''))
+                fname = in_entry.get('file_name', '')
+                raw_p = in_entry.get('path', '')
+                in_p = Path(raw_p)
                 if not in_p.is_file():
-                    # Fallback relative to study dir or root
-                    in_p = root / in_entry.get('file_name', '')
+                    in_p = root / fname
                 if not in_p.is_file():
-                    issues.append(f"PROVENANCE.json declared input file missing: {in_entry.get('file_name')}")
+                    in_p = root / 'blinded_packet' / fname
+                if not in_p.is_file():
+                    in_p = root / 'evidence' / fname
+                if not in_p.is_file():
+                    issues.append(f"PROVENANCE.json declared input file missing: {fname}")
                 else:
                     observed_in_sha = compute_file_sha256(in_p)
                     if observed_in_sha != in_entry.get('sha256', ''):
-                        issues.append(f"PROVENANCE.json input file SHA mismatch for {in_entry.get('file_name')}: expected {in_entry.get('sha256')}, observed {observed_in_sha}")
+                        issues.append(f"PROVENANCE.json input file SHA mismatch for {fname}: expected {in_entry.get('sha256')}, observed {observed_in_sha}")
 
             # Deep check all output_files declared in PROVENANCE.json
             for out_entry in prov_data.get('output_files', []):
-                out_p = Path(out_entry.get('path', ''))
+                fname = out_entry.get('file_name', '')
+                raw_p = out_entry.get('path', '')
+                out_p = Path(raw_p)
                 if not out_p.is_file():
-                    out_p = root / out_entry.get('file_name', '')
+                    out_p = root / fname
                 if not out_p.is_file():
-                    issues.append(f"PROVENANCE.json declared output file missing: {out_entry.get('file_name')}")
+                    out_p = root / 'evidence' / fname
+                if not out_p.is_file():
+                    out_p = root / 'blinded_packet' / fname
+                if not out_p.is_file():
+                    issues.append(f"PROVENANCE.json declared output file missing: {fname}")
                 else:
                     observed_out_sha = compute_file_sha256(out_p)
                     if observed_out_sha != out_entry.get('sha256', ''):
-                        issues.append(f"PROVENANCE.json output file SHA mismatch for {out_entry.get('file_name')}: expected {out_entry.get('sha256')}, observed {observed_out_sha}")
+                        issues.append(f"PROVENANCE.json output file SHA mismatch for {fname}: expected {out_entry.get('sha256')}, observed {observed_out_sha}")
 
             crypto_att = prov_data.get('cryptographic_attestation')
             if not crypto_att:
