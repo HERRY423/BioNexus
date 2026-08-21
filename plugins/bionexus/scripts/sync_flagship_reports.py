@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -11,6 +12,7 @@ if str(REPO_ROOT / 'src') not in sys.path:
     sys.path.insert(0, str(REPO_ROOT / 'src'))
 
 from bionexus.validation_verifier import compute_validation_source_snapshot
+from bionexus.versions import VERSION
 
 
 def get_git_commit_sha() -> str:
@@ -30,6 +32,12 @@ def sync_nested_provenance(obj: any, commit_sha: str, snapshot: str) -> None:
                 obj[k] = commit_sha
             elif k in ('git_dirty', 'repository_dirty_at_execution', 'validation_source_dirty'):
                 obj[k] = False
+            elif k in ('generator_version', 'project_version'):
+                obj[k] = VERSION
+            elif k == 'version' and isinstance(v, str) and re.match(r'^\d+\.\d+\.\d+', v):
+                obj[k] = VERSION
+            elif k == 'reason' and isinstance(v, str) and 'version 1.0.0-rc' in v:
+                obj[k] = re.sub(r'version 1\.0\.0-rc\.\d+', f'version {VERSION}', v)
             else:
                 sync_nested_provenance(v, commit_sha, snapshot)
     elif isinstance(obj, list):
@@ -40,16 +48,18 @@ def sync_nested_provenance(obj: any, commit_sha: str, snapshot: str) -> None:
 def sync_flagship_reports(commit_sha: str | None = None) -> None:
     current_commit = commit_sha or get_git_commit_sha()
     current_snapshot = compute_validation_source_snapshot(REPO_ROOT)
-    print(f"Syncing flagship reports with commit={current_commit}, snapshot={current_snapshot}")
+    print(f"Syncing flagship reports with commit={current_commit}, snapshot={current_snapshot}, version={VERSION}")
 
     targets = [
         REPO_ROOT / 'validation' / 'pseudobulk' / 'REPORT.json',
         REPO_ROOT / 'validation' / 'pseudobulk' / 'INFERENTIAL_STRESS_REPORT.json',
         REPO_ROOT / 'validation' / 'pseudobulk' / 'CERTIFICATION.json',
         REPO_ROOT / 'validation' / 'annotation' / 'REPORT.json',
+        REPO_ROOT / 'validation' / 'annotation' / 'FLAGSHIP_REPORT.json',
         REPO_ROOT / 'validation' / 'annotation' / 'INFERENTIAL_STRESS_REPORT.json',
         REPO_ROOT / 'validation' / 'annotation' / 'CERTIFICATION.json',
         REPO_ROOT / 'validation' / 'spatial' / 'REPORT.json',
+        REPO_ROOT / 'validation' / 'spatial' / 'FLAGSHIP_REPORT.json',
         REPO_ROOT / 'validation' / 'spatial' / 'INFERENTIAL_STRESS_REPORT.json',
         REPO_ROOT / 'validation' / 'spatial' / 'CERTIFICATION.json',
     ]

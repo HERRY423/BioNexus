@@ -7,7 +7,7 @@
     "checksum_sha256": "unavailable"
   },
   "pipeline": {
-    "version": "1.0.0-rc.1",
+    "version": "1.0.0-rc.2",
     "backend_identity": {
       "capability_id": "scrna.annotation_evidence",
       "track": "canonical",
@@ -20,19 +20,19 @@
         "bionexus.annotation_evidence"
       ],
       "entry_points_missing": [],
-      "version": "1.0.0-rc.1",
+      "version": "1.0.0-rc.2",
       "execution_fingerprint": "125b0920875fbcf1",
       "fallback": false,
       "state": "CONFORMANT",
       "action": "RUN PERMITTED (identity)",
       "failure_mode_ids": [],
-      "reason": "declared_backend == observed_backend: 'local deterministic evidence combiner' (distribution 'bionexus', version 1.0.0-rc.1, entry points 1/1 resolved, fallback False)."
+      "reason": "declared_backend == observed_backend: 'local deterministic evidence combiner' (distribution 'bionexus', version 1.0.0-rc.2, entry points 1/1 resolved, fallback False)."
     },
     "provenance": {
       "data_source": "10x Genomics public CITE-seq PBMC datasets / Hao et al. 2021 (doi:10.1016/j.cell.2021.04.048) multimodal PBMC",
       "download_date": "2026-08-21T09:59:31.725580+00:00",
-      "commit_sha": "362fdfde5026b64fffe803cf4a730585e1c1761c",
-      "git_dirty": true,
+      "commit_sha": "f2a24b80b4cb8bb83174cbdae4c1ce5215db1a35",
+      "git_dirty": false,
       "environment_lockfile_hashes": {
         "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
         "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
@@ -42,7 +42,7 @@
         "scripts/run_flagship_validation.py"
       ],
       "command_str": "scripts/run_flagship_validation.py",
-      "generator_version": "1.0.0-rc.1",
+      "generator_version": "1.0.0-rc.2",
       "python_version": "3.13.9",
       "platform": "Windows-11-10.0.26200-SP0",
       "timestamp": "2026-08-21T09:59:31.725580+00:00",
@@ -51,9 +51,9 @@
         "dataset_id": "citeseq_pbmc_sorted",
         "present": false
       },
-      "repository_dirty_at_execution": true,
-      "validation_source_dirty": true,
-      "source_snapshot_sha256": "475b79c36127828806bd2d181a8261600aad568dadaa31891d3885ae6f3c19a0"
+      "repository_dirty_at_execution": false,
+      "validation_source_dirty": false,
+      "source_snapshot_sha256": "1b7f3bc64a75d5643b50612187ba3a623a672686f2fe5213f5654ee314f28874"
     }
   },
   "metrics": [
@@ -77,7 +77,7 @@
     }
   ],
   "limitations": [
-    "Reference dataset 'citeseq_pbmc_sorted' not locally available — requires download from: 10x Genomics public CITE-seq PBMC datasets / Hao et al. 2021 (doi:10.1016/j.cell.2021.04.048) multimodal PBMC",
+    "Reference dataset 'citeseq_pbmc_sorted' not locally available \u2014 requires download from: 10x Genomics public CITE-seq PBMC datasets / Hao et al. 2021 (doi:10.1016/j.cell.2021.04.048) multimodal PBMC",
     "Required files not found: citeseq_pbmc.h5ad",
     "Validation outcome NOT verified in this environment (BNS-EM-009)"
   ],

@@ -9,7 +9,7 @@
     "checksum_sha256": "d3ecbf0e65a40e783c1c80ef4e9c21872cf0d8b8544de48ec5c9f7c32fa24bed"
   },
   "pipeline": {
-    "version": "1.0.0-rc.1",
+    "version": "1.0.0-rc.2",
     "backend_identity": {
       "capability_id": "scrna.annotation_evidence",
       "track": "canonical",
@@ -20,7 +20,7 @@
     "provenance": {
       "data_source": "synthetic_generator (in-silico generated multimodal fixture)",
       "download_date": "2026-08-20T14:28:11.176654+00:00",
-      "commit_sha": "08a37c551f57e1b2e71de548a7dd7e43f6fadff4",
+      "commit_sha": "f2a24b80b4cb8bb83174cbdae4c1ce5215db1a35",
       "git_dirty": false,
       "environment_lockfile_hashes": {
         "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
@@ -31,7 +31,7 @@
         "evals/annotation_stress_test.py"
       ],
       "command_str": "evals/annotation_stress_test.py",
-      "generator_version": "1.0.0-rc.1",
+      "generator_version": "1.0.0-rc.2",
       "python_version": "3.13.9",
       "platform": "Windows-11-10.0.26200-SP0",
       "timestamp": "2026-08-20T14:28:11.303139+00:00",
@@ -42,7 +42,7 @@
       },
       "repository_dirty_at_execution": false,
       "validation_source_dirty": false,
-      "source_snapshot_sha256": "119a24dd559221753fa57014831f36e5ae6c4a7c0da004efbcfbf8c4492e09fd"
+      "source_snapshot_sha256": "1b7f3bc64a75d5643b50612187ba3a623a672686f2fe5213f5654ee314f28874"
     }
   },
   "metrics": [
@@ -85,5 +85,5 @@
     "validation/annotation/INFERENTIAL_STRESS_REPORT.json"
   ],
   "status": "pass",
-  "source_snapshot_sha256": "119a24dd559221753fa57014831f36e5ae6c4a7c0da004efbcfbf8c4492e09fd"
+  "source_snapshot_sha256": "1b7f3bc64a75d5643b50612187ba3a623a672686f2fe5213f5654ee314f28874"
 }

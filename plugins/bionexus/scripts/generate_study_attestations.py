@@ -23,9 +23,7 @@ from __future__ import annotations
 
 import argparse
 import base64
-import hashlib
 import json
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -39,17 +37,11 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519
 
 from bionexus.attestation_authority import (
-    TRUST_ANCHORS,
-    canonical_json_bytes,
-    canonical_json_sha256,
     generate_attestation_bundle,
     generate_rekor_transparency_proof,
     generate_tsa_timestamp_token,
     generate_verification_receipt,
     load_private_key_from_env,
-    verify_attestation_bundle,
-    verify_rekor_transparency_proof,
-    verify_tsa_timestamp_token,
 )
 from bionexus.cryptographic_verifier import compute_file_sha256, compute_merkle_root, verify_study_provenance
 from bionexus.independent_pseudobulk import verify_negative_result_freeze

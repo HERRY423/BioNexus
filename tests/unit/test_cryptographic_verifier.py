@@ -6,7 +6,6 @@ from pathlib import Path
 
 import pytest
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import ed25519
 
 from bionexus.attestation_authority import (
     generate_attestation_bundle,
@@ -17,8 +16,6 @@ from bionexus.attestation_authority import (
     verify_attestation_bundle,
     verify_rekor_transparency_proof,
     verify_tsa_timestamp_token,
-    TRUST_ANCHORS,
-    SIGNING_PUBLIC_KEY_PEM,
 )
 from bionexus.cryptographic_verifier import verify_study_provenance
 from bionexus.independent_pseudobulk import validate_preregistration, verify_negative_result_freeze

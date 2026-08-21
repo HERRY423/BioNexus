@@ -3,7 +3,7 @@
 
 <div align="center">
 
-[![Release](https://img.shields.io/badge/Release-v1.0.0--rc.1-blue.svg?style=flat-square)](https://github.com/HERRY423/BioNexus/releases/tag/v1.0.0-rc.1)
+[![Release](https://img.shields.io/badge/Release-v1.0.0--rc.2-blue.svg?style=flat-square)](https://github.com/HERRY423/BioNexus/releases/tag/v1.0.0-rc.2)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg?style=flat-square)](https://www.python.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-Passing-success.svg?style=flat-square)](https://github.com/HERRY423/BioNexus/actions)

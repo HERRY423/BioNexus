@@ -1,9 +1,17 @@
 """Strict tests for the real Antigravity host acceptance gate."""
 
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+if str(REPO_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT / "src"))
+
 import evals.antigravity_acceptance as antigravity_acceptance
+from bionexus.versions import VERSION
 from evals.antigravity_acceptance import (
     RUN_SCHEMA,
     build_live_report,
@@ -11,8 +19,6 @@ from evals.antigravity_acceptance import (
     validate_live_run,
 )
 from scripts import mcp_host_audit
-
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
 def _receipt(tmp_path, monkeypatch, *, dirty=False):
@@ -27,7 +33,7 @@ def _receipt(tmp_path, monkeypatch, *, dirty=False):
         session_id="ag-session-0001",
         challenge="challenge-0000000001",
         human_approved=True,
-        plugin_version="1.0.0-rc.1",
+        plugin_version=VERSION,
         server_version="2.1.0",
         tool_catalog=[{"name": "bionexus_host_probe"}],
         repo_root=REPO_ROOT,
@@ -65,7 +71,7 @@ def _run(request, event):
         "session_id": "ag-session-0001",
         "receipt_event_hash": event["event_hash"],
         "request_sha256": request["request_sha256"],
-        "plugin_version": "1.0.0-rc.1",
+        "plugin_version": VERSION,
         "records": records,
     }
 

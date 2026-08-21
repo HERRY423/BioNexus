@@ -1,32 +1,15 @@
 from __future__ import annotations
 
-import base64
 import json
 import re
 from pathlib import Path
 from typing import List
 
 import pytest
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import ed25519
 
-from bionexus.attestation_authority import (
-    TRUST_ANCHORS,
-    canonical_json_bytes,
-    canonical_json_sha256,
-    generate_attestation_bundle,
-    generate_ephemeral_signing_key,
-    generate_verification_receipt,
-    verify_attestation_bundle,
-)
 from bionexus.cryptographic_verifier import (
     compute_file_sha256,
-    compute_merkle_root,
     verify_study_provenance,
-)
-from bionexus.independent_pseudobulk import (
-    validate_preregistration,
-    verify_negative_result_freeze,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -86,7 +69,7 @@ def test_zero_private_keys_or_secret_seeds_in_repository():
             if pat.search(content):
                 violations.append(f"Secret / private key pattern '{pat.pattern}' detected in {file_path.relative_to(REPO_ROOT)}")
 
-    assert len(violations) == 0, f"Secret leaks detected in repository:\n" + "\n".join(violations)
+    assert len(violations) == 0, "Secret leaks detected in repository:\n" + "\n".join(violations)
 
 
 # =====================================================================
@@ -184,6 +167,8 @@ def test_study_internal_hash_consistency(study_id: str):
     assert crypto_att.get("trust_root_id") == "bionexus-independent-root-2026"
     assert crypto_att.get("bundle_file") == "ATTESTATION_BUNDLE.json"
     assert crypto_att.get("receipt_file") == "VERIFICATION_RECEIPT.json"
+    assert bundle_path.is_file(), f"Attestation bundle missing: {bundle_path}"
+    assert receipt_path.is_file(), f"Verification receipt missing: {receipt_path}"
 
     # 8. Overall Study Verification Pass
     report = verify_study_provenance(study_dir)

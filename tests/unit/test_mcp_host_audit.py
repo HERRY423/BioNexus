@@ -1,9 +1,17 @@
 """Negative and integrity tests for live-host MCP receipts."""
 
+import sys
 from pathlib import Path
 from types import SimpleNamespace
 
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+if str(REPO_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT / "src"))
+
 import scripts.mcp_host_audit as mcp_host_audit
+from bionexus.versions import VERSION
 from scripts.mcp_host_audit import append_host_probe, find_receipt, verify_audit_log
 
 
@@ -16,7 +24,7 @@ def _append(path: Path, session_id: str = "ag-session-0001"):
         session_id=session_id,
         challenge="challenge-0000000001",
         human_approved=True,
-        plugin_version="1.0.0-rc.1",
+        plugin_version=VERSION,
         server_version="2.1.0",
         tool_catalog=[{"name": "bionexus_host_probe"}],
     )

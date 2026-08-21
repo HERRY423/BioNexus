@@ -8,6 +8,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
+from bionexus.attestation_authority import (
+    verify_attestation_bundle,
+    verify_rekor_transparency_proof,
+    verify_tsa_timestamp_token,
+)
+
 PathLike = Union[str, Path]
 
 
@@ -54,15 +60,6 @@ class ProvenanceVerificationReport:
             'issues': self.issues,
             'is_tamper_evident': self.is_tamper_evident,
         }
-
-
-from bionexus.attestation_authority import (
-    TRUST_ANCHORS,
-    canonical_json_sha256,
-    verify_attestation_bundle,
-    verify_rekor_transparency_proof,
-    verify_tsa_timestamp_token,
-)
 
 
 def verify_study_provenance(study_dir: PathLike) -> ProvenanceVerificationReport:

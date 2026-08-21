@@ -3,7 +3,7 @@
   "capability_id": "scrna.annotation_evidence",
   "certification_level": "VALIDATED",
   "assessment_date": "2026-08-19",
-  "project_version": "1.0.0-rc.1",
+  "project_version": "1.0.0-rc.2",
   "standards": [
     {
       "standard_id": "reference_backend",

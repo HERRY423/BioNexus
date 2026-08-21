@@ -27,6 +27,8 @@ on:
 permissions:
   contents: write
   packages: write
+  id-token: write
+  attestations: write
 
 jobs:
   build-and-release:
@@ -175,6 +177,14 @@ jobs:
           cd dist
           sha256sum * > SHA256SUMS.txt
           cat SHA256SUMS.txt
+
+      - name: Generate GitHub Artifact Attestation (Sigstore Provenance)
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            dist/*.whl
+            dist/*.tar.gz
+            dist/SHA256SUMS.txt
 
       - name: Extract Release Notes from CHANGELOG.md
         id: extract_notes

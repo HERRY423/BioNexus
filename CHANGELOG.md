@@ -11,6 +11,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.0-rc.2] - 2026-08-21
+
+### 🛡️ Added (Cryptographic Provenance & Standalone Transparency Proofs)
+
+- **Standalone Rekor Transparency Proofs (`evidence/rekor_transparency_proof.json`)**: Merkle tree inclusion proof with valid Sigstore root signature, inclusion hashes, log index, and checkpoint verification.
+- **RFC 3161 TSA Timestamp Evidence (`evidence/tsa_timestamp_token.json`)**: Cryptographic timestamp token with Ed25519 signature verification against public trust anchor.
+- **Unified Provenance & Attestation Verifier (`src/bionexus/cryptographic_verifier.py`, `src/bionexus/attestation_authority.py`)**: Strict, fail-closed Merkle root and attestation verification.
+- **Two-Tier Release Distribution Model**: Explicit boundary separating public distribution (wheel, tarball, SHA256SUMS, benchmarks, platform manifests) from internal research evidence, with strict non-leakage invariant for controlled LIMS data and donor-level raw matrices.
+- **GitHub Artifact Attestations (`.github/workflows/release.yml`)**: Added native `actions/attest-build-provenance@v2` Sigstore provenance generation to release workflow.
+
+### 🧹 Fixed (Code Quality & SSOT Synchronization)
+
+- **Ruff Lint & Import Order Hardening**: Resolved unused imports, missing newlines, and E402 script import order issues across tests, scripts, and source modules.
+- **SSOT Version Propagation**: Synchronized all manifests, review schemas, and flagship validation artifacts to version `1.0.0-rc.2`.
+
+---
+
 ## [1.0.0-rc.1] - 2026-08-20
 
 ### 🛡️ Added (Data Governance & Data Egress Contract — BNS-SEC-001..010)

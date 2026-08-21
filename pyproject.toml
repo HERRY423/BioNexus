@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bionexus-reliability"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 description = "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents (Warrant-First Evidence Assessment, Fail-Closed Invariants, Evidence-Capped Claims, Zero Silent Substitution)."
 authors = [{ name = "BioNexus Team" }]
 license = { text = "Apache-2.0" }
@@ -142,14 +142,8 @@ ignore = ["E501"]
 "plugins/**/_common.py" = ["E402"]
 "plugins/**/scripts/*.py" = ["E402"]
 "plugins/**/scripts/**/*.py" = ["E402"]
-"scripts/doctor.py" = ["E402"]
-"scripts/goldchain_smoke.py" = ["E402"]
-"scripts/run_flagship_validation.py" = ["E402"]
-"scripts/sync_version.py" = ["E402"]
-"plugins/**/doctor.py" = ["E402"]
-"plugins/**/goldchain_smoke.py" = ["E402"]
-"scripts/generate_sbom.py" = ["E402"]
-"plugins/**/generate_sbom.py" = ["E402"]
+"scripts/*.py" = ["E402"]
+"scripts/**/*.py" = ["E402"]
 "tests/**/*.py" = ["E402"]
 "evals/**/*.py" = ["E402"]
 
