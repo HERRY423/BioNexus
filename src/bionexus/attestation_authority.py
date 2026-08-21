@@ -20,19 +20,19 @@ PathLike = Union[str, Path]
 
 TRUST_ANCHOR_AUTHORITY_PUBKEY_PEM = (
     "-----BEGIN PUBLIC KEY-----\n"
-    "MCowBQYDK2VwAyEAQssUX4cQQ2D19/Gg1XCucj06sqqd04D4NbjgXWI8ubE=\n"
+    "MCowBQYDK2VwAyEAYczzcqY4HCCdTfYrD3ua98ltI7sx3fD3Nig5JoYaVFY=\n"
     "-----END PUBLIC KEY-----\n"
 )
 
 TRUST_ANCHOR_REKOR_PUBKEY_PEM = (
     "-----BEGIN PUBLIC KEY-----\n"
-    "MCowBQYDK2VwAyEA6U9f4H/02oWFjHKchV8txGRIdQwwJ0FfRaDG9NMpfYo=\n"
+    "MCowBQYDK2VwAyEAmBhoiqYyZIpoCGH6Km1lUesgvsMd6MIGa+Daz8LBGHA=\n"
     "-----END PUBLIC KEY-----\n"
 )
 
 TRUST_ANCHOR_TSA_PUBKEY_PEM = (
     "-----BEGIN PUBLIC KEY-----\n"
-    "MCowBQYDK2VwAyEAPa7i9Hx051tyozOq/yv1ji8syuTz7QzPbaJOk71CHPo=\n"
+    "MCowBQYDK2VwAyEAKyoNikf/NumpvJA2Mdi38ELXkNKzcyeRLwAf10ZqQeg=\n"
     "-----END PUBLIC KEY-----\n"
 )
 
@@ -78,7 +78,7 @@ def load_private_key_from_env(env_var_name: str) -> Optional[ed25519.Ed25519Priv
         return None
 
     try:
-        if "-----BEGIN PRIVATE KEY-----" in raw_val:
+        if "BEGIN " in raw_val and "PRIVATE KEY" in raw_val:
             key = serialization.load_pem_private_key(raw_val.encode("ascii"), password=None)
             if isinstance(key, ed25519.Ed25519PrivateKey):
                 return key

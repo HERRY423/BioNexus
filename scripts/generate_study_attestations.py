@@ -2,9 +2,15 @@
 """
 Generate official Ed25519 In-toto DSSE attestation bundles and verification receipts
 for independent validation studies using external trust root credentials.
+
+Credentials must be supplied exclusively via environment variables:
+- BIONEXUS_SIGNING_PRIVATE_KEY_PEM
+- BIONEXUS_REKOR_PRIVATE_KEY_PEM
+- BIONEXUS_TSA_PRIVATE_KEY_PEM
 """
 from __future__ import annotations
 
+import argparse
 import base64
 import hashlib
 import json
@@ -25,6 +31,7 @@ from bionexus.attestation_authority import (
     canonical_json_bytes,
     generate_attestation_bundle,
     generate_verification_receipt,
+    load_private_key_from_env,
     verify_attestation_bundle,
     TRUST_ANCHORS,
 )
@@ -40,7 +47,13 @@ def get_git_commit_sha() -> str:
         return 'UNKNOWN_COMMIT'
 
 
-def sign_and_lock_study(study_dir: Path, auth_key: ed25519.Ed25519PrivateKey, rekor_key: ed25519.Ed25519PrivateKey, tsa_key: ed25519.Ed25519PrivateKey) -> None:
+def sign_and_lock_study(
+    study_dir: Path,
+    auth_key: ed25519.Ed25519PrivateKey,
+    rekor_key: ed25519.Ed25519PrivateKey,
+    tsa_key: ed25519.Ed25519PrivateKey,
+    timestamp_iso: str = "2026-08-21T09:43:37.893454+00:00",
+) -> None:
     study_id = study_dir.name
     print(f"Processing study {study_id} in {study_dir}...")
 
@@ -102,7 +115,7 @@ def sign_and_lock_study(study_dir: Path, auth_key: ed25519.Ed25519PrivateKey, re
         private_key=auth_key,
         rekor_private_key=rekor_key,
         tsa_private_key=tsa_key,
-        timestamp_iso="2026-08-21T09:43:37.893454+00:00",
+        timestamp_iso=timestamp_iso,
     )
     bundle_path = study_dir / 'ATTESTATION_BUNDLE.json'
     bundle_path.write_text(json.dumps(bundle, indent=2) + '\n', encoding='utf-8')
@@ -130,9 +143,43 @@ def sign_and_lock_study(study_dir: Path, auth_key: ed25519.Ed25519PrivateKey, re
 
 
 def main() -> int:
-    auth_key = ed25519.Ed25519PrivateKey.from_private_bytes(hashlib.sha256(b'BioNexus-Authority-Root-2026-Secret-Material-External').digest())
-    rekor_key = ed25519.Ed25519PrivateKey.from_private_bytes(hashlib.sha256(b'BioNexus-Rekor-Log-Root-2026-Secret-Material-External').digest())
-    tsa_key = ed25519.Ed25519PrivateKey.from_private_bytes(hashlib.sha256(b'BioNexus-TSA-Authority-Root-2026-Secret-Material-External').digest())
+    parser = argparse.ArgumentParser(description="Generate and lock cryptographic study attestations")
+    parser.add_argument("--signing-key", help="Authority private key PEM or base64 (or BIONEXUS_SIGNING_PRIVATE_KEY_PEM env)")
+    parser.add_argument("--rekor-key", help="Rekor private key PEM or base64 (or BIONEXUS_REKOR_PRIVATE_KEY_PEM env)")
+    parser.add_argument("--tsa-key", help="TSA private key PEM or base64 (or BIONEXUS_TSA_PRIVATE_KEY_PEM env)")
+    args = parser.parse_args()
+
+    auth_key = None
+    if args.signing_key:
+        auth_key = load_private_key_from_env("DUMMY_KEY_NOT_USED") or (
+            serialization.load_pem_private_key(args.signing_key.encode('ascii'), None) if "-----BEGIN" in args.signing_key else ed25519.Ed25519PrivateKey.from_private_bytes(base64.b64decode(args.signing_key))
+        )
+    else:
+        auth_key = load_private_key_from_env("BIONEXUS_SIGNING_PRIVATE_KEY_PEM")
+
+    rekor_key = None
+    if args.rekor_key:
+        rekor_key = (
+            serialization.load_pem_private_key(args.rekor_key.encode('ascii'), None) if "-----BEGIN" in args.rekor_key else ed25519.Ed25519PrivateKey.from_private_bytes(base64.b64decode(args.rekor_key))
+        )
+    else:
+        rekor_key = load_private_key_from_env("BIONEXUS_REKOR_PRIVATE_KEY_PEM")
+
+    tsa_key = None
+    if args.tsa_key:
+        tsa_key = (
+            serialization.load_pem_private_key(args.tsa_key.encode('ascii'), None) if "-----BEGIN" in args.tsa_key else ed25519.Ed25519PrivateKey.from_private_bytes(base64.b64decode(args.tsa_key))
+        )
+    else:
+        tsa_key = load_private_key_from_env("BIONEXUS_TSA_PRIVATE_KEY_PEM")
+
+    if auth_key is None or rekor_key is None or tsa_key is None:
+        print(
+            "ERROR: Missing external trust root signing keys. "
+            "Set BIONEXUS_SIGNING_PRIVATE_KEY_PEM, BIONEXUS_REKOR_PRIVATE_KEY_PEM, and BIONEXUS_TSA_PRIVATE_KEY_PEM, "
+            "or provide --signing-key, --rekor-key, and --tsa-key arguments."
+        )
+        return 1
 
     sign_and_lock_study(REPO_ROOT / 'validation' / 'pseudobulk' / 'studies' / 'BN-PB-IV-004', auth_key, rekor_key, tsa_key)
     sign_and_lock_study(REPO_ROOT / 'validation' / 'pseudobulk' / 'studies' / 'BN-PB-IV-005', auth_key, rekor_key, tsa_key)
