@@ -20,7 +20,7 @@
     "provenance": {
       "data_source": "synthetic_generator (in-silico generated multimodal fixture)",
       "download_date": "2026-08-20T14:28:11.176654+00:00",
-      "commit_sha": "89cdf239658e029625d48b95dc5c71ea61a339e3",
+      "commit_sha": "427063516b42e797742181202ccf4624ff3805b5",
       "git_dirty": false,
       "environment_lockfile_hashes": {
         "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
