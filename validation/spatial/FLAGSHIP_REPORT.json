@@ -31,7 +31,7 @@
     "provenance": {
       "data_source": "10x Genomics Xenium public datasets (e.g. Human Breast FFPE) / Vizgen MERSCOPE public releases (Moffitt et al. 2016-style MERFISH)",
       "download_date": "2026-08-21T09:59:35.160183+00:00",
-      "commit_sha": "427063516b42e797742181202ccf4624ff3805b5",
+      "commit_sha": "572c7e7c6fba30ec397fbea7a560c5034dc2faa9",
       "git_dirty": false,
       "environment_lockfile_hashes": {
         "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
@@ -53,7 +53,7 @@
       },
       "repository_dirty_at_execution": false,
       "validation_source_dirty": false,
-      "source_snapshot_sha256": "a320740271433049b4de6aea743cdd8f93445ee53414b1a0ced6cd6144b029e5"
+      "source_snapshot_sha256": "b4919ee5b8d0b7c8e602d6cc550f6e650234ed979b61f3ceb5f2c92609653410"
     }
   },
   "metrics": [
@@ -83,8 +83,8 @@
   ],
   "timestamp": "2026-08-21T09:59:35.251651+00:00",
   "evidence_files": [
-    "validation\\spatial\\evidence\\.gitkeep",
-    "validation\\spatial\\evidence\\spatial_synthetic_technical_acceptance.h5ad"
+    "validation/spatial/evidence/.gitkeep",
+    "validation/spatial/evidence/spatial_synthetic_technical_acceptance.h5ad"
   ],
   "status": "skipped"
 }

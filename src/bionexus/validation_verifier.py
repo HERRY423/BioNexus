@@ -54,13 +54,31 @@ _VALIDATION_SOURCE_FILES = (
 _SOURCE_IGNORED_PARTS = {"__pycache__", ".pytest_cache", ".ruff_cache"}
 
 
+_SNAPSHOT_TEXT_EXTS = {".py", ".json", ".yaml", ".yml", ".md", ".txt", ".csv", ".toml", ".cfg", ".ini", ".rst"}
+
+
+def _git_read_file(root: Path, rel_posix: str) -> Optional[bytes]:
+    """Read file content from git HEAD object store (canonical LF, platform-independent)."""
+    try:
+        r = subprocess.run(
+            ["git", "show", f"HEAD:{rel_posix}"],
+            cwd=root,
+            capture_output=True,
+            timeout=30,
+        )
+        if r.returncode == 0:
+            return r.stdout
+    except Exception:
+        pass
+    return None
+
+
 def compute_validation_source_snapshot(repo_root: Union[Path, str]) -> str:
     """Hash validation-relevant source content without self-referential reports.
 
-    A tracked REPORT.json cannot contain the SHA of the Git commit that contains
-    that same REPORT.json. This stable content snapshot binds evidence to the
-    scientific implementations and stress harnesses while data inputs retain
-    their independent runtime SHA-256 checks.
+    Reads canonical content from the git object store (always LF) to produce
+    identical hashes on Windows, Linux, and macOS regardless of working-tree
+    line-ending configuration.
     """
     root = Path(repo_root)
     paths = _validation_source_paths(root)
@@ -70,7 +88,15 @@ def compute_validation_source_snapshot(repo_root: Union[Path, str]) -> str:
         rel = path.relative_to(root).as_posix()
         digest.update(rel.encode("utf-8"))
         digest.update(b"\0")
-        raw = path.read_bytes().replace(b"\r\n", b"\n") if path.suffix.lower() in {".py", ".json", ".yaml", ".yml", ".md", ".txt", ".csv"} else path.read_bytes()
+        # Try reading from git object store first (canonical, cross-platform)
+        raw = _git_read_file(root, rel)
+        if raw is None:
+            # Fallback: read from disk with text normalization
+            raw = path.read_bytes()
+            if path.suffix.lower() in _SNAPSHOT_TEXT_EXTS:
+                raw = raw.replace(b"\r\n", b"\n")
+        elif path.suffix.lower() in _SNAPSHOT_TEXT_EXTS:
+            raw = raw.replace(b"\r\n", b"\n")
         digest.update(hashlib.sha256(raw).digest())
         digest.update(b"\n")
     return digest.hexdigest()
@@ -453,8 +479,8 @@ def verify_validation_artifacts(
         # Check all evidence_files exist, are within repository, and not missing
         evidence_files = report_data.get("evidence_files", [])
         for ef in evidence_files:
-            ef_clean = ef.replace("\\", "/")
-            ef_path = root / Path(ef)
+            ef_clean = ef.replace("\\", "/")  # normalize to posix for display
+            ef_path = root / Path(*ef_clean.split("/"))  # cross-platform path resolution
             if not ef_path.is_file():
                 errors.append(f"{cap_id} REPORT.json evidence_files references missing file: '{ef_clean}'")
             else:

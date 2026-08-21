@@ -256,11 +256,12 @@ def test_committed_independent_report_retains_failed_endpoints_and_hashes():
 
     for artifact in provenance["output_files"]:
         p_str = artifact["path"]
+        fname = Path(p_str.replace("\\", "/")).name
         path = Path(p_str)
         if not path.is_file():
-            path = root / Path(p_str).name
+            path = root / fname
             if not path.is_file():
-                path = root / "evidence" / Path(p_str).name
+                path = root / "evidence" / fname
         assert path.is_file()
         assert hashlib.sha256(path.read_bytes()).hexdigest() == artifact["sha256"]
 

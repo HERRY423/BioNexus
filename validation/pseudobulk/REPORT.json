@@ -41,7 +41,7 @@
     "provenance": {
       "data_source": "GEO GSE96583; Kang et al. 2018 doi:10.1038/nbt.4042",
       "download_date": "2026-08-19T00:00:00+00:00",
-      "commit_sha": "427063516b42e797742181202ccf4624ff3805b5",
+      "commit_sha": "572c7e7c6fba30ec397fbea7a560c5034dc2faa9",
       "git_dirty": false,
       "environment_lockfile_hashes": {
         "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
@@ -63,7 +63,7 @@
       },
       "repository_dirty_at_execution": false,
       "validation_source_dirty": false,
-      "source_snapshot_sha256": "a320740271433049b4de6aea743cdd8f93445ee53414b1a0ced6cd6144b029e5"
+      "source_snapshot_sha256": "b4919ee5b8d0b7c8e602d6cc550f6e650234ed979b61f3ceb5f2c92609653410"
     }
   },
   "metrics": [
@@ -92,10 +92,10 @@
   ],
   "timestamp": "2026-08-21T09:59:28.366389+00:00",
   "evidence_files": [
-    "validation\\pseudobulk\\evidence\\.gitkeep",
-    "validation\\pseudobulk\\evidence\\bionexus_pseudobulk_full_de.csv",
-    "validation\\pseudobulk\\evidence\\bionexus_pseudobulk_top100.csv"
+    "validation/pseudobulk/evidence/.gitkeep",
+    "validation/pseudobulk/evidence/bionexus_pseudobulk_full_de.csv",
+    "validation/pseudobulk/evidence/bionexus_pseudobulk_top100.csv"
   ],
   "status": "pass",
-  "source_snapshot_sha256": "a320740271433049b4de6aea743cdd8f93445ee53414b1a0ced6cd6144b029e5"
+  "source_snapshot_sha256": "b4919ee5b8d0b7c8e602d6cc550f6e650234ed979b61f3ceb5f2c92609653410"
 }
