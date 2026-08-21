@@ -11,8 +11,12 @@ from cryptography.hazmat.primitives.asymmetric import ed25519
 from bionexus.attestation_authority import (
     generate_attestation_bundle,
     generate_ephemeral_signing_key,
+    generate_rekor_transparency_proof,
+    generate_tsa_timestamp_token,
     generate_verification_receipt,
     verify_attestation_bundle,
+    verify_rekor_transparency_proof,
+    verify_tsa_timestamp_token,
     TRUST_ANCHORS,
     SIGNING_PUBLIC_KEY_PEM,
 )
@@ -350,3 +354,73 @@ def test_bn_pb_iv_005_negative_result_freeze_and_provenance():
 
     freeze_issues = verify_negative_result_freeze(study_dir / 'NEGATIVE_RESULT_FREEZE.json')
     assert len(freeze_issues) == 0
+
+
+def test_rekor_transparency_proof_standalone_positive(test_keys):
+    dsse_env = {'payload': 'dGVzdA==', 'payloadType': 'application/vnd.in-toto+json'}
+    proof = generate_rekor_transparency_proof(
+        study_id='BN-PB-IV-004',
+        dsse_envelope=dsse_env,
+        rekor_private_key=test_keys['rekor'],
+        log_index=4829104,
+    )
+    valid, errors = verify_rekor_transparency_proof(
+        proof=proof,
+        dsse_envelope=dsse_env,
+        rekor_public_key_pem=test_keys['rekor_pem'],
+    )
+    assert valid is True
+    assert len(errors) == 0
+
+
+def test_rekor_transparency_proof_standalone_tampered_rejected(test_keys):
+    dsse_env = {'payload': 'dGVzdA==', 'payloadType': 'application/vnd.in-toto+json'}
+    proof = generate_rekor_transparency_proof(
+        study_id='BN-PB-IV-004',
+        dsse_envelope=dsse_env,
+        rekor_private_key=test_keys['rekor'],
+        log_index=4829104,
+    )
+    # Tamper logIndex
+    proof['log_index'] = 9999999
+    valid, errors = verify_rekor_transparency_proof(
+        proof=proof,
+        dsse_envelope=dsse_env,
+        rekor_public_key_pem=test_keys['rekor_pem'],
+    )
+    assert valid is False
+    assert any('Invalid Rekor SET signature' in e for e in errors)
+
+
+def test_tsa_timestamp_token_standalone_positive(test_keys):
+    raw_sig = b"test_signature_bytes_12345678901234567890"
+    token = generate_tsa_timestamp_token(
+        study_id='BN-PB-IV-004',
+        raw_signature=raw_sig,
+        tsa_private_key=test_keys['tsa'],
+    )
+    valid, errors = verify_tsa_timestamp_token(
+        token=token,
+        raw_signature=raw_sig,
+        tsa_public_key_pem=test_keys['tsa_pem'],
+    )
+    assert valid is True
+    assert len(errors) == 0
+
+
+def test_tsa_timestamp_token_standalone_tampered_rejected(test_keys):
+    raw_sig = b"test_signature_bytes_12345678901234567890"
+    token = generate_tsa_timestamp_token(
+        study_id='BN-PB-IV-004',
+        raw_signature=raw_sig,
+        tsa_private_key=test_keys['tsa'],
+    )
+    # Tamper timestamp
+    token['timestamp'] = "2030-01-01T00:00:00+00:00"
+    valid, errors = verify_tsa_timestamp_token(
+        token=token,
+        raw_signature=raw_sig,
+        tsa_public_key_pem=test_keys['tsa_pem'],
+    )
+    assert valid is False
+    assert any('Invalid TSA signature' in e for e in errors)

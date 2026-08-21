@@ -94,7 +94,7 @@
   "execution_provenance": {
     "data_source": "unknown",
     "download_date": "2026-08-21T09:21:41.116504+00:00",
-    "commit_sha": "8fbf4c49738241507ee9214765cdd086658d43f4",
+    "commit_sha": "6a000b51b333736b010200a5dea4f0f39cdd910d",
     "git_dirty": false,
     "environment_lockfile_hashes": {
       "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
@@ -124,6 +124,8 @@
   "cryptographic_attestation": {
     "bundle_file": "ATTESTATION_BUNDLE.json",
     "receipt_file": "VERIFICATION_RECEIPT.json",
+    "rekor_proof_file": "evidence/rekor_transparency_proof.json",
+    "tsa_token_file": "evidence/tsa_timestamp_token.json",
     "trust_root_id": "bionexus-independent-root-2026",
     "rekor_transparency_log": "bionexus-rekor-transparency-log-2026",
     "rekor_log_index": 4829104,

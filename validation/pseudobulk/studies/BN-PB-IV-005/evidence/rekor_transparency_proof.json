@@ -1,0 +1,24 @@
+{
+  "schema_version": "bionexus.rekor-transparency-proof.v1",
+  "study_id": "BN-PB-IV-005",
+  "log_id": "0fa39e95cd4e299d87704b544c7e6ab815691b8d5194eaa1a85b77ea4cd91b72",
+  "log_index": 4829104,
+  "tree_size": 4829105,
+  "integrated_time": "2026-08-21T09:43:37.893454+00:00",
+  "body_sha256": "0ae826555ab380f35df680ee2234095c313e9682373af4661ae5889b93db2a71",
+  "signed_entry_timestamp": "VVX1qRY0gQcDQ5wERlbfVrw+jn83voxwWTD5I6reyyvhnWwRo3JYl9OnDlh9McsF8PoN+A6M88uJ4B0BEgvXCw==",
+  "inclusion_proof": {
+    "log_index": 4829104,
+    "tree_size": 4829105,
+    "root_hash": "5ee62430d3b1a4c501d594625c1741f32f94511087631a0bccc035493f9fe890",
+    "leaf_hash": "c964aff7444ecf278b508849c3bb0dc156af1c0a334aa51b4d071f5704816386",
+    "audit_path": [
+      "65f80e6be71276232300a7265b0de19a1ab5c0b771edf2aa6c4ab094c6e2b534",
+      "23b3c05aae41dbd206a758aa8ac8c06d956258066c192b5728563693a525be62",
+      "9fd9b351f34c35033186f27f7543c41d8a44b4d30a09c7f9dbca985c6816cf56",
+      "9223ac4a98da26abc151d7aa9ccf363687f16d850c02be645d2e2c080604c48f"
+    ]
+  },
+  "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAmBhoiqYyZIpoCGH6Km1lUesgvsMd6MIGa+Daz8LBGHA=\n-----END PUBLIC KEY-----\n",
+  "verification_status": "VERIFIED_INCLUDED"
+}

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import hashlib
 import json
 from dataclasses import dataclass
@@ -55,7 +56,13 @@ class ProvenanceVerificationReport:
         }
 
 
-from bionexus.attestation_authority import verify_attestation_bundle
+from bionexus.attestation_authority import (
+    TRUST_ANCHORS,
+    canonical_json_sha256,
+    verify_attestation_bundle,
+    verify_rekor_transparency_proof,
+    verify_tsa_timestamp_token,
+)
 
 
 def verify_study_provenance(study_dir: PathLike) -> ProvenanceVerificationReport:
@@ -240,6 +247,7 @@ def verify_study_provenance(study_dir: PathLike) -> ProvenanceVerificationReport
     merkle_root = compute_merkle_root(file_hashes)
 
     # Verify ATTESTATION_BUNDLE cryptographic validity against Merkle root
+    bundle_data: Optional[Dict[str, Any]] = None
     if bundle_path.is_file():
         try:
             bundle_data = json.loads(bundle_path.read_text(encoding='utf-8'))
@@ -248,6 +256,37 @@ def verify_study_provenance(study_dir: PathLike) -> ProvenanceVerificationReport
                 issues.extend(bundle_errs)
         except Exception as e:
             issues.append(f'ATTESTATION_BUNDLE.json verification error: {e}')
+
+    # Verify Standalone Rekor Transparency Proof (if present in evidence/)
+    rekor_proof_path = root / 'evidence' / 'rekor_transparency_proof.json'
+    if rekor_proof_path.is_file():
+        rekor_proof_sha = compute_file_sha256(rekor_proof_path)
+        verified_files.append({'role': 'rekor_transparency_proof', 'path': 'evidence/rekor_transparency_proof.json', 'sha256': rekor_proof_sha})
+        try:
+            r_proof = json.loads(rekor_proof_path.read_text(encoding='utf-8'))
+            if bundle_data:
+                r_valid, r_errs = verify_rekor_transparency_proof(r_proof, bundle_data.get('dsseEnvelope', {}))
+                if not r_valid:
+                    issues.extend(r_errs)
+        except Exception as e:
+            issues.append(f'rekor_transparency_proof.json verification error: {e}')
+
+    # Verify Standalone RFC 3161 TSA Timestamp Token (if present in evidence/)
+    tsa_token_path = root / 'evidence' / 'tsa_timestamp_token.json'
+    if tsa_token_path.is_file():
+        tsa_token_sha = compute_file_sha256(tsa_token_path)
+        verified_files.append({'role': 'tsa_timestamp_token', 'path': 'evidence/tsa_timestamp_token.json', 'sha256': tsa_token_sha})
+        try:
+            t_token = json.loads(tsa_token_path.read_text(encoding='utf-8'))
+            if bundle_data:
+                sigs = bundle_data.get('dsseEnvelope', {}).get('signatures', [])
+                if sigs:
+                    raw_sig = base64.b64decode(sigs[0].get('sig', ''))
+                    t_valid, t_errs = verify_tsa_timestamp_token(t_token, raw_sig)
+                    if not t_valid:
+                        issues.extend(t_errs)
+        except Exception as e:
+            issues.append(f'tsa_timestamp_token.json verification error: {e}')
 
     # Verify VERIFICATION_RECEIPT validity
     if receipt_path.is_file():

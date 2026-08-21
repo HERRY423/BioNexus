@@ -14,7 +14,7 @@
         },
         "integratedTime": "2026-08-21T09:43:37.893454+00:00",
         "inclusionPromise": {
-          "signedEntryTimestamp": "4HrSz9FFxNIVabBYuf1qLxCgPAsqENFA20s3H77ta4wXy9WndVJQkwCQH6nfuLkngBr3PM4wPZ29UohkirUQCg=="
+          "signedEntryTimestamp": "07pbVUgFmYxdAGPvStIhfloMGynqx1WDcYMCaDTTYhsMm6dU0o5XQoyJYnHAYJy+CYmqJznJDkCvNcYy0RplDg=="
         }
       }
     ],
@@ -24,18 +24,18 @@
       "keyId": "e30982dacfe44adbc0f2b6bd3319034a3dea849b7fa5a11d5e0f72ceed8d8109",
       "imprint": {
         "hashAlgorithm": "SHA-256",
-        "digest": "9fd8ca5dff394648816a43c132a9433f892ed4274f5dc591e2f2cce5621550ea"
+        "digest": "a3d7e217c8523ba5ec4923fde5ec508dc94fddfdfb3ce0e6a7a8fb9e5df24550"
       },
-      "tsaSignature": "WEEJRD07UbLA0v2LzXRU2vcqTUe/eFH5Yuwu7kNGzruu+SlKFJ9+RNQsxoT4UM7W3miA9WE3p6UXr00pthtGDQ=="
+      "tsaSignature": "Lju9cuHbANVItj9B7EwNY0u4IhBSONSDGX8A0Vg//Z+cMuVUMNvd8vE9r1oDX8uVdvmiT1qjo1eVUtm5ImDoCw=="
     }
   },
   "dsseEnvelope": {
-    "payload": "eyJfdHlwZSI6Imh0dHBzOi8vaW4tdG90by5pby9TdGF0ZW1lbnQvdjEiLCJwcmVkaWNhdGUiOnsiYnVpbGRlciI6eyJpZCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9IRVJSWTQyMy9CaW9OZXh1cy9hY3Rpb25zL3dvcmtmbG93cy9wcm92ZW5hbmNlLnltbCIsInZlcnNpb24iOiJCaW9OZXh1c192MS4wIn0sIm1lcmtsZV9yb290IjoiMmFhN2U2YmE5ZmVhODUxMjQ5M2EwNTg0MmM3MWVkMTNiNjcwZTM1NTFkODg2MmNhYTRlYWZmZDZlNDNmZjA1ZiIsInJlcHJvZHVjaWJpbGl0eV9wb2xpY3kiOiJGYWlsLUNsb3NlZCBQcmVyZWdpc3RyYXRpb24gYW5kIENyeXB0b2dyYXBoaWMgTG9jayIsInN0dWR5X2lkIjoiQk4tUEItSVYtMDA0IiwidGltZXN0YW1wIjoiMjAyNi0wOC0yMVQwOTo0MzozNy44OTM0NTQrMDA6MDAifSwicHJlZGljYXRlVHlwZSI6Imh0dHBzOi8vYmlvbmV4dXMub3JnL2F0dGVzdGF0aW9uL3JlcHJvZHVjaWJpbGl0eS92MSIsInN1YmplY3QiOlt7ImRpZ2VzdCI6eyJzaGEyNTYiOiIyYWE3ZTZiYTlmZWE4NTEyNDkzYTA1ODQyYzcxZWQxM2I2NzBlMzU1MWQ4ODYyY2FhNGVhZmZkNmU0M2ZmMDVmIn0sIm5hbWUiOiJiaW9uZXh1czovL3N0dWR5L0JOLVBCLUlWLTAwNC9tZXJrbGVfcm9vdCJ9LHsiZGlnZXN0Ijp7InNoYTI1NiI6IjgxZjVkODUzYTUyM2Y2M2MzMjYyYjgzZjYxY2NlNDU4ZjU0NzFlYzMxYzc0ZmYzOTY2NGM5ZmViY2E5NTVmZDcifSwibmFtZSI6ImJpb25leHVzOi8vc3R1ZHkvQk4tUEItSVYtMDA0L1JFUE9SVC5qc29uIn1dfQ==",
+    "payload": "eyJfdHlwZSI6Imh0dHBzOi8vaW4tdG90by5pby9TdGF0ZW1lbnQvdjEiLCJwcmVkaWNhdGUiOnsiYnVpbGRlciI6eyJpZCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9IRVJSWTQyMy9CaW9OZXh1cy9hY3Rpb25zL3dvcmtmbG93cy9wcm92ZW5hbmNlLnltbCIsInZlcnNpb24iOiJCaW9OZXh1c192MS4wIn0sIm1lcmtsZV9yb290IjoiNGZmMDhhNWM0MDYwMjYwZTFlYzhkNTJkNTA3Y2E1MjBlZGVhZWRiOWI0ZGEyOTVmZDZhMWQzYjg3OTRjYjdkMyIsInJlcHJvZHVjaWJpbGl0eV9wb2xpY3kiOiJGYWlsLUNsb3NlZCBQcmVyZWdpc3RyYXRpb24gYW5kIENyeXB0b2dyYXBoaWMgTG9jayIsInN0dWR5X2lkIjoiQk4tUEItSVYtMDA0IiwidGltZXN0YW1wIjoiMjAyNi0wOC0yMVQwOTo0MzozNy44OTM0NTQrMDA6MDAifSwicHJlZGljYXRlVHlwZSI6Imh0dHBzOi8vYmlvbmV4dXMub3JnL2F0dGVzdGF0aW9uL3JlcHJvZHVjaWJpbGl0eS92MSIsInN1YmplY3QiOlt7ImRpZ2VzdCI6eyJzaGEyNTYiOiI0ZmYwOGE1YzQwNjAyNjBlMWVjOGQ1MmQ1MDdjYTUyMGVkZWFlZGI5YjRkYTI5NWZkNmExZDNiODc5NGNiN2QzIn0sIm5hbWUiOiJiaW9uZXh1czovL3N0dWR5L0JOLVBCLUlWLTAwNC9tZXJrbGVfcm9vdCJ9LHsiZGlnZXN0Ijp7InNoYTI1NiI6IjgxZjVkODUzYTUyM2Y2M2MzMjYyYjgzZjYxY2NlNDU4ZjU0NzFlYzMxYzc0ZmYzOTY2NGM5ZmViY2E5NTVmZDcifSwibmFtZSI6ImJpb25leHVzOi8vc3R1ZHkvQk4tUEItSVYtMDA0L1JFUE9SVC5qc29uIn1dfQ==",
     "payloadType": "application/vnd.in-toto+json",
     "signatures": [
       {
         "keyid": "bionexus-independent-root-2026",
-        "sig": "oRck7+yv6niYIBGIwB4JvNvYRLQgspS3xbzgWSMf3B0llJ+nMJV7kjKqO13k7v292xLPnpe8E8vQPTqeHr34AA=="
+        "sig": "GKYQVpDqO584IVC8SqTXBF8Il7jlLECOCnNOkdufaPVcTtEbj5W+jnNTVvLiCgApudkjz6Hi1TDuFLrvoN3BAA=="
       }
     ]
   }
