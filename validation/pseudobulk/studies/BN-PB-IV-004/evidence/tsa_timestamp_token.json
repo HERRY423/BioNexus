@@ -1,7 +1,7 @@
 {
   "schema_version": "bionexus.rfc3161-tsa-token.v1",
   "study_id": "BN-PB-IV-004",
-  "authority": "RFC3161 Compatible Independent Timestamp Authority",
+  "authority": "Legacy Local Timestamp Fixture",
   "key_id": "e30982dacfe44adbc0f2b6bd3319034a3dea849b7fa5a11d5e0f72ceed8d8109",
   "policy_oid": "1.3.6.1.4.1.58499.1.1.2026",
   "timestamp": "2026-08-21T09:43:37.893454+00:00",
@@ -9,5 +9,5 @@
   "imprint_digest": "c26629f2bc6891644eb539e82031ed7de3d5c6c80dfade4aa8b31470a4e934d0",
   "tsa_signature": "2ExsdlEdnmAoajtxf8RAVb4ebZJJP8hEhqRbKB/kf3A08PuW7eXxIF0NKEMAiSr6SRgRC1mXS7SBJRW0MDyQAA==",
   "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAKyoNikf/NumpvJA2Mdi38ELXkNKzcyeRLwAf10ZqQeg=\n-----END PUBLIC KEY-----\n",
-  "verification_status": "VERIFIED_TIMESTAMP"
+  "verification_status": "UNTRUSTED_LOCAL_FIXTURE"
 }

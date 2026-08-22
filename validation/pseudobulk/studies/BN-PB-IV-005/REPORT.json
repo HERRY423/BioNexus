@@ -106,9 +106,10 @@
   ],
   "biostatistician_review": {
     "attestation_path": "validation/pseudobulk/studies/BN-PB-IV-005/INDEPENDENT_BIOSTATISTICIAN_ATTESTATION.json",
-    "status": "SIGNED_COMPLETE",
+    "status": "WITHDRAWN_UNVERIFIABLE",
     "decision": "NEGATIVE_RESULT",
-    "sha256": "a66570cc802f9fe7b43a0fa24d554041062d05cda34e4e3abad8b7ee89fc2503"
+    "sha256": null,
+    "trust_decision": "NOT_ASSESSED"
   },
   "evidence_files": [
     "validation/pseudobulk/studies/BN-PB-IV-005/evidence/c05_donor_effects.csv",

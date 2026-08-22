@@ -49,7 +49,7 @@ def test_official_fastmcp_server_sdk(monkeypatch):
     assert server is not None
     assert server.name == "bionexus-local-mcp"
     tools = server._tool_manager.list_tools()
-    assert len(tools) == 10
+    assert len(tools) == 11
     tool_names = {t.name for t in tools}
     assert "search_uniprot" in tool_names
     assert "search_ensembl" in tool_names
@@ -68,10 +68,11 @@ def test_official_fastmcp_server_sdk(monkeypatch):
     monkeypatch.setenv("BIONEXUS_LOCAL_HOSTED_FALLBACKS", "1")
     server_with_fallbacks = create_mcp_server()
     tools_all = server_with_fallbacks._tool_manager.list_tools()
-    assert len(tools_all) == 17
+    assert len(tools_all) == 18
     tool_names_all = {t.name for t in tools_all}
     assert "search_pubmed" in tool_names_all
     assert "search_chembl" in tool_names_all
+    assert "bionexus_warrant_check" in tool_names_all
 
 
 def test_mcp_server_discover_modern():

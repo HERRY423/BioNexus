@@ -66,6 +66,11 @@ class EvidenceFactor(str, Enum):
     CONFOUND_CONTROLS = "confound_controls"
     BACKEND_FIDELITY = "backend_fidelity"
     PROVENANCE = "provenance"
+    SPATIAL_COLOCALIZATION = "spatial_colocalization"
+    LIGAND_RECEPTOR_INFERENCE = "ligand_receptor_inference"
+    PERTURBATION = "perturbation"
+    TEMPORAL_EVIDENCE = "temporal_evidence"
+    REFERENCE_GROUND_TRUTH = "reference_ground_truth"
 
 
 #: Positive support ladder: reaching a maturity level requires ALL listed
@@ -296,6 +301,10 @@ class SufficiencyVerdict(str, Enum):
 _EXTRA_SATISFIED_BY: Dict[str, Set[EvidenceFactor]] = {
     "external_validation": {EvidenceFactor.EXTERNAL_VALIDATION},
     "confound_controls": {EvidenceFactor.CONFOUND_CONTROLS},
+    "causal_identification": {EvidenceFactor.PERTURBATION},
+    "spatial_colocalization": {EvidenceFactor.SPATIAL_COLOCALIZATION},
+    "ligand_receptor_inference": {EvidenceFactor.LIGAND_RECEPTOR_INFERENCE},
+    "reference_ground_truth": {EvidenceFactor.REFERENCE_GROUND_TRUTH},
 }
 
 

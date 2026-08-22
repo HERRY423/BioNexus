@@ -48,11 +48,28 @@ from bionexus.claim_checker import audit_prohibited_claims
 from bionexus.provenance import capture_execution_provenance, sha256_file
 from bionexus.validation_verifier import bind_validation_source_provenance
 from bionexus.versions import VERSION
+from evals.annotation_calibration_fixture import (
+    synthetic_annotation_context,
+    synthetic_annotation_registry,
+)
 
 SYNTHETIC_DATA_DIR = REPO_ROOT / "validation" / "annotation" / "evidence"
 SYNTHETIC_H5AD_PATH = SYNTHETIC_DATA_DIR / "citeseq_synthetic_technical_acceptance.h5ad"
 OUTPUT_REPORT = REPO_ROOT / "validation" / "annotation" / "INFERENTIAL_STRESS_REPORT.json"
 VALIDATION_REPORT = REPO_ROOT / "validation" / "annotation" / "REPORT.json"
+SYNTHETIC_CALIBRATION_CONTEXT = synthetic_annotation_context()
+SYNTHETIC_CALIBRATION_REGISTRY = synthetic_annotation_registry()
+
+
+def _assess(label: str, evidence: AnnotationEvidence):
+    """Assess under an explicitly synthetic, non-runtime calibration profile."""
+
+    return assess_annotation_evidence(
+        label,
+        evidence,
+        calibration_context=SYNTHETIC_CALIBRATION_CONTEXT,
+        calibration_registry=SYNTHETIC_CALIBRATION_REGISTRY,
+    )
 
 
 def generate_synthetic_citeseq_dataset(output_path: Path | None = None) -> ad.AnnData:
@@ -167,7 +184,7 @@ def test_dim2_circular_marker_trap() -> Dict[str, Any]:
         doublet_rate=0.02,
         ontology_compatible=True,
     )
-    verdict = assess_annotation_evidence("CD4+ T cell", ev)
+    verdict = _assess("CD4+ T cell", ev)
     passed = verdict.verdict == "TENTATIVE" and "independent identity source" in " ".join(verdict.missing_evidence)
     return {
         "dimension": "2_circular_marker_reasoning_trap",
@@ -191,8 +208,8 @@ def test_dim3_negative_marker_violation() -> Dict[str, Any]:
         doublet_rate=0.03,
         ontology_compatible=True,
     )
-    verdict = assess_annotation_evidence("CD4+ T cell", ev)
-    passed = verdict.verdict == "TENTATIVE" and any("lineage exclusivity violated" in r for r in verdict.reasons)
+    verdict = _assess("CD4+ T cell", ev)
+    passed = verdict.verdict == "TENTATIVE" and any("below-profile" in r for r in verdict.reasons)
     return {
         "dimension": "3_negative_marker_violation",
         "verdict": verdict.verdict,
@@ -214,7 +231,7 @@ def test_dim4_reference_mapping() -> Dict[str, Any]:
         doublet_rate=0.04,
         ontology_compatible=True,
     )
-    verdict = assess_annotation_evidence("CD8+ T cell", ev)
+    verdict = _assess("CD8+ T cell", ev)
     passed = verdict.verdict == "SUPPORTED"
     return {
         "dimension": "4_independent_reference_mapping",
@@ -239,7 +256,7 @@ def test_dim5_orthogonal_protein_robust() -> Dict[str, Any]:
         orthogonal_protein_evidence=0.95,
         protein_concordant=True,
     )
-    verdict = assess_annotation_evidence("B cell", ev)
+    verdict = _assess("B cell", ev)
     passed = verdict.verdict == "ROBUST"
     return {
         "dimension": "5_orthogonal_surface_protein_robust",
@@ -264,7 +281,7 @@ def test_dim6_discordant_protein_conflicted() -> Dict[str, Any]:
         orthogonal_protein_evidence=0.20,
         protein_concordant=False,
     )
-    verdict = assess_annotation_evidence("NK cell", ev)
+    verdict = _assess("NK cell", ev)
     passed = verdict.verdict == "CONFLICTED"
     return {
         "dimension": "6_discordant_protein_conflicted",
@@ -285,7 +302,7 @@ def test_dim7_open_set_gating() -> Dict[str, Any]:
         reference_mapping_score=0.45,
         open_set_detected=True,
     )
-    verdict = assess_annotation_evidence("Novel plasma subclone", ev)
+    verdict = _assess("Novel plasma subclone", ev)
     passed = verdict.verdict == "ABSTAIN"
     return {
         "dimension": "7_open_set_novel_population_gating",
@@ -308,8 +325,8 @@ def test_dim8_doublet_artifact_gate() -> Dict[str, Any]:
         doublet_rate=0.28,  # > 0.15 threshold
         ontology_compatible=True,
     )
-    verdict = assess_annotation_evidence("CD4_T / B doublet", ev)
-    passed = verdict.verdict == "TENTATIVE" and any("doublet artifact" in r for r in verdict.reasons)
+    verdict = _assess("CD4_T / B doublet", ev)
+    passed = verdict.verdict == "TENTATIVE" and any("below-profile" in r for r in verdict.reasons)
     return {
         "dimension": "8_doublet_artifact_gate",
         "verdict": verdict.verdict,
@@ -376,7 +393,13 @@ def main() -> int:
         download_date=datetime.now(timezone.utc).isoformat(),
         repo_root=REPO_ROOT,
         generator_version=VERSION,
-        extra_metadata={"dataset_track": "synthetic_technical_acceptance", "n_cells": adata.n_obs, "n_genes": adata.n_vars},
+        extra_metadata={
+            "dataset_track": "synthetic_technical_acceptance",
+            "n_cells": adata.n_obs,
+            "n_genes": adata.n_vars,
+            "calibration_registry": SYNTHETIC_CALIBRATION_REGISTRY.inventory(),
+            "packaged_runtime_registry_eligible": False,
+        },
     )
     bind_validation_source_provenance(prov, REPO_ROOT)
 
@@ -447,6 +470,8 @@ def main() -> int:
         "metrics": metrics,
         "limitations": [
             "Synthetic technical acceptance only: evaluated on in-silico multimodal fixture; does not satisfy public_reference_dataset or independent_ground_truth external validation (BNS-010).",
+            "Threshold profiles are synthetic resolver fixtures, are not packaged in the runtime registry, and do not establish empirical tissue/platform/reference calibration.",
+            "The packaged runtime calibration registry has zero APPROVED profiles and remains incomplete_not_claim_ready.",
         ],
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "evidence_files": [

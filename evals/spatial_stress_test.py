@@ -1,5 +1,5 @@
 """
-BioNexus 10-Dimensional Spatial Validity & Confounder Benchmark Suite.
+BioNexus 11-Dimensional Spatial Validity & Confounder Benchmark Suite.
 Track: Synthetic Technical Acceptance (In-Silico Spatial Benchmark).
 
 Actively manufactures and tests the 10 canonical spatial alternative explanations:
@@ -13,10 +13,11 @@ Actively manufactures and tests the 10 canonical spatial alternative explanation
 8. Transcript Spillover (Lateral optical / diffusion bleed across boundaries)
 9. Imaging FOV / Batch Confounding (FOV identity confounded with condition)
 10. Coordinate Permutation Null Model (Shuffled coordinates verifying empirical FDR <= 0.05)
+11. Executable Battery Contract (scores computed, but no approved spatial profile -> FRAGILE)
 
 Validates Epistemic Transitions:
 - Uncontrolled observation -> FRAGILE
-- Confounder explaining signal (e.g. density/leakage) -> ABSTAIN
+- Confounder explaining signal (e.g. density/leakage) -> CONFLICTED
 - Core controls passed without permutation null -> SUPPORTED
 - Core controls + Permutation null passed -> ROBUST
 
@@ -47,6 +48,14 @@ import anndata as ad
 from scipy import sparse
 
 from bionexus.provenance import capture_execution_provenance, sha256_file
+from bionexus.spatial_alternative_battery import (
+    DiagnosticState,
+    SpatialBatteryData,
+    SpatialBatteryPlan,
+    SpatialClaimKind,
+    SpatialObservation,
+    run_spatial_alternative_battery,
+)
 from bionexus.spatial_inference import (
     assess_spatial_inference,
 )
@@ -164,7 +173,7 @@ def test_dim2_segmentation_leakage(adata: ad.AnnData) -> Dict[str, Any]:
         controls={"segmentation_uncertainty": "FAILED", "cell_size": "TESTED", "transcript_density": "TESTED"},
     )
 
-    passed = verdict.verdict == "ABSTAIN" and "segmentation_uncertainty" in verdict.failed
+    passed = verdict.verdict == "CONFLICTED" and "segmentation_uncertainty" in verdict.failed
     return {
         "dimension": "2_segmentation_leakage_confounder",
         "mean_neighbor_correlation": round(float(np.mean(sims)), 4),
@@ -188,7 +197,7 @@ def test_dim3_cell_density(adata: ad.AnnData) -> Dict[str, Any]:
         dists = np.linalg.norm(coords - coords[i], axis=1)
         densities.append(int(np.sum(dists < 50.0)))
 
-    # If density explains expression, control FAILED -> ABSTAIN
+    # If density explains expression, control FAILED -> CONFLICTED
     verdict_confounded = assess_spatial_inference(
         "Niche enrichment",
         controls={"local_cell_density": "FAILED", "cell_size": "TESTED", "transcript_density": "TESTED", "segmentation_uncertainty": "TESTED"},
@@ -199,7 +208,7 @@ def test_dim3_cell_density(adata: ad.AnnData) -> Dict[str, Any]:
         controls={"local_cell_density": "TESTED", "cell_size": "TESTED", "transcript_density": "TESTED", "segmentation_uncertainty": "TESTED", "nuclear_eccentricity": "TESTED", "spot_composition": "TESTED", "spatial_autocorrelation": "TESTED", "batch_fov": "TESTED", "ligand_receptor_abundance": "TESTED", "contact_geometry": "TESTED", "neighborhood_radius": "TESTED", "edge_effects": "TESTED", "transcript_spillover": "TESTED", "label_uncertainty": "TESTED"},
     )
 
-    passed = verdict_confounded.verdict == "ABSTAIN" and verdict_controlled.verdict == "SUPPORTED"
+    passed = verdict_confounded.verdict == "CONFLICTED" and verdict_controlled.verdict == "SUPPORTED"
     return {
         "dimension": "3_cell_density_confounding",
         "confounded_verdict": verdict_confounded.verdict,
@@ -225,7 +234,7 @@ def test_dim4_morphology_cell_size(adata: ad.AnnData) -> Dict[str, Any]:
         controls={"cell_size": status, "transcript_density": "TESTED", "segmentation_uncertainty": "TESTED"},
     )
 
-    passed = verdict.verdict in ("ABSTAIN", "FRAGILE", "SUPPORTED")
+    passed = verdict.verdict in ("CONFLICTED", "FRAGILE", "SUPPORTED")
     return {
         "dimension": "4_morphology_cell_size_bias",
         "area_count_correlation": round(r, 4),
@@ -274,7 +283,7 @@ def test_dim6_tissue_edge_effects(adata: ad.AnnData) -> Dict[str, Any]:
         controls={"edge_effects": "FAILED", "cell_size": "TESTED", "transcript_density": "TESTED", "segmentation_uncertainty": "TESTED"},
     )
 
-    passed = verdict_edge_failed.verdict == "ABSTAIN"
+    passed = verdict_edge_failed.verdict == "CONFLICTED"
     return {
         "dimension": "6_tissue_edge_effects",
         "edge_cell_fraction": round(edge_fraction, 4),
@@ -323,7 +332,7 @@ def test_dim8_transcript_spillover() -> Dict[str, Any]:
         "Subcellular localization",
         controls={"transcript_spillover": "FAILED", "cell_size": "TESTED", "transcript_density": "TESTED", "segmentation_uncertainty": "TESTED"},
     )
-    passed = verdict.verdict == "ABSTAIN"
+    passed = verdict.verdict == "CONFLICTED"
     return {
         "dimension": "8_transcript_spillover_control",
         "spillover_failed_verdict": verdict.verdict,
@@ -342,7 +351,7 @@ def test_dim9_batch_fov_confounding(adata: ad.AnnData) -> Dict[str, Any]:
         "Condition spatial difference",
         controls={"batch_fov": "FAILED", "cell_size": "TESTED", "transcript_density": "TESTED", "segmentation_uncertainty": "TESTED"},
     )
-    passed = verdict_fov_confounded.verdict == "ABSTAIN"
+    passed = verdict_fov_confounded.verdict == "CONFLICTED"
     return {
         "dimension": "9_batch_fov_confounding",
         "fov_confounded_verdict": verdict_fov_confounded.verdict,
@@ -390,12 +399,114 @@ def test_dim10_permutation_null(adata: ad.AnnData) -> Dict[str, Any]:
 
 
 # ==============================================================================
+# Dimension 11: Executable Battery with Fail-Closed Calibration
+# ==============================================================================
+
+def test_dim11_executable_battery() -> Dict[str, Any]:
+    print("  [Dim 11] Running Executable Alternative-Explanation Battery Contract...")
+    coordinates: list[tuple[float, float]] = []
+    labels: list[str] = []
+    exposed: list[bool] = []
+    contact_pairs: list[tuple[int, int]] = []
+    fovs: list[str] = []
+    for fov_index, x_offset in enumerate((0.0, 100.0)):
+        fov = f"fixture_fov_{fov_index + 1}"
+        for y in (0.0, 20.0, 40.0, 60.0, 80.0):
+            macrophage = len(labels)
+            coordinates.append((x_offset, y))
+            labels.append("Macrophage")
+            exposed.append(False)
+            fovs.append(fov)
+            for dx, dy in ((1.0, 0.0), (0.0, 1.0)):
+                t_cell = len(labels)
+                coordinates.append((x_offset + dx, y + dy))
+                labels.append("T_cell")
+                exposed.append(True)
+                fovs.append(fov)
+                contact_pairs.append((macrophage, t_cell))
+            for dx, dy in ((10.0, 0.0), (10.0, 2.0)):
+                coordinates.append((x_offset + dx, y + dy))
+                labels.append("T_cell")
+                exposed.append(False)
+                fovs.append(fov)
+
+    n_cells = len(labels)
+    expression = np.zeros((n_cells, 2), dtype=float)
+    expression[:, 0] = np.where(np.asarray(exposed), 2.0, 0.5)
+    expression[:, 1] = np.linspace(0.1, 1.0, n_cells)
+    rows = [row for pair in contact_pairs for row in pair]
+    cols = [col for pair in contact_pairs for col in reversed(pair)]
+    contact = sparse.csr_matrix((np.ones(len(rows)), (rows, cols)), shape=(n_cells, n_cells))
+    result = run_spatial_alternative_battery(
+        SpatialObservation(
+            observation_id="synthetic-executable-contract",
+            statement="CXCL13 expression is enriched in T cells at macrophage contacts",
+            target_gene="CXCL13",
+            focal_cell_label="T_cell",
+            neighbor_cell_label="Macrophage",
+            claim_kind=SpatialClaimKind.CONTACT_EXPRESSION_ENRICHMENT,
+        ),
+        SpatialBatteryData(
+            expression=expression,
+            gene_names=("CXCL13", "CONTROL"),
+            coordinates=np.asarray(coordinates),
+            cell_labels=labels,
+            dataset_id="synthetic-executable-contract",
+            state_revision_id="state-r1",
+            segmentation_revision_id="seg-r1",
+            label_revision_id="labels-r1",
+            coordinate_system_id="fixture-physical-space",
+            coordinate_unit="micrometer",
+            expression_scale="log1p",
+            contact_graph=contact,
+            cell_size=np.linspace(80.0, 120.0, n_cells),
+            nuclear_eccentricity=np.tile(np.linspace(0.1, 0.8, 5), n_cells // 5),
+            total_transcript_counts=np.linspace(100.0, 200.0, n_cells),
+            fov_or_batch=fovs,
+            segmentation_expression_variants={"seg-r2": expression * np.asarray([0.95, 1.0])},
+            leakage_expression_variants={"leakage-model-r1": expression * np.asarray([0.90, 1.0])},
+        ),
+        SpatialBatteryPlan(
+            primary_radius=3.0,
+            radius_grid=(2.0, 3.0, 4.0),
+            assumed_leakage_fractions=(),
+            label_flip_fraction=0.04,
+            label_perturbations=10,
+            coordinate_permutations=19,
+            random_seed=17,
+            minimum_group_cells=4,
+            max_graph_edges=2_000,
+        ),
+    )
+    numeric = [
+        item
+        for item in result.diagnostics.values()
+        if item.calibration and not item.calibration.get("structural_applicability")
+    ]
+    passed = (
+        result.verdict.verdict == "FRAGILE"
+        and result.provenance["fallback_used"] is False
+        and bool(numeric)
+        and all(item.state == DiagnosticState.UNTESTED for item in numeric)
+    )
+    return {
+        "dimension": "11_executable_battery_fail_closed_calibration",
+        "verdict": result.verdict.verdict,
+        "baseline_effect": result.baseline_effect,
+        "numeric_diagnostics": len(numeric),
+        "fallback_used": result.provenance["fallback_used"],
+        "battery_run_sha256": result.provenance["battery_run_sha256"],
+        "passed": passed,
+    }
+
+
+# ==============================================================================
 # Main Runner
 # ==============================================================================
 
 def main() -> int:
     print("=" * 75)
-    print("BioNexus 10-Dimensional Spatial Validity & Confounder Benchmark (Synthetic Technical Acceptance)")
+    print("BioNexus 11-Dimensional Spatial Validity & Confounder Benchmark (Synthetic Technical Acceptance)")
     print("=" * 75)
     start_time = time.time()
 
@@ -423,14 +534,15 @@ def main() -> int:
     dim8 = test_dim8_transcript_spillover()
     dim9 = test_dim9_batch_fov_confounding(adata)
     dim10 = test_dim10_permutation_null(adata)
+    dim11 = test_dim11_executable_battery()
 
-    all_dims = [dim1, dim2, dim3, dim4, dim5, dim6, dim7, dim8, dim9, dim10]
+    all_dims = [dim1, dim2, dim3, dim4, dim5, dim6, dim7, dim8, dim9, dim10, dim11]
     all_passed = all(d["passed"] for d in all_dims)
 
     report = {
         "schema_version": "1.0",
         "capability_id": "spatial.inference_validity",
-        "test_suite": "10_dimensional_spatial_validity_synthetic_benchmark",
+        "test_suite": "11_dimensional_spatial_validity_synthetic_benchmark",
         "dataset_track": "synthetic_technical_acceptance",
         "dataset_checksum_sha256": dataset_checksum,
         "provenance": prov,
@@ -448,10 +560,11 @@ def main() -> int:
 
     # Standard validation REPORT.json (explicitly labeled synthetic technical acceptance)
     metrics = [
-        {"name": "confounder_leakage_detection", "expected": "ABSTAIN", "observed": dim2["warrant_verdict"], "result": "pass" if dim2["passed"] else "fail"},
-        {"name": "cell_density_confounding", "expected": "ABSTAIN", "observed": dim3["confounded_verdict"], "result": "pass" if dim3["passed"] else "fail"},
+        {"name": "confounder_leakage_detection", "expected": "CONFLICTED", "observed": dim2["warrant_verdict"], "result": "pass" if dim2["passed"] else "fail"},
+        {"name": "cell_density_confounding", "expected": "CONFLICTED", "observed": dim3["confounded_verdict"], "result": "pass" if dim3["passed"] else "fail"},
         {"name": "radius_perturbation_fragile", "expected": "FRAGILE", "observed": dim7["untested_radius_verdict"], "result": "pass" if dim7["passed"] else "fail"},
         {"name": "permutation_null_robust", "expected": "ROBUST", "observed": dim10["with_permutation_null_verdict"], "result": "pass" if dim10["passed"] else "fail"},
+        {"name": "executable_battery_without_approved_profile", "expected": "FRAGILE", "observed": dim11["verdict"], "result": "pass" if dim11["passed"] else "fail"},
     ]
     all_metrics_pass = all(m["result"] == "pass" for m in metrics)
 
@@ -470,8 +583,9 @@ def main() -> int:
             "backend_identity": {
                 "capability_id": "spatial.inference_validity",
                 "track": "canonical",
-                "claimed_backend": "local deterministic alternative-explanation tester",
+                "claimed_backend": "local bounded alternative-explanation battery",
                 "observed_backend": "bionexus",
+                "reference_algorithm": "empirically_calibrated_spatial_alternative_explanation_battery_v1",
                 "state": "CONFORMANT",
             },
             "provenance": prov,
@@ -479,6 +593,8 @@ def main() -> int:
         "metrics": metrics,
         "limitations": [
             "Synthetic technical acceptance only: evaluated on in-silico spatial fixture; does not satisfy public_reference_dataset or independent_ground_truth external validation (BNS-010).",
+            "No approved real spatial calibration profile is packaged; the executable battery therefore correctly remains FRAGILE in this report.",
+            "Dimensions 1-10 exercise legacy declarative control semantics; dimension 11 executes the v2 battery and is the runtime calibration acceptance gate.",
         ],
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "evidence_files": [
@@ -496,7 +612,7 @@ def main() -> int:
         status = "PASS" if d["passed"] else "FAIL"
         print(f"  [{status}] {d['dimension']}")
     print("=" * 75)
-    print(f"Overall Result: {'ALL 10 DIMENSIONS PASSED' if all_passed else 'SOME DIMENSIONS FAILED'}")
+    print(f"Overall Result: {'ALL 11 DIMENSIONS PASSED' if all_passed else 'SOME DIMENSIONS FAILED'}")
 
     return 0 if all_passed else 1
 

@@ -557,6 +557,92 @@ def handle_backend_identity(args: argparse.Namespace) -> int:
     return 1 if any(r.action == "BLOCK" for r in reports) else 0
 
 
+def handle_conformance(args: argparse.Namespace) -> int:
+    """Handle the 'conformance' command: BioNexus Conformance Test Kit (BCTK)."""
+    from bionexus.bctk.cli import (
+        handle_badge,
+        handle_init,
+        handle_inspect,
+        handle_rules,
+        handle_test,
+    )
+
+    action = getattr(args, "conformance_action", "test")
+    if action == "test":
+        return handle_test(args)
+    elif action == "inspect":
+        return handle_inspect(args)
+    elif action == "badge":
+        return handle_badge(args)
+    elif action in ("rules", "list-rules"):
+        return handle_rules(args)
+    elif action == "init":
+        return handle_init(args)
+    return 0
+
+
+def handle_debt(args: argparse.Namespace) -> int:
+    """Handle the 'debt' command: Scientific Evidence Debt Engine (BNS-021)."""
+    from bionexus.debt import (
+        EvidenceDebtEngine,
+        create_sample_debt_ledger,
+        render_markdown_debt_report,
+        render_mermaid_debt_dag,
+        render_terminal_debt_report,
+    )
+    from bionexus.ledger import ClaimLedger
+
+    action = getattr(args, "debt_action", "audit")
+    target = getattr(args, "target", ".")
+
+    # Load or generate ledger
+    if action == "sample":
+        ledger = create_sample_debt_ledger()
+        out_p = Path(getattr(args, "output", None) or "sample_evidence_debt_ledger.json")
+        ledger.save(out_p)
+        if not getattr(args, "json", False):
+            print(f"[INFO] Sample research ledger saved to: {out_p}")
+    else:
+        target_p = Path(target)
+        if target_p.is_file() and target_p.suffix.lower() == ".json":
+            ledger = ClaimLedger.load(target_p)
+        elif target_p.is_dir():
+            candidates = [
+                target_p / "ledger.json",
+                target_p / "claim-evidence-ledger.json",
+                target_p / "sample_evidence_debt_ledger.json",
+            ]
+            found = next((c for c in candidates if c.is_file()), None)
+            if found:
+                ledger = ClaimLedger.load(found)
+            else:
+                ledger = create_sample_debt_ledger()
+        else:
+            ledger = create_sample_debt_ledger()
+
+    report = EvidenceDebtEngine.audit_ledger(ledger)
+
+    if action == "graph":
+        print(render_mermaid_debt_dag(report, ledger))
+        return 0
+
+    if getattr(args, "json", False):
+        print(json.dumps(report.to_dict(), indent=2))
+        return 0
+    elif getattr(args, "markdown", False):
+        md = render_markdown_debt_report(report)
+        if getattr(args, "output", None):
+            Path(args.output).write_text(md, encoding="utf-8")
+            print(f"[INFO] Markdown debt report written to: {args.output}")
+        else:
+            print(md)
+        return 0
+    else:
+        term = render_terminal_debt_report(report, verbose=getattr(args, "verbose", False))
+        print(term)
+        return 0
+
+
 def handle_doctor(args: argparse.Namespace) -> int:
     """Run BioNexus environment doctor diagnostics."""
     report = run_doctor()
@@ -1289,6 +1375,64 @@ def handle_route(args: argparse.Namespace) -> int:
     return 0
 
 
+def handle_eval_audit(args: argparse.Namespace) -> int:
+    """Verify the hash-chained eval receipt log and print recent receipts."""
+    from pathlib import Path
+
+    from bionexus.eval_receipt import abi_manifest_digest, default_log_path, verify_eval_log
+
+    log_arg = getattr(args, "log", None)
+    log_path = Path(log_arg).resolve() if log_arg else default_log_path()
+    if not log_path.exists():
+        print(f"[eval-audit] No receipt log found at: {log_path}")
+        print("[eval-audit] Run 'bionexus eval' first; receipts are appended automatically.")
+        return 2
+
+    events, errors = verify_eval_log(log_path)
+    print("=== BioNexus Eval Receipt Chain ===")
+    print(f"Log:     {log_path}")
+    print(f"Events:  {len(events)}")
+    if events:
+        print(f"Head:    {events[-1].get('event_hash')}")
+        current_manifest = abi_manifest_digest()
+        anchored = {e.get("abi_manifest_sha256") for e in events}
+        print(f"Current ABI manifest digest: {current_manifest}")
+        if anchored == {current_manifest}:
+            print("ABI anchor: all receipts match the current contract set.")
+        else:
+            print(
+                "ABI anchor: receipts span multiple contract sets "
+                f"({len(anchored)} distinct) — historical runs verified against their own manifest."
+            )
+    if errors:
+        print(f"[TAMPER-EVIDENT FAILURE] chain verification errors ({len(errors)}):")
+        for err in errors:
+            print(f"  - {err}")
+        return 1
+    print("Chain integrity: OK (sequence, previous-hash links, event hashes all valid).")
+
+    last_n = max(0, int(getattr(args, "last", 1) or 0))
+    for event in events[-last_n:]:
+        gating = event.get("gating_summary", {})
+        union = event.get("union_summary", {})
+        print(
+            f"\n#{event.get('sequence')} {event.get('timestamp')} suite={event.get('suite')} "
+            f"provider={event.get('provider')} strict={event.get('strict_mode')}"
+        )
+        print(
+            f"  gating: {gating.get('passed_cases')}/{gating.get('total_cases')} "
+            f"(accuracy {gating.get('overall_accuracy')}) | CRI {gating.get('cri')}"
+        )
+        print(
+            f"  union:  {union.get('passed')}/{union.get('total')} "
+            f"(accuracy {union.get('accuracy')}) | cases hashed: {event.get('case_count')}"
+        )
+        print(f"  abi_manifest: {event.get('abi_manifest_sha256')}")
+        print(f"  git: commit={event.get('git_commit')} dirty={event.get('git_dirty')}")
+        print(f"  receipt_hash: {event.get('event_hash')}")
+    return 0
+
+
 def handle_eval(args: argparse.Namespace) -> int:
     """Handle the 'eval' command to run the BioNexus Agent Reliability Benchmark (BioNexus Eval 2.0)."""
     from evals.runner import format_benchmark_markdown, run_benchmark
@@ -1377,6 +1521,235 @@ def handle_audit_claims(args: argparse.Namespace) -> int:
             print(f"     Rule: {v.rule_description}")
             print(f"     Remedy: {v.remedy}")
         return 1
+
+
+def handle_parse_claim(args: argparse.Namespace) -> int:
+    """Parse natural language scientific claim into canonical ScientificClaimIR (BNS-017)."""
+    from bionexus.claim_semantics import DeterministicClaimParser
+
+    target = args.claim
+    p = Path(target)
+    if p.exists() and p.is_file():
+        content = p.read_text(encoding="utf-8")
+    else:
+        content = target
+
+    sentences = [s.strip() for s in re.split(r"[.\n\r]+", content) if len(s.strip()) > 3]
+    parsed_claims = [DeterministicClaimParser.parse(s).to_dict() for s in sentences]
+
+    if getattr(args, "json", False) or len(parsed_claims) > 1:
+        print(json.dumps(parsed_claims if len(parsed_claims) > 1 else parsed_claims[0], indent=2))
+        return 0
+
+    ir = parsed_claims[0]
+    print("\n=== BioNexus Scientific Claim IR (BNS-017) ===")
+    print(f"Claim ID:          {ir['claim_id']}")
+    print(f"Source Text:       \"{ir['source_text']}\"")
+    print(f"Subject Entity:    {ir['subject_entity']['name']} (Features: {ir['subject_entity']['features']})")
+    print(f"Object Entity:     {ir['object_entity']['name'] if ir['object_entity'] else 'None'}")
+    print(f"Relationship:      {ir['relationship']}")
+    print(f"Directionality:    {ir['direction']}")
+    print(f"Population Scope:  {ir['population_scope'] or 'unspecified'} ({ir['generalization_scope']})")
+    print(f"Association Type:  {ir['association_type']}")
+    print(f"Causal Strength:   {ir['causal_strength']}")
+    print(f"Mechanism Depth:   {ir['mechanism_depth']}")
+    print(f"Claim Class:       {ir['claim_class']}")
+    print(f"Qualifiers:        {ir['qualifiers'] or 'none'}")
+    print(f"Negated:           {ir['negated']}")
+    return 0
+
+
+def handle_warrant_claim(args: argparse.Namespace) -> int:
+    """Evaluate scientific claim against EvidenceProfile using Deterministic Warrant Engine (BNS-017)."""
+    from bionexus.claim_semantics import DeterministicClaimParser, DeterministicWarrantEngine, EvidenceProfile
+
+    target = args.claim
+    p = Path(target)
+    if p.exists() and p.is_file():
+        content = p.read_text(encoding="utf-8")
+    else:
+        content = target
+
+    ev_profile = EvidenceProfile()
+    if getattr(args, "evidence_json", None):
+        ep = Path(args.evidence_json)
+        if ep.exists():
+            data = json.loads(ep.read_text(encoding="utf-8"))
+            ev_profile = EvidenceProfile(**data)
+
+    if getattr(args, "spatial", False):
+        ev_profile.spatial_colocalization = True
+    if getattr(args, "ligand_receptor", False):
+        ev_profile.ligand_receptor_inference = True
+    if getattr(args, "perturbation", False):
+        ev_profile.perturbation = True
+    if getattr(args, "replicates", 0) > 0:
+        ev_profile.biological_replicates_count = args.replicates
+        ev_profile.pseudobulk_aggregated = True
+
+    claim_ir = DeterministicClaimParser.parse(content)
+    res = DeterministicWarrantEngine.evaluate(claim_ir, ev_profile)
+
+    if getattr(args, "json", False):
+        print(json.dumps(res.to_dict(), indent=2))
+        return 0 if res.is_fully_warranted else 1
+
+    print("\n=== BioNexus Deterministic Warrant Engine (BNS-017) ===")
+    print(f"Claim:             \"{claim_ir.source_text}\"")
+    print(f"Requested Class:   {res.requested_claim_class}")
+    print(f"Warranted Class:   {res.warranted_claim_class}")
+    print(f"Evidence Ceiling:  {res.evidence_ceiling}")
+    print(f"Overall Status:    {'[WARRANTED]' if res.is_fully_warranted else '[NOT FULLY WARRANTED]'}")
+    print("\nTier-by-Tier Evaluation:")
+    for tier_name, tier_verdict in res.tier_verdicts.items():
+        status_tag = f"[{tier_verdict.status.value}]"
+        print(f"  - {tier_name:<22} {status_tag:<20} {tier_verdict.rationale}")
+
+    if res.evidence_gaps:
+        print("\nMissing Evidence Gaps:")
+        for gap in res.evidence_gaps:
+            print(f"  [!] {gap}")
+
+    if res.remedies:
+        print("\nActionable Remedies:")
+        for rem in res.remedies:
+            print(f"  -> {rem}")
+
+    return 0 if res.is_fully_warranted else 1
+
+
+def handle_rule(args: argparse.Namespace) -> int:
+    """Handle 'rule' subcommands (show, list, challenge, list-challenges) for BNS-018."""
+    from bionexus.rule_calibration import ChallengeNetwork
+
+    network = ChallengeNetwork()
+    action = getattr(args, "rule_action", None)
+
+    if action == "list":
+        if getattr(args, "json", False):
+            print(json.dumps([r.to_dict() for r in network.rules.values()], indent=2))
+            return 0
+
+        print("\n=== BioNexus Development Rule Registry (BNS-018) ===")
+        print(f"Registry Status: {network.registry_metadata.get('registry_status', 'NOT_ASSESSED')}")
+        print(f"Rule Propositions: {len(network.rules)}\n")
+        print(f"{'Rule ID':<35} {'Epistemic Kind':<24} {'Consensus':<14} {'Platforms / Regimes'}")
+        print("-" * 90)
+        for rid, rule in network.rules.items():
+            platforms = []
+            for reg in rule.applicable_regimes:
+                platforms.extend(reg.target_platforms)
+            plat_str = ", ".join(platforms[:3]) or "universal"
+            print(f"{rid:<35} {rule.epistemic_kind.value:<24} {rule.consensus.value:<14} {plat_str}")
+        print("\nNo packaged rule carries verified external calibration or endorsement.\n")
+        return 0
+
+    elif action == "show":
+        rule = network.get_rule(args.rule_id)
+        if not rule:
+            print(f"[ERROR] Rule '{args.rule_id}' not found in registry.")
+            return 1
+
+        if getattr(args, "json", False):
+            print(json.dumps(rule.to_dict(), indent=2))
+            return 0
+
+        print("\n============================================================")
+        print(f"=== BioNexus Rule Proposition: {rule.rule_id} ===")
+        print("============================================================")
+        print(f"* Epistemic Kind:       {rule.epistemic_kind.value}")
+        print(f"* Category:             {rule.category.value} ({rule.enforcement_level.value})")
+        print(f"* Consensus State:      {rule.consensus.value}")
+        print(f"* Source Citation:      {rule.source_citation}")
+        print(f"* Evidence Status:      {rule.metadata.get('evidence_status', 'NOT_ASSESSED')}")
+        print(f"* Review Status:        {rule.metadata.get('review_status', 'NOT_ASSESSED')}")
+
+        if rule.proposition.statement:
+            print("\n[Scientific Proposition]")
+            print(f"  Statement:  {rule.proposition.statement}")
+            if rule.proposition.formal_predicate:
+                print(f"  Predicate:  {rule.proposition.formal_predicate}")
+            if rule.proposition.underlying_assumptions:
+                print(f"  Assumptions: {'; '.join(rule.proposition.underlying_assumptions)}")
+
+        if rule.applicable_regimes:
+            print(f"\n[Applicable Regimes] ({len(rule.applicable_regimes)}):")
+            for reg in rule.applicable_regimes:
+                print(f"  - [{reg.regime_id}] {reg.description}")
+                print(f"    Platforms: {', '.join(reg.target_platforms)}, Min Samples: {reg.min_samples}")
+
+        if rule.platform_calibrations:
+            print(f"\n[Platform Calibrations] ({len(rule.platform_calibrations)}):")
+            for pcal in rule.platform_calibrations:
+                print(f"  - {pcal.platform_name}: recommended threshold = {pcal.recommended_threshold}, safe range = {pcal.safe_operating_range}")
+                if pcal.calibration_notes:
+                    print(f"    Notes: {pcal.calibration_notes}")
+
+        if rule.dataset_calibrations:
+            print(f"\n[Benchmark Dataset Calibrations] ({len(rule.dataset_calibrations)}):")
+            for dcal in rule.dataset_calibrations:
+                print(f"  - {dcal.dataset_name} (n={dcal.sample_size}): {dcal.empirical_metric_name} = {dcal.empirical_metric_value} (95% CI: {dcal.confidence_interval})")
+
+        if rule.sensitivity_analysis:
+            print("\n[Sensitivity Analysis]")
+            for sens in rule.sensitivity_analysis:
+                cliff = " [!] CLIFF-EDGE RISK" if sens.cliff_edge_risk else ""
+                print(f"  - Parameter '{sens.parameter_name}' (nominal={sens.nominal_value}){cliff}: Elasticity={sens.elasticity_score}")
+                print(f"    Summary: {sens.risk_summary}")
+
+        if rule.known_counterexamples:
+            print(f"\n[Known Counterexamples] ({len(rule.known_counterexamples)}):")
+            for ce in rule.known_counterexamples:
+                print(f"  - [{ce.counterexample_id}] {ce.description}")
+                print(f"    Mitigation: {ce.mitigation_strategy}")
+
+        if rule.reviewers:
+            print(f"\n[Peer Reviewer Attestations] ({len(rule.reviewers)}):")
+            for rev in rule.reviewers:
+                print(f"  - {rev.reviewer_name} ({rev.institution}) [{rev.verdict}]: \"{rev.review_comments}\" ({rev.attestation_date})")
+        else:
+            print("\n[Verified External Attestations] 0 — NOT_ASSESSED")
+
+        print()
+        return 0
+
+    elif action == "challenge":
+        try:
+            ch = network.submit_challenge(
+                target_rule_id=args.rule_id,
+                challenger_identity=args.challenger,
+                challenge_type=args.type,
+                title=args.title,
+                description=args.description,
+                empirical_evidence_refs=[args.dataset] if getattr(args, "dataset", None) else [],
+            )
+            network.save()
+            print("\n[OK] Formal Challenge submitted successfully!")
+            print(f"Challenge ID: {ch.challenge_id}")
+            print(f"Target Rule:  {ch.target_rule_id}")
+            print(f"Type:         {ch.challenge_type.value}")
+            print(f"Status:       {ch.status.value}")
+            print("The challenge is recorded as PROPOSED. It cannot change consensus without verified signed review attestations.\n")
+            return 0
+        except Exception as e:
+            print(f"[ERROR] Failed to submit challenge: {e}")
+            return 1
+
+    elif action == "list-challenges":
+        if getattr(args, "json", False):
+            print(json.dumps([c.to_dict() for c in network.challenges.values()], indent=2))
+            return 0
+
+        print("\n=== BioNexus Scientific Challenge Network Ledger ===")
+        print(f"Total Challenges: {len(network.challenges)}\n")
+        print(f"{'Challenge ID':<35} {'Target Rule':<25} {'Type':<25} {'Status'}")
+        print("-" * 95)
+        for cid, ch in network.challenges.items():
+            print(f"{cid:<35} {ch.target_rule_id:<25} {ch.challenge_type.value:<25} {ch.status.value}")
+        print()
+        return 0
+
+    return 0
 
 
 def handle_run(args: argparse.Namespace) -> int:
@@ -1912,6 +2285,244 @@ def handle_security(args: argparse.Namespace) -> int:
     return 0
 
 
+def handle_causal(args: argparse.Namespace) -> int:
+    from bionexus.causal_dag import CausalDAG, NodeType
+
+    action = getattr(args, "causal_action", "check")
+    if action != "check":
+        print(f"Unknown causal action: {action}")
+        return 2
+
+    dag = CausalDAG()
+    treatment = args.treatment.strip()
+    outcome = args.outcome.strip()
+    dag.add_node(treatment, NodeType.TREATMENT)
+    dag.add_node(outcome, NodeType.OUTCOME)
+    dag.add_edge(treatment, outcome, directed=True)
+
+    if getattr(args, "confounders", ""):
+        for c in args.confounders.split(","):
+            c = c.strip()
+            if c:
+                dag.add_node(c, NodeType.OBSERVED_CONFOUNDER)
+                dag.add_edge(c, treatment, directed=True)
+                dag.add_edge(c, outcome, directed=True)
+
+    conditioned_set = set()
+    if getattr(args, "conditioned", ""):
+        for z in args.conditioned.split(","):
+            z = z.strip()
+            if z:
+                conditioned_set.add(z)
+                if z not in dag.nodes:
+                    dag.add_node(z, NodeType.COVARIATE)
+
+    claim_class = getattr(args, "claim_class", "causal")
+    res = dag.evaluate_causal_claim(
+        treatment=treatment,
+        outcome=outcome,
+        conditioned_set=conditioned_set,
+        requested_claim_class=claim_class,
+    )
+
+    if getattr(args, "json", False):
+        print(json.dumps(res.to_dict(), indent=2, ensure_ascii=False))
+    else:
+        print("=" * 60)
+        print("BioNexus Structural Causal Identifiability Evaluation")
+        print("=" * 60)
+        print(f"Treatment: {treatment} -> Outcome: {outcome}")
+        print(f"Requested Claim: {res.requested_claim_class.upper()}")
+        print(f"Warranted Status: {'WARRANTED' if res.is_warranted else 'NOT_WARRANTED_AS_REQUESTED'}")
+        print(f"Warranted Claim: {res.warranted_claim_class.upper()} (Ceiling: {res.maturity_ceiling})")
+        if res.violations:
+            print("\nViolations / Open Biases:")
+            for v in res.violations:
+                print(f"  [!] {v}")
+        if res.recommended_adjustment_set:
+            print(f"\nRecommended Adjustment Set: {res.recommended_adjustment_set}")
+        print(f"\nRationale: {res.rationale}")
+        print("=" * 60)
+    return 0 if res.is_warranted else 1
+
+
+def handle_remediate(args: argparse.Namespace) -> int:
+    from bionexus.remediation import generate_prescription_for_violation
+
+    violation_id = getattr(args, "violation", "BN-F006")
+    n_samples = getattr(args, "n_samples", 2)
+    log2fc = getattr(args, "log2fc", 1.0)
+    disp = getattr(args, "dispersion", 0.25)
+
+    meta = {
+        "n_donors_min": n_samples,
+        "target_log2fc": log2fc,
+        "dispersion": disp,
+    }
+    prescription = generate_prescription_for_violation(violation_id, meta)
+
+    if getattr(args, "json", False):
+        print(json.dumps(prescription.to_dict(), indent=2, ensure_ascii=False))
+    else:
+        print("=" * 60)
+        print("BioNexus Prescriptive Study Design Remediation")
+        print("=" * 60)
+        print(f"Violation: {prescription.violation_id}")
+        print(f"Primary Strategy: {prescription.primary_strategy}")
+        print(f"Current State: {prescription.current_state_summary}")
+        print(f"Target Maturity: {prescription.target_maturity}")
+        if prescription.minimum_required_samples > 0:
+            print(f"Required Samples: N={prescription.minimum_required_samples} (Need +{prescription.additional_samples_needed} more)")
+        if prescription.power_assessment:
+            p = prescription.power_assessment
+            print(f"Statistical Power: {p.power:.1%} (alpha={p.alpha}, log2FC={p.target_log2fc}, dispersion={p.dispersion})")
+        print("\nPrescription Recipe:")
+        print(f"  {prescription.remediation_text}")
+        if prescription.analytical_remedies:
+            print("\nAnalytical Remedies:")
+            for r in prescription.analytical_remedies:
+                print(f"  - {r}")
+        if prescription.academic_citations:
+            print("\nAcademic Citations:")
+            for c in prescription.academic_citations:
+                print(f"  * {c}")
+        print("=" * 60)
+    return 0
+
+
+def handle_guard(args: argparse.Namespace) -> int:
+    import subprocess
+
+    from bionexus.guard import BioNexusGuard, GuardStatus
+
+    guard = BioNexusGuard()
+    action = getattr(args, "guard_action", "check")
+
+    if action == "check":
+        code_to_check = getattr(args, "code", None)
+        file_path = getattr(args, "file", None)
+        if file_path:
+            p = Path(file_path)
+            if not p.exists():
+                print(f"Error: File {file_path} not found")
+                return 2
+            code_to_check = p.read_text(encoding="utf-8")
+        elif not code_to_check:
+            print("Error: Must provide either code string or --file")
+            return 2
+
+        verdict = guard.inspect_code(code_to_check, file_path=file_path or "inline_code")
+        if getattr(args, "json", False):
+            print(json.dumps(verdict.to_dict(), indent=2, ensure_ascii=False))
+        else:
+            print("=" * 60)
+            print("BioNexus Runtime Pre-Tool Guard Check")
+            print("=" * 60)
+            print(f"Status: {verdict.status.value}")
+            print(f"Execution Permitted: {verdict.execution_permitted}")
+            if verdict.violation_ids:
+                print(f"Violations: {', '.join(verdict.violation_ids)}")
+            if verdict.warrant_guidance:
+                print("\nWarrant Guidance:")
+                for g in verdict.warrant_guidance:
+                    print(f"  * {g}")
+            if verdict.forbidden_claims:
+                print("\nForbidden Claims:")
+                for fc in verdict.forbidden_claims:
+                    print(f"  [X] {fc}")
+            if verdict.suggested_remedy:
+                print(f"\nSuggested Remedy:\n{verdict.suggested_remedy}")
+            print("=" * 60)
+        return 0 if verdict.execution_permitted else 1
+
+    elif action == "run":
+        cmd_args = getattr(args, "cmd", [])
+        if not cmd_args:
+            print("Error: No command specified to run")
+            return 2
+        verdict = guard.inspect_command(cmd_args)
+        if not verdict.execution_permitted:
+            print(verdict.format_agent_injection_prompt())
+            print("\n[BLOCKED] Execution halted by BioNexus Runtime Guard.")
+            return 1
+        elif verdict.status == GuardStatus.INJECT_CONSTRAINTS:
+            print(verdict.format_agent_injection_prompt())
+            print("\n[PROCEEDING WITH CONSTRAINTS]...")
+
+        # Execute command
+        return subprocess.call(cmd_args)
+
+    elif action == "hook":
+        agent = getattr(args, "agent", "codex")
+        print(f"=== BioNexus Pre-Tool Hook for {agent.upper()} ===")
+        print("Configure your AI Agent to invoke 'bionexus guard check' before tool execution.")
+        print("Hook payload schema: bionexus.guard.GuardVerdict")
+        return 0
+
+    return 0
+
+
+def handle_cache(args: argparse.Namespace) -> int:
+    from bionexus.local_cache import BioLocalCache, default_local_cache
+
+    cache = default_local_cache or BioLocalCache()
+    action = getattr(args, "cache_action", "gene")
+
+    if action == "gene":
+        query = getattr(args, "query", "")
+        if not query:
+            print("Error: Must provide gene symbol or ID")
+            return 2
+        gene = cache.get_gene(query)
+        if getattr(args, "json", False):
+            print(json.dumps(gene or {}, indent=2, ensure_ascii=False))
+        elif gene:
+            print(f"Gene: {gene['symbol']} ({gene['name']})")
+            print(f"Ensembl ID: {gene['ensembl_id']} | UniProt: {gene['uniprot_id']} | Chr: {gene['chromosome']}")
+            print(f"Synonyms: {', '.join(gene['synonyms']) or 'None'}")
+            print(f"Summary: {gene['summary']}")
+        else:
+            print(f"Gene '{query}' not found in local offline cache.")
+            return 1
+        return 0
+
+    elif action == "markers":
+        cell_type = getattr(args, "cell_type", "")
+        if not cell_type:
+            print("Error: Must provide cell type query")
+            return 2
+        markers = cache.get_markers(cell_type)
+        if getattr(args, "json", False):
+            print(json.dumps({"cell_type": cell_type, "markers": markers}, indent=2, ensure_ascii=False))
+        else:
+            print(f"Canonical Markers for '{cell_type}':")
+            if markers:
+                for m in markers:
+                    print(f"  * {m}")
+            else:
+                print("  No canonical markers found in local cache.")
+        return 0
+
+    elif action == "pathway":
+        gene = getattr(args, "gene", "")
+        if not gene:
+            print("Error: Must provide gene symbol")
+            return 2
+        pathways = cache.get_pathways_for_gene(gene)
+        if getattr(args, "json", False):
+            print(json.dumps({"gene": gene, "pathways": pathways}, indent=2, ensure_ascii=False))
+        else:
+            print(f"Reactome Pathways for '{gene}':")
+            if pathways:
+                for p in pathways:
+                    print(f"  * [{p['stId']}] {p['name']} ({p['species']})")
+            else:
+                print("  No pathways found in local cache.")
+        return 0
+
+    return 0
+
+
 # ==============================================================================
 # Main Parser & Router
 # ==============================================================================
@@ -2261,6 +2872,23 @@ def main(argv: Optional[list[str]] = None) -> int:
         ),
     )
 
+    # 8b. eval-audit (tamper-evident receipt chain for benchmark runs)
+    p_eval_audit = subparsers.add_parser(
+        "eval-audit",
+        help="Verify the hash-chained eval receipt log (tamper-evident benchmark history).",
+    )
+    p_eval_audit.add_argument(
+        "--log",
+        default=None,
+        help="Path to the eval receipt log (default: logs/eval_audit.jsonl under the repo root).",
+    )
+    p_eval_audit.add_argument(
+        "--last",
+        type=int,
+        default=1,
+        help="How many recent receipts to print in detail (default: 1).",
+    )
+
     # 9. audit-claims (Prohibited Claims & Hallucination Auditor)
     p_claim = subparsers.add_parser(
         "audit-claims", help="Audit text response or report artifact for prohibited scientific claims"
@@ -2268,6 +2896,65 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_claim.add_argument("target", help="Response text or file path to evaluate")
     p_claim.add_argument("--capability", default=None, help="Optional capability context ID")
     p_claim.add_argument("--json", action="store_true", help="Output claim audit result as JSON")
+
+    # 9.1 parse-claim (Scientific Claim IR Parser, BNS-017)
+    p_parse = subparsers.add_parser(
+        "parse-claim", help="Parse natural-language claim into structured ScientificClaimIR (BNS-017)"
+    )
+    p_parse.add_argument("claim", help="Natural-language claim statement or file path")
+    p_parse.add_argument("--json", action="store_true", help="Output structured claim IR as JSON")
+
+    # 9.2 warrant-claim (Deterministic Warrant Engine, BNS-017)
+    p_warrant = subparsers.add_parser(
+        "warrant-claim", help="Evaluate claim against EvidenceProfile using Deterministic Warrant Engine (BNS-017)"
+    )
+    p_warrant.add_argument("claim", help="Natural-language claim statement or file path")
+    p_warrant.add_argument("--evidence-json", default=None, help="Path to JSON file containing EvidenceProfile")
+    p_warrant.add_argument("--spatial", action="store_true", help="Flag: spatial colocalization evidence present")
+    p_warrant.add_argument("--ligand-receptor", action="store_true", help="Flag: ligand-receptor inference present")
+    p_warrant.add_argument("--perturbation", action="store_true", help="Flag: experimental perturbation present")
+    p_warrant.add_argument("--replicates", type=int, default=0, help="Number of biological replicates")
+    p_warrant.add_argument("--json", action="store_true", help="Output warrant evaluation result as JSON")
+
+    # 9.3 rule (Rule Calibration & Challenge Network, BNS-018)
+    p_rule = subparsers.add_parser(
+        "rule", help="Inspect and challenge rules in the Scientific Reliability Knowledge Base (BNS-018)"
+    )
+    rule_subs = p_rule.add_subparsers(dest="rule_action", help="Rule actions")
+
+    # rule list
+    p_r_list = rule_subs.add_parser("list", help="List all calibrated rules in the reliability knowledge base")
+    p_r_list.add_argument("--json", action="store_true", help="Output rules as JSON")
+
+    # rule show <rule_id>
+    p_r_show = rule_subs.add_parser("show", help="Show detailed calibration, sensitivity, and peer reviews for a rule")
+    p_r_show.add_argument("rule_id", help="Canonical rule ID or alias")
+    p_r_show.add_argument("--json", action="store_true", help="Output calibrated rule as JSON")
+
+    # rule challenge <rule_id>
+    p_r_chal = rule_subs.add_parser("challenge", help="Submit a formal challenge to a rule in the network")
+    p_r_chal.add_argument("rule_id", help="Canonical rule ID to challenge")
+    p_r_chal.add_argument("--challenger", required=True, help="Challenger identity (ORCID, name, or institution)")
+    p_r_chal.add_argument(
+        "--type",
+        default="EMPIRICAL_COUNTEREXAMPLE",
+        choices=[
+            "EMPIRICAL_COUNTEREXAMPLE",
+            "BENCHMARK_DISSENT",
+            "REGIME_BOUNDARY_VIOLATION",
+            "PARAMETER_DRIFT",
+            "MATHEMATICAL_FLAW",
+            "PLATFORM_INCOMPATIBILITY",
+        ],
+        help="Category of scientific challenge",
+    )
+    p_r_chal.add_argument("--title", required=True, help="Short title of the challenge")
+    p_r_chal.add_argument("--description", required=True, help="Detailed scientific rationale and empirical proof")
+    p_r_chal.add_argument("--dataset", default=None, help="Supporting dataset DOI, URL, or accession")
+
+    # rule list-challenges
+    p_r_lchal = rule_subs.add_parser("list-challenges", help="List all recorded scientific challenges and statuses")
+    p_r_lchal.add_argument("--json", action="store_true", help="Output challenges as JSON")
 
     # 10. run (Run Capsule Artifact Contract)
     p_run = subparsers.add_parser("run", help="Manage and inspect standardized BioNexus Run Capsule Artifacts")
@@ -2451,14 +3138,125 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_verify_art.add_argument("--enforce-version", type=str, default=None, help="Enforce specific version string")
     p_verify_art.add_argument("--json", action="store_true", help="Output result as JSON")
 
-    args = parser.parse_args(argv)
+    # 17. causal (Structural Causal DAG & Identifiability)
+    p_causal = subparsers.add_parser("causal", help="Structural Causal DAG, d-separation, and backdoor identification")
+    causal_subs = p_causal.add_subparsers(dest="causal_action", help="Causal actions")
+    p_causal_check = causal_subs.add_parser("check", help="Evaluate if a causal claim is warranted given DAG structure")
+    p_causal_check.add_argument("--treatment", "-t", required=True, help="Treatment variable name")
+    p_causal_check.add_argument("--outcome", "-y", required=True, help="Outcome variable name")
+    p_causal_check.add_argument("--confounders", "-c", default="", help="Comma-separated observed confounders")
+    p_causal_check.add_argument("--conditioned", "-z", default="", help="Comma-separated conditioned variables")
+    p_causal_check.add_argument(
+        "--claim-class",
+        default="causal",
+        choices=["causal", "mechanistic", "association", "population_effect", "descriptive"],
+        help="Requested claim class",
+    )
+    p_causal_check.add_argument("--json", action="store_true", help="Output result as JSON")
 
+    # 18. remediate (Prescriptive Power & Study Design Remediation)
+    p_remediate = subparsers.add_parser("remediate", help="Prescriptive study design and power remediation calculations")
+    p_remediate.add_argument("--violation", "-v", default="BN-F006", help="Violation ID (e.g. BN-F006, BN-F001, BN-F005)")
+    p_remediate.add_argument("--n-samples", "-n", type=int, default=2, help="Current replicates per group")
+    p_remediate.add_argument("--log2fc", type=float, default=1.0, help="Target effect size log2FC")
+    p_remediate.add_argument("--dispersion", type=float, default=0.25, help="Biological dispersion")
+    p_remediate.add_argument("--power", action="store_true", help="Perform quantitative power calculation")
+    p_remediate.add_argument("--json", action="store_true", help="Output prescription as JSON")
+
+    # 19. guard (Pre-Tool Runtime Guard & Constraint Injection)
+    p_guard = subparsers.add_parser("guard", help="Runtime pre-execution guard and warrant constraint injection")
+    guard_subs = p_guard.add_subparsers(dest="guard_action", help="Guard actions")
+    p_guard_check = guard_subs.add_parser("check", help="Preflight check a code snippet or script file")
+    p_guard_check.add_argument("code", nargs="?", default=None, help="Code string to inspect")
+    p_guard_check.add_argument("-f", "--file", default=None, help="Script path to inspect")
+    p_guard_check.add_argument("--json", action="store_true", help="Output result as JSON")
+
+    p_guard_run = guard_subs.add_parser("run", help="Run command with active pre-tool guard protection")
+    p_guard_run.add_argument("cmd", nargs=argparse.REMAINDER, help="Command and arguments to execute")
+
+    p_guard_hook = guard_subs.add_parser("hook", help="Show Agent pre-tool hook setup instructions")
+    p_guard_hook.add_argument("--agent", default="codex", choices=["codex", "claude", "cursor"], help="Target AI agent")
+
+    # 20. cache (Air-Gapped Embedded Knowledge Base & Local Cache)
+    p_cache = subparsers.add_parser("cache", help="Query local offline biomedical knowledge base")
+    cache_subs = p_cache.add_subparsers(dest="cache_action", help="Cache actions")
+    p_cache_gene = cache_subs.add_parser("gene", help="Query gene symbol / Ensembl / UniProt from local cache")
+    p_cache_gene.add_argument("query", help="Gene symbol, synonym, or ID")
+    p_cache_gene.add_argument("--json", action="store_true", help="Output result as JSON")
+
+    p_cache_markers = cache_subs.add_parser("markers", help="Query canonical markers for a cell type")
+    p_cache_markers.add_argument("cell_type", help="Cell type name (e.g. 'T cell', 'B cell')")
+    p_cache_markers.add_argument("--json", action="store_true", help="Output result as JSON")
+
+    p_cache_pathway = cache_subs.add_parser("pathway", help="Query Reactome pathways for a gene")
+    p_cache_pathway.add_argument("gene", help="Gene symbol (e.g. TP53, EGFR)")
+    p_cache_pathway.add_argument("--json", action="store_true", help="Output result as JSON")
+
+    # 21. conformance (BioNexus Conformance Test Kit - BCTK)
+    p_conf = subparsers.add_parser("conformance", help="BCTK target-bound development diagnostics; certification suspended")
+    conf_subs = p_conf.add_subparsers(dest="conformance_action", help="Conformance actions")
+
+    p_c_test = conf_subs.add_parser("test", help="Run a non-certifying diagnostic against a target")
+    p_c_test.add_argument("target", nargs="?", default=".", help="Target path, module, or package (default: .)")
+    p_c_test.add_argument("--json", action="store_true", help="Output machine-readable JSON")
+    p_c_test.add_argument("--markdown", "--md", action="store_true", help="Output Markdown diagnostic")
+    p_c_test.add_argument("-o", "--output", default=None, help="Save report to file path")
+    p_c_test.add_argument("--badge", action="store_true", help="Request badge issuance (always refused while suspended)")
+    p_c_test.add_argument("--strict", action="store_true", help="Enforce strict failure on warnings")
+    p_c_test.add_argument("-v", "--verbose", action="store_true", help="Display verbose per-rule evaluation")
+
+    p_c_inspect = conf_subs.add_parser("inspect", help="Inspect target structure and entrypoints")
+    p_c_inspect.add_argument("target", nargs="?", default=".", help="Target path or spec")
+    p_c_inspect.add_argument("--json", action="store_true", help="Output inspection as JSON")
+
+    p_c_badge = conf_subs.add_parser("badge", help="Badge issuance is suspended")
+    p_c_badge.add_argument("--tier", default="GOLD", choices=["GOLD", "SILVER", "BRONZE", "NON_CONFORMANT"])
+    p_c_badge.add_argument("-o", "--output", default="bionexus-conformance-badge.svg", help="Output SVG path")
+
+    p_c_rules = conf_subs.add_parser("rules", aliases=["list-rules"], help="List all normative rules in BCTK")
+    p_c_rules.add_argument("--json", action="store_true", help="Output rules as JSON")
+
+    p_c_init = conf_subs.add_parser("init", help="Initialize .bctk.yaml configuration in repository")
+    p_c_init.add_argument("-f", "--force", action="store_true", help="Overwrite existing configuration")
+
+    # 22. debt (Scientific Evidence Debt Engine - BNS-021)
+    p_debt = subparsers.add_parser("debt", help="BioNexus Scientific Evidence Debt Engine (BNS-021) — Track & Amortize Scientific Debt")
+    debt_subs = p_debt.add_subparsers(dest="debt_action", help="Evidence debt actions")
+
+    p_d_audit = debt_subs.add_parser("audit", help="Audit project evidence debt and epistemic keystones")
+    p_d_audit.add_argument("target", nargs="?", default=".", help="Path to ledger.json or project directory (default: .)")
+    p_d_audit.add_argument("--json", action="store_true", help="Output machine-readable JSON debt report")
+    p_d_audit.add_argument("--markdown", "--md", action="store_true", help="Output Markdown debt certificate")
+    p_d_audit.add_argument("-o", "--output", default=None, help="Save report to file path")
+    p_d_audit.add_argument("-v", "--verbose", action="store_true", help="Display detailed debt breakdown")
+
+    p_d_payoff = debt_subs.add_parser("payoff", aliases=["schedule"], help="Compute optimal scientific debt repayment schedule")
+    p_d_payoff.add_argument("target", nargs="?", default=".", help="Path to ledger.json or project directory (default: .)")
+    p_d_payoff.add_argument("--json", action="store_true", help="Output schedule as JSON")
+    p_d_payoff.add_argument("--markdown", "--md", action="store_true", help="Output schedule as Markdown")
+
+    p_d_graph = debt_subs.add_parser("graph", help="Generate Mermaid DAG visualization of evidence debt propagation")
+    p_d_graph.add_argument("target", nargs="?", default=".", help="Path to ledger.json or project directory (default: .)")
+
+    p_d_sample = debt_subs.add_parser("sample", help="Generate and audit an exemplary 20-claim research debt ledger")
+    p_d_sample.add_argument("-o", "--output", default="sample_evidence_debt_ledger.json", help="Save sample ledger JSON to file")
+    p_d_sample.add_argument("--json", action="store_true", help="Output audit report as JSON")
+    p_d_sample.add_argument("--markdown", "--md", action="store_true", help="Output audit report as Markdown")
+
+    args = parser.parse_args(argv)
 
     if not args.command:
         parser.print_help()
         return 0
 
-    if args.command in ("create-plugin", "create-skill"):
+    if args.command == "debt":
+        return handle_debt(args)
+    elif args.command == "conformance":
+        if not getattr(args, "conformance_action", None):
+            p_conf.print_help()
+            return 0
+        return handle_conformance(args)
+    elif args.command in ("create-plugin", "create-skill"):
         return handle_create_plugin(args)
     elif args.command == "doctor":
         return handle_doctor(args)
@@ -2519,8 +3317,19 @@ def main(argv: Optional[list[str]] = None) -> int:
         return handle_route(args)
     elif args.command == "eval":
         return handle_eval(args)
+    elif args.command == "eval-audit":
+        return handle_eval_audit(args)
     elif args.command == "audit-claims":
         return handle_audit_claims(args)
+    elif args.command == "parse-claim":
+        return handle_parse_claim(args)
+    elif args.command == "warrant-claim":
+        return handle_warrant_claim(args)
+    elif args.command == "rule":
+        if not getattr(args, "rule_action", None):
+            p_rule.print_help()
+            return 0
+        return handle_rule(args)
     elif args.command == "run":
         if not getattr(args, "run_action", None):
             p_run.print_help()
@@ -2562,6 +3371,23 @@ def main(argv: Optional[list[str]] = None) -> int:
         else:
             print(res.summary_str())
         return 0 if res.passed else 1
+    elif args.command == "causal":
+        if not getattr(args, "causal_action", None):
+            p_causal.print_help()
+            return 0
+        return handle_causal(args)
+    elif args.command == "remediate":
+        return handle_remediate(args)
+    elif args.command == "guard":
+        if not getattr(args, "guard_action", None):
+            p_guard.print_help()
+            return 0
+        return handle_guard(args)
+    elif args.command == "cache":
+        if not getattr(args, "cache_action", None):
+            p_cache.print_help()
+            return 0
+        return handle_cache(args)
 
     return 0
 

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bionexus:bns019-trial-run-result-schema:1",
+  "type": "object",
+  "required": ["schema", "trial_id", "run_id", "executed_at", "environment", "standard", "tracks", "cross_implementation_agreement", "overall_status", "claim_boundary"],
+  "properties": {
+    "schema": {"const": "urn:bionexus:bns019-trial-run-result:1"},
+    "trial_id": {"const": "BNS019-INTEROP-2026-01"},
+    "run_id": {"type": "string", "minLength": 1},
+    "executed_at": {"type": "string", "format": "date-time"},
+    "environment": {"type": "object"},
+    "standard": {"type": "object"},
+    "tracks": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["id", "status", "evidence", "reason"],
+        "properties": {
+          "id": {"type": "string"},
+          "status": {"enum": ["PASS", "FAIL", "NOT_RUN", "ERROR"]},
+          "evidence": {"type": "object"},
+          "reason": {"type": ["string", "null"]}
+        },
+        "additionalProperties": false
+      }
+    },
+    "cross_implementation_agreement": {
+      "type": "object",
+      "required": ["status", "compared_implementations", "reason"],
+      "properties": {
+        "status": {"enum": ["PASS", "FAIL", "NOT_RUN"]},
+        "compared_implementations": {"type": "array", "items": {"type": "string"}},
+        "reason": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "overall_status": {"enum": ["PASS", "FAIL", "INCOMPLETE"]},
+    "claim_boundary": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}

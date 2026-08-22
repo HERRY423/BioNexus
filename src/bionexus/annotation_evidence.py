@@ -1,27 +1,14 @@
-"""
-BioNexus Cell Annotation Evidence Assessment (flagship capability B, BNS-013).
+"""BioNexus Cell Annotation Evidence Assessment (BNS-013 / BNS-018).
 
-BioNexus is not another CellTypist. This module answers a different question:
-**how much evidence backs a candidate cell-type label?**
+BioNexus assesses how much evidence backs a candidate cell-type label. Score
+values are not self-interpreting: every numeric comparison is resolved through
+an empirical calibration profile conditioned on tissue, platform, reference,
+task, and the metric's evidence source.
 
-Inputs are evidence classes, not raw matrices:
-- marker consistency (positive-marker coherence within the labeled population)
-- negative-marker violation rate (fraction of labels whose lineage-exclusive
-  negatives are expressed)
-- reference mapping score (atlas / model transfer confidence)
-- doublet rate within the labeled population
-- ontology compatibility (does the label exist and cohere in CL / HRA vocabularies)
-- cross-method agreement (label concordance across independent annotators)
-- open-set signal (population outside the reference universe)
-
-Output is a per-label verdict on a deliberately small ladder:
-
-    SUPPORTED   multiple independent evidence classes cohere
-    TENTATIVE   partial evidence; at least one class missing or weak
-    ABSTAIN     no evidence, contradictory evidence, or open-set population
-
-Deterministic scoring; thresholds are published in this file and are part of
-the capability contract (they MAY only change with a contract version bump).
+Positive warrants fail closed. A missing, pending, ambiguous, or out-of-domain
+profile cannot be replaced by a global expert constant. Open-set and rare
+populations abstain regardless of their top score, and continuous-state systems
+cannot be promoted to a discrete SUPPORTED identity solely by threshold passes.
 """
 
 from __future__ import annotations
@@ -29,7 +16,18 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
-THRESHOLDS: Dict[str, float] = {
+from bionexus.empirical_warrant import (
+    CalibrationContext,
+    CalibrationRegistry,
+    CalibrationResolutionStatus,
+    MetricAssessment,
+    default_calibration_registry,
+)
+
+# Retained only so old reports can identify what was migrated. Runtime warrant
+# decisions never read this mapping; the packaged registry represents these as
+# LEGACY_UNCALIBRATED profiles that are ineligible for resolution.
+LEGACY_THRESHOLDS: Dict[str, float] = {
     "marker_consistency_min": 0.60,
     "negative_marker_violation_max": 0.20,
     "reference_mapping_min": 0.70,
@@ -37,6 +35,7 @@ THRESHOLDS: Dict[str, float] = {
     "doublet_rate_max": 0.15,
     "orthogonal_protein_min": 0.75,
 }
+THRESHOLDS = LEGACY_THRESHOLDS  # compatibility alias; not used by the engine
 
 VERDICT_LADDER = ("ROBUST", "SUPPORTED", "TENTATIVE", "CONFLICTED", "ABSTAIN")
 
@@ -45,26 +44,28 @@ VERDICT_LADDER = ("ROBUST", "SUPPORTED", "TENTATIVE", "CONFLICTED", "ABSTAIN")
 class AnnotationEvidence:
     """The evidence classes available for one candidate label."""
 
-    marker_consistency: Optional[float] = None  # 0..1
-    negative_marker_violation: Optional[float] = None  # 0..1 (lower is better)
-    reference_mapping_score: Optional[float] = None  # 0..1
-    doublet_rate: Optional[float] = None  # 0..1
+    marker_consistency: Optional[float] = None
+    negative_marker_violation: Optional[float] = None
+    reference_mapping_score: Optional[float] = None
+    doublet_rate: Optional[float] = None
     ontology_compatible: Optional[bool] = None
-    cross_method_agreement: Optional[float] = None  # 0..1
-    orthogonal_protein_evidence: Optional[float] = None  # 0..1 (CITE-seq / FACS)
+    cross_method_agreement: Optional[float] = None
+    orthogonal_protein_evidence: Optional[float] = None
     protein_concordant: Optional[bool] = None
     open_set_detected: bool = False
 
 
 @dataclass
 class AnnotationVerdict:
-    """Per-label verdict with the reasons that produced it."""
+    """Per-label verdict with evidence, calibration, and warrant ceiling."""
 
     label: str
-    verdict: str  # VERDICT_LADDER
+    verdict: str
     reasons: List[str] = field(default_factory=list)
     missing_evidence: List[str] = field(default_factory=list)
     evidence: Dict[str, Any] = field(default_factory=dict)
+    calibration: Dict[str, Any] = field(default_factory=dict)
+    warrant_ceiling: str = "ABSTAIN"
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -73,23 +74,57 @@ class AnnotationVerdict:
             "reasons": list(self.reasons),
             "missing_evidence": list(self.missing_evidence),
             "evidence": dict(self.evidence),
+            "calibration": dict(self.calibration),
+            "warrant_ceiling": self.warrant_ceiling,
         }
 
 
-def assess_annotation_evidence(label: str, evidence: AnnotationEvidence) -> AnnotationVerdict:
-    """
-    Assess how much evidence backs one candidate label (deterministic).
+_METRIC_INPUTS = {
+    "marker_consistency": "marker_consistency",
+    "negative_marker_violation": "negative_marker_violation",
+    "reference_mapping": "reference_mapping_score",
+    "cross_method_agreement": "cross_method_agreement",
+    "doublet_rate": "doublet_rate",
+    "orthogonal_protein": "orthogonal_protein_evidence",
+}
 
-    Ladder semantics:
-    - ABSTAIN: open-set population, ontology-incompatible label, an evidence
-      class actively contradicts the label, or no positive evidence at all.
-    - SUPPORTED: reference (or cross-method) evidence AND marker coherence AND
-      negative markers AND doublet control AND ontology compatibility all pass.
-    - TENTATIVE: some positive evidence exists but SUPPORTED conditions are not
-      all met; missing classes are listed as evidence requests.
+
+def _comparison_text(assessment: MetricAssessment) -> str:
+    resolution = assessment.resolution
+    assert assessment.score is not None and resolution.threshold is not None and resolution.direction is not None
+    operator = ">=" if resolution.direction.value == "AT_LEAST" else "<="
+    return (
+        f"{assessment.metric} {assessment.score:.3f} {operator} {resolution.threshold:.3f} "
+        f"under {resolution.profile_id}@{resolution.profile_version}"
+    )
+
+def _calibration_gap(assessment: MetricAssessment) -> str:
+    return (
+        f"approved empirical calibration for {assessment.metric} "
+        f"({assessment.resolution.status.value}: {assessment.resolution.reason})"
+    )
+
+
+def assess_annotation_evidence(
+    label: str,
+    evidence: AnnotationEvidence,
+    *,
+    calibration_context: Optional[CalibrationContext] = None,
+    calibration_registry: Optional[CalibrationRegistry] = None,
+) -> AnnotationVerdict:
+    """Assess one candidate label with profile-conditioned calibration.
+
+    Compatibility is preserved at the Python-call level: callers may omit the
+    new keyword arguments. Scientifically, however, an omitted context is not
+    treated as permission to reuse a universal threshold; score-bearing cases
+    remain TENTATIVE until a complete approved profile can be resolved.
     """
-    ev = evidence.evidence = {
-        k: getattr(evidence, k) for k in (
+
+    context = calibration_context or CalibrationContext()
+    registry = calibration_registry or default_calibration_registry()
+    ev = {
+        key: getattr(evidence, key)
+        for key in (
             "marker_consistency",
             "negative_marker_violation",
             "reference_mapping_score",
@@ -101,20 +136,20 @@ def assess_annotation_evidence(label: str, evidence: AnnotationEvidence) -> Anno
             "open_set_detected",
         )
     }
-    reasons: List[str] = []
-    missing: List[str] = []
-    failures: List[str] = []
+    ev["calibration_context"] = context.to_dict()
 
-    if evidence.open_set_detected:
+    if evidence.open_set_detected or context.population_scope in {"open_set", "rare"}:
+        scope = "open-set" if evidence.open_set_detected or context.population_scope == "open_set" else "rare"
         return AnnotationVerdict(
             label=label,
             verdict="ABSTAIN",
             reasons=[
-                "Open-set population: the label lies outside the reference universe; "
-                "report it as unknown/novel rather than the nearest known label (BN-F003)."
+                f"{scope.capitalize()} population: no forced nearest-known label is warranted regardless of top score (BN-F003)."
             ],
-            missing_evidence=["orthogonal evidence for a novel population (sorted bulk profile, spatial markers)"],
+            missing_evidence=["independent evidence establishing a population inside a calibrated reference universe"],
             evidence=ev,
+            calibration={"registry": registry.inventory(), "metric_assessments": {}},
+            warrant_ceiling="ABSTAIN",
         )
 
     if evidence.protein_concordant is False:
@@ -122,132 +157,150 @@ def assess_annotation_evidence(label: str, evidence: AnnotationEvidence) -> Anno
             label=label,
             verdict="CONFLICTED",
             reasons=[
-                "Orthogonal surface protein modal data (CITE-seq / FACS) contradicts RNA marker expression; "
-                "epistemic state is CONFLICTED."
+                "Orthogonal surface-protein evidence contradicts RNA marker expression; the disagreement must be resolved."
             ],
-            missing_evidence=["resolution of RNA vs Protein discordance"],
+            missing_evidence=["resolution of RNA versus protein discordance"],
             evidence=ev,
+            calibration={"registry": registry.inventory(), "metric_assessments": {}},
+            warrant_ceiling="CONFLICTED",
         )
 
-    if evidence.ontology_compatible is False:
-        failures.append("label is not compatible with the declared ontology vocabulary")
+    assessments: Dict[str, MetricAssessment] = {}
+    for metric, attr in _METRIC_INPUTS.items():
+        value = getattr(evidence, attr)
+        if value is not None:
+            assessments[metric] = registry.assess(metric, value, context)
 
-    # Positive evidence classes
-    has_reference = evidence.reference_mapping_score is not None
-    has_cross_method = evidence.cross_method_agreement is not None
-    has_markers = evidence.marker_consistency is not None
-
-    if not (has_reference or has_cross_method or has_markers):
+    calibration = {
+        "registry": registry.inventory(),
+        "metric_assessments": {metric: result.to_dict() for metric, result in assessments.items()},
+        "fallback_used": False,
+    }
+    invalid_scores = [
+        result
+        for result in assessments.values()
+        if result.resolution.status == CalibrationResolutionStatus.INVALID_SCORE
+    ]
+    if invalid_scores:
         return AnnotationVerdict(
             label=label,
             verdict="ABSTAIN",
-            reasons=["No annotation evidence source available: identity cannot be assessed or asserted (BN-F003)."],
-            missing_evidence=["reference atlas mapping or curated marker panel (positive and negative markers)"],
+            reasons=[result.resolution.reason for result in invalid_scores],
+            missing_evidence=["valid score inputs within [0, 1]"],
             evidence=ev,
+            calibration=calibration,
+            warrant_ceiling="ABSTAIN",
         )
 
-    if has_reference:
-        if evidence.reference_mapping_score >= THRESHOLDS["reference_mapping_min"]:
-            reasons.append(
-                f"reference mapping score {evidence.reference_mapping_score:.2f} >= {THRESHOLDS['reference_mapping_min']:.2f}"
-            )
-        else:
-            failures.append(
-                f"reference mapping score {evidence.reference_mapping_score:.2f} < {THRESHOLDS['reference_mapping_min']:.2f}"
-            )
-    else:
-        missing.append("reference atlas mapping")
+    has_raw_positive = any(
+        value is not None
+        for value in (
+            evidence.reference_mapping_score,
+            evidence.cross_method_agreement,
+            evidence.marker_consistency,
+        )
+    )
+    if not has_raw_positive:
+        return AnnotationVerdict(
+            label=label,
+            verdict="ABSTAIN",
+            reasons=["No annotation evidence source is available; identity cannot be assessed or asserted (BN-F003)."],
+            missing_evidence=["reference mapping, independent annotator agreement, or a curated marker panel"],
+            evidence=ev,
+            calibration=calibration,
+            warrant_ceiling="ABSTAIN",
+        )
 
-    if has_cross_method:
-        if evidence.cross_method_agreement >= THRESHOLDS["cross_method_agreement_min"]:
-            reasons.append(
-                f"cross-method agreement {evidence.cross_method_agreement:.2f} >= {THRESHOLDS['cross_method_agreement_min']:.2f}"
-            )
+    reasons: List[str] = []
+    missing: List[str] = []
+    failures: List[str] = []
+    for assessment in assessments.values():
+        if assessment.passed is True:
+            reasons.append(_comparison_text(assessment))
+        elif assessment.passed is False:
+            failures.append(_comparison_text(assessment))
         else:
-            failures.append(
-                f"cross-method agreement {evidence.cross_method_agreement:.2f} < {THRESHOLDS['cross_method_agreement_min']:.2f}"
-            )
-    else:
-        missing.append("cross-method annotation agreement")
+            missing.append(_calibration_gap(assessment))
 
-    if has_markers:
-        if evidence.marker_consistency >= THRESHOLDS["marker_consistency_min"]:
-            reasons.append(
-                f"positive-marker consistency {evidence.marker_consistency:.2f} >= {THRESHOLDS['marker_consistency_min']:.2f}"
-            )
-        else:
-            failures.append(
-                f"positive-marker consistency {evidence.marker_consistency:.2f} < {THRESHOLDS['marker_consistency_min']:.2f}"
-            )
-    else:
-        missing.append("positive-marker consistency measurement")
+    if evidence.ontology_compatible is False:
+        failures.append("label is incompatible with the declared ontology vocabulary")
+    elif evidence.ontology_compatible is None:
+        missing.append("ontology compatibility evaluation")
 
-    if evidence.negative_marker_violation is not None:
-        if evidence.negative_marker_violation <= THRESHOLDS["negative_marker_violation_max"]:
-            reasons.append(
-                f"negative-marker violation rate {evidence.negative_marker_violation:.2f} "
-                f"<= {THRESHOLDS['negative_marker_violation_max']:.2f}"
-            )
-        else:
-            failures.append(
-                f"negative-marker violation rate {evidence.negative_marker_violation:.2f} "
-                f"> {THRESHOLDS['negative_marker_violation_max']:.2f} (lineage exclusivity violated)"
-            )
-    else:
-        missing.append("negative-marker evaluation")
-
-    if evidence.doublet_rate is not None:
-        if evidence.doublet_rate <= THRESHOLDS["doublet_rate_max"]:
-            reasons.append(f"doublet rate {evidence.doublet_rate:.2f} <= {THRESHOLDS['doublet_rate_max']:.2f}")
-        else:
-            failures.append(
-                f"doublet rate {evidence.doublet_rate:.2f} > {THRESHOLDS['doublet_rate_max']:.2f} "
-                "(population may be a doublet artifact)"
-            )
-    else:
-        missing.append("doublet-rate estimate")
+    for metric, description in (
+        ("reference_mapping", "reference atlas mapping"),
+        ("cross_method_agreement", "cross-method annotation agreement"),
+        ("marker_consistency", "positive-marker consistency measurement"),
+        ("negative_marker_violation", "negative-marker evaluation"),
+        ("doublet_rate", "doublet-rate estimate"),
+    ):
+        if metric not in assessments:
+            missing.append(description)
 
     if failures:
         return AnnotationVerdict(
             label=label,
             verdict="TENTATIVE",
-            reasons=[f"contradicting evidence: {f}" for f in failures] or ["partial evidence only"],
+            reasons=[f"contradicting or below-profile evidence: {item}" for item in failures],
             missing_evidence=missing,
             evidence=ev,
+            calibration=calibration,
+            warrant_ceiling="TENTATIVE",
         )
 
-    # SUPPORTED requires an independent identity source (reference or
-    # cross-method) plus marker-level support; markers alone stay TENTATIVE.
-    independent_identity = (
-        (has_reference and evidence.reference_mapping_score >= THRESHOLDS["reference_mapping_min"])
-        or (has_cross_method and evidence.cross_method_agreement >= THRESHOLDS["cross_method_agreement_min"])
-    )
-    marker_support = has_markers and evidence.marker_consistency >= THRESHOLDS["marker_consistency_min"]
-    negatives_checked = (
-        evidence.negative_marker_violation is not None
-        and evidence.negative_marker_violation <= THRESHOLDS["negative_marker_violation_max"]
+    passed = {metric: result.passed is True for metric, result in assessments.items()}
+    independent_identity = passed.get("reference_mapping", False) or passed.get("cross_method_agreement", False)
+    core_support = (
+        independent_identity
+        and passed.get("marker_consistency", False)
+        and passed.get("negative_marker_violation", False)
+        and passed.get("doublet_rate", False)
+        and evidence.ontology_compatible is True
     )
 
-    if independent_identity and marker_support and negatives_checked:
-        # Check if orthogonal protein evidence upgrades to ROBUST
-        if (
-            evidence.orthogonal_protein_evidence is not None
-            and evidence.orthogonal_protein_evidence >= THRESHOLDS["orthogonal_protein_min"]
-        ):
-            reasons.append(
-                f"orthogonal protein concordance {evidence.orthogonal_protein_evidence:.2f} "
-                f">= {THRESHOLDS['orthogonal_protein_min']:.2f} (ROBUST)"
+    if core_support and context.state_geometry == "continuous":
+        reasons.append(
+            "Continuous-state penalty: threshold passes do not justify a discrete identity boundary in a developmental or transitional manifold."
+        )
+        return AnnotationVerdict(
+            label=label,
+            verdict="TENTATIVE",
+            reasons=reasons,
+            missing_evidence=missing + ["state-aware continuous or trajectory validation"],
+            evidence=ev,
+            calibration=calibration,
+            warrant_ceiling="TENTATIVE",
+        )
+
+    if core_support:
+        if passed.get("orthogonal_protein", False):
+            return AnnotationVerdict(
+                label=label,
+                verdict="ROBUST",
+                reasons=reasons,
+                missing_evidence=[],
+                evidence=ev,
+                calibration=calibration,
+                warrant_ceiling="ROBUST",
             )
-            return AnnotationVerdict(label=label, verdict="ROBUST", reasons=reasons, missing_evidence=[], evidence=ev)
-
-        return AnnotationVerdict(label=label, verdict="SUPPORTED", reasons=reasons, missing_evidence=[], evidence=ev)
+        return AnnotationVerdict(
+            label=label,
+            verdict="SUPPORTED",
+            reasons=reasons,
+            missing_evidence=[],
+            evidence=ev,
+            calibration=calibration,
+            warrant_ceiling="SUPPORTED",
+        )
 
     if not independent_identity:
-        missing.append("independent identity source (reference mapping or cross-method agreement)")
+        missing.append("calibrated independent identity source (reference mapping or cross-method agreement)")
     return AnnotationVerdict(
         label=label,
         verdict="TENTATIVE",
-        reasons=reasons or ["positive evidence present but insufficient for SUPPORTED"],
-        missing_evidence=missing,
+        reasons=reasons or ["Evidence scores are present but unresolved or insufficient for a positive warrant."],
+        missing_evidence=list(dict.fromkeys(missing)),
         evidence=ev,
+        calibration=calibration,
+        warrant_ceiling="TENTATIVE",
     )

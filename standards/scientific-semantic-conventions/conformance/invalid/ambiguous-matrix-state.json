@@ -1,0 +1,7 @@
+{
+  "convention": "scientific.dataset",
+  "attributes": {
+    "biological.unit": "cell",
+    "matrix.state": "normalized_expression"
+  }
+}

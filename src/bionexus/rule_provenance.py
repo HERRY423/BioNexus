@@ -179,10 +179,11 @@ def _build_classification(record: Dict[str, Any]) -> RuleClassification:
 def _build_provenance(record: Dict[str, Any]) -> RuleProvenance:
     """Build a RuleProvenance from one registry record (dict)."""
     classification = _build_classification(record)
+    ev_list = record.get("supporting_evidence") or record.get("evidence", [])
     return RuleProvenance(
         source_kind=RuleSourceKind(record["source_kind"]),
         source_citation=record["source_citation"],
-        evidence=[EvidenceReference(**e) for e in record.get("evidence", [])],
+        evidence=[EvidenceReference(**e) for e in ev_list],
         consensus=ConsensusLevel(record["consensus"]),
         exceptions=list(record.get("exceptions", [])),
         context_factors=list(record.get("context_factors", [])),

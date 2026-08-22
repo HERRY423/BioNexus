@@ -126,9 +126,9 @@ class TestScientificRuleCatalog:
         assert rule_catalog is not None
 
     def test_catalog_version(self, rule_catalog):
-        """Catalog version must be 2.0 (the epistemic-taxonomy revision)."""
+        """Catalog version must include the spatial battery calibration rule."""
         assert "catalog_version" in rule_catalog
-        assert rule_catalog["catalog_version"] == "2.0"
+        assert rule_catalog["catalog_version"] == "3.2"
 
     def test_rules_list_present(self, rule_catalog):
         """Rules list must be present and non-empty."""

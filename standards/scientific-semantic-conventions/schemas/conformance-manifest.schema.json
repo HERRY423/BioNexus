@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bionexus:scientific-semantic-conformance-manifest-schema:1",
+  "title": "BioNexus Scientific Semantic Conformance Manifest",
+  "type": "object",
+  "required": ["schema", "standard_version", "contract", "cases"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "schema": {"const": "urn:bionexus:scientific-semantic-conformance-manifest:1"},
+    "standard_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "contract": {"const": "producer-attribute-validation"},
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "input", "expected_valid"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^SEMCONV-PRODUCER-[0-9]{3}$"},
+          "input": {"type": "string", "pattern": "^(valid|invalid)/[a-z0-9-]+\\.json$"},
+          "expected_valid": {"type": "boolean"},
+          "expected_normalized_attributes": {"type": "object"},
+          "expected_failure_class": {
+            "enum": [
+              "blocked_legacy_value",
+              "missing_required_attribute",
+              "unknown_attribute",
+              "unknown_registered_value",
+              "conflicting_alias",
+              "unknown_convention",
+              "type_or_cardinality",
+              "semantic_validation_error"
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"expected_valid": {"const": true}}},
+            "then": {"required": ["expected_normalized_attributes"]},
+            "else": {"required": ["expected_failure_class"]}
+          }
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

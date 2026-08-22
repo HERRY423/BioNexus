@@ -1,0 +1,133 @@
+{
+  "registry_version": "1.0.0",
+  "status": "incomplete_not_claim_ready",
+  "description": "Annotation thresholds migrated from global constants into explicit legacy profiles. They remain non-resolvable until real regime-specific calibration evidence and independent reviewer approval are attached.",
+  "metadata": {
+    "positive_warrant_policy": "Only valid APPROVED profiles may resolve a threshold.",
+    "fallback_policy": "No global threshold fallback; unresolved calibration cannot produce SUPPORTED or ROBUST annotation warrants.",
+    "approval_boundary": "Automated fitting creates CANDIDATE profiles only; accountable human review activates a profile.",
+    "evidence_boundary": "No packaged profile is currently represented as independently empirically validated."
+  },
+  "profiles": [
+    {
+      "profile_id": "legacy.annotation.marker_consistency.v1",
+      "version": "1.0.0",
+      "metric": "marker_consistency",
+      "direction": "AT_LEAST",
+      "threshold": 0.6,
+      "regime": {
+        "tissues": ["*"],
+        "platforms": ["*"],
+        "references": ["*"],
+        "tasks": ["*"],
+        "evidence_sources": ["*"]
+      },
+      "review_status": "LEGACY_UNCALIBRATED",
+      "evidence": [],
+      "approvals": [],
+      "applicability_notes": "Former engineering default retained for migration and audit only; not eligible for warrant resolution.",
+      "known_failures": ["platform-dependent dropout", "tissue-specific marker plasticity", "continuous developmental states"],
+      "metadata": {"legacy_rule_id": "INV-004"}
+    },
+    {
+      "profile_id": "legacy.annotation.negative_marker_violation.v1",
+      "version": "1.0.0",
+      "metric": "negative_marker_violation",
+      "direction": "AT_MOST",
+      "threshold": 0.2,
+      "regime": {
+        "tissues": ["*"],
+        "platforms": ["*"],
+        "references": ["*"],
+        "tasks": ["*"],
+        "evidence_sources": ["*"]
+      },
+      "review_status": "LEGACY_UNCALIBRATED",
+      "evidence": [],
+      "approvals": [],
+      "applicability_notes": "Former engineering default retained for migration and audit only; not eligible for warrant resolution.",
+      "known_failures": ["ambient RNA", "doublets", "lineage plasticity", "panel incompleteness"],
+      "metadata": {"legacy_rule_id": "INV-005"}
+    },
+    {
+      "profile_id": "legacy.annotation.reference_mapping.v1",
+      "version": "1.0.0",
+      "metric": "reference_mapping",
+      "direction": "AT_LEAST",
+      "threshold": 0.7,
+      "regime": {
+        "tissues": ["*"],
+        "platforms": ["*"],
+        "references": ["*"],
+        "tasks": ["*"],
+        "evidence_sources": ["*"]
+      },
+      "review_status": "LEGACY_UNCALIBRATED",
+      "evidence": [],
+      "approvals": [],
+      "applicability_notes": "Former engineering default retained for migration and audit only; scores from different mappers or references are not assumed comparable.",
+      "known_failures": ["reference-domain mismatch", "open-set populations", "rare populations", "score non-comparability across methods"],
+      "metadata": {"legacy_rule_id": "INV-006"}
+    },
+    {
+      "profile_id": "legacy.annotation.cross_method_agreement.v1",
+      "version": "1.0.0",
+      "metric": "cross_method_agreement",
+      "direction": "AT_LEAST",
+      "threshold": 0.8,
+      "regime": {
+        "tissues": ["*"],
+        "platforms": ["*"],
+        "references": ["*"],
+        "tasks": ["*"],
+        "evidence_sources": ["*"]
+      },
+      "review_status": "LEGACY_UNCALIBRATED",
+      "evidence": [],
+      "approvals": [],
+      "applicability_notes": "Former engineering default retained for migration and audit only; agreement among dependent methods is not independent validation.",
+      "known_failures": ["shared reference leakage", "dependent methods", "class imbalance"],
+      "metadata": {"legacy_rule_id": "INV-007"}
+    },
+    {
+      "profile_id": "legacy.annotation.doublet_rate.v1",
+      "version": "1.0.0",
+      "metric": "doublet_rate",
+      "direction": "AT_MOST",
+      "threshold": 0.15,
+      "regime": {
+        "tissues": ["*"],
+        "platforms": ["*"],
+        "references": ["*"],
+        "tasks": ["*"],
+        "evidence_sources": ["*"]
+      },
+      "review_status": "LEGACY_UNCALIBRATED",
+      "evidence": [],
+      "approvals": [],
+      "applicability_notes": "Former engineering default retained for migration and audit only; platform loading and detector calibration are required.",
+      "known_failures": ["loading-dependent doublet rates", "detector score drift", "heterotypic doublet enrichment"],
+      "metadata": {"legacy_rule_id": "INV-008"}
+    },
+    {
+      "profile_id": "legacy.annotation.orthogonal_protein.v1",
+      "version": "1.0.0",
+      "metric": "orthogonal_protein",
+      "direction": "AT_LEAST",
+      "threshold": 0.75,
+      "regime": {
+        "tissues": ["*"],
+        "platforms": ["*"],
+        "references": ["*"],
+        "tasks": ["*"],
+        "evidence_sources": ["*"]
+      },
+      "review_status": "LEGACY_UNCALIBRATED",
+      "evidence": [],
+      "approvals": [],
+      "applicability_notes": "Former engineering default retained for migration and audit only; antibody panel and gating provenance are required.",
+      "known_failures": ["antibody specificity", "ambient antibody signal", "panel-dependent observability"],
+      "metadata": {"legacy_rule_id": "annotation_orthogonal_protein_min"}
+    }
+  ]
+}

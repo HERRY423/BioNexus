@@ -6,11 +6,11 @@
   "dataset_checksum_sha256": "d3ecbf0e65a40e783c1c80ef4e9c21872cf0d8b8544de48ec5c9f7c32fa24bed",
   "provenance": {
     "data_source": "synthetic_generator (in-silico generated multimodal fixture)",
-    "download_date": "2026-08-20T14:28:11.176654+00:00",
-    "commit_sha": "4c38c33d1903d5447c4ab5f5b558eed913be6693",
+    "download_date": "2026-08-22T03:13:46.656642+00:00",
+    "commit_sha": "20586eff06d0f3a21d8e693dbc75f3f0dae90b42",
     "git_dirty": false,
     "environment_lockfile_hashes": {
-      "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
+      "pyproject.toml": "b29c5b3f2a3a931e78f701a16c982330d4d74398e3a71d994cd027a84284df24",
       "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
       "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
     },
@@ -21,18 +21,36 @@
     "generator_version": "1.0.0-rc.2",
     "python_version": "3.13.9",
     "platform": "Windows-11-10.0.26200-SP0",
-    "timestamp": "2026-08-20T14:28:11.303139+00:00",
+    "timestamp": "2026-08-22T03:13:46.795969+00:00",
     "extra_metadata": {
       "dataset_track": "synthetic_technical_acceptance",
       "n_cells": 1200,
-      "n_genes": 300
+      "n_genes": 300,
+      "calibration_registry": {
+        "registry_version": "synthetic-technical-acceptance-v1",
+        "registry_sha256": "09af04897fc2c094ced41e58f4523bce7459e08386414a6f7bfed6c9e8ba5352",
+        "profile_count": 6,
+        "status_counts": {
+          "LEGACY_UNCALIBRATED": 0,
+          "CANDIDATE": 0,
+          "APPROVED": 6,
+          "RETIRED": 0
+        },
+        "invalid_profiles": {},
+        "metadata": {
+          "dataset_track": "synthetic_technical_acceptance",
+          "scientific_claim": "none",
+          "packaged_runtime_registry": false
+        }
+      },
+      "packaged_runtime_registry_eligible": false
     },
     "repository_dirty_at_execution": false,
     "validation_source_dirty": false,
-    "source_snapshot_sha256": "17fc0642672bd36676ef9dca66d9ff4ecc4f7c5908f14f373fcef2a1d5589564"
+    "source_snapshot_sha256": "55f5af5fdc514eedc7dafc05fd9b0f60b026625591e2e6b2c2a43d2487c61dc0"
   },
-  "timestamp": "2026-08-20T14:28:11.417831+00:00",
-  "elapsed_seconds": 0.31,
+  "timestamp": "2026-08-22T03:13:55.366205+00:00",
+  "elapsed_seconds": 8.79,
   "overall_status": "PASS",
   "dimensions": {
     "dim1_1_synthetic_technical_acceptance_baseline": {
@@ -49,7 +67,7 @@
       "missing_evidence": [
         "reference atlas mapping",
         "cross-method annotation agreement",
-        "independent identity source (reference mapping or cross-method agreement)"
+        "calibrated independent identity source (reference mapping or cross-method agreement)"
       ],
       "passed": true
     },
@@ -57,7 +75,7 @@
       "dimension": "3_negative_marker_violation",
       "verdict": "TENTATIVE",
       "reasons": [
-        "contradicting evidence: negative-marker violation rate 0.45 > 0.20 (lineage exclusivity violated)"
+        "contradicting or below-profile evidence: negative_marker_violation 0.450 <= 0.200 under synthetic.contract.negative_marker_violation.v1@1.0.0"
       ],
       "passed": true
     },
@@ -65,10 +83,10 @@
       "dimension": "4_independent_reference_mapping",
       "verdict": "SUPPORTED",
       "reasons": [
-        "reference mapping score 0.88 >= 0.70",
-        "positive-marker consistency 0.85 >= 0.60",
-        "negative-marker violation rate 0.08 <= 0.20",
-        "doublet rate 0.04 <= 0.15"
+        "marker_consistency 0.850 >= 0.600 under synthetic.contract.marker_consistency.v1@1.0.0",
+        "negative_marker_violation 0.080 <= 0.200 under synthetic.contract.negative_marker_violation.v1@1.0.0",
+        "reference_mapping 0.880 >= 0.700 under synthetic.contract.reference_mapping.v1@1.0.0",
+        "doublet_rate 0.040 <= 0.150 under synthetic.contract.doublet_rate.v1@1.0.0"
       ],
       "passed": true
     },
@@ -76,11 +94,11 @@
       "dimension": "5_orthogonal_surface_protein_robust",
       "verdict": "ROBUST",
       "reasons": [
-        "reference mapping score 0.92 >= 0.70",
-        "positive-marker consistency 0.90 >= 0.60",
-        "negative-marker violation rate 0.05 <= 0.20",
-        "doublet rate 0.02 <= 0.15",
-        "orthogonal protein concordance 0.95 >= 0.75 (ROBUST)"
+        "marker_consistency 0.900 >= 0.600 under synthetic.contract.marker_consistency.v1@1.0.0",
+        "negative_marker_violation 0.050 <= 0.200 under synthetic.contract.negative_marker_violation.v1@1.0.0",
+        "reference_mapping 0.920 >= 0.700 under synthetic.contract.reference_mapping.v1@1.0.0",
+        "doublet_rate 0.020 <= 0.150 under synthetic.contract.doublet_rate.v1@1.0.0",
+        "orthogonal_protein 0.950 >= 0.750 under synthetic.contract.orthogonal_protein.v1@1.0.0"
       ],
       "passed": true
     },
@@ -88,7 +106,7 @@
       "dimension": "6_discordant_protein_conflicted",
       "verdict": "CONFLICTED",
       "reasons": [
-        "Orthogonal surface protein modal data (CITE-seq / FACS) contradicts RNA marker expression; epistemic state is CONFLICTED."
+        "Orthogonal surface-protein evidence contradicts RNA marker expression; the disagreement must be resolved."
       ],
       "passed": true
     },
@@ -96,7 +114,7 @@
       "dimension": "7_open_set_novel_population_gating",
       "verdict": "ABSTAIN",
       "reasons": [
-        "Open-set population: the label lies outside the reference universe; report it as unknown/novel rather than the nearest known label (BN-F003)."
+        "Open-set population: no forced nearest-known label is warranted regardless of top score (BN-F003)."
       ],
       "passed": true
     },
@@ -104,7 +122,7 @@
       "dimension": "8_doublet_artifact_gate",
       "verdict": "TENTATIVE",
       "reasons": [
-        "contradicting evidence: doublet rate 0.28 > 0.15 (population may be a doublet artifact)"
+        "contradicting or below-profile evidence: doublet_rate 0.280 <= 0.150 under synthetic.contract.doublet_rate.v1@1.0.0"
       ],
       "passed": true
     },
@@ -135,6 +153,5 @@
       ],
       "passed": true
     }
-  },
-  "source_snapshot_sha256": "17fc0642672bd36676ef9dca66d9ff4ecc4f7c5908f14f373fcef2a1d5589564"
+  }
 }

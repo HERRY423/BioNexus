@@ -7,16 +7,17 @@ Not a reimplementation of Squidpy. The question answered here is:
 
 A spatial observation (e.g. "gene X enriches toward macrophage-facing
 membrane") is compatible with several non-biological explanations: cell size,
-transcript density, segmentation leakage, nuclear eccentricity, local cell
-density, spot composition, spatial autocorrelation, batch/FOV artifacts,
-ligand/receptor abundance, contact geometry, neighborhood-radius choice, and
-the absence of a permutation null. This module evaluates a declared
-control-status matrix and returns:
+transcript density, segmentation uncertainty, transcript leakage, nuclear
+eccentricity, local cell density, label uncertainty, spot composition, spatial
+autocorrelation, batch/FOV artifacts, ligand/receptor abundance, contact
+geometry, neighborhood-radius choice, and the absence of a permutation null.
+This module evaluates a declared control-status matrix and returns:
 
     ROBUST      every canonical control TESTED-and-passing + permutation null
     SUPPORTED   all provided controls pass; canonical set complete
     FRAGILE     at least one alternative left UNTESTED (the honest default)
-    ABSTAIN     a control FAILED or no controls were provided at all
+    CONFLICTED  at least one tested alternative explains or overturns the effect
+    ABSTAIN     no controls were provided or the executable baseline is not estimable
 
 Deterministic; the canonical alternative registry below is part of the
 capability contract and may only change with a contract version bump.
@@ -32,6 +33,7 @@ CANONICAL_BASE_ALTERNATIVES: tuple = (
     "cell_size",
     "transcript_density",
     "segmentation_uncertainty",
+    "transcript_leakage",
     "nuclear_eccentricity",
     "local_cell_density",
     "spot_composition",
@@ -41,32 +43,44 @@ CANONICAL_BASE_ALTERNATIVES: tuple = (
     "contact_geometry",
     "neighborhood_radius",
     "permutation_null",
+    "cell_label_perturbation",
 )
 
 # Canonical alias mapping for robust resolution
 ALTERNATIVE_ALIASES: Dict[str, str] = {
     "segmentation_leakage": "segmentation_uncertainty",
     "segmentation_specificity": "segmentation_uncertainty",
+    "segmentation_perturbation": "segmentation_uncertainty",
     "neighborhood_radius_sensitivity": "neighborhood_radius",
     "morphology_confounding": "cell_size",
     "cell_density_confounding": "local_cell_density",
     "edge_effect": "edge_effects",
     "edge_effects": "contact_geometry",
-    "transcript_spillover": "transcript_density",
-    "label_uncertainty": "spot_composition",
+    "local_transcript_density": "transcript_density",
+    "transcript_spillover": "transcript_leakage",
+    "leakage_sensitivity": "transcript_leakage",
+    "label_uncertainty": "cell_label_perturbation",
+    "cell_label_sensitivity": "cell_label_perturbation",
+    "contact_surface_geometry": "contact_geometry",
+    "fov_batch_effect": "batch_fov",
+    "coordinate_permutation_null": "permutation_null",
 }
 
-CANONICAL_ALTERNATIVES: tuple = tuple(
-    sorted(set(CANONICAL_BASE_ALTERNATIVES) | set(ALTERNATIVE_ALIASES.keys()))
-)
+CANONICAL_ALTERNATIVES: tuple = tuple(CANONICAL_BASE_ALTERNATIVES)
 
 # Controls that MUST be addressed (TESTED / CONTROLLED / FAILED) before a
 # conclusion can be called anything better than FRAGILE.
-CORE_CONTROLS: tuple = ("cell_size", "transcript_density", "segmentation_uncertainty")
+CORE_CONTROLS: tuple = (
+    "cell_size",
+    "transcript_density",
+    "segmentation_uncertainty",
+    "transcript_leakage",
+    "contact_geometry",
+)
 
 CONTROL_STATUSES = ("TESTED", "CONTROLLED", "UNTESTED", "FAILED")
 
-VALIDITY_LADDER = ("ROBUST", "SUPPORTED", "FRAGILE", "ABSTAIN")
+VALIDITY_LADDER = ("ROBUST", "SUPPORTED", "FRAGILE", "CONFLICTED", "ABSTAIN")
 
 
 @dataclass
@@ -80,7 +94,7 @@ class ControlResult:
     def __post_init__(self) -> None:
         if self.status not in CONTROL_STATUSES:
             raise ValueError(f"Control status '{self.status}' not in {CONTROL_STATUSES}")
-        if self.name not in CANONICAL_ALTERNATIVES:
+        if self.name not in CANONICAL_ALTERNATIVES and self.name not in ALTERNATIVE_ALIASES:
             raise ValueError(
                 f"Unknown alternative-explanation control '{self.name}'. Canonical: {list(CANONICAL_ALTERNATIVES)}"
             )
@@ -146,7 +160,7 @@ def assess_spatial_inference(
 
     Fail-closed semantics:
     - no controls at all              -> ABSTAIN (nothing was actually tested)
-    - any FAILED control              -> ABSTAIN (an alternative explains it)
+    - any FAILED control              -> CONFLICTED (an alternative explains it)
     - any canonical alternative left UNTESTED -> FRAGILE (names the gaps)
     - core controls addressed + permutation null -> ROBUST; without the null
       the verdict tops out at SUPPORTED.
@@ -169,14 +183,14 @@ def assess_spatial_inference(
     if failed:
         return SpatialInferenceVerdict(
             observation=observation,
-            verdict="ABSTAIN",
+            verdict="CONFLICTED",
             controlled=sorted(n for n, s in status_by_name.items() if s in ("TESTED", "CONTROLLED")),
             untested=sorted(n for n, s in status_by_name.items() if s == "UNTESTED"),
             failed=failed,
             notes=notes
             + [
-                "A declared alternative explanation FAILED its control: the conclusion is not "
-                "interpretable as stated until the confound is resolved."
+                "A tested alternative explanation explains or overturns the observation: evidence is "
+                "CONFLICTED until the confound is resolved or the claim is restated."
             ],
         )
 

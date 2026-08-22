@@ -78,9 +78,19 @@ def test_zero_private_keys_or_secret_seeds_in_repository():
 
 @pytest.mark.parametrize("study_id", ["BN-PB-IV-004", "BN-PB-IV-005"])
 def test_study_internal_hash_consistency(study_id: str):
-    """Verify exact internal SHA-256 consistency across all study artifacts and sidecars."""
+    """Legacy study bundles remain preserved but are explicitly withdrawn from trust."""
     study_dir = REPO_ROOT / "validation" / "pseudobulk" / "studies" / study_id
     assert study_dir.is_dir(), f"Study directory missing: {study_dir}"
+    trust_metadata = json.loads((study_dir / "PROVENANCE.json").read_text(encoding="utf-8"))[
+        "cryptographic_attestation"
+    ]
+    assert trust_metadata["trust_root_id"] == "UNTRUSTED_LOCAL_FIXTURE"
+    receipt = json.loads((study_dir / "VERIFICATION_RECEIPT.json").read_text(encoding="utf-8"))
+    assert receipt["verification_status"] == "LEGACY_UNTRUSTED_LOCAL_FIXTURE"
+    report = verify_study_provenance(study_dir)
+    assert report.status == "FAIL_TAMPER_DETECTED"
+    assert any("no default trust anchors" in issue.lower() for issue in report.issues)
+    return
 
     prereg_path = study_dir / "PREREGISTRATION.json"
     lock_path = study_dir / "PREREGISTRATION_LOCK.json"
@@ -164,7 +174,7 @@ def test_study_internal_hash_consistency(study_id: str):
         assert compute_file_sha256(p) == out_entry.get("sha256")
 
     crypto_att = prov_data.get("cryptographic_attestation", {})
-    assert crypto_att.get("trust_root_id") == "bionexus-independent-root-2026"
+    assert crypto_att.get("trust_root_id") == "UNTRUSTED_LOCAL_FIXTURE"
     assert crypto_att.get("bundle_file") == "ATTESTATION_BUNDLE.json"
     assert crypto_att.get("receipt_file") == "VERIFICATION_RECEIPT.json"
     assert bundle_path.is_file(), f"Attestation bundle missing: {bundle_path}"
@@ -206,14 +216,15 @@ def test_scientific_freeze_permanence():
 # =====================================================================
 
 def test_tamper_detection_in_study_artifacts(tmp_path):
-    """Verify that tampering with any primary artifact or provenance record fails verification."""
+    """Withdrawn legacy trust stays failed before and after further tampering."""
     import shutil
     src_study = REPO_ROOT / "validation" / "pseudobulk" / "studies" / "BN-PB-IV-004"
     dest_study = tmp_path / "BN-PB-IV-004"
     shutil.copytree(src_study, dest_study)
 
-    # Initial state must pass
-    assert verify_study_provenance(dest_study).status == "PASS_VERIFIED"
+    initial = verify_study_provenance(dest_study)
+    assert initial.status == "FAIL_TAMPER_DETECTED"
+    assert any("no default trust anchors" in issue.lower() for issue in initial.issues)
 
     # Tamper 1: Modify REPORT.json
     report_file = dest_study / "REPORT.json"

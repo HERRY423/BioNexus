@@ -24,6 +24,10 @@ Every requirement carries a stable identifier (`BNS-XX-nnn`). Identifiers are
 never reused. Requirements may be superseded by later revisions but never silently
 deleted.
 
+`registry.yaml` is the authoritative numbering ledger. CI validates that IDs and
+filenames are unique, contiguous, present on disk, and bound to the document's
+first heading. A document is not part of the BNS series until it is registered.
+
 ## Document index
 
 | ID | Title | Governs | Primary enforcement point |
@@ -44,6 +48,12 @@ deleted.
 | [BNS-014](BNS-014-biofailurebench.md) | BioFailureBench | The scientific trap corpus with ground truth (BF-nnn) | `evals/datasets/biofailurebench.yaml`, `evals/biofailurebench.py` |
 | [BNS-015](BNS-015-flagship-certification.md) | Flagship Certification | 3 externally-validated CERTIFIED capabilities as the priority track | `src/bionexus/certification.py` (flagship program) |
 | [BNS-016](BNS-016-standards-interop.md) | Standards Interoperability & External Scope | RO-Crate / Workflow Run Crate / IEEE 2791 BCO exports; standards engagement; product boundary | `src/bionexus/interop.py`, `src/bionexus/standards.py` |
+| [BNS-017](BNS-017-claim-semantics-ir.md) | Scientific Claim Semantics & Deterministic Warrant IR | Typed Claim IR, epistemic warrant rules, causal overclaim interception | `src/bionexus/claim_semantics.py`, `src/bionexus/claim_checker.py` |
+| [BNS-018](BNS-018-rule-calibration-and-challenge-network.md) | Scientific Rule Calibration & Challenge Network | Machine-readable rule registry, empirical sensitivity, peer challenge protocol | `src/bionexus/rule_calibration.py`, `src/bionexus/empirical_warrant.py` |
+| [BNS-019](BNS-019-scientific-semantic-conventions.md) | Scientific Semantic Conventions | Language-neutral vocabulary for biological units, claims, evidence, confounds, and warrants | `standards/scientific-semantic-conventions/` |
+| [BNS-020](BNS-020-conformance-test-kit.md) | BioNexus Conformance Test Kit (BCTK) | Target-bound development diagnostics; certification and badges suspended | `src/bionexus/bctk/`, `bctk` CLI |
+| [BNS-021](BNS-021-evidence-debt.md) | Scientific Evidence Debt & Epistemic DAG Amortization | Structured scientific debt taxonomy, keystone bottleneck analysis, optimal repayment schedule | `src/bionexus/debt.py`, `bionexus debt` |
+| [BNS-022](BNS-022-scientific-semantics-neutral-governance.md) | Scientific Semantics Neutral Governance & Institutional Adoption | Independent Council formation, technical/commercial/certification separation, evidence-bound institutional adoption | `governance/scientific-semantics/`, `scripts/validate_semantic_governance.py` |
 
 ## Conformance classes
 

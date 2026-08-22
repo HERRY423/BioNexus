@@ -2,7 +2,11 @@
 
 ## 1. Cryptographic Release Signing Architecture
 
-All official releases and container images of BioNexus are signed using [Sigstore Cosign](https://www.sigstore.dev/) and GitHub Artifact Attestations (`actions/attest-build-provenance@v2`) to provide keyless, tamper-evident cryptographic provenance backed by Sigstore transparency logs.
+**Status: designed, not verified for the current release.** The workflow intends to
+use Sigstore Cosign and GitHub Artifact Attestations, but repository-local files do
+not prove that a hosted workflow completed, that an artifact reached a transparency
+log, or that the current release is signed. Verify each release remotely before
+making that claim.
 
 ```mermaid
 graph LR
@@ -26,13 +30,15 @@ Designed for public distribution and open reproduction:
 - CycloneDX SBOM (`sbom.json`)
 - GitHub Artifact Attestation (Sigstore In-toto signed DSSE bundle)
 
-### Tier 2: Independent Research Evidence Package
-Designed for biostatistical reproducibility and cryptographic audit:
+### Tier 2: Research Evidence Package (development)
+Designed for reproducibility experiments; not independently attested by default:
 - `PROVENANCE.json` (execution provenance and environment locks)
-- `ATTESTATION_BUNDLE.json` (Sigstore v0.2 DSSE In-toto attestation)
-- `VERIFICATION_RECEIPT.json` (Ed25519 verification receipt)
-- Standalone Rekor transparency log proofs (`rekor_transparency_proof.json`)
-- RFC 3161 timestamp authority evidence (`tsa_timestamp_token.json`)
+- legacy local integrity fixtures (`ATTESTATION_BUNDLE.json`,
+  `VERIFICATION_RECEIPT.json`, `rekor_transparency_proof.json`, and
+  `tsa_timestamp_token.json`), which MUST NOT be described as Sigstore, Rekor,
+  RFC 3161, independent review, or scientific endorsement
+- `bionexus.evidence-attestation.v1` records only when they verify against an
+  explicit trust registry, artifact digest, expiry interval, and revocation state
 
 > [!IMPORTANT]
 > **Data Privacy & Governance Rule**: Controlled institutional LIMS data, donor-level unmasked clinical matrices, and restricted PHI are strictly excluded from public distribution packages and remain protected within air-gapped or controlled-access boundaries.
@@ -41,7 +47,9 @@ Designed for biostatistical reproducibility and cryptographic audit:
 
 ## 3. Verifying Release Integrity
 
-To verify the cryptographic authenticity and provenance of a BioNexus wheel or tarball release:
+The commands below are acceptance checks for a release that actually publishes the
+corresponding hosted evidence. A successful local SHA-256 check proves integrity,
+not signer identity or scientific validity.
 
 ### Using GitHub CLI:
 ```bash

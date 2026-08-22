@@ -1,0 +1,30 @@
+{
+  "$schema": "schemas/trial-manifest.schema.json",
+  "schema": "urn:bionexus:bns019-interoperability-trial-manifest:1",
+  "trial_id": "BNS019-INTEROP-2026-01",
+  "title": "BNS-019 Public Interoperability Trial 01",
+  "publication_status": "open_on_publication",
+  "opened_on": null,
+  "standard": {
+    "id": "BNS-019",
+    "version": "0.1.0",
+    "release_digest_sha256": "b3164afe6ccd69dc9d7738c2ee58195ac65862701e29f9db1f98c12e1a97e934",
+    "conformance_manifest_sha256": "f7244f5f7b8a25ff23082f4b9f500427abdaa6325a70bcd6f19ffb3c881a8e7d"
+  },
+  "tracks": [
+    {"id": "python-validator", "kind": "independent_validator", "required_cases": 5},
+    {"id": "r-validator", "kind": "independent_validator", "required_cases": 5},
+    {"id": "scanpy-anndata-adapter", "kind": "host_adapter", "required_cases": 1},
+    {"id": "seurat-adapter", "kind": "host_adapter", "required_cases": 1},
+    {"id": "nfcore-nextflow-adapter", "kind": "workflow_adapter", "required_cases": 1}
+  ],
+  "public_success_gates": {
+    "manifest_verified_by_every_implementation": true,
+    "all_applicable_cases_pass": true,
+    "canonical_outputs_agree": true,
+    "host_round_trips_preserve_envelope": true,
+    "minimum_independent_external_implementations": 1,
+    "public_execution_artifacts_required": true
+  },
+  "claim_boundary": "A passing entry demonstrates software-contract interoperability with one exact BNS-019 development release. It is not a badge, certification, endorsement, biological validation, or evidence of community adoption."
+}

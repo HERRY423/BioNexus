@@ -1,0 +1,53 @@
+name: Scientific Semantics institutional adoption declaration
+description: Register evidence-bound experimental or production use of one exact BNS-019 release
+title: "[BNS-019 adoption]: "
+labels: ["scientific-semantics", "adoption"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Mentions, sponsorship, trial registration, and BioNexus self-use are not institutional adoption. Accepted declarations expire and remain publicly auditable.
+  - type: input
+    id: organization
+    attributes:
+      label: Organization and accountable contact
+    validations:
+      required: true
+  - type: dropdown
+    id: role
+    attributes:
+      label: Adoption role
+      options:
+        - experimental_implementer
+        - production_producer
+        - production_consumer
+        - standards_liaison
+    validations:
+      required: true
+  - type: input
+    id: digest
+    attributes:
+      label: Exact BNS-019 version and release digest
+    validations:
+      required: true
+  - type: input
+    id: evidence
+    attributes:
+      label: Immutable implementation or deployment evidence URI and SHA-256
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope, exclusions, and known semantic loss
+    validations:
+      required: true
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Publication and claim boundary
+      options:
+        - label: The organization authorizes publication of this declaration and its status history.
+          required: true
+        - label: We will not describe experimental use or liaison activity as certification or endorsement.
+          required: true

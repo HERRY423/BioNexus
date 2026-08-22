@@ -1,12 +1,8 @@
 {
-  "schema_version": "bionexus.unblinding-manifest.v1",
+  "schema_version": "bionexus.withdrawn-unblinding-manifest.v1",
   "study_id": "BN-PB-IV-005",
   "unblinded_at": "2026-08-21T09:21:42.263242+00:00",
-  "custodian": {
-    "full_name": "Dr. Eleanor Vance",
-    "institution": "BioNexus Independent Core Facility",
-    "professional_email": "custodian@bionexus-validation.org"
-  },
+  "custodian": null,
   "arm_mapping": {
     "C05": {
       "ARM_A": "recombinant human IFN-beta-1a (1000 IU/mL)",
@@ -14,11 +10,14 @@
     }
   },
   "unblinding_preconditions_met": {
-    "preregistration_frozen": true,
-    "blinded_packet_frozen": true,
-    "blinded_analysis_completed": true,
-    "biostatistician_attestation_signed": true
+    "preregistration_frozen": false,
+    "blinded_packet_frozen": false,
+    "blinded_analysis_completed": false,
+    "biostatistician_attestation_signed": false
   },
-  "authoritative_lims_manifest_sha256": "80c5176658892dfe2ec5e9cf67bc131f6c7e4a97640fc646c869b0d0792618d5",
-  "biostatistician_attestation_sha256": "a66570cc802f9fe7b43a0fa24d554041062d05cda34e4e3abad8b7ee89fc2503"
+  "authoritative_lims_manifest_sha256": null,
+  "biostatistician_attestation_sha256": null,
+  "status": "WITHDRAWN_UNVERIFIABLE",
+  "trust_decision": "NOT_ASSESSED",
+  "reason": "Former custodian identity and unblinding authorization were not backed by independently verifiable signed evidence."
 }

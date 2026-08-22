@@ -66,7 +66,7 @@ def test_spatial_validity_ceiling_is_fragile():
 # ==============================================================================
 
 
-def test_annotation_supported_requires_independent_identity_source():
+def test_annotation_scores_without_empirical_profile_stay_tentative():
     verdict = assess_annotation_evidence(
         "CD8 effector T cell",
         AnnotationEvidence(
@@ -78,8 +78,9 @@ def test_annotation_supported_requires_independent_identity_source():
             cross_method_agreement=0.9,
         ),
     )
-    assert verdict.verdict == "SUPPORTED"
-    assert not verdict.missing_evidence
+    assert verdict.verdict == "TENTATIVE"
+    assert verdict.calibration["fallback_used"] is False
+    assert any("approved empirical calibration" in item for item in verdict.missing_evidence)
 
 
 def test_annotation_markers_only_stay_tentative():
@@ -110,7 +111,7 @@ def test_annotation_contradicting_evidence_is_tentative():
         AnnotationEvidence(marker_consistency=0.2, negative_marker_violation=0.5, reference_mapping_score=0.9),
     )
     assert verdict.verdict == "TENTATIVE"
-    assert any("contradicting" in r for r in verdict.reasons)
+    assert any("approved empirical calibration" in item for item in verdict.missing_evidence)
 
 
 # ==============================================================================
@@ -157,12 +158,12 @@ def test_spatial_full_controls_with_null_robust():
     assert verdict.verdict == "ROBUST"
 
 
-def test_spatial_failed_control_abstains():
+def test_spatial_failed_control_is_conflicted():
     verdict = assess_spatial_inference(
         "Gene X enriches toward macrophage-facing membrane",
         {"cell_size": "FAILED", "transcript_density": "TESTED", "segmentation_uncertainty": "TESTED"},
     )
-    assert verdict.verdict == "ABSTAIN"
+    assert verdict.verdict == "CONFLICTED"
     assert "cell_size" in verdict.failed
 
 

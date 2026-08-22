@@ -1,0 +1,26 @@
+schema_version: bionexus.spec-registry.v1
+series: BNS
+numbering_policy: monotonically_increasing_never_reused
+documents:
+  - {id: BNS-001, file: BNS-001-capability-contract.md, title: Capability Contract & Scientific ABI, status: active}
+  - {id: BNS-002, file: BNS-002-input-invariants.md, title: Input Semantic Invariants, status: active}
+  - {id: BNS-003, file: BNS-003-execution-fidelity.md, title: Execution Fidelity, status: active}
+  - {id: BNS-004, file: BNS-004-evidence-maturity.md, title: Evidence Maturity, status: active}
+  - {id: BNS-005, file: BNS-005-abstention-and-degradation.md, title: Abstention & Degradation, status: active}
+  - {id: BNS-006, file: BNS-006-provenance.md, title: Provenance, status: active}
+  - {id: BNS-007, file: BNS-007-cross-method-validation.md, title: Cross-Method Validation, status: active}
+  - {id: BNS-008, file: BNS-008-host-conformance.md, title: Host Agent Conformance, status: active}
+  - {id: BNS-009, file: BNS-009-capability-lifecycle.md, title: Capability Lifecycle, status: active}
+  - {id: BNS-010, file: BNS-010-capability-certification.md, title: Capability Certification, status: active}
+  - {id: BNS-011, file: BNS-011-failure-taxonomy.md, title: Scientific Failure Taxonomy, status: active}
+  - {id: BNS-012, file: BNS-012-claim-evidence-ledger.md, title: Claim-Evidence Ledger, status: active}
+  - {id: BNS-013, file: BNS-013-scientific-assertion-firewall.md, title: Scientific Assertion Firewall, status: active}
+  - {id: BNS-014, file: BNS-014-biofailurebench.md, title: BioFailureBench, status: active}
+  - {id: BNS-015, file: BNS-015-flagship-certification.md, title: Flagship Certification Track, status: development}
+  - {id: BNS-016, file: BNS-016-standards-interop.md, title: Standards Interoperability & External Scope, status: active}
+  - {id: BNS-017, file: BNS-017-claim-semantics-ir.md, title: Scientific Claim Semantics & Deterministic Warrant IR, status: development}
+  - {id: BNS-018, file: BNS-018-rule-calibration-and-challenge-network.md, title: Scientific Rule Calibration & Challenge Network, status: development_unverified}
+  - {id: BNS-019, file: BNS-019-scientific-semantic-conventions.md, title: Scientific Semantic Conventions, status: development}
+  - {id: BNS-020, file: BNS-020-conformance-test-kit.md, title: BioNexus Conformance Test Kit, status: development_not_certifiable}
+  - {id: BNS-021, file: BNS-021-evidence-debt.md, title: Scientific Evidence Debt & Epistemic DAG Amortization, status: development}
+  - {id: BNS-022, file: BNS-022-scientific-semantics-neutral-governance.md, title: Scientific Semantics Neutral Governance & Institutional Adoption, status: draft_council_forming}

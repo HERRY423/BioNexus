@@ -49,6 +49,7 @@ def test_mcp_tools_list_count():
     tool_names = {t["name"] for t in tools}
     expected_unique = {
         "bionexus_host_probe",
+        "bionexus_warrant_check",
         "search_uniprot",
         "search_ensembl",
         "search_gnomad",
@@ -71,7 +72,7 @@ def test_mcp_hosted_fallbacks_opt_in(monkeypatch):
     names = {t["name"] for t in public_tools_schema()}
     assert "search_pubmed" in names
     assert "search_cosmic" in names
-    assert len(names) == 17
+    assert len(names) == 18
 
 
 def test_mcp_resources_primitives():

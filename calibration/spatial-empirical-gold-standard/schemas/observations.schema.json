@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bionexus:spatial-empirical-gold-observations:1",
+  "type": "object",
+  "required": ["schema_version", "study_manifest_sha256", "records"],
+  "properties": {
+    "schema_version": {"const": "bionexus.spatial-empirical-gold-observations.v1"},
+    "study_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["record_id", "study_id", "platform", "metric", "score", "outcome_supported", "partition", "donor_id", "fov_id", "battery_run_sha256", "adjudication_record_sha256"],
+        "properties": {
+          "record_id": {"type": "string", "minLength": 1},
+          "study_id": {"type": "string", "minLength": 1},
+          "platform": {"enum": ["xenium", "cosmx", "merscope"]},
+          "metric": {"type": "string", "pattern": "^spatial\\."},
+          "score": {"type": "number", "minimum": 0, "maximum": 1},
+          "outcome_supported": {"type": "boolean"},
+          "partition": {"enum": ["calibration", "validation"]},
+          "donor_id": {"type": "string", "minLength": 1},
+          "fov_id": {"type": "string", "minLength": 1},
+          "battery_run_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "adjudication_record_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

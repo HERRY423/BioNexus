@@ -619,6 +619,12 @@ class ValidationArtifact:
 
 def compute_file_checksum(file_path: Path, algorithm: str = "sha256") -> str:
     """Compute the hex-digest checksum of a file (default SHA-256)."""
+    if algorithm == "sha256":
+        # Use the shared provenance kernel so text checksums are stable across
+        # Windows CRLF and POSIX LF checkouts. The verifier uses the same rule.
+        from bionexus.provenance import sha256_file
+
+        return sha256_file(file_path)
     h = hashlib.new(algorithm)
     with open(file_path, "rb") as f:
         for chunk in iter(lambda: f.read(8192), b""):

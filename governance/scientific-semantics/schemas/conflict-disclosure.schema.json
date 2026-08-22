@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bionexus:scientific-semantics-conflict-disclosure-schema:1",
+  "type": "object",
+  "required": ["schema", "disclosure_id", "person_id", "role", "employer_group", "bionexus_affiliated", "commercial_vendor_affiliated", "board_and_executive_roles", "material_equity_interests", "paid_relationships_12_months", "relevant_grants_and_contracts", "authored_implementations", "certification_relationships", "declared_at", "expires_on", "publication_consent", "signature_or_attestation_uri"],
+  "properties": {
+    "schema": {"const": "urn:bionexus:scientific-semantics-conflict-disclosure:1"},
+    "disclosure_id": {"type": "string", "pattern": "^SSC-COI-[0-9]{4}$"},
+    "person_id": {"type": "string", "minLength": 1},
+    "role": {"enum": ["council_member", "selection_observer", "assurance_overseer", "cab_assessor", "appeal_panelist"]},
+    "employer_group": {"type": "string", "minLength": 1},
+    "bionexus_affiliated": {"type": "boolean"},
+    "commercial_vendor_affiliated": {"type": "boolean"},
+    "board_and_executive_roles": {"type": "array", "items": {"type": "string"}},
+    "material_equity_interests": {"type": "array", "items": {"type": "string"}},
+    "paid_relationships_12_months": {"type": "array", "items": {"type": "string"}},
+    "relevant_grants_and_contracts": {"type": "array", "items": {"type": "string"}},
+    "authored_implementations": {"type": "array", "items": {"type": "string"}},
+    "certification_relationships": {"type": "array", "items": {"type": "string"}},
+    "declared_at": {"type": "string", "format": "date-time"},
+    "expires_on": {"type": "string", "format": "date"},
+    "publication_consent": {"const": true},
+    "signature_or_attestation_uri": {"type": "string", "format": "uri"}
+  },
+  "additionalProperties": false
+}

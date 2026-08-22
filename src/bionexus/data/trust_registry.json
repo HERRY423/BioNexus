@@ -1,0 +1,7 @@
+{
+  "registry_version": "1.0.0",
+  "status": "DEVELOPMENT_NO_TRUST_ANCHORS",
+  "description": "Phase-1 Scientific Trust Reset registry. No external reviewer or certification authority is trusted by default.",
+  "keys": [],
+  "revocations": []
+}

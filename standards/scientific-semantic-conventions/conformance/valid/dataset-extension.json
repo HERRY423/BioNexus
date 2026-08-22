@@ -1,0 +1,8 @@
+{
+  "convention": "scientific.dataset",
+  "attributes": {
+    "biological.unit": "spot",
+    "matrix_state": "raw_counts",
+    "x.example.assay_panel": "panel-v1"
+  }
+}

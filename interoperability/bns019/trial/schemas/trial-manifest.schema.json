@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bionexus:bns019-interoperability-trial-manifest-schema:1",
+  "type": "object",
+  "required": ["schema", "trial_id", "title", "publication_status", "opened_on", "standard", "tracks", "public_success_gates", "claim_boundary"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "schema": {"const": "urn:bionexus:bns019-interoperability-trial-manifest:1"},
+    "trial_id": {"const": "BNS019-INTEROP-2026-01"},
+    "title": {"type": "string", "minLength": 1},
+    "publication_status": {"enum": ["open_on_publication", "open", "closed"]},
+    "opened_on": {"type": ["string", "null"], "format": "date"},
+    "standard": {
+      "type": "object",
+      "required": ["id", "version", "release_digest_sha256", "conformance_manifest_sha256"],
+      "properties": {
+        "id": {"const": "BNS-019"},
+        "version": {"const": "0.1.0"},
+        "release_digest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "conformance_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "tracks": {
+      "type": "array",
+      "minItems": 5,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "required_cases"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "kind": {"enum": ["independent_validator", "host_adapter", "workflow_adapter"]},
+          "required_cases": {"type": "integer", "minimum": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "public_success_gates": {"type": "object"},
+    "claim_boundary": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}

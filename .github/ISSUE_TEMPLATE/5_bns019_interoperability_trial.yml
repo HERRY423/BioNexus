@@ -1,0 +1,51 @@
+name: BNS-019 interoperability trial participation
+description: Register an implementation or host adapter for the public BNS-019 trial
+title: "[BNS-019 interop]: "
+labels: ["interoperability", "scientific-semantics"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This trial evaluates software-contract interoperability only. It does not award a badge or validate biological conclusions.
+  - type: input
+    id: implementation
+    attributes:
+      label: Implementation ID and version
+    validations:
+      required: true
+  - type: dropdown
+    id: track
+    attributes:
+      label: Track
+      options:
+        - independent_validator
+        - host_adapter
+        - workflow_adapter
+    validations:
+      required: true
+  - type: input
+    id: repository
+    attributes:
+      label: Public source repository and immutable commit
+    validations:
+      required: true
+  - type: input
+    id: release_digest
+    attributes:
+      label: BNS-019 release digest
+      placeholder: b3164afe6ccd69dc9d7738c2ee58195ac65862701e29f9db1f98c12e1a97e934
+    validations:
+      required: true
+  - type: textarea
+    id: execution
+    attributes:
+      label: Reproduction command and environment
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundary
+    attributes:
+      label: Claim boundary
+      options:
+        - label: I understand that acceptance is not certification, endorsement, or biological validation.
+          required: true

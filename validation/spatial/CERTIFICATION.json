@@ -9,19 +9,19 @@
       "standard_id": "reference_backend",
       "satisfied": true,
       "evidence": "validation/spatial/REPORT.json -> pipeline.backend_identity.state = CONFORMANT",
-      "notes": "Local deterministic alternative-explanation tester (bionexus >= 0.9.0); entry point bionexus.spatial_inference resolved"
+      "notes": "Local bounded alternative-explanation battery (bionexus >= 0.10.0); executable and declarative entry points resolved"
     },
     {
       "standard_id": "formal_input_contract",
       "satisfied": true,
       "evidence": "src/bionexus/abi.py -> abi.get_capability_abi('spatial.inference_validity')",
-      "notes": "Complete ABI input contract defined; coordinate_type_allowed includes 'physical'"
+      "notes": "Capability contract v2 and ABI require physical coordinates, spatial state revisions, and a predeclared battery plan"
     },
     {
       "standard_id": "invariants",
       "satisfied": true,
-      "evidence": "src/bionexus/capabilities.py -> preconditions: coordinate_provenance_recorded, core_confound_controls_tested; review/SCIENTIFIC_RULE_CATALOG.json -> INV-011..INV-013, INV-017",
-      "notes": "Machine-checkable preconditions; router traps: embedding_substitution, no_controls_provided"
+      "evidence": "src/bionexus/capabilities.py -> physical/state/battery contracts; review/SCIENTIFIC_RULE_CATALOG.json -> INV-011..INV-013, INV-017..INV-018",
+      "notes": "Physical coordinates, state revisions, bounded sparse graphs, and profile-conditioned numeric decisions fail closed"
     },
     {
       "standard_id": "known_failure_modes",
@@ -32,25 +32,25 @@
     {
       "standard_id": "positive_test",
       "satisfied": true,
-      "evidence": "tests/unit/test_flagship_capabilities.py (ROBUST/SUPPORTED/FRAGILE/ABSTAIN ladder)",
-      "notes": "Verified execution producing expected scientific result"
+      "evidence": "tests/unit/test_spatial_alternative_battery.py (executable synthetic contract fixture) + tests/unit/test_flagship_capabilities.py (verdict ladder)",
+      "notes": "Synthetic software-contract execution only; fixture approvals carry no biological claim"
     },
     {
       "standard_id": "negative_test",
       "satisfied": true,
-      "evidence": "tests/unit/test_flagship_capabilities.py -> BF-011 (untested alternatives -> FRAGILE ceiling), BF-015 (no controls -> NEEDS_DATA)",
-      "notes": "Invalid inputs and invalid requests refused deterministically"
+      "evidence": "tests/unit/test_spatial_alternative_battery.py -> missing profile/contact, nonphysical coordinates, graph bound, and unestimable baseline; BF-011/BF-015",
+      "notes": "Invalid inputs refuse; missing warrant evidence degrades; failed alternatives conflict; unestimable baselines abstain"
     },
     {
       "standard_id": "adversarial_test",
       "satisfied": true,
-      "evidence": "evals/spatial_stress_test.py::test_dim2_segmentation_leakage",
-      "notes": "Adversarial confounder injection verified (segmentation leakage, transcript spillover, cell density)"
+      "evidence": "evals/spatial_stress_test.py::test_dim11_executable_battery + test_dim2_segmentation_leakage",
+      "notes": "Executable v2 battery computes diagnostics but remains FRAGILE without an approved real spatial profile"
     },
     {
       "standard_id": "public_reference_dataset",
       "satisfied": false,
-      "evidence": "validation/spatial/REPORT.json -> synthetic technical acceptance; no real Xenium/MERSCOPE dataset vendored or executed",
+      "evidence": "validation/spatial/REPORT.json -> synthetic technical acceptance; no real Xenium/CosMx/MERSCOPE calibration dataset executed",
       "notes": "Synthetic spatial fixture only (synthetic technical acceptance); does not satisfy public reference dataset standard"
     },
     {
@@ -68,8 +68,8 @@
     {
       "standard_id": "degradation_test",
       "satisfied": true,
-      "evidence": "evals/spatial_stress_test.py::test_dim1_baseline (no-controls -> ABSTAIN/NEEDS_DATA)",
-      "notes": "Uncontrolled observations and missing geometry deterministically refuse or downgrade to FRAGILE"
+      "evidence": "tests/unit/test_spatial_alternative_battery.py -> failed segmentation, missing calibration/contact, and unestimable baseline",
+      "notes": "Failed controls produce CONFLICTED; unestimable baselines ABSTAIN; unresolved empirical calibration remains FRAGILE"
     },
     {
       "standard_id": "provenance_test",

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bionexus:spatial-empirical-gold-study:1",
+  "type": "object",
+  "required": ["schema_version", "study_id", "platform", "platform_release", "tissue", "species", "panel_id", "task", "reference", "data_provenance", "dataset_artifacts", "calibration_donor_ids", "validation_donor_ids", "calibration_fov_ids", "validation_fov_ids", "segmentation_revision_ids", "leakage_model_ids", "metrics", "evidence_sources", "preregistration_artifact", "adjudication_protocol_artifact", "independent_adjudicator_ids", "outcome_definition"],
+  "properties": {
+    "schema_version": {"const": "bionexus.spatial-empirical-gold-study.v1"},
+    "study_id": {"type": "string", "minLength": 1},
+    "platform": {"enum": ["xenium", "cosmx", "merscope"]},
+    "platform_release": {"type": "string", "minLength": 1},
+    "tissue": {"type": "string", "minLength": 1},
+    "species": {"type": "string", "minLength": 1},
+    "panel_id": {"type": "string", "minLength": 1},
+    "task": {"type": "string", "minLength": 1},
+    "reference": {"type": "string", "minLength": 1},
+    "data_provenance": {"const": "REAL_PLATFORM_EXPORT"},
+    "dataset_artifacts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/artifact"}},
+    "calibration_donor_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "validation_donor_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "calibration_fov_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "validation_fov_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "segmentation_revision_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "leakage_model_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "metrics": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^spatial\\."}},
+    "evidence_sources": {"type": "object", "additionalProperties": {"type": "string", "minLength": 1}},
+    "preregistration_artifact": {"$ref": "#/$defs/artifact"},
+    "adjudication_protocol_artifact": {"$ref": "#/$defs/artifact"},
+    "independent_adjudicator_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "outcome_definition": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "artifact": {
+      "type": "object",
+      "required": ["uri", "sha256", "media_type"],
+      "properties": {
+        "uri": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "media_type": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

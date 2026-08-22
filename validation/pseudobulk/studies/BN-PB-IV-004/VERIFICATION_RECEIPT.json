@@ -2,7 +2,7 @@
   "schema_version": "bionexus.verification-receipt.v1",
   "study_id": "BN-PB-IV-004",
   "verified_at": "2026-08-21T11:37:24.898444+00:00",
-  "verification_status": "VALID_VERIFIED",
+  "verification_status": "LEGACY_UNTRUSTED_LOCAL_FIXTURE",
   "merkle_root_verified": "d7411e898e6097156e82dcd2d9f40ca530d6e42723642b2fd0ef003cabf1523b",
   "public_key_fingerprint": "0ea04d0ef756b4ff785ee18c6594bda759f7a2360c0e141cf83786037a7c05e9",
   "rekor_transparency_log": {
@@ -11,7 +11,7 @@
     "verified": true
   },
   "timestamp_authority": {
-    "authority": "RFC3161 Compatible Independent Timestamp Authority",
+    "authority": "Legacy Local Timestamp Fixture",
     "timestamp": "2026-08-21T09:43:37.893454+00:00",
     "verified": true
   },

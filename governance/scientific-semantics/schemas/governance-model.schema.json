@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bionexus:scientific-semantics-governance-model-schema:1",
+  "type": "object",
+  "required": ["schema", "governance_id", "status", "independence_claim", "normative_effect", "technical_standard", "powers", "exclusive_action_owners", "council_formation_gates", "interim_limits", "assurance_state", "institutional_adoption_state"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "schema": {"const": "urn:bionexus:scientific-semantics-governance-model:1"},
+    "governance_id": {"const": "BNS-SSC-GOV-001"},
+    "status": {"enum": ["FORMING", "ACTIVE_INDEPENDENT", "SUSPENDED"]},
+    "independence_claim": {"enum": ["NOT_YET_ESTABLISHED", "INDEPENDENT_GATES_VERIFIED", "SUSPENDED"]},
+    "normative_effect": {"enum": ["PROSPECTIVE_DRAFT", "COUNCIL_ADOPTED"]},
+    "technical_standard": {"const": "BNS-019"},
+    "powers": {
+      "type": "object",
+      "required": ["technical", "commercial", "certification"],
+      "properties": {
+        "technical": {"$ref": "#/$defs/power"},
+        "commercial": {"$ref": "#/$defs/power"},
+        "certification": {"$ref": "#/$defs/power"}
+      },
+      "additionalProperties": false
+    },
+    "exclusive_action_owners": {
+      "type": "object",
+      "minProperties": 8,
+      "additionalProperties": {"enum": ["technical", "commercial", "certification"]}
+    },
+    "council_formation_gates": {
+      "type": "object",
+      "required": ["minimum_voting_seats", "maximum_voting_seats", "minimum_non_bionexus_fraction", "maximum_single_employer_fraction", "maximum_commercial_vendor_fraction", "minimum_institutional_end_user_seats", "minimum_implementation_interoperability_seats", "minimum_statistics_methods_seats", "minimum_ontology_data_stewardship_seats", "independent_chair_required", "public_current_disclosure_required", "independent_selection_observers_required", "minimum_public_nomination_days"],
+      "properties": {
+        "minimum_voting_seats": {"type": "integer", "minimum": 7},
+        "maximum_voting_seats": {"type": "integer", "minimum": 7, "maximum": 15},
+        "minimum_non_bionexus_fraction": {"type": "number", "minimum": 0.6666666666, "maximum": 1},
+        "maximum_single_employer_fraction": {"type": "number", "minimum": 0, "maximum": 0.3333333334},
+        "maximum_commercial_vendor_fraction": {"type": "number", "minimum": 0, "maximum": 0.3333333334},
+        "minimum_institutional_end_user_seats": {"type": "integer", "minimum": 2},
+        "minimum_implementation_interoperability_seats": {"type": "integer", "minimum": 2},
+        "minimum_statistics_methods_seats": {"type": "integer", "minimum": 1},
+        "minimum_ontology_data_stewardship_seats": {"type": "integer", "minimum": 1},
+        "independent_chair_required": {"const": true},
+        "public_current_disclosure_required": {"const": true},
+        "independent_selection_observers_required": {"type": "integer", "minimum": 2},
+        "minimum_public_nomination_days": {"type": "integer", "minimum": 30}
+      },
+      "additionalProperties": false
+    },
+    "interim_limits": {"$ref": "#/$defs/actions"},
+    "assurance_state": {
+      "type": "object",
+      "required": ["status", "badge_issuance_enabled", "recognized_assessment_body_count", "certificate_registry_enabled"],
+      "properties": {
+        "status": {"enum": ["SUSPENDED_NO_INDEPENDENT_BODY", "OPERATIONAL"]},
+        "badge_issuance_enabled": {"type": "boolean"},
+        "recognized_assessment_body_count": {"type": "integer", "minimum": 0},
+        "certificate_registry_enabled": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "institutional_adoption_state": {
+      "type": "object",
+      "required": ["verified_active_organization_count", "self_use_counts_as_adoption", "trial_registration_counts_as_adoption"],
+      "properties": {
+        "verified_active_organization_count": {"type": "integer", "minimum": 0},
+        "self_use_counts_as_adoption": {"const": false},
+        "trial_registration_counts_as_adoption": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "actions": {
+      "type": "object",
+      "required": ["allowed_actions", "prohibited_actions"],
+      "properties": {
+        "allowed_actions": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]+$"}},
+        "prohibited_actions": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]+$"}}
+      },
+      "additionalProperties": false
+    },
+    "power": {
+      "type": "object",
+      "required": ["body", "allowed_actions", "prohibited_actions"],
+      "properties": {
+        "body": {"type": "string", "minLength": 1},
+        "allowed_actions": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]+$"}},
+        "prohibited_actions": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]+$"}}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

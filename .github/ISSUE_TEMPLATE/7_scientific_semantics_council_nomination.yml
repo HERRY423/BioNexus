@@ -1,0 +1,45 @@
+name: Scientific Semantics Council nomination
+description: Publicly nominate yourself or another consenting participant for the forming SSC
+title: "[SSC nomination]: "
+labels: ["scientific-semantics", "governance"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Nomination does not create a Council seat. Selection requires the public formation process, conflict disclosure, independent observers, and machine-verified composition gates.
+  - type: input
+    id: nominee
+    attributes:
+      label: Nominee name and public professional profile
+    validations:
+      required: true
+  - type: checkboxes
+    id: representation
+    attributes:
+      label: Representation and expertise
+      options:
+        - label: Institutional scientific end user
+        - label: Implementation or interoperability
+        - label: Statistics or research methodology
+        - label: Ontology or scientific data stewardship
+  - type: textarea
+    id: contributions
+    attributes:
+      label: Relevant contributions and perspective
+    validations:
+      required: true
+  - type: textarea
+    id: affiliations
+    attributes:
+      label: Employer, commercial, BioNexus, funding, and implementation affiliations
+    validations:
+      required: true
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Consent and duties
+      options:
+        - label: The nominee consents to public nomination and conflict disclosure.
+          required: true
+        - label: The nominee agrees to individual voting, recusal, transparency, and no pay-for-vote.
+          required: true

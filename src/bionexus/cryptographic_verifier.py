@@ -254,8 +254,10 @@ def verify_study_provenance(study_dir: PathLike) -> ProvenanceVerificationReport
                     issues.append("PROVENANCE.json cryptographic_attestation bundle_file must be 'ATTESTATION_BUNDLE.json'")
                 if crypto_att.get('receipt_file') != 'VERIFICATION_RECEIPT.json':
                     issues.append("PROVENANCE.json cryptographic_attestation receipt_file must be 'VERIFICATION_RECEIPT.json'")
-                if crypto_att.get('trust_root_id') != 'bionexus-independent-root-2026':
-                    issues.append(f"PROVENANCE.json unexpected trust_root_id: {crypto_att.get('trust_root_id')}")
+                issues.append(
+                    "Legacy cryptographic_attestation is not a trusted scientific evidence signature. "
+                    "Migrate to bionexus.evidence-attestation.v1 with an explicit trust registry and revocation checks."
+                )
         except Exception as e:
             issues.append(f'PROVENANCE.json parse error: {e}')
 
@@ -307,8 +309,10 @@ def verify_study_provenance(study_dir: PathLike) -> ProvenanceVerificationReport
     if receipt_path.is_file():
         try:
             receipt_data = json.loads(receipt_path.read_text(encoding='utf-8'))
-            if receipt_data.get('verification_status') != 'VALID_VERIFIED':
-                issues.append(f"VERIFICATION_RECEIPT.json status is {receipt_data.get('verification_status')}, expected VALID_VERIFIED")
+            issues.append(
+                "Legacy VERIFICATION_RECEIPT.json cannot establish scientific trust; "
+                "a verified bionexus.evidence-attestation.v1 record is required."
+            )
             if receipt_data.get('merkle_root_verified') != merkle_root:
                 issues.append(f"VERIFICATION_RECEIPT.json merkle root mismatch: expected {merkle_root}, got {receipt_data.get('merkle_root_verified')}")
             if not receipt_data.get('signature_verified'):

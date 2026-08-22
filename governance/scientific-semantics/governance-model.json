@@ -1,0 +1,129 @@
+{
+  "$schema": "schemas/governance-model.schema.json",
+  "schema": "urn:bionexus:scientific-semantics-governance-model:1",
+  "governance_id": "BNS-SSC-GOV-001",
+  "status": "FORMING",
+  "independence_claim": "NOT_YET_ESTABLISHED",
+  "normative_effect": "PROSPECTIVE_DRAFT",
+  "technical_standard": "BNS-019",
+  "powers": {
+    "technical": {
+      "body": "Scientific Semantics Council",
+      "allowed_actions": [
+        "approve_conformance_test_specification",
+        "approve_registry_release",
+        "approve_semantic_specification",
+        "manage_namespace",
+        "resolve_technical_appeal"
+      ],
+      "prohibited_actions": [
+        "accredit_assessment_body",
+        "allocate_commercial_revenue",
+        "assess_named_implementation",
+        "issue_certificate",
+        "license_product_trademark",
+        "operate_products",
+        "recognize_assessment_body",
+        "set_product_price"
+      ]
+    },
+    "commercial": {
+      "body": "Commercial operators",
+      "allowed_actions": [
+        "allocate_commercial_revenue",
+        "fund_public_infrastructure",
+        "license_product_trademark",
+        "market_products",
+        "operate_products",
+        "set_product_price",
+        "sponsor_public_events"
+      ],
+      "prohibited_actions": [
+        "accredit_assessment_body",
+        "approve_conformance_test_specification",
+        "approve_registry_release",
+        "approve_semantic_specification",
+        "assess_named_implementation",
+        "issue_certificate",
+        "manage_namespace",
+        "recognize_assessment_body",
+        "resolve_technical_appeal"
+      ]
+    },
+    "certification": {
+      "body": "Independent assurance scheme and recognized CABs",
+      "allowed_actions": [
+        "assess_named_implementation",
+        "audit_assessment_process",
+        "issue_certificate",
+        "manage_certificate_revocation",
+        "recognize_assessment_body",
+        "resolve_certification_appeal"
+      ],
+      "prohibited_actions": [
+        "accredit_assessment_body",
+        "allocate_commercial_revenue",
+        "approve_conformance_test_specification",
+        "approve_registry_release",
+        "approve_semantic_specification",
+        "license_product_trademark",
+        "manage_namespace",
+        "market_products",
+        "operate_products",
+        "resolve_technical_appeal",
+        "set_product_price"
+      ]
+    }
+  },
+  "exclusive_action_owners": {
+    "approve_semantic_specification": "technical",
+    "approve_registry_release": "technical",
+    "manage_namespace": "technical",
+    "set_product_price": "commercial",
+    "operate_products": "commercial",
+    "recognize_assessment_body": "certification",
+    "assess_named_implementation": "certification",
+    "issue_certificate": "certification"
+  },
+  "council_formation_gates": {
+    "minimum_voting_seats": 7,
+    "maximum_voting_seats": 11,
+    "minimum_non_bionexus_fraction": 0.6666666667,
+    "maximum_single_employer_fraction": 0.3333333333,
+    "maximum_commercial_vendor_fraction": 0.3333333333,
+    "minimum_institutional_end_user_seats": 2,
+    "minimum_implementation_interoperability_seats": 2,
+    "minimum_statistics_methods_seats": 1,
+    "minimum_ontology_data_stewardship_seats": 1,
+    "independent_chair_required": true,
+    "public_current_disclosure_required": true,
+    "independent_selection_observers_required": 2,
+    "minimum_public_nomination_days": 30
+  },
+  "interim_limits": {
+    "allowed_actions": [
+      "convene_public_nominations",
+      "fix_clerical_errors",
+      "publish_development_proposal",
+      "run_public_conformance_tests"
+    ],
+    "prohibited_actions": [
+      "claim_independent_council",
+      "declare_standard_stable",
+      "issue_certificate",
+      "recognize_assessment_body",
+      "restore_badging"
+    ]
+  },
+  "assurance_state": {
+    "status": "SUSPENDED_NO_INDEPENDENT_BODY",
+    "badge_issuance_enabled": false,
+    "recognized_assessment_body_count": 0,
+    "certificate_registry_enabled": false
+  },
+  "institutional_adoption_state": {
+    "verified_active_organization_count": 0,
+    "self_use_counts_as_adoption": false,
+    "trial_registration_counts_as_adoption": false
+  }
+}

@@ -373,11 +373,18 @@ _ABI_ENRICHMENT: Dict[str, Dict[str, Any]] = {
         "input_contract": InputContract(
             matrix_state_allowed=[MatrixState.NORMALIZED_EXPRESSION.value, MatrixState.RAW_COUNTS.value],
             coordinates_required=True,
-            coordinate_type_allowed=[CoordinateType.PHYSICAL.value, CoordinateType.JUSTIFIED_SPATIAL_EMBEDDING.value],
-            required_inputs=["observation", "coordinates"],
-            notes={"coordinate_type": "UMAP/PCA embeddings MUST NOT be silently substituted for physical coordinates (BNS-II-006)."},
+            coordinate_type_allowed=[CoordinateType.PHYSICAL.value],
+            required_inputs=["observation", "coordinates", "spatial_state", "battery_plan"],
+            notes={
+                "coordinate_type": "Physical tissue coordinates in micrometers are mandatory; UMAP/PCA has no fallback.",
+                "state_binding": "Dataset, state, segmentation, label, and coordinate-system revisions are mandatory.",
+                "contact_claim": "Exact segmentation-derived contact graph required; radius proximity is challenge-only.",
+            },
         ),
-        "execution": ExecutionReference(reference_backend="local deterministic alternative-explanation tester (bionexus)", reference_algorithm="spatial_alternative_explanation_matrix"),
+        "execution": ExecutionReference(
+            reference_backend="local bounded alternative-explanation battery (bionexus)",
+            reference_algorithm="empirically_calibrated_spatial_alternative_explanation_battery_v1",
+        ),
         "validation": ValidationRequirements(multiple_testing="recommended", parameter_sensitivity="required", cross_method="recommended"),
         "evidence_ceiling_note": "Untested alternative explanations cap the conclusion at FRAGILE; orthogonal validation is required to assert beyond it.",
     },
@@ -637,13 +644,19 @@ def enforce_statistical_warrant(
     claimed_maturity: str,
     has_external_validation: bool = False,
     has_fdr_correction: Optional[bool] = None,
+    min_replicates_per_condition: Optional[int] = None,
 ) -> str:
     """
-    The full statistical-warrant clamp (BNS-CC-009 / BN-F005):
+    The full statistical-warrant clamp (BNS-CC-009 / BN-F005 / BN-F002):
 
     1. ABI evidence-ceiling clamp (BNS-CC-013): no claim above the
        capability's ceiling without external validation.
-    2. Multiple-testing warrant cap (BN-F005): when the capability REQUIRES
+    2. Low-replication warrant cap (BN-F002): when the design runs at the
+       minimal legal replication (N=2 donors/condition), any warrant-level
+       maturity above FRAGILE is capped at FRAGILE — a two-donor design
+       cannot warrant population-level discovery-power language regardless
+       of how strong individual effect sizes appear.
+    3. Multiple-testing warrant cap (BN-F005): when the capability REQUIRES
        false-discovery control and `has_fdr_correction` is False, any
        warrant-level maturity (SUPPORTED / ROBUST / REPLICATED) is capped at
        PRELIMINARY until corrected values are reported alongside the findings.
@@ -653,19 +666,28 @@ def enforce_statistical_warrant(
     warranted = enforce_evidence_ceiling(
         capability_id, claimed_maturity, has_external_validation=has_external_validation
     )
+    ranks = {
+        ConclusionMaturity.ABSTAIN.value: 0,
+        ConclusionMaturity.UNASSESSED.value: 0,
+        ConclusionMaturity.PRELIMINARY.value: 1,
+        ConclusionMaturity.FRAGILE.value: 2,
+        ConclusionMaturity.CONFLICTED.value: 2,
+        ConclusionMaturity.SUPPORTED.value: 3,
+        ConclusionMaturity.ROBUST.value: 4,
+        ConclusionMaturity.REPLICATED.value: 5,
+    }
+    # 2. Low-replication warrant cap (BN-F002).
+    if min_replicates_per_condition is not None and 0 < int(min_replicates_per_condition) < 3:
+        key = str(warranted).upper()
+        if key in (
+            ConclusionMaturity.SUPPORTED.value,
+            ConclusionMaturity.ROBUST.value,
+            ConclusionMaturity.REPLICATED.value,
+        ):
+            warranted = ConclusionMaturity.FRAGILE.value
     if has_fdr_correction is False:
         abi = get_capability_abi(capability_id)
         if abi.validation.multiple_testing == "required":
-            ranks = {
-                ConclusionMaturity.ABSTAIN.value: 0,
-                ConclusionMaturity.UNASSESSED.value: 0,
-                ConclusionMaturity.PRELIMINARY.value: 1,
-                ConclusionMaturity.FRAGILE.value: 2,
-                ConclusionMaturity.CONFLICTED.value: 2,
-                ConclusionMaturity.SUPPORTED.value: 3,
-                ConclusionMaturity.ROBUST.value: 4,
-                ConclusionMaturity.REPLICATED.value: 5,
-            }
             key = str(warranted).upper()
             if key not in (
                 ConclusionMaturity.ABSTAIN.value,

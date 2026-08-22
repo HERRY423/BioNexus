@@ -126,10 +126,10 @@
     "receipt_file": "VERIFICATION_RECEIPT.json",
     "rekor_proof_file": "evidence/rekor_transparency_proof.json",
     "tsa_token_file": "evidence/tsa_timestamp_token.json",
-    "trust_root_id": "bionexus-independent-root-2026",
-    "rekor_transparency_log": "bionexus-rekor-transparency-log-2026",
+    "trust_root_id": "UNTRUSTED_LOCAL_FIXTURE",
+    "rekor_transparency_log": "UNTRUSTED_LOCAL_FIXTURE",
     "rekor_log_index": 4829104,
-    "tsa_authority": "RFC3161 Compatible Independent Timestamp Authority",
+    "tsa_authority": "Legacy Local Timestamp Fixture",
     "policy": "Fail-Closed Preregistration and Cryptographic Lock"
   }
 }

@@ -1,0 +1,7 @@
+{
+  "$schema": "schemas/institutional-adoption-registry.schema.json",
+  "schema": "urn:bionexus:scientific-semantics-institutional-adoption-registry:1",
+  "governance_id": "BNS-SSC-GOV-001",
+  "verified_active_organization_count": 0,
+  "declarations": []
+}

@@ -54,12 +54,32 @@ surfaces in agentic biology:
   happen at every minor release; a capability that loses a core criterion
   MUST leave the flagship set until the criterion is restored (it MAY remain
   VALIDATED in the general program).
+- **BNS-FC-009** `spatial.inference_validity` MUST remain flagship C and MUST
+  deepen through alternative-explanation execution and empirical calibration;
+  this work MUST NOT be represented as a new omics capability or a fourth
+  flagship.
+- **BNS-FC-010** A contact-based spatial claim MUST use a state-bound,
+  segmentation-derived contact graph. Physical-radius proximity MAY challenge
+  contact geometry but MUST NOT be substituted for exact contact.
+- **BNS-FC-011** Spatial battery numeric decisions MUST resolve an `APPROVED`
+  empirical profile conditioned on metric, tissue, platform, reference, task,
+  and evidence source. Missing, pending, mismatched, or ambiguous profiles MUST
+  remain `UNTESTED`; no global numeric fallback is permitted.
+- **BNS-FC-012** Real-data spatial certification MUST report platform-separated
+  Xenium, CosMx, and MERSCOPE evidence, including negative/counterexample cases,
+  FOV/donor isolation, held-out evaluation, abstentions, and independent review.
+  A synthetic fixture MUST NOT satisfy public-data or biological-calibration
+  evidence gates.
 
 ## 3. Verification hooks
 
 - `src/bionexus/certification.py::flagship_program` — computed progress (BNS-FC-005).
 - `tests/unit/test_flagship_capabilities.py` — flagship set, tier floor,
   external-criteria reporting.
+- `src/bionexus/spatial_alternative_battery.py` — bounded executable battery
+  and state-bound provenance (BNS-FC-009..011).
+- `tests/unit/test_spatial_alternative_battery.py` — synthetic contract-only
+  positive, degradation, refusal, and fail-closed calibration paths.
 - `bionexus certification` CLI — flagship section (BNS-FC-006).
 - BioFailureBench coverage: BF-005/BF-012/BF-024 (flagship A),
   BF-004/BF-022/BF-026 (flagship B), BF-011/BF-015/BF-013 (flagship C).

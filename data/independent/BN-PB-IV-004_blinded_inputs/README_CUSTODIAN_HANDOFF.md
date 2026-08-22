@@ -10,9 +10,9 @@ Required inputs:
    validated with `scripts/validate_c04_lims_pairing.py`.
 2. `C04_BLINDED_PSEUDOBULK.h5ad` containing only opaque subject/arm labels.
 3. `C04_BLINDED_SAMPLE_MANIFEST.csv` with 24 opaque rows.
-4. `CUSTODIAN_DATA_GATE_ATTESTATION.json` filled from the repository template,
-   with `status: SIGNED_COMPLETE`, hashes, UTC signature time, and a real
-   signature or detached signature hash.
+4. A verified `bionexus.evidence-attestation.v1` record bound to the custodian
+   evidence artifact, validated against an explicit trust registry and revocation
+   state. The former bare JSON/signature-hash template is withdrawn.
 
 Use the authoritative-manifest preflight before producing the blinded files:
 
@@ -33,4 +33,5 @@ After all four blinded materials exist, run:
 python scripts\freeze_pseudobulk_blinded_packet.py
 ```
 
-The gate must be `PASS` before any outcome code receives the condition key.
+During the Scientific Trust Reset the legacy freeze command fails closed. The gate
+cannot become `PASS` until a target-bound attestation adapter is implemented.

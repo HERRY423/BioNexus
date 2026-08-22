@@ -1,0 +1,90 @@
+{
+  "schema": "urn:bionexus:bns019-trial-run-result:1",
+  "trial_id": "BNS019-INTEROP-2026-01",
+  "run_id": "local-maintainer-2026-08-21",
+  "executed_at": "2026-08-22T05:16:51Z",
+  "environment": {
+    "operating_system": "Windows-11-10.0.26200-SP0",
+    "python": "3.13.9",
+    "r": "Rscript (R) version 4.5.3 (2026-03-11)",
+    "nextflow": null
+  },
+  "standard": {
+    "id": "BNS-019",
+    "version": "0.1.0",
+    "release_digest_sha256": "b3164afe6ccd69dc9d7738c2ee58195ac65862701e29f9db1f98c12e1a97e934"
+  },
+  "tracks": [
+    {
+      "id": "python-validator",
+      "status": "PASS",
+      "evidence": {
+        "implementation": "bns019-python-stdlib",
+        "cases_passed": 5,
+        "cases_total": 5,
+        "result_sha256": "2cba1d5bfc155a73d3cd84f6c94007d3be18025e39e9fe3696bc8cc80babb2b9"
+      },
+      "reason": null
+    },
+    {
+      "id": "r-validator",
+      "status": "PASS",
+      "evidence": {
+        "implementation": "bns019-r-jsonlite",
+        "cases_passed": 5,
+        "cases_total": 5,
+        "result_sha256": "fccf6413d4fe5fa87fb47c4fc34d6c15abbde6a3e22743c7c892611316ce2dca"
+      },
+      "reason": null
+    },
+    {
+      "id": "scanpy-anndata-adapter",
+      "status": "PASS",
+      "evidence": {
+        "checks": {
+          "registry_verified": true,
+          "uns_only_contract": true,
+          "shape_preserved": true,
+          "anndata_h5ad_round_trip": true,
+          "fingerprint_preserved": true
+        },
+        "result_sha256": "25377adf64ea2d136fd07438a5cdf80db17c1ae78185470d43f6a67b82f91ca4"
+      },
+      "reason": null
+    },
+    {
+      "id": "seurat-adapter",
+      "status": "PASS",
+      "evidence": {
+        "checks": {
+          "registry_verified": true,
+          "misc_only_contract": true,
+          "dimensions_preserved": true,
+          "rds_round_trip": true,
+          "fingerprint_preserved": true
+        },
+        "result_sha256": "6aeec5ae018f63e396589d5cbf191fbf8ea9f4e5c9424772d980117de3a75d8d"
+      },
+      "reason": null
+    },
+    {
+      "id": "nfcore-nextflow-adapter",
+      "status": "NOT_RUN",
+      "evidence": {
+        "adapter_core_status": "PASS",
+        "adapter_core_result_sha256": "bc9e85856cf012191be28b6fa3ef089148a08110d23a869d5de4f154a0bbdf1c"
+      },
+      "reason": "Nextflow runtime is unavailable; adapter-core execution is not counted as workflow conformance"
+    }
+  ],
+  "cross_implementation_agreement": {
+    "status": "PASS",
+    "compared_implementations": [
+      "bns019-python-stdlib",
+      "bns019-r-jsonlite"
+    ],
+    "reason": null
+  },
+  "overall_status": "INCOMPLETE",
+  "claim_boundary": "This is a local maintainer self-test of software-contract interoperability. It is not a public external trial result, badge, certification, endorsement, or biological validation."
+}

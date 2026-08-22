@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bionexus:scientific-semantics-adoption-declaration-schema:1",
+  "type": "object",
+  "required": ["schema", "declaration_id", "organization", "role", "standard", "implementation", "scope", "known_semantic_loss", "accountable_contact", "publication_consent", "declared_at", "expires_on", "status"],
+  "properties": {
+    "schema": {"const": "urn:bionexus:scientific-semantics-adoption-declaration:1"},
+    "declaration_id": {"type": "string", "pattern": "^SSC-ADOPT-[0-9]{4}$"},
+    "organization": {"type": "string", "minLength": 1},
+    "role": {"enum": ["experimental_implementer", "production_producer", "production_consumer", "standards_liaison"]},
+    "standard": {
+      "type": "object",
+      "required": ["id", "version", "release_digest_sha256"],
+      "properties": {
+        "id": {"const": "BNS-019"},
+        "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+        "release_digest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "implementation": {
+      "type": "object",
+      "required": ["name", "version", "evidence_uri", "evidence_sha256"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "evidence_uri": {"type": "string", "format": "uri"},
+        "evidence_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "scope": {"type": "string", "minLength": 1},
+    "known_semantic_loss": {"type": "array", "items": {"type": "string"}},
+    "accountable_contact": {"type": "string", "minLength": 1},
+    "publication_consent": {"const": true},
+    "declared_at": {"type": "string", "format": "date-time"},
+    "expires_on": {"type": "string", "format": "date"},
+    "status": {"enum": ["active", "expired", "withdrawn", "revoked"]}
+  },
+  "additionalProperties": false
+}

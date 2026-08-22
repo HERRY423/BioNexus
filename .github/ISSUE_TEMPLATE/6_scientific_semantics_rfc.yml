@@ -1,0 +1,65 @@
+name: Scientific Semantics RFC proposal
+description: Propose a public BNS-019 semantic or governance change
+title: "[SSC RFC draft]: "
+labels: ["scientific-semantics", "rfc"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The Scientific Semantics Council is currently forming. Submissions are public draft proposals, not accepted Council decisions.
+  - type: input
+    id: use_case
+    attributes:
+      label: Producer and consumer use case
+    validations:
+      required: true
+  - type: textarea
+    id: meaning
+    attributes:
+      label: Exact scientific meaning and exclusions
+      description: Define what the proposed field or value means and interpretations it must not support.
+    validations:
+      required: true
+  - type: textarea
+    id: regimes
+    attributes:
+      label: Empirical regimes and overclaim risks
+    validations:
+      required: true
+  - type: textarea
+    id: collision
+    attributes:
+      label: Namespace and external-standard collision analysis
+    validations:
+      required: true
+  - type: dropdown
+    id: compatibility
+    attributes:
+      label: Compatibility class
+      options:
+        - additive
+        - deprecation
+        - breaking
+        - stability
+        - governance
+    validations:
+      required: true
+  - type: textarea
+    id: implementations
+    attributes:
+      label: Independent implementation and conformance evidence
+    validations:
+      required: true
+  - type: textarea
+    id: conflicts
+    attributes:
+      label: Funding and conflicts
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundary
+    attributes:
+      label: Process boundary
+      options:
+        - label: I understand that an issue or maintainer review is not an accepted SSC decision.
+          required: true

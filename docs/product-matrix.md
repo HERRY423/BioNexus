@@ -13,20 +13,27 @@ BioNexus
 ├── BioNexus Core                        the reliability layer IS the product
 │   │
 │   ├── core                             the scientific contract kernel
-│   │   ├── BNS specification series     (spec/BNS-001..016)
+│   │   ├── BNS specification series     (spec/BNS-001..020)
 │   │   ├── Biological Capability ABI    (capabilities, abi)
+│   │   ├── Scientific Semantics          (consumes independent BNS-019 release)
+│   │   ├── Spatial Empirical Gold        (Xenium/CosMx/MERSCOPE calibration only)
 │   │   ├── Warrant Engine               (warrant: WarrantAssessment / PolicyDecision,
 │   │   │                                 rule_classification: EpistemicKind taxonomy)
 │   │   ├── Failure Taxonomy             (failures, BN-F001..F012)
 │   │   ├── Fail-Closed Engine           (intent_router, failclosed)
-│   │   └── Evidence Model               (contracts, ledger, provenance, artifacts, interop)
+│   │   ├── Evidence Model               (contracts, ledger, provenance, artifacts, interop)
+│   │   └── Evidence Debt Engine         (debt, BNS-021: Epistemic DAG amortization & payoff)
 │   │
 │   ├── audit                            the researcher entry points
 │   │   ├── preflight                    (preflight)
 │   │   ├── audit                        (analysis_audit, integrity, claim_checker)
+│   │   ├── debt                         (bionexus debt: audit, payoff schedule, DAG graph)
 │   │   └── verify                       (verification)
 │   │
 │   └── conformance                      the trust layer
+│       ├── BCTK (Diagnostic Test Kit)   (bctk, bionexus conformance, BNS-020:
+│       │                                 OpenTelemetry-style compliance kit for any
+│       │                                 agent/plugin/tool across 8 scientific dimensions)
 │       ├── capability certification     (certification, BNS-010/015 flagship)
 │       ├── backend identity conformance (backend_conformance, BNS-EF-012..016 / BN-F010:
 │       │                                 declared_backend == observed_backend,
@@ -60,7 +67,7 @@ grow into a "do-everything biology platform".
 
 | Matrix cell | Modules in `src/bionexus/` (+ trees) |
 |---|---|
-| core: contracts & ABI | `capabilities`, `abi` |
+| core: contracts, ABI & semantics | `capabilities`, `abi`, `scientific_semantics` |
 | core: failure taxonomy | `failures` |
 | core: fail-closed engine | `intent_router`, `failclosed` |
 | core: evidence model | `contracts`, `ledger`, `provenance`, `artifacts`, `interop`, `standards` |
@@ -115,7 +122,7 @@ will be added. The three flagship capabilities —
 |---|---|---|
 | Pseudobulk differential expression | `scrna.pseudobulk_de` | BNS-015 external validation vs published DE truth (Kang 2018) |
 | Annotation evidence assessment | `scrna.annotation_evidence` | BNS-015 distrust calibration on CITE-seq/FACS-sorted PBMC |
-| Spatial inference validity | `spatial.inference_validity` | BNS-015 manufactured-artifact downgrade on Xenium/CosMx/MERFISH-class data |
+| Spatial Alternative Explanation Battery | `spatial.inference_validity` v2 | BNS-015 segmentation/leakage/geometry/field/null/label challenges, followed by real platform-separated Xenium/CosMx/MERSCOPE calibration |
 
 — are the priority: they must reach genuinely **CERTIFIED** status (14/14
 evidence gates, Backend Identity CONFORMANT, external real-data validation).

@@ -1,99 +1,136 @@
 {
-  "registry_version": "2.0.0",
-  "description": "BioNexus Scientific Rule Provenance Registry. Every rule enforced by BioNexus carries explicit, verifiable provenance: source citations with DOIs/URLs, consensus level, known exceptions, and an invariant-vs-warrant classification. This registry is data, not code: labs can fork it, extend it, or override it via BIONEXUS_RULE_REGISTRY. Edit the registry file; the Python constants in rule_provenance.py are generated from it at import time.",
-  "last_reviewed": "2026-08",
+  "registry_version": "3.1.0-trust-reset",
+  "registry_status": "DEVELOPMENT_UNVERIFIED",
+  "description": "BioNexus development rule propositions and regime hypotheses (BNS-018). No packaged rule carries verified external endorsement, empirical calibration, or accepted challenge status.",
+  "last_reviewed": null,
+  "external_validation_claimed": false,
+  "trusted_attestation_ids": [],
+  "trust_policy": "External review or calibration is accepted only through bionexus.evidence-attestation.v1 verification against an explicit trust registry and artifact digest.",
   "rules": {
-    "clinical_diagnosis_without_certification": {
-      "aliases": ["treatment_recommendation", "clinical_diagnosis", "unverified_clinical_diagnosis"],
-      "source_kind": "regulatory",
-      "source_citation": "CLIA regulations (42 CFR Part 493); CAP accreditation checklists; EU IVDR 2017/746; FDA 21 CFR Part 11",
-      "evidence": [
-        {"kind": "regulation", "ref": "https://www.ecfr.gov/current/title-42/chapter-IV/subchapter-G/part-493", "note": "CLIA laboratory requirements"},
-        {"kind": "regulation", "ref": "https://eur-lex.europa.eu/eli/reg/2017/746/oj", "note": "EU In Vitro Diagnostic Regulation"},
-        {"kind": "regulation", "ref": "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-H/part-11", "note": "FDA electronic records/signatures"}
+    "missing_replicates": {
+      "aliases": [
+        "min_replicates",
+        "pseudoreplication",
+        "replicates_required"
       ],
-      "consensus": "ESTABLISHED",
-      "exceptions": [],
-      "last_verified": "2025-06",
-      "classification": {
-        "category": "INVARIANT_SAFETY",
-        "enforcement_level": "ENFORCED",
-        "epistemic_kind": "EXECUTION_INVARIANT",
-        "rationale": "CLIA/CAP mandate: clinical diagnosis without certified validation directly impacts patient treatment decisions."
-      }
-    },
-    "identifier_namespace_mismatch": {
-      "aliases": ["identifier_namespace"],
-      "source_kind": "statistical_theory",
-      "source_citation": "Data integrity invariant: joining mismatched identifier namespaces corrupts all downstream results (BN-F004)",
-      "evidence": [
-        {"kind": "documentation", "ref": "https://www.ensembl.org/info/genome/stable_ids/index.html", "note": "Ensembl stable ID semantics differ from HGNC symbols"},
-        {"kind": "documentation", "ref": "https://www.genenames.org/help/symbol-management/", "note": "HGNC symbol lifecycle and reuse"}
-      ],
-      "consensus": "ESTABLISHED",
-      "exceptions": ["Explicit mapping table provided and recorded in provenance"],
-      "last_verified": "2025-06",
-      "classification": {
-        "category": "INVARIANT_INTEGRITY",
-        "enforcement_level": "ENFORCED",
-        "epistemic_kind": "DATA_INTEGRITY_INVARIANT",
-        "rationale": "Data integrity: joining HGNC gene symbols against Ensembl IDs produces silent one-to-many mappings indistinguishable from correct joins."
-      }
-    },
-    "model_substitution_attempt": {
-      "aliases": ["model_substitution"],
-      "source_kind": "project_invariant",
-      "source_citation": "BioNexus honesty policy (BNS-EF-002, BN-F010): never present heuristic output as canonical backend results",
-      "evidence": [
-        {"kind": "spec", "ref": "spec/BNS-003-execution-fidelity.md", "note": "Execution fidelity specification"},
-        {"kind": "spec", "ref": "spec/BNS-008-host-conformance.md", "note": "Host conformance and backend identity"}
-      ],
-      "consensus": "PROJECT_INTERNAL",
-      "exceptions": [],
-      "last_verified": "2025-06",
-      "classification": {
-        "category": "INVARIANT_INTEGRITY",
-        "enforcement_level": "ENFORCED",
-        "epistemic_kind": "DATA_INTEGRITY_INVARIANT",
-        "rationale": "Reproducibility: substituting models without detection breaks deterministic audit trails (BN-F010)."
-      }
-    },
-    "normalized_matrix_only": {
-      "aliases": ["raw_counts_only"],
-      "source_kind": "statistical_theory",
-      "source_citation": "Negative binomial GLM requires integer counts; Love et al. 2014 (DESeq2), Soneson & Robinson 2016 (pseudobulk)",
-      "evidence": [
-        {"kind": "paper", "ref": "doi:10.1186/s13059-014-0550-8", "note": "Love, Huber & Anders 2014, DESeq2 negative binomial model"},
-        {"kind": "paper", "ref": "doi:10.12688/f1000research.10570.2", "note": "Soneson & Robinson 2018, muscat pseudobulk"},
-        {"kind": "paper", "ref": "doi:10.1038/nbt.3192", "note": "Ritchie et al. 2015, limma input requirements"}
-      ],
-      "consensus": "STRONG",
-      "exceptions": [
-        "Exploratory marker ranking with normalized input (ceiling: PRELIMINARY)",
-        "Pseudobulk aggregation from log-normalized data with explicit disclaimer"
-      ],
-      "context_factors": [
-        "dispersion_estimation_model",
-        "continuous_log_norm_vs_raw_integer_counts"
-      ],
-      "last_verified": "2025-06",
+      "proposition": {
+        "statement": "Biological replication (n >= 3) is mandatory for population-level statistical inference; treating single-donor cells as independent samples constitutes pseudoreplication.",
+        "formal_predicate": "forall g in Genes: Var_pop(Y_g) = sigma^2_donor + sigma^2_cell; n_donors >= 3",
+        "underlying_assumptions": [
+          "Hierarchical multi-level sampling structure",
+          "Non-zero between-donor biological variance (ICC > 0)",
+          "Exchangeable donor sampling from target population"
+        ],
+        "theoretical_framework": "Hierarchical Linear Models & Design-Based Inference"
+      },
+      "epistemic_kind": "WARRANT_CONSTRAINT",
       "classification": {
         "category": "WARRANT_EPISTEMIC",
         "enforcement_level": "ADVISORY",
         "epistemic_kind": "WARRANT_CONSTRAINT",
-        "rationale": "Statistical theory: negative binomial models assume integer counts; feeding normalized floats violates dispersion estimation assumptions, making p-values approximate rather than calibrated."
-      }
-    },
-    "missing_replicates": {
-      "aliases": ["min_replicates"],
-      "source_kind": "statistical_theory",
-      "source_citation": "Biological replication is required for population-level inference; Fisher 1935, design-based inference",
-      "evidence": [
-        {"kind": "book", "ref": "isbn:978-0028446905", "note": "Fisher 1935, The Design of Experiments"},
-        {"kind": "paper", "ref": "doi:10.12688/f1000research.10570.2", "note": "Soneson & Robinson 2018, pseudobulk requires biological replicates"},
-        {"kind": "paper", "ref": "doi:10.1038/nmeth.4612", "note": "Lun & Risso 2018, single-cell DE workflow pitfalls (pseudoreplication)"}
-      ],
+        "rationale": "Experimental design theory: with fewer replicates than the inferential design requires, between-replicate variance is unidentifiable; sample-specific batch effects confound population effects."
+      },
       "consensus": "ESTABLISHED",
+      "source_kind": "statistical_theory",
+      "source_citation": "Fisher 1935 (Design of Experiments); Lun & Risso 2018 (single-cell pitfalls); Squair et al. 2021 (Nature Communications)",
+      "supporting_evidence": [
+        {
+          "kind": "paper",
+          "ref": "doi:10.1038/s41467-021-25960-2",
+          "note": "Squair et al. 2021: Confronting false discoveries in single-cell differential expression"
+        },
+        {
+          "kind": "paper",
+          "ref": "doi:10.1038/nmeth.4612",
+          "note": "Lun & Risso 2018: Single-cell differential expression workflow pitfalls"
+        },
+        {
+          "kind": "paper",
+          "ref": "doi:10.12688/f1000research.10570.2",
+          "note": "Soneson & Robinson 2018: muscat pseudobulk framework"
+        }
+      ],
+      "contradictory_evidence": [
+        {
+          "kind": "paper",
+          "ref": "doi:10.1038/s41592-023-01814-1",
+          "note": "Zimmerman et al. 2023: Isogenic cell lines with minimal donor variance under identical culture conditions"
+        }
+      ],
+      "applicable_regimes": [
+        {
+          "regime_id": "droplet_scrna_primary_tissue",
+          "description": "Droplet single-cell RNA-seq on primary human or mammalian tissue biopsies",
+          "target_platforms": [
+            "10x_chromium_v3",
+            "10x_chromium_v2",
+            "10x_flex",
+            "drop_seq",
+            "parse_evercode"
+          ],
+          "min_samples": 3,
+          "min_features": 500,
+          "sample_design": "unpaired",
+          "tissue_contexts": [
+            "tumor",
+            "blood",
+            "lung",
+            "brain",
+            "liver"
+          ]
+        },
+        {
+          "regime_id": "spatial_transcriptomics_pseudobulk",
+          "description": "Array-based spatial transcriptomics aggregated to donor/slice pseudobulk",
+          "target_platforms": [
+            "visium",
+            "visium_hd",
+            "slide_seq"
+          ],
+          "min_samples": 3,
+          "min_features": 1000,
+          "sample_design": "spatial",
+          "tissue_contexts": [
+            "all"
+          ]
+        }
+      ],
+      "known_counterexamples": [
+        {
+          "counterexample_id": "isogenic_cloned_cell_line",
+          "description": "Clonally derived isogenic cell line under controlled incubator conditions with zero genetic diversity",
+          "empirical_citation": "doi:10.1038/s41592-023-01814-1",
+          "boundary_mechanism": "Between-donor genetic variance component sigma^2_donor is zero by definition",
+          "mitigation_strategy": "Cap claim class at SAMPLE_SPECIFIC / EXPLORATORY; explicitly disallow population generalization"
+        }
+      ],
+      "dataset_calibrations": [],
+      "platform_calibrations": [],
+      "sensitivity_analysis": [],
+      "reviewers": [],
+      "version_history": [
+        {
+          "version": "1.0.0",
+          "date": "2024-01-10",
+          "author": "BioNexus Core Team",
+          "summary": "Initial static threshold rule",
+          "epistemic_rationale": "Initial baseline requirement"
+        },
+        {
+          "version": "3.0.0",
+          "date": "2026-08-21",
+          "author": "BioNexus Development Team",
+          "summary": "Historical development entry; prior calibration or endorsement language withdrawn during the Scientific Trust Reset.",
+          "epistemic_rationale": "No independently verifiable evidence artifact was packaged."
+        },
+        {
+          "version": "3.1.0-trust-reset",
+          "date": "2026-08-21",
+          "author": "BioNexus Development Team",
+          "summary": "Historical development entry; prior calibration or endorsement language withdrawn during the Scientific Trust Reset.",
+          "epistemic_rationale": "No independently verifiable evidence artifact was packaged."
+        }
+      ],
       "exceptions": [
         "Exploratory per-sample descriptive statistics (no population claim)",
         "Screening with explicit 'no inferential claims' disclaimer"
@@ -104,23 +141,193 @@
         "observed_effect_size",
         "covariate_batch_adjustment"
       ],
-      "last_verified": "2025-06",
+      "last_verified": "",
+      "metadata": {
+        "evidence_status": "UNVERIFIED_DEVELOPMENT",
+        "review_status": "NOT_ASSESSED",
+        "calibration_status": "NOT_ASSESSED",
+        "attestation_ids": []
+      }
+    },
+    "normalized_matrix_only": {
+      "aliases": [
+        "raw_counts_only",
+        "deseq2_raw_counts",
+        "negative_binomial_integer_input"
+      ],
+      "proposition": {
+        "statement": "Negative binomial generalized linear models (DESeq2, edgeR) assume integer counts; continuous normalized floats violate dispersion estimation assumptions.",
+        "formal_predicate": "forall y in Matrix: y in NonNegativeIntegers; Var(Y) = mu + alpha * mu^2",
+        "underlying_assumptions": [
+          "Poisson-Gamma mixture distribution of sequencing read counts",
+          "Mean-variance relationship parameterizable by dispersion alpha"
+        ],
+        "theoretical_framework": "Negative Binomial GLM & Quasi-Likelihood"
+      },
+      "epistemic_kind": "WARRANT_CONSTRAINT",
       "classification": {
         "category": "WARRANT_EPISTEMIC",
         "enforcement_level": "ADVISORY",
         "epistemic_kind": "WARRANT_CONSTRAINT",
-        "rationale": "Experimental design theory: with fewer replicates than the intended inferential design requires, reliable between-replicate variance estimation is not supported; population-level effects are confounded with sample-specific noise. The software can still compute, and the statistical model is still mathematically defined — what is missing is a reliable design basis for inference."
+        "rationale": "Statistical theory: negative binomial models assume integer counts; feeding normalized floats distorts dispersion estimation, invalidating hypothesis testing."
+      },
+      "consensus": "STRONG",
+      "source_kind": "statistical_theory",
+      "source_citation": "Love et al. 2014 (DESeq2); Robinson et al. 2010 (edgeR); Ritchie et al. 2015 (limma-voom)",
+      "supporting_evidence": [
+        {
+          "kind": "paper",
+          "ref": "doi:10.1186/s13059-014-0550-8",
+          "note": "Love, Huber & Anders 2014: Moderated estimation of fold change and dispersion for RNA-seq"
+        },
+        {
+          "kind": "paper",
+          "ref": "doi:10.1093/bioinformatics/btp616",
+          "note": "Robinson, McCarthy & Smyth 2010: edgeR empirical Bayes dispersion estimation"
+        }
+      ],
+      "contradictory_evidence": [],
+      "applicable_regimes": [
+        {
+          "regime_id": "bulk_and_pseudobulk_de",
+          "description": "Bulk RNA-seq and single-cell aggregated pseudobulk differential expression",
+          "target_platforms": [
+            "illumina_novaseq",
+            "10x_chromium_v3",
+            "element_aviti"
+          ],
+          "min_samples": 3,
+          "min_features": 1000,
+          "sample_design": "any",
+          "tissue_contexts": [
+            "all"
+          ]
+        }
+      ],
+      "known_counterexamples": [
+        {
+          "counterexample_id": "limma_trend_microarray_log2",
+          "description": "Microarray or continuous intensity data modeled via limma-trend / limma-voom",
+          "empirical_citation": "doi:10.1093/nar/gkv007",
+          "boundary_mechanism": "Limma-trend models log2 intensities directly with empirical Bayes variance smoothing",
+          "mitigation_strategy": "Route to limma capability with continuous normality assumption"
+        }
+      ],
+      "dataset_calibrations": [],
+      "platform_calibrations": [],
+      "sensitivity_analysis": [],
+      "reviewers": [],
+      "version_history": [
+        {
+          "version": "1.0.0",
+          "date": "2024-01-10",
+          "author": "BioNexus Core Team",
+          "summary": "Baseline raw count check",
+          "epistemic_rationale": "GLM integrity requirement"
+        },
+        {
+          "version": "3.1.0-trust-reset",
+          "date": "2026-08-21",
+          "author": "BioNexus Development Team",
+          "summary": "Historical development entry; prior calibration or endorsement language withdrawn during the Scientific Trust Reset.",
+          "epistemic_rationale": "No independently verifiable evidence artifact was packaged."
+        }
+      ],
+      "exceptions": [
+        "Exploratory marker ranking with normalized input (ceiling: PRELIMINARY)",
+        "Pseudobulk aggregation from log-normalized data with explicit disclaimer"
+      ],
+      "context_factors": [
+        "dispersion_estimation_model",
+        "continuous_log_norm_vs_raw_integer_counts"
+      ],
+      "last_verified": "",
+      "metadata": {
+        "evidence_status": "UNVERIFIED_DEVELOPMENT",
+        "review_status": "NOT_ASSESSED",
+        "calibration_status": "NOT_ASSESSED",
+        "attestation_ids": []
       }
     },
     "spatial_coords_present": {
-      "aliases": ["non_degenerate_geometry", "embedding_substitution", "insufficient_spatial_spots", "degenerate_spatial_coordinates"],
-      "source_kind": "landmark_paper",
-      "source_citation": "Spatial statistics require physical coordinates; embedding substitution invalidates Moran's I (BN-F009, BNS-II-006)",
-      "evidence": [
-        {"kind": "paper", "ref": "doi:10.1038/s41592-021-01358-2", "note": "Palla et al. 2022, Squidpy spatial statistics framework"},
-        {"kind": "paper", "ref": "doi:10.1002/wics.66", "note": "Li, Calder & Martin 2007, Moran's I review: weights from physical adjacency"}
+      "aliases": [
+        "non_degenerate_geometry",
+        "embedding_substitution",
+        "insufficient_spatial_spots",
+        "degenerate_spatial_coordinates"
       ],
+      "proposition": {
+        "statement": "Spatial statistical metrics (Moran's I, spatial neighborhood graphs) assume Euclidean physical tissue coordinates; UMAP/t-SNE latent embeddings do not represent physical adjacency.",
+        "formal_predicate": "W_ij = f(d_phys(s_i, s_j)); d_phys in PhysicalMicronSpace",
+        "underlying_assumptions": [
+          "Spatial stationarity and isotropy across local 2D tissue coordinate space",
+          "Distance decay weight matrix W constructed from calibrated physical coordinates"
+        ],
+        "theoretical_framework": "Spatial Autoregressive Processes & Spatial Point Patterns"
+      },
+      "epistemic_kind": "WARRANT_CONSTRAINT",
+      "classification": {
+        "category": "WARRANT_EPISTEMIC",
+        "enforcement_level": "ADVISORY",
+        "epistemic_kind": "WARRANT_CONSTRAINT",
+        "rationale": "Spatial statistics: Moran's I assumes physical adjacency; embedding coordinates proxy for topological similarity which may correlate with but does not equal tissue-level structure."
+      },
       "consensus": "STRONG",
+      "source_kind": "landmark_paper",
+      "source_citation": "Palla et al. 2022 (Squidpy); Li, Calder & Martin 2007 (Spatial statistics review)",
+      "supporting_evidence": [
+        {
+          "kind": "paper",
+          "ref": "doi:10.1038/s41592-021-01358-2",
+          "note": "Palla et al. 2022: Squidpy spatial single-cell analysis framework"
+        },
+        {
+          "kind": "paper",
+          "ref": "doi:10.1002/wics.66",
+          "note": "Li, Calder & Martin 2007: Spatial autocorrelation and Moran's I weights"
+        }
+      ],
+      "contradictory_evidence": [],
+      "applicable_regimes": [
+        {
+          "regime_id": "spatial_tissue_sections",
+          "description": "2D and 3D spatial transcriptomics array and imaging technologies",
+          "target_platforms": [
+            "visium_55um",
+            "visium_hd",
+            "xenium",
+            "merscope",
+            "cosmx"
+          ],
+          "min_samples": 1,
+          "min_features": 100,
+          "sample_design": "spatial",
+          "tissue_contexts": [
+            "all"
+          ]
+        }
+      ],
+      "known_counterexamples": [],
+      "dataset_calibrations": [],
+      "platform_calibrations": [],
+      "sensitivity_analysis": [],
+      "reviewers": [],
+      "version_history": [
+        {
+          "version": "1.0.0",
+          "date": "2024-01-10",
+          "author": "BioNexus Core Team",
+          "summary": "Initial geometry sanity check",
+          "epistemic_rationale": "Spatial integrity protection"
+        },
+        {
+          "version": "3.1.0-trust-reset",
+          "date": "2026-08-21",
+          "author": "BioNexus Development Team",
+          "summary": "Historical development entry; prior calibration or endorsement language withdrawn during the Scientific Trust Reset.",
+          "epistemic_rationale": "No independently verifiable evidence artifact was packaged."
+        }
+      ],
       "exceptions": [
         "Embedding coordinates with explicit spatial justification and FRAGILE ceiling"
       ],
@@ -128,23 +335,89 @@
         "physical_micron_coordinates_vs_latent_embedding",
         "spot_density_and_segmentation_geometry"
       ],
-      "last_verified": "2025-06",
+      "last_verified": "",
+      "metadata": {
+        "evidence_status": "UNVERIFIED_DEVELOPMENT",
+        "review_status": "NOT_ASSESSED",
+        "calibration_status": "NOT_ASSESSED",
+        "attestation_ids": []
+      }
+    },
+    "annotation_source_recorded": {
+      "aliases": [
+        "negative_markers_evaluated",
+        "annotation_evidence_available"
+      ],
+      "proposition": {
+        "statement": "Single-cell cell-type assertions require verifiable orthogonal evidence (reference atlas projection, surface proteome, or expert marker panel); unsupervised cluster marker sorting alone is circular.",
+        "formal_predicate": "P(CellType_c = T | Evidence_c) >= 0.80 where Evidence_c in {ReferenceAtlas, CITEseq, Panel}",
+        "underlying_assumptions": [
+          "Marker expression in isolated clusters does not uniquely determine lineage identity without cross-dataset stability",
+          "Reference atlases (Azimuth, CellTypist) possess validated ground truth annotations"
+        ],
+        "theoretical_framework": "Bayesian Lineage Classification & Circularity Prevention"
+      },
+      "epistemic_kind": "WARRANT_CONSTRAINT",
       "classification": {
         "category": "WARRANT_EPISTEMIC",
         "enforcement_level": "ADVISORY",
         "epistemic_kind": "WARRANT_CONSTRAINT",
-        "rationale": "Spatial statistics: Moran's I assumes physical adjacency; embedding coordinates proxy for topological similarity which may correlate with but does not equal tissue-level structure."
-      }
-    },
-    "annotation_source_recorded": {
-      "aliases": ["negative_markers_evaluated", "annotation_evidence_available"],
-      "source_kind": "best_practice",
-      "source_citation": "Cell-type labels require evidence support (reference atlas, marker panel); BN-F003",
-      "evidence": [
-        {"kind": "paper", "ref": "doi:10.1038/s41576-021-00341-c", "note": "Luecken et al. 2022, single-cell best practices: annotation"},
-        {"kind": "paper", "ref": "doi:10.1038/s41587-021-00870-2", "note": "Abdelaal et al. 2019, automated cell-type annotation benchmark"}
-      ],
+        "rationale": "Annotation evidence limits what identity claims can be justified; numeric clusters remain valid."
+      },
       "consensus": "STRONG",
+      "source_kind": "best_practice",
+      "source_citation": "Luecken et al. 2022 (Single-cell best practices); Abdelaal et al. 2019 (Annotation benchmark)",
+      "supporting_evidence": [
+        {
+          "kind": "paper",
+          "ref": "doi:10.1038/s41576-021-00341-c",
+          "note": "Luecken et al. 2022: Current best practices in single-cell RNA-seq analysis: a tutorial"
+        },
+        {
+          "kind": "paper",
+          "ref": "doi:10.1038/s41587-021-00870-2",
+          "note": "Abdelaal et al. 2019: A comparison of automatic cell identification methods for single-cell RNA sequencing data"
+        }
+      ],
+      "contradictory_evidence": [],
+      "applicable_regimes": [
+        {
+          "regime_id": "single_cell_annotation",
+          "description": "Cell-type annotation workflows in scRNA-seq and snRNA-seq",
+          "target_platforms": [
+            "10x_chromium",
+            "smart_seq2",
+            "bd_rhapsody"
+          ],
+          "min_samples": 1,
+          "min_features": 200,
+          "sample_design": "any",
+          "tissue_contexts": [
+            "all"
+          ]
+        }
+      ],
+      "known_counterexamples": [],
+      "dataset_calibrations": [],
+      "platform_calibrations": [],
+      "sensitivity_analysis": [],
+      "reviewers": [],
+      "version_history": [
+        {
+          "version": "1.0.0",
+          "date": "2024-01-10",
+          "author": "BioNexus Core Team",
+          "summary": "Annotation source check",
+          "epistemic_rationale": "Circularity protection"
+        },
+        {
+          "version": "3.1.0-trust-reset",
+          "date": "2026-08-21",
+          "author": "BioNexus Development Team",
+          "summary": "Historical development entry; prior calibration or endorsement language withdrawn during the Scientific Trust Reset.",
+          "epistemic_rationale": "No independently verifiable evidence artifact was packaged."
+        }
+      ],
       "exceptions": [
         "Numeric cluster labels without biological identity claims",
         "Exploratory annotation with explicit 'candidate only' disclaimer"
@@ -154,50 +427,392 @@
         "independent_reference_mapping",
         "orthogonal_surface_protein"
       ],
-      "last_verified": "2025-06",
+      "last_verified": "",
+      "metadata": {
+        "evidence_status": "UNVERIFIED_DEVELOPMENT",
+        "review_status": "NOT_ASSESSED",
+        "calibration_status": "NOT_ASSESSED",
+        "attestation_ids": []
+      }
+    },
+    "clinical_diagnosis_without_certification": {
+      "aliases": [
+        "treatment_recommendation",
+        "clinical_diagnosis",
+        "unverified_clinical_diagnosis"
+      ],
+      "proposition": {
+        "statement": "Omics analysis software without CLIA/CAP certification and formal analytical validation cannot issue clinical diagnostic assertions or treatment directives for individual patients.",
+        "formal_predicate": "forall p in Patients: ClinicalDiagnosis(p) requires CertifiedValidation(Pipeline)",
+        "underlying_assumptions": [
+          "Research pipelines lack validated clinical sensitivity/specificity thresholds and chain-of-custody controls"
+        ],
+        "theoretical_framework": "Regulatory Bioethics & Good Laboratory Practice (GLP)"
+      },
+      "epistemic_kind": "EXECUTION_INVARIANT",
       "classification": {
-        "category": "WARRANT_EPISTEMIC",
-        "enforcement_level": "ADVISORY",
-        "epistemic_kind": "WARRANT_CONSTRAINT",
-        "rationale": "Annotation evidence limits what identity claims can be justified; numeric clusters remain valid."
+        "category": "INVARIANT_SAFETY",
+        "enforcement_level": "ENFORCED",
+        "epistemic_kind": "EXECUTION_INVARIANT",
+        "rationale": "CLIA/CAP mandate: clinical diagnosis without certified validation directly impacts patient treatment decisions."
+      },
+      "consensus": "ESTABLISHED",
+      "source_kind": "regulatory",
+      "source_citation": "CLIA regulations (42 CFR Part 493); CAP accreditation checklists; EU IVDR 2017/746; FDA 21 CFR Part 11",
+      "supporting_evidence": [
+        {
+          "kind": "regulation",
+          "ref": "https://www.ecfr.gov/current/title-42/chapter-IV/subchapter-G/part-493",
+          "note": "CLIA laboratory requirements"
+        },
+        {
+          "kind": "regulation",
+          "ref": "https://eur-lex.europa.eu/eli/reg/2017/746/oj",
+          "note": "EU In Vitro Diagnostic Regulation"
+        },
+        {
+          "kind": "regulation",
+          "ref": "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-H/part-11",
+          "note": "FDA electronic records/signatures"
+        }
+      ],
+      "contradictory_evidence": [],
+      "applicable_regimes": [
+        {
+          "regime_id": "all_patient_and_clinical_pipelines",
+          "description": "All clinical omics analysis workflows",
+          "target_platforms": [
+            "all"
+          ],
+          "min_samples": 1,
+          "min_features": 1,
+          "sample_design": "any",
+          "tissue_contexts": [
+            "human_patient"
+          ]
+        }
+      ],
+      "known_counterexamples": [],
+      "dataset_calibrations": [],
+      "platform_calibrations": [],
+      "sensitivity_analysis": [],
+      "reviewers": [],
+      "version_history": [
+        {
+          "version": "1.0.0",
+          "date": "2024-01-10",
+          "author": "BioNexus Core Team",
+          "summary": "CLIA safety invariant",
+          "epistemic_rationale": "Patient safety protection"
+        },
+        {
+          "version": "3.1.0-trust-reset",
+          "date": "2026-08-21",
+          "author": "BioNexus Development Team",
+          "summary": "Historical development entry; prior calibration or endorsement language withdrawn during the Scientific Trust Reset.",
+          "epistemic_rationale": "No independently verifiable evidence artifact was packaged."
+        }
+      ],
+      "exceptions": [],
+      "context_factors": [],
+      "last_verified": "",
+      "metadata": {
+        "evidence_status": "UNVERIFIED_DEVELOPMENT",
+        "review_status": "NOT_ASSESSED",
+        "calibration_status": "NOT_ASSESSED",
+        "attestation_ids": []
+      }
+    },
+    "identifier_namespace_mismatch": {
+      "aliases": [
+        "identifier_namespace"
+      ],
+      "proposition": {
+        "statement": "Joining disparate biological identifier namespaces without an explicit, versioned cross-reference dictionary causes silent data loss and spurious one-to-many gene mappings.",
+        "formal_predicate": "Namespace(Left) == Namespace(Right) or HasVerifiedMapping(Left, Right)",
+        "underlying_assumptions": [
+          "HGNC symbols, Ensembl IDs, and Entrez IDs operate under distinct lifecycle and synonym update policies"
+        ],
+        "theoretical_framework": "Relational Data Integrity & Ontology Mapping"
+      },
+      "epistemic_kind": "DATA_INTEGRITY_INVARIANT",
+      "classification": {
+        "category": "INVARIANT_INTEGRITY",
+        "enforcement_level": "ENFORCED",
+        "epistemic_kind": "DATA_INTEGRITY_INVARIANT",
+        "rationale": "Data integrity: joining HGNC gene symbols against Ensembl IDs produces silent one-to-many mappings indistinguishable from correct joins."
+      },
+      "consensus": "ESTABLISHED",
+      "source_kind": "statistical_theory",
+      "source_citation": "Ensembl stable ID documentation; HGNC symbol lifecycle; BN-F004",
+      "supporting_evidence": [
+        {
+          "kind": "documentation",
+          "ref": "https://www.ensembl.org/info/genome/stable_ids/index.html",
+          "note": "Ensembl stable ID semantics differ from HGNC symbols"
+        },
+        {
+          "kind": "documentation",
+          "ref": "https://www.genenames.org/help/symbol-management/",
+          "note": "HGNC symbol lifecycle and reuse"
+        }
+      ],
+      "contradictory_evidence": [],
+      "applicable_regimes": [],
+      "known_counterexamples": [],
+      "dataset_calibrations": [],
+      "platform_calibrations": [],
+      "sensitivity_analysis": [],
+      "reviewers": [],
+      "version_history": [
+        {
+          "version": "1.0.0",
+          "date": "2024-01-10",
+          "author": "BioNexus Core Team",
+          "summary": "Namespace integrity invariant",
+          "epistemic_rationale": "Join integrity protection"
+        },
+        {
+          "version": "3.1.0-trust-reset",
+          "date": "2026-08-21",
+          "author": "BioNexus Development Team",
+          "summary": "Historical development entry; prior calibration or endorsement language withdrawn during the Scientific Trust Reset.",
+          "epistemic_rationale": "No independently verifiable evidence artifact was packaged."
+        }
+      ],
+      "exceptions": [
+        "Explicit mapping table provided and recorded in provenance"
+      ],
+      "context_factors": [],
+      "last_verified": "",
+      "metadata": {
+        "evidence_status": "UNVERIFIED_DEVELOPMENT",
+        "review_status": "NOT_ASSESSED",
+        "calibration_status": "NOT_ASSESSED",
+        "attestation_ids": []
+      }
+    },
+    "model_substitution_attempt": {
+      "aliases": [
+        "model_substitution"
+      ],
+      "proposition": {
+        "statement": "Substituting an unverified heuristic or secondary approximation model without explicit disclosure violates execution fidelity and reproducibility contracts.",
+        "formal_predicate": "DeclaredBackend == ExecutedBackend; ZeroSilentSubstitution",
+        "underlying_assumptions": [
+          "Downstream warrant depends strictly on algorithmic identity of the executed code"
+        ],
+        "theoretical_framework": "Cryptographic Execution Traceability & Provenance"
+      },
+      "epistemic_kind": "DATA_INTEGRITY_INVARIANT",
+      "classification": {
+        "category": "INVARIANT_INTEGRITY",
+        "enforcement_level": "ENFORCED",
+        "epistemic_kind": "DATA_INTEGRITY_INVARIANT",
+        "rationale": "Reproducibility: substituting models without detection breaks deterministic audit trails (BN-F010)."
+      },
+      "consensus": "PROJECT_INTERNAL",
+      "source_kind": "project_invariant",
+      "source_citation": "BioNexus honesty policy (BNS-EF-002, BN-F010): never present heuristic output as canonical backend results",
+      "supporting_evidence": [
+        {
+          "kind": "spec",
+          "ref": "spec/BNS-003-execution-fidelity.md",
+          "note": "Execution fidelity specification"
+        },
+        {
+          "kind": "spec",
+          "ref": "spec/BNS-008-host-conformance.md",
+          "note": "Host conformance and backend identity"
+        }
+      ],
+      "contradictory_evidence": [],
+      "applicable_regimes": [],
+      "known_counterexamples": [],
+      "dataset_calibrations": [],
+      "platform_calibrations": [],
+      "sensitivity_analysis": [],
+      "reviewers": [],
+      "version_history": [
+        {
+          "version": "1.0.0",
+          "date": "2024-01-10",
+          "author": "BioNexus Core Team",
+          "summary": "Execution fidelity invariant",
+          "epistemic_rationale": "Zero silent substitution policy"
+        },
+        {
+          "version": "3.1.0-trust-reset",
+          "date": "2026-08-21",
+          "author": "BioNexus Development Team",
+          "summary": "Historical development entry; prior calibration or endorsement language withdrawn during the Scientific Trust Reset.",
+          "epistemic_rationale": "No independently verifiable evidence artifact was packaged."
+        }
+      ],
+      "exceptions": [],
+      "context_factors": [],
+      "last_verified": "",
+      "metadata": {
+        "evidence_status": "UNVERIFIED_DEVELOPMENT",
+        "review_status": "NOT_ASSESSED",
+        "calibration_status": "NOT_ASSESSED",
+        "attestation_ids": []
       }
     },
     "multiple_testing_uncorrected": {
-      "aliases": ["missing_fdr"],
-      "source_kind": "statistical_theory",
-      "source_citation": "Multiple testing correction required when testing >1 hypothesis; Benjamini & Hochberg 1995",
-      "evidence": [
-        {"kind": "paper", "ref": "doi:10.1111/j.2517-6161.1995.tb02031.x", "note": "Benjamini & Hochberg 1995, FDR control"}
+      "aliases": [
+        "missing_fdr"
       ],
-      "consensus": "ESTABLISHED",
-      "exceptions": [
-        "Single pre-registered hypothesis (no correction needed)",
-        "Exploratory ranking without inferential claims"
-      ],
-      "last_verified": "2025-06",
+      "proposition": {
+        "statement": "Testing multiple hypotheses simultaneously across thousands of omics features without False Discovery Rate (FDR) adjustment inflates family-wise type I error.",
+        "formal_predicate": "FDR <= alpha; p_adj = BenjaminiHochberg(p_values)",
+        "underlying_assumptions": [
+          "Independence or positive regression dependency of test statistics (PRDS assumption)"
+        ],
+        "theoretical_framework": "Benjamini-Hochberg False Discovery Rate Control"
+      },
+      "epistemic_kind": "POLICY_DEFAULT",
       "classification": {
         "category": "WARRANT_EPISTEMIC",
         "enforcement_level": "ADVISORY",
         "epistemic_kind": "POLICY_DEFAULT",
-        "rationale": "Without FDR control, individual p-values are inflated false positives; exploratory ranking tolerates this. The 0.05 alpha is a community-convention default, legitimately replaceable per study design."
+        "rationale": "Without FDR control, individual p-values are inflated false positives; exploratory ranking tolerates this. The 0.05 alpha is a community-convention default."
+      },
+      "consensus": "ESTABLISHED",
+      "source_kind": "statistical_theory",
+      "source_citation": "Benjamini & Hochberg 1995 (FDR control); Storey 2002 (q-value)",
+      "supporting_evidence": [
+        {
+          "kind": "paper",
+          "ref": "doi:10.1111/j.2517-6161.1995.tb02031.x",
+          "note": "Benjamini & Hochberg 1995: Controlling the false discovery rate"
+        },
+        {
+          "kind": "paper",
+          "ref": "doi:10.1111/1467-9868.00346",
+          "note": "Storey 2002: A direct approach to false discovery rates"
+        }
+      ],
+      "contradictory_evidence": [],
+      "applicable_regimes": [
+        {
+          "regime_id": "genome_wide_multiple_testing",
+          "description": "Any high-dimensional hypothesis test with >= 10 features",
+          "target_platforms": [
+            "all"
+          ],
+          "min_samples": 1,
+          "min_features": 10,
+          "sample_design": "any",
+          "tissue_contexts": [
+            "all"
+          ]
+        }
+      ],
+      "known_counterexamples": [
+        {
+          "counterexample_id": "single_pre_registered_candidate",
+          "description": "Pre-registered hypothesis testing a single designated biomarker",
+          "empirical_citation": "doi:10.1111/j.2517-6161.1995.tb02031.x",
+          "boundary_mechanism": "Family size m=1 does not require multiplicity correction",
+          "mitigation_strategy": "Permit nominal p-value reporting if pre-registration artifact is attached"
+        }
+      ],
+      "dataset_calibrations": [],
+      "platform_calibrations": [],
+      "sensitivity_analysis": [],
+      "reviewers": [],
+      "version_history": [
+        {
+          "version": "1.0.0",
+          "date": "2024-01-10",
+          "author": "BioNexus Core Team",
+          "summary": "FDR policy default",
+          "epistemic_rationale": "Multiple testing control"
+        },
+        {
+          "version": "3.1.0-trust-reset",
+          "date": "2026-08-21",
+          "author": "BioNexus Development Team",
+          "summary": "Historical development entry; prior calibration or endorsement language withdrawn during the Scientific Trust Reset.",
+          "epistemic_rationale": "No independently verifiable evidence artifact was packaged."
+        }
+      ],
+      "exceptions": [
+        "Single pre-registered hypothesis (no correction needed)",
+        "Exploratory ranking without inferential claims"
+      ],
+      "context_factors": [],
+      "last_verified": "",
+      "metadata": {
+        "evidence_status": "UNVERIFIED_DEVELOPMENT",
+        "review_status": "NOT_ASSESSED",
+        "calibration_status": "NOT_ASSESSED",
+        "attestation_ids": []
       }
     },
     "missing_backend": {
-      "aliases": ["backend_identity"],
-      "source_kind": "project_invariant",
-      "source_citation": "Backend identity conformance (BNS-EF-012..016, BN-F010): declared == observed, no silent substitution",
-      "evidence": [
-        {"kind": "spec", "ref": "spec/BNS-008-host-conformance.md", "note": "Host conformance specification"}
+      "aliases": [
+        "backend_identity"
       ],
-      "consensus": "PROJECT_INTERNAL",
-      "exceptions": [],
-      "last_verified": "2025-06",
+      "proposition": {
+        "statement": "A declared capability backend MUST be physically available and executed without silent substitution; if unavailable, the engine MUST fail closed.",
+        "formal_predicate": "DeclaredBackend in ExecutedBackends",
+        "underlying_assumptions": [
+          "Different backend implementations produce divergent numerical results and edge-case behaviors"
+        ],
+        "theoretical_framework": "Software Execution Integrity"
+      },
+      "epistemic_kind": "DATA_INTEGRITY_INVARIANT",
       "classification": {
         "category": "INVARIANT_INTEGRITY",
         "enforcement_level": "ENFORCED",
         "epistemic_kind": "DATA_INTEGRITY_INVARIANT",
         "rationale": "Scientific capability contract: the canonical backend defines the algorithm. Silent substitution means the result is not what was advertised — zero silent substitution policy."
+      },
+      "consensus": "PROJECT_INTERNAL",
+      "source_kind": "project_invariant",
+      "source_citation": "Backend identity conformance (BNS-EF-012..016, BN-F010): declared == observed, no silent substitution",
+      "supporting_evidence": [
+        {
+          "kind": "spec",
+          "ref": "spec/BNS-008-host-conformance.md",
+          "note": "Host conformance specification"
+        }
+      ],
+      "contradictory_evidence": [],
+      "applicable_regimes": [],
+      "known_counterexamples": [],
+      "dataset_calibrations": [],
+      "platform_calibrations": [],
+      "sensitivity_analysis": [],
+      "reviewers": [],
+      "version_history": [
+        {
+          "version": "1.0.0",
+          "date": "2024-01-10",
+          "author": "BioNexus Core Team",
+          "summary": "Backend availability invariant",
+          "epistemic_rationale": "Fail-closed execution protection"
+        },
+        {
+          "version": "3.1.0-trust-reset",
+          "date": "2026-08-21",
+          "author": "BioNexus Development Team",
+          "summary": "Historical development entry; prior calibration or endorsement language withdrawn during the Scientific Trust Reset.",
+          "epistemic_rationale": "No independently verifiable evidence artifact was packaged."
+        }
+      ],
+      "exceptions": [],
+      "context_factors": [],
+      "last_verified": "",
+      "metadata": {
+        "evidence_status": "UNVERIFIED_DEVELOPMENT",
+        "review_status": "NOT_ASSESSED",
+        "calibration_status": "NOT_ASSESSED",
+        "attestation_ids": []
       }
     }
-  }
+  },
+  "challenges": {}
 }

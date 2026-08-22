@@ -92,12 +92,17 @@ work/
 .pytest_temp/
 .pytest_tmp/
 .pytest_tmp_*/
+.pytest-tmp*/
+.pytest-tmp-*
 .pytest_tmp_run/
 .pytest_tmp_host_live_*/
 .bionexus-doctor.json
 .codex*
 .agents/mcp_config.json
 plugins/**/.agents/
+.lo-profile*
+logs/
+
 
 # Machine-local remote-columnar runtime and verified download parts.
 .vendor/
@@ -125,3 +130,10 @@ figures/
 *.docx
 *.pptx
 *.pdf
+
+# Public BNS-019 interoperability protocol artifacts and participant evidence.
+!interoperability/bns019/trial/schemas/submission.schema.json
+!interoperability/bns019/trial/submissions/
+!interoperability/bns019/trial/submissions/**
+!interoperability/bns019/trial/results/
+!interoperability/bns019/trial/results/**

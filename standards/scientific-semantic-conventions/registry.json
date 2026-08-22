@@ -1,0 +1,113 @@
+{
+  "$schema": "schemas/registry.schema.json",
+  "schema_version": "0.1.0",
+  "schema_url": "urn:bionexus:scientific-semantic-conventions:0.1.0",
+  "stability": "development",
+  "title": "BioNexus Scientific Semantic Conventions",
+  "description": "A shared vocabulary for exchanging the meaning and evidence boundary of scientific AI outputs. This development release is a convention contract, not a claim of community adoption or biological validation.",
+  "attributes": {
+    "biological.unit": {
+      "type": "string",
+      "cardinality": "one",
+      "stability": "development",
+      "brief": "Biological or acquisition unit represented by the record.",
+      "values": ["donor", "sample", "cell", "spot", "transcript", "field_of_view"]
+    },
+    "matrix.state": {
+      "type": "string",
+      "cardinality": "one",
+      "stability": "development",
+      "brief": "Mathematical state of the expression matrix consumed or produced.",
+      "note": "Values describe representation, not quality. normalized_counts and log_normalized are intentionally distinct; normalized_expression is not accepted because it is ambiguous between them.",
+      "values": ["raw_counts", "normalized_counts", "log_normalized", "scaled"]
+    },
+    "claim.type": {
+      "type": "string",
+      "cardinality": "one",
+      "stability": "development",
+      "brief": "Strongest scientific proposition asserted by the record.",
+      "values": ["descriptive", "associative", "population_effect", "predictive", "mechanistic", "causal", "clinical_actionable"]
+    },
+    "evidence.type": {
+      "type": "string_array",
+      "cardinality": "many",
+      "stability": "development",
+      "brief": "Independently identifiable evidence classes actually present.",
+      "values": ["computational_result", "orthogonal_measurement", "perturbation", "replication", "literature_support", "external_validation"]
+    },
+    "confound.type": {
+      "type": "string_array",
+      "cardinality": "many",
+      "stability": "development",
+      "brief": "Alternative explanations explicitly assessed or left unresolved.",
+      "values": ["donor", "batch", "segmentation", "transcript_leakage", "cell_size", "spatial_density", "nuclear_eccentricity", "contact_geometry", "neighborhood_definition", "spatial_autocorrelation", "cell_label"]
+    },
+    "warrant.level": {
+      "type": "string",
+      "cardinality": "one",
+      "stability": "development",
+      "brief": "Ordered positive support ceiling for the scientific claim.",
+      "values": ["unassessed", "fragile", "preliminary", "supported", "robust", "replicated"]
+    },
+    "warrant.status": {
+      "type": "string",
+      "cardinality": "one",
+      "stability": "development",
+      "brief": "Orthogonal assessment state that must not be collapsed into warrant strength.",
+      "values": ["unassessed", "assessed", "conflicted", "abstained"]
+    }
+  },
+  "groups": {
+    "scientific.observation": {
+      "type": "event",
+      "stability": "development",
+      "brief": "One claim-bearing scientific observation exchanged between tools.",
+      "attributes": {
+        "biological.unit": "required",
+        "matrix.state": "recommended",
+        "claim.type": "required",
+        "evidence.type": "required",
+        "confound.type": "recommended",
+        "warrant.level": "required",
+        "warrant.status": "required"
+      }
+    },
+    "scientific.dataset": {
+      "type": "entity",
+      "stability": "development",
+      "brief": "A dataset or matrix resource described without asserting a finding.",
+      "attributes": {
+        "biological.unit": "required",
+        "matrix.state": "recommended",
+        "confound.type": "opt_in"
+      }
+    },
+    "scientific.claim": {
+      "type": "event",
+      "stability": "development",
+      "brief": "A claim and its evidence boundary when no matrix resource is exchanged.",
+      "attributes": {
+        "biological.unit": "recommended",
+        "claim.type": "required",
+        "evidence.type": "required",
+        "confound.type": "recommended",
+        "warrant.level": "required",
+        "warrant.status": "required"
+      }
+    }
+  },
+  "attribute_aliases": {
+    "biological_unit": "biological.unit",
+    "matrix_state": "matrix.state"
+  },
+  "value_aliases": {
+    "matrix.state": {"scaled_expression": "scaled"},
+    "claim.type": {"association": "associative", "clinical_actionability": "clinical_actionable"}
+  },
+  "blocked_legacy_values": {
+    "matrix.state": {
+      "normalized_expression": "Ambiguous legacy value: declare normalized_counts or log_normalized explicitly. BioNexus will not infer whether a transform was logged."
+    }
+  },
+  "extension_namespace_pattern": "^x\\.[a-z][a-z0-9_]*\\.[a-z][a-z0-9_.]*[a-z0-9]$"
+}

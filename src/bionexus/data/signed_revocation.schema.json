@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bionexus.org/schemas/signed-revocation.v1.json",
+  "title": "BioNexus signed trust revocation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "revocation_id", "target_type", "target_id", "reason",
+    "revoked_at", "signer_id", "key_id", "signature_algorithm", "signature_b64"
+  ],
+  "properties": {
+    "schema_version": {"const": "bionexus.signed-revocation.v1"},
+    "revocation_id": {"type": "string", "minLength": 1},
+    "target_type": {"enum": ["attestation", "key"]},
+    "target_id": {"type": "string", "minLength": 1},
+    "reason": {"type": "string", "minLength": 1},
+    "revoked_at": {"type": "string", "format": "date-time"},
+    "signer_id": {"type": "string", "minLength": 1},
+    "key_id": {"type": "string", "minLength": 1},
+    "signature_algorithm": {"const": "Ed25519"},
+    "signature_b64": {"type": "string", "minLength": 1}
+  }
+}

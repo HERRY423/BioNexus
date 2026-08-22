@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bionexus:scientific-semantic-envelope:0.1.0",
+  "title": "BioNexus Scientific Semantic Envelope",
+  "type": "object",
+  "required": [
+    "schema_url",
+    "convention",
+    "producer",
+    "record_id",
+    "source_record_sha256",
+    "attributes",
+    "semantic_fingerprint_sha256"
+  ],
+  "properties": {
+    "schema_url": {"const": "urn:bionexus:scientific-semantic-conventions:0.1.0"},
+    "convention": {"enum": ["scientific.observation", "scientific.dataset", "scientific.claim"]},
+    "producer": {"type": "string", "minLength": 1, "maxLength": 256},
+    "record_id": {"type": ["string", "null"], "maxLength": 512},
+    "source_record_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "attributes": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {"pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)+$"},
+      "additionalProperties": {
+        "oneOf": [
+          {"type": "string", "maxLength": 1024},
+          {
+            "type": "array",
+            "items": {"type": "string", "maxLength": 256},
+            "uniqueItems": true,
+            "maxItems": 1000
+          }
+        ]
+      }
+    },
+    "semantic_fingerprint_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": false
+}

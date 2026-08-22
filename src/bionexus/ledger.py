@@ -45,6 +45,12 @@ EVIDENCE_KINDS = (
     "statistical_result", # test statistic, effect size, corrected p-value
     "database",           # external knowledge source (ClinVar, UniProt, ...)
     "cross_method",       # concordance evidence from an alternative method
+    "causal_dag",         # structural causal graph / d-separation validation
+    "spatial_colocalization", # spatial adjacency / colocalization evidence
+    "ligand_receptor",    # ligand-receptor expression / communication inference
+    "perturbation",       # functional knockout / knockdown / rescue evidence
+    "temporal_kinetics",  # longitudinal / time-series kinetics
+    "claim_semantics",    # parsed claim IR / warrant engine record
 )
 
 
@@ -77,6 +83,9 @@ class ClaimRecord:
     depends_on: List[str] = field(default_factory=list)
     evidence_status: str = ConclusionMaturity.UNASSESSED.value
     provenance: Dict[str, Any] = field(default_factory=dict)
+    causal_evaluation: Optional[Dict[str, Any]] = None
+    structured_claim: Optional[Dict[str, Any]] = None
+    warrant_evaluation: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -155,6 +164,49 @@ class ClaimLedger:
             min_maturity = enforce_evidence_ceiling(
                 claim.capability_id, min_maturity, has_external_validation=has_ext
             )
+
+        if claim.causal_evaluation:
+            causal_ceiling = claim.causal_evaluation.get("maturity_ceiling")
+            if causal_ceiling and MATURITY_RANKS.get(causal_ceiling, 0) < MATURITY_RANKS.get(min_maturity, 0):
+                min_maturity = causal_ceiling
+
+        # Semantic Claim IR & Deterministic Warrant Evaluation (BNS-017)
+        if claim.structured_claim or claim.statement:
+            try:
+                from bionexus.claim_semantics import (
+                    DeterministicClaimParser,
+                    DeterministicWarrantEngine,
+                    EvidenceProfile,
+                    ScientificClaimIR,
+                )
+
+                if claim.structured_claim:
+                    # If already structured dict, rehydrate into ScientificClaimIR or evaluate
+                    claim_ir = DeterministicClaimParser.parse(claim.statement, claim_id=claim.claim_id)
+                else:
+                    claim_ir = DeterministicClaimParser.parse(claim.statement, claim_id=claim.claim_id)
+
+                # Assemble EvidenceProfile from supporting evidence nodes
+                ev_profile = EvidenceProfile(
+                    spatial_colocalization=any(self.evidence[r].kind == "spatial_colocalization" for r in claim.supported_by if r in self.evidence),
+                    ligand_receptor_inference=any(self.evidence[r].kind == "ligand_receptor" for r in claim.supported_by if r in self.evidence),
+                    perturbation=any(self.evidence[r].kind == "perturbation" for r in claim.supported_by if r in self.evidence),
+                    temporal_evidence=any(self.evidence[r].kind == "temporal_kinetics" for r in claim.supported_by if r in self.evidence),
+                    independent_validation=any(self.evidence[r].kind in ("database", "cross_method") for r in claim.supported_by if r in self.evidence),
+                    reference_ground_truth=any(self.evidence[r].kind in ("database", "cross_method") for r in claim.supported_by if r in self.evidence),
+                    cross_method_concordance=any(self.evidence[r].kind == "cross_method" for r in claim.supported_by if r in self.evidence),
+                    causal_identification_status="BACKDOOR_SATISFIED" if any(self.evidence[r].kind == "causal_dag" for r in claim.supported_by if r in self.evidence) else "UNASSESSED",
+                )
+
+                w_result = DeterministicWarrantEngine.evaluate(claim_ir, ev_profile)
+                claim.warrant_evaluation = w_result.to_dict()
+                claim.structured_claim = claim_ir.to_dict()
+
+                warrant_ceiling = w_result.evidence_ceiling
+                if MATURITY_RANKS.get(warrant_ceiling, 0) < MATURITY_RANKS.get(min_maturity, 0):
+                    min_maturity = warrant_ceiling
+            except Exception:
+                pass
 
         claim.evidence_status = min_maturity
         return claim.evidence_status

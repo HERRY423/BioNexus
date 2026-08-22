@@ -108,6 +108,17 @@ def _top_level_package(import_name: str) -> str:
     return import_name.split(".")[0]
 
 
+import functools
+
+
+@functools.lru_cache(maxsize=1)
+def _get_packages_distributions() -> Dict[str, List[str]]:
+    try:
+        return importlib.metadata.packages_distributions()
+    except Exception:
+        return {}
+
+
 def _observed_distribution(import_name: str) -> Optional[str]:
     """The distribution that actually provides the top-level import name.
 
@@ -115,10 +126,7 @@ def _observed_distribution(import_name: str) -> Optional[str]:
     not from anything the caller claims.
     """
     top = _top_level_package(import_name)
-    try:
-        mapping = importlib.metadata.packages_distributions()
-    except Exception:
-        return None
+    mapping = _get_packages_distributions()
     dists = mapping.get(top)
     if not dists:
         return None

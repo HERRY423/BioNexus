@@ -1,0 +1,88 @@
+{
+  "$schema": "schemas/program.schema.json",
+  "schema_version": "bionexus.spatial-empirical-gold-program.v1",
+  "program_version": "0.1.0",
+  "status": "incomplete_not_claim_ready",
+  "capability_id": "spatial.inference_validity",
+  "scope": "alternative-explanation calibration for cell-resolved imaging spatial transcriptomics only",
+  "supported_platforms": ["xenium", "cosmx", "merscope"],
+  "platform_programs": {
+    "xenium": {"status": "NOT_STARTED", "study_ids": [], "approved_profile_ids": []},
+    "cosmx": {"status": "NOT_STARTED", "study_ids": [], "approved_profile_ids": []},
+    "merscope": {"status": "NOT_STARTED", "study_ids": [], "approved_profile_ids": []}
+  },
+  "alternative_explanations": {
+    "segmentation_uncertainty": {
+      "metric": "spatial.segmentation_effect_retention",
+      "direction": "AT_LEAST",
+      "required_empirical_anchor": "independently adjudicated segmentation revisions or orthogonal cell-boundary measurement"
+    },
+    "transcript_leakage": {
+      "metric": "spatial.leakage_effect_retention",
+      "direction": "AT_LEAST",
+      "required_empirical_anchor": "versioned leakage-model outputs plus independently adjudicated assignment or negative-control evidence"
+    },
+    "cell_size": {
+      "metric": "spatial.cell_size_adjusted_retention",
+      "direction": "AT_LEAST",
+      "required_empirical_anchor": "state-bound cell morphology measurement"
+    },
+    "nuclear_eccentricity": {
+      "metric": "spatial.nuclear_eccentricity_adjusted_retention",
+      "direction": "AT_LEAST",
+      "required_empirical_anchor": "state-bound nuclear morphology measurement"
+    },
+    "transcript_density": {
+      "metric": "spatial.transcript_density_adjusted_retention",
+      "direction": "AT_LEAST",
+      "required_empirical_anchor": "state-bound transcript coordinates or counts"
+    },
+    "local_cell_density": {
+      "metric": "spatial.local_density_adjusted_retention",
+      "direction": "AT_LEAST",
+      "required_empirical_anchor": "physical coordinates in micrometers"
+    },
+    "contact_geometry": {
+      "metric": "spatial.contact_geometry_retention",
+      "direction": "AT_LEAST",
+      "required_empirical_anchor": "exact segmentation-derived contact graph and boundary revision"
+    },
+    "batch_fov": {
+      "metric": "spatial.batch_fov_stability",
+      "direction": "AT_LEAST",
+      "required_empirical_anchor": "multiple declared FOV or batch identifiers"
+    },
+    "neighborhood_radius": {
+      "metric": "spatial.radius_stability",
+      "direction": "AT_LEAST",
+      "required_empirical_anchor": "preregistered physical-radius grid"
+    },
+    "permutation_null": {
+      "metric": "spatial.permutation_p_value",
+      "direction": "AT_MOST",
+      "required_empirical_anchor": "preregistered coordinate-permutation design"
+    },
+    "cell_label_perturbation": {
+      "metric": "spatial.cell_label_stability",
+      "direction": "AT_LEAST",
+      "required_empirical_anchor": "versioned label revisions or independently estimated confusion model"
+    },
+    "spatial_autocorrelation": {
+      "metric": "spatial.spatial_autocorrelation_null_p_value",
+      "direction": "AT_MOST",
+      "required_empirical_anchor": "separately adjudicated spatial-null outcome"
+    }
+  },
+  "policies": {
+    "data_provenance": "REAL_PLATFORM_EXPORT only",
+    "platform_pooling": "forbidden",
+    "donor_overlap_between_partitions": "forbidden",
+    "fov_overlap_between_partitions": "forbidden",
+    "threshold_fallback": "forbidden",
+    "automatic_approval": "forbidden",
+    "synthetic_evidence": "software tests only; never profile evidence",
+    "missing_evidence": "incomplete_not_claim_ready"
+  },
+  "studies": [],
+  "approved_profiles": []
+}

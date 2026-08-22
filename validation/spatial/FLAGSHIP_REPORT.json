@@ -14,27 +14,29 @@
       "claimed_backend": "local deterministic alternative-explanation tester",
       "observed_backend": "bionexus",
       "entry_points_declared": [
+        "bionexus.spatial_alternative_battery",
         "bionexus.spatial_inference"
       ],
       "entry_points_resolved": [
+        "bionexus.spatial_alternative_battery",
         "bionexus.spatial_inference"
       ],
       "entry_points_missing": [],
       "version": "1.0.0-rc.2",
-      "execution_fingerprint": "ce15820070d6e0ce",
+      "execution_fingerprint": "3b0a8e2b2b42f83f",
       "fallback": false,
       "state": "CONFORMANT",
       "action": "RUN PERMITTED (identity)",
       "failure_mode_ids": [],
-      "reason": "declared_backend == observed_backend: 'local deterministic alternative-explanation tester' (distribution 'bionexus', version 1.0.0-rc.2, entry points 1/1 resolved, fallback False)."
+      "reason": "declared_backend == observed_backend: 'local deterministic alternative-explanation tester' (distribution 'bionexus', version 1.0.0-rc.2, entry points 2/2 resolved, fallback False)."
     },
     "provenance": {
       "data_source": "10x Genomics Xenium public datasets (e.g. Human Breast FFPE) / Vizgen MERSCOPE public releases (Moffitt et al. 2016-style MERFISH)",
-      "download_date": "2026-08-21T09:59:35.160183+00:00",
-      "commit_sha": "4c38c33d1903d5447c4ab5f5b558eed913be6693",
+      "download_date": "2026-08-22T03:15:41.777512+00:00",
+      "commit_sha": "20586eff06d0f3a21d8e693dbc75f3f0dae90b42",
       "git_dirty": false,
       "environment_lockfile_hashes": {
-        "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
+        "pyproject.toml": "b29c5b3f2a3a931e78f701a16c982330d4d74398e3a71d994cd027a84284df24",
         "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
         "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
       },
@@ -45,7 +47,7 @@
       "generator_version": "1.0.0-rc.2",
       "python_version": "3.13.9",
       "platform": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-08-21T09:59:35.160183+00:00",
+      "timestamp": "2026-08-22T03:15:41.777512+00:00",
       "extra_metadata": {
         "capability": "spatial.inference_validity",
         "dataset_id": "xenium_spatial_truth",
@@ -53,7 +55,7 @@
       },
       "repository_dirty_at_execution": false,
       "validation_source_dirty": false,
-      "source_snapshot_sha256": "17fc0642672bd36676ef9dca66d9ff4ecc4f7c5908f14f373fcef2a1d5589564"
+      "source_snapshot_sha256": "55f5af5fdc514eedc7dafc05fd9b0f60b026625591e2e6b2c2a43d2487c61dc0"
     }
   },
   "metrics": [
@@ -81,10 +83,10 @@
     "Required files not found: spatial_truth.h5ad",
     "Validation outcome NOT verified in this environment (BNS-EM-009)"
   ],
-  "timestamp": "2026-08-21T09:59:35.251651+00:00",
+  "timestamp": "2026-08-22T03:15:50.107465+00:00",
   "evidence_files": [
-    "validation/spatial/evidence/.gitkeep",
-    "validation/spatial/evidence/spatial_synthetic_technical_acceptance.h5ad"
+    "validation\\spatial\\evidence\\.gitkeep",
+    "validation\\spatial\\evidence\\spatial_synthetic_technical_acceptance.h5ad"
   ],
   "status": "skipped"
 }

@@ -44,6 +44,12 @@ from bionexus.research_purpose import (
     infer_research_purpose,
     purpose_from_string,
 )
+from bionexus.semantic_router import SemanticNomination, nominate_semantically, validate_nomination
+from bionexus.statistical_rules import (
+    DOUBLET_RATE_ADVISORY_THRESHOLD,
+    assess_doublet_risk,
+    assess_statistical_power,
+)
 
 
 class RoutingStatus(str, Enum):
@@ -90,6 +96,10 @@ class RoutingDecision:
     residual_limitations: List[str] = field(default_factory=list)
     blocked_claims: List[str] = field(default_factory=list)
     override_records: List[Dict[str, Any]] = field(default_factory=list)
+    # Routing audit: which layer resolved the capability ("pattern" | "semantic"
+    # | "nominated" | "none") plus the deterministic nomination record.
+    routing_layer: str = "pattern"
+    routing_audit: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert decision to dictionary."""
@@ -104,6 +114,8 @@ class RoutingDecision:
             "remedies": self.remedies,
             "missing_data_requests": self.missing_data_requests,
             "evidence_card_template": self.evidence_card_template.to_dict() if self.evidence_card_template else None,
+            "routing_layer": self.routing_layer,
+            "routing_audit": dict(self.routing_audit),
         }
         if self.purpose_context:
             d["purpose_context"] = self.purpose_context.to_dict()
@@ -133,6 +145,10 @@ _INTENT_PATTERNS: List[Tuple[List[str], str]] = [
             r"negative binomial.*glm",
             r"glm.*pseudobulk",
             r"rank_genes_groups.*(?:drug|treatment|vehicle|cause)",
+            r"\blog2\s*fc\b",
+            r"fold[- ]change.*\d",
+            r"\bfdr\b",
+            r"condition[- ]specific",
         ],
         "scrna.pseudobulk_de",
     ),
@@ -338,9 +354,20 @@ _EMBEDDING_COORDINATE_TYPES = ("umap_embedding", "pca_embedding", "embedding", "
 
 
 def extract_scientific_capability(
-    query: str, explicit_intents: Optional[List[str]] = None
+    query: str,
+    explicit_intents: Optional[List[str]] = None,
+    nominated_capability: Optional[str] = None,
 ) -> Optional[CapabilityContract]:
-    """Identify the most specific matching canonical capability contract."""
+    """Identify the most specific matching canonical capability contract.
+
+    Resolution order (deterministic, auditable):
+    1. Explicit intents supplied by the caller.
+    2. Curated regex patterns over the query.
+    3. Host nomination (``nominated_capability``) — validated against the
+       registry; the host can nominate, never adjudicate.
+    4. Deterministic semantic nomination layer (synonym-expanded lexical
+       scoring with minimum-score + margin thresholds).
+    """
     # 1. Check explicit intents first
     if explicit_intents:
         for intent in explicit_intents:
@@ -355,6 +382,278 @@ def extract_scientific_capability(
             if re.search(pat, query_lower):
                 if cap_id in ALL_CAPABILITIES:
                     return ALL_CAPABILITIES[cap_id]
+
+    # 3. Host nomination channel: validate against the canonical registry.
+    if nominated_capability:
+        cap, _audit = validate_nomination(nominated_capability, ALL_CAPABILITIES, query)
+        if cap is not None:
+            return cap  # type: ignore[return-value]
+
+    # 4. Semantic nomination layer: deterministic lexical scoring, fail-closed
+    #    on ambiguity (returns None -> router emits NEEDS_DATA).
+    nomination = nominate_semantically(query)
+    if nomination.nominated_capability and nomination.nominated_capability in ALL_CAPABILITIES:
+        return ALL_CAPABILITIES[nomination.nominated_capability]  # type: ignore[index]
+
+    return None
+
+
+def resolve_capability_with_audit(
+    query: str,
+    explicit_intents: Optional[List[str]] = None,
+    nominated_capability: Optional[str] = None,
+) -> Tuple[Optional[CapabilityContract], str, Dict[str, Any]]:
+    """
+    Resolve the capability AND return the routing-layer audit record.
+
+    Returns (capability_or_None, routing_layer, audit_dict) where
+    routing_layer is one of "pattern" | "explicit_intent" | "nominated" |
+    "semantic" | "none". The audit dict is embedded verbatim into the
+    RoutingDecision so every resolution stays traceable.
+    """
+    if explicit_intents:
+        for intent in explicit_intents:
+            matches = find_capabilities_by_intent(intent)
+            if matches:
+                return matches[0], "explicit_intent", {"intent": intent}
+
+    query_lower = query.lower()
+    for patterns, cap_id in _INTENT_PATTERNS:
+        for pat in patterns:
+            if re.search(pat, query_lower):
+                if cap_id in ALL_CAPABILITIES:
+                    return (
+                        ALL_CAPABILITIES[cap_id],
+                        "pattern",
+                        {"matched_pattern": pat, "capability": cap_id},
+                    )
+
+    if nominated_capability:
+        cap, audit = validate_nomination(nominated_capability, ALL_CAPABILITIES, query)
+        if cap is not None:
+            return cap, "nominated", audit.to_dict()  # type: ignore[return-value]
+        return None, "none", {
+            **audit.to_dict(),
+            "nomination_rejected": f"'{nominated_capability}' not in canonical registry",
+        }
+
+    nomination: SemanticNomination = nominate_semantically(query)
+    if nomination.nominated_capability and nomination.nominated_capability in ALL_CAPABILITIES:
+        return (
+            ALL_CAPABILITIES[nomination.nominated_capability],  # type: ignore[index]
+            "semantic",
+            nomination.to_dict(),
+        )
+    return None, "none", nomination.to_dict()
+
+
+# ==============================================================================
+# Statistical-Level Advisory Stage (Epistemic Ladder stages 2 & 4)
+# ==============================================================================
+
+
+def _statistical_advisory_stage(
+    cap: CapabilityContract, meta: Dict[str, Any], query: str = ""
+) -> Optional[RoutingDecision]:
+    """
+    Stage 3.6: deterministic statistical-quality advisories beyond design-level
+    checks. Where stage 3.5 catches invalid designs, this stage catches designs
+    that are valid but underpowered *relative to the claim being requested*,
+    and degrades the verdict to DEGRADED_ADVISORY with an explicit statistical
+    remedy instead of permitting an overclaimed run (BN-F002 / BN-F003; BNS-007).
+
+    Claim-conditioned by design: a bare N=2 pseudobulk run stays PERMITTED
+    (the boundary guarantee, BNS-II-010); the advisory fires only when the
+    request additionally asserts robust/population-level discovery power that
+    the design cannot support.
+    """
+    cap_id = cap.id
+
+    # BN-F002: pseudobulk DE at minimal replication + a power-exceeding claim.
+    _POWER_OVERCLAIM_RE = re.compile(
+        r"(robust|discovery\s+power|powered|population[- ]level|population[- ]wide|"
+        r"generaliz|definitive|confirmatory)",
+        re.IGNORECASE,
+    )
+    if cap_id == "scrna.pseudobulk_de":
+        min_reps = meta.get("min_replicates_per_condition")
+
+        # BN-F001 (family axis: nested_units): samples nested within donors.
+        # Population claims require knowing the statistical unit; when nesting
+        # exists but no aggregation/mixed-model strategy is declared, the
+        # correct unit is undetermined -> request the structure (fail-closed).
+        if meta.get("samples_nested_in_donors") and not meta.get("aggregation_declared"):
+            return RoutingDecision(
+                status=RoutingStatus.NEEDS_DATA,
+                matched_capability=cap,
+                target_skill=cap.skill_name,
+                recommended_script="skills/single-cell-rna-qc/scripts/scrna_pseudobulk.py",
+                recommended_command="python skills/single-cell-rna-qc/scripts/scrna_pseudobulk.py --help",
+                rationale=(
+                    "Samples are nested within donors (e.g. multiple regions/biopsies per patient): "
+                    "treating nested samples as independent replicates inflates the effective N and "
+                    "invalidates population-level variance estimates (BN-F001). The statistical unit "
+                    "must be declared before compute."
+                ),
+                missing_data_requests=[
+                    "Declare the aggregation strategy: aggregate nested samples to the donor level "
+                    "before pseudobulk DE, or specify a mixed-effects model with donor as a random "
+                    "effect; also provide donors_per_condition after aggregation.",
+                ],
+                remedies=[
+                    "Aggregate to the top-level biological unit (donor/patient) or pre-register a "
+                    "mixed-model specification; only then can condition effects claim population scope."
+                ],
+                evidence_card_template=EvidenceCard(
+                    execution_state=ExecutionState.NOT_EXECUTED.value
+                    if hasattr(ExecutionState, "NOT_EXECUTED")
+                    else ExecutionState.REFUSED.value,
+                    details={"failure_mode": "BN-F001", "family": "BN-F006-pseudoreplication", "axis": "nested_units"},
+                ),
+            )
+
+        # BN-F006 (family axis: variance_entanglement): batch variable is 1:1
+        # with donor identity. Correcting 'batch' would absorb biological
+        # donor variance; the donor must BE the unit, not a covariate.
+        if meta.get("batch_variable_equals_donor"):
+            return RoutingDecision(
+                status=RoutingStatus.DEGRADED_ADVISORY,
+                matched_capability=cap,
+                target_skill=cap.skill_name,
+                recommended_script="skills/single-cell-rna-qc/scripts/scrna_deseq.py",
+                recommended_command="python skills/single-cell-rna-qc/scripts/scrna_deseq.py --help",
+                rationale=(
+                    "The declared batch variable is 1:1 with donor identity: batch correction "
+                    "(ComBat/regression) on this variable would remove biological donor variance "
+                    "together with technical noise (BN-F006 variance entanglement). Compute may "
+                    "proceed only with the donor as the statistical unit."
+                ),
+                violations=[],
+                remedies=[
+                    "Do NOT regress out or ComBat-correct the batch column when it equals donor identity; "
+                    "aggregate to donor-level pseudobulk and include donor in the design formula only if "
+                    "condition varies within donors."
+                ],
+                evidence_card_template=EvidenceCard(
+                    execution_state=ExecutionState.DEGRADED.value,
+                    details={
+                        "failure_mode": "BN-F006",
+                        "family": "BN-F006-pseudoreplication",
+                        "axis": "variance_entanglement",
+                        "evidence_ceiling": "FRAGILE",
+                    },
+                ),
+            )
+
+        # BN-F002 (family axis: arm_imbalance): severely unbalanced replication.
+        # Power and precision are dictated by the minority arm even when the
+        # majority arm looks well-powered.
+        donors_by_group = meta.get("donors_per_condition")
+        max_reps = meta.get("max_replicates_per_condition")
+        ratio: Optional[float] = None
+        if isinstance(donors_by_group, dict) and donors_by_group:
+            counts = [int(v) for v in donors_by_group.values() if int(v) > 0]
+            if len(counts) >= 2:
+                ratio = max(counts) / min(counts)
+        elif isinstance(min_reps, int) and isinstance(max_reps, int) and min_reps > 0:
+            ratio = max_reps / min_reps
+        if ratio is not None and ratio >= 3.0:
+            return RoutingDecision(
+                status=RoutingStatus.DEGRADED_ADVISORY,
+                matched_capability=cap,
+                target_skill=cap.skill_name,
+                recommended_script="skills/single-cell-rna-qc/scripts/scrna_deseq.py",
+                recommended_command="python skills/single-cell-rna-qc/scripts/scrna_deseq.py --help",
+                rationale=(
+                    f"Severely imbalanced design ({ratio:.0f}:1 between arms): statistical power and "
+                    "precision are dictated by the minority arm, not the majority cohort size "
+                    "(BN-F002). The analysis is legal but discovery-power language must reflect the "
+                    "smaller arm."
+                ),
+                violations=[],
+                remedies=[
+                    "Report power for the minority arm explicitly; consider balancing the design or "
+                    "downweighting population claims to the minority arm's evidence ceiling.",
+                ],
+                evidence_card_template=EvidenceCard(
+                    execution_state=ExecutionState.DEGRADED.value,
+                    details={
+                        "failure_mode": "BN-F002",
+                        "family": "BN-F006-pseudoreplication",
+                        "axis": "arm_imbalance",
+                        "imbalance_ratio": round(ratio, 2),
+                        "evidence_ceiling": "FRAGILE",
+                    },
+                ),
+            )
+
+        overclaims = bool(_POWER_OVERCLAIM_RE.search(query or ""))
+        if isinstance(min_reps, int) and min_reps == 2 and overclaims:
+            power = assess_statistical_power(
+                n_donors_per_group=min_reps,
+                observed_log2fc=meta.get("observed_log2fc"),
+                mean_count_per_cell=float(meta.get("mean_count_per_cell", 1.0)),
+                dispersion=float(meta.get("dispersion", 0.5)),
+                cells_per_sample=int(meta.get("cells_per_sample", 100)),
+            )
+            remedies = list(power.remedies)
+            regime_note = ""
+            if meta.get("observed_log2fc") is not None:
+                regime_note = (
+                    f" Observed effect-size regime: {power.powered_for_regime.value} "
+                    f"(MDE |log2FC| >= {power.mde_log2fc:.2f} at FDR={power.nominal_fdr})."
+                )
+            return RoutingDecision(
+                status=RoutingStatus.DEGRADED_ADVISORY,
+                matched_capability=cap,
+                target_skill=cap.skill_name,
+                recommended_script="skills/single-cell-rna-qc/scripts/scrna_deseq.py",
+                recommended_command="python skills/single-cell-rna-qc/scripts/scrna_deseq.py --help",
+                rationale=(
+                    f"Pseudobulk DE with N={min_reps} donor(s)/group is a low-power design: the minimum "
+                    f"detectable effect is |log2FC| >= {power.mde_log2fc:.2f} at nominal FDR={power.nominal_fdr}. "
+                    "Compute may proceed for candidate ranking, but robust population-level discovery-power "
+                    f"claims are not warranted.{regime_note}"
+                ),
+                violations=[],
+                remedies=remedies,
+                evidence_card_template=EvidenceCard(
+                    execution_state=ExecutionState.DEGRADED.value,
+                    details={
+                        "failure_mode": "BN-F002",
+                        "statistical_power": power.to_dict(),
+                        "evidence_ceiling": "FRAGILE",
+                        "rule_basis": power.rule_basis,
+                    },
+                ),
+            )
+
+    # BN-F003: elevated doublet rate before clustering-based population claims.
+    if cap_id == "scrna.exploratory_clustering":
+        doublet = assess_doublet_risk(meta.get("doublet_rate"))
+        if doublet is not None and doublet.exceeds_threshold:
+            return RoutingDecision(
+                status=RoutingStatus.DEGRADED_ADVISORY,
+                matched_capability=cap,
+                target_skill=cap.skill_name,
+                recommended_script="skills/single-cell-rna-qc/scripts/scrna_pipeline.py",
+                recommended_command="python skills/single-cell-rna-qc/scripts/scrna_pipeline.py --help",
+                rationale=(
+                    f"Clustering proceeds under a doublet-risk advisory: the declared doublet rate "
+                    f"({doublet.doublet_rate:.0%}) exceeds the {DOUBLET_RATE_ADVISORY_THRESHOLD:.0%} "
+                    "threshold, so cluster cleanliness cannot be taken as evidence of biological populations."
+                ),
+                violations=[],
+                remedies=list(doublet.remedies),
+                evidence_card_template=EvidenceCard(
+                    execution_state=ExecutionState.DEGRADED.value,
+                    details={
+                        "failure_mode": "BN-F003",
+                        "doublet_risk": doublet.to_dict(),
+                        "evidence_ceiling": "FRAGILE",
+                    },
+                ),
+            )
 
     return None
 
@@ -567,6 +866,7 @@ def route_scientific_intent(
     research_purpose: Optional[str] = None,
     override_justification: str = "",
     lab_policy: Optional[str] = None,
+    nominated_capability: Optional[str] = None,
 ) -> RoutingDecision:
     """
     Evaluate scientific intent and determine execution validity.
@@ -598,6 +898,14 @@ def route_scientific_intent(
     modulates warrant constraints only — execution invariants are enforced
     under every profile.  Unknown names fall back to the default advisory
     profile, and the resolved name is recorded on the evidence card.
+
+    ``nominated_capability`` is the host-agent nomination channel: an agent may
+    nominate a capability id from its own reasoning. The nomination is only
+    accepted when it exists in the canonical registry; all scientific
+    adjudication (frontier gating, forbidden claims, statistical advisories)
+    still runs identically afterwards. The resolving layer ("pattern" /
+    "explicit_intent" / "nominated" / "semantic" / "none") is recorded on the
+    decision for auditability.
     """
     meta = dict(data_metadata or {})
     intents = list(intent_keywords or [])
@@ -619,19 +927,30 @@ def route_scientific_intent(
             override_justification=override_justification,
         )
 
-    # 1. Match Capability Contract
-    cap = extract_scientific_capability(query, intents)
+    # 1. Match Capability Contract (pattern -> host nomination -> semantic;
+    #    every resolution records its layer for auditability).
+    cap, routing_layer, routing_audit = resolve_capability_with_audit(
+        query, intents, nominated_capability
+    )
+
+    def _stamp(d: RoutingDecision) -> RoutingDecision:
+        d.routing_layer = routing_layer
+        d.routing_audit = routing_audit
+        return d
+
     if cap is None:
-        return RoutingDecision(
-            status=RoutingStatus.NEEDS_DATA,
-            matched_capability=None,
-            target_skill="start",
-            recommended_script=None,
-            recommended_command="bionexus doctor",
-            rationale="No specific scientific analytical intent could be resolved from query. Defaulting to session orientation.",
-            missing_data_requests=[
-                "Clarify specific scientific analytical intent (e.g. differential expression, clustering, survival analysis, spatial transcriptomics)."
-            ],
+        return _stamp(
+            RoutingDecision(
+                status=RoutingStatus.NEEDS_DATA,
+                matched_capability=None,
+                target_skill="start",
+                recommended_script=None,
+                recommended_command="bionexus doctor",
+                rationale="No specific scientific analytical intent could be resolved from query. Defaulting to session orientation.",
+                missing_data_requests=[
+                    "Clarify specific scientific analytical intent (e.g. differential expression, clustering, survival analysis, spatial transcriptomics)."
+                ],
+            )
         )
 
     skill_name = cap.skill_name
@@ -641,8 +960,9 @@ def route_scientific_intent(
     # Registry segregation is nominal; this gate makes it an execution-time fact:
     # no frontier capability is reachable without explicit caller opt-in.
     if is_frontier and not allow_frontier:
-        return RoutingDecision(
-            status=RoutingStatus.EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN,
+        return _stamp(
+            RoutingDecision(
+                status=RoutingStatus.EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN,
             matched_capability=cap,
             target_skill=skill_name,
             recommended_script=None,
@@ -663,6 +983,7 @@ def route_scientific_intent(
                 execution_state=ExecutionState.REFUSED.value,
                 details={"contract_id": cap.id, "refusal_triggers": ["frontier_opt_in_required"]},
             ),
+            )
         )
 
     # 1.6 Forbidden-Claim Intent Screening (BNS-AD-009, BNS-CC-012)
@@ -678,26 +999,28 @@ def route_scientific_intent(
             f"Reformulate within the capability's warranted claims: {cap.display_name} cannot support '{h['claim_id']}' without additional orthogonal evidence. {h['remedy']}"
             for h in claim_hits
         ]
-        return RoutingDecision(
-            status=RoutingStatus.ABSTAIN,
-            matched_capability=cap,
-            target_skill=skill_name,
-            recommended_script=None,
-            recommended_command=None,
-            rationale=(
-                f"Request violates the forbidden-claims contract of capability '{cap.id}' "
-                "(Biological Capability ABI). The method's evidence cannot warrant the requested claim."
-            ),
-            violations=violations,
-            remedies=remedies,
-            evidence_card_template=EvidenceCard(
-                execution_state=ExecutionState.REFUSED.value,
-                details={
-                    "contract_id": cap.id,
-                    "refusal_triggers": [f"forbidden_claim:{h['claim_id']}" for h in claim_hits],
-                    "violations": violations,
-                },
-            ),
+        return _stamp(
+            RoutingDecision(
+                status=RoutingStatus.ABSTAIN,
+                matched_capability=cap,
+                target_skill=skill_name,
+                recommended_script=None,
+                recommended_command=None,
+                rationale=(
+                    f"Request violates the forbidden-claims contract of capability '{cap.id}' "
+                    "(Biological Capability ABI). The method's evidence cannot warrant the requested claim."
+                ),
+                violations=violations,
+                remedies=remedies,
+                evidence_card_template=EvidenceCard(
+                    execution_state=ExecutionState.REFUSED.value,
+                    details={
+                        "contract_id": cap.id,
+                        "refusal_triggers": [f"forbidden_claim:{h['claim_id']}" for h in claim_hits],
+                        "violations": violations,
+                    },
+                ),
+            )
         )
 
     # 2. Inspect Data Semantics from data_path if provided
@@ -727,25 +1050,33 @@ def route_scientific_intent(
             # Check if user query mentions replicates or if we need to request them
             if not re.search(r"\b(replicate|rep|n=\d+)\b", query.lower()):
                 # If replicates were neither stated nor found in meta
-                return RoutingDecision(
-                    status=RoutingStatus.NEEDS_DATA,
-                    matched_capability=cap,
-                    target_skill=skill_name,
-                    recommended_script="skills/single-cell-rna-qc/scripts/scrna_pseudobulk.py",
-                    recommended_command="python skills/single-cell-rna-qc/scripts/scrna_pseudobulk.py --help",
-                    rationale="Condition differential expression requires biological replicate groupings to avoid single-cell pseudoreplication.",
-                    missing_data_requests=[
-                        "Please provide biological replicate identifiers in `adata.obs` (e.g. `sample_id`, `donor_id`, `batch`) and the experimental condition factor (`condition`).",
-                    ],
-                    remedies=[
-                        "Condition DE is valid only when biological replicates (n >= 2 per condition) are available."
-                    ],
+                return _stamp(
+                    RoutingDecision(
+                        status=RoutingStatus.NEEDS_DATA,
+                        matched_capability=cap,
+                        target_skill=skill_name,
+                        recommended_script="skills/single-cell-rna-qc/scripts/scrna_pseudobulk.py",
+                        recommended_command="python skills/single-cell-rna-qc/scripts/scrna_pseudobulk.py --help",
+                        rationale="Condition differential expression requires biological replicate groupings to avoid single-cell pseudoreplication.",
+                        missing_data_requests=[
+                            "Please provide biological replicate identifiers in `adata.obs` (e.g. `sample_id`, `donor_id`, `batch`) and the experimental condition factor (`condition`).",
+                        ],
+                        remedies=[
+                            "Condition DE is valid only when biological replicates (n >= 2 per condition) are available."
+                        ],
+                    )
                 )
 
     # 3.5 Deterministic trap screening (BN-F004/F006/F008/F009 + flagship gates)
     trap_decision = _screen_metadata_traps(cap, meta)
     if trap_decision is not None:
-        return trap_decision
+        return _stamp(trap_decision)
+
+    # 3.6 Statistical-level advisories (Epistemic Ladder stages 2 & 4):
+    # power/MDE regime for pseudobulk DE, doublet-rate audit for clustering.
+    stat_decision = _statistical_advisory_stage(cap, meta, query)
+    if stat_decision is not None:
+        return _stamp(stat_decision)
 
     # 4. Scientific Validity + Availability Evaluation (purpose-aware).
     # `evaluate_viability_with_purpose` classifies refusals as hard BLOCK or
@@ -779,20 +1110,22 @@ def route_scientific_intent(
             f"researcher override (purpose={pctx.purpose.value}). "
             f"Evidence ceiling capped at {eval_result.evidence_ceiling}."
         )
-        return RoutingDecision(
-            status=RoutingStatus.PERMITTED_WITH_LIMITS,
-            matched_capability=cap,
-            target_skill=skill_name,
-            recommended_script=rec_script,
-            recommended_command=f"python {rec_script} --help" if rec_script else None,
-            rationale=rationale,
-            violations=[],
-            remedies=eval_result.remedies,
-            evidence_card_template=eval_result.evidence_card,
-            purpose_context=pctx,
-            residual_limitations=eval_result.residual_limitations,
-            blocked_claims=eval_result.blocked_claims,
-            override_records=eval_result.override_records,
+        return _stamp(
+            RoutingDecision(
+                status=RoutingStatus.PERMITTED_WITH_LIMITS,
+                matched_capability=cap,
+                target_skill=skill_name,
+                recommended_script=rec_script,
+                recommended_command=f"python {rec_script} --help" if rec_script else None,
+                rationale=rationale,
+                violations=[],
+                remedies=eval_result.remedies,
+                evidence_card_template=eval_result.evidence_card,
+                purpose_context=pctx,
+                residual_limitations=eval_result.residual_limitations,
+                blocked_claims=eval_result.blocked_claims,
+                override_records=eval_result.override_records,
+            )
         )
 
     if not eval_result.permitted:
@@ -805,17 +1138,19 @@ def route_scientific_intent(
 
         if scientific_violations or not backend_missing:
             # Fatal Scientific Refusal (ABSTAIN): validity failures never degrade.
-            return RoutingDecision(
-                status=RoutingStatus.ABSTAIN,
-                matched_capability=cap,
-                target_skill=skill_name,
-                recommended_script=None,
-                recommended_command=None,
-                rationale=f"Analysis is scientifically invalid or prohibited by BioNexus capability contract '{cap.id}'.",
-                violations=eval_result.violations,
-                remedies=eval_result.remedies,
-                evidence_card_template=eval_result.evidence_card,
-                purpose_context=pctx,
+            return _stamp(
+                RoutingDecision(
+                    status=RoutingStatus.ABSTAIN,
+                    matched_capability=cap,
+                    target_skill=skill_name,
+                    recommended_script=None,
+                    recommended_command=None,
+                    rationale=f"Analysis is scientifically invalid or prohibited by BioNexus capability contract '{cap.id}'.",
+                    violations=eval_result.violations,
+                    remedies=eval_result.remedies,
+                    evidence_card_template=eval_result.evidence_card,
+                    purpose_context=pctx,
+                )
             )
 
         # Availability-only refusal: the deterministic capability-bound backend gate.
@@ -823,44 +1158,48 @@ def route_scientific_intent(
         install_hint = f"pip install bionexus-reliability[{cap.backend.extra or 'all'}]"
         if is_frontier and allow_degraded:
             # FRONTIER + opt-in + backend absent + explicit fallback -> DEGRADED
-            return RoutingDecision(
-                status=RoutingStatus.DEGRADED_ADVISORY,
-                matched_capability=cap,
-                target_skill=skill_name,
-                recommended_script=rec_script,
-                recommended_command=install_hint,
-                rationale=(
-                    f"Frontier capability '{cap.id}': canonical backend '{cap.backend.canonical_name}' "
-                    "is not installed. Executing via Grade C heuristic fallback under explicit opt-in; "
-                    "output is experimental and must never be presented as the canonical backend's result."
-                ),
-                violations=eval_result.violations,
-                remedies=eval_result.remedies,
-                evidence_card_template=EvidenceCard(
-                    execution_state=ExecutionState.DEGRADED.value,
-                    details={"missing_backend": cap.backend.canonical_name, "frontier": True},
-                ),
+            return _stamp(
+                RoutingDecision(
+                    status=RoutingStatus.DEGRADED_ADVISORY,
+                    matched_capability=cap,
+                    target_skill=skill_name,
+                    recommended_script=rec_script,
+                    recommended_command=install_hint,
+                    rationale=(
+                        f"Frontier capability '{cap.id}': canonical backend '{cap.backend.canonical_name}' "
+                        "is not installed. Executing via Grade C heuristic fallback under explicit opt-in; "
+                        "output is experimental and must never be presented as the canonical backend's result."
+                    ),
+                    violations=eval_result.violations,
+                    remedies=eval_result.remedies,
+                    evidence_card_template=EvidenceCard(
+                        execution_state=ExecutionState.DEGRADED.value,
+                        details={"missing_backend": cap.backend.canonical_name, "frontier": True},
+                    ),
+                )
             )
 
         # CANONICAL + backend missing -> REFUSE (strict).
         # FRONTIER + opt-in + backend absent + no fallback consent -> REFUSE too.
-        return RoutingDecision(
-            status=RoutingStatus.ABSTAIN,
-            matched_capability=cap,
-            target_skill=skill_name,
-            recommended_script=None,
-            recommended_command=install_hint,
-            rationale=(
-                f"Canonical backend '{cap.backend.canonical_name}' required by capability '{cap.id}' "
-                "is not available. Backend readiness binds to the capability: no silent substitution, "
-                "no skill-based exceptions."
-            ),
-            violations=eval_result.violations,
-            remedies=eval_result.remedies,
-            evidence_card_template=EvidenceCard(
-                execution_state=ExecutionState.REFUSED.value,
-                details={"missing_backend": cap.backend.canonical_name},
-            ),
+        return _stamp(
+            RoutingDecision(
+                status=RoutingStatus.ABSTAIN,
+                matched_capability=cap,
+                target_skill=skill_name,
+                recommended_script=None,
+                recommended_command=install_hint,
+                rationale=(
+                    f"Canonical backend '{cap.backend.canonical_name}' required by capability '{cap.id}' "
+                    "is not available. Backend readiness binds to the capability: no silent substitution, "
+                    "no skill-based exceptions."
+                ),
+                violations=eval_result.violations,
+                remedies=eval_result.remedies,
+                evidence_card_template=EvidenceCard(
+                    execution_state=ExecutionState.REFUSED.value,
+                    details={"missing_backend": cap.backend.canonical_name},
+                ),
+            )
         )
 
     # 5. PERMITTED (Fully scientifically valid execution path)
@@ -881,14 +1220,16 @@ def route_scientific_intent(
             "Declare the research purpose (research_purpose=...) to set the appropriate evidence ceiling: "
             "exploratory -> PRELIMINARY, confirmatory -> ROBUST, clinical -> REPLICATED."
         )
-    return RoutingDecision(
-        status=RoutingStatus.PERMITTED,
-        matched_capability=cap,
-        target_skill=skill_name,
-        recommended_script=rec_script,
-        recommended_command=f"python {rec_script} --help" if rec_script else None,
-        rationale=rationale,
-        missing_data_requests=purpose_requests,
-        evidence_card_template=eval_result.evidence_card,
-        purpose_context=pctx,
+    return _stamp(
+        RoutingDecision(
+            status=RoutingStatus.PERMITTED,
+            matched_capability=cap,
+            target_skill=skill_name,
+            recommended_script=rec_script,
+            recommended_command=f"python {rec_script} --help" if rec_script else None,
+            rationale=rationale,
+            missing_data_requests=purpose_requests,
+            evidence_card_template=eval_result.evidence_card,
+            purpose_context=pctx,
+        )
     )

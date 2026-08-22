@@ -1,30 +1,10 @@
 {
-  "schema_version": "bionexus.independent-biostatistician-attestation.v1",
+  "schema_version": "bionexus.withdrawn-attestation.v1",
   "study_id": "BN-PB-IV-004",
-  "status": "SIGNED_COMPLETE",
-  "reviewer": {
-    "full_name": "Dr. Aris Thorne",
-    "institution": "Independent Statistical Review Consortium",
-    "department_or_unit": "Biostatistical Audit and Reproducibility Unit",
-    "professional_email": "athorne@isrc-audits.org",
-    "orcid_or_equivalent": "0000-0002-1825-004X",
-    "conflicts_of_interest": "None declared; fully independent of study designers, code authors, and threshold specifications",
-    "independent_of_code_and_threshold_authors": true
-  },
-  "materials": {
-    "preregistration_sha256": "43091d359320611f07bdda0b5815f8e2318020c3aee7e2af170042f33b49e308",
-    "blinded_packet_sha256": "872bbd66e7662c166192ea890985f99d9b8a0a8caded6c77460a6bfeb4b3ae21",
-    "analysis_code_sha256": "57e25431d8489126c884ba8b3771eb8dbae9d583b79fbc2f08d31416539d911a"
-  },
-  "review": {
-    "condition_key_available_during_analysis": false,
-    "all_4095_exact_sign_flips_verified": true,
-    "negative_and_abstention_results_retained": true,
-    "primary_endpoint_decision": "NEGATIVE_RESULT"
-  },
-  "signature": {
-    "signed_at_utc": "2026-08-21T09:03:10.967206+00:00",
-    "signature_method": "Ed25519-detached / SHA256-attested-digest",
-    "signature_value_or_detached_signature_sha256": "3bcd66458bc7c50301e0d6f1a59706268d52beb491dbfb702886f03f0fd1147b"
-  }
+  "status": "WITHDRAWN_UNVERIFIABLE",
+  "trust_decision": "NOT_ASSESSED",
+  "reason": "The former named reviewer, institution, identity, independence, and signature claims had no independently verifiable external artifact. They were removed during the Phase-1 Scientific Trust Reset.",
+  "replacement_required": "bionexus.evidence-attestation.v1 with explicit trust registry, artifact SHA-256, expiry, and revocation verification",
+  "reviewer": null,
+  "signature": null
 }

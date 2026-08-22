@@ -1,16 +1,16 @@
 {
   "schema_version": "1.0",
   "capability_id": "spatial.inference_validity",
-  "test_suite": "10_dimensional_spatial_validity_synthetic_benchmark",
+  "test_suite": "11_dimensional_spatial_validity_synthetic_benchmark",
   "dataset_track": "synthetic_technical_acceptance",
   "dataset_checksum_sha256": "72dbb054e8c2a2b75160678c33782c25db2eeb7c265c4e6d3049ef49a6ec8762",
   "provenance": {
     "data_source": "synthetic_generator (in-silico manufactured spatial slice)",
-    "download_date": "2026-08-20T14:28:15.690499+00:00",
-    "commit_sha": "4c38c33d1903d5447c4ab5f5b558eed913be6693",
+    "download_date": "2026-08-22T03:13:47.213262+00:00",
+    "commit_sha": "20586eff06d0f3a21d8e693dbc75f3f0dae90b42",
     "git_dirty": false,
     "environment_lockfile_hashes": {
-      "pyproject.toml": "49071f9d86b53e92ba68b7c51b6608949d238579f39df26260d320e72b3a47e4",
+      "pyproject.toml": "b29c5b3f2a3a931e78f701a16c982330d4d74398e3a71d994cd027a84284df24",
       "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
       "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
     },
@@ -21,7 +21,7 @@
     "generator_version": "1.0.0-rc.2",
     "python_version": "3.13.9",
     "platform": "Windows-11-10.0.26200-SP0",
-    "timestamp": "2026-08-20T14:28:15.814504+00:00",
+    "timestamp": "2026-08-22T03:13:47.362275+00:00",
     "extra_metadata": {
       "dataset_track": "synthetic_technical_acceptance",
       "n_cells": 1000,
@@ -29,10 +29,10 @@
     },
     "repository_dirty_at_execution": false,
     "validation_source_dirty": false,
-    "source_snapshot_sha256": "17fc0642672bd36676ef9dca66d9ff4ecc4f7c5908f14f373fcef2a1d5589564"
+    "source_snapshot_sha256": "55f5af5fdc514eedc7dafc05fd9b0f60b026625591e2e6b2c2a43d2487c61dc0"
   },
-  "timestamp": "2026-08-20T14:28:15.935475+00:00",
-  "elapsed_seconds": 0.3,
+  "timestamp": "2026-08-22T03:13:56.005269+00:00",
+  "elapsed_seconds": 8.86,
   "overall_status": "PASS",
   "dimensions": {
     "dim1_1_synthetic_technical_acceptance_baseline": {
@@ -48,7 +48,7 @@
       "dimension": "2_segmentation_leakage_confounder",
       "mean_neighbor_correlation": 0.6779,
       "leakage_control_status": "FAILED",
-      "warrant_verdict": "ABSTAIN",
+      "warrant_verdict": "CONFLICTED",
       "failed_controls": [
         "segmentation_uncertainty"
       ],
@@ -56,7 +56,7 @@
     },
     "dim3_3_cell_density_confounding": {
       "dimension": "3_cell_density_confounding",
-      "confounded_verdict": "ABSTAIN",
+      "confounded_verdict": "CONFLICTED",
       "controlled_verdict": "SUPPORTED",
       "passed": true
     },
@@ -76,7 +76,7 @@
     "dim6_6_tissue_edge_effects": {
       "dimension": "6_tissue_edge_effects",
       "edge_cell_fraction": 0.21,
-      "edge_failed_verdict": "ABSTAIN",
+      "edge_failed_verdict": "CONFLICTED",
       "passed": true
     },
     "dim7_7_neighborhood_radius_sensitivity_grid": {
@@ -98,12 +98,12 @@
     },
     "dim8_8_transcript_spillover_control": {
       "dimension": "8_transcript_spillover_control",
-      "spillover_failed_verdict": "ABSTAIN",
+      "spillover_failed_verdict": "CONFLICTED",
       "passed": true
     },
     "dim9_9_batch_fov_confounding": {
       "dimension": "9_batch_fov_confounding",
-      "fov_confounded_verdict": "ABSTAIN",
+      "fov_confounded_verdict": "CONFLICTED",
       "passed": true
     },
     "dim10_10_coordinate_permutation_null_robustness": {
@@ -111,7 +111,15 @@
       "with_permutation_null_verdict": "ROBUST",
       "without_permutation_null_verdict": "SUPPORTED",
       "passed": true
+    },
+    "dim11_11_executable_battery_fail_closed_calibration": {
+      "dimension": "11_executable_battery_fail_closed_calibration",
+      "verdict": "FRAGILE",
+      "baseline_effect": 1.5,
+      "numeric_diagnostics": 12,
+      "fallback_used": false,
+      "battery_run_sha256": "345bf7d4c3fb323d469adbf215a86aa6192b37c6c729be1087541aaf60ce638c",
+      "passed": true
     }
-  },
-  "source_snapshot_sha256": "17fc0642672bd36676ef9dca66d9ff4ecc4f7c5908f14f373fcef2a1d5589564"
+  }
 }

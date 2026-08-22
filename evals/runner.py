@@ -10,6 +10,7 @@ Executes multi-tier benchmark suites:
 from __future__ import annotations
 
 import os
+import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -596,6 +597,7 @@ def run_single_case(
                 str(claimed_maturity).upper(),
                 has_external_validation=bool(case.data_metadata.get("external_validation", False)),
                 has_fdr_correction=case.data_metadata.get("multiple_testing_correction"),
+                min_replicates_per_condition=case.data_metadata.get("min_replicates_per_condition"),
             )
             actual_maturity = clamped
             if case.expected_maturity and clamped.upper() != str(case.expected_maturity).upper():
@@ -691,7 +693,7 @@ def run_benchmark(
     mod = model or ("gpt-4o-mini" if prov == "openai" else ("claude-3-5-sonnet" if prov == "anthropic" else "simulated_trace_v1"))
     is_live = prov in ("openai", "anthropic", "gemini")
 
-    return BenchmarkReport(
+    report = BenchmarkReport(
         total_cases=total,
         passed_cases=passed,
         failed_cases=failed,
@@ -714,6 +716,38 @@ def run_benchmark(
         union_passed=union_passed,
         union_accuracy=union_accuracy,
     )
+
+    # Tamper-evident audit receipt (BNS-006 / eval-receipt chain v1): append the
+    # run's aggregates, per-case digests, and ABI-manifest digest to the
+    # hash-chained log so published accuracy claims stay re-derivable.
+    try:
+        from bionexus.eval_receipt import append_eval_receipt, audit_enabled
+        from bionexus.versions import PLUGIN_VERSION
+
+        if audit_enabled():
+            payload = _receipt_payload_from_report(report)
+            receipt = append_eval_receipt(
+                suite=suite or "all",
+                provider=prov,
+                model=mod,
+                strict_mode=strict_mode,
+                gating_summary=payload["gating_summary"],
+                frontier_summary=payload["frontier_summary"],
+                union_summary=payload["union_summary"],
+                case_digests=payload["case_digests"],
+                plugin_version=PLUGIN_VERSION,
+            )
+            report.audit_receipt_hash = receipt.get("event_hash")
+    except Exception as exc:  # noqa: BLE001 - audit must never corrupt results
+        print(f"[eval-receipt] WARNING: audit receipt not written: {exc}", file=sys.stderr)
+
+    return report
+
+
+def _receipt_payload_from_report(report: BenchmarkReport) -> Dict[str, Any]:
+    from bionexus.eval_receipt import summarize_report_for_receipt
+
+    return summarize_report_for_receipt(report)
 
 
 def format_benchmark_markdown(report: BenchmarkReport) -> str:

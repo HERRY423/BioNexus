@@ -20,5 +20,5 @@
     ]
   },
   "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAmBhoiqYyZIpoCGH6Km1lUesgvsMd6MIGa+Daz8LBGHA=\n-----END PUBLIC KEY-----\n",
-  "verification_status": "VERIFIED_INCLUDED"
+  "verification_status": "UNTRUSTED_LOCAL_FIXTURE"
 }

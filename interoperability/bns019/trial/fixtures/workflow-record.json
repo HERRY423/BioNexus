@@ -1,0 +1,5 @@
+{
+  "id": "interop-trial-record-001",
+  "artifact": "results/observation.json",
+  "producer": "example.nfcore.workflow"
+}

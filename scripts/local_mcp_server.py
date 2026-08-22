@@ -36,6 +36,16 @@ from typing import Any, Dict, List, Optional
 
 from mcp_host_audit import append_host_probe
 
+# Add src to sys.path if not present for in-tree execution
+sys_src = str(Path(__file__).resolve().parent.parent / "src")
+if sys_src not in sys.path:
+    sys.path.insert(0, sys_src)
+
+try:
+    from bionexus.local_cache import default_local_cache
+except ImportError:
+    default_local_cache = None
+
 try:
     from mcp.server.fastmcp import FastMCP
 except ImportError:
@@ -556,6 +566,29 @@ async def tool_search_clinical_trials(
 async def tool_search_uniprot(query: str, organism: Optional[str] = "human", limit: int = 5) -> Dict[str, Any]:
     """Query UniProtKB for protein functions, gene names, sequences, and accessions."""
     limit = min(max(1, int(limit)), 50)
+
+    # Check local offline cache first if in offline mode
+    if default_local_cache and default_local_cache.is_offline_mode():
+        cached_gene = default_local_cache.get_gene(query)
+        if cached_gene:
+            return {
+                "query": query,
+                "organism": organism,
+                "total_results": 1,
+                "source": "BioNexusLocalCache (Offline)",
+                "proteins": [
+                    {
+                        "accession": cached_gene["uniprot_id"],
+                        "id": f"{cached_gene['symbol']}_HUMAN",
+                        "protein_name": cached_gene["name"],
+                        "genes": [cached_gene["symbol"]],
+                        "organism": cached_gene["species"],
+                        "function": cached_gene["summary"],
+                        "url": f"https://www.uniprot.org/uniprotkb/{cached_gene['uniprot_id']}",
+                    }
+                ],
+            }
+
     search_term = query
     if organism and organism.lower() == "human":
         search_term = f"{query} AND organism_id:9606"
@@ -571,47 +604,87 @@ async def tool_search_uniprot(query: str, organism: Optional[str] = "human", lim
         "fields": "accession,id,gene_names,protein_name,organism_name,length,cc_function",
     }
     url = f"https://rest.uniprot.org/uniprotkb/search?{urllib.parse.urlencode(params)}"
-    data = await async_http_request(url)
+    try:
+        data = await async_http_request(url)
 
-    results = []
-    for entry in data.get("results", []):
-        primary_acc = entry.get("primaryAccession")
-        entry_name = entry.get("uniProtkbId")
-        organism_name = entry.get("organism", {}).get("scientificName")
+        results = []
+        for entry in data.get("results", []):
+            primary_acc = entry.get("primaryAccession")
+            entry_name = entry.get("uniProtkbId")
+            organism_name = entry.get("organism", {}).get("scientificName")
 
-        desc = entry.get("proteinDescription", {})
-        recommended_name = desc.get("recommendedName", {}).get("fullName", {}).get("value", "Unknown")
+            desc = entry.get("proteinDescription", {})
+            recommended_name = desc.get("recommendedName", {}).get("fullName", {}).get("value", "Unknown")
 
-        genes = []
-        for g in entry.get("genes", []):
-            if "geneName" in g:
-                genes.append(g["geneName"].get("value"))
+            genes = []
+            for g in entry.get("genes", []):
+                if "geneName" in g:
+                    genes.append(g["geneName"].get("value"))
 
-        functions = []
-        for comment in entry.get("comments", []):
-            if comment.get("commentType") == "FUNCTION":
-                for text_obj in comment.get("texts", []):
-                    functions.append(text_obj.get("value", ""))
+            functions = []
+            for comment in entry.get("comments", []):
+                if comment.get("commentType") == "FUNCTION":
+                    for text_obj in comment.get("texts", []):
+                        functions.append(text_obj.get("value", ""))
 
-        results.append(
-            {
-                "accession": primary_acc,
-                "id": entry_name,
-                "protein_name": recommended_name,
-                "genes": genes,
-                "organism": organism_name,
-                "sequence_length": entry.get("sequence", {}).get("length"),
-                "function": " ".join(functions)[:500],
-                "url": f"https://www.uniprot.org/uniprotkb/{primary_acc}",
-            }
-        )
+            results.append(
+                {
+                    "accession": primary_acc,
+                    "id": entry_name,
+                    "protein_name": recommended_name,
+                    "genes": genes,
+                    "organism": organism_name,
+                    "sequence_length": entry.get("sequence", {}).get("length"),
+                    "function": " ".join(functions)[:500],
+                    "url": f"https://www.uniprot.org/uniprotkb/{primary_acc}",
+                }
+            )
 
-    return {"query": query, "organism": organism, "total_results": len(results), "proteins": results}
+        return {"query": query, "organism": organism, "total_results": len(results), "proteins": results}
+    except Exception as e:
+        logger.warning(f"UniProt network request failed for {query}: {e}. Trying local cache...")
+        if default_local_cache:
+            cached_gene = default_local_cache.get_gene(query)
+            if cached_gene:
+                return {
+                    "query": query,
+                    "organism": organism,
+                    "total_results": 1,
+                    "source": "BioNexusLocalCache (Fallback)",
+                    "proteins": [
+                        {
+                            "accession": cached_gene["uniprot_id"],
+                            "id": f"{cached_gene['symbol']}_HUMAN",
+                            "protein_name": cached_gene["name"],
+                            "genes": [cached_gene["symbol"]],
+                            "organism": cached_gene["species"],
+                            "function": cached_gene["summary"],
+                            "url": f"https://www.uniprot.org/uniprotkb/{cached_gene['uniprot_id']}",
+                        }
+                    ],
+                }
+        return {"query": query, "organism": organism, "error": str(e)}
 
 
 async def tool_search_ensembl(symbol: str, species: str = "human") -> Dict[str, Any]:
     """Query Ensembl REST API for gene metadata, coordinates, biotype, and transcript structures."""
     species = "homo_sapiens" if species.lower() in ("human", "homo_sapiens") else species
+
+    # Check local offline cache first if in offline mode
+    if default_local_cache and default_local_cache.is_offline_mode():
+        cached_gene = default_local_cache.get_gene(symbol)
+        if cached_gene:
+            return {
+                "symbol": symbol,
+                "species": species,
+                "ensembl_id": cached_gene["ensembl_id"],
+                "biotype": "protein_coding",
+                "description": cached_gene["summary"],
+                "chromosome": cached_gene["chromosome"],
+                "transcripts": [],
+                "source": "BioNexusLocalCache (Offline)",
+            }
+
     url = f"https://rest.ensembl.org/lookup/symbol/{species}/{symbol}?expand=1"
     headers = {"Content-Type": "application/json"}
     try:
@@ -639,7 +712,20 @@ async def tool_search_ensembl(symbol: str, species: str = "human") -> Dict[str, 
             "transcripts": transcripts,
         }
     except Exception as e:
-        logger.error(f"Ensembl lookup failed for {symbol}: {e}")
+        logger.warning(f"Ensembl lookup failed for {symbol}: {e}. Trying local cache...")
+        if default_local_cache:
+            cached_gene = default_local_cache.get_gene(symbol)
+            if cached_gene:
+                return {
+                    "symbol": symbol,
+                    "species": species,
+                    "ensembl_id": cached_gene["ensembl_id"],
+                    "biotype": "protein_coding",
+                    "description": cached_gene["summary"],
+                    "chromosome": cached_gene["chromosome"],
+                    "transcripts": [],
+                    "source": "BioNexusLocalCache (Fallback)",
+                }
         return {"symbol": symbol, "error": str(e)}
 
 
@@ -729,6 +815,26 @@ async def tool_search_pdb(query: str, limit: int = 5) -> Dict[str, Any]:
     experimental method, resolution, and bound ligands.
     """
     limit = min(max(1, int(limit)), 50)
+
+    # Check local offline cache first if in offline mode
+    if default_local_cache and default_local_cache.is_offline_mode():
+        pdb = default_local_cache.get_pdb_summary(query)
+        if pdb:
+            return {
+                "query": query,
+                "total_found": 1,
+                "limit": limit,
+                "source": "BioNexusLocalCache (Offline)",
+                "structures": [
+                    {
+                        "pdb_id": pdb["pdb_id"],
+                        "title": pdb["title"],
+                        "resolution_angstrom": pdb["resolution"],
+                        "pdb_url": f"https://www.rcsb.org/structure/{pdb['pdb_id']}",
+                    }
+                ],
+            }
+
     search_url = "https://search.rcsb.org/rcsbsearch/v2/query"
     search_payload = {
         "query": {"type": "terminal", "service": "full_text", "parameters": {"value": query}},
@@ -774,7 +880,24 @@ async def tool_search_pdb(query: str, limit: int = 5) -> Dict[str, Any]:
 
         return {"query": query, "total_found": total_count, "limit": limit, "structures": entries}
     except Exception as e:
-        logger.error(f"PDB search failed for {query}: {e}")
+        logger.warning(f"PDB search network failed for {query}: {e}. Trying local cache...")
+        if default_local_cache:
+            pdb = default_local_cache.get_pdb_summary(query)
+            if pdb:
+                return {
+                    "query": query,
+                    "total_found": 1,
+                    "limit": limit,
+                    "source": "BioNexusLocalCache (Fallback)",
+                    "structures": [
+                        {
+                            "pdb_id": pdb["pdb_id"],
+                            "title": pdb["title"],
+                            "resolution_angstrom": pdb["resolution"],
+                            "pdb_url": f"https://www.rcsb.org/structure/{pdb['pdb_id']}",
+                        }
+                    ],
+                }
         return {"query": query, "error": str(e)}
 
 
@@ -818,6 +941,18 @@ async def tool_search_reactome(query: str, species: str = "Homo sapiens", limit:
     pathway hierarchies, and participating molecules.
     """
     limit = min(max(1, int(limit)), 50)
+
+    # Check local offline cache first if in offline mode
+    if default_local_cache and default_local_cache.is_offline_mode():
+        pathways = default_local_cache.get_pathways_for_gene(query)
+        return {
+            "query": query,
+            "species": species,
+            "total_found": len(pathways),
+            "pathways": pathways[:limit],
+            "source": "BioNexusLocalCache (Offline)",
+        }
+
     params = {"query": query, "species": species, "types": "Pathway", "rows": str(limit)}
     url = f"https://reactome.org/ContentService/search/query?{urllib.parse.urlencode(params)}"
     try:
@@ -840,7 +975,17 @@ async def tool_search_reactome(query: str, species: str = "Homo sapiens", limit:
                 )
         return {"query": query, "species": species, "total_found": len(pathways), "pathways": pathways[:limit]}
     except Exception as e:
-        logger.error(f"Reactome search failed for {query}: {e}")
+        logger.warning(f"Reactome search network failed for {query}: {e}. Trying local cache...")
+        if default_local_cache:
+            pathways = default_local_cache.get_pathways_for_gene(query)
+            if pathways:
+                return {
+                    "query": query,
+                    "species": species,
+                    "total_found": len(pathways),
+                    "pathways": pathways[:limit],
+                    "source": "BioNexusLocalCache (Fallback)",
+                }
         return {"query": query, "error": str(e)}
 
 
@@ -1027,6 +1172,94 @@ async def tool_get_gene_expression(gene_symbol: str, tissue_site: Optional[str] 
     except Exception as e:
         logger.error(f"GTEx expression query failed for {gene_symbol}: {e}")
         return {"gene_symbol": symbol, "error": str(e)}
+
+
+async def tool_bionexus_warrant_check(
+    query: str,
+    data_metadata: Optional[Dict[str, Any]] = None,
+    research_purpose: Optional[str] = None,
+    lab_policy: Optional[str] = None,
+    intent_keywords: Optional[List[str]] = None,
+) -> Dict[str, Any]:
+    """
+    Pre-execution scientific warrant gate for full-privilege agent hosts.
+
+    Wraps ``bionexus.intent_router.route_scientific_intent`` as a single MCP call
+    that any host (Biomni, Claude Code, Codex, Cursor, ...) can invoke BEFORE
+    executing model-generated analysis code. Returns the authoritative routing
+    verdict, matched capability, blocked claims, remedies, and evidence ceiling.
+    """
+    try:
+        from bionexus.intent_router import route_scientific_intent
+    except ImportError as exc:
+        return {
+            "status": "TOOL_UNAVAILABLE",
+            "matched_capability_id": None,
+            "error": f"bionexus core package not importable: {exc}",
+            "remedy": "Install the plugin runtime from the repository root: pip install -e .",
+            "boundary": "Fail-closed: no scientific warrant can be issued without the core engine.",
+        }
+
+    decision = route_scientific_intent(
+        query,
+        data_path=None,
+        data_metadata=data_metadata,
+        allow_degraded=False,
+        allow_frontier=False,
+        research_purpose=research_purpose,
+        override_justification="",
+        lab_policy=lab_policy,
+        intent_keywords=intent_keywords,
+    )
+    payload = decision.to_dict()
+    payload["evidence_ceiling"] = _capability_evidence_ceiling(decision.matched_capability)
+
+    # Attach Scientific Claim IR and Epistemic Warrant Evaluation (BNS-017)
+    try:
+        from bionexus.claim_semantics import DeterministicClaimParser, DeterministicWarrantEngine, EvidenceProfile
+
+        meta = data_metadata or {}
+        ev_prof = EvidenceProfile(
+            spatial_colocalization=bool(meta.get("has_spatial_coords") or meta.get("spatial_colocalization")),
+            ligand_receptor_inference=bool(meta.get("ligand_receptor_inference")),
+            perturbation=bool(meta.get("perturbation") or meta.get("is_perturbation")),
+            temporal_evidence=bool(meta.get("temporal_evidence") or meta.get("time_series")),
+            biological_replicates_count=int(meta.get("num_donors") or meta.get("biological_replicates") or 0),
+            pseudobulk_aggregated=bool(meta.get("pseudobulk_aggregated") or meta.get("is_pseudobulk")),
+            reference_ground_truth=bool(meta.get("reference_ground_truth")),
+            regulatory_certification=bool(meta.get("regulatory_certification")),
+        )
+        claim_ir = DeterministicClaimParser.parse(query)
+        w_eval = DeterministicWarrantEngine.evaluate(claim_ir, ev_prof)
+        payload["scientific_claim_ir"] = claim_ir.to_dict()
+        payload["claim_warrant_evaluation"] = w_eval.to_dict()
+    except Exception:
+        pass
+
+    payload["host_integration"] = {
+        "intended_hosts": ["biomni", "claude_code", "codex", "cursor", "any_mcp_host"],
+        "call_timing": "Invoke BEFORE executing model-generated analysis code.",
+        "motivation": (
+            "Full-privilege agent platforms (e.g. Biomni) document that they execute "
+            "LLM-generated code with full system privileges; sandboxing addresses OS-level "
+            "risk, not scientific validity. This gate permits the compute but caps what the "
+            "run may claim."
+        ),
+    }
+    payload["boundary"] = (
+        "Scientific warrant only: this verdict is not clinical validation, "
+        "regulatory clearance, or proof that the analysis executed."
+    )
+    return payload
+
+
+def _capability_evidence_ceiling(capability: Any) -> Optional[str]:
+    """Best-effort string form of a CapabilityContract's evidence ceiling."""
+    if capability is None:
+        return None
+    raw = getattr(capability, "evidence_ceiling", None)
+    value = getattr(raw, "value", raw)
+    return str(value) if value is not None else None
 
 
 async def tool_bionexus_host_probe(
@@ -1431,6 +1664,57 @@ TOOLS_SCHEMA = [
         },
     },
     {
+        "name": "bionexus_warrant_check",
+        "description": (
+            "Pre-execution scientific warrant gate: evaluate a natural-language analysis intent "
+            "against BioNexus invariants and evidence rules BEFORE running AI-generated code. "
+            "Returns the routing verdict (PERMITTED / PERMITTED_WITH_LIMITS / NEEDS_DATA / ABSTAIN), "
+            "matched capability, blocked claims, remedies, and evidence ceiling. "
+            "Designed for full-privilege hosts such as Biomni, Claude Code, Codex, and Cursor."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": (
+                        "Natural-language analytical intent, e.g. 'Run differential expression "
+                        "between condition A and B' or 'Cluster my single-cell dataset'."
+                    ),
+                },
+                "data_metadata": {
+                    "type": "object",
+                    "description": (
+                        "Optional dataset facts the router can check without file access, "
+                        "e.g. {'donors_per_condition': 2, 'conditions': 2, 'has_spatial_coords': false}."
+                    ),
+                },
+                "research_purpose": {
+                    "type": "string",
+                    "enum": ["exploratory", "screening", "confirmatory", "causal", "clinical"],
+                    "description": (
+                        "Intended research purpose. Sets the evidence REQUIREMENT, never the "
+                        "evidence value. Omitted = inferred from the query."
+                    ),
+                },
+                "lab_policy": {
+                    "type": "string",
+                    "enum": ["shadow_audit", "discovery_lab", "enforced_lab"],
+                    "description": (
+                        "Laboratory enforcement profile modulating intervention only "
+                        "(default advisory 'discovery_lab'); execution invariants hold under every profile."
+                    ),
+                },
+                "intent_keywords": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Optional hint keywords to bias capability matching.",
+                },
+            },
+            "required": ["query"],
+        },
+    },
+    {
         "name": "bionexus_host_probe",
         "description": (
             "Record a server-side, tamper-evident receipt proving that a named host reached this local MCP server. "
@@ -1664,6 +1948,13 @@ TOOL_ADAPTER_MAP = {
         args.get("gene_symbol", ""),
         args.get("tissue_site"),
     ),
+    "bionexus_warrant_check": lambda args: tool_bionexus_warrant_check(
+        args.get("query", ""),
+        args.get("data_metadata"),
+        args.get("research_purpose"),
+        args.get("lab_policy"),
+        args.get("intent_keywords"),
+    ),
     "bionexus_host_probe": lambda args: tool_bionexus_host_probe(
         args.get("host_name", ""),
         args.get("host_version", ""),
@@ -1850,6 +2141,30 @@ def create_mcp_server():
     )
     async def get_gene_expression(gene_symbol: str, tissue_site: Optional[str] = None) -> str:
         res = await tool_get_gene_expression(gene_symbol=gene_symbol, tissue_site=tissue_site)
+        return json.dumps(res, indent=2, ensure_ascii=False)
+
+    @mcp.tool(
+        name="bionexus_warrant_check",
+        description=(
+            "Pre-execution scientific warrant gate: evaluate an analysis intent against BioNexus "
+            "invariants and evidence rules BEFORE running AI-generated code. Returns the routing "
+            "verdict, blocked claims, remedies, and evidence ceiling. Not clinical validation."
+        ),
+    )
+    async def bionexus_warrant_check(
+        query: str,
+        data_metadata: Optional[Dict[str, Any]] = None,
+        research_purpose: Optional[str] = None,
+        lab_policy: Optional[str] = None,
+        intent_keywords: Optional[List[str]] = None,
+    ) -> str:
+        res = await tool_bionexus_warrant_check(
+            query=query,
+            data_metadata=data_metadata,
+            research_purpose=research_purpose,
+            lab_policy=lab_policy,
+            intent_keywords=intent_keywords,
+        )
         return json.dumps(res, indent=2, ensure_ascii=False)
 
     @mcp.tool(

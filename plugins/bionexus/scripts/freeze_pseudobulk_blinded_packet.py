@@ -134,6 +134,10 @@ def assess_gates(input_root: Path) -> tuple[list[str], dict[str, Any]]:
         issues.append(f"missing signed custodian data-gate attestation: {attestation_path}")
     else:
         attestation = _load_json(attestation_path)
+        issues.append(
+            "legacy custodian attestation cannot establish trust; supply a verified "
+            "bionexus.evidence-attestation.v1 adapter before freezing"
+        )
         if attestation.get("status") != "SIGNED_COMPLETE":
             issues.append("custodian data-gate attestation is not SIGNED_COMPLETE")
         required_true = (

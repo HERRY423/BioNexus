@@ -27,6 +27,8 @@ class ClaimViolationType(str, Enum):
     MODEL_SUBSTITUTION_OVERCLAIM = "MODEL_SUBSTITUTION_OVERCLAIM"
     SURVIVAL_HAZARD_OVERCLAIM = "SURVIVAL_HAZARD_OVERCLAIM"
     PROHIBITED_CLAIM_MATCH = "PROHIBITED_CLAIM_MATCH"
+    UNWARRANTED_CAUSAL_MECHANISM = "UNWARRANTED_CAUSAL_MECHANISM"
+    UNWARRANTED_POPULATION_GENERALIZATION = "UNWARRANTED_POPULATION_GENERALIZATION"
 
 
 @dataclass
@@ -268,6 +270,67 @@ def audit_prohibited_claims(
                     )
                 )
 
+    # 7. Semantic Claim IR & Deterministic Warrant Audit (BNS-017)
+    try:
+        from bionexus.claim_semantics import (
+            CausalStrength,
+            DeterministicClaimParser,
+            DeterministicWarrantEngine,
+            EvidenceProfile,
+            GeneralizationScope,
+            WarrantTierStatus,
+        )
+
+        ev_profile = EvidenceProfile(
+            reference_ground_truth=allow_unverified_cell_types,
+            regulatory_certification=allow_regulatory_claims,
+            ruo_disclaimer_present="research use only" in text.lower() or "ruo" in text.lower(),
+        )
+
+        sentences = [s.strip() for s in re.split(r"[.\n\r]+", text) if len(s.strip()) > 5]
+        for sent in sentences:
+            claim_ir = DeterministicClaimParser.parse(sent)
+            if claim_ir.negated:
+                continue
+
+            w_res = DeterministicWarrantEngine.evaluate(claim_ir, ev_profile)
+            if not w_res.is_fully_warranted:
+                # Check for specific unwarranted tiers
+                if (
+                    w_res.tier_verdicts.get("causal_claim")
+                    and w_res.tier_verdicts["causal_claim"].status == WarrantTierStatus.NOT_WARRANTED
+                    and claim_ir.causal_strength == CausalStrength.COUNTERFACTUAL_CAUSAL
+                ):
+                    # Avoid duplicate violation if already caught by regex
+                    if not any(v.matched_text in sent or sent in v.matched_text for v in violations):
+                        violations.append(
+                            ClaimViolation(
+                                violation_type=ClaimViolationType.UNWARRANTED_CAUSAL_MECHANISM,
+                                matched_text=sent,
+                                rule_description=(
+                                    f"Causal claim '{claim_ir.subject_entity.name} -> "
+                                    f"{claim_ir.object_entity.name if claim_ir.object_entity else 'effect'}' is not "
+                                    "warranted without experimental perturbation or SCM backdoor identification."
+                                ),
+                                remedy="; ".join(w_res.remedies) or "Downgrade causal phrasing to correlational observation.",
+                            )
+                        )
+                elif (
+                    w_res.tier_verdicts.get("cell_identity_claim")
+                    and w_res.tier_verdicts["cell_identity_claim"].status == WarrantTierStatus.NOT_WARRANTED
+                ):
+                    if not any(v.violation_type == ClaimViolationType.CELL_TYPE_HALLUCINATION for v in violations):
+                        violations.append(
+                            ClaimViolation(
+                                violation_type=ClaimViolationType.CELL_TYPE_HALLUCINATION,
+                                matched_text=sent,
+                                rule_description="Single-cell clusters must remain numeric unless verified against ground truth reference markers.",
+                                remedy="Refer to clusters numerically or qualify as putative/candidate markers.",
+                            )
+                        )
+    except Exception:
+        pass
+
     passed = len(violations) == 0
     if passed:
         notes.append("No prohibited claims detected. Text complies with scientific honesty invariants.")
@@ -281,3 +344,24 @@ def audit_prohibited_claims(
         clean_text=text,
         audit_notes=notes,
     )
+
+
+def audit_claim_semantics(
+    text: str,
+    evidence: Optional[Any] = None,
+) -> Any:
+    """
+    Dedicated semantic claim auditor returning structured ScientificClaimIR and
+    Deterministic Warrant Engine verdicts (BNS-017).
+    """
+    from bionexus.claim_semantics import DeterministicClaimParser, DeterministicWarrantEngine, EvidenceProfile
+
+    ev = evidence or EvidenceProfile()
+    sentences = [s.strip() for s in re.split(r"[.\n\r]+", text) if len(s.strip()) > 5]
+    results = []
+    for sent in sentences:
+        claim_ir = DeterministicClaimParser.parse(sent)
+        w_eval = DeterministicWarrantEngine.evaluate(claim_ir, ev)
+        results.append({"claim_ir": claim_ir.to_dict(), "warrant_evaluation": w_eval.to_dict()})
+    return results
+

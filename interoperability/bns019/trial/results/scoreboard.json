@@ -1,0 +1,10 @@
+{
+  "schema": "urn:bionexus:bns019-public-scoreboard:1",
+  "trial_id": "BNS019-INTEROP-2026-01",
+  "publication_status": "open_on_publication",
+  "standard_release_digest_sha256": "b3164afe6ccd69dc9d7738c2ee58195ac65862701e29f9db1f98c12e1a97e934",
+  "accepted_external_submissions": [],
+  "public_success_gate": "NOT_MET",
+  "reason": "The trial kit has not yet been published and no independent external submission has been accepted. Maintainer self-tests do not satisfy the external gate.",
+  "updated_at": null
+}

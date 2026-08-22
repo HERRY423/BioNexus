@@ -953,6 +953,15 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
                 description="2D/3D spatial coordinate matrix (adata.obsm['spatial']).",
                 validation_rule="audit_spatial_coordinates",
             ),
+            "spatial_state": InputSpecification(
+                name="spatial_state",
+                semantic_type=SemanticInputType.BIGDATA_STORE.value,
+                required=True,
+                description=(
+                    "Expression, gene names, cell labels, coordinate system, and immutable dataset/state/"
+                    "segmentation/label revision identifiers; exact contact graph and covariates when applicable."
+                ),
+            ),
         },
         preconditions=[
             Precondition(
@@ -1480,14 +1489,14 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
     # 10. Spatial Inference Validity Assessment (flagship capability C, BNS-013)
     "spatial.inference_validity": CapabilityContract(
         id="spatial.inference_validity",
-        version=1,
-        display_name="Spatial Inference Validity Assessment",
+        version=2,
+        display_name="Spatial Alternative Explanation Battery",
         skill_name="spatial-transcriptomics",
         summary=(
-            "Not a reimplementation of spatial methods: tests whether a spatial biology conclusion survives its "
-            "alternative explanations (segmentation leakage, cell size, transcript density, nuclear eccentricity, "
-            "local density, spot composition, spatial autocorrelation, batch/FOV, ligand/receptor abundance, "
-            "contact geometry, neighborhood radius, permutation null)."
+            "An executable, empirically calibrated challenge battery for a declared spatial observation: tests "
+            "segmentation perturbations, transcript leakage, morphology, density, contact geometry, batch/FOV, "
+            "neighborhood radius, coordinate nulls, and cell-label perturbations. It does not run a generic "
+            "spatial workflow or silently substitute expert magic numbers."
         ),
         intent=[
             "spatial_inference_validity",
@@ -1506,7 +1515,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
                 name="coordinates",
                 semantic_type=SemanticInputType.SPATIAL_COORDINATES.value,
                 required=True,
-                description="Physical spatial coordinates (or an embedding with recorded spatial justification).",
+                description="Physical spatial coordinates in micrometers; embeddings are not accepted.",
                 validation_rule="audit_spatial_coordinates",
             ),
             "alternative_controls": InputSpecification(
@@ -1515,17 +1524,29 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
                 required=False,
                 description="Status of each alternative-explanation control (TESTED / CONTROLLED / UNTESTED / FAILED).",
             ),
+            "battery_plan": InputSpecification(
+                name="battery_plan",
+                semantic_type=SemanticInputType.SAMPLE_METADATA.value,
+                required=True,
+                description=(
+                    "Predeclared radii, leakage sensitivity, perturbation counts, seed, minimum group size, and "
+                    "graph bound for executable alternative-explanation testing."
+                ),
+            ),
         },
         preconditions=[
             Precondition(
                 id="coordinate_provenance_recorded",
-                rule="coordinate origin is physical or a justified embedding",
+                rule="coordinate origin is physical tissue space in micrometers",
                 description="Embeddings substituted for tissue coordinates invalidate spatial statistics (BNS-II-006).",
                 fatal_if_violated=True,
             ),
             Precondition(
                 id="core_confound_controls_tested",
-                rule="cell_size and transcript_density and segmentation_uncertainty are TESTED or CONTROLLED",
+                rule=(
+                    "cell_size, transcript_density, segmentation_uncertainty, transcript_leakage, and "
+                    "contact_geometry are TESTED or CONTROLLED"
+                ),
                 description="The canonical spatial confound controls must be addressed before any validity verdict.",
                 fatal_if_violated=False,
             ),
@@ -1534,27 +1555,37 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             canonical_name="local deterministic alternative-explanation tester",
             import_name="bionexus",
             minimum_version="0.10.0",
-            description="Deterministic alternative-explanation matrix (spatial_inference.assess_spatial_inference)",
-            entry_points=("bionexus.spatial_inference",),
+            description=(
+                "Bounded perturbation battery with profile-conditioned warrant decisions "
+                "(spatial_alternative_battery.run_spatial_alternative_battery)"
+            ),
+            entry_points=(
+                "bionexus.spatial_alternative_battery",
+                "bionexus.spatial_inference",
+            ),
         ),
         refusal_conditions=[
             RefusalTrigger(
                 condition_id="no_controls_provided",
                 description="Validity requested with zero alternative-explanation controls.",
-                remedy="Run the core confound controls (cell size, transcript density, segmentation uncertainty, permutation null) and resubmit.",
+                remedy=(
+                    "Run the bounded battery with segmentation/leakage variants, morphology and density covariates, "
+                    "contact geometry, radius sensitivity, coordinate nulls, and label perturbations."
+                ),
                 violated_rule="Alternative-explanation requirement (BN-F006)",
             ),
             RefusalTrigger(
                 condition_id="embedding_substitution",
                 description="UMAP/PCA coordinates offered where physical tissue coordinates are required.",
-                remedy="Provide physical coordinates, or record a spatial justification and cap the verdict at FRAGILE.",
+                remedy="Provide physical tissue coordinates in micrometers; no embedding fallback is permitted.",
                 violated_rule="Spatial provenance invariant (BN-F009)",
             ),
         ],
         outputs=[
-            "alternative_explanation_matrix (per-control status) (JSON/CSV)",
-            "validity_verdict (ROBUST | SUPPORTED | FRAGILE | ABSTAIN)",
+            "alternative_explanation_battery (per-control scores, perturbations, and calibration resolution) (JSON)",
+            "validity_verdict (ROBUST | SUPPORTED | FRAGILE | CONFLICTED | ABSTAIN)",
             "unresolved_alternatives (list)",
+            "state-bound provenance and input hashes",
             "evidence_card (JSON/Markdown)",
         ],
         evidence_requirements=EvidenceRequirement(
@@ -1562,6 +1593,8 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             effect_size="recommended",
             mandatory_limitations=[
                 "A FRAGILE verdict names the untested alternatives, not a negative result.",
+                "An unapproved or absent empirical calibration profile cannot produce a CONTROLLED diagnostic.",
+                "Assumed leakage fractions are sensitivity analyses, not estimates of true transcript leakage.",
                 "Orthogonal validation is required to assert beyond FRAGILE for confound-sensitive observations.",
             ],
         ),

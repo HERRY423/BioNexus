@@ -1,0 +1,8 @@
+{
+  "convention": "scientific.claim",
+  "attributes": {
+    "claim.type": "descriptive",
+    "warrant.level": "preliminary",
+    "warrant.status": "assessed"
+  }
+}

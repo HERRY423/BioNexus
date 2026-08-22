@@ -1,0 +1,7 @@
+{
+  "convention": "scientific.dataset",
+  "attributes": {
+    "biological.unit": "spot",
+    "example.assay_panel": "panel-v1"
+  }
+}

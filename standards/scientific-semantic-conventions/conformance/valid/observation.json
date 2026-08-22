@@ -1,0 +1,12 @@
+{
+  "convention": "scientific.observation",
+  "attributes": {
+    "biological_unit": "cell",
+    "matrix.state": "log_normalized",
+    "claim.type": "association",
+    "evidence.type": ["computational_result"],
+    "confound.type": ["transcript_leakage", "segmentation", "segmentation"],
+    "warrant.level": "fragile",
+    "warrant.status": "assessed"
+  }
+}

@@ -1,7 +1,7 @@
 {
-  "catalog_version": "2.0",
+  "catalog_version": "3.2",
   "supersedes": "INVARIANTS_CATALOG.json (v1.0)",
-  "taxonomy_note": "Not every rule BioNexus encodes is an invariant. Each rule declares exactly one epistemic_kind: EXECUTION_INVARIANT, DATA_INTEGRITY_INVARIANT, WARRANT_CONSTRAINT, CALIBRATED_THRESHOLD, HEURISTIC_DETECTOR, or POLICY_DEFAULT. Calibrated thresholds and heuristic detectors must never be presented as universal scientific laws. Legacy INV-xxx identifiers are preserved for certification traceability.",
+  "taxonomy_note": "Not every rule BioNexus encodes is an invariant. Each rule declares exactly one epistemic_kind: EXECUTION_INVARIANT, DATA_INTEGRITY_INVARIANT, WARRANT_CONSTRAINT, CALIBRATED_THRESHOLD, HEURISTIC_DETECTOR, or POLICY_DEFAULT. A CALIBRATED_THRESHOLD is resolved from an approved empirical profile conditioned on tissue, platform, reference, task, and evidence source. Missing or pending calibration fails closed and never falls back to a universal number. Legacy INV-xxx identifiers are preserved for certification traceability.",
   "rules": [
     {
       "id": "INV-001",
@@ -81,9 +81,16 @@
       "name": "annotation_marker_consistency_threshold",
       "epistemic_kind": "CALIBRATED_THRESHOLD",
       "description": "Minimum positive-marker consistency score required for SUPPORTED annotation verdict",
-      "current_value": 0.6,
-      "source_file": "src/bionexus/annotation_evidence.py",
-      "source_line": 34,
+      "current_value": {
+        "resolver": "empirical_calibration_profile",
+        "metric": "marker_consistency",
+        "required_context": ["tissue", "platform", "reference", "task", "evidence_source"],
+        "legacy_value": 0.6,
+        "legacy_status": "LEGACY_UNCALIBRATED",
+        "fallback": "NO_POSITIVE_WARRANT"
+      },
+      "source_file": "src/bionexus/empirical_warrant.py",
+      "source_line": 444,
       "rationale": "Calibrated balance between sensitivity to true markers and noise tolerance: 0.60 is an engineering choice, not a biological constant. Marker coherence requirements vary with platform, tissue dissociation, and cell-type biology; this threshold must be recalibrated, not universalized.",
       "sensitivity": "medium",
       "review_status": "pending"
@@ -93,9 +100,16 @@
       "name": "annotation_negative_marker_violation_max",
       "epistemic_kind": "CALIBRATED_THRESHOLD",
       "description": "Maximum allowed negative-marker violation rate for annotation evidence",
-      "current_value": 0.2,
-      "source_file": "src/bionexus/annotation_evidence.py",
-      "source_line": 35,
+      "current_value": {
+        "resolver": "empirical_calibration_profile",
+        "metric": "negative_marker_violation",
+        "required_context": ["tissue", "platform", "reference", "task", "evidence_source"],
+        "legacy_value": 0.2,
+        "legacy_status": "LEGACY_UNCALIBRATED",
+        "fallback": "NO_POSITIVE_WARRANT"
+      },
+      "source_file": "src/bionexus/empirical_warrant.py",
+      "source_line": 444,
       "rationale": "Calibrated tolerance for lineage-exclusive negative marker expression (ambient RNA, doublets, genuine plasticity). 0.20 is a heuristic allowance, platform-dependent; exceeding it suggests but does not prove lineage confusion.",
       "sensitivity": "medium",
       "review_status": "pending"
@@ -105,9 +119,16 @@
       "name": "annotation_reference_mapping_min",
       "epistemic_kind": "CALIBRATED_THRESHOLD",
       "description": "Minimum reference mapping score required for independent identity evidence",
-      "current_value": 0.7,
-      "source_file": "src/bionexus/annotation_evidence.py",
-      "source_line": 36,
+      "current_value": {
+        "resolver": "empirical_calibration_profile",
+        "metric": "reference_mapping",
+        "required_context": ["tissue", "platform", "reference", "task", "evidence_source"],
+        "legacy_value": 0.7,
+        "legacy_status": "LEGACY_UNCALIBRATED",
+        "fallback": "NO_POSITIVE_WARRANT"
+      },
+      "source_file": "src/bionexus/empirical_warrant.py",
+      "source_line": 444,
       "rationale": "Calibrated confidence floor below which reference-atlas mapping is too uncertain to anchor an identity claim. Method- and atlas-dependent; different mapping tools produce non-comparable scores, so this threshold is only meaningful with the documented scorer.",
       "sensitivity": "high",
       "review_status": "pending"
@@ -117,9 +138,16 @@
       "name": "annotation_cross_method_agreement_min",
       "epistemic_kind": "CALIBRATED_THRESHOLD",
       "description": "Minimum cross-method agreement score for independent identity evidence",
-      "current_value": 0.8,
-      "source_file": "src/bionexus/annotation_evidence.py",
-      "source_line": 37,
+      "current_value": {
+        "resolver": "empirical_calibration_profile",
+        "metric": "cross_method_agreement",
+        "required_context": ["tissue", "platform", "reference", "task", "evidence_source"],
+        "legacy_value": 0.8,
+        "legacy_status": "LEGACY_UNCALIBRATED",
+        "fallback": "NO_POSITIVE_WARRANT"
+      },
+      "source_file": "src/bionexus/empirical_warrant.py",
+      "source_line": 444,
       "rationale": "Calibrated alternative to reference mapping: independent methods agreeing at >= 0.80 compensate for method-specific biases. The 0.80 value is an engineering judgement about how much agreement substitutes for an atlas, not a statistical theorem.",
       "sensitivity": "medium",
       "review_status": "pending"
@@ -129,9 +157,16 @@
       "name": "annotation_doublet_rate_max",
       "epistemic_kind": "CALIBRATED_THRESHOLD",
       "description": "Maximum allowed doublet rate within a labeled population",
-      "current_value": 0.15,
-      "source_file": "src/bionexus/annotation_evidence.py",
-      "source_line": 38,
+      "current_value": {
+        "resolver": "empirical_calibration_profile",
+        "metric": "doublet_rate",
+        "required_context": ["tissue", "platform", "reference", "task", "evidence_source"],
+        "legacy_value": 0.15,
+        "legacy_status": "LEGACY_UNCALIBRATED",
+        "fallback": "NO_POSITIVE_WARRANT"
+      },
+      "source_file": "src/bionexus/empirical_warrant.py",
+      "source_line": 444,
       "rationale": "Calibrated ceiling reflecting typical doublet rates of droplet platforms (~5-10% at standard loading). 0.15 is platform- and loading-dependent; populations above it MAY be doublet artifacts — the flag is a warning requiring investigation, not a verdict.",
       "sensitivity": "medium",
       "review_status": "pending"
@@ -169,10 +204,10 @@
       "name": "spatial_robustness_ladder",
       "epistemic_kind": "WARRANT_CONSTRAINT",
       "description": "Canonical validity ladder for spatial inference verdicts with degradation semantics",
-      "current_value": ["ROBUST", "SUPPORTED", "FRAGILE", "ABSTAIN"],
+      "current_value": ["ROBUST", "SUPPORTED", "FRAGILE", "CONFLICTED", "ABSTAIN"],
       "source_file": "src/bionexus/spatial_inference.py",
-      "source_line": 52,
-      "rationale": "Epistemic grading semantics: ROBUST requires all canonical controls tested+passing AND a permutation null; SUPPORTED requires all provided controls pass without a permutation null; FRAGILE is the honest default when any alternative is UNTESTED; ABSTAIN when a control FAILED or no controls were provided. The ladder structure is a warrant constraint on claim strength.",
+      "source_line": 82,
+      "rationale": "Epistemic grading semantics: ROBUST requires all canonical controls tested+passing AND a permutation null; SUPPORTED requires the complete non-null canonical set without a permutation null; FRAGILE is the honest default when an alternative is UNTESTED; CONFLICTED records that a tested alternative explains or overturns the observation; ABSTAIN is reserved for absent or unestimable evidence. The ladder structure is a warrant constraint on claim strength.",
       "sensitivity": "high",
       "review_status": "pending"
     },
@@ -181,10 +216,10 @@
       "name": "spatial_core_controls",
       "epistemic_kind": "WARRANT_CONSTRAINT",
       "description": "Canonical alternative-explanation controls that MUST be addressed before a spatial conclusion can exceed FRAGILE",
-      "current_value": ["cell_size", "transcript_density", "segmentation_uncertainty"],
+      "current_value": ["cell_size", "transcript_density", "segmentation_uncertainty", "transcript_leakage", "contact_geometry"],
       "source_file": "src/bionexus/spatial_inference.py",
-      "source_line": 48,
-      "rationale": "The three most common non-biological explanations for spatial enrichment patterns. The requirement to address them before claiming biology is a warrant constraint grounded in spatial-confounding literature; the specific control set is revisable as the field identifies new dominant confounds.",
+      "source_line": 72,
+      "rationale": "The dominant measurement and geometry explanations for spatial enrichment patterns must be addressed before claiming biology. Transcript leakage is distinct from local transcript density, and contact geometry is mandatory even when proximity appears strong. The specific set is contract-versioned and remains externally reviewable.",
       "sensitivity": "high",
       "review_status": "pending"
     },
@@ -194,15 +229,27 @@
       "epistemic_kind": "WARRANT_CONSTRAINT",
       "description": "Complete registry of canonical alternative explanations for spatial observations",
       "current_value": [
-        "cell_size", "transcript_density", "segmentation_uncertainty",
+        "cell_size", "transcript_density", "segmentation_uncertainty", "transcript_leakage",
         "nuclear_eccentricity", "local_cell_density", "spot_composition",
         "spatial_autocorrelation", "batch_fov", "ligand_receptor_abundance",
-        "contact_geometry", "neighborhood_radius", "permutation_null"
+        "contact_geometry", "neighborhood_radius", "permutation_null", "cell_label_perturbation"
       ],
       "source_file": "src/bionexus/spatial_inference.py",
       "source_line": 31,
-      "rationale": "Registry of known non-biological confounds in spatial transcriptomics. The registry is part of the capability contract and changes only with a contract version bump; individual entries remain open to external review as the field matures.",
+      "rationale": "Registry of known non-biological confounds in spatial transcriptomics. Segmentation, leakage, and label uncertainty are separate failure surfaces rather than aliases for density or spot composition. The registry is part of capability contract v2 and changes only with a contract version bump; individual entries remain open to external review as the field matures.",
       "sensitivity": "medium",
+      "review_status": "pending"
+    },
+    {
+      "id": "INV-018",
+      "name": "spatial_battery_profile_conditioned_decisions",
+      "epistemic_kind": "CALIBRATED_THRESHOLD",
+      "description": "Per-diagnostic spatial battery decision boundaries are resolved from approved empirical profiles for the declared regime",
+      "current_value": "threshold(metric, tissue, platform, reference, task, evidence_source)",
+      "source_file": "src/bionexus/spatial_alternative_battery.py",
+      "source_line": 207,
+      "rationale": "Effect-retention scores, FOV/radius stability, label sensitivity, and permutation p-values do not have one scientifically valid cross-platform cutoff. The engine computes scores but promotes them to CONTROLLED only when a matching APPROVED empirical profile resolves. The packaged registry currently has no approved real spatial profile and never uses a universal fallback.",
+      "sensitivity": "high",
       "review_status": "pending"
     },
     {
@@ -302,6 +349,24 @@
       "source_file": "src/bionexus/data/rule_registry.json",
       "source_line": 158,
       "rationale": "The canonical backend defines the algorithm of a certified capability; executing a substitute without explicit frontier-fallback consent advertises a result the run did not produce. Frontier capabilities retain a documented consent path; canonical ones do not.",
+      "sensitivity": "high",
+      "review_status": "pending"
+    },
+    {
+      "id": "RULE-022",
+      "name": "scientific_semantic_integrity",
+      "epistemic_kind": "DATA_INTEGRITY_INVARIANT",
+      "description": "Meaning-bearing scientific metadata must conform to a versioned convention and must not silently coerce ambiguous matrix, claim, evidence, confound, or warrant semantics",
+      "current_value": [
+        "versioned schema_url",
+        "strict producer",
+        "loss-preserving consumer",
+        "semantic fingerprint",
+        "no normalized_expression inference"
+      ],
+      "source_file": "src/bionexus/scientific_semantics.py",
+      "source_line": 174,
+      "rationale": "This is a data-integrity invariant about the meaning of exchanged evidence, not a claim that a biological conclusion is correct. Silent coercion can turn normalized counts into logged values, conflict into positive support, or an association into a causal claim. Unknown future consumer values are therefore preserved with warnings, while producers refuse ambiguous or unregistered semantics. No empirical threshold is encoded by this rule.",
       "sensitivity": "high",
       "review_status": "pending"
     }

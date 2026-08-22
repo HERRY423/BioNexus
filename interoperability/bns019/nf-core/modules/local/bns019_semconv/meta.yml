@@ -1,0 +1,49 @@
+name: bns019_semconv
+description: Attach a manifest-verified BNS-019 scientific semantic envelope to a workflow record
+keywords:
+  - scientific semantics
+  - interoperability
+  - provenance
+tools:
+  - python:
+      description: Python programming language
+      homepage: https://www.python.org/
+      documentation: https://docs.python.org/3/
+      licence: PSF-2.0
+input:
+  - tuple:
+      - meta:
+          type: map
+          description: Sample metadata containing an id
+      - record:
+          type: file
+          description: JSON workflow record to transport
+          pattern: "*.json"
+      - semantics:
+          type: file
+          description: BNS-019 convention and attributes JSON
+          pattern: "*.json"
+  - standard_release:
+      type: directory
+      description: Unpacked, language-neutral BNS-019 release
+  - adapter_script:
+      type: file
+      description: Trial workflow adapter script
+  - validator_script:
+      type: file
+      description: Independent BNS-019 validator script
+output:
+  - record:
+      - meta:
+          type: map
+      - "*.bns019.json":
+          type: file
+          description: Workflow record plus BNS-019 envelope and exact release digest
+  - versions:
+      - versions.yml:
+          type: file
+          description: Software and BNS-019 release versions
+authors:
+  - "BioNexus interoperability trial contributors"
+maintainers:
+  - "BioNexus interoperability trial contributors"

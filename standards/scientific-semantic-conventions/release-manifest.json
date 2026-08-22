@@ -1,0 +1,97 @@
+{
+  "schema": "urn:bionexus:scientific-semantic-release-manifest:1",
+  "standard_id": "BNS-019",
+  "artifact_name": "bionexus-scientific-semantic-conventions",
+  "version": "0.1.0",
+  "status": "development",
+  "digest_algorithm": "sha256",
+  "files": [
+    {
+      "path": "COMPATIBILITY.md",
+      "sha256": "74c6f1e745e670672f7aff5e49fee100ddfcb6b8c3b3e34fbaf0367d857f79b6",
+      "size_bytes": 931
+    },
+    {
+      "path": "GOVERNANCE.md",
+      "sha256": "644185b712528d560d1d9222b833580a7f0f5c48f9345e4e196b5df25783df5a",
+      "size_bytes": 775
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "size_bytes": 11358
+    },
+    {
+      "path": "README.md",
+      "sha256": "e2bcaa98e99a6d45301324b7cfc2e17929042cc5403e04150e6d29310308651d",
+      "size_bytes": 2391
+    },
+    {
+      "path": "VERSION",
+      "sha256": "e9dd8507f4bf0c6f42458e41aea833ad0bd3f6127272335eee9bf4d58541ed67",
+      "size_bytes": 6
+    },
+    {
+      "path": "conformance/invalid/ambiguous-matrix-state.json",
+      "sha256": "327b38ca6b3b273eff60d2a926ca26b55204bed44964bdd8b51fdb510407ef51",
+      "size_bytes": 139
+    },
+    {
+      "path": "conformance/invalid/missing-required-evidence.json",
+      "sha256": "a965232560647086863f4117020c5d05b91139bf03de4f24d2a54beca01e0f21",
+      "size_bytes": 164
+    },
+    {
+      "path": "conformance/invalid/unowned-extension.json",
+      "sha256": "fef584b50a40d0d3894d331820effb30164e5108fa03d17a1543122be03a6972",
+      "size_bytes": 133
+    },
+    {
+      "path": "conformance/manifest.json",
+      "sha256": "f7244f5f7b8a25ff23082f4b9f500427abdaa6325a70bcd6f19ffb3c881a8e7d",
+      "size_bytes": 1563
+    },
+    {
+      "path": "conformance/valid/dataset-extension.json",
+      "sha256": "df75380411751b6adc24a392c789022d01457e6df10d39d52875c3bef657ffe9",
+      "size_bytes": 169
+    },
+    {
+      "path": "conformance/valid/observation.json",
+      "sha256": "9c4335d3e92ea8d627c146949e126c485a6ccaaf471a98cd62f71dee91312f4f",
+      "size_bytes": 359
+    },
+    {
+      "path": "registry.json",
+      "sha256": "077054b3d4fc9f828d5e7d435b7d56252c4a8ab772af3167f2d29189e10e7f2c",
+      "size_bytes": 4745
+    },
+    {
+      "path": "schemas/conformance-manifest.schema.json",
+      "sha256": "434a14917169e4d55c6cf3ebcba6848c0ea95c28f37f58d1b33f3229f917cdd6",
+      "size_bytes": 1785
+    },
+    {
+      "path": "schemas/envelope.schema.json",
+      "sha256": "3c6227b1e2dcffd3286cf218812d430a2146c0f7ae7d12ea1a57d72399982a13",
+      "size_bytes": 1357
+    },
+    {
+      "path": "schemas/registry.schema.json",
+      "sha256": "2c04827a90e3d37ebacb5131ce5d24c034f282470d4a35b60e3fb82dc1b6bdb0",
+      "size_bytes": 2890
+    }
+  ],
+  "release_digest_sha256": "b3164afe6ccd69dc9d7738c2ee58195ac65862701e29f9db1f98c12e1a97e934",
+  "attestation_profile": {
+    "schema_version": "bionexus.evidence-attestation.v1",
+    "predicate_type": "standard-release",
+    "subject_type": "scientific-semantic-conventions-release",
+    "subject_id": "BNS-019",
+    "subject_version": "0.1.0",
+    "required_claims": {
+      "release_digest_sha256": "b3164afe6ccd69dc9d7738c2ee58195ac65862701e29f9db1f98c12e1a97e934"
+    }
+  },
+  "claim_boundary": "Software-contract release only; not evidence of biological validity, empirical calibration, external endorsement, or community adoption."
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bionexus:scientific-semantics-assurance-body-schema:1",
+  "type": "object",
+  "required": ["schema", "body_id", "legal_name", "jurisdiction", "accountable_officers", "competence_scope", "impartiality_policy_uri", "conflict_policy_uri", "assessment_procedure_uri", "appeal_process_uri", "certificate_registry_uri", "bionexus_controlled", "applicant_controlled", "recognition_status", "evidence_sha256"],
+  "properties": {
+    "schema": {"const": "urn:bionexus:scientific-semantics-assurance-body:1"},
+    "body_id": {"type": "string", "pattern": "^SSC-CAB-[0-9]{4}$"},
+    "legal_name": {"type": "string", "minLength": 1},
+    "jurisdiction": {"type": "string", "minLength": 1},
+    "accountable_officers": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "competence_scope": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "impartiality_policy_uri": {"type": "string", "format": "uri"},
+    "conflict_policy_uri": {"type": "string", "format": "uri"},
+    "assessment_procedure_uri": {"type": "string", "format": "uri"},
+    "appeal_process_uri": {"type": "string", "format": "uri"},
+    "certificate_registry_uri": {"type": "string", "format": "uri"},
+    "bionexus_controlled": {"const": false},
+    "applicant_controlled": {"const": false},
+    "recognition_status": {"enum": ["candidate", "recognized", "suspended", "withdrawn"]},
+    "evidence_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": false
+}

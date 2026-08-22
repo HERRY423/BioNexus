@@ -1,0 +1,3 @@
+recursive-include src/bionexus/data *.json
+recursive-include spec *.md *.yaml
+recursive-include calibration/spatial-empirical-gold-standard *.json *.md

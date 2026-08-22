@@ -1,29 +1,10 @@
 {
-  "schema_version": "bionexus.custodian-data-gate-attestation.v1",
+  "schema_version": "bionexus.withdrawn-attestation.v1",
   "study_id": "BN-PB-IV-004",
-  "status": "SIGNED_COMPLETE",
-  "custodian": {
-    "full_name": "Dr. Eleanor Vance",
-    "institution": "BioNexus Independent Core Facility",
-    "professional_email": "custodian@bionexus-validation.org",
-    "independent_of_analysis": true
-  },
-  "gates": {
-    "authoritative_lims_pairing_verified": true,
-    "no_pair_inferred_from_accession_or_file_order": true,
-    "exactly_12_complete_donor_pairs": true,
-    "ifn_beta_1a_identity_and_lot_verified": true,
-    "six_hour_timing_within_five_minutes_verified": true,
-    "arm_key_held_outside_packet": true
-  },
-  "materials": {
-    "preregistration_sha256": "43091d359320611f07bdda0b5815f8e2318020c3aee7e2af170042f33b49e308",
-    "C02_blinded_pseudobulk_sha256": "647081c352e94f142da667144ae1547b3cb629d1c8fd53df0107a6f17c22395e",
-    "C04_blinded_pseudobulk_sha256": "3351e4ed6153955effe1e578eb8314666ca72595486bf7fb91be702af0923e96",
-    "C04_blinded_sample_manifest_sha256": "8c4722ef580c31015e3e876dcd8780cfd9ec5f84d567e798dc8acb685cf48d26"
-  },
-  "signature": {
-    "signed_at_utc": "2026-08-21T08:43:58.369755+00:00",
-    "signature_value_or_detached_sha256": "6e214d3f10963f23c232505f922dae1969ec7efc1fbb18fd4be6768320036bf1"
-  }
+  "status": "WITHDRAWN_UNVERIFIABLE",
+  "trust_decision": "NOT_ASSESSED",
+  "reason": "Former custodian identity, independence, data-gate, and signature claims had no independently verifiable external artifact and were removed during the Phase-1 Scientific Trust Reset.",
+  "replacement_required": "bionexus.evidence-attestation.v1 with explicit trust registry, artifact SHA-256, expiry, and revocation verification",
+  "custodian": null,
+  "signature": null
 }

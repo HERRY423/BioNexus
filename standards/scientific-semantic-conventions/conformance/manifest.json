@@ -1,0 +1,50 @@
+{
+  "$schema": "../schemas/conformance-manifest.schema.json",
+  "schema": "urn:bionexus:scientific-semantic-conformance-manifest:1",
+  "standard_version": "0.1.0",
+  "contract": "producer-attribute-validation",
+  "cases": [
+    {
+      "id": "SEMCONV-PRODUCER-001",
+      "input": "valid/observation.json",
+      "expected_valid": true,
+      "expected_normalized_attributes": {
+        "biological.unit": "cell",
+        "matrix.state": "log_normalized",
+        "claim.type": "associative",
+        "evidence.type": ["computational_result"],
+        "confound.type": ["segmentation", "transcript_leakage"],
+        "warrant.level": "fragile",
+        "warrant.status": "assessed"
+      }
+    },
+    {
+      "id": "SEMCONV-PRODUCER-002",
+      "input": "valid/dataset-extension.json",
+      "expected_valid": true,
+      "expected_normalized_attributes": {
+        "biological.unit": "spot",
+        "matrix.state": "raw_counts",
+        "x.example.assay_panel": "panel-v1"
+      }
+    },
+    {
+      "id": "SEMCONV-PRODUCER-003",
+      "input": "invalid/ambiguous-matrix-state.json",
+      "expected_valid": false,
+      "expected_failure_class": "blocked_legacy_value"
+    },
+    {
+      "id": "SEMCONV-PRODUCER-004",
+      "input": "invalid/missing-required-evidence.json",
+      "expected_valid": false,
+      "expected_failure_class": "missing_required_attribute"
+    },
+    {
+      "id": "SEMCONV-PRODUCER-005",
+      "input": "invalid/unowned-extension.json",
+      "expected_valid": false,
+      "expected_failure_class": "unknown_attribute"
+    }
+  ]
+}

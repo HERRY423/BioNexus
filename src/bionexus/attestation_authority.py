@@ -14,51 +14,16 @@ from cryptography.hazmat.primitives.asymmetric import ed25519
 
 PathLike = Union[str, Path]
 
-# =====================================================================
-# Public Trust Anchors (Public Keys only - NO private keys in repo!)
-# =====================================================================
-
-TRUST_ANCHOR_AUTHORITY_PUBKEY_PEM = (
-    "-----BEGIN PUBLIC KEY-----\n"
-    "MCowBQYDK2VwAyEAYczzcqY4HCCdTfYrD3ua98ltI7sx3fD3Nig5JoYaVFY=\n"
-    "-----END PUBLIC KEY-----\n"
-)
-
-TRUST_ANCHOR_REKOR_PUBKEY_PEM = (
-    "-----BEGIN PUBLIC KEY-----\n"
-    "MCowBQYDK2VwAyEAmBhoiqYyZIpoCGH6Km1lUesgvsMd6MIGa+Daz8LBGHA=\n"
-    "-----END PUBLIC KEY-----\n"
-)
-
-TRUST_ANCHOR_TSA_PUBKEY_PEM = (
-    "-----BEGIN PUBLIC KEY-----\n"
-    "MCowBQYDK2VwAyEAKyoNikf/NumpvJA2Mdi38ELXkNKzcyeRLwAf10ZqQeg=\n"
-    "-----END PUBLIC KEY-----\n"
-)
-
-TRUST_ANCHORS = {
-    "authority": {
-        "key_id": "bionexus-independent-root-2026",
-        "fingerprint": hashlib.sha256(TRUST_ANCHOR_AUTHORITY_PUBKEY_PEM.encode("utf-8")).hexdigest(),
-        "public_key_pem": TRUST_ANCHOR_AUTHORITY_PUBKEY_PEM,
-        "algorithm": "Ed25519",
-    },
-    "rekor_transparency_log": {
-        "key_id": "bionexus-rekor-transparency-log-2026",
-        "fingerprint": hashlib.sha256(TRUST_ANCHOR_REKOR_PUBKEY_PEM.encode("utf-8")).hexdigest(),
-        "public_key_pem": TRUST_ANCHOR_REKOR_PUBKEY_PEM,
-        "algorithm": "Ed25519",
-    },
-    "timestamp_authority": {
-        "key_id": "bionexus-rfc3161-tsa-root-2026",
-        "fingerprint": hashlib.sha256(TRUST_ANCHOR_TSA_PUBKEY_PEM.encode("utf-8")).hexdigest(),
-        "public_key_pem": TRUST_ANCHOR_TSA_PUBKEY_PEM,
-        "algorithm": "Ed25519",
-    },
-}
-
-# Alias for backward compatibility
-SIGNING_PUBLIC_KEY_PEM = TRUST_ANCHOR_AUTHORITY_PUBKEY_PEM
+# Phase-1 Scientific Trust Reset: the former in-repository keys were never backed
+# by an independently verifiable authority, transparency log, or timestamp service.
+# They are intentionally removed. This legacy module now verifies only when every
+# public key is supplied explicitly by the caller. New scientific evidence must use
+# ``bionexus.trust_evidence`` and its revocation-aware trust registry.
+TRUST_ANCHOR_AUTHORITY_PUBKEY_PEM = ""
+TRUST_ANCHOR_REKOR_PUBKEY_PEM = ""
+TRUST_ANCHOR_TSA_PUBKEY_PEM = ""
+TRUST_ANCHORS: Dict[str, Dict[str, str]] = {}
+SIGNING_PUBLIC_KEY_PEM = ""
 
 
 def canonical_json_bytes(payload: Any) -> bytes:
@@ -106,7 +71,7 @@ def generate_attestation_bundle(
     study_id: str,
     merkle_root: str,
     report_sha256: str,
-    signer_name: str = 'BioNexus Independent Attestation Authority',
+    signer_name: str = 'BioNexus Legacy Local Integrity Fixture',
     signer_uri: str = 'https://github.com/HERRY423/BioNexus/actions/workflows/provenance.yml',
     private_key: Optional[ed25519.Ed25519PrivateKey] = None,
     rekor_private_key: Optional[ed25519.Ed25519PrivateKey] = None,
@@ -114,7 +79,7 @@ def generate_attestation_bundle(
     timestamp_iso: Optional[str] = None,
     log_index: int = 4829104,
 ) -> Dict[str, Any]:
-    """Generate a Sigstore v0.2 DSSE In-toto attestation bundle with real Rekor SET and RFC 3161 TSA proofs."""
+    """Generate a legacy local integrity fixture; this is not Sigstore/Rekor/RFC3161 evidence."""
     # Resolve authority private key (explicit arg -> environment -> fail-closed error)
     priv_key = private_key or load_private_key_from_env("BIONEXUS_SIGNING_PRIVATE_KEY_PEM")
     if priv_key is None:
@@ -165,14 +130,14 @@ def generate_attestation_bundle(
         'payloadType': 'application/vnd.in-toto+json',
         'signatures': [
             {
-                'keyid': TRUST_ANCHORS['authority']['key_id'],
+                'keyid': hashlib.sha256(pub_pem.encode('utf-8')).hexdigest(),
                 'sig': signature_b64,
             }
         ],
     }
     dsse_sha256 = canonical_json_sha256(dsse_envelope)
 
-    # 1. Real Rekor Transparency Log Signed Entry Timestamp (SET)
+    # 1. Rekor-shaped local test receipt (not submitted to a transparency log)
     rekor_priv = rekor_private_key or load_private_key_from_env("BIONEXUS_REKOR_PRIVATE_KEY_PEM")
     if rekor_priv is not None:
         rekor_pub_pem = rekor_priv.public_key().public_bytes(
@@ -188,7 +153,7 @@ def generate_attestation_bundle(
         rekor_raw_sig = rekor_priv.sign(rekor_payload)
         rekor_set_b64 = base64.b64encode(rekor_raw_sig).decode('ascii')
     else:
-        rekor_key_id = TRUST_ANCHORS['rekor_transparency_log']['fingerprint']
+        rekor_key_id = ""
         rekor_set_b64 = ""
 
     tlog_entry = {
@@ -200,7 +165,7 @@ def generate_attestation_bundle(
         },
     }
 
-    # 2. Real RFC 3161 Timestamp Authority (TSA) Token Verification Material
+    # 2. Timestamp-shaped local test receipt (not an RFC 3161 token)
     tsa_priv = tsa_private_key or load_private_key_from_env("BIONEXUS_TSA_PRIVATE_KEY_PEM")
     if tsa_priv is not None:
         tsa_pub_pem = tsa_priv.public_key().public_bytes(
@@ -209,19 +174,19 @@ def generate_attestation_bundle(
         ).decode('ascii')
         tsa_key_id = hashlib.sha256(tsa_pub_pem.encode('utf-8')).hexdigest()
         tsa_payload = canonical_json_bytes({
-            'authority': 'RFC3161 Compatible Independent Timestamp Authority',
+            'authority': 'Legacy Local Timestamp Fixture',
             'imprint_sha256': sig_digest,
             'timestamp': now_iso,
         })
         tsa_raw_sig = tsa_priv.sign(tsa_payload)
         tsa_sig_b64 = base64.b64encode(tsa_raw_sig).decode('ascii')
     else:
-        tsa_key_id = TRUST_ANCHORS['timestamp_authority']['fingerprint']
+        tsa_key_id = ""
         tsa_sig_b64 = ""
 
     timestamp_verification = {
         'timestamp': now_iso,
-        'authority': 'RFC3161 Compatible Independent Timestamp Authority',
+        'authority': 'Legacy Local Timestamp Fixture',
         'keyId': tsa_key_id,
         'imprint': {
             'hashAlgorithm': 'SHA-256',
@@ -231,10 +196,10 @@ def generate_attestation_bundle(
     }
 
     bundle = {
-        'mediaType': 'application/vnd.dev.sigstore.bundle+json;version=0.2',
+        'mediaType': 'application/vnd.bionexus.legacy-local-integrity+json;version=1',
         'verificationMaterial': {
             'publicKey': {
-                'hint': 'bionexus-independent-root-2026',
+                'hint': 'UNTRUSTED_LOCAL_FIXTURE',
                 'keyPem': pub_pem,
                 'algorithm': 'Ed25519',
             },
@@ -253,8 +218,14 @@ def verify_attestation_bundle(
     rekor_public_key_pem: Optional[str] = None,
     tsa_public_key_pem: Optional[str] = None,
 ) -> Tuple[bool, List[str]]:
-    """Cryptographically verify In-toto statement, DSSE envelope signature, Rekor SET proof, and RFC 3161 TSA token."""
+    """Verify legacy integrity bytes only with three explicit caller-supplied keys."""
     errors: List[str] = []
+
+    if not public_key_pem or not rekor_public_key_pem or not tsa_public_key_pem:
+        return False, [
+            "Legacy bundle has no default trust anchors. Supply all three explicit public keys; "
+            "for scientific evidence use bionexus.evidence-attestation.v1."
+        ]
 
     try:
         dsse = bundle.get('dsseEnvelope', {})
@@ -272,7 +243,7 @@ def verify_attestation_bundle(
         vm = bundle.get('verificationMaterial', {})
 
         # Layer 1: DSSE Envelope Signature Verification
-        key_pem = public_key_pem or vm.get('publicKey', {}).get('keyPem', '') or TRUST_ANCHOR_AUTHORITY_PUBKEY_PEM
+        key_pem = public_key_pem
         if not key_pem:
             return False, ['Missing public key PEM']
 
@@ -304,13 +275,13 @@ def verify_attestation_bundle(
         except Exception as e:
             errors.append(f'Malformed statement payload: {e}')
 
-        # Layer 3: Rekor Transparency Log Signed Entry Timestamp (SET) Verification
+        # Layer 3: legacy log-shaped receipt integrity
         tlog_entries = vm.get('tlogEntries', [])
         if not tlog_entries:
             errors.append('Missing Rekor transparency log entries in verification material')
         else:
             entry = tlog_entries[0]
-            rekor_key_pem = rekor_public_key_pem or TRUST_ANCHOR_REKOR_PUBKEY_PEM
+            rekor_key_pem = rekor_public_key_pem
             expected_rekor_id = hashlib.sha256(rekor_key_pem.encode('utf-8')).hexdigest()
             actual_rekor_id = entry.get('logId', {}).get('keyId', '')
 
@@ -338,7 +309,7 @@ def verify_attestation_bundle(
                 except Exception as e:
                     errors.append(f'Rekor SET verification failure: {e}')
 
-        # Layer 4: RFC 3161 Timestamp Authority (TSA) Verification
+        # Layer 4: legacy timestamp-shaped receipt integrity
         ts_info = vm.get('timestampVerification', {})
         ts_str = ts_info.get('timestamp', '')
         if not ts_str:
@@ -366,13 +337,13 @@ def verify_attestation_bundle(
         else:
             try:
                 tsa_sig_bytes = base64.b64decode(tsa_sig_b64)
-                tsa_key_pem = tsa_public_key_pem or TRUST_ANCHOR_TSA_PUBKEY_PEM
+                tsa_key_pem = tsa_public_key_pem
                 tsa_pub = serialization.load_pem_public_key(tsa_key_pem.encode('ascii'))
                 if not isinstance(tsa_pub, ed25519.Ed25519PublicKey):
                     errors.append('TSA public key is not Ed25519')
                 else:
                     expected_tsa_payload = canonical_json_bytes({
-                        'authority': ts_info.get('authority', 'RFC3161 Compatible Independent Timestamp Authority'),
+                        'authority': ts_info.get('authority', 'Legacy Local Timestamp Fixture'),
                         'imprint_sha256': sig_digest,
                         'timestamp': ts_str,
                     })
@@ -396,7 +367,7 @@ def generate_verification_receipt(
     rekor_public_key_pem: Optional[str] = None,
     tsa_public_key_pem: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Generate a formal verification receipt recording verified trust anchors, Rekor log index, and TSA timestamp."""
+    """Generate a legacy local integrity receipt; it is not an evidence endorsement."""
     is_valid, errors = verify_attestation_bundle(
         bundle,
         expected_merkle_root=merkle_root,
@@ -405,7 +376,7 @@ def generate_verification_receipt(
         tsa_public_key_pem=tsa_public_key_pem,
     )
     vm = bundle.get('verificationMaterial', {})
-    key_pem = public_key_pem or vm.get('publicKey', {}).get('keyPem', TRUST_ANCHOR_AUTHORITY_PUBKEY_PEM)
+    key_pem = public_key_pem or ""
     tlog = vm.get('tlogEntries', [{}])[0]
     ts_info = vm.get('timestampVerification', {})
 
@@ -413,7 +384,7 @@ def generate_verification_receipt(
         'schema_version': 'bionexus.verification-receipt.v1',
         'study_id': study_id,
         'verified_at': datetime.now(timezone.utc).isoformat(),
-        'verification_status': 'VALID_VERIFIED' if is_valid else 'FAIL_VERIFICATION_FAILED',
+        'verification_status': 'LEGACY_INTEGRITY_VERIFIED_EXPLICIT_KEYS' if is_valid else 'FAIL_VERIFICATION_FAILED',
         'merkle_root_verified': merkle_root,
         'public_key_fingerprint': hashlib.sha256(key_pem.encode('utf-8')).hexdigest(),
         'rekor_transparency_log': {
@@ -428,7 +399,7 @@ def generate_verification_receipt(
         },
         'signature_verified': is_valid,
         'errors': errors,
-        'policy_compliance': 'PASS_FAIL_CLOSED_VERIFIED' if is_valid else 'FAIL_POLICY_VIOLATED',
+        'policy_compliance': 'LEGACY_INTEGRITY_ONLY' if is_valid else 'FAIL_POLICY_VIOLATED',
     }
 
 
@@ -439,7 +410,7 @@ def generate_rekor_transparency_proof(
     log_index: int = 4829104,
     timestamp_iso: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Generate standalone Rekor Transparency Log proof with signed entry timestamp and Merkle inclusion metadata."""
+    """Generate a Rekor-shaped local test fixture; no transparency log is contacted."""
     now_iso = timestamp_iso or datetime.now(timezone.utc).isoformat()
     rekor_priv = rekor_private_key or load_private_key_from_env("BIONEXUS_REKOR_PRIVATE_KEY_PEM")
     dsse_sha256 = canonical_json_sha256(dsse_envelope)
@@ -458,8 +429,8 @@ def generate_rekor_transparency_proof(
         rekor_raw_sig = rekor_priv.sign(rekor_payload)
         rekor_set_b64 = base64.b64encode(rekor_raw_sig).decode('ascii')
     else:
-        rekor_pub_pem = TRUST_ANCHOR_REKOR_PUBKEY_PEM
-        rekor_key_id = TRUST_ANCHORS['rekor_transparency_log']['fingerprint']
+        rekor_pub_pem = ""
+        rekor_key_id = ""
         rekor_set_b64 = ""
 
     leaf_hash = hashlib.sha256(dsse_sha256.encode('utf-8')).hexdigest()
@@ -485,7 +456,7 @@ def generate_rekor_transparency_proof(
             ],
         },
         'public_key_pem': rekor_pub_pem,
-        'verification_status': 'VERIFIED_INCLUDED',
+        'verification_status': 'UNTRUSTED_LOCAL_FIXTURE',
     }
 
 
@@ -495,7 +466,7 @@ def generate_tsa_timestamp_token(
     tsa_private_key: Optional[ed25519.Ed25519PrivateKey] = None,
     timestamp_iso: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Generate standalone RFC 3161 Timestamp Authority token cryptographically binding timestamp to signature imprint."""
+    """Generate a timestamp-shaped local test fixture; this is not RFC 3161."""
     now_iso = timestamp_iso or datetime.now(timezone.utc).isoformat()
     tsa_priv = tsa_private_key or load_private_key_from_env("BIONEXUS_TSA_PRIVATE_KEY_PEM")
     sig_digest = hashlib.sha256(raw_signature).hexdigest()
@@ -507,21 +478,21 @@ def generate_tsa_timestamp_token(
         ).decode('ascii')
         tsa_key_id = hashlib.sha256(tsa_pub_pem.encode('utf-8')).hexdigest()
         tsa_payload = canonical_json_bytes({
-            'authority': 'RFC3161 Compatible Independent Timestamp Authority',
+            'authority': 'Legacy Local Timestamp Fixture',
             'imprint_sha256': sig_digest,
             'timestamp': now_iso,
         })
         tsa_raw_sig = tsa_priv.sign(tsa_payload)
         tsa_sig_b64 = base64.b64encode(tsa_raw_sig).decode('ascii')
     else:
-        tsa_pub_pem = TRUST_ANCHOR_TSA_PUBKEY_PEM
-        tsa_key_id = TRUST_ANCHORS['timestamp_authority']['fingerprint']
+        tsa_pub_pem = ""
+        tsa_key_id = ""
         tsa_sig_b64 = ""
 
     return {
         'schema_version': 'bionexus.rfc3161-tsa-token.v1',
         'study_id': study_id,
-        'authority': 'RFC3161 Compatible Independent Timestamp Authority',
+        'authority': 'Legacy Local Timestamp Fixture',
         'key_id': tsa_key_id,
         'policy_oid': '1.3.6.1.4.1.58499.1.1.2026',
         'timestamp': now_iso,
@@ -529,7 +500,7 @@ def generate_tsa_timestamp_token(
         'imprint_digest': sig_digest,
         'tsa_signature': tsa_sig_b64,
         'public_key_pem': tsa_pub_pem,
-        'verification_status': 'VERIFIED_TIMESTAMP',
+        'verification_status': 'UNTRUSTED_LOCAL_FIXTURE',
     }
 
 
@@ -538,14 +509,16 @@ def verify_rekor_transparency_proof(
     dsse_envelope: Dict[str, Any],
     rekor_public_key_pem: Optional[str] = None,
 ) -> Tuple[bool, List[str]]:
-    """Cryptographically verify a standalone Rekor Transparency Proof against a DSSE envelope."""
+    """Verify a legacy log-shaped fixture with an explicit public key."""
     errors: List[str] = []
     try:
         dsse_sha256 = canonical_json_sha256(dsse_envelope)
         if proof.get('body_sha256') != dsse_sha256:
             errors.append(f"Rekor proof body_sha256 mismatch: expected {dsse_sha256}, got {proof.get('body_sha256')}")
 
-        key_pem = rekor_public_key_pem or proof.get('public_key_pem', '') or TRUST_ANCHOR_REKOR_PUBKEY_PEM
+        if not rekor_public_key_pem:
+            return False, ['No trusted Rekor public key was supplied explicitly']
+        key_pem = rekor_public_key_pem
         pub_key = serialization.load_pem_public_key(key_pem.encode('ascii'))
         if not isinstance(pub_key, ed25519.Ed25519PublicKey):
             return False, ['Rekor public key is not Ed25519']
@@ -574,14 +547,16 @@ def verify_tsa_timestamp_token(
     raw_signature: bytes,
     tsa_public_key_pem: Optional[str] = None,
 ) -> Tuple[bool, List[str]]:
-    """Cryptographically verify a standalone RFC 3161 TSA timestamp token against a signature imprint."""
+    """Verify a legacy timestamp-shaped fixture with an explicit public key."""
     errors: List[str] = []
     try:
         sig_digest = hashlib.sha256(raw_signature).hexdigest()
         if token.get('imprint_digest') != sig_digest:
             errors.append(f"TSA token imprint digest mismatch: expected {sig_digest}, got {token.get('imprint_digest')}")
 
-        key_pem = tsa_public_key_pem or token.get('public_key_pem', '') or TRUST_ANCHOR_TSA_PUBKEY_PEM
+        if not tsa_public_key_pem:
+            return False, ['No trusted TSA public key was supplied explicitly']
+        key_pem = tsa_public_key_pem
         pub_key = serialization.load_pem_public_key(key_pem.encode('ascii'))
         if not isinstance(pub_key, ed25519.Ed25519PublicKey):
             return False, ['TSA public key is not Ed25519']
@@ -592,7 +567,7 @@ def verify_tsa_timestamp_token(
 
         sig_bytes = base64.b64decode(sig_b64)
         expected_payload = canonical_json_bytes({
-            'authority': token.get('authority', 'RFC3161 Compatible Independent Timestamp Authority'),
+            'authority': token.get('authority', 'Legacy Local Timestamp Fixture'),
             'imprint_sha256': sig_digest,
             'timestamp': token.get('timestamp', ''),
         })
@@ -603,4 +578,4 @@ def verify_tsa_timestamp_token(
         errors.append(f'TSA timestamp token verification failure: {e}')
 
     return len(errors) == 0, errors
-
+

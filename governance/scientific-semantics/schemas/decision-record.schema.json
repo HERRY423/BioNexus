@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bionexus:scientific-semantics-decision-record-schema:1",
+  "type": "object",
+  "required": ["schema", "decision_id", "status", "decision_class", "title", "authority", "proposal_uri", "opened_at", "closed_at", "eligible_voters", "votes", "recusals", "formal_objections", "rationale", "source_commit"],
+  "properties": {
+    "schema": {"const": "urn:bionexus:scientific-semantics-decision-record:1"},
+    "decision_id": {"type": "string", "pattern": "^SSC-DEC-[0-9]{4}$"},
+    "status": {"enum": ["proposed", "accepted", "rejected", "remanded", "withdrawn", "invalidated"]},
+    "decision_class": {"enum": ["routine", "breaking", "stability", "namespace", "governance", "emergency_security"]},
+    "title": {"type": "string", "minLength": 1},
+    "authority": {"enum": ["scientific_semantics_council", "interim_draft_stewards"]},
+    "proposal_uri": {"type": "string", "format": "uri"},
+    "opened_at": {"type": "string", "format": "date-time"},
+    "closed_at": {"type": ["string", "null"], "format": "date-time"},
+    "eligible_voters": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "votes": {"type": "array", "items": {"type": "object"}},
+    "recusals": {"type": "array", "items": {"type": "object"}},
+    "formal_objections": {"type": "array", "items": {"type": "object"}},
+    "rationale": {"type": "string"},
+    "source_commit": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40,64}$"}
+  },
+  "additionalProperties": false
+}

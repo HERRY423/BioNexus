@@ -114,7 +114,10 @@ def validate_independent_biostatistician_attestation(
         payload = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         return [f"independent biostatistician attestation is unreadable: {type(exc).__name__}: {exc}"]
-    issues: list[str] = []
+    issues: list[str] = [
+        "legacy reviewer JSON cannot establish independent trust; verification requires "
+        "bionexus.evidence-attestation.v1, an explicit trust registry, and revocation checks"
+    ]
     if payload.get("schema_version") != "bionexus.independent-biostatistician-attestation.v1":
         issues.append("unsupported independent biostatistician attestation schema")
     if payload.get("status") != "SIGNED_COMPLETE":

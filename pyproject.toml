@@ -39,7 +39,8 @@ dependencies = [
     "pyyaml>=6.0,<7.0",
     "tqdm>=4.65.0,<5.0.0",
     "jsonschema>=4.17.0,<6.0.0",
-    "scikit-learn>=1.2.0"
+    "scikit-learn>=1.2.0",
+    "cryptography>=41.0.0,<50.0.0"
 ]
 
 [project.optional-dependencies]
@@ -107,6 +108,9 @@ all = [
 
 [project.scripts]
 bionexus = "bionexus.cli:main"
+bctk = "bionexus.bctk.cli:main"
+bionexus-evidence-verify = "bionexus.trust_cli:main"
+bionexus-spatial-gold = "bionexus.spatial_gold_cli:main"
 
 [tool.setuptools.packages.find]
 
@@ -146,4 +150,3 @@ ignore = ["E501"]
 "scripts/**/*.py" = ["E402"]
 "tests/**/*.py" = ["E402"]
 "evals/**/*.py" = ["E402"]
-

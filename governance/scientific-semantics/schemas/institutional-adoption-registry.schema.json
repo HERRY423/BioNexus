@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bionexus:scientific-semantics-institutional-adoption-registry-schema:1",
+  "type": "object",
+  "required": ["schema", "governance_id", "verified_active_organization_count", "declarations"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "schema": {"const": "urn:bionexus:scientific-semantics-institutional-adoption-registry:1"},
+    "governance_id": {"const": "BNS-SSC-GOV-001"},
+    "verified_active_organization_count": {"type": "integer", "minimum": 0},
+    "declarations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "required": ["declaration_id", "organization", "role", "status", "declaration_path", "expires_on"],
+        "properties": {
+          "declaration_id": {"type": "string", "pattern": "^SSC-ADOPT-[0-9]{4}$"},
+          "organization": {"type": "string", "minLength": 1},
+          "role": {"enum": ["experimental_implementer", "production_producer", "production_consumer", "standards_liaison"]},
+          "status": {"enum": ["active", "expired", "withdrawn", "revoked"]},
+          "declaration_path": {"type": "string", "pattern": "^adopters/[a-z0-9._-]+\\.json$"},
+          "expires_on": {"type": "string", "format": "date"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

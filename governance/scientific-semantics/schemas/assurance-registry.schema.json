@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bionexus:scientific-semantics-assurance-registry-schema:1",
+  "type": "object",
+  "required": ["schema", "governance_id", "status", "badge_issuance_enabled", "recognized_assessment_bodies", "certificates"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "schema": {"const": "urn:bionexus:scientific-semantics-assurance-registry:1"},
+    "governance_id": {"const": "BNS-SSC-GOV-001"},
+    "status": {"enum": ["SUSPENDED_NO_INDEPENDENT_BODY", "OPERATIONAL"]},
+    "badge_issuance_enabled": {"type": "boolean"},
+    "recognized_assessment_bodies": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "required": ["body_id", "name", "status", "record_path"],
+        "properties": {
+          "body_id": {"type": "string", "pattern": "^SSC-CAB-[0-9]{4}$"},
+          "name": {"type": "string", "minLength": 1},
+          "status": {"enum": ["recognized", "suspended", "withdrawn"]},
+          "record_path": {"type": "string", "pattern": "^assurance-bodies/[a-z0-9._-]+\\.json$"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "certificates": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "required": ["certificate_id", "body_id", "subject", "status", "record_uri", "artifact_sha256"],
+        "properties": {
+          "certificate_id": {"type": "string", "pattern": "^SSC-CERT-[0-9]{6}$"},
+          "body_id": {"type": "string", "pattern": "^SSC-CAB-[0-9]{4}$"},
+          "subject": {"type": "string", "minLength": 1},
+          "status": {"enum": ["active", "suspended", "expired", "revoked"]},
+          "record_uri": {"type": "string", "format": "uri"},
+          "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

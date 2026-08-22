@@ -1,8 +1,8 @@
 {
-  "mediaType": "application/vnd.dev.sigstore.bundle+json;version=0.2",
+  "mediaType": "application/vnd.bionexus.legacy-local-integrity+json;version=1",
   "verificationMaterial": {
     "publicKey": {
-      "hint": "bionexus-independent-root-2026",
+      "hint": "UNTRUSTED_LOCAL_FIXTURE",
       "keyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAYczzcqY4HCCdTfYrD3ua98ltI7sx3fD3Nig5JoYaVFY=\n-----END PUBLIC KEY-----\n",
       "algorithm": "Ed25519"
     },
@@ -20,7 +20,7 @@
     ],
     "timestampVerification": {
       "timestamp": "2026-08-21T09:43:37.893454+00:00",
-      "authority": "RFC3161 Compatible Independent Timestamp Authority",
+      "authority": "Legacy Local Timestamp Fixture",
       "keyId": "e30982dacfe44adbc0f2b6bd3319034a3dea849b7fa5a11d5e0f72ceed8d8109",
       "imprint": {
         "hashAlgorithm": "SHA-256",
@@ -34,7 +34,7 @@
     "payloadType": "application/vnd.in-toto+json",
     "signatures": [
       {
-        "keyid": "bionexus-independent-root-2026",
+        "keyid": "UNTRUSTED_LOCAL_FIXTURE",
         "sig": "nDBPMQRPvOwyiDEmBe//6PkHYXycr6CO685h6rDRYFBBKErdxzLRj/gffNJc47/UYEP4Cmb2oQMPDt0r0DguCA=="
       }
     ]

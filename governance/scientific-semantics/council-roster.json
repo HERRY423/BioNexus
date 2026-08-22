@@ -1,0 +1,20 @@
+{
+  "$schema": "schemas/council-roster.schema.json",
+  "schema": "urn:bionexus:scientific-semantics-council-roster:1",
+  "governance_id": "BNS-SSC-GOV-001",
+  "status": "FORMING",
+  "independence_claim": "NOT_YET_ESTABLISHED",
+  "chair_member_id": null,
+  "selection_observer_ids": [],
+  "members": [],
+  "formation_gate_status": "NOT_MET",
+  "unmet_gates": [
+    "minimum_voting_seats",
+    "minimum_non_bionexus_fraction",
+    "representation_mix",
+    "independent_chair",
+    "public_current_disclosures",
+    "independent_selection_observers",
+    "public_nomination_period"
+  ]
+}

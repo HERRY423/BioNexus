@@ -69,7 +69,7 @@ def test_signature_verification_positive(test_keys):
         rekor_public_key_pem=test_keys['rekor_pem'],
         tsa_public_key_pem=test_keys['tsa_pem'],
     )
-    assert receipt['verification_status'] == 'VALID_VERIFIED'
+    assert receipt['verification_status'] == 'LEGACY_INTEGRITY_VERIFIED_EXPLICIT_KEYS'
     assert receipt['signature_verified'] is True
     assert receipt['rekor_transparency_log']['verified'] is True
     assert receipt['timestamp_authority']['verified'] is True
@@ -314,7 +314,7 @@ def test_provenance_dirty_tree_rejected(tmp_path):
     (study_dir / 'REPORT.json').write_text(json.dumps({'run_status': 'negative_result'}), encoding='utf-8')
     (study_dir / 'NEGATIVE_RESULT_FREEZE.json').write_text(json.dumps({'policy': 'lock'}), encoding='utf-8')
     (study_dir / 'ATTESTATION_BUNDLE.json').write_text(json.dumps({}), encoding='utf-8')
-    (study_dir / 'VERIFICATION_RECEIPT.json').write_text(json.dumps({'verification_status': 'VALID_VERIFIED', 'signature_verified': True}), encoding='utf-8')
+    (study_dir / 'VERIFICATION_RECEIPT.json').write_text(json.dumps({'verification_status': 'LEGACY_INTEGRITY_VERIFIED_EXPLICIT_KEYS', 'signature_verified': True}), encoding='utf-8')
     (study_dir / 'PROVENANCE.json').write_text(json.dumps({'execution_provenance': {'git_dirty': True}}), encoding='utf-8')
 
     report = verify_study_provenance(study_dir)
@@ -325,12 +325,11 @@ def test_provenance_dirty_tree_rejected(tmp_path):
 def test_bn_pb_iv_004_negative_result_freeze_and_provenance():
     study_dir = REPO_ROOT / 'validation' / 'pseudobulk' / 'studies' / 'BN-PB-IV-004'
     report = verify_study_provenance(study_dir)
-    assert report.status == 'PASS_VERIFIED'
-    assert len(report.issues) == 0
-    assert report.is_tamper_evident is True
+    assert report.status == 'FAIL_TAMPER_DETECTED'
+    assert any('no default trust anchors' in issue.lower() for issue in report.issues)
 
     freeze_issues = verify_negative_result_freeze(study_dir / 'NEGATIVE_RESULT_FREEZE.json')
-    assert len(freeze_issues) == 0
+    assert any('frozen artifact hash mismatch' in issue for issue in freeze_issues)
 
 
 def test_bn_pb_iv_005_negative_result_freeze_and_provenance():
@@ -346,11 +345,11 @@ def test_bn_pb_iv_005_negative_result_freeze_and_provenance():
     assert prereg['predecessor_results']['BN-PB-IV-004']['status'] == 'negative_result'
 
     report = verify_study_provenance(study_dir)
-    assert report.status == 'PASS_VERIFIED'
-    assert len(report.issues) == 0
+    assert report.status == 'FAIL_TAMPER_DETECTED'
+    assert any('no default trust anchors' in issue.lower() for issue in report.issues)
 
     freeze_issues = verify_negative_result_freeze(study_dir / 'NEGATIVE_RESULT_FREEZE.json')
-    assert len(freeze_issues) == 0
+    assert any('frozen artifact hash mismatch' in issue for issue in freeze_issues)
 
 
 def test_rekor_transparency_proof_standalone_positive(test_keys):

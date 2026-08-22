@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bionexus:scientific-semantics-council-roster-schema:1",
+  "type": "object",
+  "required": ["schema", "governance_id", "status", "independence_claim", "chair_member_id", "selection_observer_ids", "members", "formation_gate_status", "unmet_gates"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "schema": {"const": "urn:bionexus:scientific-semantics-council-roster:1"},
+    "governance_id": {"const": "BNS-SSC-GOV-001"},
+    "status": {"enum": ["FORMING", "ACTIVE_INDEPENDENT", "SUSPENDED"]},
+    "independence_claim": {"enum": ["NOT_YET_ESTABLISHED", "INDEPENDENT_GATES_VERIFIED", "SUSPENDED"]},
+    "chair_member_id": {"type": ["string", "null"]},
+    "selection_observer_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "nomination_opened_on": {"type": "string", "format": "date"},
+    "nomination_closed_on": {"type": "string", "format": "date"},
+    "members": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "required": ["member_id", "name", "employer_group", "bionexus_affiliated", "commercial_vendor_affiliated", "representations", "voting", "term_start", "term_end", "disclosure_path", "disclosure_current"],
+        "properties": {
+          "member_id": {"type": "string", "pattern": "^SSC-M-[0-9]{4}$"},
+          "name": {"type": "string", "minLength": 1},
+          "employer_group": {"type": "string", "minLength": 1},
+          "bionexus_affiliated": {"type": "boolean"},
+          "commercial_vendor_affiliated": {"type": "boolean"},
+          "representations": {"type": "array", "uniqueItems": true, "items": {"enum": ["institutional_end_user", "implementation_interoperability", "statistics_methods", "ontology_data_stewardship", "other"]}},
+          "voting": {"type": "boolean"},
+          "term_start": {"type": "string", "format": "date"},
+          "term_end": {"type": "string", "format": "date"},
+          "disclosure_path": {"type": "string", "pattern": "^disclosures/[a-z0-9._-]+\\.json$"},
+          "disclosure_current": {"type": "boolean"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "formation_gate_status": {"enum": ["NOT_MET", "MET", "SUSPENDED"]},
+    "unmet_gates": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

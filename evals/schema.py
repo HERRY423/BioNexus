@@ -164,6 +164,7 @@ class BenchmarkReport:
     union_total: int = 0
     union_passed: int = 0
     union_accuracy: float = 0.0
+    audit_receipt_hash: Optional[str] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return {
