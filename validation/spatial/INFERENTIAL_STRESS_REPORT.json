@@ -7,7 +7,7 @@
   "provenance": {
     "data_source": "synthetic_generator (in-silico manufactured spatial slice)",
     "download_date": "2026-08-22T03:13:47.213262+00:00",
-    "commit_sha": "20586eff06d0f3a21d8e693dbc75f3f0dae90b42",
+    "commit_sha": "225a9e60d760f2bc454a4af741018ab9e99b8e6b",
     "git_dirty": false,
     "environment_lockfile_hashes": {
       "pyproject.toml": "b29c5b3f2a3a931e78f701a16c982330d4d74398e3a71d994cd027a84284df24",
@@ -29,7 +29,7 @@
     },
     "repository_dirty_at_execution": false,
     "validation_source_dirty": false,
-    "source_snapshot_sha256": "55f5af5fdc514eedc7dafc05fd9b0f60b026625591e2e6b2c2a43d2487c61dc0"
+    "source_snapshot_sha256": "faba6299efd9174087c14e293f63d3619870caae742450a0f8204f8faabea24d"
   },
   "timestamp": "2026-08-22T03:13:56.005269+00:00",
   "elapsed_seconds": 8.86,
