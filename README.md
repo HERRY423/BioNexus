@@ -141,7 +141,7 @@ See the full [BCTK Developer Guide](docs/CONFORMANCE_TEST_KIT.md) and [BNS-020 S
 
 ---
 
-## 💳 Evidence Debt (证据债务) — Project-Wide Reliability Accounting
+## 💳 Evidence Debt  — Project-Wide Reliability Accounting
 
 In software engineering, teams manage **Technical Debt** rather than publishing an arbitrary *"Code Quality: 83%"*.
 
