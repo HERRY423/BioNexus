@@ -228,6 +228,8 @@ def test_mcp_host_probe_records_server_receipt(tmp_path, monkeypatch):
 
     from mcp_host_audit import verify_audit_log
 
+    from bionexus.versions import PLUGIN_VERSION
+
     audit_path = tmp_path / "mcp-audit.jsonl"
     monkeypatch.setenv("BIONEXUS_MCP_AUDIT_LOG", str(audit_path))
 
@@ -260,6 +262,7 @@ def test_mcp_host_probe_records_server_receipt(tmp_path, monkeypatch):
     assert payload["receipt_event_hash"] == events[0]["event_hash"]
     assert events[0]["host_name"] == "antigravity"
     assert events[0]["human_approved"] is True
+    assert events[0]["plugin_version"] == PLUGIN_VERSION
 
 
 def test_mcp_host_probe_fails_closed_without_audit_log(monkeypatch):
@@ -288,3 +291,74 @@ def test_mcp_host_probe_fails_closed_without_audit_log(monkeypatch):
     resp = asyncio.run(_run())
     assert resp["result"]["isError"] is True
     assert "BIONEXUS_MCP_AUDIT_LOG" in resp["result"]["content"][0]["text"]
+
+
+def test_mcp_warrant_check_propagates_governing_refusal_into_tiers():
+    """A tier-only consumer must not receive positive authorization under NEEDS_DATA."""
+    import json
+
+    async def _run():
+        req = {
+            "jsonrpc": "2.0",
+            "id": "clinical-warrant-fail-closed",
+            "method": "tools/call",
+            "params": {
+                "name": "bionexus_warrant_check",
+                "arguments": {
+                    "query": "Use this signature to provide a definitive clinical diagnosis for patients.",
+                    "research_purpose": "clinical",
+                    "data_metadata": {
+                        "clinical_ground_truth": False,
+                        "independent_validation": False,
+                        "regulatory_certification": True,
+                    },
+                },
+            },
+        }
+        return await handle_rpc_request_async(req)
+
+    resp = asyncio.run(_run())
+    payload = json.loads(resp["result"]["content"][0]["text"])
+    warrant = payload["claim_warrant_evaluation"]
+
+    assert payload["status"] == "NEEDS_DATA"
+    assert warrant["governing_status"] == "NEEDS_DATA"
+    assert warrant["is_fully_warranted"] is False
+    assert warrant["evidence_ceiling"] == "ABSTAIN"
+    assert warrant["tier_verdicts"]["clinical_claim"]["status"] == "NOT_WARRANTED"
+    assert all(tier["status"] != "WARRANTED" for tier in warrant["tier_verdicts"].values())
+
+
+def test_mcp_warrant_check_does_not_treat_string_false_as_evidence():
+    """String values such as 'false' must not become truthy scientific facts."""
+    import json
+
+    async def _run():
+        req = {
+            "jsonrpc": "2.0",
+            "id": "strict-evidence-booleans",
+            "method": "tools/call",
+            "params": {
+                "name": "bionexus_warrant_check",
+                "arguments": {
+                    "query": "This signature provides definitive clinical diagnosis for patients.",
+                    "data_metadata": {
+                        "clinical_ground_truth": "false",
+                        "independent_validation": "false",
+                        "regulatory_certification": "false",
+                    },
+                },
+            },
+        }
+        return await handle_rpc_request_async(req)
+
+    resp = asyncio.run(_run())
+    payload = json.loads(resp["result"]["content"][0]["text"])
+    clinical = payload["claim_warrant_evaluation"]["tier_verdicts"]["clinical_claim"]
+
+    assert clinical["status"] == "NOT_WARRANTED"
+    assert set(clinical["missing_evidence"]) == {
+        "clia_cap_fda_certification",
+        "clinical_ground_truth",
+        "independent_validation",
+    }

@@ -111,6 +111,7 @@ class WarrantTierStatus(str, Enum):
     WARRANTED_WITH_LIMITS = "WARRANTED_WITH_LIMITS"
     NOT_WARRANTED = "NOT_WARRANTED"
     PROHIBITED = "PROHIBITED"
+    NOT_ASSESSED = "NOT_ASSESSED"
     NOT_APPLICABLE = "NOT_APPLICABLE"
 
 
@@ -193,6 +194,7 @@ class EvidenceProfile:
     confound_controls: List[str] = field(default_factory=list)  # ["donor", "batch", "cell_cycle"]
     causal_identification_status: str = "UNASSESSED"  # "BACKDOOR_SATISFIED" | "UNBLOCKED_BACKDOOR" | "COLLIDER_BIAS"
     reference_ground_truth: bool = False  # Verified cell atlas / reference panel
+    clinical_ground_truth: bool = False  # Verified clinical endpoint/diagnosis bound to the intended use
     regulatory_certification: bool = False  # CLIA/CAP / FDA Part 11 certified
     ruo_disclaimer_present: bool = False  # Research Use Only disclaimer
     cross_method_concordance: bool = False  # Agreement across alternative tools
@@ -237,6 +239,7 @@ class WarrantEvaluationResult:
     remedies: List[str] = field(default_factory=list)
     rule_violations: List[str] = field(default_factory=list)
     epistemic_summary: str = ""
+    governing_status: Optional[str] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -250,6 +253,7 @@ class WarrantEvaluationResult:
             "remedies": self.remedies,
             "rule_violations": self.rule_violations,
             "epistemic_summary": self.epistemic_summary,
+            "governing_status": self.governing_status,
         }
 
 
@@ -798,7 +802,9 @@ class DeterministicWarrantEngine:
         # ----------------------------------------------------------------------
         # Tier 3: Mechanistic Warrant
         # ----------------------------------------------------------------------
-        # Mechanistic claims assert molecular/cellular cascades (e.g. CD8 T cells drive macrophage polarization)
+        # Mechanistic claims assert molecular/cellular cascades (e.g. CD8 T cells drive macrophage polarization).
+        # Temporal ordering may strengthen a mechanism, but cannot substitute for
+        # an intervention when issuing a positive mechanistic warrant.
         mech_warranted = True
         mech_gaps = []
         is_mechanistic_requested = (
@@ -809,15 +815,19 @@ class DeterministicWarrantEngine:
         )
 
         if is_mechanistic_requested:
-            # Requires: (Spatial + L-R + (Perturbation OR Temporal)) OR (Ground Truth Reference + Perturbation)
-            has_functional_proof = ev.perturbation or ev.temporal_evidence
+            # A positive mechanistic warrant requires an actual functional
+            # perturbation. Temporal kinetics alone remain supportive evidence.
+            has_functional_proof = ev.perturbation
             if not has_functional_proof:
                 mech_warranted = False
-                mech_gaps.extend(["perturbation_functional_assay", "temporal_kinetics"])
+                mech_gaps.append("perturbation_functional_assay")
+                if not ev.temporal_evidence:
+                    mech_gaps.append("temporal_kinetics")
                 evidence_gaps.append("missing_functional_perturbation")
                 remedies.append(
                     f"Mechanistic claim '{claim.subject_entity.name} -> {claim.object_entity.name if claim.object_entity else 'phenotype'}' "
-                    "requires experimental perturbation (CRISPR/knockdown/rescue) or longitudinal time-series kinetics. "
+                    "requires experimental perturbation (CRISPR/knockdown/rescue); longitudinal time-series kinetics "
+                    "may support but cannot replace the intervention. "
                     "Spatial colocalization and ligand-receptor co-expression establish spatial association, not directional mechanism."
                 )
 
@@ -934,8 +944,19 @@ class DeterministicWarrantEngine:
             if not ev.regulatory_certification:
                 clinical_warranted = False
                 clinical_gaps.append("clia_cap_fda_certification")
+                evidence_gaps.append("missing_regulatory_certification")
+            if not ev.clinical_ground_truth:
+                clinical_warranted = False
+                clinical_gaps.append("clinical_ground_truth")
+                evidence_gaps.append("missing_clinical_ground_truth")
+            if not ev.independent_validation:
+                clinical_warranted = False
+                clinical_gaps.append("independent_validation")
+                evidence_gaps.append("missing_independent_validation")
+            if not clinical_warranted:
                 rule_violations.append(
-                    "REGULATORY_COMPLIANCE_OVERCLAIM: Diagnostic or treatment recommendation emitted on research-use-only platform."
+                    "REGULATORY_COMPLIANCE_OVERCLAIM: Diagnostic or treatment recommendation lacks regulatory "
+                    "certification, intended-use clinical ground truth, or independent validation."
                 )
                 remedies.append(
                     "Include mandatory Research Use Only (RUO) disclaimer and restrict output to basic scientific exploration."
@@ -951,11 +972,11 @@ class DeterministicWarrantEngine:
                 else WarrantTierStatus.NOT_WARRANTED
             ),
             is_warranted=clinical_warranted if clinical_requested else False,
-            rationale="Clinical certification verified."
+            rationale="Clinical certification, intended-use ground truth, and independent validation verified."
             if clinical_requested and clinical_warranted
             else "A clinical actionability claim was not requested."
             if not clinical_requested
-            else "Clinical actionability prohibited on research-grade pipeline.",
+            else "Clinical actionability is not warranted without certification, clinical ground truth, and independent validation.",
             missing_evidence=clinical_gaps,
         )
 
@@ -1035,6 +1056,59 @@ class DeterministicWarrantEngine:
             rule_violations=rule_violations,
             epistemic_summary=summary,
         )
+
+
+_NON_AUTHORIZING_GOVERNING_STATUSES = {
+    "ABSTAIN",
+    "NEEDS_DATA",
+    "EXPERIMENTAL_CAPABILITY_REQUIRES_OPT_IN",
+}
+
+
+def enforce_governing_status(
+    evaluation: WarrantEvaluationResult,
+    governing_status: str,
+) -> WarrantEvaluationResult:
+    """Make a non-authorizing top-level route fail closed inside tier verdicts.
+
+    Some consumers read only ``tier_verdicts``. Therefore a top-level refusal
+    cannot coexist with a positive tier that those consumers could mistake for
+    authorization. Existing negative and not-applicable tiers are preserved;
+    positive tiers become explicitly ``NOT_ASSESSED`` because the governing
+    preconditions prevented an authorizing assessment.
+    """
+
+    normalized = str(getattr(governing_status, "value", governing_status)).upper()
+    evaluation.governing_status = normalized
+    if normalized not in _NON_AUTHORIZING_GOVERNING_STATUSES:
+        return evaluation
+
+    for verdict in evaluation.tier_verdicts.values():
+        if verdict.status in (
+            WarrantTierStatus.WARRANTED,
+            WarrantTierStatus.WARRANTED_WITH_LIMITS,
+        ):
+            verdict.status = WarrantTierStatus.NOT_ASSESSED
+            verdict.is_warranted = False
+            verdict.rationale = (
+                f"Not authoritatively assessed because the governing route returned {normalized}. "
+                "Resolve the top-level refusal or missing-data state before using this tier."
+            )
+            if "governing_route_authorization" not in verdict.missing_evidence:
+                verdict.missing_evidence.append("governing_route_authorization")
+
+    evaluation.is_fully_warranted = False
+    evaluation.warranted_claim_class = ClaimClass.DESCRIPTIVE.value
+    evaluation.evidence_ceiling = ConclusionMaturity.ABSTAIN.value
+    gap = f"governing_status_{normalized.lower()}"
+    if gap not in evaluation.evidence_gaps:
+        evaluation.evidence_gaps.append(gap)
+        evaluation.evidence_gaps.sort()
+    evaluation.epistemic_summary = (
+        f"Claim '{evaluation.claim_id}' is not scientifically authorized: governing status {normalized}. "
+        "Positive tier verdicts were replaced with NOT_ASSESSED; existing negative and not-applicable verdicts remain visible."
+    )
+    return evaluation
 
 
 # ==============================================================================

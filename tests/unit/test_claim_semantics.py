@@ -35,6 +35,7 @@ from bionexus.claim_semantics import (
     GeneralizationScope,
     MechanismDepth,
     WarrantTierStatus,
+    enforce_governing_status,
 )
 from bionexus.cli import main as cli_main
 from bionexus.contracts import ConclusionMaturity
@@ -209,6 +210,74 @@ def test_clinical_actionability_firewall():
 
     assert verdict.tier_verdicts["clinical_claim"].status == WarrantTierStatus.NOT_WARRANTED
     assert any("REGULATORY_COMPLIANCE_OVERCLAIM" in v for v in verdict.rule_violations)
+
+
+def test_clinical_warrant_requires_ground_truth_and_independent_validation():
+    """Regulatory configuration alone must never authorize a clinical claim."""
+    ir = DeterministicClaimParser.parse(
+        "This gene expression signature provides definitive clinical diagnosis for patients."
+    )
+
+    incomplete = DeterministicWarrantEngine.evaluate(
+        ir,
+        EvidenceProfile(
+            regulatory_certification=True,
+            clinical_ground_truth=False,
+            independent_validation=False,
+        ),
+    )
+
+    tier = incomplete.tier_verdicts["clinical_claim"]
+    assert tier.status == WarrantTierStatus.NOT_WARRANTED
+    assert tier.is_warranted is False
+    assert set(tier.missing_evidence) == {"clinical_ground_truth", "independent_validation"}
+    assert "missing_clinical_ground_truth" in incomplete.evidence_gaps
+    assert "missing_independent_validation" in incomplete.evidence_gaps
+
+    complete = DeterministicWarrantEngine.evaluate(
+        ir,
+        EvidenceProfile(
+            regulatory_certification=True,
+            clinical_ground_truth=True,
+            independent_validation=True,
+        ),
+    )
+    assert complete.tier_verdicts["clinical_claim"].status == WarrantTierStatus.WARRANTED
+
+
+def test_temporal_evidence_cannot_replace_mechanistic_perturbation():
+    """A temporal series may support but cannot independently warrant mechanism."""
+    ir = DeterministicClaimParser.parse("CXCL13+ CD8 T cells drive macrophage polarization in NSCLC.")
+    verdict = DeterministicWarrantEngine.evaluate(
+        ir,
+        EvidenceProfile(
+            observational_data=True,
+            temporal_evidence=True,
+            perturbation=False,
+            biological_replicates_count=4,
+            pseudobulk_aggregated=True,
+        ),
+    )
+
+    tier = verdict.tier_verdicts["mechanistic_claim"]
+    assert tier.status == WarrantTierStatus.NOT_WARRANTED
+    assert "perturbation_functional_assay" in tier.missing_evidence
+    assert "temporal_kinetics" not in tier.missing_evidence
+
+
+def test_non_authorizing_governing_status_removes_positive_tier_authority():
+    """Tier-only consumers must not see WARRANTED under NEEDS_DATA/ABSTAIN."""
+    ir = DeterministicClaimParser.parse("TP53 is associated with DNA damage response.")
+    verdict = DeterministicWarrantEngine.evaluate(ir, EvidenceProfile(observational_data=True))
+
+    enforce_governing_status(verdict, "NEEDS_DATA")
+
+    assert verdict.governing_status == "NEEDS_DATA"
+    assert verdict.is_fully_warranted is False
+    assert verdict.evidence_ceiling == ConclusionMaturity.ABSTAIN.value
+    assert verdict.tier_verdicts["association_claim"].status == WarrantTierStatus.NOT_ASSESSED
+    assert verdict.tier_verdicts["association_claim"].is_warranted is False
+    assert all(tier.status != WarrantTierStatus.WARRANTED for tier in verdict.tier_verdicts.values())
 
 
 def test_ledger_semantic_claim_resolution():

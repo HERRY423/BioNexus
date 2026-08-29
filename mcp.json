@@ -5,7 +5,9 @@
       "type": "stdio",
       "command": "python",
       "args": [
-        "${PLUGIN_ROOT}/scripts/local_mcp_server.py"
+        "${PLUGIN_ROOT}/scripts/local_mcp_server.py",
+        "--audit-log",
+        "${PLUGIN_ROOT}/.bionexus-audit/mcp-host-audit.jsonl"
       ],
       "cwd": "${PLUGIN_ROOT}"
     }

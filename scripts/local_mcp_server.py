@@ -47,6 +47,7 @@ except ImportError:
     default_local_cache = None
 
 from bionexus.egress_guard import guarded_urlopen
+from bionexus.versions import PLUGIN_VERSION
 
 try:
     from mcp.server.fastmcp import FastMCP
@@ -61,7 +62,6 @@ logger = logging.getLogger("BioNexusMCP")
 logger.setLevel(logging.INFO)
 
 SERVER_VERSION = "2.1.0"
-PLUGIN_VERSION = "1.0.0-rc.1"
 
 # Use file handler only to keep stdout clean for JSON-RPC
 try:
@@ -1227,21 +1227,34 @@ async def tool_bionexus_warrant_check(
 
     # Attach Scientific Claim IR and Epistemic Warrant Evaluation (BNS-017)
     try:
-        from bionexus.claim_semantics import DeterministicClaimParser, DeterministicWarrantEngine, EvidenceProfile
+        from bionexus.claim_semantics import (
+            DeterministicClaimParser,
+            DeterministicWarrantEngine,
+            EvidenceProfile,
+            enforce_governing_status,
+        )
 
         meta = data_metadata or {}
+
+        def _declared_true(*keys: str) -> bool:
+            """Only a JSON boolean true may activate an evidence fact."""
+            return any(meta.get(key) is True for key in keys)
+
         ev_prof = EvidenceProfile(
-            spatial_colocalization=bool(meta.get("has_spatial_coords") or meta.get("spatial_colocalization")),
-            ligand_receptor_inference=bool(meta.get("ligand_receptor_inference")),
-            perturbation=bool(meta.get("perturbation") or meta.get("is_perturbation")),
-            temporal_evidence=bool(meta.get("temporal_evidence") or meta.get("time_series")),
+            spatial_colocalization=_declared_true("has_spatial_coords", "spatial_colocalization"),
+            ligand_receptor_inference=_declared_true("ligand_receptor_inference"),
+            perturbation=_declared_true("perturbation", "is_perturbation"),
+            temporal_evidence=_declared_true("temporal_evidence", "time_series"),
             biological_replicates_count=int(meta.get("num_donors") or meta.get("biological_replicates") or 0),
-            pseudobulk_aggregated=bool(meta.get("pseudobulk_aggregated") or meta.get("is_pseudobulk")),
-            reference_ground_truth=bool(meta.get("reference_ground_truth")),
-            regulatory_certification=bool(meta.get("regulatory_certification")),
+            pseudobulk_aggregated=_declared_true("pseudobulk_aggregated", "is_pseudobulk"),
+            independent_validation=_declared_true("independent_validation"),
+            reference_ground_truth=_declared_true("reference_ground_truth"),
+            clinical_ground_truth=_declared_true("clinical_ground_truth"),
+            regulatory_certification=_declared_true("regulatory_certification"),
         )
         claim_ir = DeterministicClaimParser.parse(query)
         w_eval = DeterministicWarrantEngine.evaluate(claim_ir, ev_prof)
+        enforce_governing_status(w_eval, decision.status.value)
         payload["scientific_claim_ir"] = claim_ir.to_dict()
         payload["claim_warrant_evaluation"] = w_eval.to_dict()
     except Exception:
@@ -1697,7 +1710,9 @@ TOOLS_SCHEMA = [
                     "type": "object",
                     "description": (
                         "Optional dataset facts the router can check without file access, "
-                        "e.g. {'donors_per_condition': 2, 'conditions': 2, 'has_spatial_coords': false}."
+                        "e.g. {'donors_per_condition': 2, 'conditions': 2, 'has_spatial_coords': false}. "
+                        "Clinical authorization facts are independent_validation, clinical_ground_truth, "
+                        "and regulatory_certification; omitted values fail closed."
                     ),
                 },
                 "research_purpose": {

@@ -36,7 +36,7 @@
     "provenance": {
       "data_source": "YosefLab/scVI-data processed public 10x PBMC 10k and PBMC 5k CITE-seq datasets used by the official scvi-tools totalVI tutorials",
       "download_date": "2026-08-28",
-      "commit_sha": "c8622075dd1461f8936391304dc1348f1b3b5e31",
+      "commit_sha": "276359b0dc38b98729ff484deefaf61e8a551d44",
       "git_dirty": false,
       "environment_lockfile_hashes": {
         "pyproject.toml": "a1fc0fd54da675b8ae8caea63c2a18dde07d31a956a56600c5d3735c32548063",
@@ -58,7 +58,7 @@
       },
       "repository_dirty_at_execution": false,
       "validation_source_dirty": false,
-      "source_snapshot_sha256": "49c19f3dbadebf91ec30e4dafb2e7e692add4decf716b198a9627b099b21e34e"
+      "source_snapshot_sha256": "acf5e5303f1ef497bdab0cbdc2b562970702ca3dca93ea902dbaefd28f6a35a6"
     }
   },
   "metrics": [

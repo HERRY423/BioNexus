@@ -69,6 +69,10 @@ def test_generate_agent_plugins_manifests():
     servers = mcp_json["mcpServers"]
     assert "bionexus-local-mcp" in servers
     assert servers["bionexus-local-mcp"]["type"] == "stdio"
+    assert servers["bionexus-local-mcp"]["args"][-2:] == [
+        "--audit-log",
+        "${PLUGIN_ROOT}/.bionexus-audit/mcp-host-audit.jsonl",
+    ]
     assert "pubmed" not in servers
     assert "benchling" not in servers  # Disabled server excluded
 
@@ -96,6 +100,10 @@ def test_generate_codex_config():
     assert codex_conf["name"] == "bionexus-reliability"
     assert codex_conf["provider"] == "BioNexus"
     assert "bionexus-local-mcp" in codex_conf["mcpServers"]
+    assert codex_conf["mcpServers"]["bionexus-local-mcp"]["args"][-2:] == [
+        "--audit-log",
+        "${PLUGIN_ROOT}/.bionexus-audit/mcp-host-audit.jsonl",
+    ]
     assert "pubmed" not in codex_conf["mcpServers"]
 
 

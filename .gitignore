@@ -105,6 +105,7 @@ work/
 plugins/**/.agents/
 .lo-profile*
 logs/
+.bionexus-audit/
 
 
 # Machine-local remote-columnar runtime and verified download parts.
