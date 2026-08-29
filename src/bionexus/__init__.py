@@ -153,6 +153,14 @@ from .guard import (
     inspect_code,
     inspect_command,
 )
+from .human_adjudication import (
+    HUMAN_ADJUDICATION_SCHEMA_VERSION,
+    HumanAdjudicationResult,
+    HumanScientificAdjudication,
+    HumanScientificDecision,
+    adjudicate_ecosystem_claim,
+    assessment_sha256,
+)
 from .integrity import (
     audit_expression_matrix,
     audit_parameter_stability,
@@ -389,6 +397,8 @@ __all__ = [
     "AnnotationEvidence",
     "AnnotationVerdict",
     "assess_warrant",
+    "adjudicate_ecosystem_claim",
+    "assessment_sha256",
     "AuditFinding",
     "BundleVerificationResult",
     "CANONICAL_CAPABILITIES",
@@ -399,6 +409,10 @@ __all__ = [
     "GRADE_A",
     "GRADE_B",
     "GRADE_C",
+    "HUMAN_ADJUDICATION_SCHEMA_VERSION",
+    "HumanAdjudicationResult",
+    "HumanScientificAdjudication",
+    "HumanScientificDecision",
     "INTENT_ALIASES",
     "InputArtifact",
     "OutputArtifact",

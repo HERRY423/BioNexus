@@ -363,8 +363,9 @@ class CapabilityContract:
            maturity and unsupported claims, starting from the evidence
            assessment.  Identical in every lab.
         3. **PolicyDecision** (deployment posture): does BioNexus intervene?
-           ALLOW / ALLOW_WITH_ACK (shadow) / REQUIRE_OVERRIDE (advisory) /
-           BLOCK (enforced or integrity invariant) / ESCALATE (safety).
+           ALLOW / ALLOW_WITH_ACK (shadow) / ALLOW_WITH_LIMITS (low-risk
+           discovery) / REQUIRE_OVERRIDE (higher-risk advisory) / BLOCK
+           (enforced or integrity invariant) / ESCALATE (safety).
 
         Additionally a **SufficiencyAssessment** compares the evidence against
         the intended-use requirement (purpose + claim class): WARRANTED or
@@ -569,6 +570,62 @@ class CapabilityContract:
                 evidence_ceiling=assessment.evidence_ceiling,
                 lab_policy_name=policy.name,
                 shadow_violations=[t.description for t in warrant_triggers],
+                evidence_assessment=evidence.to_dict(),
+                warrant_assessment=assessment.to_dict(),
+                sufficiency=sufficiency.to_dict(),
+                policy_decision=decision.to_dict(),
+            )
+
+        # Low-friction discovery posture: compute proceeds without manufacturing
+        # an override record.  The return state remains explicitly limited, and
+        # every scientific consequence from the warrant assessment is retained.
+        if decision.action == PolicyAction.ALLOW_WITH_LIMITS:
+            capped = cap_conclusion_by_purpose(
+                ConclusionMaturity.FRAGILE.value, assessment.evidence_ceiling
+            )
+            card = EvidenceCard(
+                execution_state=ExecutionState.PERMITTED_WITH_LIMITS.value,
+                input_integrity=base.evidence_card.input_integrity
+                if base.evidence_card
+                else DimensionGrade.UNTESTED.value,
+                assumption_validity=base.evidence_card.assumption_validity
+                if base.evidence_card
+                else DimensionGrade.GRADE_C.value,
+                statistical_support=base.evidence_card.statistical_support
+                if base.evidence_card
+                else DimensionGrade.UNTESTED.value,
+                details={
+                    "contract_id": self.id,
+                    "execution_backend": self.backend.canonical_name,
+                    "low_friction_discovery": True,
+                    "acknowledged_condition_ids": [t.condition_id for t in warrant_triggers],
+                    "notes": (
+                        "Exploratory/screening execution proceeds without a separate "
+                        "override. Scientific limits and unsupported claims remain binding."
+                    ),
+                },
+                research_purpose=pctx.purpose.value,
+                evidence_ceiling=assessment.evidence_ceiling,
+                blocked_claims=assessment.unsupported_claims,
+                residual_limitations=assessment.residual_uncertainty,
+            )
+            _attach(card, assessment, decision, evidence, sufficiency)
+            return CapabilityEvaluationResult(
+                capability_id=self.id,
+                status="PERMITTED_WITH_LIMITS",
+                permitted=True,
+                violations=[],
+                refusal_triggers=[],
+                remedies=base.remedies,
+                evidence_card=card,
+                conclusion_maturity=capped,
+                backend_available=base.backend_available,
+                research_purpose=pctx.purpose.value,
+                evidence_ceiling=assessment.evidence_ceiling,
+                soft_violations=[t.description for t in warrant_triggers],
+                residual_limitations=assessment.residual_uncertainty,
+                blocked_claims=assessment.unsupported_claims,
+                lab_policy_name=policy.name,
                 evidence_assessment=evidence.to_dict(),
                 warrant_assessment=assessment.to_dict(),
                 sufficiency=sufficiency.to_dict(),

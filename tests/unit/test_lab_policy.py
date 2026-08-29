@@ -69,6 +69,7 @@ def test_profile_serialization_round_trip():
     assert d["name"] == "enforced_lab"
     assert d["warrant_mode"] == "ENFORCED"
     assert d["require_override_justification"] is True
+    assert d["auto_acknowledge_purposes"] == []
 
 
 # ---------------------------------------------------------------------------
@@ -103,11 +104,15 @@ def test_shadow_policy_permits_and_records_warrant_violation():
     assert card.details["policy_decision"]["action"] == "ALLOW_WITH_ACK"
 
 
-def test_advisory_policy_blocks_without_override():
+def test_discovery_policy_auto_acknowledges_screening_without_override():
     decision = route_scientific_intent(_DE_QUERY, data_metadata=_DE_META, research_purpose="screening")
-    assert decision.status.value == "ABSTAIN"
+    assert decision.status.value == "PERMITTED_WITH_LIMITS"
     pd = decision.evidence_card_template.details["policy_decision"]
-    assert pd["action"] == "REQUIRE_OVERRIDE"
+    assert pd["action"] == "ALLOW_WITH_LIMITS"
+    assert pd["friction_level"] == "record_only"
+    assert pd["requires_user_action"] is False
+    assert decision.evidence_card_template.details["low_friction_discovery"] is True
+    assert decision.override_records == []
 
 
 def test_warrant_assessment_is_identical_across_policies():
@@ -135,9 +140,22 @@ def test_warrant_assessment_is_identical_across_policies():
     # ...while the intervention differs.
     assert (actions["shadow_audit"], actions["discovery_lab"], actions["enforced_lab"]) == (
         "ALLOW_WITH_ACK",
-        "REQUIRE_OVERRIDE",
+        "ALLOW_WITH_LIMITS",
         "BLOCK",
     )
+
+
+def test_discovery_policy_still_requires_override_for_confirmatory_gap():
+    decision = route_scientific_intent(
+        _DE_QUERY,
+        data_metadata=_DE_META,
+        research_purpose="confirmatory",
+    )
+    assert decision.status.value == "ABSTAIN"
+    pd = decision.evidence_card_template.details["policy_decision"]
+    assert pd["action"] == "REQUIRE_OVERRIDE"
+    assert pd["friction_level"] == "documented_override"
+    assert pd["requires_user_action"] is True
 
 
 def test_advisory_policy_override_yields_permitted_with_limits():

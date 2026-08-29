@@ -37,6 +37,17 @@ class EvidenceRelationship(str, Enum):
     DEPENDS_ON = "depends_on"
 
 
+class EvidenceSupportTier(str, Enum):
+    """Descriptive support strength; never an automatic maturity promotion."""
+
+    CONTEXT_ONLY = "context_only"
+    CORROBORATION = "corroboration"
+    METHODOLOGICAL_TRIANGULATION = "methodological_triangulation"
+    ORTHOGONAL_SUPPORT = "orthogonal_support"
+    INDEPENDENT_REPLICATION = "independent_replication"
+    EXTERNAL_REPLICATION = "external_replication"
+
+
 class ClaimAuditStatus(str, Enum):
     PASS = "PASS"
     CONFLICTED = "CONFLICTED"
@@ -216,6 +227,23 @@ def _promote_ref(
     )
     provenance = dict(base.provenance)
     provenance.update(adjudication.qualification)
+    independence_basis = adjudication.qualification.get("independence_basis")
+    if relationship in {EvidenceRelationship.CONTEXT, EvidenceRelationship.DEPENDS_ON}:
+        support_tier = EvidenceSupportTier.CONTEXT_ONLY
+    elif independence_basis == "blinded_external_evaluation":
+        support_tier = EvidenceSupportTier.EXTERNAL_REPLICATION
+    elif independence_basis in {"independent_dataset", "held_out_cohort"}:
+        support_tier = EvidenceSupportTier.INDEPENDENT_REPLICATION
+    elif independence_basis == "orthogonal_assay":
+        support_tier = EvidenceSupportTier.ORTHOGONAL_SUPPORT
+    elif adjudication.qualification.get("support_basis") == "methodological_triangulation":
+        support_tier = EvidenceSupportTier.METHODOLOGICAL_TRIANGULATION
+    else:
+        support_tier = EvidenceSupportTier.CORROBORATION
+    provenance["support_tier"] = support_tier.value
+    provenance["support_tier_semantics"] = (
+        "descriptive_review_bound_not_automatic_validation_or_maturity_promotion"
+    )
     provenance["adjudication"] = {
         "relationship": relationship.value,
         "rationale": adjudication.rationale,

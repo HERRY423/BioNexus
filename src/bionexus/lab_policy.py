@@ -38,7 +38,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 
 from bionexus.rule_classification import (
     EnforcementLevel,
@@ -96,12 +96,17 @@ class LabPolicyProfile:
         require_override_justification: When True, any researcher override must
             carry a non-empty justification string (recommended for ADVISORY and
             ENFORCED labs).
+        auto_acknowledge_purposes: Intended-use purposes for which an advisory
+            warrant gap may proceed without a separate override.  This only
+            reduces interaction friction; the evidence ceiling, unsupported
+            claims, and residual uncertainty remain unchanged.
         notes: Free-text description of when to use this profile.
     """
 
     name: str
     warrant_mode: EnforcementMode = EnforcementMode.ADVISORY
     require_override_justification: bool = True
+    auto_acknowledge_purposes: Tuple[str, ...] = ()
     notes: str = ""
 
     def effective_mode_for(self, classification: Optional[RuleClassification]) -> EnforcementMode:
@@ -137,6 +142,7 @@ class LabPolicyProfile:
             "name": self.name,
             "warrant_mode": self.warrant_mode.value,
             "require_override_justification": self.require_override_justification,
+            "auto_acknowledge_purposes": list(self.auto_acknowledge_purposes),
             "notes": self.notes,
         }
 
@@ -172,9 +178,11 @@ DISCOVERY_LAB = LabPolicyProfile(
     name="discovery_lab",
     warrant_mode=EnforcementMode.ADVISORY,
     require_override_justification=True,
+    auto_acknowledge_purposes=("exploratory", "screening"),
     notes=(
-        "Advisory: warrant violations permit execution as PERMITTED_WITH_LIMITS "
-        "with capped conclusion maturity and a recorded advisory.  Invariants still block."
+        "Low-friction discovery: exploratory and screening warrant gaps proceed "
+        "as PERMITTED_WITH_LIMITS without a separate override; confirmatory and "
+        "causal gaps require a documented override.  Invariants still block."
     ),
 )
 

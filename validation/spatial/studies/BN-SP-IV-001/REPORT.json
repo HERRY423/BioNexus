@@ -1,7 +1,7 @@
 {
   "schema_version": "bionexus.spatial-real-instrument-validation-report.v1",
   "study_id": "BN-SP-IV-001",
-  "generated_at": "2026-08-29T07:21:17.847696+00:00",
+  "generated_at": "2026-08-29T09:29:42.688455+00:00",
   "preregistration": {
     "path": "validation/spatial/studies/BN-SP-IV-001/PREREGISTRATION.json",
     "sha256": "5fd7ec8b5302d7697755d4aba1d97da77da9eec501b1b3645a3f718bfadfdded",
@@ -76,7 +76,7 @@
   "provenance": {
     "data_source": "10x Genomics official Xenium XOA v4 tiny human kidney output",
     "download_date": "2026-08-28",
-    "commit_sha": "7a0e0e180d07773c392ccfe61daa5a86837b280f",
+    "commit_sha": "c8622075dd1461f8936391304dc1348f1b3b5e31",
     "git_dirty": true,
     "environment_lockfile_hashes": {
       "pyproject.toml": "a1fc0fd54da675b8ae8caea63c2a18dde07d31a956a56600c5d3735c32548063",
@@ -84,21 +84,19 @@
       "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
     },
     "command": [
-      "C:\\Users\\13264\\anaconda3\\Lib\\site-packages\\pytest\\__main__.py",
-      "tests/unit/",
-      "-v",
-      "--ignore=tests/unit/test_scvi_smoke.py"
+      "C:\\Users\\13264\\anaconda3\\Scripts\\pytest",
+      "tests/unit"
     ],
-    "command_str": "C:\\Users\\13264\\anaconda3\\Lib\\site-packages\\pytest\\__main__.py tests/unit/ -v --ignore=tests/unit/test_scvi_smoke.py",
+    "command_str": "C:\\Users\\13264\\anaconda3\\Scripts\\pytest tests/unit",
     "generator_version": "1.0.0-rc.3",
     "python_version": "3.13.9",
     "platform": "Windows-11-10.0.26200-SP0",
-    "timestamp": "2026-08-29T07:21:17.651120+00:00",
+    "timestamp": "2026-08-29T09:29:42.544644+00:00",
     "extra_metadata": {
       "study_id": "BN-SP-IV-001"
     },
     "repository_dirty_at_execution": true,
     "validation_source_dirty": true,
-    "source_snapshot_sha256": "42ef70c5bcd60e944e38c031c05d25230c012028aee827eb5406dabf0c07b001"
+    "source_snapshot_sha256": "49c19f3dbadebf91ec30e4dafb2e7e692add4decf716b198a9627b099b21e34e"
   }
 }

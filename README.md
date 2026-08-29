@@ -250,9 +250,9 @@ WarrantAssessment  (science — policy-independent)     PolicyDecision  (deploym
 
 ─────────────────────────────────────────────────     ─────────────────────────────────
 
-claim_maturity · evidence_ceiling · unsupported_      ALLOW · ALLOW_WITH_ACK · REQUIRE_
+claim_maturity · evidence_ceiling · unsupported_      ALLOW · ALLOW_WITH_ACK · ALLOW_WITH_LIMITS
 
-claims · residual_uncertainty · rule_basis            OVERRIDE · BLOCK · ESCALATE
+claims · residual_uncertainty · rule_basis            REQUIRE_OVERRIDE · BLOCK · ESCALATE
 
 ```
 
@@ -264,7 +264,7 @@ Scientific assessment (all labs):  ceiling = FRAGILE · population_level_inferen
 
 Policy action:                     SHADOW    → ALLOW_WITH_ACK    (proceed; warning recorded)
 
-                                   ADVISORY  → REQUIRE_OVERRIDE  (proceed only with documented override)
+                                   DISCOVERY → ALLOW_WITH_LIMITS (exploratory/screening; no separate override)
 
                                    ENFORCED  → BLOCK             (remedy the violation first)
 
@@ -276,7 +276,7 @@ Policy action:                     SHADOW    → ALLOW_WITH_ACK    (proceed; war
 
 | `shadow_audit` | `ALLOW_WITH_ACK` — proceed, warning on the EvidenceCard | **unchanged** (ceiling still applies to every claim) |
 
-| `discovery_lab` *(default)* | `REQUIRE_OVERRIDE` — proceed with documented justification → `PERMITTED_WITH_LIMITS` | **unchanged** |
+| `discovery_lab` *(default)* | Exploratory/screening: `ALLOW_WITH_LIMITS`; confirmatory/causal: `REQUIRE_OVERRIDE` | **unchanged** |
 
 | `enforced_lab` | `BLOCK` — even under override | **unchanged** |
 
@@ -309,6 +309,8 @@ Two guardrails keep this honest in both directions:
 1. **Policy decides intervention, never evidence value.** The same data yields the same `WarrantAssessment` (ceiling, unsupported claims, residual uncertainty) under shadow, advisory, and enforced — asserted by the test suite as the decoupling invariant.
 
 2. **Execution invariants are never relaxed.** `INVARIANT_SAFETY` rules `ESCALATE` to human/regulatory review and `INVARIANT_INTEGRITY` rules `BLOCK` under *every* profile; the resolved profile name and both objects are always written to the EvidenceCard for audit.
+
+3. **Friction is observable and risk-scaled.** `PolicyDecision` records `friction_level` and `requires_user_action`. Low-risk discovery spends only a record-only acknowledgement; a user-supplied override is still retained, while confirmatory/causal gaps require one and clinical/integrity boundaries remain non-overridable.
 
 ---
 
@@ -345,7 +347,7 @@ or duplicate them; it passively audits their completed outputs:
 ```text
 external capability -> content-bound intake -> provenance/semantic audit
                     -> explicit reviewed edges + context/duplicate audit
-                    -> Warrant + Audit + EvidenceCard -> pending human decision
+                    -> Warrant + Audit + EvidenceCard -> Human Scientific Adjudication
 ```
 
 The `external-evidence-audit` wrapper implements
@@ -362,6 +364,15 @@ owner. BioNexus detects duplicate payloads, blocks declared scope conflicts,
 preserves contradictions, and emits Warrant + Audit + EvidenceCard + Ledger;
 it never infers evidence relationships or changes
 `PENDING_HUMAN_DECISION` into an autonomous verdict.
+
+`bionexus.human_adjudication` closes that loop without transferring scientific
+authority to AI. A named decision owner may record `ACCEPT_FOR_EXPLORATION`,
+`ACCEPT_WITH_LIMITS`, `DEFER_PENDING_EVIDENCE`, or `REJECT` against the exact
+assessment SHA-256. The decision receipt binds rationale, intended use,
+conditions, acknowledged limits, and addressed contradictions. BioNexus checks
+the record and non-bypassable boundaries only: adjudication never promotes the
+machine-assessed maturity, rewrites the warrant, or turns a structurally
+`BLOCKED` packet into acceptance.
 
 Hosted peer MCP servers remain listed in the canonical compatibility catalog
 but are not bundled into BioNexus manifests by default, preventing duplicate
@@ -1008,4 +1019,3 @@ ruff check .
 BioNexus is open-source software licensed under the [Apache License, Version 2.0](LICENSE).
 
 Copyright (c) 2026 BioNexus Team.
-

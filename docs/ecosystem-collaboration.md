@@ -68,6 +68,14 @@ Database and `cross_method` evidence no longer gain this status by type alone.
 This prevents a second tool response from being mistaken for independent
 scientific validation.
 
+BioNexus nevertheless does not flatten all non-independent support to zero.
+Each reviewed ledger edge exposes a descriptive `support_tier`:
+`corroboration`, `methodological_triangulation`, `orthogonal_support`,
+`independent_replication`, or `external_replication` (`context_only` for
+non-claim-bearing material). This tier is review-bound metadata, not an
+automatic validation flag or maturity promotion; strict external-validation
+qualification above remains unchanged.
+
 ## Operational example
 
 ```python
@@ -198,9 +206,54 @@ external envelopes + explicit adjudications
           Claim-Evidence Ledger
                     |
                     v
-      PENDING_HUMAN_DECISION (always)
+      PENDING_HUMAN_DECISION
+                    |
+                    v
+     HumanScientificAdjudication
+       (named owner + exact snapshot)
 ```
 
 `PASS` means the packet is internally admissible under this contract. It is
 not a truth verdict, producer authentication, scientific replication, or final
 acceptance by the named decision owner.
+
+## Human Scientific Adjudication
+
+`bionexus.human_adjudication` is the only final-decision transition in this
+workflow. The human record declares one of `ACCEPT_FOR_EXPLORATION`,
+`ACCEPT_WITH_LIMITS`, `DEFER_PENDING_EVIDENCE`, or `REJECT`, and binds it to the
+complete assessment SHA-256 plus a content digest of the decision record.
+
+BioNexus validates that the frozen owner and claim match, the timestamp and
+rationale are present, evidence limits are explicitly acknowledged for an
+acceptance, and every contradiction is addressed. A structurally `BLOCKED`
+assessment cannot be accepted. The returned adjudication result preserves the
+original conclusion maturity and warrant verbatim. Content hashes detect
+mutation but do not authenticate the real-world identity or authority of the
+signer; host/laboratory identity controls remain responsible for that boundary.
+
+```python
+from bionexus import (
+    HumanScientificAdjudication,
+    HumanScientificDecision,
+    adjudicate_ecosystem_claim,
+    assessment_sha256,
+)
+
+record = HumanScientificAdjudication.create(
+    claim_id=assessment.claim_id,
+    decision=HumanScientificDecision.ACCEPT_FOR_EXPLORATION.value,
+    decision_owner_id=assessment.decision_owner,
+    adjudicator_id="scientist:dr-chen",
+    decided_at="2026-08-29T10:30:00-07:00",
+    rationale="Prioritize this candidate for an independent follow-up assay.",
+    intended_use="bounded hypothesis generation",
+    assessment_sha256=assessment_sha256(assessment),
+    human_attestation=True,
+    acknowledges_evidence_limits=True,
+    conditions=("Do not use as confirmatory or clinical evidence.",),
+)
+result = adjudicate_ecosystem_claim(assessment, record)
+assert result.final_decision == "ACCEPT_FOR_EXPLORATION"
+assert result.preserved_warrant == assessment.warrant
+```

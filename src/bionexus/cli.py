@@ -3247,6 +3247,73 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_d_sample.add_argument("--json", action="store_true", help="Output audit report as JSON")
     p_d_sample.add_argument("--markdown", "--md", action="store_true", help="Output audit report as Markdown")
 
+    
+    # 23. lims
+    p_lims = subparsers.add_parser("lims", help="BioNexus LIMS Hub (BNS-LIMS-001) — Benchling, LabWare, C04 Pairing Connectors")
+    lims_subs = p_lims.add_subparsers(dest="lims_action", help="LIMS actions")
+
+    p_l_audit = lims_subs.add_parser("audit-pairing", help="Audit C04 custodian pairing manifest")
+    p_l_audit.add_argument("manifest", help="Path to pairing manifest CSV")
+    p_l_audit.add_argument("--json", action="store_true", help="Output JSON report")
+
+    p_l_sync = lims_subs.add_parser("sync-samples", help="Sync samples with generic REST LIMS")
+    p_l_sync.add_argument("--url", default="https://lims.internal/api/v1", help="LIMS base URL")
+    p_l_sync.add_argument("--samples", nargs="+", default=["SMP-001", "SMP-002"], help="Sample IDs")
+    p_l_sync.add_argument("--json", action="store_true", help="Output JSON report")
+
+    p_l_export = lims_subs.add_parser("export-assay", help="Export plate assay results to Benchling")
+    p_l_export.add_argument("--plate-id", default="PLT-001", help="Plate identifier")
+    p_l_export.add_argument("--schema-id", default="sch_plate_reader", help="Benchling assay schema ID")
+    p_l_export.add_argument("--wells", type=int, default=96, help="Well count")
+    p_l_export.add_argument("--json", action="store_true", help="Output JSON report")
+
+    # 24. instrument
+    p_inst = subparsers.add_parser("instrument", help="BioNexus Instrument Gateway (BNS-INST-001) — Plate Reader, NGS, Single-Cell Ingestion")
+    inst_subs = p_inst.add_subparsers(dest="instrument_action", help="Instrument actions")
+
+    p_i_detect = inst_subs.add_parser("detect", help="Auto-detect laboratory instrument file type")
+    p_i_detect.add_argument("file", help="Path to instrument output file")
+    p_i_detect.add_argument("--json", action="store_true", help="Output JSON result")
+
+    p_i_ingest = inst_subs.add_parser("ingest", help="Ingest and standardize instrument file to Allotrope ASM")
+    p_i_ingest.add_argument("file", help="Path to instrument output file")
+    p_i_ingest.add_argument("-o", "--output", default=None, help="Output JSON/ASM path")
+    p_i_ingest.add_argument("--json", action="store_true", help="Output JSON result")
+
+    # 25. airgap
+    p_airgap = subparsers.add_parser("airgap", help="BioNexus Airgap & Zero-Egress DLP Guard (BNS-SEC-011)")
+    airgap_subs = p_airgap.add_subparsers(dest="airgap_action", help="Airgap actions")
+
+    p_a_audit = airgap_subs.add_parser("audit", help="Audit airgap policy and DLP metrics")
+    p_a_audit.add_argument("--mode", default="AIRGAP_STRICT", choices=["AIRGAP_STRICT", "VPC_INTERNAL_ONLY", "ALLOWLIST_AUDITED", "OPEN_CONNECTED"])
+    p_a_audit.add_argument("--json", action="store_true", help="Output JSON report")
+
+    p_a_eval = airgap_subs.add_parser("evaluate", help="Evaluate destination egress permissions and DLP")
+    p_a_eval.add_argument("url", help="Destination URL or hostname")
+    p_a_eval.add_argument("--mode", default="AIRGAP_STRICT", choices=["AIRGAP_STRICT", "VPC_INTERNAL_ONLY", "ALLOWLIST_AUDITED", "OPEN_CONNECTED"])
+    p_a_eval.add_argument("--payload", default=None, help="Payload string to inspect")
+    p_a_eval.add_argument("--json", action="store_true", help="Output JSON report")
+
+    # 26. compliance
+    p_comp = subparsers.add_parser("compliance", help="BioNexus 21 CFR Part 11 & GxP Compliance Engine (BNS-COMP-001)")
+    comp_subs = p_comp.add_subparsers(dest="compliance_action", help="Compliance actions")
+
+    p_cmp_sign = comp_subs.add_parser("sign", help="Apply 21 CFR Part 11 electronic signature to artifact")
+    p_cmp_sign.add_argument("target", help="Path to target artifact")
+    p_cmp_sign.add_argument("--name", default="Dr. Alice Smith", help="Signer name")
+    p_cmp_sign.add_argument("--email", default="alice.smith@lab.org", help="Signer email")
+    p_cmp_sign.add_argument("--role", default="PI_SIGNER", choices=["PI_SIGNER", "QA_AUDITOR", "SYSTEM_ADMIN", "BIOINFORMATICIAN", "RESEARCHER"])
+    p_cmp_sign.add_argument("--reason", default="APPROVAL_OF_SCIENTIFIC_EVIDENCE", help="Signing reason")
+    p_cmp_sign.add_argument("--json", action="store_true", help="Output JSON signature")
+
+    p_cmp_ver = comp_subs.add_parser("verify-sig", help="Verify 21 CFR Part 11 electronic signature")
+    p_cmp_ver.add_argument("target", help="Path to target artifact")
+    p_cmp_ver.add_argument("signature_file", help="Path to JSON signature file")
+    p_cmp_ver.add_argument("--json", action="store_true", help="Output JSON verification")
+
+    p_cmp_ledger = comp_subs.add_parser("audit-ledger", help="Audit GxP hash chain integrity")
+    p_cmp_ledger.add_argument("--json", action="store_true", help="Output JSON report")
+
     args = parser.parse_args(argv)
 
     if not args.command:
@@ -3392,6 +3459,28 @@ def main(argv: Optional[list[str]] = None) -> int:
             p_cache.print_help()
             return 0
         return handle_cache(args)
+
+    
+    elif args.command == "lims":
+        if not getattr(args, "lims_action", None):
+            p_lims.print_help()
+            return 0
+        return handle_lims(args)
+    elif args.command == "instrument":
+        if not getattr(args, "instrument_action", None):
+            p_inst.print_help()
+            return 0
+        return handle_instrument(args)
+    elif args.command == "airgap":
+        if not getattr(args, "airgap_action", None):
+            p_airgap.print_help()
+            return 0
+        return handle_airgap(args)
+    elif args.command == "compliance":
+        if not getattr(args, "compliance_action", None):
+            p_comp.print_help()
+            return 0
+        return handle_compliance(args)
 
     return 0
 

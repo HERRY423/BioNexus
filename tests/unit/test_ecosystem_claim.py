@@ -110,6 +110,7 @@ def test_review_bound_sources_produce_warrant_audit_card_and_pending_decision() 
     claim = result.ledger["claims"]["CLAIM-TP53-1"]
     assert result.audit.status == "PASS"
     assert set(claim["supported_by"]) == {"EXT-DB-1", "EXT-LIT-1"}
+    assert result.ledger["evidence"]["EXT-DB-1"]["provenance"]["support_tier"] == "corroboration"
     assert result.warrant
     assert result.evidence_card["details"]["claim_conclusion_maturity"] == result.conclusion_maturity
     assert result.final_decision == "PENDING_HUMAN_DECISION"
@@ -209,6 +210,27 @@ def test_context_only_packet_is_admissible_but_cannot_support_the_claim() -> Non
     assert claim["depends_on"] == ["EXT-DB-8"]
     assert result.conclusion_maturity == "ABSTAIN"
     assert result.warrant["tier_verdicts"]["association_claim"]["status"] == "NOT_WARRANTED"
+    assert result.ledger["evidence"]["EXT-DB-8"]["provenance"]["support_tier"] == "context_only"
+
+
+def test_intermediate_support_tier_is_visible_without_becoming_external_validation() -> None:
+    database = _database("EXT-DB-TRIANGULATION")
+    adjudication = EvidenceAdjudication(
+        evidence_id=database.evidence_id,
+        relationship="supports",
+        maturity="PRELIMINARY",
+        rationale="Alternative analytical approach agrees within the declared scope.",
+        adjudicator_id="reviewer:alice",
+        adjudication_receipt_sha256=HEX_C,
+        validation_role="supporting",
+        qualification={"support_basis": "methodological_triangulation"},
+    )
+
+    result = assess_ecosystem_claim(_packet((database,), (adjudication,)))
+
+    ref = result.ledger["evidence"][database.evidence_id]
+    assert ref["provenance"]["support_tier"] == "methodological_triangulation"
+    assert ref["validation_role"] == "supporting"
 
 
 def test_claim_assessment_cli_writes_reusable_artifact(tmp_path: Path) -> None:

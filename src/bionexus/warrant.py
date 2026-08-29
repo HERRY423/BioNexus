@@ -18,6 +18,8 @@ Policy actions (ordered by intervention strength):
 - **ALLOW**: no violations; proceed.
 - **ALLOW_WITH_ACK**: shadow posture — proceed, warnings recorded, the warrant
   ceiling still applies to any claim.
+- **ALLOW_WITH_LIMITS**: low-risk discovery posture — proceed without a separate
+  override, while preserving the ceiling, blocked claims, and limitations.
 - **REQUIRE_OVERRIDE**: advisory posture — proceed only after a documented
   researcher override; the ceiling still applies.
 - **BLOCK**: enforced posture or a data-integrity invariant — stop.
@@ -55,6 +57,7 @@ class PolicyAction(str, Enum):
 
     ALLOW = "ALLOW"
     ALLOW_WITH_ACK = "ALLOW_WITH_ACK"
+    ALLOW_WITH_LIMITS = "ALLOW_WITH_LIMITS"
     REQUIRE_OVERRIDE = "REQUIRE_OVERRIDE"
     BLOCK = "BLOCK"
     ESCALATE = "ESCALATE"
@@ -147,9 +150,20 @@ class PolicyDecision:
     override_records: List[Dict[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
+        friction_level = {
+            PolicyAction.ALLOW: "none",
+            PolicyAction.ALLOW_WITH_ACK: "record_only",
+            PolicyAction.ALLOW_WITH_LIMITS: "record_only",
+            PolicyAction.REQUIRE_OVERRIDE: "documented_override",
+            PolicyAction.BLOCK: "blocked",
+            PolicyAction.ESCALATE: "human_escalation",
+        }[self.action]
         return {
             "action": self.action.value,
             "policy_name": self.policy_name,
+            "friction_level": friction_level,
+            "requires_user_action": self.action
+            in {PolicyAction.REQUIRE_OVERRIDE, PolicyAction.BLOCK, PolicyAction.ESCALATE},
             "rationale": self.rationale,
             "intervention_notes": self.intervention_notes,
             "override_records": self.override_records,
@@ -259,7 +273,8 @@ def decide_policy(
 ) -> PolicyDecision:
     """Derive the lab-policy intervention for a warrant assessment.
 
-    Precedence: ESCALATE > BLOCK > REQUIRE_OVERRIDE > ALLOW_WITH_ACK > ALLOW.
+    Precedence: ESCALATE > BLOCK > REQUIRE_OVERRIDE > ALLOW_WITH_LIMITS >
+    ALLOW_WITH_ACK > ALLOW.
     Invariant actions ignore the lab profile entirely.
     """
     notes: List[str] = []
@@ -306,6 +321,18 @@ def decide_policy(
     else:  # pragma: no cover - defensive
         action = PolicyAction.REQUIRE_OVERRIDE
 
+    # The discovery profile spends no extra interaction friction on explicitly
+    # exploratory or screening work.  This changes only the intervention: the
+    # policy-independent warrant above is preserved byte-for-byte.  Unknown,
+    # confirmatory, causal, and clinical purposes never enter this path.
+    auto_acknowledge = set(getattr(policy, "auto_acknowledge_purposes", ()))
+    if (
+        action == PolicyAction.REQUIRE_OVERRIDE
+        and not override_active
+        and assessment.purpose in auto_acknowledge
+    ):
+        action = PolicyAction.ALLOW_WITH_LIMITS
+
     rationale = (
         f"Warrant constraints active; lab policy '{policy.name}' maps them to "
         f"{action.value}.  The scientific assessment (ceiling="
@@ -315,6 +342,11 @@ def decide_policy(
         notes.append(
             "Shadow posture: proceeding without intervention, but the evidence "
             "ceiling still applies to every claim made from this run."
+        )
+    elif action == PolicyAction.ALLOW_WITH_LIMITS:
+        notes.append(
+            "Exploratory/screening execution may proceed without a separate "
+            "override; the evidence ceiling, limitations, and unsupported claims remain binding."
         )
     elif action == PolicyAction.REQUIRE_OVERRIDE:
         if override_active:
