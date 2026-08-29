@@ -1,5 +1,6 @@
 {
-  "catalog_version": "3.2",
+  "catalog_version": "3.3",
+  "citation_audit_note": "v3.3 (2026-08-25): corrected INV-001 provenance after Crossref resolution audit. doi:10.12688/f1000research.10570.2 resolves to an unrelated education paper (Crusio et al. 2017) and was replaced; doi:10.1038/nmeth.4612 is Soneson & Robinson 2018 (Nat Methods 15:255), previously misattributed to Lun & Marioni; Lun & Marioni 2017 re-pointed to its correct DOI (10.1093/biostatistics/kxw055). Crowell et al. 2020 (muscat, Nat Commun 11:6077) added as the pseudobulk framework reference. INV-008 gained McGinnis et al. 2019 (DoubletFinder) for droplet doublet-rate context.",
   "supersedes": "INVARIANTS_CATALOG.json (v1.0)",
   "taxonomy_note": "Not every rule BioNexus encodes is an invariant. Each rule declares exactly one epistemic_kind: EXECUTION_INVARIANT, DATA_INTEGRITY_INVARIANT, WARRANT_CONSTRAINT, CALIBRATED_THRESHOLD, HEURISTIC_DETECTOR, or POLICY_DEFAULT. A CALIBRATED_THRESHOLD is resolved from an approved empirical profile conditioned on tissue, platform, reference, task, and evidence source. Missing or pending calibration fails closed and never falls back to a universal number. Legacy INV-xxx identifiers are preserved for certification traceability.",
   "rules": [
@@ -24,8 +25,9 @@
       ],
       "literature_provenance": [
         {"citation": "Squair et al. 2021", "doi": "10.1038/s41467-021-25960-2"},
-        {"citation": "Soneson & Robinson 2018", "doi": "10.12688/f1000research.10570.2"},
-        {"citation": "Lun & Marioni 2017", "doi": "10.1038/nmeth.4612"}
+        {"citation": "Soneson & Robinson 2018", "doi": "10.1038/nmeth.4612"},
+        {"citation": "Lun & Marioni 2017", "doi": "10.1093/biostatistics/kxw055"},
+        {"citation": "Crowell et al. 2020 (muscat)", "doi": "10.1038/s41467-020-19894-4"}
       ],
       "sensitivity": "high",
       "review_status": "pending"
@@ -168,6 +170,9 @@
       "source_file": "src/bionexus/empirical_warrant.py",
       "source_line": 444,
       "rationale": "Calibrated ceiling reflecting typical doublet rates of droplet platforms (~5-10% at standard loading). 0.15 is platform- and loading-dependent; populations above it MAY be doublet artifacts — the flag is a warning requiring investigation, not a verdict.",
+      "literature_provenance": [
+        {"citation": "McGinnis et al. 2019 (DoubletFinder)", "doi": "10.1016/j.cels.2019.03.003"}
+      ],
       "sensitivity": "medium",
       "review_status": "pending"
     },

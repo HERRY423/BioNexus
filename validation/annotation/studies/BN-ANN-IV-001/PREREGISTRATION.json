@@ -1,0 +1,83 @@
+{
+  "schema_version": "bionexus.annotation-independent-validation-preregistration.v1",
+  "study_id": "BN-ANN-IV-001",
+  "title": "Two-dataset CITE-seq calibration and locked-holdout evaluation of conservative PBMC lineage acceptance",
+  "locked_before_holdout_outcome_analysis": true,
+  "locked_at": "2026-08-28",
+  "study_status_at_lock": "PREREGISTERED_NOT_RUN",
+  "capability_id": "scrna.annotation_evidence",
+  "claim_target": "A context-specific candidate gate can enrich correctness of coarse RNA-derived PBMC lineage labels when evaluated against paired orthogonal ADT anchors in a distinct public dataset.",
+  "claim_exclusions": [
+    "cell-type assignment by BioNexus",
+    "calibrated per-cell probability",
+    "fine-grained subtype validity",
+    "independent expert ground truth",
+    "cross-tissue or cross-platform transfer",
+    "clinical validity"
+  ],
+  "datasets": {
+    "calibration": {
+      "path": "data/flagship/citeseq_pbmc_sorted/pbmc_10k_protein_v3.h5ad",
+      "sha256": "5f08b8575febf9e04b209b94eb43f6335f1e33b0985cdcf44adf7320f6243c69"
+    },
+    "holdout": {
+      "path": "data/flagship/citeseq_pbmc_sorted/pbmc_5k_protein_v3.h5ad",
+      "sha256": "a1bf51e070d24b39627ea4de9b3e489a4637ff795e1061e0733e26c3baec8847"
+    }
+  },
+  "input_gates": {
+    "rna": "full matrix must be finite, nonnegative integer counts",
+    "adt": "protein_expression must be finite, nonnegative integer counts with protein_names metadata",
+    "shared_anchor_proteins": ["CD3_TotalSeqB", "CD19_TotalSeqB", "CD14_TotalSeqB", "CD56_TotalSeqB"],
+    "minimum_evaluable_lineages": 3,
+    "minimum_anchor_cells_per_lineage_in_holdout": 20
+  },
+  "orthogonal_anchor_rule": {
+    "labels": {
+      "T": "CD3_TotalSeqB",
+      "B": "CD19_TotalSeqB",
+      "MONOCYTE": "CD14_TotalSeqB",
+      "NK": "CD56_TotalSeqB"
+    },
+    "high_confidence_requirement": "top anchor count >= 5 and (top + 1) / (runner_up + 1) >= 2",
+    "ambiguous_cells": "excluded from endpoint evaluation and counted explicitly"
+  },
+  "rna_candidate_rule": {
+    "normalization": "per-cell counts per 10000 followed by log1p",
+    "label": "highest mean expression across fixed lineage marker module",
+    "marker_modules": {
+      "T": ["CD3D", "CD3E", "TRBC1", "TRBC2", "LCK"],
+      "B": ["MS4A1", "CD79A", "CD79B", "CD37", "CD74"],
+      "MONOCYTE": ["LST1", "S100A8", "S100A9", "CTSS", "LILRB1"],
+      "NK": ["NKG7", "GNLY", "PRF1", "KLRD1", "CTSW"]
+    },
+    "confidence_score": "top module mean minus runner-up module mean"
+  },
+  "candidate_gate_fit": {
+    "calibration_dataset_only": true,
+    "selection_rule": "lowest observed confidence threshold with at least 100 accepted cells and Wilson 95% precision lower bound >= 0.90; ties choose higher coverage",
+    "fallback": "if no threshold qualifies, produce a negative result and no candidate profile"
+  },
+  "locked_holdout_primary_endpoints": {
+    "accepted_precision_wilson_lower_95_min": 0.9,
+    "coverage_min": 0.1,
+    "accepted_lineages_min": 3,
+    "accepted_cells_per_lineage_min": 20,
+    "accepted_accuracy_must_not_be_below_ungated_accuracy": true
+  },
+  "uncertainty": {
+    "precision_interval": "Wilson 95% binomial interval",
+    "accuracy_interval": "Wilson 95% binomial interval",
+    "no_post_hoc_threshold_changes": true
+  },
+  "governance": {
+    "successful_result_maximum_status": "CANDIDATE",
+    "activation_requires": [
+      "independent external reviewer",
+      "approved empirical calibration profile",
+      "separate donor-aware or multi-study validation",
+      "cryptographic binding to final released artifact"
+    ],
+    "negative_results_retained": true
+  }
+}

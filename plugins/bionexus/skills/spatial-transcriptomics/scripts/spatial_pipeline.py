@@ -20,9 +20,38 @@ from spatial_io import load_spatial_anndata, resolve_spatial_key
 
 from bionexus.backends import require
 from bionexus.contracts import GRADE_A, GRADE_B, GRADE_C, EvidenceCard, attach_meta
-from bionexus.integrity import audit_expression_matrix, audit_spatial_coordinates
+from bionexus.integrity import (
+    ScientificInputError,
+    audit_expression_matrix,
+    require_raw_count_matrix,
+    require_spatial_coordinates,
+)
 from bionexus.pipeline_config import load_pipeline_config, merge_config
 from bionexus.provenance import sidecar
+
+
+def prepare_spatial_expression_input(adata):
+    """Resolve expression semantics without ever fabricating normalized counts."""
+    counts_layer_present = "counts" in adata.layers
+    if not counts_layer_present:
+        try:
+            require_raw_count_matrix(adata.X, label="adata.X")
+        except ScientificInputError:
+            pass
+        else:
+            adata.layers["counts"] = adata.X.copy()
+            counts_layer_present = True
+
+    if counts_layer_present:
+        require_raw_count_matrix(adata.layers["counts"], label="adata.layers['counts']")
+        expression_input = adata.layers["counts"]
+        grade, notes, stats = audit_expression_matrix(expression_input, expected_type="counts")
+    else:
+        expression_input = adata.X
+        grade, notes, stats = audit_expression_matrix(expression_input, expected_type="normalized")
+        if grade == GRADE_C:
+            raise ScientificInputError("Expression matrix is invalid for spatial analysis: " + "; ".join(notes))
+    return expression_input, counts_layer_present, grade, notes, stats
 
 
 def run_spatial_gold_chain(
@@ -40,27 +69,31 @@ def run_spatial_gold_chain(
     import squidpy as sq
 
     key = resolve_spatial_key(adata, preferred=spatial_key)
-    coords_grade, coords_notes, coords_stats = audit_spatial_coordinates(adata.obsm.get(key))
+    coords_stats = require_spatial_coordinates(adata.obsm.get(key), n_observations=adata.n_obs)
+    coords_grade = GRADE_A
+    coords_notes = [
+        f"Verified {coords_stats['n_points']} valid {coords_stats['n_dimensions']}D spatial coordinates."
+    ]
 
     # Audit expression input integrity
-    input_counts_grade, input_counts_notes, input_stats = audit_expression_matrix(
-        adata.layers.get("counts", adata.X), expected_type="counts"
-    )
+    (
+        expression_input,
+        counts_layer_present,
+        input_counts_grade,
+        input_counts_notes,
+        input_stats,
+    ) = prepare_spatial_expression_input(adata)
 
     limitations = [
         "knn graph (not Delaunay). Moran ranking preferred over unadjusted p-values.",
         "Expression Leiden is optional and is not a spatial domain model.",
     ]
 
-    if "counts" not in adata.layers:
-        if input_counts_grade == GRADE_A:
-            adata.layers["counts"] = adata.X.copy()
-        else:
-            adata.layers["counts"] = adata.X.copy()
-            limitations.append(
-                "layers['counts'] was missing and adata.X appears non-integer/log-normalized; "
-                "normalized expression was stored as counts fallback."
-            )
+    if not counts_layer_present:
+        limitations.append(
+            "Raw counts layer was not supplied. Moran's I used the existing expression scale; "
+            "no counts layer was fabricated."
+        )
 
     knn = getattr(sq.gr, "spatial_neighbors_knn", None)
     if knn is not None:
@@ -102,9 +135,10 @@ def run_spatial_gold_chain(
             import scanpy as sc
 
             n_pcs = int(min(20, max(2, adata.n_obs - 1), max(2, adata.n_vars - 1)))
-            sc.pp.normalize_total(adata, target_sum=1e4)
-            sc.pp.log1p(adata)
-            x_log1p = True
+            if counts_layer_present:
+                sc.pp.normalize_total(adata, target_sum=1e4)
+                sc.pp.log1p(adata)
+                x_log1p = True
             sc.pp.pca(adata, n_comps=n_pcs)
             sc.pp.neighbors(adata, n_neighbors=min(15, adata.n_obs - 1), n_pcs=n_pcs)
             try:
@@ -127,7 +161,10 @@ def run_spatial_gold_chain(
     if cluster_error:
         limitations.append(f"Leiden requested but failed: {cluster_error}")
     if x_log1p:
-        limitations.append("X was log1p-normalized after Moran; raw counts remain in layers['counts'].")
+        if counts_layer_present:
+            limitations.append("X was log1p-normalized after Moran; verified raw counts remain in layers['counts'].")
+        else:
+            limitations.append("X was log1p-normalized for clustering; no raw counts layer is available.")
 
     # Evaluate statistical support from SVG significance
     sig_svg = 0
@@ -152,6 +189,7 @@ def run_spatial_gold_chain(
         details={
             "spatial_coords_grade": coords_grade,
             "expression_integrity_grade": input_counts_grade,
+            "raw_counts_layer_present": counts_layer_present,
             "input_notes": coords_notes + input_counts_notes,
             "graph": graph_name,
             "significant_svg_count": sig_svg,

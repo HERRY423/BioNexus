@@ -12,6 +12,13 @@ Usage:
 
 import argparse
 import sys
+from pathlib import Path
+
+_SRC = Path(__file__).resolve().parents[3] / "src"
+if _SRC.is_dir() and str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
+from bionexus.integrity import require_raw_count_matrix
 
 
 def prepare_data(
@@ -54,6 +61,7 @@ def prepare_data(
     from model_utils import get_mito_genes
 
     adata = adata.copy()
+    require_raw_count_matrix(adata.X, label="adata.X")
     print(f"Input: {adata.shape[0]} cells, {adata.shape[1]} genes")
 
     if not skip_filter:
@@ -73,7 +81,7 @@ def prepare_data(
         sc.pp.filter_genes(adata, min_cells=min_cells)
         print(f"Filtered genes: {n_genes_before} → {adata.n_vars}")
 
-    # Store raw counts in layer
+    # Store raw counts only after complete integer-count validation.
     adata.layers["counts"] = adata.X.copy()
 
     # HVG selection

@@ -1,0 +1,120 @@
+{
+  "schema_version": "researchos.knowledge-bridge-manifest.v1",
+  "project": "BioNexus",
+  "generated_at": "2026-08-27T11:13:51Z",
+  "generator": "scripts/build_knowledge_bridge.ps1",
+  "source_snapshot_sha256": "90c308b96354520599c14b2e318c2ef79c95f57488ad1ca87968e0f263a9c4a3",
+  "source_nodes": [
+    {
+      "path": "10_Projects/BioNexus/BioNexus.md",
+      "sha256": "e442a4212cceed364e8020b2412bec81a746ebdd5bdc2bc5f9c7c1d452751caf"
+    },
+    {
+      "path": "30_Evidence/Claims/BioNexus-is-a-warrant-first-reliability-layer.md",
+      "sha256": "b7a99e66a692f8ae4f88c62a0f3faf7c4e79a36316e4ff2d3312e51a259dea34"
+    },
+    {
+      "path": "30_Evidence/Claims/BioNexus-is-not-yet-independently-claim-ready-across-flagships.md",
+      "sha256": "4f0069809398a061ff0e5a640e7ad983b3adc7f4be8801535b5ab64435f7cba7"
+    },
+    {
+      "path": "30_Evidence/Claims/M4-means-evidence-computed-certification-not-capability-count.md",
+      "sha256": "85f216c2a91a020fd9b90f0948dcb9ed90caac8e1022d9890e3da8dbabd07de9"
+    },
+    {
+      "path": "30_Evidence/Claims/Positive-annotation-warrants-require-approved-context-profiles.md",
+      "sha256": "6f855054dcb7af83d51085b320dcfd242f2ab969cb2bb41b701b770e875d2177"
+    },
+    {
+      "path": "30_Evidence/Claims/Pseudobulk-independent-reproducibility-remains-fragile.md",
+      "sha256": "e11d96f071d47a668a0064153b8017a42d00ee98b19105e5adc7c6702922c87b"
+    },
+    {
+      "path": "30_Evidence/Findings/BioNexus-current-repository-snapshot-2026-08-27.md",
+      "sha256": "da7d48ff1e003e34707a02e8772b74d62eb0ac98a52c277f4edb6ff7a9ef6d32"
+    },
+    {
+      "path": "30_Evidence/Findings/BioNexus-empirical-calibration-registry-has-zero-approved-profiles.md",
+      "sha256": "5de9c82bdf2e277be47bebfdf204f07b5f080696bfaec56ca86363a59f6f99e6"
+    },
+    {
+      "path": "30_Evidence/Findings/BioNexus-external-governance-and-interoperability-gates-are-open.md",
+      "sha256": "70d263e7348a27f79b0bb74a6ee842bc648967897121598b0369f643be5e343f"
+    },
+    {
+      "path": "30_Evidence/Findings/BioNexus-flagship-certification-gap-snapshot.md",
+      "sha256": "903ec167a333f7145892ebd8f59194696b18132c76e373d82badbfc53dd5f242"
+    },
+    {
+      "path": "30_Evidence/Findings/BioNexus-pseudobulk-independent-negative-result.md",
+      "sha256": "a57a9923301c23684b5e7dcb3407ff10b9cb65c35869d3ffcf6d41c5cc34cef1"
+    },
+    {
+      "path": "50_Decisions/Architecture/Compile-repository-context-from-ResearchOS.md",
+      "sha256": "b79276150786cdbfde766638320f7032904a40c80add6f7a27ac4a763185b3f3"
+    },
+    {
+      "path": "50_Decisions/Architecture/Keep-BioNexus-out-of-planner-memory-and-multi-agent-scope.md",
+      "sha256": "74534391ae6bd591b4476b0c0deb91340c2dc052c6a79cf18b652fc99ff43408"
+    },
+    {
+      "path": "50_Decisions/Architecture/Require-context-specific-calibration-with-no-universal-fallback.md",
+      "sha256": "456c12783cb2a133217c0a30d03afa791f1381ae5379004ee6ffac4ac033b3b0"
+    },
+    {
+      "path": "50_Decisions/Architecture/Use-thin-optional-bridges-for-CellTypePilot-and-SEL.md",
+      "sha256": "99626b40cbc59068016ba4a1391f4d17b8f90f4eb1deb52cdf164ec47f42ce84"
+    },
+    {
+      "path": "50_Decisions/Product/Focus-BioNexus-on-three-certified-flagships-before-breadth.md",
+      "sha256": "bb3610876b6d07dbd89d6e4584c73aa2204fc1a77f3c88e176fdcdbc85267420"
+    },
+    {
+      "path": "60_Questions/Problems/Annotation-and-spatial-real-data-validation-is-missing.md",
+      "sha256": "add95f25b831981e4d701848632cabb9e72e5e9f82efc1f30af9ad334f6ec736"
+    },
+    {
+      "path": "60_Questions/Problems/Cross-host-and-independent-review-are-incomplete.md",
+      "sha256": "8b5387b73a02bc492c2a5e57da1baf01118e86246dcc32666964afb8be761cb6"
+    },
+    {
+      "path": "60_Questions/Problems/Current-BioNexus-checkout-is-not-a-clean-freeze.md",
+      "sha256": "91ebdc3c604e0d381d26d2720ef7398bbcee5ffd2988d3377c2a9d82f9cfac8b"
+    },
+    {
+      "path": "60_Questions/Problems/External-adoption-and-governance-are-not-established.md",
+      "sha256": "9f0693fcf5bda576eb1b7c55072f6c1a4bac15a235cfa44567a66e1e868f0064"
+    },
+    {
+      "path": "60_Questions/Problems/No-approved-empirical-calibration-profiles.md",
+      "sha256": "5f1aec4550d067ca7a59cc93adefd2ebe1ecda244dc52636bab09d36de260124"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "PROJECT_CONTEXT.md",
+      "sha256": "fa82a152c441b2e1430e1255f9d800cc0e01e8e2a0a156e78c59ce9eb86c948a",
+      "size_bytes": 3125
+    },
+    {
+      "path": "ARCHITECTURE_DECISIONS.md",
+      "sha256": "40341166ac6278b85eafdc9cb89722a9949ccab773b82fdc922e1138663b13f5",
+      "size_bytes": 2742
+    },
+    {
+      "path": "EVIDENCE_MAP.md",
+      "sha256": "17e8b767dc465d33208f352228ca224320901bda6ddc779257409a27c26c0731",
+      "size_bytes": 4245
+    },
+    {
+      "path": "OPEN_QUESTIONS.md",
+      "sha256": "8ae6de238f73a8207c04406b5b4c713948a4a7c78f10e5e1252993749b2a63d7",
+      "size_bytes": 2342
+    },
+    {
+      "path": "DOMAIN_KNOWLEDGE.md",
+      "sha256": "6b8a7e90f20ca4319f079f49db43a6f6f418fd58dab4ef82b55fd514c26a91d0",
+      "size_bytes": 2426
+    }
+  ]
+}

@@ -70,13 +70,13 @@ grow into a "do-everything biology platform".
 | core: contracts, ABI & semantics | `capabilities`, `abi`, `scientific_semantics` |
 | core: failure taxonomy | `failures` |
 | core: fail-closed engine | `intent_router`, `failclosed` |
-| core: evidence model | `contracts`, `ledger`, `provenance`, `artifacts`, `interop`, `standards` |
+| core: evidence model | `contracts`, `ledger`, `provenance`, `artifacts`, `interop`, `ecosystem_intake`, `standards` |
 | audit: preflight / audit / verify | `preflight`, `analysis_audit`, `verification` |
 | audit: data & claim integrity | `integrity`, `claim_checker` |
 | conformance: certification | `certification` |
 | conformance: backend identity | `backend_conformance` (BNS-EF-012..016; CLI `backend-identity`) |
 | conformance: host conformance & bench | `evals/` (runner, host_eval, biofailurebench, flagship_validation) |
-| capability plane: stable packs | `skills/` tree (single-cell-rna-qc, spatial-transcriptomics, scvi-tools, provenance-and-audit, nextflow-development, instrument-data-to-allotrope) |
+| capability plane: stable packs | `skills/` tree (single-cell-rna-qc, spatial-transcriptomics, scvi-tools, provenance-and-audit, external-evidence-audit, nextflow-development, instrument-data-to-allotrope) |
 | capability plane: frontier packs | `scfm`, `cluster`, `bigdata`, tangram/gears/nicheformer capability contracts, closed_loop |
 
 Today these layers ship as one Python package with the boundaries enforced at

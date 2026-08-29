@@ -31,9 +31,12 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from bionexus.abi import FORBIDDEN_CLAIM_CATALOG, get_capability_abi
+from bionexus.claim_semantics import detect_assertive_causal_language
 from bionexus.ledger import MATURITY_RANKS, ClaimLedger, ClaimRecord, EvidenceRef
 
 _LEDGER_NAMES = ("bionexus.ledger.json", "ledger.json")
+# Legacy pattern retained for reference/compat; active detection is the shared,
+# negation-aware `detect_assertive_causal_language` (claim_semantics).
 _CAUSAL_LANGUAGE = re.compile(
     r"\b(?:drives?|causes?|caused|induces?|induced|proves?|proven|mechanism of action|is causal)\b",
     re.IGNORECASE,
@@ -205,9 +208,10 @@ def verify_ledger(ledger: ClaimLedger, ledger_path: str = "<ledger>") -> Verific
             except KeyError:
                 flags.append(f"unknown capability_id '{claim.capability_id}'")
 
-        if _CAUSAL_LANGUAGE.search(claim.statement):
+        causal_hit = detect_assertive_causal_language(claim.statement)
+        if causal_hit:
             not_warranted.append(
-                f'"{claim.statement.strip()}" — causal/mechanistic language; this evidence class '
+                f'"{claim.statement.strip()}" — assertive causal language ("{causal_hit}"); this evidence class '
                 "supports association/enrichment language only"
             )
             ok = False

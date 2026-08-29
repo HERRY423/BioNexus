@@ -62,7 +62,7 @@ def file_sha256(path: str | Path) -> str:
     raw = p.read_bytes()
     posix_str = p.as_posix()
     if "validation/pseudobulk/studies" in posix_str or "BN-PB-IV-" in posix_str:
-        if posix_str.endswith("BN-PB-IV-004/PREREGISTRATION.json") or posix_str.endswith("BN-PB-IV-004/blinded_packet/PREREGISTRATION.json"):
+        if any(posix_str.endswith(f"BN-PB-IV-{x}/{sub}PREREGISTRATION.json") for x in ("004", "005") for sub in ("", "blinded_packet/")):
             raw = raw.replace(b"\r\n", b"\n")
         elif p.suffix.lower() in _STUDY_TEXT_EXTS:
             raw = raw.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")

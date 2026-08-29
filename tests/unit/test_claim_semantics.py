@@ -25,7 +25,6 @@ if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 from bionexus.claim_semantics import (
-    AssociationType,
     CausalStrength,
     ClaimRelationshipType,
     ClinicalActionability,
@@ -35,10 +34,8 @@ from bionexus.claim_semantics import (
     EvidenceProfile,
     GeneralizationScope,
     MechanismDepth,
-    ScientificClaimIR,
     WarrantTierStatus,
 )
-from bionexus.claim_checker import audit_claim_semantics, audit_prohibited_claims
 from bionexus.cli import main as cli_main
 from bionexus.contracts import ConclusionMaturity
 from bionexus.evidence_model import ClaimClass
@@ -151,6 +148,27 @@ def test_warrant_upgrade_with_functional_perturbation():
     assert len(verdict.evidence_gaps) == 0
 
 
+def test_claim_syntax_is_not_evidence_and_unrequested_tiers_are_not_warranted():
+    """Association syntax must not mint evidence or imply higher-tier warrant."""
+    ir = DeterministicClaimParser.parse("TP53 is associated with DNA damage response.")
+
+    verdict = DeterministicWarrantEngine.evaluate(ir, EvidenceProfile())
+
+    assert verdict.tier_verdicts["association_claim"].status == WarrantTierStatus.NOT_WARRANTED
+    assert verdict.evidence_ceiling == ConclusionMaturity.ABSTAIN.value
+    assert verdict.warranted_claim_class == ClaimClass.DESCRIPTIVE.value
+    for tier_name in (
+        "population_claim",
+        "mechanistic_claim",
+        "causal_claim",
+        "cell_identity_claim",
+        "clinical_claim",
+    ):
+        tier = verdict.tier_verdicts[tier_name]
+        assert tier.status == WarrantTierStatus.NOT_APPLICABLE
+        assert tier.is_warranted is False
+
+
 def test_negated_claim_epistemic_honesty():
     """Verify that statements expressing negative findings or limitations are warranted."""
     negated_claim = "Marker p-values from rank_genes_groups cannot prove drug treatment caused 200 DEGs."
@@ -256,3 +274,72 @@ def test_cli_parse_claim_and_warrant_claim(capsys):
     assert rc_warrant_pass == 0
     captured_pass = capsys.readouterr()
     assert "[WARRANTED]" in captured_pass.out
+
+
+def test_scientific_claim_ir_json_schema():
+    """Verify standard JSON-Schema generation for structured LLM decoding."""
+    from bionexus.claim_semantics import get_scientific_claim_ir_schema
+
+    schema = get_scientific_claim_ir_schema()
+    assert schema["type"] == "object"
+    assert "properties" in schema
+    assert "claim_id" in schema["properties"]
+    assert "relationship" in schema["properties"]
+    assert "causal_strength" in schema["properties"]
+    assert "claim_class" in schema["properties"]
+    assert "required" in schema
+    assert "relationship" in schema["required"]
+    assert "direction" in schema["required"]
+
+
+def test_compound_claim_decomposition():
+    """Verify decomposition of complex compound scientific statements into atomic IRs."""
+    from bionexus.claim_semantics import decompose_compound_claim
+
+    compound_text = (
+        "CD274 is upregulated in exhausted CD8+ T cells; "
+        "which drives T-cell exhaustion and thereby promotes tumor progression."
+    )
+    atomic_claims = decompose_compound_claim(compound_text)
+    assert len(atomic_claims) >= 2
+    assert atomic_claims[0].claim_id == "atomic_claim_01"
+    assert any("CD274" in c.subject_entity.name or "CD274" in c.source_text for c in atomic_claims)
+    assert any("decomposed_clause" in q for q in atomic_claims[0].qualifiers)
+
+
+def test_counterfactual_warrant_advice():
+    """Verify counterfactual evidence remediation recommendations for scientists."""
+    from bionexus.claim_semantics import (
+        DeterministicClaimParser,
+        DeterministicWarrantEngine,
+        EvidenceProfile,
+        generate_counterfactual_warrant_advice,
+    )
+
+    claim_text = "CXCL13+ CD8 T cells drive macrophage polarization in NSCLC."
+    ir = DeterministicClaimParser.parse(claim_text)
+
+    # Observational evidence facts (n=1 replicate, no perturbation)
+    facts = EvidenceProfile(
+        spatial_colocalization=True,
+        ligand_receptor_inference=True,
+        perturbation=False,
+        biological_replicates_count=1,
+        pseudobulk_aggregated=False,
+    )
+    evaluation = DeterministicWarrantEngine.evaluate(ir, facts)
+
+    advice = generate_counterfactual_warrant_advice(ir, facts, evaluation)
+    assert len(advice) >= 2
+
+    # Check for population claim advice
+    pop_advice = next((a for a in advice if a["target_tier"] == "population_claim"), None)
+    assert pop_advice is not None
+    assert "biological_replicates_count" in pop_advice["missing_facts"]
+    assert "Squair et al. 2021" in pop_advice["actionable_remediation"]
+
+    # Check for causal claim advice
+    causal_advice = next((a for a in advice if a["target_tier"] == "causal_claim"), None)
+    assert causal_advice is not None
+    assert "perturbation" in causal_advice["missing_facts"]
+    assert "CRISPR" in causal_advice["actionable_remediation"]

@@ -33,6 +33,7 @@ def test_doctor_reports_tier_and_forbids_clia():
         "spatial-transcriptomics",
     }
     assert "spatial-transcriptomics" in report["default_skills"]
+    assert "external-evidence-audit" in report["default_skills"]
     assert "biologics-design" in report["legacy_skills"]
 
 

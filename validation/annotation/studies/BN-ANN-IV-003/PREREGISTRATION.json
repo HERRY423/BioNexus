@@ -1,0 +1,90 @@
+{
+  "schema_version": "bionexus.annotation-external-validation-preregistration.v1",
+  "study_id": "BN-ANN-IV-003",
+  "title": "Transparent raw-count successor evaluation on the external Azimuth PBMC reference",
+  "locked_at": "2026-08-28",
+  "study_status_at_lock": "PREREGISTERED_AFTER_INPUT_AUDIT_BEFORE_OUTCOME_ASSOCIATION",
+  "capability_id": "scrna.annotation_evidence",
+  "predecessor": {
+    "study_id": "BN-ANN-IV-002",
+    "retained_result": "not_evaluated_input_ineligible",
+    "reason_for_successor": "The locked predecessor prohibited substituting another expression layer after X failed the raw-count contract. This new study explicitly declares adata.raw.X and a separate study id; BN-ANN-IV-002 remains unchanged."
+  },
+  "access_disclosure": {
+    "dataset_structure_seen": true,
+    "reference_label_names_and_marginal_counts_seen": true,
+    "candidate_reference_agreement_seen": false,
+    "endpoint_results_seen": false,
+    "blinding_status": "NOT_BLINDED_TO_LABEL_DISTRIBUTION",
+    "consequence": "Any positive result is capped below a blinded external validation and requires a new never-seen donor-aware cohort."
+  },
+  "claim_target": "Without changing the PBMC10k-developed threshold, the coarse RNA gate selectively enriches agreement with external Azimuth PBMC reference annotations when the published file's explicitly declared raw-count layer is used.",
+  "claim_exclusions": [
+    "blinded external validation",
+    "BioNexus cell-type assignment",
+    "fine-grained subtype validity",
+    "calibrated per-cell probability",
+    "cross-tissue transfer",
+    "clinical validity",
+    "independent external reviewer sign-off"
+  ],
+  "external_holdout": {
+    "path": "data/flagship/citeseq_pbmc_sorted/pbmc_multimodal_zenodo_10213715.h5ad",
+    "source": "Zenodo record 10213715, pbmc_multimodal.h5ad",
+    "doi": "10.5281/zenodo.10213715",
+    "published_md5": "bfb4711abd1ddadf9d4960aca762513d",
+    "sha256": "6187a2d38cfe92b967816699d3338b44ed4d43b70445b748a782e83597618864",
+    "size_bytes": 1945943003,
+    "required_obs_label": "celltype.l2"
+  },
+  "rna_candidate_rule": {
+    "matrix_source": "adata.raw.X",
+    "gene_identifier_source": "adata.raw.var['_index']",
+    "normalization": "per-cell raw counts per 10000 followed by log1p",
+    "input_gate": "the complete selected matrix must be finite, non-negative, and integer-valued; otherwise endpoints are not evaluated",
+    "label": "highest mean expression across the unchanged BN-ANN-IV-001 lineage modules",
+    "marker_modules": {
+      "T": ["CD3D", "CD3E", "TRBC1", "TRBC2", "LCK"],
+      "B": ["MS4A1", "CD79A", "CD79B", "CD37", "CD74"],
+      "MONOCYTE": ["LST1", "S100A8", "S100A9", "CTSS", "LILRB1"],
+      "NK": ["NKG7", "GNLY", "PRF1", "KLRD1", "CTSW"]
+    },
+    "confidence_score": "top module mean minus runner-up module mean"
+  },
+  "external_label_mapping": {
+    "T": ["CD4", "CD8", "T cell", "Tcm", "Tem", "Treg", "MAIT"],
+    "B": ["B cell", "B naive", "B memory", "Plasmablast"],
+    "MONOCYTE": ["Mono", "Monocyte"],
+    "NK": ["NK"],
+    "unmapped_labels": "excluded and enumerated before endpoints"
+  },
+  "locked_candidate_threshold": {
+    "rna_margin_min": 0.8007809849349283,
+    "selected_on": "PBMC10k ADT-anchored development cells only",
+    "development_coverage": 0.8,
+    "development_precision": 0.9737332339791356,
+    "development_precision_wilson_lower_95": 0.9691043559562766,
+    "development_accuracy_improvement": 0.054508196721311464,
+    "changed_from_BN_ANN_IV_002": false
+  },
+  "locked_external_endpoints": {
+    "accepted_precision_wilson_lower_95_min": 0.9,
+    "accuracy_improvement_min": 0.03,
+    "coverage_min": 0.1,
+    "coverage_max": 0.8,
+    "accepted_lineages_min": 3,
+    "accepted_cells_per_lineage_min": 20,
+    "minimum_mapped_holdout_cells": 1000
+  },
+  "governance": {
+    "successful_result_maximum_status": "CANDIDATE_EXTERNAL_REFERENCE_NONBLINDED",
+    "independent_ground_truth": false,
+    "activation_requires": [
+      "new never-seen donor-aware external cohort",
+      "independent domain reviewer",
+      "approved context-specific calibration profile",
+      "released-artifact reproduction"
+    ],
+    "negative_results_retained": true
+  }
+}

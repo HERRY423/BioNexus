@@ -17,11 +17,18 @@ Usage:
 import argparse
 import os
 import sys
+from pathlib import Path
+
+_SRC = Path(__file__).resolve().parents[3] / "src"
+if _SRC.is_dir() and str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
 
 # Import canonical implementations from model_utils (single source of truth)
 from model_utils import (
     train_scvi,
 )
+
+from bionexus.integrity import require_counts_layer
 
 MODELS = ["scvi", "scanvi", "totalvi", "peakvi", "velovi", "multivi"]
 
@@ -191,9 +198,8 @@ Examples:
         adata = sc.read_h5ad(args.input)
         print(f"Data: {adata.shape}")
 
-    if "counts" not in adata.layers:
-        print("Warning: 'counts' layer not found, using .X")
-        adata.layers["counts"] = adata.X.copy()
+    if args.model in ("scvi", "scanvi", "totalvi"):
+        require_counts_layer(adata)
 
     # ---- Train -----------------------------------------------------------
     print(

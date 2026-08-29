@@ -2,8 +2,8 @@
   "schema_version": "1.0",
   "capability_id": "scrna.annotation_evidence",
   "certification_level": "VALIDATED",
-  "assessment_date": "2026-08-19",
-  "project_version": "1.0.0-rc.2",
+  "assessment_date": "2026-08-28",
+  "project_version": "1.0.0-rc.3",
   "standards": [
     {
       "standard_id": "reference_backend",
@@ -49,15 +49,15 @@
     },
     {
       "standard_id": "public_reference_dataset",
-      "satisfied": false,
-      "evidence": "validation/annotation/REPORT.json -> synthetic technical acceptance; no real CITE-seq dataset vendored or executed",
-      "notes": "Synthetic multimodal fixture only (synthetic technical acceptance); does not satisfy public reference dataset standard"
+      "satisfied": true,
+      "evidence": "BN-ANN-IV-001 executed two real public CITE-seq datasets; BN-ANN-IV-003 evaluated 148297 mapped cells against external Azimuth PBMC reference annotations",
+      "notes": "BN-ANN-IV-003 met its locked endpoints but was not blinded to label distributions and is capped at CANDIDATE_EXTERNAL_REFERENCE_NONBLINDED"
     },
     {
       "standard_id": "independent_ground_truth",
       "satisfied": false,
-      "evidence": "evals/annotation_stress_test.py -> in-silico synthetic fixture truth",
-      "notes": "Synthetic fixture truth generated alongside test; no independent external ground truth dataset executed"
+      "evidence": "BN-ANN-IV-003 uses externally authored reference annotations; BN-ANN-IV-001 uses paired ADT anchors",
+      "notes": "Reference annotations and orthogonal ADT are not experimental biological ground truth; no approved calibration profile was activated"
     },
     {
       "standard_id": "parameter_perturbation",
@@ -92,16 +92,15 @@
   ],
   "summary": {
     "total_standards": 14,
-    "satisfied": 10,
-    "unsatisfied": 4,
+    "satisfied": 11,
+    "unsatisfied": 3,
     "unsatisfied_list": [
-      "public_reference_dataset",
       "independent_ground_truth",
       "cross_host_test",
       "external_reviewer"
     ],
     "verdict": "VALIDATED",
-    "verdict_rationale": "10/14 criteria satisfied including all 6 core criteria plus adversarial test, parameter perturbation, degradation test, and provenance test. 4 remain unsatisfied (public reference dataset and independent ground truth revoked pending real CITE-seq dataset execution; cross-host test and external reviewer pending)."
+    "verdict_rationale": "11/14 criteria satisfied. BN-ANN-IV-001 was inconclusive, BN-ANN-IV-002 failed its locked input contract, and BN-ANN-IV-003 met all locked endpoints on external Azimuth PBMC reference annotations but was not blinded to label distributions. Independent biological ground truth, cross-host reproduction, external review, and any approved empirical warrant remain absent."
   },
   "evidence_bundle": {
     "validation_report": "validation/annotation/REPORT.json",

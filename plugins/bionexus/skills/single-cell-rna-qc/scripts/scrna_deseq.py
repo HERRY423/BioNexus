@@ -14,6 +14,7 @@ if _SRC.is_dir() and str(_SRC) not in sys.path:
 
 from bionexus.backends import require
 from bionexus.contracts import GRADE_A, attach_meta
+from bionexus.integrity import require_replicate_design
 
 
 def run_pydeseq2(
@@ -24,27 +25,17 @@ def run_pydeseq2(
     reference: str | None = None,
     contrast_level: str | None = None,
 ):
+    counts, design, replicate_counts = require_replicate_design(
+        counts,
+        design,
+        condition=condition,
+        min_replicates_per_level=2,
+    )
+    # Conversion is lossless only after the fail-closed integer-count gate.
+    counts = counts.astype(int)
     require("pydeseq2", for_method="run_pydeseq2")
-    import numpy as np
     from pydeseq2.dds import DeseqDataSet
     from pydeseq2.ds import DeseqStats
-
-    counts = counts.copy()
-    design = design.copy()
-    if "sample_id" in design.columns:
-        design = design.set_index("sample_id")
-    if condition not in design.columns:
-        raise ValueError(f"condition '{condition}' not in design columns {list(design.columns)}")
-    counts.index = counts.index.astype(str)
-    design.index = design.index.astype(str)
-    shared = counts.index.intersection(design.index)
-    if len(shared) < 4:
-        raise ValueError(f"Need >=4 shared sample ids for pydeseq2, got {len(shared)}")
-    counts = counts.loc[shared]
-    design = design.loc[shared]
-    if not np.issubdtype(counts.values.dtype, np.number):
-        raise ValueError("counts must be numeric")
-    counts = counts.round().astype(int)
     levels = list(design[condition].astype(str).unique())
     if len(levels) < 2:
         raise ValueError(f"condition '{condition}' has <2 levels")
@@ -64,6 +55,8 @@ def run_pydeseq2(
             "n_genes": int(counts.shape[1]),
             "condition": condition,
             "contrast": [condition, alt, ref],
+            "replicates_per_level": replicate_counts,
+            "raw_integer_counts_verified": True,
             "n_tested": int(len(table)),
         },
         method="pydeseq2.DeseqStats",

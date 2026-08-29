@@ -6,11 +6,11 @@
   "dataset_checksum_sha256": "d3ecbf0e65a40e783c1c80ef4e9c21872cf0d8b8544de48ec5c9f7c32fa24bed",
   "provenance": {
     "data_source": "synthetic_generator (in-silico generated multimodal fixture)",
-    "download_date": "2026-08-22T03:13:46.656642+00:00",
-    "commit_sha": "225a9e60d760f2bc454a4af741018ab9e99b8e6b",
+    "download_date": "2026-08-29T06:54:28.378356+00:00",
+    "commit_sha": "7a0e0e180d07773c392ccfe61daa5a86837b280f",
     "git_dirty": false,
     "environment_lockfile_hashes": {
-      "pyproject.toml": "b29c5b3f2a3a931e78f701a16c982330d4d74398e3a71d994cd027a84284df24",
+      "pyproject.toml": "72b298385f6617e259e0387200a8ccae03ee1a22567d0a7f73e5b82f12aa0de8",
       "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
       "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
     },
@@ -18,10 +18,10 @@
       "evals/annotation_stress_test.py"
     ],
     "command_str": "evals/annotation_stress_test.py",
-    "generator_version": "1.0.0-rc.2",
+    "generator_version": "1.0.0-rc.3",
     "python_version": "3.13.9",
     "platform": "Windows-11-10.0.26200-SP0",
-    "timestamp": "2026-08-22T03:13:46.795969+00:00",
+    "timestamp": "2026-08-29T06:54:28.554715+00:00",
     "extra_metadata": {
       "dataset_track": "synthetic_technical_acceptance",
       "n_cells": 1200,
@@ -47,10 +47,10 @@
     },
     "repository_dirty_at_execution": false,
     "validation_source_dirty": false,
-    "source_snapshot_sha256": "faba6299efd9174087c14e293f63d3619870caae742450a0f8204f8faabea24d"
+    "source_snapshot_sha256": "42ef70c5bcd60e944e38c031c05d25230c012028aee827eb5406dabf0c07b001"
   },
-  "timestamp": "2026-08-22T03:13:55.366205+00:00",
-  "elapsed_seconds": 8.79,
+  "timestamp": "2026-08-29T06:54:28.936058+00:00",
+  "elapsed_seconds": 0.66,
   "overall_status": "PASS",
   "dimensions": {
     "dim1_1_synthetic_technical_acceptance_baseline": {

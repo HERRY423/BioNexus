@@ -67,6 +67,7 @@ _SNAPSHOT_EXTENSIONS = {
 _SNAPSHOT_EXCLUDED_DIRS = {
     ".git", ".mypy_cache", ".pytest_cache", ".ruff_cache", "__pycache__",
     ".venv", ".vendor", "build", "dist", "logs", "node_modules", "validation", "venv",
+    "data", "interoperability",
 }
 
 
@@ -89,7 +90,11 @@ def snapshot_target(target: TargetDescriptor, *, max_files: int = 5000) -> Targe
                 relative = path.relative_to(target.root_path)
             except ValueError:
                 continue
-            if any(part in _SNAPSHOT_EXCLUDED_DIRS or part.startswith(".pytest-tmp") for part in relative.parts):
+            if any(
+                part in _SNAPSHOT_EXCLUDED_DIRS
+                or part.startswith((".pytest-tmp", ".phase2-", "_eval_", "_evaluation_", "_benchmark_"))
+                for part in relative.parts
+            ):
                 continue
             candidates.append(path.resolve())
         candidates.sort(key=lambda path: path.relative_to(target.root_path.resolve()).as_posix())

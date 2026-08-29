@@ -1,0 +1,154 @@
+{
+  "schema_version": "bionexus.ecosystem-claim-packet.v1",
+  "claim_id": "CLM-ECO-003-DRUG-EGFR-OSIMERTINIB",
+  "statement": "Osimertinib selectively inhibits mutant EGFR T790M through covalent binding to Cys797 in the ATP-binding pocket with sub-nanomolar IC50 potency.",
+  "decision_owner": "principal_investigator_dr_smith",
+  "claim_context": {
+    "scope": "preclinical_drug_mechanism",
+    "target_protein": "EGFR",
+    "target_uniprot": "P00533",
+    "small_molecule": "Osimertinib",
+    "chembl_id": "CHEMBL3353410"
+  },
+  "envelopes": [
+    {
+      "schema_version": "bionexus.external-evidence-envelope.v1",
+      "evidence_id": "ENV-STR-EGFR-001",
+      "family": "structure",
+      "producer": {
+        "plugin_id": "science-pdb",
+        "capability": "structure",
+        "tool_name": "search_pdb",
+        "plugin_version": "1.0.0-rc.3"
+      },
+      "captured_at": "2026-08-29T00:00:00+00:00",
+      "source_context": {
+        "structure_id": "4G5J",
+        "structure_source": "RCSB PDB",
+        "structure_version": "v1",
+        "residue_mapping": "kinase_domain_residues_696_1022",
+        "model_quality_context": "X-ray resolution 2.80 Angstrom",
+        "producer": "science-pdb",
+        "tool_name": "search_pdb"
+      },
+      "payload": {
+        "pdb_id": "4G5J",
+        "title": "Structure of EGFR kinase domain in complex with mutant-selective covalent inhibitor",
+        "resolution": 2.8,
+        "covalent_adduct_residue": "CYS797",
+        "gatekeeper_residue": "MET790"
+      },
+      "payload_sha256": "32f680088911f8d133228707e817f63b37d30d0f1c44bd465a4f419251634ba3",
+      "request_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "schema_version": "bionexus.external-evidence-envelope.v1",
+      "evidence_id": "ENV-DB-CHEMBL-002",
+      "family": "database",
+      "producer": {
+        "plugin_id": "science-chembl",
+        "capability": "database",
+        "tool_name": "chembl_query",
+        "plugin_version": "1.0.0-rc.3"
+      },
+      "captured_at": "2026-08-29T00:00:00+00:00",
+      "source_context": {
+        "source_name": "ChEMBL Database",
+        "record_ids": [
+          "CHEMBL3353410",
+          "CHEMBL203"
+        ],
+        "database_release": "ChEMBL_34",
+        "identifier_namespace": "chembl.compound",
+        "organism_taxon": "9606",
+        "producer": "science-chembl",
+        "tool_name": "chembl_query"
+      },
+      "payload": {
+        "molecule_chembl_id": "CHEMBL3353410",
+        "pref_name": "OSIMERTINIB",
+        "target_chembl_id": "CHEMBL203",
+        "target_name": "Epidermal growth factor receptor erbB1",
+        "bioactivities": [
+          {
+            "activity_type": "IC50",
+            "value": 0.8,
+            "units": "nM",
+            "assay_description": "Inhibition of recombinant EGFR T790M/L858R kinase activity",
+            "standard_relation": "="
+          },
+          {
+            "activity_type": "IC50",
+            "value": 12.0,
+            "units": "nM",
+            "assay_description": "Inhibition of wild-type EGFR kinase activity",
+            "standard_relation": "="
+          }
+        ]
+      },
+      "payload_sha256": "d85c0dfdf5a78e3586a45840f8fe185a7e8461bec6d2c47936e36bacf12788c8",
+      "request_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "schema_version": "bionexus.external-evidence-envelope.v1",
+      "evidence_id": "ENV-LIT-PUBMED-003",
+      "family": "literature",
+      "producer": {
+        "plugin_id": "science-literature",
+        "capability": "literature",
+        "tool_name": "literature_search_pubmed",
+        "plugin_version": "1.0.0-rc.3"
+      },
+      "captured_at": "2026-08-29T00:00:00+00:00",
+      "source_context": {
+        "source_name": "PubMed / MEDLINE",
+        "identifiers": [
+          "PMID:24869598",
+          "doi:10.1056/NEJMoa1404088"
+        ],
+        "publication_status": "peer_reviewed",
+        "study_design": "clinical_trial_phase_1_2",
+        "producer": "science-literature",
+        "tool_name": "literature_search_pubmed"
+      },
+      "payload": {
+        "pmid": "24869598",
+        "title": "AZD9291 in EGFR inhibitor-resistant non-small-cell lung cancer",
+        "journal": "New England Journal of Medicine",
+        "year": 2014,
+        "conclusions": "Osimertinib (AZD9291) was highly active in patients with lung cancer with the EGFR T790M mutation who had disease progression with earlier EGFR TKIs."
+      },
+      "payload_sha256": "9b27d28f0c09988cdd04a0c0270d22dc80fa2344d65b74f92f05a7f845273e0c",
+      "request_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    }
+  ],
+  "adjudications": [
+    {
+      "evidence_id": "ENV-STR-EGFR-001",
+      "relationship": "supports",
+      "maturity": "SUPPORTED",
+      "rationale": "High-resolution X-ray crystallography proves atomic coordinates of covalent bond formation at Cys797.",
+      "adjudicator_id": "evaluator_dr_chen",
+      "adjudication_receipt_sha256": "4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c",
+      "validation_role": "supporting"
+    },
+    {
+      "evidence_id": "ENV-DB-CHEMBL-002",
+      "relationship": "supports",
+      "maturity": "SUPPORTED",
+      "rationale": "Curated ChEMBL bioactivity assay quantifies sub-nanomolar potency (IC50 0.8 nM) with 15-fold selectivity over wild-type.",
+      "adjudicator_id": "evaluator_dr_chen",
+      "adjudication_receipt_sha256": "5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d",
+      "validation_role": "supporting"
+    },
+    {
+      "evidence_id": "ENV-LIT-PUBMED-003",
+      "relationship": "supports",
+      "maturity": "SUPPORTED",
+      "rationale": "NEJM clinical trial establishes in vivo efficacy in human patients carrying the T790M resistance mutation.",
+      "adjudicator_id": "evaluator_dr_chen",
+      "adjudication_receipt_sha256": "6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e",
+      "validation_role": "supporting"
+    }
+  ]
+}

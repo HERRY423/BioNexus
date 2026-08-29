@@ -32,7 +32,7 @@
       },
       "consensus": "ESTABLISHED",
       "source_kind": "statistical_theory",
-      "source_citation": "Fisher 1935 (Design of Experiments); Lun & Risso 2018 (single-cell pitfalls); Squair et al. 2021 (Nature Communications)",
+      "source_citation": "Fisher 1935 (Design of Experiments); Soneson & Robinson 2018 (Nat Methods 15:255); Lun & Marioni 2017 (Biostatistics 18:451); Squair et al. 2021 (Nature Communications)",
       "supporting_evidence": [
         {
           "kind": "paper",
@@ -42,19 +42,24 @@
         {
           "kind": "paper",
           "ref": "doi:10.1038/nmeth.4612",
-          "note": "Lun & Risso 2018: Single-cell differential expression workflow pitfalls"
+          "note": "Soneson & Robinson 2018: Bias, robustness and scalability in single-cell differential expression analysis"
         },
         {
           "kind": "paper",
-          "ref": "doi:10.12688/f1000research.10570.2",
-          "note": "Soneson & Robinson 2018: muscat pseudobulk framework"
+          "ref": "doi:10.1093/biostatistics/kxw055",
+          "note": "Lun & Marioni 2017: Overcoming confounding plate effects in differential expression analyses of single-cell RNA-seq data"
+        },
+        {
+          "kind": "paper",
+          "ref": "doi:10.1038/s41467-020-19894-4",
+          "note": "Crowell, Soneson et al. 2020: muscat detects subpopulation-specific state transitions from multi-sample multi-condition single-cell transcriptomics data"
         }
       ],
       "contradictory_evidence": [
         {
-          "kind": "paper",
-          "ref": "doi:10.1038/s41592-023-01814-1",
-          "note": "Zimmerman et al. 2023: Isogenic cell lines with minimal donor variance under identical culture conditions"
+          "kind": "observation",
+          "ref": "",
+          "note": "Isogenic clonally derived cell lines under identical culture conditions carry zero between-line genetic variance by construction, so replicate thresholds designed for primary tissue do not directly transfer. Citation audit 2026-08-25: the previously packaged DOI (10.1038/s41592-023-01814-1) resolves to Ahlmann-Eltze & Huber 2023 'Comparison of transformations for single-cell RNA-seq data', which does not support this claim; no independently verifiable external citation is currently packaged."
         }
       ],
       "applicable_regimes": [
@@ -99,7 +104,8 @@
         {
           "counterexample_id": "isogenic_cloned_cell_line",
           "description": "Clonally derived isogenic cell line under controlled incubator conditions with zero genetic diversity",
-          "empirical_citation": "doi:10.1038/s41592-023-01814-1",
+          "empirical_citation": "",
+          "citation_status": "UNVERIFIED_REMOVED_2026-08-25",
           "boundary_mechanism": "Between-donor genetic variance component sigma^2_donor is zero by definition",
           "mitigation_strategy": "Cap claim class at SAMPLE_SPECIFIC / EXPLORATORY; explicitly disallow population generalization"
         }

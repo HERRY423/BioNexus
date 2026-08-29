@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bionexus-reliability"
-version = "1.0.0-rc.2"
+version = "1.0.0-rc.3"
 description = "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents (Warrant-First Evidence Assessment, Fail-Closed Invariants, Evidence-Capped Claims, Zero Silent Substitution)."
 authors = [{ name = "BioNexus Team" }]
 license = { text = "Apache-2.0" }
@@ -133,7 +133,19 @@ addopts = "-v --tb=short"
 [tool.ruff]
 line-length = 120
 target-version = "py310"
-exclude = [".venv", "venv", "__pycache__", ".git", "build", "dist"]
+exclude = [
+    ".venv",
+    "venv",
+    "__pycache__",
+    ".git",
+    "build",
+    "dist",
+    "runtime_lance",
+    "_benchmark_upload_*",
+    "_eval_*",
+    "_evaluation_*",
+    ".pytest-tmp-*",
+]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]

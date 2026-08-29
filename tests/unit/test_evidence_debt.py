@@ -12,26 +12,17 @@ Tests:
 from __future__ import annotations
 
 import json
-from pathlib import Path
-
-import pytest
 
 from bionexus.contracts import ConclusionMaturity
 from bionexus.debt import (
     DebtKind,
-    DebtSeverity,
-    EvidenceDebtAuditReport,
     EvidenceDebtEngine,
-    EvidenceDebtItem,
-    RemediationPriority,
-    RemediationRecipe,
     create_sample_debt_ledger,
     render_markdown_debt_report,
     render_mermaid_debt_dag,
     render_terminal_debt_report,
 )
 from bionexus.ledger import ClaimLedger, ClaimRecord, EvidenceRef
-
 
 # ==============================================================================
 # 1. Evidence Debt Detection & Taxonomy Tests

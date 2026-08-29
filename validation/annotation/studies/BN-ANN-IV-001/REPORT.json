@@ -1,0 +1,189 @@
+{
+  "schema_version": "bionexus.annotation-independent-validation-report.v1",
+  "study_id": "BN-ANN-IV-001",
+  "generated_at": "2026-08-29T07:21:15.677357+00:00",
+  "preregistration": {
+    "path": "validation/annotation/studies/BN-ANN-IV-001/PREREGISTRATION.json",
+    "sha256": "00a645c983e23283ecaaf3593b0b742ad6e9a63844cf673135e3d312a2fdb88f",
+    "thresholds_changed_after_lock": false,
+    "external_timestamp": false
+  },
+  "datasets": {
+    "calibration": {
+      "path": "data/flagship/citeseq_pbmc_sorted/pbmc_10k_protein_v3.h5ad",
+      "sha256": "5f08b8575febf9e04b209b94eb43f6335f1e33b0985cdcf44adf7320f6243c69",
+      "shape": [
+        6855,
+        16727
+      ],
+      "anchor_cells": 6710,
+      "anchor_lineages": {
+        "B": 509,
+        "MONOCYTE": 1695,
+        "NK": 874,
+        "T": 3632
+      }
+    },
+    "holdout": {
+      "path": "data/flagship/citeseq_pbmc_sorted/pbmc_5k_protein_v3.h5ad",
+      "sha256": "a1bf51e070d24b39627ea4de9b3e489a4637ff795e1061e0733e26c3baec8847",
+      "shape": [
+        3994,
+        16581
+      ],
+      "anchor_cells": 3875,
+      "ambiguous_cells": 119,
+      "anchor_lineages": {
+        "B": 285,
+        "MONOCYTE": 1259,
+        "NK": 300,
+        "T": 2031
+      }
+    }
+  },
+  "candidate_gate": {
+    "threshold": 0.0,
+    "accepted": 6710,
+    "correct": 6168,
+    "precision": 0.9192250372578241,
+    "precision_wilson_95": [
+      0.9124627945770442,
+      0.9255075439403362
+    ],
+    "coverage": 1.0
+  },
+  "holdout": {
+    "ungated_accuracy": 0.9390967741935484,
+    "ungated_accuracy_wilson_95": [
+      0.9311232144983851,
+      0.9462006039993768
+    ],
+    "accepted_cells": 3875,
+    "accepted_correct": 3639,
+    "accepted_precision": 0.9390967741935484,
+    "accepted_precision_wilson_95": [
+      0.9311232144983851,
+      0.9462006039993768
+    ],
+    "coverage": 1.0,
+    "accepted_by_adt_anchor": {
+      "B": 285,
+      "MONOCYTE": 1259,
+      "NK": 300,
+      "T": 2031
+    }
+  },
+  "primary_endpoints": {
+    "precision_wilson_lower_95": {
+      "observed": 0.9311232144983851,
+      "threshold": 0.9,
+      "passed": true
+    },
+    "coverage": {
+      "observed": 1.0,
+      "threshold": 0.1,
+      "passed": true
+    },
+    "accepted_lineages": {
+      "observed": 4,
+      "threshold": 3,
+      "passed": true
+    },
+    "accuracy_enrichment": {
+      "accepted": 0.9390967741935484,
+      "ungated": 0.9390967741935484,
+      "passed": true
+    }
+  },
+  "post_run_scientific_audit": {
+    "preregistered_endpoint": false,
+    "degenerate_nonselective_gate": true,
+    "claim_target_supported": false,
+    "reason": "The fitted gate accepted the full held-out anchor set or did not improve accuracy; the preregistered numeric endpoints were met but correctness enrichment was not demonstrated."
+  },
+  "status": {
+    "run_status": "endpoints_met_inconclusive",
+    "primary_endpoints_passed": true,
+    "maximum_maturity": "FRAGILE",
+    "public_reference_dataset": true,
+    "independent_ground_truth": false
+  },
+  "claim_boundary": {
+    "supported_if_positive": "context-specific candidate gate on two real public paired RNA/ADT PBMC datasets",
+    "not_supported": [
+      "cell-type assignment by BioNexus",
+      "calibrated per-cell probability",
+      "fine-grained subtype validity",
+      "independent expert ground truth",
+      "cross-tissue or cross-platform transfer",
+      "clinical validity"
+    ],
+    "activation_blocked_on": [
+      "independent external reviewer",
+      "approved empirical calibration profile",
+      "separate donor-aware or multi-study validation",
+      "cryptographic binding to final released artifact"
+    ]
+  },
+  "markers_used": {
+    "T": [
+      "CD3D",
+      "CD3E",
+      "TRBC1",
+      "TRBC2",
+      "LCK"
+    ],
+    "B": [
+      "MS4A1",
+      "CD79A",
+      "CD79B",
+      "CD37",
+      "CD74"
+    ],
+    "MONOCYTE": [
+      "LST1",
+      "S100A8",
+      "S100A9",
+      "CTSS",
+      "LILRB1"
+    ],
+    "NK": [
+      "NKG7",
+      "GNLY",
+      "PRF1",
+      "KLRD1",
+      "CTSW"
+    ]
+  },
+  "evidence_files": [
+    "validation/annotation/studies/BN-ANN-IV-001/evidence/holdout_cell_decisions.csv"
+  ],
+  "provenance": {
+    "data_source": "YosefLab/scVI-data processed public 10x PBMC CITE-seq",
+    "download_date": "2026-08-28",
+    "commit_sha": "7a0e0e180d07773c392ccfe61daa5a86837b280f",
+    "git_dirty": true,
+    "environment_lockfile_hashes": {
+      "pyproject.toml": "a1fc0fd54da675b8ae8caea63c2a18dde07d31a956a56600c5d3735c32548063",
+      "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
+      "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
+    },
+    "command": [
+      "C:\\Users\\13264\\anaconda3\\Lib\\site-packages\\pytest\\__main__.py",
+      "tests/unit/",
+      "-v",
+      "--ignore=tests/unit/test_scvi_smoke.py"
+    ],
+    "command_str": "C:\\Users\\13264\\anaconda3\\Lib\\site-packages\\pytest\\__main__.py tests/unit/ -v --ignore=tests/unit/test_scvi_smoke.py",
+    "generator_version": "1.0.0-rc.3",
+    "python_version": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "timestamp": "2026-08-29T07:21:15.440775+00:00",
+    "extra_metadata": {
+      "study_id": "BN-ANN-IV-001"
+    },
+    "repository_dirty_at_execution": true,
+    "validation_source_dirty": true,
+    "source_snapshot_sha256": "42ef70c5bcd60e944e38c031c05d25230c012028aee827eb5406dabf0c07b001"
+  }
+}

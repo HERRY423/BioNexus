@@ -9,10 +9,18 @@ import json
 import logging
 import re
 import shutil
+import sys
 import time
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
-from urllib.request import Request, urlopen
+from urllib.request import Request
+
+_SRC = Path(__file__).resolve().parents[4] / "src"
+if _SRC.is_dir() and str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
+from bionexus.egress_guard import guarded_requests_get
+from bionexus.egress_guard import guarded_urlopen as urlopen
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -35,7 +43,18 @@ def _rate_limit_ncbi():
 
 # Try to import requests for better HTTP handling
 try:
-    import requests
+    import requests as _requests
+
+    class _GuardedRequests:
+        def get(self, url, **kwargs):
+            return guarded_requests_get(
+                url,
+                request_get=_requests.get,
+                purpose="NCBI/ENA public data access",
+                **kwargs,
+            )
+
+    requests = _GuardedRequests()
 
     HAS_REQUESTS = True
 except ImportError:

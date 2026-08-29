@@ -1,0 +1,218 @@
+{
+  "schema_version": "bionexus.annotation-external-reference-validation-report.v1",
+  "study_id": "BN-ANN-IV-003",
+  "generated_at": "2026-08-28T16:17:13.515846+00:00",
+  "preregistration": {
+    "path": "validation/annotation/studies/BN-ANN-IV-003/PREREGISTRATION.json",
+    "sha256": "06166d9991c5f293e38d6efe290ceb182c08247f76b29a1a007ac35fdd9ce4b4",
+    "thresholds_changed_after_lock": false,
+    "external_timestamp": false
+  },
+  "dataset": {
+    "path": "data/flagship/citeseq_pbmc_sorted/pbmc_multimodal_zenodo_10213715.h5ad",
+    "source": "Zenodo record 10213715, pbmc_multimodal.h5ad",
+    "doi": "10.5281/zenodo.10213715",
+    "size_bytes": 1945943003,
+    "published_md5": "bfb4711abd1ddadf9d4960aca762513d",
+    "sha256": "6187a2d38cfe92b967816699d3338b44ed4d43b70445b748a782e83597618864",
+    "shape": [
+      161764,
+      20729
+    ],
+    "reference_label_column": "celltype.l2"
+  },
+  "input_contract": {
+    "passed": true,
+    "locked_matrix_source": "adata.raw.X",
+    "complete_matrix_finite_nonnegative_integer": true
+  },
+  "access_disclosure": {
+    "dataset_structure_seen": true,
+    "reference_label_names_and_marginal_counts_seen": true,
+    "candidate_reference_agreement_seen": false,
+    "endpoint_results_seen": false,
+    "blinding_status": "NOT_BLINDED_TO_LABEL_DISTRIBUTION",
+    "consequence": "Any positive result is capped below a blinded external validation and requires a new never-seen donor-aware cohort."
+  },
+  "locked_gate": {
+    "rna_margin_min": 0.8007809849349283,
+    "selected_on": "PBMC10k ADT-anchored development cells only",
+    "development_coverage": 0.8,
+    "development_precision": 0.9737332339791356,
+    "development_precision_wilson_lower_95": 0.9691043559562766,
+    "development_accuracy_improvement": 0.054508196721311464,
+    "changed_from_BN_ANN_IV_002": false
+  },
+  "holdout": {
+    "mapped_cells": 148297,
+    "unmapped_cells": 13467,
+    "original_label_counts": {
+      "ASDC": 76,
+      "B intermediate": 2431,
+      "B memory": 3285,
+      "B naive": 7718,
+      "CD14 Mono": 42690,
+      "CD16 Mono": 6320,
+      "CD4 CTL": 1736,
+      "CD4 Naive": 17479,
+      "CD4 Proliferating": 108,
+      "CD4 TCM": 14889,
+      "CD4 TEM": 4282,
+      "CD8 Naive": 10768,
+      "CD8 Proliferating": 91,
+      "CD8 TCM": 2883,
+      "CD8 TEM": 11727,
+      "Doublet": 605,
+      "Eryth": 83,
+      "HSPC": 329,
+      "ILC": 132,
+      "MAIT": 2784,
+      "NK": 17173,
+      "NK Proliferating": 548,
+      "NK_CD56bright": 943,
+      "Plasmablast": 366,
+      "Platelet": 2293,
+      "Treg": 2507,
+      "cDC1": 151,
+      "cDC2": 2501,
+      "dnT": 356,
+      "gdT": 3649,
+      "pDC": 861
+    },
+    "mapped_lineage_counts": {
+      "B": 11369,
+      "MONOCYTE": 49010,
+      "NK": 18664,
+      "T": 69254
+    },
+    "accepted_cells": 111575,
+    "accepted_by_external_lineage": {
+      "B": 10972,
+      "MONOCYTE": 47653,
+      "NK": 18449,
+      "T": 34501
+    },
+    "ungated_accuracy": 0.9164379589607342,
+    "accepted_precision": 0.9553663455075062,
+    "accepted_precision_wilson_95": [
+      0.9541389273180912,
+      0.9565624088084544
+    ],
+    "coverage": 0.7523753009164043
+  },
+  "primary_endpoints": {
+    "mapped_holdout_cells": {
+      "observed": 148297,
+      "threshold": 1000,
+      "passed": true
+    },
+    "accepted_precision_wilson_lower_95": {
+      "observed": 0.9541389273180912,
+      "threshold": 0.9,
+      "passed": true
+    },
+    "accuracy_improvement": {
+      "observed": 0.038928386546772,
+      "threshold": 0.03,
+      "passed": true
+    },
+    "coverage_range": {
+      "observed": 0.7523753009164043,
+      "minimum": 0.1,
+      "maximum": 0.8,
+      "passed": true
+    },
+    "accepted_lineages": {
+      "observed": 4,
+      "threshold": 3,
+      "minimum_cells_per_lineage": 20,
+      "passed": true
+    }
+  },
+  "status": {
+    "run_status": "positive_candidate",
+    "primary_endpoints_passed": true,
+    "maximum_maturity": "CANDIDATE_EXTERNAL_REFERENCE_NONBLINDED",
+    "public_reference_dataset": true,
+    "independent_reference_annotations": true,
+    "independent_ground_truth": false
+  },
+  "claim_boundary": {
+    "supported_if_positive": "Without changing the PBMC10k-developed threshold, the coarse RNA gate selectively enriches agreement with external Azimuth PBMC reference annotations when the published file's explicitly declared raw-count layer is used.",
+    "not_supported": [
+      "blinded external validation",
+      "BioNexus cell-type assignment",
+      "fine-grained subtype validity",
+      "calibrated per-cell probability",
+      "cross-tissue transfer",
+      "clinical validity",
+      "independent external reviewer sign-off"
+    ],
+    "activation_blocked_on": [
+      "new never-seen donor-aware external cohort",
+      "independent domain reviewer",
+      "approved context-specific calibration profile",
+      "released-artifact reproduction"
+    ]
+  },
+  "markers_used": {
+    "T": [
+      "CD3D",
+      "CD3E",
+      "TRBC1",
+      "TRBC2",
+      "LCK"
+    ],
+    "B": [
+      "MS4A1",
+      "CD79A",
+      "CD79B",
+      "CD37",
+      "CD74"
+    ],
+    "MONOCYTE": [
+      "LST1",
+      "S100A8",
+      "S100A9",
+      "CTSS",
+      "LILRB1"
+    ],
+    "NK": [
+      "NKG7",
+      "GNLY",
+      "PRF1",
+      "KLRD1",
+      "CTSW"
+    ]
+  },
+  "evidence_files": [
+    "validation/annotation/studies/BN-ANN-IV-003/evidence/external_holdout_cell_decisions.csv.gz"
+  ],
+  "provenance": {
+    "data_source": "Zenodo 10213715 pbmc_multimodal.h5ad with externally authored Azimuth PBMC labels",
+    "download_date": "2026-08-28",
+    "commit_sha": "7a0e0e180d07773c392ccfe61daa5a86837b280f",
+    "git_dirty": true,
+    "environment_lockfile_hashes": {
+      "pyproject.toml": "72b298385f6617e259e0387200a8ccae03ee1a22567d0a7f73e5b82f12aa0de8",
+      "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
+      "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
+    },
+    "command": [
+      "evals/annotation_external_holdout_validation.py",
+      "--study-id",
+      "BN-ANN-IV-003"
+    ],
+    "command_str": "evals/annotation_external_holdout_validation.py --study-id BN-ANN-IV-003",
+    "generator_version": "1.0.0-rc.2",
+    "python_version": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "timestamp": "2026-08-28T16:17:13.177712+00:00",
+    "extra_metadata": {
+      "study_id": "BN-ANN-IV-003"
+    },
+    "repository_dirty_at_execution": true,
+    "validation_source_dirty": true,
+    "source_snapshot_sha256": "a4a183fbf6e1430b683f45e66976e301258f4bfe45ea748d46dcfc972730af61"
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "schema_version": "bionexus.annotation-independent-validation-preregistration.v1",
+  "study_id": "BN-ANN-IV-002",
+  "title": "Locked external Azimuth PBMC reference-label evaluation of a non-degenerate reject gate",
+  "locked_before_external_holdout_access": true,
+  "locked_at": "2026-08-28",
+  "study_status_at_lock": "PREREGISTERED_DOWNLOAD_IN_PROGRESS",
+  "capability_id": "scrna.annotation_evidence",
+  "development_history": {
+    "predecessor": "BN-ANN-IV-001",
+    "retained_predecessor_result": "endpoints_met_inconclusive",
+    "reason_for_successor": "The predecessor selected threshold 0 with 100% coverage and no accuracy enrichment. Its report remains immutable evidence; this successor adds an explicit non-degeneracy requirement and uses a never-before-read external holdout."
+  },
+  "claim_target": "A threshold developed only on the PBMC10k CITE-seq calibration cohort selectively enriches agreement of coarse RNA-derived lineage candidates with externally authored Azimuth PBMC reference annotations.",
+  "claim_exclusions": [
+    "BioNexus cell-type assignment",
+    "fine-grained subtype validity",
+    "calibrated per-cell probability",
+    "cross-tissue transfer",
+    "clinical validity",
+    "independent external reviewer sign-off"
+  ],
+  "development_dataset": {
+    "path": "data/flagship/citeseq_pbmc_sorted/pbmc_10k_protein_v3.h5ad",
+    "sha256": "5f08b8575febf9e04b209b94eb43f6335f1e33b0985cdcf44adf7320f6243c69"
+  },
+  "external_holdout": {
+    "path": "data/flagship/citeseq_pbmc_sorted/pbmc_multimodal_zenodo_10213715.h5ad",
+    "source": "Zenodo record 10213715, pbmc_multimodal.h5ad",
+    "doi": "10.5281/zenodo.10213715",
+    "published_md5": "bfb4711abd1ddadf9d4960aca762513d",
+    "size_bytes": 1945943003,
+    "required_obs_label": "celltype.l2",
+    "holdout_bytes_or_labels_must_not_be_used_for_threshold_selection": true
+  },
+  "rna_candidate_rule": {
+    "normalization": "per-cell counts per 10000 followed by log1p; if X is already non-count normalized expression the study fails closed",
+    "label": "highest mean expression across the unchanged BN-ANN-IV-001 lineage modules",
+    "marker_modules": {
+      "T": ["CD3D", "CD3E", "TRBC1", "TRBC2", "LCK"],
+      "B": ["MS4A1", "CD79A", "CD79B", "CD37", "CD74"],
+      "MONOCYTE": ["LST1", "S100A8", "S100A9", "CTSS", "LILRB1"],
+      "NK": ["NKG7", "GNLY", "PRF1", "KLRD1", "CTSW"]
+    },
+    "confidence_score": "top module mean minus runner-up module mean"
+  },
+  "external_label_mapping": {
+    "T": ["CD4", "CD8", "T cell", "Tcm", "Tem", "Treg", "MAIT"],
+    "B": ["B cell", "B naive", "B memory", "Plasmablast"],
+    "MONOCYTE": ["Mono", "Monocyte"],
+    "NK": ["NK"],
+    "unmapped_labels": "excluded and enumerated before endpoints"
+  },
+  "locked_candidate_threshold": {
+    "rna_margin_min": 0.8007809849349283,
+    "selected_on": "PBMC10k ADT-anchored development cells only",
+    "development_coverage": 0.8,
+    "development_precision": 0.9737332339791356,
+    "development_precision_wilson_lower_95": 0.9691043559562766,
+    "development_accuracy_improvement": 0.054508196721311464,
+    "threshold_changes_after_lock": "prohibited; create a new study_id"
+  },
+  "locked_external_endpoints": {
+    "accepted_precision_wilson_lower_95_min": 0.9,
+    "accuracy_improvement_min": 0.03,
+    "coverage_min": 0.1,
+    "coverage_max": 0.8,
+    "accepted_lineages_min": 3,
+    "accepted_cells_per_lineage_min": 20,
+    "minimum_mapped_holdout_cells": 1000
+  },
+  "governance": {
+    "successful_result_maximum_status": "CANDIDATE_EXTERNAL_REFERENCE",
+    "independent_ground_truth_interpretation": "Externally authored published reference annotations are independent of BioNexus, but are reference labels rather than experimental biological truth.",
+    "activation_requires": [
+      "independent domain reviewer",
+      "donor-aware transport study",
+      "approved context-specific calibration profile",
+      "released-artifact reproduction"
+    ],
+    "negative_results_retained": true
+  }
+}

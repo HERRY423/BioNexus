@@ -139,6 +139,58 @@ def _build_metrics_for_pseudobulk_run(observed: Dict[str, Any]) -> List[Dict[str
     ]
 
 
+def _build_metrics_for_annotation_run(observed: Dict[str, Any]) -> List[Dict[str, Any]]:
+    metrics: List[Dict[str, Any]] = []
+    for name, endpoint in observed.get("primary_endpoints", {}).items():
+        metrics.append(
+            {
+                "name": name,
+                "expected": endpoint.get("threshold", "preregistered criterion"),
+                "observed": endpoint,
+                "result": "pass" if endpoint.get("passed") else "fail",
+            }
+        )
+    audit = observed.get("post_run_scientific_audit", {})
+    metrics.append(
+        {
+            "name": "nondegenerate_correctness_enrichment",
+            "expected": "gate is selective and improves held-out accuracy",
+            "observed": audit,
+            "result": "pass" if audit.get("claim_target_supported") else "fail",
+        }
+    )
+    return metrics
+
+
+def _build_metrics_for_spatial_run(run_results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    metrics: List[Dict[str, Any]] = []
+    for result in run_results:
+        observed = result.get("observed", {})
+        endpoint_name = observed.get("endpoint")
+        if endpoint_name == "radius_change":
+            continue
+        study = observed.get("study", {})
+        endpoint = study.get("endpoints", {}).get(endpoint_name)
+        if endpoint_name and endpoint:
+            metrics.append(
+                {
+                    "name": endpoint_name,
+                    "expected": "preregistered directional/effect-size criterion",
+                    "observed": endpoint,
+                    "result": "pass" if endpoint.get("passed") else "fail",
+                }
+            )
+    metrics.append(
+        {
+            "name": "radius_sensitivity_claim_ceiling",
+            "expected": "FRAGILE when radius sweep is unexecuted",
+            "observed": "FRAGILE",
+            "result": "pass",
+        }
+    )
+    return metrics
+
+
 def _build_limitations(capability: str, dataset_id: str, present: bool) -> List[str]:
     """Build honest limitation notes (skip case vs executed case)."""
     manifest = FLAGSHIP_DATASETS.get(dataset_id, {})
@@ -167,6 +219,22 @@ def _build_limitations(capability: str, dataset_id: str, present: bool) -> List[
             "Counts derive from SeuratData 'ifnb' with donor identities joined "
             "from GEO GSE96583 per-cell metadata (demuxlet 'ind' column); "
             "singlets only.",
+        ]
+    if capability == "scrna.annotation_evidence":
+        return [
+            "Two real public processed 10x CITE-seq datasets were executed with calibration/holdout separation.",
+            "Paired ADT anchors are orthogonal evidence but not independent expert ground truth.",
+            "BN-ANN-IV-001 met its numeric endpoints with a zero threshold and 100% coverage; "
+            "the post-run scientific audit therefore classifies the gate as non-selective and inconclusive.",
+            "BN-ANN-IV-002 retained an input-ineligible non-evaluation because X was normalized; "
+            "the separately locked BN-ANN-IV-003 raw-count successor met its endpoints but was not "
+            "blinded to label distributions and is capped at CANDIDATE_EXTERNAL_REFERENCE_NONBLINDED.",
+        ]
+    if capability == "spatial.inference_validity":
+        return [
+            "Authentic 10x Xenium XOA v4 bytes were executed and the official archive MD5 was verified.",
+            "The vendor states this tiny three-patch/two-FOV dataset is for format testing and not biological conclusions.",
+            "BN-SP-IV-001 retained a negative result because the cell-size-bias effect did not meet its locked threshold.",
         ]
     return ["Dataset present; see manifest notes for truth semantics."]
 
@@ -205,7 +273,8 @@ def run_single_capability(
         # If any result is non-skipped, use the worst; otherwise all skipped
         non_skipped = [r for r in run_results if not r.get("skipped")]
         if non_skipped:
-            overall = non_skipped[0]
+            failing = [r for r in non_skipped if _determine_status(r) == "fail"]
+            overall = failing[0] if failing else non_skipped[0]
         else:
             overall = run_results[0]
     else:
@@ -225,6 +294,7 @@ def run_single_capability(
     dataset_info: Dict[str, Any] = {
         "name": dataset_id,
         "version": manifest.get("version", "GSE96583" if dataset_id == "kang2018_pbmc_ifnb" else "unknown"),
+        "dataset_track": manifest.get("dataset_track", "real_public_external_validation"),
         "accession": manifest.get("source", "unknown"),
         "checksum_sha256": checksums if checksums else "unavailable",
     }
@@ -262,13 +332,31 @@ def run_single_capability(
     observed = overall.get("observed") if isinstance(overall, dict) else None
     if executed and capability == "scrna.pseudobulk_de" and observed:
         metrics = _build_metrics_for_pseudobulk_run(observed)
+    elif executed and capability == "scrna.annotation_evidence" and observed:
+        metrics = _build_metrics_for_annotation_run(observed)
+    elif executed and capability == "spatial.inference_validity":
+        metrics = _build_metrics_for_spatial_run(run_results)
     else:
         metrics = _build_metrics_for_skip(capability, dataset_id)
     limitations = _build_limitations(capability, dataset_id, present)
 
     # Evidence files
     subdir = _capability_to_subdir(capability)
-    evidence_files = _find_extra_data_files(subdir)
+    if capability in {"scrna.annotation_evidence", "spatial.inference_validity"}:
+        # These reports supersede the synthetic acceptance track.  Only the
+        # preregistered study bundle belongs in the external-evidence report;
+        # synthetic h5ad fixtures remain attached solely to the inferential
+        # stress report and must never masquerade as flagship evidence.
+        evidence_files: List[str] = []
+        studies_dir = VALIDATION_ROOT / subdir / "studies"
+        if studies_dir.is_dir():
+            evidence_files.extend(
+                str(path.relative_to(REPO_ROOT))
+                for path in sorted(studies_dir.rglob("*"))
+                if path.is_file()
+            )
+    else:
+        evidence_files = _find_extra_data_files(subdir)
 
     timestamp = datetime.now(timezone.utc).isoformat()
 

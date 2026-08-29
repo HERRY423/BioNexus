@@ -46,6 +46,8 @@ try:
 except ImportError:
     default_local_cache = None
 
+from bionexus.egress_guard import guarded_urlopen
+
 try:
     from mcp.server.fastmcp import FastMCP
 except ImportError:
@@ -188,7 +190,12 @@ async def async_http_request(
 
     def _sync_request():
         req = urllib.request.Request(url, data=body_bytes, headers=req_headers, method=method)
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
+        with guarded_urlopen(
+            req,
+            timeout=timeout,
+            purpose="Local MCP public scientific API request",
+            payload=json_data,
+        ) as resp:
             content = resp.read().decode("utf-8")
             if not content.strip():
                 return {}
@@ -327,7 +334,11 @@ async def tool_get_pubmed_article(pmid: str) -> Dict[str, Any]:
 
         def _fetch_xml():
             req = urllib.request.Request(fetch_url, headers={"User-Agent": "BioNexus-LocalMCP/2.0.0"})
-            with urllib.request.urlopen(req, timeout=15) as resp:
+            with guarded_urlopen(
+                req,
+                timeout=15,
+                purpose="Local MCP endpoint availability probe",
+            ) as resp:
                 return resp.read()
 
         xml_bytes = await asyncio.to_thread(_fetch_xml)

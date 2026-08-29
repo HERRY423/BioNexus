@@ -6,9 +6,17 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 import urllib.error
 import urllib.request
+from pathlib import Path
 from typing import Any, Dict
+
+_SRC = Path(__file__).resolve().parents[1] / "src"
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
+from bionexus.egress_guard import guarded_urlopen
 
 TOKEN = os.environ.get("GH_TOKEN", "")
 REPO = "HERRY423/BioNexus"
@@ -225,7 +233,12 @@ def github_request(endpoint: str, data: Dict[str, Any] | None = None, method: st
     for attempt in range(1, max_retries + 1):
         try:
             req = urllib.request.Request(url, data=body, headers=headers, method=method)
-            with urllib.request.urlopen(req, timeout=30) as resp:
+            with guarded_urlopen(
+                req,
+                timeout=30,
+                purpose="Create or update BioNexus GitHub issue metadata",
+                payload=data or {},
+            ) as resp:
                 return json.loads(resp.read().decode("utf-8"))
         except urllib.error.HTTPError as e:
             if e.code in (404, 422):

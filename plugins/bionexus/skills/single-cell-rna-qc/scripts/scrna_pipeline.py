@@ -24,7 +24,7 @@ from scrna_reduce_cluster import reduce_and_cluster
 
 from bionexus.backends import require
 from bionexus.contracts import GRADE_A, GRADE_B, EvidenceCard, attach_meta
-from bionexus.integrity import audit_expression_matrix
+from bionexus.integrity import audit_expression_matrix, require_raw_count_matrix
 from bionexus.provenance import sidecar
 
 
@@ -42,9 +42,13 @@ def run_scrna_gold_chain(
     """Full gold chain: QC (MAD) → scrublet (opt) → norm/log1p → HVG/PCA/Neighbors → Leiden → markers."""
     require("scanpy", for_method="run_scrna_gold_chain")
     steps = []
-    raw_counts_grade, raw_notes, raw_stats = audit_expression_matrix(
-        adata.layers.get("counts", adata.X), expected_type="counts"
-    )
+    if "counts" not in adata.layers:
+        # Raw 10x/AnnData inputs commonly keep counts in X.  Promotion is only
+        # legal after a complete integer-count validation; normalized X fails.
+        require_raw_count_matrix(adata.X, label="adata.X")
+        adata.layers["counts"] = adata.X.copy()
+    require_raw_count_matrix(adata.layers["counts"], label="adata.layers['counts']")
+    raw_counts_grade, raw_notes, raw_stats = audit_expression_matrix(adata.layers["counts"], expected_type="counts")
 
     should_qc = (not skip_qc) if skip_qc is not None else run_qc
     if should_qc:

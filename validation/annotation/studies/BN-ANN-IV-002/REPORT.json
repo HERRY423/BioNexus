@@ -1,0 +1,155 @@
+{
+  "schema_version": "bionexus.annotation-external-reference-validation-report.v1",
+  "study_id": "BN-ANN-IV-002",
+  "generated_at": "2026-08-28T16:16:40.046305+00:00",
+  "preregistration": {
+    "path": "validation/annotation/studies/BN-ANN-IV-002/PREREGISTRATION.json",
+    "sha256": "aee79447a0f1d3f1b3b1bca400642730e2c622270a6148dae68fecbf635482cf",
+    "thresholds_changed_after_lock": false,
+    "external_timestamp": false
+  },
+  "dataset": {
+    "path": "data/flagship/citeseq_pbmc_sorted/pbmc_multimodal_zenodo_10213715.h5ad",
+    "source": "Zenodo record 10213715, pbmc_multimodal.h5ad",
+    "doi": "10.5281/zenodo.10213715",
+    "size_bytes": 1945943003,
+    "published_md5": "bfb4711abd1ddadf9d4960aca762513d",
+    "sha256": "6187a2d38cfe92b967816699d3338b44ed4d43b70445b748a782e83597618864",
+    "shape": [
+      161764,
+      20729
+    ],
+    "reference_label_column_required_but_not_accessed": "celltype.l2"
+  },
+  "input_contract": {
+    "passed": false,
+    "reason": "external holdout X is not a finite non-negative integer count matrix; the locked study prohibits substituting normalized expression",
+    "x_matrix_type": "_CSRDataset",
+    "x_dtype": "float64",
+    "locked_matrix_source": "adata.X",
+    "available_layers": [
+      "None"
+    ],
+    "raw_present_but_substitution_prohibited_by_lock": true,
+    "reference_labels_accessed": false
+  },
+  "locked_gate": {
+    "rna_margin_min": 0.8007809849349283,
+    "selected_on": "PBMC10k ADT-anchored development cells only",
+    "development_coverage": 0.8,
+    "development_precision": 0.9737332339791356,
+    "development_precision_wilson_lower_95": 0.9691043559562766,
+    "development_accuracy_improvement": 0.054508196721311464,
+    "threshold_changes_after_lock": "prohibited; create a new study_id"
+  },
+  "primary_endpoints": {
+    "mapped_holdout_cells": {
+      "observed": null,
+      "passed": false,
+      "status": "NOT_EVALUATED_INPUT_INELIGIBLE"
+    },
+    "accepted_precision_wilson_lower_95": {
+      "observed": null,
+      "passed": false,
+      "status": "NOT_EVALUATED_INPUT_INELIGIBLE"
+    },
+    "accuracy_improvement": {
+      "observed": null,
+      "passed": false,
+      "status": "NOT_EVALUATED_INPUT_INELIGIBLE"
+    },
+    "coverage_range": {
+      "observed": null,
+      "passed": false,
+      "status": "NOT_EVALUATED_INPUT_INELIGIBLE"
+    },
+    "accepted_lineages": {
+      "observed": null,
+      "passed": false,
+      "status": "NOT_EVALUATED_INPUT_INELIGIBLE"
+    }
+  },
+  "status": {
+    "run_status": "not_evaluated_input_ineligible",
+    "primary_endpoints_passed": false,
+    "maximum_maturity": "FRAGILE",
+    "public_reference_dataset": true,
+    "independent_reference_annotations": "NOT_ACCESSED_AFTER_INPUT_GATE_FAILURE",
+    "independent_ground_truth": false
+  },
+  "claim_boundary": {
+    "supported": null,
+    "not_supported": [
+      "BioNexus cell-type assignment",
+      "fine-grained subtype validity",
+      "calibrated per-cell probability",
+      "cross-tissue transfer",
+      "clinical validity",
+      "independent external reviewer sign-off"
+    ],
+    "activation_blocked_on": [
+      "independent domain reviewer",
+      "donor-aware transport study",
+      "approved context-specific calibration profile",
+      "released-artifact reproduction"
+    ]
+  },
+  "markers_available": {
+    "T": [
+      "CD3D",
+      "CD3E",
+      "TRBC1",
+      "TRBC2",
+      "LCK"
+    ],
+    "B": [
+      "MS4A1",
+      "CD79A",
+      "CD79B",
+      "CD37",
+      "CD74"
+    ],
+    "MONOCYTE": [
+      "LST1",
+      "S100A8",
+      "S100A9",
+      "CTSS",
+      "LILRB1"
+    ],
+    "NK": [
+      "NKG7",
+      "GNLY",
+      "PRF1",
+      "KLRD1",
+      "CTSW"
+    ]
+  },
+  "evidence_files": [],
+  "provenance": {
+    "data_source": "Zenodo 10213715 pbmc_multimodal.h5ad",
+    "download_date": "2026-08-28",
+    "commit_sha": "7a0e0e180d07773c392ccfe61daa5a86837b280f",
+    "git_dirty": true,
+    "environment_lockfile_hashes": {
+      "pyproject.toml": "72b298385f6617e259e0387200a8ccae03ee1a22567d0a7f73e5b82f12aa0de8",
+      "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
+      "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
+    },
+    "command": [
+      "evals/annotation_external_holdout_validation.py",
+      "--study-id",
+      "BN-ANN-IV-002"
+    ],
+    "command_str": "evals/annotation_external_holdout_validation.py --study-id BN-ANN-IV-002",
+    "generator_version": "1.0.0-rc.2",
+    "python_version": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "timestamp": "2026-08-28T16:16:39.746158+00:00",
+    "extra_metadata": {
+      "study_id": "BN-ANN-IV-002"
+    },
+    "repository_dirty_at_execution": true,
+    "validation_source_dirty": true,
+    "source_snapshot_sha256": "a4a183fbf6e1430b683f45e66976e301258f4bfe45ea748d46dcfc972730af61"
+  }
+}

@@ -103,7 +103,7 @@ def test_claims_need_evidence():
     assert empty.evidence_status == "ABSTAIN"
 
 
-def test_external_validation_unlocks_ceiling():
+def test_database_retrieval_does_not_unlock_external_validation_ceiling():
     ledger = _reference_ledger()
     ledger.add_evidence(EvidenceRef("PBMC-ATLAS-9", "database", "CITE-seq atlas IFN module concordance", maturity="REPLICATED"))
     claim = ClaimRecord(
@@ -113,7 +113,82 @@ def test_external_validation_unlocks_ceiling():
         supported_by=["PBMC-ATLAS-9"],
     )
     ledger.add_claim(claim)
+    assert claim.evidence_status != "REPLICATED"
+
+
+def test_qualified_independent_validation_unlocks_ceiling():
+    ledger = _reference_ledger()
+    ledger.add_evidence(
+        EvidenceRef(
+            "PBMC-ATLAS-10",
+            "cross_method",
+            "Held-out cohort assessment",
+            maturity="REPLICATED",
+            validation_role="external_validation",
+            provenance={
+                "independence_basis": "held_out_cohort",
+                "validation_target_sha256": "a" * 64,
+                "validation_evidence_sha256": "b" * 64,
+                "review_status": "approved",
+                "reviewer_id": "reviewer:external-01",
+                "review_receipt_sha256": "c" * 64,
+            },
+        )
+    )
+    claim = ClaimRecord(
+        claim_id="CLAIM-022",
+        statement="Gene X is associated with response Y",
+        capability_id="variant.acmg_classification",
+        supported_by=["PBMC-ATLAS-10"],
+    )
+    ledger.add_claim(claim)
     assert claim.evidence_status == "REPLICATED"
+
+
+def test_external_validation_role_requires_independence_hashes_and_human_review():
+    with pytest.raises(ValueError, match="review_status='approved'"):
+        EvidenceRef(
+            "EXT-BAD-1",
+            "cross_method",
+            validation_role="external_validation",
+            provenance={"independence_basis": "held_out_cohort"},
+        )
+
+    with pytest.raises(ValueError, match="cannot validate an artifact against itself"):
+        EvidenceRef(
+            "EXT-BAD-2",
+            "cross_method",
+            validation_role="external_validation",
+            provenance={
+                "independence_basis": "held_out_cohort",
+                "validation_target_sha256": "a" * 64,
+                "validation_evidence_sha256": "a" * 64,
+                "review_status": "approved",
+                "reviewer_id": "reviewer:external-01",
+                "review_receipt_sha256": "c" * 64,
+            },
+        )
+
+
+def test_external_validation_qualification_is_rechecked_after_mutation():
+    ref = EvidenceRef(
+        "EXT-MUTABLE-1",
+        "cross_method",
+        validation_role="external_validation",
+        provenance={
+            "independence_basis": "orthogonal_assay",
+            "validation_target_sha256": "a" * 64,
+            "validation_evidence_sha256": "b" * 64,
+            "review_status": "approved",
+            "reviewer_id": "reviewer:external-02",
+            "review_receipt_sha256": "c" * 64,
+        },
+    )
+    assert ref.qualifies_as_external_validation is True
+
+    ref.provenance["review_status"] = "pending"
+
+    assert ref.qualifies_as_external_validation is False
 
 
 def test_unknown_references_rejected_and_duplicates_refused():

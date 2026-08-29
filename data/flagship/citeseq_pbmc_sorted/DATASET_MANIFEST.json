@@ -1,0 +1,42 @@
+{
+  "schema_version": "bionexus.public-dataset-manifest.v1",
+  "dataset_id": "citeseq_pbmc_sorted",
+  "dataset_track": "real_public_processed_citeseq",
+  "acquired_at": "2026-08-28",
+  "license_note": "Underlying 10x Genomics public PBMC datasets; processed AnnData files distributed by YosefLab/scVI-data and used by the official scvi-tools totalVI tutorials.",
+  "scientific_boundary": {
+    "public_reference_dataset": true,
+    "independent_reference_annotations": true,
+    "independent_ground_truth": false,
+    "reason": "Paired ADT provides orthogonal modality evidence. The optional Azimuth PBMC successor adds externally authored reference annotations, but reference labels are not experimental biological ground truth and the successful successor was not blinded to label distributions."
+  },
+  "files": [
+    {
+      "role": "calibration_only",
+      "path": "pbmc_10k_protein_v3.h5ad",
+      "source_url": "https://raw.githubusercontent.com/YosefLab/scVI-data/master/pbmc_10k_protein_v3.h5ad",
+      "sha256": "5f08b8575febf9e04b209b94eb43f6335f1e33b0985cdcf44adf7320f6243c69",
+      "size_bytes": 24937137,
+      "observed_shape": [6855, 16727]
+    },
+    {
+      "role": "locked_holdout_only",
+      "path": "pbmc_5k_protein_v3.h5ad",
+      "source_url": "https://raw.githubusercontent.com/YosefLab/scVI-data/master/pbmc_5k_protein_v3.h5ad",
+      "sha256": "a1bf51e070d24b39627ea4de9b3e489a4637ff795e1061e0733e26c3baec8847",
+      "size_bytes": 18294964,
+      "observed_shape": [3994, 16581]
+    },
+    {
+      "role": "optional_external_reference_successor_not_downloaded_in_ci",
+      "path": "pbmc_multimodal_zenodo_10213715.h5ad",
+      "source_url": "https://zenodo.org/records/10213715/files/pbmc_multimodal.h5ad?download=1",
+      "doi": "10.5281/zenodo.10213715",
+      "published_md5": "bfb4711abd1ddadf9d4960aca762513d",
+      "sha256": "6187a2d38cfe92b967816699d3338b44ed4d43b70445b748a782e83597618864",
+      "size_bytes": 1945943003,
+      "observed_shape": [161764, 20729],
+      "study_ids": ["BN-ANN-IV-002", "BN-ANN-IV-003"]
+    }
+  ]
+}

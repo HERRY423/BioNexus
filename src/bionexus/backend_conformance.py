@@ -45,6 +45,7 @@ fallback would, by definition, be a masquerade.
 
 from __future__ import annotations
 
+import functools
 import hashlib
 import importlib
 import importlib.metadata
@@ -106,9 +107,6 @@ def _norm_dist(name: str) -> str:
 
 def _top_level_package(import_name: str) -> str:
     return import_name.split(".")[0]
-
-
-import functools
 
 
 @functools.lru_cache(maxsize=1)

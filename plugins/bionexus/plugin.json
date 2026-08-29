@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "bionexus-reliability",
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0-rc.3",
   "description": "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents (Warrant-First Evidence Assessment, Fail-Closed Invariants, Evidence-Capped Claims, Zero Silent Substitution).",
   "author": {
     "name": "BioNexus Team"

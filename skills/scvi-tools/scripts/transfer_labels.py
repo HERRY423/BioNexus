@@ -12,6 +12,13 @@ Usage:
 import argparse
 import os
 import sys
+from pathlib import Path
+
+_SRC = Path(__file__).resolve().parents[3] / "src"
+if _SRC.is_dir() and str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
+from bionexus.integrity import require_counts_layer, require_raw_count_matrix
 
 
 def transfer_labels(reference_model, adata_query, max_epochs=100, confidence_threshold=0.5):
@@ -54,7 +61,9 @@ def transfer_labels(reference_model, adata_query, max_epochs=100, confidence_thr
 
     # Ensure counts layer
     if "counts" not in adata_query.layers:
+        require_raw_count_matrix(adata_query.X, label="query adata.X")
         adata_query.layers["counts"] = adata_query.X.copy()
+    require_counts_layer(adata_query)
 
     # Prepare query for mapping
     print("Preparing query data...")

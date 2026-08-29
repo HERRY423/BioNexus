@@ -277,7 +277,6 @@ def audit_prohibited_claims(
             DeterministicClaimParser,
             DeterministicWarrantEngine,
             EvidenceProfile,
-            GeneralizationScope,
             WarrantTierStatus,
         )
 

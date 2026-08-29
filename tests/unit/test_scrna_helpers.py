@@ -56,6 +56,18 @@ def test_pseudobulk_sums_counts():
     assert "not a DE test" in contract["next"].lower() or "DE" in contract["next"]
 
 
+def test_pseudobulk_refuses_missing_or_normalized_counts_layer():
+    missing = _tiny()
+    del missing.layers["counts"]
+    with pytest.raises(ValueError, match="refusing to substitute"):
+        pseudobulk_counts(missing, by=["sample", "leiden"])
+
+    normalized = _tiny()
+    normalized.layers["counts"] = normalized.layers["counts"] / 3.0
+    with pytest.raises(ValueError, match="non-integer"):
+        pseudobulk_counts(normalized, by=["sample", "leiden"])
+
+
 def test_convert_rejects_rds():
     with pytest.raises(ValueError, match="rds"):
         convert_to_h5ad("obj.rds", "out.h5ad")

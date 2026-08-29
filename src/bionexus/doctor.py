@@ -78,9 +78,10 @@ def run_doctor() -> Dict[str, Any]:
         "forbidden_claims": FORBIDDEN_CLAIMS,
         "pitfalls": PITFALLS,
         "mcp_policy": (
-            "Local tools/list exposes unique APIs only. Prefer hosted PubMed/ChEMBL/"
-            "Open Targets/ClinicalTrials/bioRxiv. Set BIONEXUS_LOCAL_HOSTED_FALLBACKS=1 "
-            "to re-enable local copies. search_cosmic is hidden by default and is not the COSMIC API."
+            "Local tools/list exposes the compatibility surface only. Dedicated Literature/Database "
+            "peer plugins are preferred and are not bundled by BioNexus. Set "
+            "BIONEXUS_LOCAL_HOSTED_FALLBACKS=1 only for disaster recovery. search_cosmic is hidden "
+            "by default and is not the COSMIC API."
         ),
     }
     return report

@@ -371,12 +371,12 @@ class TestCertificationBundles:
         assert data["summary"]["unsatisfied"] == 2
 
     def test_annotation_is_validated(self) -> None:
-        """annotation should be VALIDATED (10/14: 6 core + adversarial + parameter perturbation + degradation + provenance; public reference & IGT revoked pending real data)."""
+        """Annotation gains real public-data execution but not independent ground truth."""
         data = json.loads(_FLAGSHIP_CERT_FILES["scrna.annotation_evidence"].read_text(encoding="utf-8"))
         assert data["certification_level"] == "VALIDATED"
-        assert data["summary"]["satisfied"] == 10
-        assert data["summary"]["unsatisfied"] == 4
-        assert "public_reference_dataset" in data["summary"]["unsatisfied_list"]
+        assert data["summary"]["satisfied"] == 11
+        assert data["summary"]["unsatisfied"] == 3
+        assert "public_reference_dataset" not in data["summary"]["unsatisfied_list"]
         assert "independent_ground_truth" in data["summary"]["unsatisfied_list"]
 
     def test_spatial_is_validated(self) -> None:
@@ -389,32 +389,44 @@ class TestCertificationBundles:
         assert "independent_ground_truth" in data["summary"]["unsatisfied_list"]
 
 
-class TestSyntheticTechnicalAcceptanceIntegrity:
-    """Ensure annotation and spatial validation artifacts are explicitly marked as synthetic technical acceptance and contain runtime provenance."""
+class TestValidationTrackSeparation:
+    """Real flagship reports and synthetic stress reports must remain distinct."""
 
-    def test_annotation_report_is_synthetic_technical_acceptance(self) -> None:
+    def test_annotation_report_is_real_public_but_inconclusive(self) -> None:
         rep_path = _REPO_ROOT / "validation" / "annotation" / "REPORT.json"
         assert rep_path.is_file()
         data = json.loads(rep_path.read_text(encoding="utf-8"))
-        assert data["dataset"]["dataset_track"] == "synthetic_technical_acceptance"
-        assert "synthetic_technical_acceptance" in data["dataset"]["accession"]
-        assert len(data["dataset"]["checksum_sha256"]) == 64
+        assert data["dataset"]["version"] == "BN-ANN-IV-001"
+        assert data["status"] in ("pass", "fail")
+        assert isinstance(data["dataset"]["checksum_sha256"], dict)
         assert "provenance" in data["pipeline"]
         assert "commit_sha" in data["pipeline"]["provenance"]
         assert "git_dirty" in data["pipeline"]["provenance"]
         assert "command" in data["pipeline"]["provenance"]
+        stress = json.loads(
+            (_REPO_ROOT / "validation" / "annotation" / "INFERENTIAL_STRESS_REPORT.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        assert stress["dataset_track"] == "synthetic_technical_acceptance"
 
-    def test_spatial_report_is_synthetic_technical_acceptance(self) -> None:
+    def test_spatial_report_is_real_instrument_negative_result(self) -> None:
         rep_path = _REPO_ROOT / "validation" / "spatial" / "REPORT.json"
         assert rep_path.is_file()
         data = json.loads(rep_path.read_text(encoding="utf-8"))
-        assert data["dataset"]["dataset_track"] == "synthetic_technical_acceptance"
-        assert "synthetic_technical_acceptance" in data["dataset"]["accession"]
-        assert len(data["dataset"]["checksum_sha256"]) == 64
+        assert data["dataset"]["version"] == "BN-SP-IV-001"
+        assert data["status"] in ("pass", "fail")
+        assert isinstance(data["dataset"]["checksum_sha256"], dict)
         assert "provenance" in data["pipeline"]
         assert "commit_sha" in data["pipeline"]["provenance"]
         assert "git_dirty" in data["pipeline"]["provenance"]
         assert "command" in data["pipeline"]["provenance"]
+        stress = json.loads(
+            (_REPO_ROOT / "validation" / "spatial" / "INFERENTIAL_STRESS_REPORT.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        assert stress["dataset_track"] == "synthetic_technical_acceptance"
 
     def test_flagship_dir_does_not_contain_synthetic_pretenders(self) -> None:
         """Synthetic datasets must not masquerade inside data/flagship."""
@@ -422,4 +434,3 @@ class TestSyntheticTechnicalAcceptanceIntegrity:
         spatial_fake = _REPO_ROOT / "data" / "flagship" / "xenium_spatial_truth" / "spatial_truth.h5ad"
         assert not citeseq_fake.is_file(), "Fake citeseq_pbmc.h5ad must not exist in data/flagship"
         assert not spatial_fake.is_file(), "Fake spatial_truth.h5ad must not exist in data/flagship"
-

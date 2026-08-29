@@ -568,7 +568,7 @@ def simulate_gene_perturbation(
     mode: str = "knockout",
     config: Optional[SCFMConfig] = None,
     cell_type_col: Optional[str] = "cell_type",
-    allow_proxy_fallback: bool = True,
+    allow_proxy_fallback: bool = False,
 ) -> SCFMPerturbationResult:
     """
     Perform in silico gene perturbation (Knockout or Overexpression) and compute embedding displacement.
@@ -663,4 +663,3 @@ def simulate_gene_perturbation(
             "Evidence Ceiling: PRELIMINARY. In silico predictions are computational hypotheses requiring experimental validation.",
         ],
     )
-

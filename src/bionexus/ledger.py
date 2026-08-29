@@ -44,6 +44,8 @@ EVIDENCE_KINDS = (
     "method_run",         # an executed analytical run (backend + parameters)
     "statistical_result", # test statistic, effect size, corrected p-value
     "database",           # external knowledge source (ClinVar, UniProt, ...)
+    "literature",         # paper/preprint result; retrieval is not independent validation
+    "inspection",         # sequence/structure/slide observation; no causal promotion
     "cross_method",       # concordance evidence from an alternative method
     "causal_dag",         # structural causal graph / d-separation validation
     "spatial_colocalization", # spatial adjacency / colocalization evidence
@@ -52,6 +54,30 @@ EVIDENCE_KINDS = (
     "temporal_kinetics",  # longitudinal / time-series kinetics
     "claim_semantics",    # parsed claim IR / warrant engine record
 )
+
+VALIDATION_ROLES = (
+    "supporting",
+    "context_only",
+    "external_validation",
+    "reference_ground_truth",
+)
+
+_INDEPENDENCE_BASES = {
+    "independent_dataset",
+    "held_out_cohort",
+    "orthogonal_assay",
+    "blinded_external_evaluation",
+}
+
+
+def _is_sha256(value: Any) -> bool:
+    if not isinstance(value, str) or len(value) != 64:
+        return False
+    try:
+        int(value, 16)
+    except ValueError:
+        return False
+    return True
 
 
 @dataclass
@@ -63,12 +89,75 @@ class EvidenceRef:
     summary: str = ""
     maturity: str = ConclusionMaturity.PRELIMINARY.value
     provenance: Dict[str, Any] = field(default_factory=dict)
+    validation_role: str = "supporting"
 
     def __post_init__(self) -> None:
         if self.kind not in EVIDENCE_KINDS:
             raise ValueError(f"Evidence kind '{self.kind}' not in {EVIDENCE_KINDS}")
         if self.maturity not in MATURITY_RANKS:
             raise ValueError(f"Unknown maturity '{self.maturity}'")
+        if self.validation_role not in VALIDATION_ROLES:
+            raise ValueError(f"Validation role '{self.validation_role}' not in {VALIDATION_ROLES}")
+        if self.validation_role == "external_validation":
+            self._validate_external_qualification()
+        elif self.validation_role == "reference_ground_truth":
+            self._validate_reference_qualification()
+
+    def _validate_review(self) -> None:
+        receipt_hash = self.provenance.get("review_receipt_sha256")
+        if (
+            self.provenance.get("review_status") != "approved"
+            or not self.provenance.get("reviewer_id")
+            or not _is_sha256(receipt_hash)
+        ):
+            raise ValueError(
+                f"Evidence '{self.ref_id}' requires review_status='approved', a named reviewer_id, "
+                "and review_receipt_sha256"
+            )
+
+    def _validate_external_qualification(self) -> None:
+        self._validate_review()
+        basis = self.provenance.get("independence_basis")
+        if basis not in _INDEPENDENCE_BASES:
+            raise ValueError(f"Evidence '{self.ref_id}' has unsupported independence_basis '{basis}'")
+        target_hash = self.provenance.get("validation_target_sha256")
+        evidence_hash = self.provenance.get("validation_evidence_sha256")
+        if not _is_sha256(target_hash) or not _is_sha256(evidence_hash):
+            raise ValueError(
+                f"Evidence '{self.ref_id}' requires validation_target_sha256 and validation_evidence_sha256"
+            )
+        if target_hash == evidence_hash:
+            raise ValueError(f"Evidence '{self.ref_id}' cannot validate an artifact against itself")
+
+    def _validate_reference_qualification(self) -> None:
+        self._validate_review()
+        required = ("reference_release", "reference_scope", "reference_artifact_sha256")
+        missing = [name for name in required if not self.provenance.get(name)]
+        if missing or not _is_sha256(self.provenance.get("reference_artifact_sha256")):
+            raise ValueError(f"Evidence '{self.ref_id}' has incomplete reference qualification: {missing}")
+
+    @property
+    def qualifies_as_external_validation(self) -> bool:
+        try:
+            if self.validation_role == "external_validation":
+                self._validate_external_qualification()
+                return True
+            if self.validation_role == "reference_ground_truth":
+                self._validate_reference_qualification()
+                return True
+        except ValueError:
+            return False
+        return False
+
+    @property
+    def is_reference_ground_truth(self) -> bool:
+        if self.validation_role != "reference_ground_truth":
+            return False
+        try:
+            self._validate_reference_qualification()
+        except ValueError:
+            return False
+        return True
 
 
 @dataclass
@@ -157,7 +246,7 @@ class ClaimLedger:
 
         if claim.capability_id:
             has_ext = any(
-                self.evidence[r].kind == "database" or self.evidence[r].kind == "cross_method"
+                self.evidence[r].qualifies_as_external_validation
                 for r in claim.supported_by
                 if r in self.evidence
             )
@@ -177,7 +266,6 @@ class ClaimLedger:
                     DeterministicClaimParser,
                     DeterministicWarrantEngine,
                     EvidenceProfile,
-                    ScientificClaimIR,
                 )
 
                 if claim.structured_claim:
@@ -188,12 +276,21 @@ class ClaimLedger:
 
                 # Assemble EvidenceProfile from supporting evidence nodes
                 ev_profile = EvidenceProfile(
+                    observational_data=bool(supporting),
                     spatial_colocalization=any(self.evidence[r].kind == "spatial_colocalization" for r in claim.supported_by if r in self.evidence),
                     ligand_receptor_inference=any(self.evidence[r].kind == "ligand_receptor" for r in claim.supported_by if r in self.evidence),
                     perturbation=any(self.evidence[r].kind == "perturbation" for r in claim.supported_by if r in self.evidence),
                     temporal_evidence=any(self.evidence[r].kind == "temporal_kinetics" for r in claim.supported_by if r in self.evidence),
-                    independent_validation=any(self.evidence[r].kind in ("database", "cross_method") for r in claim.supported_by if r in self.evidence),
-                    reference_ground_truth=any(self.evidence[r].kind in ("database", "cross_method") for r in claim.supported_by if r in self.evidence),
+                    independent_validation=any(
+                        self.evidence[r].qualifies_as_external_validation
+                        for r in claim.supported_by
+                        if r in self.evidence
+                    ),
+                    reference_ground_truth=any(
+                        self.evidence[r].is_reference_ground_truth
+                        for r in claim.supported_by
+                        if r in self.evidence
+                    ),
                     cross_method_concordance=any(self.evidence[r].kind == "cross_method" for r in claim.supported_by if r in self.evidence),
                     causal_identification_status="BACKDOOR_SATISFIED" if any(self.evidence[r].kind == "causal_dag" for r in claim.supported_by if r in self.evidence) else "UNASSESSED",
                 )
@@ -261,6 +358,7 @@ class ClaimLedger:
                     "bns:evidenceKind": ref.kind,
                     "bns:summary": ref.summary,
                     "bns:maturity": ref.maturity,
+                    "bns:validationRole": ref.validation_role,
                 }
             )
 

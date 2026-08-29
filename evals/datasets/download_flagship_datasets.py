@@ -15,8 +15,9 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import sys
-import urllib.request
+import zipfile
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -28,7 +29,68 @@ from flagship_validation import (  # noqa: E402
     flagship_dataset_present,
 )
 
+from bionexus.egress_guard import DataClassification, guarded_urlopen  # noqa: E402
+
 GEO_KANG2018_URL = "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE96583&format=file"
+CITESEQ_FILES = {
+    "pbmc_10k_protein_v3.h5ad": {
+        "url": "https://raw.githubusercontent.com/YosefLab/scVI-data/master/pbmc_10k_protein_v3.h5ad",
+        "sha256": "5f08b8575febf9e04b209b94eb43f6335f1e33b0985cdcf44adf7320f6243c69",
+    },
+    "pbmc_5k_protein_v3.h5ad": {
+        "url": "https://raw.githubusercontent.com/YosefLab/scVI-data/master/pbmc_5k_protein_v3.h5ad",
+        "sha256": "a1bf51e070d24b39627ea4de9b3e489a4637ff795e1061e0733e26c3baec8847",
+    },
+}
+XENIUM_ARCHIVE = {
+    "name": "Xenium_V1_Protein_Human_Kidney_tiny_outs.zip",
+    "url": (
+        "https://cf.10xgenomics.com/samples/xenium/4.0.0/"
+        "Xenium_V1_Protein_Human_Kidney_tiny/Xenium_V1_Protein_Human_Kidney_tiny_outs.zip"
+    ),
+    "sha256": "abd7e8f7fd047dcc6afdb1e9eece90d4533d3ead053c6f05c482be050bdf79d2",
+}
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _download_verified(url: str, destination: Path, expected_sha256: str | None) -> None:
+    if destination.is_file() and (expected_sha256 is None or _sha256(destination) == expected_sha256):
+        return
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    partial = destination.with_suffix(destination.suffix + ".part")
+    with guarded_urlopen(
+        url,
+        timeout=120,
+        purpose=f"download pinned BioNexus public flagship dataset {destination.name}",
+        data_classification=DataClassification.PUBLIC_BENCHMARK,
+    ) as response, partial.open("wb") as handle:
+        for block in iter(lambda: response.read(1024 * 1024), b""):
+            handle.write(block)
+    observed = _sha256(partial)
+    if expected_sha256 is not None and observed != expected_sha256:
+        partial.unlink(missing_ok=True)
+        raise RuntimeError(
+            f"download hash mismatch for {destination.name}: expected {expected_sha256}, observed {observed}"
+        )
+    partial.replace(destination)
+
+
+def _extract_verified_zip(archive: Path, destination: Path) -> None:
+    destination.mkdir(parents=True, exist_ok=True)
+    root = destination.resolve()
+    with zipfile.ZipFile(archive) as bundle:
+        for member in bundle.infolist():
+            target = (destination / member.filename).resolve()
+            if target != root and root not in target.parents:
+                raise RuntimeError(f"archive path escapes destination: {member.filename}")
+        bundle.extractall(destination)
 
 
 def _report(dataset_id: str, ok: bool, note: str = "") -> None:
@@ -51,7 +113,7 @@ def fetch_kang2018(root: Path) -> bool:
     if not tar_path.is_file():
         print(f"    downloading GEO supplementary tarball -> {tar_path} ...")
         try:
-            urllib.request.urlretrieve(GEO_KANG2018_URL, tar_path)  # noqa: S310
+            _download_verified(GEO_KANG2018_URL, tar_path, expected_sha256=None)
         except Exception as e:
             print(f"    automatic download failed ({e}); fetch manually:")
             print(f"      {GEO_KANG2018_URL}")
@@ -72,19 +134,15 @@ def fetch_kang2018(root: Path) -> bool:
 
 
 def fetch_citeseq(root: Path) -> bool:
-    """B: CITE-seq / sorted PBMC (Hao et al. 2021 multimodal PBMC, 10x public)."""
-    flagship_dataset_dir("citeseq_pbmc_sorted").mkdir(parents=True, exist_ok=True)
+    """B: public 10x PBMC CITE-seq files used by scvi-tools totalVI tutorials."""
+    destination = flagship_dataset_dir("citeseq_pbmc_sorted")
+    destination.mkdir(parents=True, exist_ok=True)
+    for name, source in CITESEQ_FILES.items():
+        _download_verified(source["url"], destination / name, source["sha256"])
     steps = """
-    Manual acquisition (10x data files are versioned per release; follow the
-    current links rather than pinned URLs):
-      1. 10x Genomics public CITE-seq PBMC feature-barcode datasets, or
-         Hao et al. 2021 (Cell 184:3573, doi:10.1016/j.cell.2021.04.048)
-         multimodal PBMC 'bmcite' (available via the SeuratData R package).
-      2. Convert to data/flagship/citeseq_pbmc_sorted/citeseq_pbmc.h5ad with
-         the ADT protein modality exposed (obsm['prot'] or a var-masked ADT
-         block) and sorted-population labels in obs when available.
-    The benchmark measures whether BioNexus distrusts annotations lacking this
-    orthogonal protein evidence — the evidence itself must be real.
+    Two pinned processed public 10x PBMC CITE-seq AnnData files are present.
+    BN-ANN-IV-001 uses PBMC10k only for fitting and PBMC5k only for holdout.
+    Paired ADT is real orthogonal evidence, not independent expert ground truth.
     """
     _report("citeseq_pbmc_sorted", flagship_dataset_present("citeseq_pbmc_sorted"), steps)
     return flagship_dataset_present("citeseq_pbmc_sorted")
@@ -92,17 +150,15 @@ def fetch_citeseq(root: Path) -> bool:
 
 def fetch_xenium(root: Path) -> bool:
     """C: Xenium / CosMx / MERFISH-class in situ data with coordinates."""
-    flagship_dataset_dir("xenium_spatial_truth").mkdir(parents=True, exist_ok=True)
+    destination = flagship_dataset_dir("xenium_spatial_truth")
+    destination.mkdir(parents=True, exist_ok=True)
+    archive = destination / XENIUM_ARCHIVE["name"]
+    _download_verified(XENIUM_ARCHIVE["url"], archive, XENIUM_ARCHIVE["sha256"])
+    _extract_verified_zip(archive, destination / "official_tiny_outs")
     steps = """
-    Manual acquisition (10x/Vizgen public in situ datasets are distributed via
-    registered downloads; follow the current links):
-      1. 10x Genomics Xenium public datasets (e.g. Human Breast FFPE) or
-         Vizgen MERSCOPE public MERFISH releases.
-      2. Build data/flagship/xenium_spatial_truth/spatial_truth.h5ad:
-         raw counts + physical coordinates in obsm['spatial'];
-         optional obs columns 'cell_area' and 'fov'.
-    The artifact injectors then manufacture leakage / size / density /
-    permutation / FOV artifacts on this REAL coordinate field.
+    The pinned official XOA v4 tiny human-kidney archive is present and hash verified.
+    It supports real-instrument technical acceptance only: 10x states that this
+    tiny subset is not intended for biological conclusions.
     """
     _report("xenium_spatial_truth", flagship_dataset_present("xenium_spatial_truth"), steps)
     return flagship_dataset_present("xenium_spatial_truth")

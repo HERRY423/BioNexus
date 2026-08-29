@@ -103,6 +103,7 @@ class KnownCounterexample:
     empirical_citation: str
     boundary_mechanism: str
     mitigation_strategy: str
+    citation_status: str = ""  # e.g. "UNVERIFIED_REMOVED_2026-08-25" when a prior citation failed audit
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)

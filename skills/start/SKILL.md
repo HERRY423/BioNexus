@@ -62,4 +62,4 @@ Endpoint: clustered `.h5ad` + markers/SVG CSV. Clusters are numbers. Do not inve
 
 ## MCP
 
-Local server defaults to **unique** tools (UniProt, Ensembl, gnomAD, PDB, AF, Reactome, STRING, GEO, GTEx). Prefer hosted PubMed/ChEMBL/Open Targets/ClinicalTrials/bioRxiv. Set `BIONEXUS_LOCAL_HOSTED_FALLBACKS=1` only if hosted MCP is down.
+Local server defaults to the BioNexus compatibility surface (UniProt, Ensembl, gnomAD, PDB, AF, Reactome, STRING, GEO, GTEx). Prefer dedicated Literature/Database peer plugins when the host provides them; BioNexus does not bundle those peers. Set `BIONEXUS_LOCAL_HOSTED_FALLBACKS=1` only for disaster recovery.

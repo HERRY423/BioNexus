@@ -6,7 +6,7 @@
 package:
   name: "bionexus-reliability"
   display_name: "BioNexus"
-  version: "1.0.0-rc.2"
+  version: "1.0.0-rc.3"
   description: "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents (Warrant-First Evidence Assessment, Fail-Closed Invariants, Evidence-Capped Claims, Zero Silent Substitution)."
   author:
     name: "BioNexus Team"
@@ -43,6 +43,7 @@ mcp_servers:
       type: "streamable-http"
       claude_type: "http"
       enabled: true
+      bundle_with_plugin: false
       category: "literature"
       description: "Biomedical literature citations and abstracts from PubMed"
 
@@ -52,6 +53,7 @@ mcp_servers:
       type: "streamable-http"
       claude_type: "http"
       enabled: true
+      bundle_with_plugin: false
       category: "visualization"
       description: "Scientific illustration and diagram generation"
 
@@ -61,6 +63,7 @@ mcp_servers:
       type: "streamable-http"
       claude_type: "http"
       enabled: true
+      bundle_with_plugin: false
       category: "preprints"
       description: "Preprint servers for biology and medicine via Europe PMC"
 
@@ -70,6 +73,7 @@ mcp_servers:
       type: "streamable-http"
       claude_type: "http"
       enabled: true
+      bundle_with_plugin: false
       category: "literature"
       description: "AI-powered scientific research consensus search"
 
@@ -79,6 +83,7 @@ mcp_servers:
       type: "streamable-http"
       claude_type: "http"
       enabled: true
+      bundle_with_plugin: false
       category: "clinical"
       description: "Clinical study protocols and results registry from ClinicalTrials.gov"
 
@@ -88,6 +93,7 @@ mcp_servers:
       type: "streamable-http"
       claude_type: "http"
       enabled: true
+      bundle_with_plugin: false
       category: "chemistry"
       description: "Bioactive molecules, targets, and drug discovery bioactivities database"
 
@@ -97,6 +103,7 @@ mcp_servers:
       type: "streamable-http"
       claude_type: "http"
       enabled: true
+      bundle_with_plugin: false
       category: "data_repository"
       description: "Collaborative biomedical data sharing platform"
 
@@ -106,6 +113,7 @@ mcp_servers:
       type: "streamable-http"
       claude_type: "http"
       enabled: true
+      bundle_with_plugin: false
       category: "literature"
       description: "Scientific literature connector for Wiley journals"
 
@@ -115,6 +123,7 @@ mcp_servers:
       type: "streamable-http"
       claude_type: "http"
       enabled: true
+      bundle_with_plugin: false
       category: "precision_medicine"
       description: "AI platform for precision medicine and oncology"
 
@@ -124,6 +133,7 @@ mcp_servers:
       type: "streamable-http"
       claude_type: "http"
       enabled: true
+      bundle_with_plugin: false
       category: "target_discovery"
       description: "Drug target discovery and validation platform"
 
@@ -181,6 +191,11 @@ skills:
       grade: "B"
       backend: "bionexus.provenance"
       description: "Cryptographic SHA-256 hashes, environment snapshot, W3C PROV-O sidecars"
+    - name: "external-evidence-audit"
+      tier: "wrapper"
+      grade: "B"
+      backend: "bionexus.ecosystem_intake"
+      description: "Passive, content-bound intake audit for results returned by external scientific capabilities"
     - name: "start"
       tier: "outline"
       grade: "outline"
@@ -240,4 +255,3 @@ skills:
       grade: "outline"
       backend: "in-memory dict"
       description: "In-memory biological knowledge graph entity and relationship manager"
-

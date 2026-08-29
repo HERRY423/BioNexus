@@ -23,7 +23,7 @@ jobs:
       - name: Install Lint & Package Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install ruff pyyaml numpy
+          pip install "ruff>=0.1,<1" pyyaml numpy
           pip install -e .
       - name: Run Ruff Linter
         run: ruff check .
@@ -109,6 +109,9 @@ jobs:
           python evals/pseudobulk_stress_test.py
           python evals/spatial_stress_test.py
           python evals/annotation_stress_test.py
+          python evals/datasets/download_flagship_datasets.py --only citeseq_pbmc_sorted
+          python evals/datasets/download_flagship_datasets.py --only xenium_spatial_truth
+          python scripts/run_flagship_validation.py
           python scripts/verify_validation_artifacts.py
 
       - name: Run Complete Test Suite & Audit Validation Artifacts

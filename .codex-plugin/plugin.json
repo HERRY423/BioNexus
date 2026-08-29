@@ -1,6 +1,6 @@
 {
   "name": "bionexus-reliability",
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0-rc.3",
   "description": "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents (Warrant-First Evidence Assessment, Fail-Closed Invariants, Evidence-Capped Claims, Zero Silent Substitution).",
   "author": {
     "name": "BioNexus Team",
@@ -38,9 +38,9 @@
     ],
     "websiteURL": "https://github.com/HERRY423/BioNexus",
     "defaultPrompt": [
-      "Inspect single-cell dataset and run QC",
-      "Query UniProt for TP53 protein details",
-      "Analyze spatial transcriptomics with squidpy"
+      "Audit evidence returned by another science plugin",
+      "Check whether this result warrants the proposed claim",
+      "Verify provenance, backend identity, and claim ceiling"
     ]
   }
 }

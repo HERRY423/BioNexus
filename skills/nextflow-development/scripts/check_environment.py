@@ -377,12 +377,15 @@ def check_network() -> CheckResult:
     try:
         import urllib.request
 
+        from bionexus.egress_guard import guarded_urlopen
+
         headers = {"User-Agent": "nf-core-helper/1.0"}
 
         def _reachable(url):
             try:
                 req = urllib.request.Request(url, headers=headers)
-                urllib.request.urlopen(req, timeout=10)
+                with guarded_urlopen(req, timeout=10, purpose="nf-core environment connectivity probe"):
+                    pass
                 return True
             except Exception:
                 return False

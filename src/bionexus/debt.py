@@ -17,14 +17,12 @@ Key concepts:
 
 from __future__ import annotations
 
-import json
 from dataclasses import asdict, dataclass, field
 from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional, Set
 
 from bionexus.contracts import ConclusionMaturity
-from bionexus.ledger import ClaimLedger, ClaimRecord, EvidenceRef, MATURITY_RANKS
+from bionexus.ledger import MATURITY_RANKS, ClaimLedger, ClaimRecord, EvidenceRef
 
 
 class DebtKind(str, Enum):
@@ -331,7 +329,7 @@ class EvidenceDebtEngine:
                     debt_kind=DebtKind.DOMAIN_MISMATCH,
                     severity=DebtSeverity.CRITICAL,
                     title=f"Reference Atlas Domain Mismatch in {node_id}",
-                    description=f"Reference atlas dataset differs in condition, tissue compartment, or disease state from target cohort (e.g. PBMC vs Tumor Microenvironment).",
+                    description="Reference atlas dataset differs in condition, tissue compartment, or disease state from target cohort (e.g. PBMC vs Tumor Microenvironment).",
                     root_node_id=node_id,
                     affected_claim_ids=aff_list,
                     remediation=RemediationRecipe(
@@ -353,7 +351,7 @@ class EvidenceDebtEngine:
                     debt_kind=DebtKind.AMBIENT_SIGNAL_CONTAMINATION,
                     severity=DebtSeverity.HIGH,
                     title=f"Ambient RNA Contamination in {node_id}",
-                    description=f"Count matrix contains uncorrected ambient cell-free mRNA, risking false marker discovery.",
+                    description="Count matrix contains uncorrected ambient cell-free mRNA, risking false marker discovery.",
                     root_node_id=node_id,
                     affected_claim_ids=aff_list,
                     remediation=RemediationRecipe(
@@ -375,7 +373,7 @@ class EvidenceDebtEngine:
                     debt_kind=DebtKind.PARAMETER_SENSITIVITY,
                     severity=DebtSeverity.HIGH,
                     title=f"Clustering Parameter Sensitivity on {node_id}",
-                    description=f"Cluster partitions or marker sets shift significantly under resolution sweep (0.4 to 1.2).",
+                    description="Cluster partitions or marker sets shift significantly under resolution sweep (0.4 to 1.2).",
                     root_node_id=node_id,
                     affected_claim_ids=aff_list,
                     remediation=RemediationRecipe(
@@ -595,12 +593,8 @@ def render_mermaid_debt_dag(report: EvidenceDebtAuditReport, ledger: Optional[Cl
     """Render a Mermaid DAG diagram visualizing Evidence Debt propagation."""
     mermaid: List[str] = ["```mermaid", "graph TD"]
 
-    # Collect keystones
-    keystones = {k["root_node_id"] for k in report.epistemic_keystones}
-
-    # Add debt items and keystones
+    # Add debt items and their affected claims.
     for d in report.debt_items:
-        color_class = "fill:#f96,stroke:#333,stroke-width:2px" if d.severity == DebtSeverity.CRITICAL else "fill:#ff9,stroke:#333,stroke-width:1px"
         node_label = f'"{d.debt_id}: {d.title[:25]}...<br/>[Severity: {d.severity.value}]"'
         mermaid.append(f"    {d.debt_id}[{node_label}]")
 

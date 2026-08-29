@@ -1,0 +1,24 @@
+{
+  "schema_version": "bionexus.public-dataset-manifest.v1",
+  "dataset_id": "xenium_spatial_truth",
+  "dataset_track": "real_instrument_technical_acceptance",
+  "acquired_at": "2026-08-28",
+  "source_page": "https://www.10xgenomics.com/support/software/xenium-onboard-analysis/latest/resources/xenium-example-data",
+  "files": [
+    {
+      "role": "official_xoa_v4_tiny_output_bundle",
+      "path": "Xenium_V1_Protein_Human_Kidney_tiny_outs.zip",
+      "source_url": "https://cf.10xgenomics.com/samples/xenium/4.0.0/Xenium_V1_Protein_Human_Kidney_tiny/Xenium_V1_Protein_Human_Kidney_tiny_outs.zip",
+      "sha256": "abd7e8f7fd047dcc6afdb1e9eece90d4533d3ead053c6f05c482be050bdf79d2",
+      "md5": "50c04dea5e751e1c7508ff24528242e8",
+      "size_bytes": 20929485,
+      "official_md5_verified": true
+    }
+  ],
+  "scientific_boundary": {
+    "real_instrument_bytes": true,
+    "public_reference_dataset": false,
+    "independent_ground_truth": false,
+    "reason": "10x states that this three-patch/two-FOV tiny dataset is for file-format testing and is not intended for biological conclusions."
+  }
+}

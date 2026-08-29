@@ -13,6 +13,121 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 
 
+class ScientificInputError(ValueError):
+    """Raised when a scientific input violates a fail-closed execution invariant."""
+
+
+def require_raw_count_matrix(X: Any, *, label: str = "counts") -> Dict[str, Any]:
+    """Validate an entire matrix as finite, non-negative integer counts.
+
+    Unlike :func:`audit_expression_matrix`, this is an execution gate, not a
+    sampled diagnostic.  It therefore inspects every stored value and raises
+    instead of assigning a lower evidence grade.
+    """
+    if X is None or not hasattr(X, "shape"):
+        raise ScientificInputError(f"{label} is missing or is not a 2D matrix")
+    if len(X.shape) != 2 or int(X.shape[0]) == 0 or int(X.shape[1]) == 0:
+        raise ScientificInputError(f"{label} must be a non-empty 2D matrix; got shape {getattr(X, 'shape', None)}")
+
+    try:
+        import scipy.sparse as sp
+
+        values = X.data if sp.issparse(X) else np.asarray(X).ravel()
+    except Exception as exc:
+        raise ScientificInputError(f"{label} could not be inspected as a numeric matrix: {exc}") from exc
+
+    if not np.issubdtype(values.dtype, np.number):
+        raise ScientificInputError(f"{label} must contain numeric values")
+    if values.size and not np.all(np.isfinite(values)):
+        raise ScientificInputError(f"{label} contains NaN or infinite values")
+    if values.size and np.any(values < 0):
+        raise ScientificInputError(f"{label} contains negative values")
+    if values.size and not np.all(np.isclose(values, np.rint(values), rtol=0.0, atol=1e-6)):
+        raise ScientificInputError(
+            f"{label} contains non-integer values and cannot be treated as raw counts; "
+            "provide an unnormalized count matrix"
+        )
+
+    return {
+        "shape": [int(X.shape[0]), int(X.shape[1])],
+        "n_stored_values": int(values.size),
+        "integer_counts_verified": True,
+    }
+
+
+def require_counts_layer(adata: Any, *, layer: str = "counts") -> Any:
+    """Return a verified raw-count layer; never silently substitute ``adata.X``."""
+    if not hasattr(adata, "layers") or layer not in adata.layers:
+        raise ScientificInputError(
+            f"AnnData layer '{layer}' is required and must contain raw integer counts; "
+            "refusing to substitute adata.X"
+        )
+    matrix = adata.layers[layer]
+    require_raw_count_matrix(matrix, label=f"adata.layers['{layer}']")
+    return matrix
+
+
+def require_replicate_design(
+    counts: Any,
+    design: Any,
+    *,
+    condition: str,
+    min_replicates_per_level: int = 2,
+) -> tuple[Any, Any, Dict[str, int]]:
+    """Validate exact sample alignment and biological replication for DE."""
+    if "sample_id" in design.columns:
+        design = design.set_index("sample_id")
+    if condition not in design.columns:
+        raise ScientificInputError(f"condition '{condition}' not in design columns {list(design.columns)}")
+
+    counts = counts.copy()
+    design = design.copy()
+    counts.index = counts.index.astype(str)
+    design.index = design.index.astype(str)
+    if counts.index.has_duplicates:
+        raise ScientificInputError("counts sample identifiers must be unique")
+    if design.index.has_duplicates:
+        raise ScientificInputError("design sample identifiers must be unique")
+
+    counts_ids = set(counts.index)
+    design_ids = set(design.index)
+    if counts_ids != design_ids:
+        missing_design = sorted(counts_ids - design_ids)
+        missing_counts = sorted(design_ids - counts_ids)
+        raise ScientificInputError(
+            "counts and design sample identifiers must match exactly; "
+            f"missing_from_design={missing_design[:5]}, missing_from_counts={missing_counts[:5]}"
+        )
+
+    design = design.loc[counts.index]
+    if design[condition].isna().any():
+        raise ScientificInputError(f"condition '{condition}' contains missing values")
+    level_counts = design[condition].astype(str).value_counts().to_dict()
+    if len(level_counts) < 2:
+        raise ScientificInputError(f"condition '{condition}' must contain at least two levels")
+    under_replicated = {str(k): int(v) for k, v in level_counts.items() if int(v) < min_replicates_per_level}
+    if under_replicated:
+        raise ScientificInputError(
+            f"condition '{condition}' requires >= {min_replicates_per_level} biological replicates per level; "
+            f"under_replicated={under_replicated}"
+        )
+    require_raw_count_matrix(counts.to_numpy(), label="pseudobulk counts")
+    return counts, design, {str(k): int(v) for k, v in level_counts.items()}
+
+
+def require_spatial_coordinates(coords: Any, *, n_observations: Optional[int] = None, min_spots: int = 5) -> Dict[str, Any]:
+    """Require valid 2D/3D coordinates aligned one-to-one with observations."""
+    grade, notes, stats = audit_spatial_coordinates(coords, min_spots=min_spots)
+    if grade != "A":
+        raise ScientificInputError("Invalid spatial coordinate state: " + "; ".join(notes))
+    if n_observations is not None and int(stats["n_points"]) != int(n_observations):
+        raise ScientificInputError(
+            "Spatial coordinates are not aligned with observations: "
+            f"{stats['n_points']} coordinate rows for {n_observations} observations"
+        )
+    return stats
+
+
 def audit_expression_matrix(
     X: Any, expected_type: str = "counts", sample_size: int = 2000
 ) -> Tuple[str, List[str], Dict[str, Any]]:

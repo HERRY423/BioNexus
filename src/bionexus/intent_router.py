@@ -130,6 +130,17 @@ class RoutingDecision:
 # ==============================================================================
 
 _INTENT_PATTERNS: List[Tuple[List[str], str]] = [
+    # 0. Annotation-evidence assessment — high-specificity cues FIRST so that
+    #    confidence/warrant framing is not hijacked by the generic
+    #    "cluster <N>" pattern below (flagship capability B).
+    (
+        [
+            r"\b(?:azimuth|celltypist|singler|scmap)\b",
+            r"(?:how (?:much|well)|how confident|what evidence)[^.]{0,60}?\b(?:annotat|label|cell[- ]type)",
+            r"\b(?:annotation|label)\s+(?:evidence|confidence|warrant|support)",
+        ],
+        "scrna.annotation_evidence",
+    ),
     # 1. Single-cell condition differential expression
     (
         [

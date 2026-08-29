@@ -336,6 +336,39 @@ Explicitly **not** in scope, ever: planner, memory, multi-agent, chat UI, cloud 
 
 ---
 
+## 🤝 Capability × Reliability: ecosystem collaboration
+
+Literature, Databases, NGS, Sequence, Structure, and Slide plugins are peer
+capabilities selected by the host or researcher. BioNexus does not orchestrate
+or duplicate them; it passively audits their completed outputs:
+
+```text
+external capability -> content-bound intake -> provenance/semantic audit
+                    -> explicit reviewed edges + context/duplicate audit
+                    -> Warrant + Audit + EvidenceCard -> pending human decision
+```
+
+The `external-evidence-audit` wrapper implements
+`bionexus.external-evidence-envelope.v1`. It binds each result to declared
+producer/tool context, the originating request, exact payload SHA-256, and
+family-specific interpretation metadata. A valid intake remains `UNASSESSED`
+and `context_only`: a paper, database record, second method, sequence view,
+structure view, or slide observation is never automatically promoted to
+independent validation. See the [cross-plugin collaboration contract](docs/ecosystem-collaboration.md).
+
+For multi-source claims, `bionexus.ecosystem-claim-packet.v1` requires one
+explicit, receipt-bound adjudication per result and a named human decision
+owner. BioNexus detects duplicate payloads, blocks declared scope conflicts,
+preserves contradictions, and emits Warrant + Audit + EvidenceCard + Ledger;
+it never infers evidence relationships or changes
+`PENDING_HUMAN_DECISION` into an autonomous verdict.
+
+Hosted peer MCP servers remain listed in the canonical compatibility catalog
+but are not bundled into BioNexus manifests by default, preventing duplicate
+tool registration when dedicated ecosystem plugins are installed.
+
+---
+
 ## 🌐 Standards & Interoperability (BNS-016)
 
 BioNexus does **not** invent a proprietary research-data standard. Run capsules and Claim–Evidence Ledgers export through published community standards (`bionexus interop ro-crate|bco|check`):
@@ -772,15 +805,12 @@ BioNexus is governed by a normative, machine-enforced scientific contract publis
 
 BioNexus enforces a strict distinction between **Execution Fidelity** (whether official algorithms executed) and **Scientific Evidence Quality** (statistical power, input integrity, parameter sensitivity, and external validation).
 
-Every biological output is packaged with a deterministic **`EvidenceCard`** and a synthesized **`ConclusionStatus`**:
+Every biological output is packaged with a deterministic **`EvidenceCard`**
+and a synthesized **`ConclusionMaturity`**. Execution state, evidence
+dimensions, claim ceiling, limitations, and external-validation status remain
+separate fields; a successful run cannot by itself raise scientific maturity.
 
-```text
-
-┌─────────────────────────────────────────────────────────────────────────────────────────────┐
-
-│                                   BioNexus Evidence Card                                    │
-
-├──────────────────────## 🛠️ Core Scientific Skills & Non-Negotiable Honesty Rules
+### 🛠️ Core Scientific Skills & Non-Negotiable Honesty Rules
 
 | Skill Directory | Primary Backend | Evidence Grade | Non-Negotiable Scientific Honesty Rule |
 
@@ -797,6 +827,8 @@ Every biological output is packaged with a deterministic **`EvidenceCard`** and 
 | [`instrument-data-to-allotrope`](skills/instrument-data-to-allotrope) | `allotropy` | **Grade A** | Converts raw analytical instrument outputs (27+ vendors) into standardized Allotrope ASM JSON. |
 
 | [`provenance-and-audit`](skills/provenance-and-audit) | `bionexus.provenance` | **Grade B** | SHA-256 dataset hashing and W3C PROV-O JSON-LD tracking without claiming 21 CFR Part 11. |
+
+| [`external-evidence-audit`](skills/external-evidence-audit) | `bionexus.ecosystem_intake` + `bionexus.ecosystem_claim` | **Grade B** | Audits host-supplied results and explicit multi-source adjudications; intake remains `UNASSESSED`, duplicate evidence is not double-counted, and the final decision is always human-owned. |
 
 | [`clinical-cohort-analysis`](skills/clinical-cohort-analysis) | `lifelines` (optional) + `scipy` | **Grade C** | Uses Cox PH when `lifelines` is present; explicitly labels event-rate ratios as Grade C fallback. |
 
@@ -816,7 +848,9 @@ Every biological output is packaged with a deterministic **`EvidenceCard`** and 
 
 ## 🌐 Model Context Protocol (MCP) Biological Layer
 
-BioNexus provides direct access to biological tools, resources, and cloud-hosted servers via the official Model Context Protocol (FastMCP) with deterministic, non-overlapping routing:
+BioNexus exposes a small local MCP compatibility surface. Dedicated ecosystem
+plugins should provide literature, database, analysis, and visualization
+capabilities; BioNexus audits their returned evidence through the host.
 
 ### 1. Local Stdio MCP Server (`bionexus-local-mcp`)
 
@@ -840,29 +874,14 @@ BioNexus provides direct access to biological tools, resources, and cloud-hosted
 
   * `search_pubmed`, `get_pubmed_article`, `search_biorxiv`, `search_chembl`, `search_opentargets`, `search_clinical_trials`, `search_cosmic` *(hidden by default to avoid duplicate tool routing with cloud endpoints)*
 
-### 2. Cloud-Hosted Streamable-HTTP Endpoints (10 Endpoints)
+### 2. Hosted peers are catalogued, not bundled
 
-* **NCBI PubMed**: `https://pubmed.mcp.claude.com/mcp`
+The SSOT retains known hosted endpoints for compatibility checks, but entries
+marked `bundle_with_plugin: false` are excluded from generated Agent Plugin,
+Codex, and Claude MCP manifests. Install the relevant peer plugin separately;
+then pass its result into `external-evidence-audit`.
 
-* **bioRxiv / medRxiv**: `https://hcls.mcp.claude.com/biorxiv/mcp`
-
-* **ChEMBL**: `https://hcls.mcp.claude.com/chembl/mcp`
-
-* **Open Targets**: `https://mcp.platform.opentargets.org/mcp`
-
-* **ClinicalTrials.gov**: `https://hcls.mcp.claude.com/clinical_trials/mcp`
-
-* **BioRender**: `https://mcp.services.biorender.com/mcp`
-
-* **Consensus AI**: `https://mcp.consensus.app/mcp`
-
-* **Wiley Online Library**: `https://connector.scholargateway.ai/mcp`
-
-* **Owkin Precision Medicine**: `https://mcp.k.owkin.com/mcp`
-
-* **Synapse**: `https://mcp.synapse.org/mcp`
-
-### 3. Optional Elevated Rate-Limit Credentials
+### 3. Optional local-fallback credentials
 
 To raise rate limits or connect enterprise lab platforms, copy `.env.example` to `.env` and run:
 
@@ -876,67 +895,7 @@ python scripts/auth_helper.py --status
 
 ## 🏛️ Architecture: Single Source of Truth (SSOT)
 
-All client configurations across Codex, Claude, Cursor, and Python packages are deterministically compiled from [`bionexus.registry.yaml`](bionexus.registry.yaml):stMCP) with deterministic, non-overlapping routing:
-
-### 1. Local Stdio MCP Server (`bionexus-local-mcp`)
-
-*Zero API keys required for all core endpoints:*
-
-* **Core Local Unique Tools (Default Active — 9 Tools)**:
-
-  * **Proteins & Structures**: `search_uniprot`, `search_alphafold`, `search_pdb`
-
-  * **Genomics & Regulation**: `search_ensembl`, `search_gnomad`, `get_gene_expression` (GTEx), `search_geo`
-
-  * **Pathways & Networks**: `search_reactome`, `search_string`
-
-* **Workflow Resources & Prompts (Always Active)**:
-
-  * 6 production YAML workflows/configs (`bionexus://workflows/...`, `bionexus://configs/...`)
-
-  * 6 structured bioinformatic prompts (`drug_target_analysis`, `variant_pathogenicity`, etc.)
-
-* **Hosted Fallbacks (Opt-in Disaster Recovery via `BIONEXUS_LOCAL_HOSTED_FALLBACKS=1`)**:
-
-  * `search_pubmed`, `get_pubmed_article`, `search_biorxiv`, `search_chembl`, `search_opentargets`, `search_clinical_trials`, `search_cosmic` *(hidden by default to avoid duplicate tool routing with cloud endpoints)*
-
-### 2. Cloud-Hosted Streamable-HTTP Endpoints (10 Endpoints)
-
-* **NCBI PubMed**: `https://pubmed.mcp.claude.com/mcp`
-
-* **bioRxiv / medRxiv**: `https://hcls.mcp.claude.com/biorxiv/mcp`
-
-* **ChEMBL**: `https://hcls.mcp.claude.com/chembl/mcp`
-
-* **Open Targets**: `https://mcp.platform.opentargets.org/mcp`
-
-* **ClinicalTrials.gov**: `https://hcls.mcp.claude.com/clinical_trials/mcp`
-
-* **BioRender**: `https://mcp.services.biorender.com/mcp`
-
-* **Consensus AI**: `https://mcp.consensus.app/mcp`
-
-* **Wiley Online Library**: `https://connector.scholargateway.ai/mcp`
-
-* **Owkin Precision Medicine**: `https://mcp.k.owkin.com/mcp`
-
-* **Synapse**: `https://mcp.synapse.org/mcp`
-
-### 3. Optional Elevated Rate-Limit Credentials
-
-To raise rate limits or connect enterprise lab platforms, copy `.env.example` to `.env` and run:
-
-```bash
-
-python scripts/auth_helper.py --status
-
-```
-
----
-
-## 🏛️ Architecture: Single Source of Truth (SSOT)
-
-All client configurations across Codex, Claude, Cursor, and Python packages are deterministically compiled from [`bionexus.registry.yaml`](file:///bionexus.registry.yaml):
+All client configurations across Codex, Claude, Cursor, and Python packages are deterministically compiled from [`bionexus.registry.yaml`](bionexus.registry.yaml):
 
 ```mermaid
 
@@ -950,7 +909,7 @@ graph TD
 
     Compiler --> C3[".codex/config.json<br/>OpenAI Codex Platform"]
 
-    Compiler --> C4["mcp.json & .mcp.json<br/>MCP stdio & HTTP Endpoints"]
+    Compiler --> C4["mcp.json & .mcp.json<br/>Local MCP + explicitly bundled endpoints"]
 
     Compiler --> C5["marketplace.json<br/>Plugin Catalog Manifests"]
 

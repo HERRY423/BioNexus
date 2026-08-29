@@ -6,11 +6,19 @@ Usage:
     from model_utils import prepare_adata, train_scvi, evaluate_integration
 """
 
+import sys
 import warnings
+from pathlib import Path
 from typing import Dict, List, Optional
 
 import numpy as np
 import scanpy as sc
+
+_SRC = Path(__file__).resolve().parents[3] / "src"
+if _SRC.is_dir() and str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
+from bionexus.integrity import require_counts_layer, require_raw_count_matrix
 
 
 def get_mito_genes(adata) -> np.ndarray:
@@ -70,6 +78,7 @@ def prepare_adata(
     """
     if copy:
         adata = adata.copy()
+    require_raw_count_matrix(adata.X, label="adata.X")
 
     # Calculate QC metrics
     adata.var["mt"] = get_mito_genes(adata)
@@ -158,6 +167,8 @@ def train_scvi(
     Trained model
     """
     import scvi
+
+    require_counts_layer(adata)
 
     # Auto-tune batch size if not specified
     if batch_size is None:

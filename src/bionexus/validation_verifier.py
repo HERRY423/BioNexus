@@ -44,7 +44,10 @@ _VALIDATION_SOURCE_DIRS = (
 _VALIDATION_SOURCE_FILES = (
     "evals/pseudobulk_stress_test.py",
     "evals/annotation_stress_test.py",
+    "evals/annotation_external_validation.py",
+    "evals/annotation_external_holdout_validation.py",
     "evals/spatial_stress_test.py",
+    "evals/spatial_instrument_validation.py",
     "evals/flagship_validation.py",
     "scripts/run_flagship_validation.py",
     "pyproject.toml",
@@ -57,28 +60,12 @@ _SOURCE_IGNORED_PARTS = {"__pycache__", ".pytest_cache", ".ruff_cache"}
 _SNAPSHOT_TEXT_EXTS = {".py", ".json", ".yaml", ".yml", ".md", ".txt", ".csv", ".toml", ".cfg", ".ini", ".rst"}
 
 
-def _git_read_file(root: Path, rel_posix: str) -> Optional[bytes]:
-    """Read file content from git HEAD object store (canonical LF, platform-independent)."""
-    try:
-        r = subprocess.run(
-            ["git", "show", f"HEAD:{rel_posix}"],
-            cwd=root,
-            capture_output=True,
-            timeout=30,
-        )
-        if r.returncode == 0:
-            return r.stdout
-    except Exception:
-        pass
-    return None
-
-
 def compute_validation_source_snapshot(repo_root: Union[Path, str]) -> str:
-    """Hash validation-relevant source content without self-referential reports.
+    """Hash the code that would execute now, excluding self-referential reports.
 
-    Reads canonical content from the git object store (always LF) to produce
-    identical hashes on Windows, Linux, and macOS regardless of working-tree
-    line-ending configuration.
+    Text line endings are normalized for cross-platform stability.  Reading
+    the working tree (rather than ``git show HEAD``) is intentional: local
+    source modifications must invalidate previously generated evidence.
     """
     root = Path(repo_root)
     paths = _validation_source_paths(root)
@@ -88,14 +75,8 @@ def compute_validation_source_snapshot(repo_root: Union[Path, str]) -> str:
         rel = path.relative_to(root).as_posix()
         digest.update(rel.encode("utf-8"))
         digest.update(b"\0")
-        # Try reading from git object store first (canonical, cross-platform)
-        raw = _git_read_file(root, rel)
-        if raw is None:
-            # Fallback: read from disk with text normalization
-            raw = path.read_bytes()
-            if path.suffix.lower() in _SNAPSHOT_TEXT_EXTS:
-                raw = raw.replace(b"\r\n", b"\n")
-        elif path.suffix.lower() in _SNAPSHOT_TEXT_EXTS:
+        raw = path.read_bytes()
+        if path.suffix.lower() in _SNAPSHOT_TEXT_EXTS:
             raw = raw.replace(b"\r\n", b"\n")
         digest.update(hashlib.sha256(raw).digest())
         digest.update(b"\n")
@@ -281,6 +262,36 @@ def verify_validation_artifacts(
                     rel_p = str(p)
                 checked.append(rel_p)
 
+        # Preregistration locks are part of the evidence boundary, not merely
+        # attachments.  Recompute each hash so post-outcome edits fail closed.
+        studies_dir = cap_dir / "studies"
+        if studies_dir.is_dir():
+            resolved_root = root.resolve()
+            for lock_path in sorted(studies_dir.rglob("PREREGISTRATION_LOCK.json")):
+                try:
+                    lock_data = json.loads(lock_path.read_text(encoding="utf-8"))
+                    target_rel = lock_data.get("locked_path") or lock_data.get("preregistration_path")
+                    if not target_rel:
+                        errors.append(f"Invalid preregistration lock {lock_path}: missing target path")
+                        continue
+                    locked_path = (root / str(target_rel)).resolve()
+                    locked_path.relative_to(resolved_root)
+                    if not locked_path.is_file():
+                        errors.append(f"Preregistration lock target missing: {locked_path}")
+                        continue
+                    observed_hash = sha256_file(locked_path)
+                    expected_hash = lock_data.get("sha256") or lock_data.get("preregistration_sha256")
+                    if observed_hash != expected_hash:
+                        errors.append(
+                            f"Preregistration hash mismatch for {locked_path.relative_to(root)}: "
+                            f"recorded {expected_hash}, recomputed {observed_hash}"
+                        )
+                    checked.extend(
+                        [str(lock_path.relative_to(root)), str(locked_path.relative_to(root))]
+                    )
+                except (KeyError, OSError, ValueError, json.JSONDecodeError) as exc:
+                    errors.append(f"Invalid preregistration lock {lock_path}: {exc}")
+
         if not report_path.is_file() or not cert_path.is_file():
             details[cap_id] = cap_details
             continue
@@ -415,21 +426,30 @@ def verify_validation_artifacts(
         dataset_track = dataset_info.get("dataset_track")
 
         if cap_id in ("scrna.annotation_evidence", "spatial.inference_validity"):
-            if dataset_track != "synthetic_technical_acceptance":
-                errors.append(
-                    f"{cap_id} must have dataset_track='synthetic_technical_acceptance', got '{dataset_track}'"
-                )
-            accession = dataset_info.get("accession", "")
-            if "synthetic_technical_acceptance" not in accession:
-                errors.append(
-                    f"{cap_id} accession must indicate synthetic_technical_acceptance, got '{accession}'"
-                )
-            # Check checksum validity
-            cs = dataset_info.get("checksum_sha256")
-            if not isinstance(cs, str) or len(cs) != 64:
-                errors.append(f"{cap_id} invalid checksum_sha256 in REPORT.json")
+            expected_track = {
+                "scrna.annotation_evidence": "real_public_processed_citeseq",
+                "spatial.inference_validity": "real_instrument_technical_acceptance",
+            }[cap_id]
+            if dataset_track != expected_track:
+                errors.append(f"{cap_id} must have dataset_track='{expected_track}', got '{dataset_track}'")
+            cs_dict = dataset_info.get("checksum_sha256")
+            if not isinstance(cs_dict, dict) or not cs_dict:
+                errors.append(f"{cap_id} missing or invalid dataset.checksum_sha256 dictionary")
+            else:
+                ds_dir = root / "data" / "flagship" / dataset_info.get("name", "")
+                for fname, expected_hash in cs_dict.items():
+                    target_file = ds_dir / fname
+                    if not target_file.is_file():
+                        errors.append(f"{cap_id} declared real data file missing: {target_file}")
+                        continue
+                    actual_hash = sha256_file(target_file)
+                    checked.append(str(target_file.relative_to(root)))
+                    if actual_hash != expected_hash:
+                        errors.append(
+                            f"Checksum mismatch for {fname}: recorded {expected_hash}, recomputed {actual_hash}"
+                        )
 
-            # Check that gitignored .h5ad is NOT listed as a permanent evidence_file in REPORT.json
+            # Large raw inputs are hash-bound datasets, not permanent report evidence attachments.
             evidence_files = report_data.get("evidence_files", [])
             for ef in evidence_files:
                 if ef.endswith(".h5ad") or ef.endswith(".zarr"):
@@ -507,12 +527,12 @@ def verify_validation_artifacts(
                     f"{cap_id} standard '{std_id}' satisfied mismatch: CERTIFICATION.json has {standards[std_id]['satisfied']}, certification.py expects {exp_satisfied}"
                 )
 
-        # Synthetic capabilities must NOT claim public_reference_dataset or independent_ground_truth
+        # External biological ground truth remains unsatisfied for these two
+        # capabilities. Public-reference status is capability-specific and is
+        # already bound to the canonical certification evidence above.
         if cap_id in ("scrna.annotation_evidence", "spatial.inference_validity"):
-            if standards.get("public_reference_dataset", {}).get("satisfied"):
-                errors.append(f"{cap_id} falsely claims public_reference_dataset=true under synthetic track")
             if standards.get("independent_ground_truth", {}).get("satisfied"):
-                errors.append(f"{cap_id} falsely claims independent_ground_truth=true under synthetic track")
+                errors.append(f"{cap_id} falsely claims independent_ground_truth=true")
 
         # Summary check
         satisfied_count = sum(1 for s in cert_data.get("standards", []) if s.get("satisfied"))

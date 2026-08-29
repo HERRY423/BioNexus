@@ -79,6 +79,9 @@ from .claim_semantics import (
     WarrantEvaluationResult,
     WarrantTierStatus,
     WarrantTierVerdict,
+    decompose_compound_claim,
+    generate_counterfactual_warrant_advice,
+    get_scientific_claim_ir_schema,
 )
 from .contracts import (
     ABSTAIN,
@@ -578,6 +581,9 @@ __all__ = [
     "WarrantEvaluationResult",
     "WarrantTierStatus",
     "WarrantTierVerdict",
+    "decompose_compound_claim",
+    "generate_counterfactual_warrant_advice",
+    "get_scientific_claim_ir_schema",
     "ApplicableRegime",
     "CalibratedRule",
     "ChallengeNetwork",

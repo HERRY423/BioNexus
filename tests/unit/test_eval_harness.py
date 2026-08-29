@@ -105,7 +105,8 @@ def test_l3_missing_backend_never_counts_as_pass(monkeypatch):
     real_import = builtins.__import__
 
     def _block_backends(name, *args, **kwargs):
-        if name.split(".")[0] in _L3_BACKEND_MODULES:
+        root_name = name.split(".")[0]
+        if root_name in _L3_BACKEND_MODULES or name in _L3_BACKEND_MODULES or name.startswith(("evals.flagship", "evals.annotation", "evals.spatial")):
             raise ImportError(f"blocked for test: {name}")
         return real_import(name, *args, **kwargs)
 

@@ -2091,7 +2091,7 @@ def handle_scfm(args: argparse.Namespace) -> int:
             target_gene=args.gene,
             mode=args.mode,
             config=cfg,
-            allow_proxy_fallback=getattr(args, "allow_proxy", True),
+            allow_proxy_fallback=getattr(args, "allow_proxy", False),
         )
         if getattr(args, "json", False):
             print(json.dumps(res.to_dict(), indent=2))
@@ -3075,7 +3075,11 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_scfm_pert.add_argument("--mode", default="knockout", choices=["knockout", "overexpression"], help="Perturbation mode")
     p_scfm_pert.add_argument("--model", default="geneformer", choices=["geneformer", "scgpt"], help="Foundation model family")
     p_scfm_pert.add_argument("--checkpoint", default=None, help="Path to official pretrained checkpoint directory or HuggingFace ID")
-    p_scfm_pert.add_argument("--allow-proxy", action="store_true", default=True, help="Allow fallback to Grade C proxy if checkpoint is absent")
+    p_scfm_pert.add_argument(
+        "--allow-proxy",
+        action="store_true",
+        help="Explicitly allow fallback to the Grade C proxy if the canonical checkpoint is absent",
+    )
     p_scfm_pert.add_argument("--device", default="auto", choices=["auto", "cuda", "cpu"], help="Inference device")
     p_scfm_pert.add_argument("--json", action="store_true", help="Output perturbation report as JSON")
 

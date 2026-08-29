@@ -206,3 +206,83 @@ def test_ledger_integration_with_causal_evaluation() -> None:
 
     # The claim's maturity should be clamped by causal_evaluation to FRAGILE (not ROBUST)
     assert claim.evidence_status == ConclusionMaturity.FRAGILE.value
+
+
+def test_frontdoor_criterion_identification() -> None:
+    # Classic Frontdoor: X -> M -> Y with unobserved confounder U (U -> X and U -> Y)
+    dag = CausalDAG("FrontdoorDAG")
+    dag.add_node("X", NodeType.TREATMENT)
+    dag.add_node("M", NodeType.MEDIATOR)
+    dag.add_node("Y", NodeType.OUTCOME)
+    dag.add_node("U", NodeType.UNOBSERVED_CONFOUNDER)
+
+    dag.add_edge("U", "X")
+    dag.add_edge("U", "Y")
+    dag.add_edge("X", "M")
+    dag.add_edge("M", "Y")
+
+    # 1. Direct backdoor fails due to unobserved U
+    is_bd, bd_viols, _ = dag.backdoor_criterion("X", "Y", set())
+    assert not is_bd
+
+    # 2. Frontdoor criterion on M succeeds
+    is_fd, fd_viols, details = dag.frontdoor_criterion("X", "Y", "M")
+    assert is_fd
+    assert len(fd_viols) == 0
+    assert details["intercepts_all_directed_paths"]
+
+    # 3. Overall causal evaluation detects frontdoor and warrants causal claim!
+    res = dag.evaluate_causal_claim("X", "Y", requested_claim_class=ClaimClass.CAUSAL)
+    assert res.is_warranted
+    assert res.identification_method == "frontdoor"
+    assert res.frontdoor_mediator == "M"
+    assert res.warranted_claim_class == ClaimClass.CAUSAL.value
+    assert res.maturity_ceiling == ConclusionMaturity.SUPPORTED.value
+    assert "Pearl 1995 Frontdoor Criterion" in res.rationale
+
+
+def test_instrumental_variable_mendelian_randomization() -> None:
+    # Classic IV: Z (eQTL) -> X (Gene Expression) -> Y (Disease Outcome), with unobserved confounder U -> X, U -> Y
+    dag = CausalDAG("MendelianRandomizationDAG")
+    dag.add_node("Z", NodeType.INSTRUMENT)
+    dag.add_node("X", NodeType.TREATMENT)
+    dag.add_node("Y", NodeType.OUTCOME)
+    dag.add_node("U", NodeType.UNOBSERVED_CONFOUNDER)
+
+    dag.add_edge("Z", "X")
+    dag.add_edge("X", "Y")
+    dag.add_edge("U", "X")
+    dag.add_edge("U", "Y")
+
+    # 1. Test IV criterion directly
+    is_iv, iv_viols, details = dag.instrumental_variable_criterion("Z", "X", "Y")
+    assert is_iv
+    assert len(iv_viols) == 0
+
+    # 2. Overall causal evaluation warrants causal claim via IV
+    res = dag.evaluate_causal_claim("X", "Y", requested_claim_class=ClaimClass.CAUSAL)
+    assert res.is_warranted
+    assert res.identification_method == "instrumental_variable"
+    assert res.valid_instrument == "Z"
+    assert res.warranted_claim_class == ClaimClass.CAUSAL.value
+    assert "Instrumental Variable / Mendelian Randomization" in res.rationale
+
+
+def test_invalid_instrument_pleiotropic_violation() -> None:
+    # Pleiotropy violation: Z -> X -> Y and direct pleiotropic edge Z -> Y
+    dag = CausalDAG("PleiotropicIVDAG")
+    dag.add_node("Z", NodeType.INSTRUMENT)
+    dag.add_node("X", NodeType.TREATMENT)
+    dag.add_node("Y", NodeType.OUTCOME)
+    dag.add_node("U", NodeType.UNOBSERVED_CONFOUNDER)
+
+    dag.add_edge("Z", "X")
+    dag.add_edge("X", "Y")
+    dag.add_edge("Z", "Y")  # Direct pleiotropy!
+    dag.add_edge("U", "X")
+    dag.add_edge("U", "Y")
+
+    is_iv, iv_viols, _ = dag.instrumental_variable_criterion("Z", "X", "Y")
+    assert not is_iv
+    assert any(CausalViolationType.INVALID_INSTRUMENT_EXCLUSION_VIOLATED.value in v for v in iv_viols)
+

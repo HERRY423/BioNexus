@@ -32,6 +32,9 @@ from typing import Dict, List, Optional, Tuple
 # ---------------------------------------------------------------------------
 # Domain synonym table: canonical concept -> surface variants (lowercase).
 # Curated; extending it is a reviewed registry change, not runtime behavior.
+# Variants are matched as whole-token sequences after light plural folding,
+# never as raw substrings ("tangram" must not trigger the "ram" memory
+# concept; "zoom" must not trigger "oom").
 # ---------------------------------------------------------------------------
 
 _CONCEPT_SYNONYMS: Dict[str, Tuple[str, ...]] = {
@@ -39,78 +42,132 @@ _CONCEPT_SYNONYMS: Dict[str, Tuple[str, ...]] = {
     "differential_expression": (
         "differential expression", "differentially expressed", "de analysis",
         "deseq2", "pydeseq2", "edger", "condition effect", "treatment effect",
-        "bulk-level", "pseudobulk",
+        "bulk-level", "pseudobulk", "differential state", "differential states",
+        "upregulated", "downregulated", "expression changes", "expression shift",
+        "de genes", "differential testing",
     ),
     "condition_comparison": (
         "vs", "versus", "between conditions", "across conditions",
         "treated control", "case control", "stimulated", "perturbed",
+        "between groups", "across groups", "case versus control",
+        "stimulated versus control", "compared between",
     ),
     # clustering / exploratory family
     "clustering": (
         "cluster", "clusters", "clustering", "leiden", "louvain",
         "communities", "populations", "unsupervised groups",
     ),
-    "marker_genes": ("marker genes", "markers", "signature genes", "canonical markers"),
+    "marker_genes": (
+        "marker genes", "markers", "signature genes", "canonical markers",
+        "rank genes groups", "positive markers", "top expressed genes",
+    ),
     "dimensionality": ("umap", "tsne", "pca", "embedding", "manifold", "latent space"),
     # spatial family
     "spatial": (
         "spatial", "space", "tissue coordinates", "visium", "slide-seq", "slide seq",
         "merfish", "cosmx", "xenium", "spots", "spot", "tissue positions",
-        "histological", "in situ", "stereoseq",
+        "histological", "in situ", "stereoseq", "tangram", "spatial deconvolution",
+        "imaging based", "physical coordinates",
     ),
     "spatial_statistics": (
         "moran", "morans i", "autocorrelation", "spatially variable", "svg",
         "spatial graph", "neighborhood enrichment", "ripley", "co-occurrence",
+        "neighborhood graph", "spatially variable genes",
     ),
     "validity_assessment": (
         "alternative explanation", "conclusion valid", "does the conclusion hold",
         "conclusion survive", "robust to", "confound control", "permutation null",
         "sensitivity of the conclusion", "invalidated",
+        "alternative explanations", "does the finding hold",
+        "would the conclusion survive", "negative control", "robustness check",
     ),
     # survival family
     "survival": (
         "survival", "kaplan meier", "kaplan-meier", "log-rank", "logrank",
         "cox", "hazard", "prognosis", "prognostic", "overall survival",
-        "progression-free", "time-to-event",
+        "progression-free", "time-to-event", "censoring", "clinical outcome",
     ),
     # generative models
     "generative_model": (
         "scvi", "scvi-tools", "scanvi", "totalvi", "variational",
-        "deep generative", "vae", "latent embedding",
+        "deep generative", "vae", "latent embedding", "generative representation",
     ),
     # variant family
     "variant": (
         "variant", "variants", "mutation", "snv", "indel", "cnv",
-        "pathogenicity", "acmg", "clinvar", "hgvs",
+        "pathogenicity", "acmg", "clinvar", "hgvs", "vus", "pathogenic",
     ),
     # annotation evidence
+    # NOTE: no bare "cell-type" variant — cell types are usually the PAYLOAD of
+    # spatial mapping / DE queries; bare mentions must not nominate
+    # scrna.annotation_evidence. Label/annotate/reference vocabulary carries
+    # the annotation-evidence intent instead.
     "annotation": (
-        "annotate", "annotation", "cell type label", "cell-type", "identity labels",
-        "reference mapping", "label transfer",
+        "annotate", "annotation", "cell type label", "identity labels",
+        "reference mapping", "label transfer", "reference atlas", "azimuth",
+        "celltypist", "scmap", "singler", "annotation confidence",
     ),
     # pipelines / infra
     "pipeline": ("nextflow", "nf-core", "nfcore", "pipeline", "samplesheet", "workflow launch"),
     "instrument": ("allotrope", "plate reader", "chromatography", "instrument export", "asm json"),
     "hpc": ("slurm", "sbatch", "pbs", "qsub", "lsf", "bsub", "kubernetes", "aws batch", "hpc"),
-    "memory": ("memory", "ram", "out-of-core", "oom", "zarr chunking", "large matrix"),
+    "memory": ("memory", "ram", "out-of-core", "oom", "zarr chunking", "large matrix",
+               "ram estimate", "memory footprint", "chunk size"),
     # foundation models / perturbation
     "foundation_model": ("geneformer", "scgpt", "scbert", "foundation model", "pretrained scfm"),
     "perturbation_generic": (
         "knockout", "perturbation", "perturb-seq", "perturb seq", "overexpression",
-        "in silico deletion",
+        "in silico deletion", "crispr", "knockdown", "crispr screen", "drug perturbation",
     ),
     "combinatorial_perturbation": (
         "gears", "combinatorial knockout", "combinatorial perturbation",
-        "graph-enhanced perturbation",
+        "graph-enhanced perturbation", "double perturbation", "pairwise knockout",
     ),
-    "niche": ("niche", "microenvironment", "tumor microenvironment", "spatial niche"),
+    "niche": ("niche", "microenvironment", "tumor microenvironment", "spatial niche",
+              "microenvironment composition"),
 }
 
-# Pre-compiled lowercase variant index: variant string -> concept name.
-_VARIANT_INDEX: Dict[str, str] = {}
+# ---------------------------------------------------------------------------
+# Deterministic tokenization + light plural folding.
+#
+# Both the query and every synonym variant are normalized through the SAME
+# pipeline, so inflected forms match exactly at token granularity:
+#   "clusters" -> "cluster", "genes" -> "gene", "studies" -> "study".
+# Matching is whole-token contiguous-subsequence, never substring, which
+# removes lexical false positives such as "tangram" -> "ram" or
+# "zoom" -> "oom".
+# ---------------------------------------------------------------------------
+
+
+def _fold(token: str) -> str:
+    """Light deterministic plural fold (S-stemmer style). No dictionary needed."""
+    if len(token) > 4 and token.endswith("ies"):
+        return token[:-3] + "y"
+    if token.endswith("sses"):
+        return token[:-2]
+    if len(token) > 3 and token.endswith("s") and not token.endswith(("ss", "us", "is")):
+        return token[:-1]
+    return token
+
+
+def _tokenize(text: str) -> List[str]:
+    """Lowercase, split on non-alphanumeric, fold plurals. Pure function."""
+    return [_fold(t) for t in re.split(r"[^a-z0-9]+", text.lower()) if t]
+
+
+def _normalize_variant_tokens(variant: str) -> List[str]:
+    return _tokenize(variant)
+
+
+
+_VARIANT_INDEX: Dict[Tuple[str, ...], str] = {}
+# Normalized token tuple -> original variant string (for audit output).
+_VARIANT_ORIGINAL: Dict[Tuple[str, ...], str] = {}
 for _concept, _variants in _CONCEPT_SYNONYMS.items():
     for _v in _variants:
-        _VARIANT_INDEX[_v] = _concept
+        _key = tuple(_normalize_variant_tokens(_v))
+        _VARIANT_INDEX[_key] = _concept
+        _VARIANT_ORIGINAL.setdefault(_key, _v)
 
 # Capability -> weighted concept profile. Weights express how strongly each
 # concept evidences the capability; they are registry-reviewed constants.
@@ -158,6 +215,7 @@ class SemanticNomination:
     runner_up: Optional[str] = None
     runner_up_score: float = 0.0
     matched_concepts: List[str] = field(default_factory=list)
+    matched_variants: List[str] = field(default_factory=list)  # original synonym strings that hit
 
     def to_dict(self) -> Dict[str, object]:
         return {
@@ -167,30 +225,48 @@ class SemanticNomination:
             "runner_up": self.runner_up,
             "runner_up_score": round(self.runner_up_score, 4),
             "matched_concepts": list(self.matched_concepts),
+            "matched_variants": list(self.matched_variants),
         }
 
 
-def _detect_concepts(query_lower: str) -> List[str]:
-    """Return concepts whose surface variants appear in the query."""
+def detect_concepts_and_variants(query: str) -> Tuple[List[str], List[str]]:
+    """
+    Whole-token variant detection over the query.
+
+    A variant matches when its normalized token sequence appears as a
+    contiguous subsequence of the query's normalized tokens. Returns
+    (concepts_in_registry_order, matched_variant_original_strings).
+    Deterministic and offline.
+    """
+    qtokens = _tokenize(query)
     found: List[str] = []
-    for concept, variants in _CONCEPT_SYNONYMS.items():
-        for v in variants:
-            if v in query_lower:
-                found.append(concept)
+    hits: List[str] = []
+    seen: set = set()
+    for vkey, concept in _VARIANT_INDEX.items():
+        n = len(vkey)
+        if n == 0 or len(qtokens) < n:
+            continue
+        matched = False
+        for i in range(len(qtokens) - n + 1):
+            if tuple(qtokens[i:i + n]) == vkey:
+                matched = True
                 break
-    return found
+        if matched:
+            hits.append(_VARIANT_ORIGINAL[vkey])
+            if concept not in seen:
+                seen.add(concept)
+                found.append(concept)
+    return found, hits
 
 
-def score_capabilities(query: str, candidates: Optional[List[str]] = None) -> List[Tuple[str, float]]:
-    """
-    Deterministically score candidate capabilities against the query.
+def _detect_concepts(query_lower: str) -> List[str]:
+    """Return concepts whose surface variants appear in the query (token-boundary exact)."""
+    return detect_concepts_and_variants(query_lower)[0]
 
-    Score = (sum of matched concept weights) / (total profile weight), so 1.0
-    means every concept the capability is built from was evidenced. Returns
-    candidates sorted by descending score.
-    """
-    query_lower = query.lower()
-    concepts = set(_detect_concepts(query_lower))
+
+def _rank_with_concepts(
+    concepts: set, candidates: Optional[List[str]] = None
+) -> List[Tuple[str, float]]:
     pool = candidates if candidates is not None else list(_CAPABILITY_CONCEPTS)
     scored: List[Tuple[str, float]] = []
     for cap_id in pool:
@@ -204,26 +280,37 @@ def score_capabilities(query: str, candidates: Optional[List[str]] = None) -> Li
     return scored
 
 
+def score_capabilities(query: str, candidates: Optional[List[str]] = None) -> List[Tuple[str, float]]:
+    """
+    Deterministically score candidate capabilities against the query.
+
+    Score = (sum of matched concept weights) / (total profile weight), so 1.0
+    means every concept the capability is built from was evidenced. Returns
+    candidates sorted by descending score.
+    """
+    return _rank_with_concepts(set(detect_concepts_and_variants(query)[0]), candidates)
+
+
 def nominate_semantically(query: str, candidates: Optional[List[str]] = None) -> SemanticNomination:
     """
     Attempt a semantic nomination. Fails closed: returns layer="none" unless a
     single candidate clears both MIN_SEMANTIC_SCORE and MIN_MARGIN.
     """
-    ranked = score_capabilities(query, candidates)
-    matched = _detect_concepts(query.lower())
+    concepts, variants = detect_concepts_and_variants(query)
+    ranked = _rank_with_concepts(set(concepts), candidates)
     if not ranked or ranked[0][1] < MIN_SEMANTIC_SCORE:
-        return SemanticNomination(None, "none", matched_concepts=matched)
+        return SemanticNomination(None, "none", matched_concepts=concepts, matched_variants=variants)
     best_id, best_score = ranked[0]
     second_score = ranked[1][1] if len(ranked) > 1 else 0.0
     if best_score - second_score < MIN_MARGIN:
         return SemanticNomination(
             None, "none", score=best_score, runner_up=ranked[1][0] if len(ranked) > 1 else None,
-            runner_up_score=second_score, matched_concepts=matched,
+            runner_up_score=second_score, matched_concepts=concepts, matched_variants=variants,
         )
     return SemanticNomination(
         best_id, "semantic", score=best_score,
         runner_up=ranked[1][0] if len(ranked) > 1 else None,
-        runner_up_score=second_score, matched_concepts=matched,
+        runner_up_score=second_score, matched_concepts=concepts, matched_variants=variants,
     )
 
 

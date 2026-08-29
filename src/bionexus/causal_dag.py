@@ -31,6 +31,7 @@ class NodeType(str, Enum):
     MEDIATOR = "mediator"  # Intermediate signaling molecule or downstream pathway
     COLLIDER_SELECTION = "collider_selection"  # Survival selection, cluster-subset filtering
     COVARIATE = "covariate"  # General precision covariate
+    INSTRUMENT = "instrument"  # Instrumental variable (e.g. eQTL, Mendelian randomization variant)
 
 
 class CausalViolationType(str, Enum):
@@ -43,6 +44,10 @@ class CausalViolationType(str, Enum):
     DESCENDANT_OF_TREATMENT_ADJUSTED = "DESCENDANT_OF_TREATMENT_ADJUSTED"
     CYCLIC_STRUCTURE_DETECTED = "CYCLIC_STRUCTURE_DETECTED"
     UNDEFINED_TREATMENT_OR_OUTCOME = "UNDEFINED_TREATMENT_OR_OUTCOME"
+    INVALID_INSTRUMENT_NOT_ASSOCIATED = "INVALID_INSTRUMENT_NOT_ASSOCIATED"
+    INVALID_INSTRUMENT_EXCLUSION_VIOLATED = "INVALID_INSTRUMENT_EXCLUSION_VIOLATED"
+    INVALID_INSTRUMENT_CONFOUNDED = "INVALID_INSTRUMENT_CONFOUNDED"
+    FRONTDOOR_CONDITIONS_VIOLATED = "FRONTDOOR_CONDITIONS_VIOLATED"
 
 
 @dataclass
@@ -77,6 +82,9 @@ class CausalWarrantResult:
     open_backdoor_paths: List[List[str]] = field(default_factory=list)
     collider_risk_paths: List[List[str]] = field(default_factory=list)
     recommended_adjustment_set: List[str] = field(default_factory=list)
+    identification_method: str = "backdoor"  # "backdoor", "frontdoor", "instrumental_variable", "unidentifiable"
+    frontdoor_mediator: Optional[str] = None
+    valid_instrument: Optional[str] = None
     rationale: str = ""
 
     def to_dict(self) -> Dict[str, Any]:
@@ -89,6 +97,9 @@ class CausalWarrantResult:
             "open_backdoor_paths": self.open_backdoor_paths,
             "collider_risk_paths": self.collider_risk_paths,
             "recommended_adjustment_set": self.recommended_adjustment_set,
+            "identification_method": self.identification_method,
+            "frontdoor_mediator": self.frontdoor_mediator,
+            "valid_instrument": self.valid_instrument,
             "rationale": self.rationale,
         }
 
@@ -195,6 +206,28 @@ class CausalDAG:
                     _dfs(neighbor, target, current_path, visited)
                     current_path.pop()
                     visited.remove(neighbor)
+
+        _dfs(start, end, [start], {start})
+        return paths
+
+    def all_directed_paths(self, start: str, end: str) -> List[List[str]]:
+        """Find all directed causal paths from start to end (following arrows)."""
+        if start not in self.nodes or end not in self.nodes:
+            return []
+
+        paths: List[List[str]] = []
+
+        def _dfs(current: str, target: str, current_path: List[str], visited: Set[str]) -> None:
+            if current == target:
+                paths.append(list(current_path))
+                return
+            for child in self.children(current):
+                if child not in visited:
+                    visited.add(child)
+                    current_path.append(child)
+                    _dfs(child, target, current_path, visited)
+                    current_path.pop()
+                    visited.remove(child)
 
         _dfs(start, end, [start], {start})
         return paths
@@ -359,6 +392,133 @@ class CausalDAG:
             ]
         return []
 
+    def frontdoor_criterion(
+        self,
+        treatment: str,
+        outcome: str,
+        mediator: str,
+    ) -> Tuple[bool, List[str], Dict[str, Any]]:
+        """Test if mediator satisfies Pearl's Frontdoor Criterion for (treatment, outcome).
+
+        Conditions (Pearl, 1995):
+        1. Mediator intercepts all directed paths from treatment to outcome.
+        2. There is no unblocked backdoor path from treatment to mediator.
+        3. All backdoor paths from mediator to outcome are blocked by {treatment}.
+        """
+        violations: List[str] = []
+        details: Dict[str, Any] = {"mediator": mediator}
+
+        if treatment not in self.nodes or outcome not in self.nodes or mediator not in self.nodes:
+            violations.append("All of treatment, outcome, and mediator must exist in DAG.")
+            return False, violations, details
+
+        # Condition 1: Intercept all directed paths
+        directed_ty = self.all_directed_paths(treatment, outcome)
+        if not directed_ty:
+            violations.append(
+                f"{CausalViolationType.FRONTDOOR_CONDITIONS_VIOLATED.value}: "
+                f"No directed causal path exists from treatment '{treatment}' to outcome '{outcome}'."
+            )
+        else:
+            for path in directed_ty:
+                if mediator not in path:
+                    violations.append(
+                        f"{CausalViolationType.FRONTDOOR_CONDITIONS_VIOLATED.value}: "
+                        f"Mediator '{mediator}' fails to intercept directed path {path}."
+                    )
+                    break
+
+        # Condition 2: No unblocked backdoor path from treatment to mediator
+        backdoors_tm = self.find_backdoor_paths(treatment, mediator)
+        open_tm: List[List[str]] = []
+        for path in backdoors_tm:
+            if not self.is_path_blocked(path, set()):
+                open_tm.append(path)
+        if open_tm:
+            violations.append(
+                f"{CausalViolationType.FRONTDOOR_CONDITIONS_VIOLATED.value}: "
+                f"Open backdoor path exists between treatment and mediator: {open_tm}"
+            )
+
+        # Condition 3: All backdoor paths from mediator to outcome are blocked by {treatment}
+        backdoors_my = self.find_backdoor_paths(mediator, outcome)
+        open_my: List[List[str]] = []
+        for path in backdoors_my:
+            if not self.is_path_blocked(path, {treatment}):
+                open_my.append(path)
+        if open_my:
+            violations.append(
+                f"{CausalViolationType.FRONTDOOR_CONDITIONS_VIOLATED.value}: "
+                f"Backdoor path from mediator to outcome is not blocked by treatment: {open_my}"
+            )
+
+        details["open_treatment_mediator_backdoors"] = open_tm
+        details["open_mediator_outcome_backdoors"] = open_my
+        details["intercepts_all_directed_paths"] = len(violations) == 0
+
+        return len(violations) == 0, violations, details
+
+    def instrumental_variable_criterion(
+        self,
+        instrument: str,
+        treatment: str,
+        outcome: str,
+        conditioning_set: Optional[Set[str]] = None,
+    ) -> Tuple[bool, List[str], Dict[str, Any]]:
+        """Test if instrument satisfies Instrumental Variable / Mendelian Randomization conditions.
+
+        Conditions:
+        1. Relevance: Instrument has a direct or indirect causal path to treatment.
+        2. Exclusion Restriction: Instrument affects outcome ONLY through treatment
+           (no direct Z -> Y edge, and all directed paths from Z to Y pass through treatment).
+        3. Independence / Unconfoundedness: Instrument is independent of unmeasured confounders of (T, Y).
+        """
+        violations: List[str] = []
+        conditioned = set(conditioning_set or set())
+        details: Dict[str, Any] = {"instrument": instrument}
+
+        if instrument not in self.nodes or treatment not in self.nodes or outcome not in self.nodes:
+            violations.append("All of instrument, treatment, and outcome must exist in DAG.")
+            return False, violations, details
+
+        # 1. Relevance
+        directed_zt = self.all_directed_paths(instrument, treatment)
+        if not directed_zt:
+            violations.append(
+                f"{CausalViolationType.INVALID_INSTRUMENT_NOT_ASSOCIATED.value}: "
+                f"Instrument '{instrument}' does not causally influence treatment '{treatment}'."
+            )
+
+        # 2. Exclusion Restriction: No direct edge Z -> Y, and all paths Z -> Y go through treatment
+        if outcome in self.children(instrument):
+            violations.append(
+                f"{CausalViolationType.INVALID_INSTRUMENT_EXCLUSION_VIOLATED.value}: "
+                f"Instrument '{instrument}' has a direct pleiotropic edge to outcome '{outcome}'."
+            )
+
+        directed_zy = self.all_directed_paths(instrument, outcome)
+        for path in directed_zy:
+            if treatment not in path:
+                violations.append(
+                    f"{CausalViolationType.INVALID_INSTRUMENT_EXCLUSION_VIOLATED.value}: "
+                    f"Direct pleiotropic causal path {path} bypasses treatment '{treatment}'."
+                )
+                break
+
+        # 3. Independence / Unconfoundedness: Check for open backdoor between Z and Y
+        backdoors_zy = self.find_backdoor_paths(instrument, outcome)
+        open_zy = [path for path in backdoors_zy if not self.is_path_blocked(path, conditioned)]
+        if open_zy:
+            violations.append(
+                f"{CausalViolationType.INVALID_INSTRUMENT_CONFOUNDED.value}: "
+                f"Instrument '{instrument}' shares unblocked confounders with outcome: {open_zy}"
+            )
+
+        details["directed_paths_to_treatment"] = directed_zt
+        details["open_instrument_backdoors"] = open_zy
+
+        return len(violations) == 0, violations, details
+
     def evaluate_causal_claim(
         self,
         treatment: str,
@@ -427,16 +587,69 @@ class CausalDAG:
             ClaimClass.MECHANISTIC,
         )
 
+        # Explore Alternative Causal Identifications if Backdoor fails
+        frontdoor_candidate: Optional[str] = None
+        instrument_candidate: Optional[str] = None
+
+        if all_violations and is_causal_requested:
+            # Check Frontdoor Criterion across potential mediators
+            potential_mediators = [
+                name
+                for name, node in self.nodes.items()
+                if (node.node_type == NodeType.MEDIATOR or name in self.children(treatment))
+                and name != treatment
+                and name != outcome
+            ]
+            for m in potential_mediators:
+                fd_ok, _, _ = self.frontdoor_criterion(treatment, outcome, m)
+                if fd_ok:
+                    frontdoor_candidate = m
+                    break
+
+            # Check Instrumental Variable across instruments
+            potential_instruments = [
+                name
+                for name, node in self.nodes.items()
+                if node.node_type == NodeType.INSTRUMENT or name in self.parents(treatment)
+            ]
+            for z in potential_instruments:
+                iv_ok, _, _ = self.instrumental_variable_criterion(z, treatment, outcome, conditioned)
+                if iv_ok:
+                    instrument_candidate = z
+                    break
+
         if not all_violations:
             # Backdoor satisfied, no collider or unobserved confounding
             warranted_class = requested_claim_class.value
             maturity_ceiling = ConclusionMaturity.ROBUST.value
             is_warranted = True
+            identification_method = "backdoor"
             rationale = (
-                f"Structural Causal Identifiability: Backdoor criterion satisfied for {treatment} -> {outcome}. "
+                f"Structural Causal Identifiability (Backdoor): Backdoor criterion satisfied for {treatment} -> {outcome}. "
                 f"No open backdoor or collider bias detected with conditioning set {sorted(conditioned)}."
             )
+        elif frontdoor_candidate:
+            # Frontdoor Criterion satisfied despite unobserved confounding!
+            warranted_class = requested_claim_class.value
+            maturity_ceiling = ConclusionMaturity.SUPPORTED.value
+            is_warranted = True
+            identification_method = "frontdoor"
+            rationale = (
+                f"Structural Causal Identifiability (Frontdoor): Causal effect of {treatment} -> {outcome} is identifiable "
+                f"via mediator '{frontdoor_candidate}' despite unobserved confounding (Pearl 1995 Frontdoor Criterion)."
+            )
+        elif instrument_candidate:
+            # Instrumental Variable satisfied!
+            warranted_class = requested_claim_class.value
+            maturity_ceiling = ConclusionMaturity.SUPPORTED.value
+            is_warranted = True
+            identification_method = "instrumental_variable"
+            rationale = (
+                f"Structural Causal Identifiability (Instrumental Variable / Mendelian Randomization): "
+                f"Causal effect of {treatment} -> {outcome} is identifiable using valid instrument '{instrument_candidate}'."
+            )
         else:
+            identification_method = "unidentifiable"
             is_warranted = not is_causal_requested
             if is_causal_requested:
                 warranted_class = ClaimClass.ASSOCIATION.value
@@ -462,5 +675,8 @@ class CausalDAG:
             open_backdoor_paths=open_backdoors,
             collider_risk_paths=collider_paths,
             recommended_adjustment_set=rec_adj_list,
+            identification_method=identification_method,
+            frontdoor_mediator=frontdoor_candidate,
+            valid_instrument=instrument_candidate,
             rationale=rationale,
         )

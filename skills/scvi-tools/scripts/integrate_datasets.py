@@ -12,6 +12,13 @@ Usage:
 import argparse
 import os
 import sys
+from pathlib import Path
+
+_SRC = Path(__file__).resolve().parents[3] / "src"
+if _SRC.is_dir() and str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
+from bionexus.integrity import require_counts_layer, require_raw_count_matrix
 
 
 def integrate_datasets(adatas, batch_names=None, labels_key=None, n_top_genes=2000, n_latent=30, max_epochs=200):
@@ -40,7 +47,7 @@ def integrate_datasets(adatas, batch_names=None, labels_key=None, n_top_genes=20
     import scanpy as sc
     import scvi
 
-    # Assign batch names
+    # Assign batch names and establish count semantics before concatenation.
     if batch_names is None:
         batch_names = [f"dataset_{i}" for i in range(len(adatas))]
 
@@ -49,6 +56,10 @@ def integrate_datasets(adatas, batch_names=None, labels_key=None, n_top_genes=20
 
     # Add batch labels
     for adata, name in zip(adatas, batch_names):
+        if "counts" not in adata.layers:
+            require_raw_count_matrix(adata.X, label=f"{name}.X")
+            adata.layers["counts"] = adata.X.copy()
+        require_counts_layer(adata)
         adata.obs["batch"] = name
         print(f"{name}: {adata.shape}")
 
@@ -67,8 +78,7 @@ def integrate_datasets(adatas, batch_names=None, labels_key=None, n_top_genes=20
     adata = sc.concat(adatas, label="batch", keys=batch_names)
     print(f"Combined: {adata.shape}")
 
-    # Store counts
-    adata.layers["counts"] = adata.X.copy()
+    require_counts_layer(adata)
 
     # HVG selection
     print(f"Selecting {n_top_genes} HVGs...")

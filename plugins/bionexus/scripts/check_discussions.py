@@ -6,9 +6,17 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 import time
 import urllib.error
 import urllib.request
+from pathlib import Path
+
+_SRC = Path(__file__).resolve().parents[1] / "src"
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
+from bionexus.egress_guard import guarded_urlopen
 
 TOKEN = os.environ.get("GH_TOKEN", "")
 REPO_OWNER = "HERRY423"
@@ -27,7 +35,12 @@ def graphql_query(query: str, variables: dict | None = None, max_retries: int = 
     for attempt in range(1, max_retries + 1):
         try:
             req = urllib.request.Request(GRAPHQL_URL, data=payload, headers=headers, method="POST")
-            with urllib.request.urlopen(req, timeout=30) as resp:
+            with guarded_urlopen(
+                req,
+                timeout=30,
+                purpose="GitHub discussion query",
+                payload={"operation": "graphql", "variables": variables or {}},
+            ) as resp:
                 return json.loads(resp.read().decode("utf-8"))
         except Exception:
             if attempt == max_retries:

@@ -1,0 +1,10 @@
+{
+  "schema_version": "bionexus.preregistration-lock.v1",
+  "study_id": "BN-SP-IV-001",
+  "locked_path": "validation/spatial/studies/BN-SP-IV-001/PREREGISTRATION.json",
+  "sha256": "5fd7ec8b5302d7697755d4aba1d97da77da9eec501b1b3645a3f718bfadfdded",
+  "locked_at": "2026-08-28",
+  "lock_strength": "local_repository_hash_before_endpoint_analysis",
+  "external_timestamp": false,
+  "mutation_policy": "Any method, endpoint, threshold, or success-criterion change requires a new study_id."
+}

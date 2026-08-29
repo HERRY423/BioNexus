@@ -82,3 +82,13 @@ def test_gold_chain_refuses_without_coords():
     adata = ad.AnnData(np.ones((8, 6)))
     with pytest.raises(ValueError, match="spatial"):
         run_spatial_gold_chain(adata, cluster=False)
+
+
+def test_normalized_spatial_input_never_fabricates_counts_layer():
+    adata = _planted_spatial()
+    del adata.layers["counts"]
+    adata.X = adata.X.astype(float) / 3.7
+    out, _svg, summary = run_spatial_gold_chain(adata, cluster=False, top_n=5)
+    assert "counts" not in out.layers
+    assert summary["evidence_card"]["details"]["raw_counts_layer_present"] is False
+    assert any("no counts layer was fabricated" in item.lower() for item in summary["limitations"])

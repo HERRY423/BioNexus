@@ -1,0 +1,104 @@
+{
+  "schema_version": "bionexus.spatial-real-instrument-validation-report.v1",
+  "study_id": "BN-SP-IV-001",
+  "generated_at": "2026-08-29T07:21:17.847696+00:00",
+  "preregistration": {
+    "path": "validation/spatial/studies/BN-SP-IV-001/PREREGISTRATION.json",
+    "sha256": "5fd7ec8b5302d7697755d4aba1d97da77da9eec501b1b3645a3f718bfadfdded",
+    "thresholds_changed_after_lock": false,
+    "external_timestamp": false
+  },
+  "dataset": {
+    "archive_sha256": "abd7e8f7fd047dcc6afdb1e9eece90d4533d3ead053c6f05c482be050bdf79d2",
+    "official_md5_verified": true,
+    "n_cells": 358,
+    "n_gene_features": 405,
+    "n_transcripts": 26463,
+    "dataset_track": "real_instrument_technical_acceptance"
+  },
+  "endpoints": {
+    "segmentation_leakage": {
+      "baseline_mean_neighbor_cosine": 0.3668729920866186,
+      "injected_mean_neighbor_cosine": 0.6738740257641723,
+      "delta": 0.3070010336775537,
+      "passed": true
+    },
+    "cell_size_bias": {
+      "baseline_spearman": 0.7884956504816625,
+      "injected_spearman": 0.9894797175100387,
+      "delta": 0.20098406702837623,
+      "threshold": 0.2,
+      "passed": true
+    },
+    "transcript_density_bias": {
+      "baseline_spearman": -0.2852150519417895,
+      "injected_spearman": 0.6012544955197201,
+      "delta": 0.8864695474615096,
+      "threshold": 0.2,
+      "passed": true
+    },
+    "coordinate_permutation": {
+      "coordinate_sha256_changed": true,
+      "expression_sha256_preserved": true,
+      "passed": true
+    },
+    "fov_confounding": {
+      "observed_fovs": [
+        "Y2",
+        "Z2"
+      ],
+      "cramers_v": 1.0,
+      "threshold": 1.0,
+      "passed": true
+    }
+  },
+  "status": {
+    "run_status": "technical_acceptance_pass",
+    "all_locked_endpoints_passed": true,
+    "maximum_maturity": "REAL_INSTRUMENT_TECHNICAL_ACCEPTANCE",
+    "public_reference_dataset": false,
+    "independent_ground_truth": false
+  },
+  "claim_boundary": {
+    "supported_if_positive": "BioNexus artifact diagnostics execute on authentic Xenium XOA bytes and respond in the expected direction to deterministic manufactured confounders.",
+    "not_supported": [
+      "biological validity",
+      "tissue-level generalization",
+      "segmentation accuracy against histology",
+      "approved spatial calibration profile",
+      "independent ground truth"
+    ],
+    "vendor_limit": "The vendor documents the tiny dataset as format-testing material not intended for biological conclusions."
+  },
+  "evidence_files": [
+    "validation/spatial/studies/BN-SP-IV-001/evidence/cell_diagnostics.csv"
+  ],
+  "provenance": {
+    "data_source": "10x Genomics official Xenium XOA v4 tiny human kidney output",
+    "download_date": "2026-08-28",
+    "commit_sha": "7a0e0e180d07773c392ccfe61daa5a86837b280f",
+    "git_dirty": true,
+    "environment_lockfile_hashes": {
+      "pyproject.toml": "a1fc0fd54da675b8ae8caea63c2a18dde07d31a956a56600c5d3735c32548063",
+      "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
+      "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
+    },
+    "command": [
+      "C:\\Users\\13264\\anaconda3\\Lib\\site-packages\\pytest\\__main__.py",
+      "tests/unit/",
+      "-v",
+      "--ignore=tests/unit/test_scvi_smoke.py"
+    ],
+    "command_str": "C:\\Users\\13264\\anaconda3\\Lib\\site-packages\\pytest\\__main__.py tests/unit/ -v --ignore=tests/unit/test_scvi_smoke.py",
+    "generator_version": "1.0.0-rc.3",
+    "python_version": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "timestamp": "2026-08-29T07:21:17.651120+00:00",
+    "extra_metadata": {
+      "study_id": "BN-SP-IV-001"
+    },
+    "repository_dirty_at_execution": true,
+    "validation_source_dirty": true,
+    "source_snapshot_sha256": "42ef70c5bcd60e944e38c031c05d25230c012028aee827eb5406dabf0c07b001"
+  }
+}

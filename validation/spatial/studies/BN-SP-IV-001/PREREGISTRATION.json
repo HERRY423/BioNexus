@@ -1,0 +1,43 @@
+{
+  "schema_version": "bionexus.spatial-real-instrument-validation-preregistration.v1",
+  "study_id": "BN-SP-IV-001",
+  "title": "Official Xenium XOA v4 tiny-output real-instrument artifact sensitivity study",
+  "locked_before_endpoint_analysis": true,
+  "locked_at": "2026-08-28",
+  "study_status_at_lock": "PREREGISTERED_NOT_RUN",
+  "capability_id": "spatial.inference_validity",
+  "dataset": {
+    "path": "data/flagship/xenium_spatial_truth/Xenium_V1_Protein_Human_Kidney_tiny_outs.zip",
+    "sha256": "abd7e8f7fd047dcc6afdb1e9eece90d4533d3ead053c6f05c482be050bdf79d2",
+    "official_md5": "50c04dea5e751e1c7508ff24528242e8"
+  },
+  "claim_target": "BioNexus artifact diagnostics execute on authentic Xenium XOA bytes and respond in the expected direction to deterministic manufactured confounders.",
+  "claim_exclusions": [
+    "biological validity",
+    "tissue-level generalization",
+    "segmentation accuracy against histology",
+    "approved spatial calibration profile",
+    "independent ground truth"
+  ],
+  "input_gates": {
+    "raw_nonnegative_integer_cell_feature_counts": true,
+    "physical_centroids_required": true,
+    "cell_area_required": true,
+    "minimum_cells": 100,
+    "official_archive_hash_must_match": true
+  },
+  "locked_endpoints": {
+    "segmentation_leakage": "mean nearest-neighbor cosine similarity must increase after deterministic 20% neighbor mixing",
+    "cell_size_bias": "Spearman correlation between cell area and total counts must increase by at least 0.20 after deterministic area scaling",
+    "transcript_density_bias": "Spearman correlation between local density and total counts must increase by at least 0.20 after deterministic density scaling",
+    "coordinate_permutation": "coordinate permutation must change the coordinate SHA-256 while preserving the expression matrix SHA-256",
+    "fov_confounding": "manufactured condition equal to observed FOV must produce Cramer's V of 1.0 when at least two FOVs are present"
+  },
+  "governance": {
+    "maximum_status": "REAL_INSTRUMENT_TECHNICAL_ACCEPTANCE",
+    "public_reference_dataset_standard_satisfied": false,
+    "independent_ground_truth_standard_satisfied": false,
+    "reason": "The vendor documents the tiny dataset as format-testing material not intended for biological conclusions.",
+    "negative_results_retained": true
+  }
+}

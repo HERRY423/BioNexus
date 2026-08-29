@@ -1,0 +1,174 @@
+{
+  "schema_version": "bionexus.ecosystem-claim-packet.v1",
+  "claim_id": "CLM-ECO-001-TARGET-TP53",
+  "statement": "TP53 is a canonical tumor suppressor that coordinates transcriptional upregulation of DNA repair and cell cycle arrest genes upon cellular stress.",
+  "decision_owner": "principal_investigator_dr_smith",
+  "claim_context": {
+    "scope": "preclinical_target_discovery",
+    "organism": "Homo sapiens",
+    "target_gene": "TP53",
+    "target_uniprot": "P04637"
+  },
+  "envelopes": [
+    {
+      "schema_version": "bionexus.external-evidence-envelope.v1",
+      "evidence_id": "ENV-LIT-TP53-001",
+      "family": "literature",
+      "producer": {
+        "plugin_id": "science-literature",
+        "capability": "literature",
+        "tool_name": "literature_search_europepmc",
+        "plugin_version": "1.0.0-rc.3"
+      },
+      "captured_at": "2026-08-29T00:00:00+00:00",
+      "source_context": {
+        "source_name": "Europe PMC / PubMed",
+        "identifiers": [
+          "PMID:34567890",
+          "doi:10.1038/s41586-021-03823-3"
+        ],
+        "publication_status": "peer_reviewed",
+        "study_design": "observational_cohort",
+        "producer": "science-literature",
+        "tool_name": "literature_search_europepmc"
+      },
+      "payload": {
+        "title": "Transcriptional regulation and mutational landscape of TP53 in genomic stability",
+        "journal": "Nature",
+        "year": 2021,
+        "conclusions": "TP53 functions as a sequence-specific transcription factor activating CDKN1A and apoptotic effectors."
+      },
+      "payload_sha256": "c178ff6d1929e1fb1ecc194a80eb37fb5cc312dedba3e1dad79878f8b8bfffb3",
+      "request_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "schema_version": "bionexus.external-evidence-envelope.v1",
+      "evidence_id": "ENV-DB-TP53-002",
+      "family": "database",
+      "producer": {
+        "plugin_id": "science-uniprot",
+        "capability": "database",
+        "tool_name": "search_uniprot",
+        "plugin_version": "1.0.0-rc.3"
+      },
+      "captured_at": "2026-08-29T00:00:00+00:00",
+      "source_context": {
+        "source_name": "UniProtKB / Swiss-Prot",
+        "record_ids": [
+          "P04637"
+        ],
+        "database_release": "2026_01",
+        "identifier_namespace": "uniprot.accession",
+        "organism_taxon": "9606",
+        "producer": "science-uniprot",
+        "tool_name": "search_uniprot"
+      },
+      "payload": {
+        "primaryAccession": "P04637",
+        "uniProtkbId": "P53_HUMAN",
+        "organism": {
+          "scientificName": "Homo sapiens",
+          "taxonId": 9606
+        },
+        "proteinDescription": {
+          "recommendedName": {
+            "fullName": {
+              "value": "Cellular tumor antigen p53"
+            }
+          }
+        },
+        "sequence": {
+          "length": 393
+        },
+        "features": [
+          {
+            "type": "Domain",
+            "location": {
+              "start": {
+                "value": 102
+              },
+              "end": {
+                "value": 292
+              }
+            },
+            "description": "DNA-binding domain"
+          }
+        ]
+      },
+      "payload_sha256": "1528648fd9d775940b4779b216d85f192866ef4720048a8a77d882e2e719bac2",
+      "request_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "schema_version": "bionexus.external-evidence-envelope.v1",
+      "evidence_id": "ENV-ANA-TP53-003",
+      "family": "analysis",
+      "producer": {
+        "plugin_id": "bionexus",
+        "capability": "analysis",
+        "tool_name": "run_pseudobulk_de",
+        "plugin_version": "1.0.0-rc.3"
+      },
+      "captured_at": "2026-08-29T00:00:00+00:00",
+      "source_context": {
+        "backend_name": "bionexus.pseudobulk_de",
+        "backend_version": "1.0.0-rc.3",
+        "input_artifact_sha256": "5c357d36efc715f5c3577d6fb86bb5d5d8525b6a71adccdbdaffaa3d5e27863e",
+        "parameters_sha256": "1adccdbdaffaa3d5e27863ef55a6d36efc715f5c3577d6fb86bb5d5d8525b6a7",
+        "execution_receipt_sha256": "3d5e27863ef55a6d36efc715f5c3577d6fb86bb5d5d8525b6a71adccdbdaffaa",
+        "producer": "bionexus",
+        "tool_name": "run_pseudobulk_de"
+      },
+      "payload": {
+        "gene": "TP53",
+        "baseMean": 64.29,
+        "log2FoldChange": 2.45,
+        "lfcSE": 0.27,
+        "stat": 8.87,
+        "pvalue": 7.11e-19,
+        "padj": 1.42e-17,
+        "contrast": "radiation_treated vs control",
+        "donors_analyzed": 8
+      },
+      "payload_sha256": "8a843756e6024b9952d0c2ee586e54f485e405e47a4330cf42d8577366deb371",
+      "request_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    }
+  ],
+  "adjudications": [
+    {
+      "evidence_id": "ENV-LIT-TP53-001",
+      "relationship": "supports",
+      "maturity": "SUPPORTED",
+      "rationale": "High-impact peer-reviewed literature confirms biological mechanism of TP53 transcription factor function.",
+      "adjudicator_id": "evaluator_dr_chen",
+      "adjudication_receipt_sha256": "7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b",
+      "validation_role": "supporting",
+      "qualification": {
+        "experimental_system": "human_primary_cells"
+      }
+    },
+    {
+      "evidence_id": "ENV-DB-TP53-002",
+      "relationship": "supports",
+      "maturity": "SUPPORTED",
+      "rationale": "UniProtKB Swiss-Prot verified record documents reviewed structural domains and functional annotations.",
+      "adjudicator_id": "evaluator_dr_chen",
+      "adjudication_receipt_sha256": "9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b7a8b",
+      "validation_role": "supporting",
+      "qualification": {
+        "curation_status": "reviewed_swiss_prot"
+      }
+    },
+    {
+      "evidence_id": "ENV-ANA-TP53-003",
+      "relationship": "supports",
+      "maturity": "SUPPORTED",
+      "rationale": "Donor-paired pseudobulk GLM confirms significant induction in experimental perturbation cohort.",
+      "adjudicator_id": "evaluator_dr_chen",
+      "adjudication_receipt_sha256": "3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b7a8b9c0d1e2f",
+      "validation_role": "supporting",
+      "qualification": {
+        "model_type": "negative_binomial_pseudobulk_glm"
+      }
+    }
+  ]
+}

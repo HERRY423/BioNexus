@@ -1,108 +1,138 @@
 {
   "capability": "scrna.annotation_evidence",
   "dataset": {
-    "name": "citeseq_synthetic_technical_acceptance",
-    "dataset_track": "synthetic_technical_acceptance",
-    "version": "1.0-synthetic",
-    "accession": "synthetic_technical_acceptance (in-silico generated multimodal fixture; not 10x Genomics / Hao et al. 2021)",
-    "data_source": "in_silico_generator",
-    "checksum_sha256": "d3ecbf0e65a40e783c1c80ef4e9c21872cf0d8b8544de48ec5c9f7c32fa24bed"
+    "name": "citeseq_pbmc_sorted",
+    "version": "BN-ANN-IV-001",
+    "dataset_track": "real_public_processed_citeseq",
+    "accession": "YosefLab/scVI-data processed public 10x PBMC 10k and PBMC 5k CITE-seq datasets used by the official scvi-tools totalVI tutorials",
+    "checksum_sha256": {
+      "DATASET_MANIFEST.json": "a210c7c795e6e4d933e9c32575439206c3c58ba49556198ab48e643257c8fdcb",
+      "pbmc_10k_protein_v3.h5ad": "5f08b8575febf9e04b209b94eb43f6335f1e33b0985cdcf44adf7320f6243c69",
+      "pbmc_5k_protein_v3.h5ad": "a1bf51e070d24b39627ea4de9b3e489a4637ff795e1061e0733e26c3baec8847"
+    }
   },
   "pipeline": {
-    "version": "1.0.0-rc.2",
+    "version": "1.0.0-rc.3",
     "backend_identity": {
       "capability_id": "scrna.annotation_evidence",
       "track": "canonical",
       "claimed_backend": "local deterministic evidence combiner",
       "observed_backend": "bionexus",
-      "state": "CONFORMANT"
+      "entry_points_declared": [
+        "bionexus.annotation_evidence"
+      ],
+      "entry_points_resolved": [
+        "bionexus.annotation_evidence"
+      ],
+      "entry_points_missing": [],
+      "version": "1.0.0-rc.3",
+      "execution_fingerprint": "49f19363a70e3b38",
+      "fallback": false,
+      "state": "CONFORMANT",
+      "action": "RUN PERMITTED (identity)",
+      "failure_mode_ids": [],
+      "reason": "declared_backend == observed_backend: 'local deterministic evidence combiner' (distribution 'bionexus', version 1.0.0-rc.3, entry points 1/1 resolved, fallback False)."
     },
     "provenance": {
-      "data_source": "synthetic_generator (in-silico generated multimodal fixture)",
-      "download_date": "2026-08-22T03:13:46.656642+00:00",
-      "commit_sha": "225a9e60d760f2bc454a4af741018ab9e99b8e6b",
+      "data_source": "YosefLab/scVI-data processed public 10x PBMC 10k and PBMC 5k CITE-seq datasets used by the official scvi-tools totalVI tutorials",
+      "download_date": "2026-08-28",
+      "commit_sha": "7a0e0e180d07773c392ccfe61daa5a86837b280f",
       "git_dirty": false,
       "environment_lockfile_hashes": {
-        "pyproject.toml": "b29c5b3f2a3a931e78f701a16c982330d4d74398e3a71d994cd027a84284df24",
+        "pyproject.toml": "a1fc0fd54da675b8ae8caea63c2a18dde07d31a956a56600c5d3735c32548063",
         "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
         "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
       },
       "command": [
-        "evals/annotation_stress_test.py"
+        "scripts/run_flagship_validation.py"
       ],
-      "command_str": "evals/annotation_stress_test.py",
-      "generator_version": "1.0.0-rc.2",
+      "command_str": "scripts/run_flagship_validation.py",
+      "generator_version": "1.0.0-rc.3",
       "python_version": "3.13.9",
       "platform": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-08-22T03:13:46.795969+00:00",
+      "timestamp": "2026-08-29T07:16:18.748574+00:00",
       "extra_metadata": {
-        "dataset_track": "synthetic_technical_acceptance",
-        "n_cells": 1200,
-        "n_genes": 300,
-        "calibration_registry": {
-          "registry_version": "synthetic-technical-acceptance-v1",
-          "registry_sha256": "09af04897fc2c094ced41e58f4523bce7459e08386414a6f7bfed6c9e8ba5352",
-          "profile_count": 6,
-          "status_counts": {
-            "LEGACY_UNCALIBRATED": 0,
-            "CANDIDATE": 0,
-            "APPROVED": 6,
-            "RETIRED": 0
-          },
-          "invalid_profiles": {},
-          "metadata": {
-            "dataset_track": "synthetic_technical_acceptance",
-            "scientific_claim": "none",
-            "packaged_runtime_registry": false
-          }
-        },
-        "packaged_runtime_registry_eligible": false
+        "capability": "scrna.annotation_evidence",
+        "dataset_id": "citeseq_pbmc_sorted",
+        "present": true
       },
       "repository_dirty_at_execution": false,
       "validation_source_dirty": false,
-      "source_snapshot_sha256": "faba6299efd9174087c14e293f63d3619870caae742450a0f8204f8faabea24d"
+      "source_snapshot_sha256": "42ef70c5bcd60e944e38c031c05d25230c012028aee827eb5406dabf0c07b001"
     }
   },
   "metrics": [
     {
-      "name": "distrust_under_evidenced",
-      "expected": "TENTATIVE",
-      "observed": "TENTATIVE",
+      "name": "precision_wilson_lower_95",
+      "expected": 0.9,
+      "observed": {
+        "observed": 0.9311232144983851,
+        "threshold": 0.9,
+        "passed": true
+      },
       "result": "pass"
     },
     {
-      "name": "negative_marker_violation",
-      "expected": "TENTATIVE",
-      "observed": "TENTATIVE",
+      "name": "coverage",
+      "expected": 0.1,
+      "observed": {
+        "observed": 1.0,
+        "threshold": 0.1,
+        "passed": true
+      },
       "result": "pass"
     },
     {
-      "name": "orthogonal_protein_robust",
-      "expected": "ROBUST",
-      "observed": "ROBUST",
+      "name": "accepted_lineages",
+      "expected": 3,
+      "observed": {
+        "observed": 4,
+        "threshold": 3,
+        "passed": true
+      },
       "result": "pass"
     },
     {
-      "name": "open_set_abstain",
-      "expected": "ABSTAIN",
-      "observed": "ABSTAIN",
+      "name": "accuracy_enrichment",
+      "expected": "preregistered criterion",
+      "observed": {
+        "accepted": 0.9390967741935484,
+        "ungated": 0.9390967741935484,
+        "passed": true
+      },
       "result": "pass"
     },
     {
-      "name": "discordant_conflicted",
-      "expected": "CONFLICTED",
-      "observed": "CONFLICTED",
-      "result": "pass"
+      "name": "nondegenerate_correctness_enrichment",
+      "expected": "gate is selective and improves held-out accuracy",
+      "observed": {
+        "preregistered_endpoint": false,
+        "degenerate_nonselective_gate": true,
+        "claim_target_supported": false,
+        "reason": "The fitted gate accepted the full held-out anchor set or did not improve accuracy; the preregistered numeric endpoints were met but correctness enrichment was not demonstrated."
+      },
+      "result": "fail"
     }
   ],
   "limitations": [
-    "Synthetic technical acceptance only: evaluated on in-silico multimodal fixture; does not satisfy public_reference_dataset or independent_ground_truth external validation (BNS-010).",
-    "Threshold profiles are synthetic resolver fixtures, are not packaged in the runtime registry, and do not establish empirical tissue/platform/reference calibration.",
-    "The packaged runtime calibration registry has zero APPROVED profiles and remains incomplete_not_claim_ready."
+    "Two real public processed 10x CITE-seq datasets were executed with calibration/holdout separation.",
+    "Paired ADT anchors are orthogonal evidence but not independent expert ground truth.",
+    "BN-ANN-IV-001 met its numeric endpoints with a zero threshold and 100% coverage; the post-run scientific audit therefore classifies the gate as non-selective and inconclusive.",
+    "BN-ANN-IV-002 retained an input-ineligible non-evaluation because X was normalized; the separately locked BN-ANN-IV-003 raw-count successor met its endpoints but was not blinded to label distributions and is capped at CANDIDATE_EXTERNAL_REFERENCE_NONBLINDED."
   ],
-  "timestamp": "2026-08-22T03:13:55.367831+00:00",
+  "timestamp": "2026-08-29T07:16:18.940146+00:00",
   "evidence_files": [
-    "validation/annotation/INFERENTIAL_STRESS_REPORT.json"
+    "validation\\annotation\\studies\\BN-ANN-IV-001\\evidence\\holdout_cell_decisions.csv",
+    "validation\\annotation\\studies\\BN-ANN-IV-001\\PREREGISTRATION.json",
+    "validation\\annotation\\studies\\BN-ANN-IV-001\\PREREGISTRATION_LOCK.json",
+    "validation\\annotation\\studies\\BN-ANN-IV-001\\REPORT.json",
+    "validation\\annotation\\studies\\BN-ANN-IV-002\\PREREGISTRATION.json",
+    "validation\\annotation\\studies\\BN-ANN-IV-002\\PREREGISTRATION_LOCK.json",
+    "validation\\annotation\\studies\\BN-ANN-IV-002\\REPORT.json",
+    "validation\\annotation\\studies\\BN-ANN-IV-003\\evidence\\external_holdout_cell_decisions.csv.gz",
+    "validation\\annotation\\studies\\BN-ANN-IV-003\\PREREGISTRATION.json",
+    "validation\\annotation\\studies\\BN-ANN-IV-003\\PREREGISTRATION_LOCK.json",
+    "validation\\annotation\\studies\\BN-ANN-IV-003\\REPORT.json"
   ],
   "status": "pass"
 }

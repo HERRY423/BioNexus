@@ -10,9 +10,16 @@ import logging
 import os
 import sys
 import urllib.request
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 import numpy as np
+
+_SRC = Path(__file__).resolve().parents[3] / "src"
+if _SRC.is_dir() and str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
+from bionexus.egress_guard import guarded_urlopen
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
 logger = logging.getLogger("StructureFetcher")
@@ -102,7 +109,7 @@ def fetch_structure_pdb(pdb_id: str, save_path: Optional[str] = None) -> Dict[st
     logger.info(f"Fetching PDB structure {pdb_id_clean} from {url}...")
 
     req = urllib.request.Request(url, headers={"User-Agent": "BioNexus/2.0.0"})
-    with urllib.request.urlopen(req, timeout=15) as resp:
+    with guarded_urlopen(req, timeout=15, purpose="Fetch public RCSB PDB structure") as resp:
         content = resp.read().decode("utf-8")
 
     if save_path:
@@ -123,7 +130,7 @@ def fetch_structure_alphafold(uniprot_id: str, save_path: Optional[str] = None) 
     logger.info(f"Fetching AlphaFold structure for UniProt {acc} from {url}...")
 
     req = urllib.request.Request(url, headers={"User-Agent": "BioNexus/2.0.0"})
-    with urllib.request.urlopen(req, timeout=15) as resp:
+    with guarded_urlopen(req, timeout=15, purpose="Fetch public AlphaFold DB structure") as resp:
         content = resp.read().decode("utf-8")
 
     if save_path:

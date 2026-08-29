@@ -28,9 +28,12 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 LOCAL_LANCE_RUNTIME = REPO_ROOT / "runtime_lance"
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
+if str(REPO_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT / "src"))
 if LOCAL_LANCE_RUNTIME.is_dir():
     sys.path.insert(0, str(LOCAL_LANCE_RUNTIME))
 
+from bionexus.egress_guard import guarded_requests_get
 from scripts.extract_parse_natural_pseudobulk import (  # noqa: E402
     BASE_URI,
     ELIGIBLE_CYTOKINES,
@@ -119,8 +122,10 @@ def _download_fragment(
     last_error: Exception | None = None
     for attempt in range(1, attempts + 1):
         try:
-            with requests.get(
+            with guarded_requests_get(
                 url,
+                request_get=requests.get,
+                purpose="Download pinned public Parse-10M expression fragment",
                 headers={"Authorization": f"Bearer {token}", "User-Agent": "BioNexus-Parse-extraction/1"},
                 stream=True,
                 timeout=(30, 300),

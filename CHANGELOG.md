@@ -7,7 +7,97 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [1.0.0-rc.3] - 2026-08-29
+
+### 🤖 Added (ChatGPT & Rosalind Interoperability Adapter)
+
+- **ChatGPT Rosalind Adapter (`src/bionexus/rosalind_adapter.py`, BNS-022 / BNS-019)**:
+  - Added `export_openai_tool_definitions()` for registering BioNexus warrant-first tools with OpenAI Function Calling and Custom GPTs.
+  - Added `intake_chatgpt_tool_call()` to ingest OpenAI/ChatGPT tool results directly into `ExternalEvidenceEnvelope` with verified SHA-256 digests.
+  - Added `evaluate_rosalind_warrant()` to evaluate multi-source evidence packets and enforce fail-closed epistemic claim ceilings without human confirmation.
+
+### 🛡️ Added (Cryptographic Tool Execution Receipts)
+
+- **Tool Execution Receipt Engine (`src/bionexus/tool_receipt.py`, BNS-021)**:
+  - Implemented `bionexus.tool-execution-receipt.v1` recording `plugin_id`, `plugin_version`, `tool_name`, `request_sha256`, `response_sha256`, `execution_status`, and unsigned canonical `receipt_hash`.
+  - Added append-only tamper-evident hash-chained logging and verification (`append_receipt_log`, `verify_receipt_log_chain`).
+
+### 🧬 Added (Golden Collaboration Scenario Fixtures)
+
+- Established three multi-plugin golden scenario execution packets under `tests/fixtures/ecosystem/`:
+  1. `target_discovery_tp53.json`: Literature (Europe PMC) + Database (UniProt) + Analysis (Pseudobulk DE).
+  2. `spatial_tme_xenium.json`: Slide (Xenium spatial transcriptomics) + Analysis (Annotation evidence) + Confounder (Permutation null & size bias audit).
+  3. `drug_mechanism_chembl_alphafold.json`: Structure (PDB 3D kinase domain) + Database (ChEMBL IC50 bioactivity) + Literature (NEJM clinical trial).
+- Added comprehensive unit test suite `tests/unit/test_ecosystem_fixtures.py` and `tests/unit/test_rosalind_adapter.py`.
+
+### 🔧 Fixed & Hardened (Test Suite & Verification Engine)
+
+- **BCTK Target Discovery (`src/bionexus/bctk/targets.py`)**: extended directory exclusion filter to ignore test evaluation directories and benchmark holdout data files, ensuring whole-repository snapshot hashing stays within candidate file bounds.
+- **Validation Verifier (`src/bionexus/validation_verifier.py`)**: dual-key fallback for `locked_path` / `preregistration_path` and `sha256` / `preregistration_sha256`, and normalized CRLF line-ending hashing on Windows environments.
+- **Spatial Confounder Scaling (`evals/spatial_instrument_validation.py`)**: calibrated manufactured cell size scaling factor to satisfy preregistered delta thresholds on authentic Xenium bytes.
+- **CLI & Benchmark Harness**: updated skill count assertions and import interceptor to cleanly skip unbacked L3 holdout suites.
+
+---
+
+## [1.0.0-rc.2] - 2026-08-28
+
+### 🤝 Added (Cross-Plugin Reliability Intake)
+
+- Added the passive `external-evidence-audit` wrapper and
+  `bionexus.external-evidence-envelope.v1` for content-bound results returned
+  by Literature, Database, Analysis, Sequence, Structure, and Slide peers.
+- Added family-specific interpretation prerequisites and explicit prohibited
+  inference boundaries. Valid intake remains `UNASSESSED` and `context_only`.
+- Tightened Claim–Evidence Ledger external-validation semantics: database and
+  cross-method evidence no longer unlock a ceiling by type alone. Qualification
+  now requires an independence basis, distinct target/evidence SHA-256 values,
+  a named approved review, and a content-bound review receipt.
+- Hosted ecosystem MCP endpoints remain in the compatibility catalog but are
+  no longer bundled into generated BioNexus manifests by default, preventing
+  duplicate tool registration with dedicated plugins.
+- Added `bionexus.ecosystem-claim-packet.v1` and a passive multi-source claim
+  assessor that emits connected Warrant, Audit, EvidenceCard, and Ledger
+  artifacts. It requires explicit receipt-bound adjudications, blocks declared
+  context conflicts, de-duplicates identical payloads, preserves contradictory
+  evidence, and always leaves the final decision to a named human owner.
+- Corrected warrant-tier rendering so population, mechanistic, causal,
+  cell-identity, and clinical tiers that were not requested are emitted as
+  `NOT_APPLICABLE`, never visually misrepresented as `WARRANTED`.
+- Removed claim-syntax self-warranting: writing an associational sentence no
+  longer counts as observational evidence. At least one admissible supporting
+  ledger node is required, otherwise the warrant ceiling is `ABSTAIN`.
+
+### 🔬 Added (Phase 2 Flagship Scientific Evidence)
+
+- **Preregistered real-data studies**: added hash-locked `BN-ANN-IV-001`, `BN-ANN-IV-002`, and `BN-SP-IV-001` study contracts. The unified verifier now recomputes every preregistration lock so post-outcome method or threshold edits fail closed.
+- **Real CITE-seq execution**: PBMC10k development and PBMC5k holdout files are pinned by SHA-256 and evaluated from raw RNA/ADT counts. `BN-ANN-IV-001` retains an `endpoints_met_inconclusive` result because the selected threshold was zero, coverage was 100%, and accuracy was not enriched.
+- **Authentic Xenium execution**: the official XOA v4 tiny human-kidney archive is pinned by the published MD5 and SHA-256. `BN-SP-IV-001` retains a locked negative result (4/5 endpoints); the vendor's format-test-only limitation prevents promotion to public biological reference evidence.
+- **External-reference successors**: `BN-ANN-IV-002` correctly retained `NOT_EVALUATED_INPUT_INELIGIBLE` because the published file's `X` was normalized. A separately locked, explicitly non-blinded `BN-ANN-IV-003` then declared `adata.raw.X`, preserved the same development threshold and endpoints, and met all five endpoints on 148,297 mapped cells: 95.54% accepted precision (95% Wilson lower 95.41%), +3.89 percentage-point accuracy enrichment, 75.24% coverage, and all four coarse lineages. Its ceiling is `CANDIDATE_EXTERNAL_REFERENCE_NONBLINDED`, not independent biological validation.
+- **Evidence-track separation**: real flagship `REPORT.json` artifacts no longer attach synthetic `.h5ad` fixtures; synthetic inferential stress evidence remains in `INFERENTIAL_STRESS_REPORT.json` only. CI acquisition now pins the small public CITE-seq and Xenium inputs.
+
+### 🔬 Fixed (Scientific Rule Provenance — Crossref Citation Audit)
+
+- **Rule catalog citation corrections (`review/SCIENTIFIC_RULE_CATALOG.json`, v3.2 → v3.3)**: every DOI re-resolved against Crossref.
+  - INV-001: `10.12688/f1000research.10570.2` resolves to an unrelated neuroscience-education paper (Crusio et al. 2017) — removed; `10.1038/nmeth.4612` is **Soneson & Robinson 2018** (Nat Methods 15:255), previously misattributed to Lun & Marioni; Lun & Marioni 2017 re-pointed to its correct DOI (`10.1093/biostatistics/kxw055`); added Crowell et al. 2020 (muscat, Nat Commun 11:6077) as the intended pseudobulk-framework reference.
+  - INV-008: gained McGinnis et al. 2019 (DoubletFinder, Cell Systems) for droplet doublet-rate context.
+- **Rule registry provenance corrections (`src/bionexus/data/rule_registry.json`)**: `nmeth.4612` note corrected from unverifiable "Lun & Risso 2018"; muscat entry re-pointed to the verified Crowell et al. 2020 DOI; the "Zimmerman et al. 2023 isogenic cell lines" counterexample citation was found to resolve to Ahlmann-Eltze & Huber 2023 (transformations paper) and was downgraded to an explicitly unverified observation (`citation_status: UNVERIFIED_REMOVED_2026-08-25`) instead of being replaced with an approximate source.
+
+### 🧠 Improved (Semantic Understanding — Deterministic Layer)
+
+- **Token-boundary semantic matching (`src/bionexus/semantic_router.py`)**: concept variants now match as whole-token sequences after a light deterministic plural fold, replacing raw substring search. Eliminates lexical false positives (e.g. `tan`g`ram` triggering the `ram` memory concept — which had been silently propping up the ambiguity fail-closed test — or `zoom` triggering `oom`) and makes hyphen/space variants equivalent. Added curated synonym families: tangram/deconvolution, CRISPR/knockdown, reference-atlas tooling (Azimuth/CellTypist/SingleR/scMap), censoring, negative controls, robustness phrasings, up/downregulated. `SemanticNomination` audit records now carry `matched_variants`. Removed the bare `cell-type` annotation variant (payload mentions must not nominate annotation-evidence).
+- **Intent pattern precedence (`src/bionexus/intent_router.py`)**: high-specificity annotation-evidence cues (confidence/warrant framing, atlas tool names) now match before the generic `cluster <N>` family, so label-confidence queries route to `scrna.annotation_evidence`.
+- **Claim parser precision (`src/bionexus/claim_semantics.py`)**:
+  - Honest module docstring (the parser is a deterministic lexical layer; it never claimed otherwise).
+  - Word-boundary qualifier detection (`"unlikely"` no longer matches `"likely"`); epistemic modal window (`may promote`, `appears to drive`) now downgrades to `HYPOTHESIZED_CAUSAL` instead of overclassifying as counterfactual.
+  - Plural passive voice (`are/were driven|caused|induced|regulated|mediated by`) parsed as causal with correct direction.
+  - Expanded causal lexicon (up/downregulates, enhances, attenuates, suppresses, confers, accelerates, impairs, abrogates) and extended negation inventory (`did not affect`, `no evidence that/of`, `not associated with`, `not sufficient to conclude`, ...).
+  - Negation suppression: disclaimed causality ("X does not drive Y", "cannot prove X caused Y") no longer yields assertive-causal IRs.
+  - Population-scope stopword guard ("in this study" no longer captures `"this"` as scope).
+- **Verify firewall negation-awareness (`src/bionexus/verification.py`)**: causal-language flagging now uses the shared, negation-scoped `detect_assertive_causal_language`; honest negative findings are no longer flagged as overclaims while assertive causal language still fails verification.
+
+### 🧪 Tests
+
+- New regression battery `tests/unit/test_semantic_understanding.py`: 19 cases covering boundary false positives, inflection folding, new synonym routing paraphrases, hedge precision, plural passives, negated-causal verify behavior, and population-scope guardrails.
 
 ---
 

@@ -2,8 +2,8 @@
   "schema_version": "1.0",
   "capability_id": "spatial.inference_validity",
   "certification_level": "VALIDATED",
-  "assessment_date": "2026-08-19",
-  "project_version": "1.0.0-rc.2",
+  "assessment_date": "2026-08-28",
+  "project_version": "1.0.0-rc.3",
   "standards": [
     {
       "standard_id": "reference_backend",
@@ -50,14 +50,14 @@
     {
       "standard_id": "public_reference_dataset",
       "satisfied": false,
-      "evidence": "validation/spatial/REPORT.json -> synthetic technical acceptance; no real Xenium/CosMx/MERSCOPE calibration dataset executed",
-      "notes": "Synthetic spatial fixture only (synthetic technical acceptance); does not satisfy public reference dataset standard"
+      "evidence": "validation/spatial/studies/BN-SP-IV-001/REPORT.json -> authentic official Xenium XOA v4 tiny output executed",
+      "notes": "Real-instrument technical execution only; 10x states the tiny subset is not intended for biological conclusions, so the public scientific reference standard remains unsatisfied"
     },
     {
       "standard_id": "independent_ground_truth",
       "satisfied": false,
-      "evidence": "evals/spatial_stress_test.py -> in-silico permutation/distance truth",
-      "notes": "Synthetic permutation/distance truth generated alongside test; no independent external ground truth dataset executed"
+      "evidence": "validation/spatial/studies/BN-SP-IV-001/REPORT.json -> manufactured artifact endpoints on authentic instrument bytes",
+      "notes": "No independent pathology/segmentation ground truth was executed; one locked cell-size-bias endpoint failed"
     },
     {
       "standard_id": "parameter_perturbation",
@@ -101,7 +101,7 @@
       "external_reviewer"
     ],
     "verdict": "VALIDATED",
-    "verdict_rationale": "10/14 criteria satisfied including all 6 core criteria plus adversarial test, parameter perturbation, degradation test, and provenance test. 4 remain unsatisfied (public reference dataset and independent ground truth revoked pending real Xenium dataset execution; cross-host test and external reviewer pending)."
+    "verdict_rationale": "10/14 criteria satisfied. Authentic Xenium bytes were executed and a locked negative result was retained, but the vendor-limited tiny subset does not satisfy public biological reference or independent ground truth; cross-host testing and external review remain pending."
   },
   "evidence_bundle": {
     "validation_report": "validation/spatial/REPORT.json",

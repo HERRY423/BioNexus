@@ -14,6 +14,7 @@ DEFAULT_SKILLS: FrozenSet[str] = frozenset(
         "nextflow-development",
         "instrument-data-to-allotrope",
         "provenance-and-audit",
+        "external-evidence-audit",
         "spatial-transcriptomics",
     }
 )

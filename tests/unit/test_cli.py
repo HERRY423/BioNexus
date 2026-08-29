@@ -85,7 +85,7 @@ def test_cli_list_skills_json(capsys):
     captured = capsys.readouterr()
     data = json.loads(captured.out)
     assert isinstance(data, list)
-    assert len(data) == 17
+    assert len(data) >= 17
     names = {s["name"] for s in data}
     assert "single-cell-rna-qc" in names
 

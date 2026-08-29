@@ -49,6 +49,7 @@ def test_canonical_registry_loading_and_structure():
     assert "mcp_servers" in registry
     assert "local" in registry["mcp_servers"]
     assert "hosted" in registry["mcp_servers"]
+    assert registry["mcp_servers"]["hosted"]["pubmed"]["bundle_with_plugin"] is False
 
     errors = validate_registry_structure(registry)
     assert errors == []
@@ -68,8 +69,7 @@ def test_generate_agent_plugins_manifests():
     servers = mcp_json["mcpServers"]
     assert "bionexus-local-mcp" in servers
     assert servers["bionexus-local-mcp"]["type"] == "stdio"
-    assert "pubmed" in servers
-    assert servers["pubmed"]["type"] == "streamable-http"
+    assert "pubmed" not in servers
     assert "benchling" not in servers  # Disabled server excluded
 
 
@@ -82,8 +82,7 @@ def test_generate_claude_manifests():
     assert c_plugin["name"] == "bionexus-reliability"
     assert "mcpServers" in c_mcp
     servers = c_mcp["mcpServers"]
-    assert "pubmed" in servers
-    assert servers["pubmed"]["type"] == "http"
+    assert "pubmed" not in servers
     # Verify no bionexus-local-mcp in hosted-only Claude manifest and disabled benchling is absent
     assert "bionexus-local-mcp" not in servers
     assert "benchling" not in servers
@@ -97,7 +96,7 @@ def test_generate_codex_config():
     assert codex_conf["name"] == "bionexus-reliability"
     assert codex_conf["provider"] == "BioNexus"
     assert "bionexus-local-mcp" in codex_conf["mcpServers"]
-    assert "pubmed" in codex_conf["mcpServers"]
+    assert "pubmed" not in codex_conf["mcpServers"]
 
 
 def test_endpoint_validation():

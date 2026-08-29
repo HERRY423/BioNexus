@@ -18,6 +18,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import yaml
 
+from bionexus.egress_guard import guarded_urlopen
+
 
 def get_default_registry_path(repo_root: Optional[Path] = None) -> Path:
     """Resolve the default bionexus.registry.yaml path."""
@@ -117,7 +119,11 @@ def validate_endpoints(registry: Dict[str, Any], check_live: bool = False, timeo
                     req = urllib.request.Request(
                         url, headers={"User-Agent": "BioNexus-RegistryValidator/1.0"}, method="HEAD"
                     )
-                    with urllib.request.urlopen(req, timeout=timeout) as resp:
+                    with guarded_urlopen(
+                        req,
+                        timeout=timeout,
+                        purpose="Canonical registry endpoint availability probe",
+                    ) as resp:
                         status["live_status"] = resp.status
                 except urllib.error.HTTPError as e:
                     # Many MCP endpoints require POST or Auth, so 401/403/404/405 indicates endpoint reachable
@@ -155,7 +161,13 @@ def to_agent_plugins_plugin_json(registry: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def to_agent_plugins_mcp_json(registry: Dict[str, Any]) -> Dict[str, Any]:
-    """Generate Agent Plugins 1.0 mcp.json configuration."""
+    """Generate MCP config without bundling peer ecosystem capabilities.
+
+    Hosted servers remain in the canonical catalog for compatibility and
+    endpoint diagnostics, but ``bundle_with_plugin: false`` keeps BioNexus from
+    registering duplicate Literature, Database, visualization, or analysis
+    capabilities.
+    """
     mcp_data = registry.get("mcp_servers", {})
     servers: Dict[str, Any] = {}
 
@@ -171,7 +183,11 @@ def to_agent_plugins_mcp_json(registry: Dict[str, Any]) -> Dict[str, Any]:
 
     # 2. Hosted streamable-http MCP servers
     for s_id, s_conf in mcp_data.get("hosted", {}).items():
-        if s_conf.get("enabled", True) and s_conf.get("url"):
+        if (
+            s_conf.get("enabled", True)
+            and s_conf.get("bundle_with_plugin", True)
+            and s_conf.get("url")
+        ):
             servers[s_id] = {"type": s_conf.get("type", "streamable-http"), "url": s_conf.get("url")}
 
     return {"$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json", "mcpServers": servers}
@@ -192,13 +208,17 @@ def to_claude_plugin_json(registry: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def to_claude_mcp_json(registry: Dict[str, Any]) -> Dict[str, Any]:
-    """Generate Claude Desktop / Claude Code .mcp.json manifest (only enabled servers with valid URLs)."""
+    """Generate Claude MCP manifest for enabled servers explicitly bundled by BioNexus."""
     mcp_data = registry.get("mcp_servers", {})
     servers: Dict[str, Any] = {}
 
     # Hosted MCP servers (with Claude standard http type)
     for s_id, s_conf in mcp_data.get("hosted", {}).items():
-        if s_conf.get("enabled", True) and s_conf.get("url"):
+        if (
+            s_conf.get("enabled", True)
+            and s_conf.get("bundle_with_plugin", True)
+            and s_conf.get("url")
+        ):
             servers[s_id] = {"type": s_conf.get("claude_type", "http"), "url": s_conf.get("url")}
 
     return {"mcpServers": servers}
@@ -243,9 +263,9 @@ def to_codex_plugin_json(registry: Dict[str, Any]) -> Dict[str, Any]:
             "capabilities": ["Interactive", "Read", "Write"],
             "websiteURL": "https://github.com/HERRY423/BioNexus",
             "defaultPrompt": [
-                "Inspect single-cell dataset and run QC",
-                "Query UniProt for TP53 protein details",
-                "Analyze spatial transcriptomics with squidpy",
+                "Audit evidence returned by another science plugin",
+                "Check whether this result warrants the proposed claim",
+                "Verify provenance, backend identity, and claim ceiling",
             ],
         },
     }

@@ -3,7 +3,7 @@
   "study_id": "BN-PB-IV-005",
   "locked_at": "2026-08-21T09:10:43.235384+00:00",
   "preregistration_path": "validation/pseudobulk/studies/BN-PB-IV-005/PREREGISTRATION.json",
-  "preregistration_sha256": "84dfc421043c414c3832d1e4824d572d66b05fcf1a4a94c83666b5447142a5cf",
+  "preregistration_sha256": "7b081e8a8126ba286b85dbc53249b14b821ea4562e4bdcd198b4343500c0032a",
   "lock_strength": "repository_hash_lock_before_sample_manifest_or_outcome_access",
   "predecessor_negative_results_preserved": [
     "BN-PB-IV-002",

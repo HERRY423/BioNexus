@@ -69,6 +69,9 @@ evals/datasets/benchmarks/*.h5ad
 data/flagship/*/*.tar.gz
 data/flagship/*/*.tar
 data/flagship/*/ifnb.SeuratData/
+data/flagship/xenium_spatial_truth/*.zip
+data/flagship/xenium_spatial_truth/official_tiny_outs/
+data/flagship/citeseq_pbmc_sorted/.zenodo_parts/
 .coverage
 coverage.xml
 htmlcov/
@@ -137,3 +140,9 @@ figures/
 !interoperability/bns019/trial/submissions/**
 !interoperability/bns019/trial/results/
 !interoperability/bns019/trial/results/**
+
+# Temporary test & eval runs
+.phase2-pytest-*/
+_evaluation_*/
+_eval_*/
+_benchmark_upload_*/

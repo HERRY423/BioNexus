@@ -18,6 +18,7 @@ run/
 
 from __future__ import annotations
 
+import hashlib
 import json
 import time
 from dataclasses import asdict, dataclass, field
@@ -28,6 +29,33 @@ from typing import Any, Dict, List, Optional
 from bionexus.contracts import EvidenceCard
 from bionexus.provenance import capture_environment, sha256_file, sidecar
 from bionexus.versions import PLUGIN_VERSION
+
+BUNDLE_SCHEMA_VERSION = "2.0"
+_CORE_DESCRIPTORS = (
+    "inputs.json",
+    "parameters.json",
+    "evidence.json",
+    "provenance.json",
+    "environment.json",
+    "logs/pipeline.log",
+)
+
+
+def _canonical_json_sha256(payload: Dict[str, Any]) -> str:
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _contained_artifact_path(base_dir: Path, candidate: str | Path) -> tuple[Path, str]:
+    """Resolve an output path and require it to remain inside the capsule."""
+    base = base_dir.resolve()
+    path = Path(candidate)
+    resolved = path.resolve() if path.is_absolute() else (base / path).resolve()
+    try:
+        relative = resolved.relative_to(base)
+    except ValueError as exc:
+        raise ValueError(f"RunBundle artifact must remain inside {base}: {candidate}") from exc
+    return resolved, relative.as_posix()
 
 
 @dataclass
@@ -170,13 +198,13 @@ class RunBundle:
         metadata: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Record an input file artifact."""
-        p = Path(file_path)
+        p = Path(file_path).resolve()
         sha = sha256_file(p) if p.exists() and p.is_file() else "missing"
         size = p.stat().st_size if p.exists() and p.is_file() else 0
 
         self.inputs[name] = InputArtifact(
             name=name,
-            path=str(p.as_posix()),
+            path=p.as_posix(),
             semantic_type=semantic_type,
             sha256=sha,
             size_bytes=size,
@@ -198,10 +226,11 @@ class RunBundle:
         metadata: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Record a generated result data artifact."""
-        p = Path(file_path)
-        rel_path = str(p.relative_to(self.run_dir).as_posix()) if p.is_relative_to(self.run_dir) else str(p.as_posix())
-        sha = sha256_file(p) if p.exists() and p.is_file() else "pending"
-        size = p.stat().st_size if p.exists() and p.is_file() else 0
+        p, rel_path = _contained_artifact_path(self.run_dir, Path(file_path).resolve())
+        if not p.is_file():
+            raise FileNotFoundError(f"Result artifact does not exist: {p}")
+        sha = sha256_file(p)
+        size = p.stat().st_size
 
         self.results[name] = OutputArtifact(
             name=name,
@@ -222,10 +251,11 @@ class RunBundle:
         description: str = "",
     ) -> None:
         """Record a generated figure or visualization."""
-        p = Path(file_path)
-        rel_path = str(p.relative_to(self.run_dir).as_posix()) if p.is_relative_to(self.run_dir) else str(p.as_posix())
-        sha = sha256_file(p) if p.exists() and p.is_file() else "pending"
-        size = p.stat().st_size if p.exists() and p.is_file() else 0
+        p, rel_path = _contained_artifact_path(self.run_dir, Path(file_path).resolve())
+        if not p.is_file():
+            raise FileNotFoundError(f"Figure artifact does not exist: {p}")
+        sha = sha256_file(p)
+        size = p.stat().st_size
 
         self.figures[title] = FigureArtifact(
             title=title,
@@ -316,6 +346,7 @@ class RunBundle:
 
         # 7. Write master run.json
         manifest = {
+            "bundle_schema_version": BUNDLE_SCHEMA_VERSION,
             "run_id": self.run_id,
             "bionexus_version": PLUGIN_VERSION,
             "capability_id": self.capability_id,
@@ -339,6 +370,18 @@ class RunBundle:
             },
             "downstream_suggestions": [asdict(v) for v in self.downstream_suggestions],
         }
+
+        descriptor_hashes = {
+            rel_path: sha256_file(self.run_dir / rel_path)
+            for rel_path in _CORE_DESCRIPTORS
+        }
+        manifest["integrity"] = {
+            "algorithm": "sha256",
+            "descriptor_sha256": descriptor_hashes,
+            "scope": "inputs, descriptors, results, figures, and manifest payload",
+            "authentication": "none",
+        }
+        manifest["integrity"]["manifest_payload_sha256"] = _canonical_json_sha256(manifest)
 
         master_path = self.run_dir / "run.json"
         master_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
@@ -388,45 +431,97 @@ def verify_run_bundle(run_dir: str | Path) -> BundleVerificationResult:
     tampered: List[str] = []
     notes: List[str] = []
 
-    # Check required core descriptor files
-    expected_core = [
-        "inputs.json",
-        "parameters.json",
-        "evidence.json",
-        "provenance.json",
-        "environment.json",
-        "logs/pipeline.log",
-    ]
-    for rel_f in expected_core:
+    integrity = manifest.get("integrity")
+    if manifest.get("bundle_schema_version") != BUNDLE_SCHEMA_VERSION or not isinstance(integrity, dict):
+        notes.append("Legacy or unsealed RunBundle: schema v2 integrity metadata is required.")
+        tampered.append("run.json (missing v2 integrity seal)")
+        integrity = {}
+
+    expected_manifest_sha = integrity.get("manifest_payload_sha256")
+    manifest_payload = dict(manifest)
+    integrity_payload = dict(integrity)
+    integrity_payload.pop("manifest_payload_sha256", None)
+    manifest_payload["integrity"] = integrity_payload
+    actual_manifest_sha = _canonical_json_sha256(manifest_payload)
+    if not expected_manifest_sha or expected_manifest_sha != actual_manifest_sha:
+        tampered.append("run.json (manifest payload checksum mismatch)")
+
+    # Check required core descriptor files and their sealed checksums.
+    descriptor_hashes = integrity.get("descriptor_sha256", {})
+    for rel_f in _CORE_DESCRIPTORS:
         f_path = base_dir / rel_f
-        if not f_path.exists():
+        if not f_path.is_file():
             missing.append(rel_f)
+            continue
+        expected_sha = descriptor_hashes.get(rel_f)
+        actual_sha = sha256_file(f_path)
+        if not expected_sha or expected_sha != actual_sha:
+            tampered.append(f"{rel_f} (descriptor checksum mismatch)")
+
+    # Inputs may intentionally live outside the capsule, but their recorded
+    # bytes must still be present and unchanged at verification time.
+    inputs_path = base_dir / "inputs.json"
+    if inputs_path.is_file():
+        try:
+            inputs_manifest = json.loads(inputs_path.read_text(encoding="utf-8"))
+        except Exception as exc:
+            tampered.append(f"inputs.json (parse failure: {exc})")
+            inputs_manifest = {}
+        for input_item in inputs_manifest.values() if isinstance(inputs_manifest, dict) else []:
+            recorded_path = input_item.get("path", "")
+            expected_sha = input_item.get("sha256", "")
+            input_path = Path(recorded_path)
+            if not input_path.is_absolute():
+                input_path = (base_dir / input_path).resolve()
+            if not input_path.is_file():
+                missing.append(f"input:{recorded_path}")
+            elif not expected_sha or expected_sha == "missing" or sha256_file(input_path) != expected_sha:
+                tampered.append(f"input:{recorded_path} (checksum mismatch)")
 
     # Check results files & checksums
     results_list = manifest.get("artifacts", {}).get("results", [])
     for res_item in results_list:
         rel_path = res_item.get("path", "")
         expected_sha = res_item.get("sha256", "")
-        f_path = base_dir / rel_path
-        if not f_path.exists():
+        try:
+            f_path, safe_rel_path = _contained_artifact_path(base_dir, rel_path)
+        except ValueError:
+            tampered.append(f"{rel_path} (path escapes run directory)")
+            continue
+        if not f_path.is_file():
             missing.append(rel_path)
         else:
-            if expected_sha and expected_sha != "pending":
-                actual_sha = sha256_file(f_path)
-                if actual_sha != expected_sha:
-                    tampered.append(f"{rel_path} (Expected: {expected_sha[:8]}..., Got: {actual_sha[:8]}...)")
+            actual_sha = sha256_file(f_path)
+            if not expected_sha or expected_sha == "pending" or actual_sha != expected_sha:
+                tampered.append(
+                    f"{safe_rel_path} (Expected: {expected_sha[:8]}..., Got: {actual_sha[:8]}...)"
+                )
 
     # Check figures
     figures_list = manifest.get("artifacts", {}).get("figures", [])
     for fig_item in figures_list:
         rel_path = fig_item.get("path", "")
-        f_path = base_dir / rel_path
-        if not f_path.exists():
+        expected_sha = fig_item.get("sha256", "")
+        try:
+            f_path, safe_rel_path = _contained_artifact_path(base_dir, rel_path)
+        except ValueError:
+            tampered.append(f"{rel_path} (path escapes run directory)")
+            continue
+        if not f_path.is_file():
             missing.append(rel_path)
+        else:
+            actual_sha = sha256_file(f_path)
+            if not expected_sha or expected_sha == "pending" or actual_sha != expected_sha:
+                tampered.append(
+                    f"{safe_rel_path} (Expected: {expected_sha[:8]}..., Got: {actual_sha[:8]}...)"
+                )
 
     valid = len(missing) == 0 and len(tampered) == 0
     if valid:
-        notes.append(f"RunBundle '{run_id}' is complete and cryptographically verified.")
+        notes.append(
+            f"RunBundle '{run_id}' passed SHA-256 integrity checks. "
+            "This detects byte changes but is not a digital signature or identity authentication."
+        )
     else:
         if missing:
             notes.append(f"Missing {len(missing)} expected file(s).")

@@ -1,0 +1,179 @@
+{
+  "schema_version": "bionexus.ecosystem-claim-packet.v1",
+  "claim_id": "CLM-ECO-002-SPATIAL-TME-XENIUM",
+  "statement": "CD8+ cytotoxic T cells display spatially restricted localization to the invasive tumor margin in human breast carcinoma without being driven by cell-size or density artifacts.",
+  "decision_owner": "principal_investigator_dr_smith",
+  "claim_context": {
+    "scope": "spatial_tumor_microenvironment",
+    "tissue": "human_breast_carcinoma",
+    "instrument": "10x_xenium_v1",
+    "target_genes": [
+      "CD8A",
+      "GZMB"
+    ]
+  },
+  "envelopes": [
+    {
+      "schema_version": "bionexus.external-evidence-envelope.v1",
+      "evidence_id": "ENV-SLD-XENIUM-001",
+      "family": "slide",
+      "producer": {
+        "plugin_id": "bionexus-spatial",
+        "capability": "slide",
+        "tool_name": "spatial_svg_moran",
+        "plugin_version": "1.0.0-rc.3"
+      },
+      "captured_at": "2026-08-29T00:00:00+00:00",
+      "source_context": {
+        "image_or_dataset_sha256": "abd7e8f7fd047dcc6afdb1e9eece90d4533d3ead053c6f05c482be050bdf79d2",
+        "coordinate_system": "microns_relative_to_corner",
+        "coordinate_transform": "identity",
+        "segmentation_version": "xoa_v4",
+        "biological_replicate_ids": [
+          "BRCA_SEC_01"
+        ],
+        "field_of_view_ids": [
+          "FOV_001",
+          "FOV_002",
+          "FOV_003"
+        ],
+        "producer": "bionexus-spatial",
+        "tool_name": "spatial_svg_moran"
+      },
+      "payload": {
+        "dataset": "Xenium_Human_Breast_Cancer",
+        "genes_evaluated": [
+          "CD8A",
+          "GZMB"
+        ],
+        "moran_i": {
+          "CD8A": 0.421,
+          "GZMB": 0.389
+        },
+        "p_value_simulated": {
+          "CD8A": 0.0001,
+          "GZMB": 0.0001
+        },
+        "spatial_pattern": "margin_clustered"
+      },
+      "payload_sha256": "cb76f7929fc24689ee8d5d967036362a44bf4b67059bc7fc6c36e36651b39c14",
+      "request_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "schema_version": "bionexus.external-evidence-envelope.v1",
+      "evidence_id": "ENV-ANA-ANNOTATION-002",
+      "family": "analysis",
+      "producer": {
+        "plugin_id": "bionexus",
+        "capability": "analysis",
+        "tool_name": "single_cell_qc",
+        "plugin_version": "1.0.0-rc.3"
+      },
+      "captured_at": "2026-08-29T00:00:00+00:00",
+      "source_context": {
+        "backend_name": "bionexus.annotation_evidence",
+        "backend_version": "1.0.0-rc.3",
+        "input_artifact_sha256": "abd7e8f7fd047dcc6afdb1e9eece90d4533d3ead053c6f05c482be050bdf79d2",
+        "parameters_sha256": "4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c",
+        "execution_receipt_sha256": "6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a",
+        "producer": "bionexus",
+        "tool_name": "single_cell_qc"
+      },
+      "payload": {
+        "cluster_id": "cluster_3",
+        "annotated_cell_type": "CD8+ Cytotoxic T Cell",
+        "positive_markers": [
+          "CD8A",
+          "CD8B",
+          "GZMB",
+          "PRF1"
+        ],
+        "negative_markers_satisfied": [
+          "CD14",
+          "CD19",
+          "PECAM1"
+        ],
+        "evidence_tier": "SUPPORTED"
+      },
+      "payload_sha256": "2754a7bda91648f948ca2fa1883ca3bff50f04d4943d36fd603ecb055aa75aef",
+      "request_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "schema_version": "bionexus.external-evidence-envelope.v1",
+      "evidence_id": "ENV-SLD-CONFOUNDER-003",
+      "family": "slide",
+      "producer": {
+        "plugin_id": "bionexus-spatial",
+        "capability": "slide",
+        "tool_name": "spatial_artifact_verifier",
+        "plugin_version": "1.0.0-rc.3"
+      },
+      "captured_at": "2026-08-29T00:00:00+00:00",
+      "source_context": {
+        "image_or_dataset_sha256": "abd7e8f7fd047dcc6afdb1e9eece90d4533d3ead053c6f05c482be050bdf79d2",
+        "coordinate_system": "microns_relative_to_corner",
+        "coordinate_transform": "identity",
+        "segmentation_version": "xoa_v4",
+        "biological_replicate_ids": [
+          "BRCA_SEC_01"
+        ],
+        "field_of_view_ids": [
+          "FOV_001",
+          "FOV_002",
+          "FOV_003"
+        ],
+        "producer": "bionexus-spatial",
+        "tool_name": "spatial_artifact_verifier"
+      },
+      "payload": {
+        "artifact_tests": {
+          "coordinate_permutation_null": {
+            "passed": true,
+            "null_moran_mean": 0.002,
+            "empirical_p": 0.0001
+          },
+          "cell_size_confounding": {
+            "passed": true,
+            "spearman_area_vs_marker": 0.041,
+            "status": "not_confounded"
+          },
+          "fov_edge_artifact": {
+            "passed": true,
+            "status": "no_boundary_enrichment"
+          }
+        }
+      },
+      "payload_sha256": "799d7462aa98d3ad94e34c3bd084a412505308f1e3af347e1e47bf56dd36bc50",
+      "request_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    }
+  ],
+  "adjudications": [
+    {
+      "evidence_id": "ENV-SLD-XENIUM-001",
+      "relationship": "supports",
+      "maturity": "SUPPORTED",
+      "rationale": "Direct authentic Xenium subcellular resolution spatial matrix demonstrates statistically robust Moran's I spatial clustering.",
+      "adjudicator_id": "evaluator_dr_chen",
+      "adjudication_receipt_sha256": "8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c",
+      "validation_role": "supporting"
+    },
+    {
+      "evidence_id": "ENV-ANA-ANNOTATION-002",
+      "relationship": "supports",
+      "maturity": "SUPPORTED",
+      "rationale": "Cell-type lineage gating with negative marker tests verifies cluster identity as authentic CD8+ T cells.",
+      "adjudicator_id": "evaluator_dr_chen",
+      "adjudication_receipt_sha256": "0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e",
+      "validation_role": "supporting"
+    },
+    {
+      "evidence_id": "ENV-SLD-CONFOUNDER-003",
+      "relationship": "supports",
+      "maturity": "SUPPORTED",
+      "rationale": "Full 3-tier confounder test battery confirms observed spatial signal is not driven by cell size, density, or edge artifacts.",
+      "adjudicator_id": "evaluator_dr_chen",
+      "adjudication_receipt_sha256": "2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a",
+      "validation_role": "supporting"
+    }
+  ]
+}

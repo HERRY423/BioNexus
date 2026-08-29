@@ -18,6 +18,7 @@ if _SRC.is_dir() and str(_SRC) not in sys.path:
 
 from bionexus.backends import require
 from bionexus.contracts import GRADE_A, attach_meta
+from bionexus.integrity import require_counts_layer
 
 
 def pseudobulk_counts(adata, *, by: list[str], layer: str = "counts"):
@@ -29,10 +30,7 @@ def pseudobulk_counts(adata, *, by: list[str], layer: str = "counts"):
     missing = [k for k in by if k not in adata.obs]
     if missing:
         raise ValueError(f"Missing obs columns for pseudobulk: {missing}")
-    if layer in adata.layers:
-        matrix = adata.layers[layer]
-    else:
-        matrix = adata.X
+    matrix = require_counts_layer(adata, layer=layer)
     if sparse.issparse(matrix):
         frame = pd.DataFrame.sparse.from_spmatrix(matrix, index=adata.obs_names, columns=adata.var_names)
         frame = frame.sparse.to_dense()
@@ -48,7 +46,8 @@ def pseudobulk_counts(adata, *, by: list[str], layer: str = "counts"):
     contract = attach_meta(
         {
             "by": by,
-            "layer": layer if layer in adata.layers else "X",
+            "layer": layer,
+            "raw_integer_counts_verified": True,
             "n_pseudobulk_samples": int(grouped.shape[0]),
             "n_genes": int(grouped.shape[1]),
             "design_columns": list(design.columns),

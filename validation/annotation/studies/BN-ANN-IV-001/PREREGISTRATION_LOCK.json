@@ -1,0 +1,10 @@
+{
+  "schema_version": "bionexus.preregistration-lock.v1",
+  "study_id": "BN-ANN-IV-001",
+  "locked_path": "validation/annotation/studies/BN-ANN-IV-001/PREREGISTRATION.json",
+  "sha256": "00a645c983e23283ecaaf3593b0b742ad6e9a63844cf673135e3d312a2fdb88f",
+  "locked_at": "2026-08-28",
+  "lock_strength": "local_repository_hash_before_holdout_outcome_analysis",
+  "external_timestamp": false,
+  "mutation_policy": "Any method, endpoint, threshold, or success-criterion change requires a new study_id."
+}
