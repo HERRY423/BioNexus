@@ -51,6 +51,20 @@ without adopting anything else from BioNexus.
 - **BNS-IO-011** Crate root datasets SHOULD carry Bioschemas-compatible
   schema.org typing; full Bioschemas profile validation MAY follow and MUST
   be reflected honestly in the registry before `implemented` status is claimed.
+- **BNS-IO-014** Run capsules MUST be exportable as Workflow Run RO-Crate
+  Research Object directories (`bionexus interop wfrun-crate`) that package
+  the actual input bytes, software (engine + pinned packages), the execution
+  as a `CreateAction`, recorded per-step executions (`ControlAction` /
+  tool-run `CreateAction` / engine `OrganizeAction` per Provenance Run Crate
+  0.5), output artifacts, the EvidenceCard, and any adjacent Claim–Evidence
+  Ledger, under the published profile chain (Process Run Crate 0.5, Workflow
+  Run Crate 0.5, Workflow RO-Crate 1.0; Provenance Run Crate 0.5 declared only
+  when steps are projected). The export MUST fail closed: capsules whose v2
+  integrity seal does not verify are never exported, the metadata document is
+  validated before anything is written, and the materialized crate MUST be
+  re-verified on disk (structure plus SHA-256 of every data entity, computed
+  over raw bytes so standard consumers agree). Exports remain deterministic
+  and offline (BNS-IO-006).
 
 ## 3. Standards engagement requirements
 
@@ -81,6 +95,10 @@ without adopting anything else from BioNexus.
 ## 5. Verification hooks
 
 - `tests/unit/test_interop.py` — projections, profiles, fail-closed exports.
+- `tests/unit/test_wfrun_crate.py` — Workflow Run RO-Crate bundle structure,
+  profile chain, step wiring, checksum agreement, determinism, fail-closed
+  refusal of unsealed capsules.
 - `tests/unit/test_standards.py` — registry statuses and verbatim disclaimer.
 - `tests/unit/test_product_matrix.py` — documented module mapping is real.
 - `bionexus interop check <run|ledger>` — CLI-level validation.
+- `bionexus interop wfrun-crate <run> --out <dir>` — CLI-level bundle export.

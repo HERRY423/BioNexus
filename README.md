@@ -382,17 +382,21 @@ tool registration when dedicated ecosystem plugins are installed.
 
 ## 🌐 Standards & Interoperability (BNS-016)
 
-BioNexus does **not** invent a proprietary research-data standard. Run capsules and Claim–Evidence Ledgers export through published community standards (`bionexus interop ro-crate|bco|check`):
+BioNexus does **not** invent a proprietary research-data standard. Run capsules and Claim–Evidence Ledgers export through published community standards (`bionexus interop ro-crate|bco|wfrun-crate|check`):
 
 ```text
 
 Claim–Evidence Ledger ──> W3C PROV-O ──┬── RO-Crate 1.1 (+ Workflow Run Crate profiles)
 
+Run Capsule           ─────────────────┼── Workflow Run RO-Crate Research Object bundle
+
 Run Capsule           ─────────────────┴── BioCompute Object (IEEE 2791-2020)
 
 ```
 
-Institutional pipelines (Galaxy, DNAnexus, Seven Bridges, WorkflowHub) can ingest BioNexus outputs today without adopting anything else from BioNexus. Exports are deterministic, offline, and validated before they are written.
+`bionexus interop wfrun-crate <run> --out <dir>` packages a sealed run capsule into a standard **Workflow Run RO-Crate** Research Object: the actual input bytes, software (engine + pinned packages), the execution as a schema.org `CreateAction`, recorded per-step executions (Provenance Run Crate), output artifacts, the EvidenceCard, and any adjacent Claim–Evidence Ledger — conforming to the profile chain Process/Workflow/Provenance Run Crate 0.5 + Workflow RO-Crate 1.0.
+
+Institutional pipelines (Galaxy, DNAnexus, Seven Bridges, WorkflowHub) can ingest BioNexus outputs today without adopting anything else from BioNexus. Exports are deterministic, offline, and validated before they are written: an export that fails structural validation is never written, and the materialized crate is re-verified on disk (fail-closed interop, BNS-IO-004/BNS-IO-014).
 
 **Honest positioning** (`bionexus standards`): BioNexus is *not* an industry standard and does not claim to be one. The BNS series is an implementation proposal — discussable, criticizable, contributable — with the GA4GH AI Work Stream as the primary engagement window ([standards engagement](docs/standards-engagement.md)). Alignment statuses are machine-readable and honest: `implemented` (RO-Crate, Workflow Run Crate, BCO, PROV-O) · `aligned` (Bioschemas, nf-core) · `proposal` (GA4GH AI Work Stream) · `tracked` (ELIXIR, scverse, Bioconductor, WorkflowHub).
 

@@ -67,10 +67,15 @@ ALIGNMENTS: Dict[str, StandardAlignment] = {
         ),
         StandardAlignment(
             key="workflow-run-crate",
-            name="Workflow Run Crate (Process Run Crate 0.5 / Workflow RO-Crate)",
-            url="https://w3id.org/ro/wfrun/process/0.5",
+            name="Workflow Run RO-Crate (Process/Workflow/Provenance Run Crate 0.5 + Workflow RO-Crate 1.0)",
+            url="https://w3id.org/ro/wfrun/workflow/0.5",
             status="implemented",
-            role="Execution provenance: CreateAction + ComputationalWorkflow projections with profile declarations",
+            role=(
+                "Execution provenance: document projections plus full Research Object "
+                "bundle exports (inputs, software, execution, steps, outputs, EvidenceCard, "
+                "Claim Ledger) with structural profile validation; official "
+                "ro-crate-validator integration is not claimed (BNS-IO-010)"
+            ),
             since="0.10.0",
         ),
         StandardAlignment(

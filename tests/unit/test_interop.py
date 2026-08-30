@@ -33,6 +33,7 @@ from bionexus.interop import (
     run_bundle_to_ro_crate,
     validate_bco,
     validate_ro_crate,
+    validate_workflow_run_crate,
 )
 from bionexus.ledger import ClaimLedger, ClaimRecord, EvidenceRef
 from bionexus.verification import write_example_ledger
@@ -270,6 +271,44 @@ def test_interop_cli(tmp_path, capsys):
     doc = json.loads(capsys.readouterr().out)
     assert validate_ro_crate(doc) == []
 
+    # Workflow Run RO-Crate bundle export (BNS-IO-014). The hand-written demo
+    # capsule carries no v2 integrity seal, so the fail-closed exporter refuses.
+    assert cli_main(["interop", "wfrun-crate", str(run_dir), "--out", str(tmp_path / "wfc")]) == 1
+    assert "failed integrity verification" in capsys.readouterr().err
+    assert not (tmp_path / "wfc").exists()
+
+    # Sealed capsule: build a real RunBundle and export it.
+    from bionexus.artifacts import RunBundle
+
+    sealed_dir = tmp_path / "sealed_run"
+    counts_file = tmp_path / "counts.h5ad"
+    counts_file.write_bytes(b"counts-bytes")
+    bundle = RunBundle.create(sealed_dir, "scrna.pseudobulk_de", "single-cell-rna-qc", run_id="run_cli_wfrun")
+    bundle.record_input("counts", counts_file, "raw_counts")
+    (sealed_dir / "results").mkdir(parents=True, exist_ok=True)
+    out_csv = sealed_dir / "results" / "de.csv"
+    out_csv.write_text("gene,p\nCXCL13,0.01\n", encoding="utf-8")
+    bundle.add_result("de", out_csv, "de_table")
+    bundle.record_step("de", "pydeseq2", inputs=["counts"], outputs=["de"])
+    bundle.finalize()
+
+    assert cli_main(["interop", "wfrun-crate", str(sealed_dir), "--out", str(tmp_path / "wfc")]) == 0
+    out_wfc = capsys.readouterr().out
+    assert "Workflow Run RO-Crate written to" in out_wfc
+    assert "post-write verification: PASS" in out_wfc
+    assert (tmp_path / "wfc" / "ro-crate-metadata.json").is_file()
+    assert (tmp_path / "wfc" / "data" / "inputs" / "counts").is_file()
+    wfc_doc = json.loads((tmp_path / "wfc" / "ro-crate-metadata.json").read_text(encoding="utf-8"))
+    assert validate_workflow_run_crate(wfc_doc) == []
+
+    assert cli_main(["interop", "wfrun-crate", str(sealed_dir)]) == 0
+    wfc_stdout = json.loads(capsys.readouterr().out)
+    assert validate_workflow_run_crate(wfc_stdout) == []
+
+    assert cli_main(["interop", "check", str(run_dir)]) == 0
+    check_out = capsys.readouterr().out
+    assert "Workflow Run RO-Crate (bundle projection): PASS" in check_out
+
 
 def test_no_proprietary_interchange_format_claim():
     """BNS-IO-005: the interop surface exposes only standard formats."""
@@ -277,4 +316,6 @@ def test_no_proprietary_interchange_format_claim():
 
     public = [n for n in dir(interop) if not n.startswith("_")]
     exporters = [n for n in public if n.startswith("export_")]
-    assert set(exporters) == {"export_ro_crate", "export_bco"}
+    # export_workflow_run_crate (BNS-IO-014) is the Workflow Run RO-Crate
+    # Research Object bundle export -- still a published community standard.
+    assert set(exporters) == {"export_ro_crate", "export_bco", "export_workflow_run_crate"}

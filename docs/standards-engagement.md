@@ -18,7 +18,7 @@ That mandate intersects what BioNexus already is, mechanically:
 | Responsible AI in genomics/health | Fail-closed engine (`bionexus.failclosed`), deterministic refusal vocabulary (BNS-AD-014) |
 | Interoperability of AI components | Biological Capability ABI (`bionexus.abi`), machine-readable capability contracts (`bionexus.capabilities`) |
 | Evidence & evaluation boundaries | EvidenceCard 2.0 maturity ladder + evidence ceilings (`contracts`, `abi.enforce_evidence_ceiling`) |
-| Provenance & reproducibility | PROV-O sidecars, RO-Crate / Workflow Run Crate exports, IEEE 2791 BCO exports (`bionexus.interop`) |
+| Provenance & reproducibility | PROV-O sidecars, RO-Crate / Workflow Run Crate exports (`bionexus interop wfrun-crate` ships full Research Object bundles: inputs, software, execution, steps, outputs, EvidenceCard, Claim Ledger), IEEE 2791 BCO exports (`bionexus.interop`) |
 | AI agent conformance & safety | Host conformance spec (BNS-008), prohibited-claims auditor (`claim_checker`), L2 host benchmark |
 | Shared test suites / benchmarks | BioFailureBench trap corpus (BNS-014): host-agnostic, ground-truthed, runnable by any agent framework |
 
