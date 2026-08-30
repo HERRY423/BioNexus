@@ -172,10 +172,13 @@ jobs:
         shell: bash
         run: |
           pytest tests/unit/test_eval_harness.py -k "test_l3_missing_backend_never_counts_as_pass" -v
-      - name: Run Standard Eval with Audited Degradation Accounting
+      - name: Run L3 Eval with Audited Degradation Accounting
         shell: bash
         run: |
-          python -m bionexus.cli eval --level all --provider replay
+          # L1/L2 routing expectations are verified in the core/scientific jobs.
+          # This core-only job exercises the L3 missing-backend contract: every
+          # unexecuted outcome remains SKIPPED_NO_BACKEND, never a pass.
+          python -m bionexus.cli eval --level L3 --provider replay
 
   # --------------------------------------------------------------------------
   # 5. Frontier & Optional Extras Matrix
