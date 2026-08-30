@@ -224,17 +224,18 @@ skills:
       backend: "sklearn ExtraTrees"
       description: "Linear multimodal fusion and co-expression scoring"
 
+    - name: "research-workflow-orchestrator"
+      tier: "wrapper"
+      grade: "B"
+      backend: "bionexus.orchestrator + Run Capsule"
+      description: "Capsule-chain orchestration: topological multi-stage execution with fail-closed abort"
+
   outlines:
     - name: "experiment-design-agent"
       tier: "outline"
       grade: "outline"
       backend: "none"
       description: "5-phase biomedical study outline and keyword routing template"
-    - name: "research-workflow-orchestrator"
-      tier: "outline"
-      grade: "outline"
-      backend: "local MCP (optional)"
-      description: "YAML DAG workflow orchestration across local MCP tools"
     - name: "knowledge-graph-augmentation"
       tier: "outline"
       grade: "outline"

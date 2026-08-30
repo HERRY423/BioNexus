@@ -42,6 +42,7 @@ def test_discoverable_skills_exclude_legacy():
     assert "single-cell-rna-qc" in names
     assert "spatial-transcriptomics" in names
     assert "start" in names
+    assert "research-workflow-orchestrator" in names
     assert "biologics-design" not in names
     assert "variant-interpretation" not in names
     assert names == DEFAULT_SKILLS

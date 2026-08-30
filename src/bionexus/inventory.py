@@ -157,12 +157,14 @@ SKILLS: List[SkillRecord] = [
     },
     {
         "name": "research-workflow-orchestrator",
-        "grade": "outline",
-        "tier": "outline",
-        "status": "outline",
-        "does": "YAML DAG topological runner that can call local MCP tools.",
-        "does_not": "Replace Nextflow/Airflow.",
-        "backend": "local MCP (optional)",
+        "grade": "gold-wrapper",
+        "tier": "wrapper",
+        "status": "canonical",
+        "does": "Chain BioNexus stages into verified Run Capsules: topological execution, per-stage "
+        "capsules, fail-closed abort, project-ledger registration.",
+        "does_not": "Validate stage science itself. Does not replace Nextflow/Airflow/Snakemake. "
+        "Never reports a partially executed chain as complete.",
+        "backend": "bionexus.orchestrator + Run Capsule",
     },
     {
         "name": "provenance-and-audit",

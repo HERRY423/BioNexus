@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### 🚀 Added
+- **Verified Data Ingress (`bionexus.ingress`)**:
+  - `bionexus ingest <source> <dest>`: streaming SHA-256-verified ingestion from local paths, `file://`, and `http(s)://`; `s3://`/`gs://` refuse deterministically unless their optional SDK is present (never pretend a fetch happened).
+  - Fail-closed checksum/size verification: mismatched artifacts are deleted, never kept.
+  - `ingest_into_capsule()` registers ingested artifacts directly into a Run Capsule input manifest.
+- **Real nf-core Execution (`skills/nextflow-development`)**:
+  - `nfcore_execute.py`: executes a written launch script when Nextflow is available, records exit status, log tails, and a full Run Capsule (`nextflow.pipeline_execute`); refuses honestly when Nextflow/bash are missing.
+  - `nfcore_sarek_launch.py`: nf-core/sarek launch artifacts with Sarek-schema samplesheet validation (patient/sample/fastq_1/fastq_2, optional lane + tumor/normal status normalization) and mandatory explicit `--step`.
+- **Run Capsule Chain Orchestration (`bionexus.orchestrator`)**:
+  - `bionexus chain <spec.yaml>`: topological, fail-closed execution of multi-stage research workflows with one verified Run Capsule per stage; failed stages skip downstream stages (`SKIPPED_FAIL_CLOSED`) and never report partial success.
+  - Stage commands are argv lists (`shell=False`); `--dry-run` plans without executing; cycles, unknown dependencies, duplicates, and privilege escalation are rejected at spec validation.
+- **Project Ledger (`bionexus.project`)**:
+  - `bionexus project init|register-dataset|register-run|status`: cross-session project memory in `.bionexus/project.json`.
+  - Datasets deduplicate by SHA-256; Run Capsules are cryptographically verified at registration and tampered capsules are refused (fail-closed).
+- **Skill graduation**: `research-workflow-orchestrator` upgraded from outline/deprecated to a canonical wrapper skill over `bionexus.orchestrator` (Run Capsule chain surface), now default-visible.
+
+### 🔄 Changed
+- CLI: new `ingest`, `chain`, and `project` subcommands; `research-workflow-orchestrator` moved from `LEGACY_SKILLS` to `DEFAULT_SKILLS`.
+
+---
+
 ## [0.8.0] - 2026-08-15
 
 ### 🚀 Added

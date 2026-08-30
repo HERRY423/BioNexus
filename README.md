@@ -239,6 +239,35 @@ Every biological output is packaged with a deterministic **`EvidenceCard`** and 
 | [`nextflow-development`](file:///skills/nextflow-development) | `nextflow`, `nf-core` | **Grade A** | Validates FASTQ/BAM schema and profile configurations before generating launch scripts. |
 | [`instrument-data-to-allotrope`](file:///skills/instrument-data-to-allotrope) | `allotropy` | **Grade A** | Converts raw analytical instrument outputs (27+ vendors) into standardized Allotrope ASM JSON. |
 | [`provenance-and-audit`](file:///skills/provenance-and-audit) | `bionexus.provenance` | **Grade A** | SHA-256 dataset hashing and W3C PROV-O JSON-LD tracking without claiming 21 CFR Part 11. |
+| [`research-workflow-orchestrator`](file:///skills/research-workflow-orchestrator) | `bionexus.orchestrator` | **Grade B** | Chains stages into verified Run Capsules, fail-closed on failure. Captures execution fidelity only — never certifies stage science. |
+
+---
+
+## ⚡ Researcher Workflow Accelerators
+
+Closing the loop from *data arrival* to *verified, resumable research state*:
+
+```bash
+# 1. Ingest external data with streaming SHA-256 verification (local / file:// / http(s)://)
+bionexus ingest https://example.org/sample.h5ad ./data --sha256 <expected-digest>
+
+# 2. Execute an nf-core launch script for real (Nextflow on PATH), capturing a Run Capsule
+python skills/nextflow-development/scripts/nfcore_execute.py --script run.sh --outdir results
+
+# 3. Chain multi-stage workflows: one verified capsule per stage, fail-closed on failure
+bionexus chain workflow.yaml --workdir chain_runs
+
+# 4. Keep cross-session project memory: hash-deduplicated datasets + integrity-verified capsules
+bionexus project init
+bionexus project register-run chain_runs/qc
+bionexus project status
+```
+
+Cloud object stores (`s3://`, `gs://`) refuse deterministically unless their optional SDK
+is installed — BioNexus never pretends a fetch happened, and checksum mismatches delete
+the staged artifact instead of keeping it. Chain orchestration guarantees **execution
+fidelity and provenance only**; scientific validity remains owned by each stage's
+capability contract. See [`docs/artifact-contract.md`](docs/artifact-contract.md).
 
 ---
 

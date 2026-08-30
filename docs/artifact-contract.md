@@ -158,6 +158,39 @@ if not check.valid:
 
 ---
 
+## ⛓️ Chain Orchestration (Multi-Stage Handoff)
+
+A single capsule hands off from one stage to the next agent turn; a **chain** hands off
+across many stages automatically. `bionexus.orchestrator` executes a declarative spec
+(YAML/JSON) topologically, wrapping every stage in its own full Run Capsule:
+
+```bash
+# Validate + plan without executing
+bionexus chain workflow.yaml --dry-run
+
+# Execute; one capsule per stage under --workdir, plus chain_summary.json
+bionexus chain workflow.yaml --workdir chain_runs
+
+# Persist verified stage capsules into the project ledger
+bionexus project register-run chain_runs/qc
+bionexus project register-run chain_runs/de
+```
+
+Chain invariants:
+
+1. **Fail-closed**: a failing stage aborts the chain; downstream stages are recorded as
+   `SKIPPED_FAIL_CLOSED`. A chain with any failed stage must never be reported as a
+   completed analysis.
+2. **No shell**: stage commands are argv lists executed with `shell=False`; `sudo` is
+   rejected at validation time.
+3. **Execution fidelity only**: orchestrator stage capsules record `EXECUTED` with all
+   scientific dimensions `UNTESTED`. Scientific validity remains owned by each stage's
+   own capability contract and EvidenceCard.
+4. **Verifiable handoff**: downstream stages (or agents) can `bionexus run verify` any
+   upstream capsule before consuming it, exactly as with single-run capsules.
+
+---
+
 ## 🔒 Immutability & Audit Invariants
 
 1. **Deterministic Hashes**: All input and output datasets have SHA-256 digests generated at creation time.

@@ -9,6 +9,9 @@ Commands:
   bionexus inventory        Alias for list-skills
   bionexus registry         Compile and validate multi-platform registry manifests
   bionexus audit            Audit expression matrix or spatial coordinate integrity
+  bionexus ingest           Fetch a dataset with streaming SHA-256 verification
+  bionexus chain            Execute a Run Capsule chain (fail-closed orchestration)
+  bionexus project          Manage the cross-session project ledger
 """
 
 from __future__ import annotations
@@ -960,6 +963,117 @@ def handle_run(args: argparse.Namespace) -> int:
     return 0
 
 
+def handle_ingest(args: argparse.Namespace) -> int:
+    """Fetch a dataset into the workspace with streaming SHA-256 verification."""
+    from bionexus.ingress import ingest
+
+    payload = ingest(
+        args.source,
+        args.dest,
+        filename=args.filename,
+        expected_sha256=args.sha256,
+        expected_size_bytes=args.size,
+        timeout_seconds=args.timeout,
+        overwrite=args.overwrite,
+    )
+    if args.json:
+        print(json.dumps(payload, indent=2, default=str))
+    else:
+        print("\n=== BioNexus Verified Data Ingress ===")
+        if payload.get("refused"):
+            print(f"[REFUSED] {payload.get('abstain_reason')}")
+        else:
+            ing = payload["ingress"]
+            print(f"[OK] Ingested {ing['size_bytes']} bytes from {ing['source']}")
+            print(f"  - Destination: {ing['destination']}")
+            print(f"  - SHA-256:     {ing['sha256']}")
+    return 1 if payload.get("refused") else 0
+
+
+def handle_chain(args: argparse.Namespace) -> int:
+    """Execute a Run Capsule chain specification topologically, fail-closed."""
+    from bionexus.orchestrator import ChainValidationError, run_chain
+
+    try:
+        payload = run_chain(args.spec, args.workdir, dry_run=args.dry_run)
+    except ChainValidationError as e:
+        print(f"[ERROR] Invalid chain specification: {e}", file=sys.stderr)
+        return 1
+
+    chain = payload["chain"]
+    if args.json:
+        print(json.dumps(payload, indent=2, default=str))
+    else:
+        print("\n=== BioNexus Capsule Chain Orchestration ===")
+        print(f"**Chain**: {chain['chain_name']} | **Status**: {chain['chain_status']}")
+        if chain.get("planned_order"):
+            print(f"**Planned order**: {' -> '.join(chain['planned_order'])}")
+        for step in chain["steps"]:
+            note = f" | {step['note']}" if step.get("note") else ""
+            print(
+                f"  - {step['step_id']}: {step['status']}"
+                + (f" (rc={step['returncode']})" if step.get("returncode") is not None else "")
+                + (f" | capsule: {step['capsule_dir']}" if step.get("capsule_dir") else "")
+                + note
+            )
+        if chain["chain_status"] == "FAILED":
+            print("\n[FAIL-CLOSED] A stage failed; downstream stages were skipped. Chain output must NOT be used as a completed analysis.")
+    return 0 if chain["chain_status"] in ("COMPLETED", "PLANNED") else 1
+
+
+def handle_project(args: argparse.Namespace) -> int:
+    """Handle 'project' subcommands for the cross-session project ledger."""
+    from bionexus.project import ProjectLedger, find_project_root
+
+    action = getattr(args, "project_action", None)
+    if action == "init":
+        root = Path(args.root).resolve() if args.root else Path.cwd().resolve()
+        if (root / ".bionexus" / "project.json").is_file() and not args.force:
+            print(f"[ERROR] Project ledger already exists at {root}. Use --force to reinitialize.", file=sys.stderr)
+            return 1
+        ledger = ProjectLedger(root, create=True)
+        ledger.data["name"] = args.name or root.name
+        ledger.save()
+        print(f"[OK] BioNexus project ledger initialized: {ledger.path}")
+        return 0
+
+    root = Path(args.root).resolve() if getattr(args, "root", None) else find_project_root(Path.cwd())
+    if root is None:
+        print("[ERROR] No BioNexus project ledger found. Run 'bionexus project init' first.", file=sys.stderr)
+        return 1
+    ledger = ProjectLedger(root)
+
+    if action == "register-dataset":
+        payload = ledger.register_dataset(args.path, semantic_type=args.semantic_type)
+        if payload.get("refused"):
+            print(f"[REFUSED] {payload.get('abstain_reason')}", file=sys.stderr)
+            return 1
+        ds = payload["dataset"]
+        print(f"[OK] Dataset registered (deduplicated={payload['deduplicated']}): SHA-256 {ds['sha256'][:16]}...")
+        for p in ds["paths"]:
+            print(f"  - {p}")
+        return 0
+
+    if action == "register-run":
+        payload = ledger.register_run(args.capsule)
+        if payload.get("refused"):
+            print(f"[REFUSED] {payload.get('abstain_reason')}", file=sys.stderr)
+            return 1
+        run = payload["run"]
+        print(f"[OK] Run Capsule '{run['run_id']}' registered (integrity verified).")
+        print(f"  - Capability: {run.get('capability_id')} | Maturity: {run.get('conclusion_maturity')}")
+        return 0
+
+    if action == "status":
+        if args.json:
+            print(json.dumps(ledger.status(), indent=2, default=str))
+        else:
+            print(ledger.status_markdown())
+        return 0
+
+    return 0
+
+
 # ==============================================================================
 # Main Parser & Router
 # ==============================================================================
@@ -1150,6 +1264,52 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_run_list = run_subs.add_parser("list", help="List all BioNexus run capsules in a directory")
     p_run_list.add_argument("path", nargs="?", default=".", help="Parent directory to search (default: .)")
 
+    # 11. ingest (Verified Data Ingress)
+    p_ingest = subparsers.add_parser(
+        "ingest", help="Fetch a dataset (local/file/http[s]) into the workspace with SHA-256 verification"
+    )
+    p_ingest.add_argument("source", help="Source URI or path (file://, http(s)://, or local path)")
+    p_ingest.add_argument("dest", help="Destination directory for the ingested artifact")
+    p_ingest.add_argument("--filename", default=None, help="Override destination filename")
+    p_ingest.add_argument("--sha256", default=None, help="Expected SHA-256 (fail-closed on mismatch)")
+    p_ingest.add_argument("--size", type=int, default=None, help="Expected size in bytes (fail-closed on mismatch)")
+    p_ingest.add_argument("--timeout", type=int, default=60, help="Network timeout in seconds (default: 60)")
+    p_ingest.add_argument("--overwrite", action="store_true", help="Replace an existing destination file")
+    p_ingest.add_argument("--json", action="store_true", help="Output result payload as JSON")
+
+    # 12. chain (Run Capsule chain orchestration)
+    p_chain = subparsers.add_parser(
+        "chain", help="Execute a multi-stage research workflow as verified Run Capsules (fail-closed)"
+    )
+    p_chain.add_argument("spec", help="Chain specification file (.yaml/.yml or .json)")
+    p_chain.add_argument("--workdir", default="chain_runs", help="Working directory for stage capsules")
+    p_chain.add_argument("--dry-run", action="store_true", help="Validate and plan the chain without executing")
+    p_chain.add_argument("--json", action="store_true", help="Output chain report as JSON")
+
+    # 13. project (cross-session project ledger)
+    p_project = subparsers.add_parser(
+        "project", help="Manage the project ledger: datasets, Run Capsules, and cross-session memory"
+    )
+    project_subs = p_project.add_subparsers(dest="project_action", help="Project actions")
+
+    p_project_init = project_subs.add_parser("init", help="Initialize a project ledger (.bionexus/project.json)")
+    p_project_init.add_argument("--root", default=None, help="Project root (default: current directory)")
+    p_project_init.add_argument("--name", default=None, help="Project display name")
+    p_project_init.add_argument("--force", action="store_true", help="Reinitialize an existing ledger")
+
+    p_project_ds = project_subs.add_parser("register-dataset", help="Register a dataset by content hash")
+    p_project_ds.add_argument("path", help="Path to the dataset file")
+    p_project_ds.add_argument("--semantic-type", default="unspecified", help="Semantic input type label")
+    p_project_ds.add_argument("--root", default=None, help="Project root (default: discovered from cwd)")
+
+    p_project_run = project_subs.add_parser("register-run", help="Register a verified Run Capsule")
+    p_project_run.add_argument("capsule", help="Path to the run capsule directory (or run.json)")
+    p_project_run.add_argument("--root", default=None, help="Project root (default: discovered from cwd)")
+
+    p_project_status = project_subs.add_parser("status", help="Show project summary")
+    p_project_status.add_argument("--root", default=None, help="Project root (default: discovered from cwd)")
+    p_project_status.add_argument("--json", action="store_true", help="Output status as JSON")
+
     args = parser.parse_args(argv)
 
     if not args.command:
@@ -1185,6 +1345,15 @@ def main(argv: Optional[list[str]] = None) -> int:
             p_run.print_help()
             return 0
         return handle_run(args)
+    elif args.command == "ingest":
+        return handle_ingest(args)
+    elif args.command == "chain":
+        return handle_chain(args)
+    elif args.command == "project":
+        if not getattr(args, "project_action", None):
+            p_project.print_help()
+            return 0
+        return handle_project(args)
 
     return 0
 

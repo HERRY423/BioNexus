@@ -15,6 +15,7 @@ DEFAULT_SKILLS: FrozenSet[str] = frozenset(
         "instrument-data-to-allotrope",
         "provenance-and-audit",
         "spatial-transcriptomics",
+        "research-workflow-orchestrator",
     }
 )
 
@@ -27,7 +28,6 @@ LEGACY_SKILLS: FrozenSet[str] = frozenset(
         "protein-structure-analysis",
         "multiome-integration",
         "experiment-design-agent",
-        "research-workflow-orchestrator",
         "knowledge-graph-augmentation",
     }
 )
