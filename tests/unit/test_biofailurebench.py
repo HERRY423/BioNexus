@@ -9,12 +9,18 @@ gating traps pass deterministically through the standard runner.
 import sys
 from pathlib import Path
 
+import pytest
+
 _REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
+
+
+pytest.importorskip("scanpy", reason="SKIPPED_NO_BACKEND: canonical backend scanpy not installed (runs in the Canonical Scientific Stack matrix)")
+import pytest
 
 from bionexus.cli import main as cli_main
 from bionexus.failures import FAILURE_TAXONOMY, taxonomy_summary

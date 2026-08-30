@@ -19,6 +19,10 @@ if str(_REPO_ROOT) not in sys.path:
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
+
+import pytest
+
+pytest.importorskip("squidpy", reason="SKIPPED_NO_BACKEND: canonical backend squidpy not installed (runs in the Canonical Scientific Stack matrix)")
 from evals.metrics import (
     compute_cross_host_consistency,
     compute_epistemic_calibration,

@@ -118,8 +118,7 @@ jobs:
         shell: bash
         run: |
           pytest tests/ -v --ignore=tests/unit/test_scvi_smoke.py
-
-      - name: Run Strict L3 Benchmark Eval (Skips Turn Red)
+      - name: Run Strict Full Benchmark Eval (Skips Turn Red)
         shell: bash
         env:
           BIONEXUS_EVAL_STRICT: "1"
@@ -131,6 +130,10 @@ jobs:
         with:
           name: benchmark-report-${{ matrix.os }}-py${{ matrix.python-version }}
           path: evals/reports/benchmark_${{ matrix.os }}_py${{ matrix.python-version }}.md
+
+      # Strict eval ("skips turn red") requires the canonical scientific backends
+      # to be installed; it runs in the Canonical Scientific Stack matrix below,
+      # where every L1/L2/L3 case can actually execute.
 
   # --------------------------------------------------------------------------
   # 4. Graceful Degradation Matrix: Tested As Epistemic Results, Never Shell Ignorance
@@ -172,10 +175,13 @@ jobs:
         shell: bash
         run: |
           pytest tests/unit/test_eval_harness.py -k "test_l3_missing_backend_never_counts_as_pass" -v
-      - name: Run Standard Eval with Audited Degradation Accounting
+      - name: Run L3 Eval with Audited Degradation Accounting
         shell: bash
         run: |
-          python -m bionexus.cli eval --level all --provider replay
+          # L1/L2 routing expectations are verified in the core/scientific jobs.
+          # This core-only job exercises the L3 missing-backend contract: every
+          # unexecuted outcome remains SKIPPED_NO_BACKEND, never a pass.
+          python -m bionexus.cli eval --level L3 --provider replay
 
   # --------------------------------------------------------------------------
   # 5. Frontier & Optional Extras Matrix

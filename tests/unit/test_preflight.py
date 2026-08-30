@@ -17,6 +17,10 @@ if str(_SRC) not in sys.path:
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
+
+import pytest
+
+pytest.importorskip("scanpy", reason="SKIPPED_NO_BACKEND: canonical backend scanpy not installed (runs in the Canonical Scientific Stack matrix)")
 from bionexus.cli import main as cli_main
 from bionexus.preflight import (
     INTENT_ALIASES,

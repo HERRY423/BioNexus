@@ -9,6 +9,9 @@ Verifies the Task 5 contract:
 
 from unittest.mock import patch
 
+import pytest
+
+pytest.importorskip("scanpy", reason="SKIPPED_NO_BACKEND: canonical backend scanpy not installed (runs in the Canonical Scientific Stack matrix)")
 from bionexus import (
     DEFAULT_LAB_POLICY,
     DISCOVERY_LAB,

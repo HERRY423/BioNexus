@@ -33,6 +33,7 @@ jobs:
           set -euo pipefail
           sudo apt-get update && sudo apt-get install -y apptainer || true
           apptainer --version
+          mkdir -p "$PWD/.apptainer-tmp"
           APPTAINER_TMPDIR=$PWD/.apptainer-tmp apptainer build \
             --tmpdir $PWD/.apptainer-tmp \
             bionexus.sif container/apptainer.def
@@ -63,7 +64,7 @@ jobs:
           # vocabulary, not that it permits.
           apptainer exec --bind "$PWD/data:/data:ro" bionexus.sif \
             bionexus preflight /data/flagship/kang2018_pbmc_ifnb/pbmc_ifnb_counts.h5ad \
-            --intent differential-expression \
+            --intent differential-expression --json \
             > preflight_smoke.json
           python - <<'PY'
           import json

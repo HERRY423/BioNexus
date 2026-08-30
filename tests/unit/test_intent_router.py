@@ -22,6 +22,10 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
+
+import pytest
+
+pytest.importorskip("squidpy", reason="SKIPPED_NO_BACKEND: canonical backend squidpy not installed (runs in the Canonical Scientific Stack matrix)")
 from bionexus.agent_routing import (
     RoutingStatus,
     extract_scientific_capability,

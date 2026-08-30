@@ -1001,175 +1001,142 @@ def handle_interop(args: argparse.Namespace) -> int:
     return 0
 
 
-def handle_lims(args: argparse.Namespace) -> int:
-    """Handle the 'lims' command (BNS-LIMS-001): LIMS connectivity, offline/mock by default."""
-    from bionexus.lims_hub import (
-        BenchlingConnector,
-        C04PairingCustodianHub,
-        GenericRestLIMSConnector,
-        LIMSConnectionConfig,
-        LIMSConnectorType,
-    )
-
-    action = getattr(args, "lims_action", None)
-    try:
-        if action == "audit-pairing":
-            report = C04PairingCustodianHub().audit_manifest(args.manifest)
-            if args.json:
-                print(json.dumps(report, indent=2))
-            else:
-                print(f"=== C04 Pairing Manifest Audit: {args.manifest} ===")
-                print(f"Status: {report.get('status', 'ABSTAIN')} (passed: {report.get('passed', False)})")
-                for issue in report.get("issues", []):
-                    print(f"  - {issue}")
-            return 0 if report.get("passed") else 1
-
-        if action == "sync-samples":
-            config = LIMSConnectionConfig(connector_type=LIMSConnectorType.GENERIC_REST, base_url=args.url)
-            records = [{"sample_id": sample} for sample in args.samples]
-            result = GenericRestLIMSConnector(config).sync_samples(records, mock_response=True)
-            return _print_lims_export_result(result, args.json, f"sync {len(records)} sample(s) to {args.url}")
-
-        if action == "export-assay":
-            config = LIMSConnectionConfig(connector_type=LIMSConnectorType.BENCHLING, schema_id=args.schema_id)
-            measurements = [
-                {"well_id": f"W{i + 1:03d}", "plate_id": args.plate_id} for i in range(args.wells)
-            ]
-            result = BenchlingConnector(config).export_assay_results(
-                args.schema_id, args.plate_id, measurements, mock_response=True
-            )
-            return _print_lims_export_result(result, args.json, f"export {len(measurements)} well(s) for {args.plate_id}")
-    except (FileNotFoundError, ValueError, PermissionError) as e:
-        print(f"[ERROR] {e}", file=sys.stderr)
-        return 1
-    print(f"[ERROR] Unknown lims action: {action}", file=sys.stderr)
-    return 1
-
-
-def _print_lims_export_result(result, as_json: bool, summary: str) -> int:
+def _emit_cli_payload(payload: dict, as_json: bool = False) -> None:
+    """Print a deterministic CLI result without implying unperformed work."""
     if as_json:
-        print(json.dumps(result.to_dict(), indent=2))
-    else:
-        print(f"=== LIMS Export: {summary} ===")
-        print(f"Success: {result.success}; records: {result.records_synced}")
-        print("Mode: mock response (no live network egress; live export is a site adaptation)")
-        for err in result.errors:
-            print(f"  - {err}")
-    return 0 if result.success else 1
+        print(json.dumps(payload, indent=2, ensure_ascii=False, default=str))
+        return
+    for key, value in payload.items():
+        print(f"{key}: {value}")
+
+
+def handle_lims(args: argparse.Namespace) -> int:
+    """Run local LIMS checks; refuse commands that would only simulate a sync."""
+    if args.lims_action == "audit-pairing":
+        from bionexus.lims_hub import C04PairingCustodianHub
+
+        result = C04PairingCustodianHub().audit_manifest(args.manifest)
+        _emit_cli_payload(result, args.json)
+        return 0 if result.get("passed") else 1
+
+    result = {
+        "status": "REFUSED_NOT_CONFIGURED",
+        "executed": False,
+        "action": args.lims_action,
+        "reason": (
+            "Live LIMS transport and authenticated destination are not configured. "
+            "BioNexus will not report a mock response as a completed laboratory sync."
+        ),
+    }
+    _emit_cli_payload(result, args.json)
+    return 2
 
 
 def handle_instrument(args: argparse.Namespace) -> int:
-    """Handle the 'instrument' command (BNS-INST-001): instrument ingestion to Allotrope ASM."""
-    from dataclasses import asdict
-
+    """Detect or locally ingest an instrument export with a bound receipt."""
     from bionexus.instrument_gateway import LaboratoryInstrumentGateway
 
-    action = getattr(args, "instrument_action", None)
     gateway = LaboratoryInstrumentGateway()
-    try:
-        if action == "detect":
-            instrument_type, vendor_model = gateway.detect_instrument_type(args.file)
-            if args.json:
-                print(json.dumps({"instrument_type": str(instrument_type.value), "vendor_model": vendor_model}, indent=2))
-            else:
-                print(f"=== Instrument Detection: {args.file} ===")
-                print(f"Type: {instrument_type.value}; Vendor/Model: {vendor_model}")
-            return 0
+    if args.instrument_action == "detect":
+        instrument_type, vendor = gateway.detect_instrument_type(args.file)
+        exists = Path(args.file).is_file()
+        result = {
+            "status": "DETECTED" if exists else "REFUSED_MISSING_INPUT",
+            "instrument_type": instrument_type.value,
+            "vendor_model": vendor,
+            "source_exists": exists,
+        }
+        _emit_cli_payload(result, args.json)
+        return 0 if exists else 1
 
-        if action == "ingest":
-            result = gateway.ingest_file(args.file, args.output)
-            if args.json:
-                print(json.dumps(asdict(result), indent=2, default=str))
-            else:
-                print(f"=== Instrument Ingestion: {args.file} ===")
-                print(f"Success: {result.success}; type: {result.instrument_type}; records: {result.records_ingested}")
-                if result.output_path:
-                    print(f"Output: {result.output_path}")
-                for err in result.errors:
-                    print(f"  - {err}")
-            return 0 if result.success else 1
-    except (FileNotFoundError, ValueError, PermissionError) as e:
-        print(f"[ERROR] {e}", file=sys.stderr)
-        return 1
-    print(f"[ERROR] Unknown instrument action: {action}", file=sys.stderr)
-    return 1
+    result = gateway.ingest_file(args.file, output_path=args.output)
+    payload = result.to_dict()
+    _emit_cli_payload(payload, args.json)
+    return 0 if result.success else 1
 
 
 def handle_airgap(args: argparse.Namespace) -> int:
-    """Handle the 'airgap' command (BNS-SEC-011): zero-egress policy and DLP evaluation."""
-    from bionexus.airgap_guard import AirgapNetworkGuard
+    """Evaluate the local zero-egress guard without claiming DLP certification."""
+    from bionexus.airgap_guard import AirgapNetworkGuard, AirgapPolicyMode
 
-    action = getattr(args, "airgap_action", None)
-    try:
-        guard = AirgapNetworkGuard(mode=args.mode)
-        if action == "audit":
-            report = guard.get_summary_report()
-            if args.json:
-                print(json.dumps(report, indent=2))
-            else:
-                print("=== Airgap Policy Audit ===")
-                for key, value in report.items():
-                    print(f"{key}: {value}")
-            return 0
+    guard = AirgapNetworkGuard(mode=AirgapPolicyMode(args.mode))
+    if args.airgap_action == "audit":
+        result = guard.get_summary_report()
+        result["status"] = "LOCAL_POLICY_DIAGNOSTIC_ONLY"
+        result["certification"] = "NOT_ASSESSED"
+        _emit_cli_payload(result, args.json)
+        return 0
 
-        if action == "evaluate":
-            payload = args.payload if args.payload is not None else None
-            permitted, block_reason, receipt = guard.evaluate_egress(args.url, payload=payload)
-            if args.json:
-                print(json.dumps({"permitted": permitted, "block_reason": block_reason, "receipt": receipt}, indent=2, default=str))
-            else:
-                print(f"=== Airgap Egress Evaluation: {args.url} ===")
-                print(f"Permitted: {permitted}" + (f"; reason: {block_reason}" if block_reason else ""))
-            return 0 if permitted else 1
-    except (ValueError, PermissionError) as e:
-        print(f"[ERROR] {e}", file=sys.stderr)
-        return 1
-    print(f"[ERROR] Unknown airgap action: {action}", file=sys.stderr)
-    return 1
+    permitted, reason, receipt = guard.evaluate_egress(args.url, payload=args.payload)
+    result = {
+        "status": "PERMITTED" if permitted else "ABSTAIN",
+        "permitted": permitted,
+        "reason": reason,
+        "receipt": receipt,
+        "certification": "NOT_ASSESSED",
+    }
+    _emit_cli_payload(result, args.json)
+    return 0 if permitted else 1
 
 
 def handle_compliance(args: argparse.Namespace) -> int:
-    """Handle the 'compliance' command (BNS-COMP-001): 21 CFR Part 11 signatures and GxP chain."""
-    from bionexus.compliance_ledger import ComplianceAuditLedger
+    """Create or verify local hash records without asserting regulatory compliance."""
+    from bionexus.compliance_ledger import ComplianceAuditLedger, ElectronicSignature
 
-    action = getattr(args, "compliance_action", None)
-    try:
-        if action == "sign":
-            ledger = ComplianceAuditLedger()
-            signature = ledger.sign_artifact(args.name, args.email, args.role, args.reason, args.target)
-            if args.json:
-                print(json.dumps(signature.to_dict(), indent=2))
-            else:
-                print(f"=== Electronic Signature Applied: {args.target} ===")
-                print(f"Signature ID: {signature.signature_id}; hash: {signature.signature_hash[:24]}...")
-                print("Scope note: SHA-256 integrity binding, not a 21 CFR Part 11 deployment assertion.")
-            return 0
+    ledger = ComplianceAuditLedger()
+    if args.compliance_action == "sign":
+        target = Path(args.target)
+        if not target.is_file():
+            result = {
+                "status": "REFUSED_MISSING_INPUT",
+                "signed": False,
+                "target": str(target),
+                "regulatory_compliance": "NOT_ASSESSED",
+            }
+            _emit_cli_payload(result, args.json)
+            return 1
+        signature = ledger.sign_artifact(
+            signer_name=args.name,
+            signer_email=args.email,
+            signer_role=args.role,
+            signing_reason=args.reason,
+            artifact_path_or_bytes=target,
+        )
+        result = signature.to_dict()
+        result["regulatory_compliance"] = "NOT_ASSESSED"
+        _emit_cli_payload(result, args.json)
+        return 0
 
-        if action == "verify-sig":
-            signature = json.loads(Path(args.signature_file).read_text(encoding="utf-8"))
-            valid, reason = ComplianceAuditLedger().verify_signature(signature, args.target)
-            if args.json:
-                print(json.dumps({"valid": valid, "reason": reason}, indent=2))
-            else:
-                print(f"=== Signature Verification: {args.signature_file} vs {args.target} ===")
-                print(f"Valid: {valid}" + (f"; reason: {reason}" if reason else ""))
-            return 0 if valid else 1
+    if args.compliance_action == "verify-sig":
+        target = Path(args.target)
+        signature_path = Path(args.signature_file)
+        if not target.is_file() or not signature_path.is_file():
+            result = {
+                "status": "REFUSED_MISSING_INPUT",
+                "verified": False,
+                "regulatory_compliance": "NOT_ASSESSED",
+            }
+            _emit_cli_payload(result, args.json)
+            return 1
+        signature = ElectronicSignature(**json.loads(signature_path.read_text(encoding="utf-8")))
+        verified, reason = ledger.verify_signature(signature, target)
+        result = {
+            "status": "VERIFIED_HASH_BINDING" if verified else "ABSTAIN",
+            "verified": verified,
+            "reason": reason,
+            "regulatory_compliance": "NOT_ASSESSED",
+        }
+        _emit_cli_payload(result, args.json)
+        return 0 if verified else 1
 
-        if action == "audit-ledger":
-            intact, issues = ComplianceAuditLedger().verify_ledger_integrity()
-            if args.json:
-                print(json.dumps({"intact": intact, "issues": issues}, indent=2))
-            else:
-                print("=== GxP Audit Ledger Integrity ===")
-                print(f"Chain intact: {intact}")
-                for issue in issues:
-                    print(f"  - {issue}")
-            return 0 if intact else 1
-    except (FileNotFoundError, ValueError, PermissionError, json.JSONDecodeError) as e:
-        print(f"[ERROR] {e}", file=sys.stderr)
-        return 1
-    print(f"[ERROR] Unknown compliance action: {action}", file=sys.stderr)
-    return 1
+    result = {
+        "status": "NOT_ASSESSED",
+        "verified": False,
+        "reason": "No persisted ledger was supplied; an empty in-memory ledger is not audit evidence.",
+        "regulatory_compliance": "NOT_ASSESSED",
+    }
+    _emit_cli_payload(result, args.json)
+    return 2
 
 
 def handle_standards(args: argparse.Namespace) -> int:
