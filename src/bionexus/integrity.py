@@ -167,9 +167,13 @@ def audit_expression_matrix(
     try:
         import scipy.sparse as sp
 
-        if sp.issparse(X):
+        # anndata backed-mode reads return h5py-backed sparse datasets that are
+        # NOT scipy.sparse instances (issparse() is False); they expose .indptr
+        # and .data. Detect them so the audit reads stored values instead of
+        # building a 0-d object array (which crashed np.isfinite).
+        if sp.issparse(X) or (hasattr(X, "indptr") and hasattr(X, "data")):
             stats["is_sparse"] = True
-            data = X.data
+            data = np.asarray(X.data)
         else:
             data = np.asarray(X).ravel()
     except Exception as e:

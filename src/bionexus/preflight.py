@@ -182,7 +182,18 @@ def inspect_data_state(
         except Exception as exc:  # unreadable h5ad
             checks.append(PreflightCheck(name="input", passed=False, detail=f"could not read .h5ad: {exc}"))
         else:
-            grade, notes, stats = audit_expression_matrix(adata.X, expected_type="counts")
+            # Backed-mode matrices (anndata h5py-backed sparse datasets and
+            # dense h5py datasets) do not expose scipy/ndarray interfaces and
+            # crash the value-level audit; materialize a deterministic row
+            # prefix before auditing. The audit itself samples stored values,
+            # so a row prefix preserves its semantics.
+            matrix = adata.X
+            import numpy as np  # noqa: PLC0415
+            import scipy.sparse as sparse  # noqa: PLC0415
+
+            if not (sparse.issparse(matrix) or isinstance(matrix, np.ndarray)):
+                matrix = matrix[: min(adata.n_obs, 10000)]
+            grade, notes, stats = audit_expression_matrix(matrix, expected_type="counts")
             is_integer = bool(stats.get("is_integer_like", False))
             meta.setdefault("is_integer_like", is_integer)
             meta.setdefault("is_normalized", not is_integer)

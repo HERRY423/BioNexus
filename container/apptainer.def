@@ -1,0 +1,74 @@
+Bootstrap: docker
+From: python:3.11-slim-bookworm
+
+%help
+    BioNexus scientific reliability layer — full scientific stack image for
+    HPC clusters (Apptainer/Singularity).
+
+    Build (Linux with apptainer, or in CI):
+        apptainer build bionexus.sif container/apptainer.def
+
+    Verify after pulling/building:
+        apptainer exec bionexus.sif bionexus doctor --json
+        apptainer exec bionexus.sif bionexus preflight --help
+
+    Run on a cluster (bind a writable work dir for outputs):
+        apptainer exec --bind /scratch:/scratch bionexus.sif \
+            bionexus preflight /scratch/cohort.h5ad --intent differential-expression
+
+    Scope: this image ships the scientific-matrix dependency set (scanpy,
+    squidpy, pydeseq2, lifelines, allotropy; CPU torch via scvi-tools) pinned
+    at build time from the copied source tree. torch CUDA is NOT included —
+    HPC nodes provide their own CUDA stack. The image is Research Use Only.
+
+%labels
+    org.opencontainers.image.title BioNexus
+    org.opencontainers.image.description Scientific reliability layer for AI-assisted biology (RUO)
+    org.opencontainers.image.licenses Apache-2.0
+    org.opencontainers.image.source https://github.com/HERRY423/BioNexus
+
+%environment
+    # Keep matplotlib headless inside containers and batch jobs.
+    export MPLBACKEND=Agg
+    export PYTHONUNBUFFERED=1
+
+%files
+    pyproject.toml /opt/bionexus/pyproject.toml
+    README.md /opt/bionexus/README.md
+    LICENSE /opt/bionexus/LICENSE
+    src /opt/bionexus/src
+    skills /opt/bionexus/skills
+    scripts /opt/bionexus/scripts
+    evals /opt/bionexus/evals
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update && apt-get install -y --no-install-recommends \
+        git build-essential procps && \
+        rm -rf /var/lib/apt/lists/*
+
+    python -m pip install --no-cache-dir --upgrade pip
+    cd /opt/bionexus && \
+        python -m pip install --no-cache-dir -e ".[goldchain,spatial,scverse,deseq,survival,allotrope,mcp]"
+
+    # Fail the build when the scientific stack is not importable or the CLI
+    # entry points are broken — a broken image must not exist.
+    python - <<'PY'
+from bionexus.doctor import run_doctor
+report = run_doctor()
+ready = report.get("ready", {})
+required = ["core_ready", "scverse_ready", "spatial_ready", "survival_ready"]
+missing = [name for name in required if not ready.get(name)]
+assert not missing, f"image self-check failed, missing backends: {missing}"
+print("image self-check OK; backends:", ", ".join(sorted(k for k, v in ready.items() if v)))
+PY
+
+%test
+    python -c "import scanpy, squidpy, pydeseq2, lifelines; print('scientific stack importable')"
+    bionexus doctor --json > /dev/null && echo "doctor OK"
+    bionexus preflight --help > /dev/null && echo "preflight entry point OK"
+    bionexus audit --help > /dev/null && echo "audit entry point OK"
+    bionexus verify --help > /dev/null && echo "verify entry point OK"
+
+%runscript
+    exec bionexus "$@"
