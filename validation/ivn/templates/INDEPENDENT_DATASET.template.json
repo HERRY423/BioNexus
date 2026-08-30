@@ -1,0 +1,20 @@
+{
+  "dataset_id": "BN-<CAP>-IV-<NNN>",
+  "capability_id": "scrna.pseudobulk_de",
+  "title": "Short human-readable study title",
+  "source_uri": "Public accession URL or origin statement",
+  "accession": "GSE96583",
+  "disease": "systemic_lupus_erythematosus",
+  "tissue": "PBMC_blood",
+  "technology": "10x_chromium_3prime_droplet",
+  "author_associated": false,
+  "donor_aware": true,
+  "outcome": "not_recorded",
+  "truth_provenance": null,
+  "preregistration_path": "validation/<capability>/studies/<id>/PREREGISTRATION.json",
+  "preregistration_sha256": "",
+  "report_path": "validation/<capability>/studies/<id>/REPORT.json",
+  "report_sha256": "",
+  "status": "REGISTERED",
+  "notes": "Why this dataset is independent of the BioNexus authors. author_associated datasets never count. For spatial.inference_validity, truth_provenance must be {kind: pathology_annotation|segmentation_truth, provider: <independent provider>, independent_of_authors: true, blinded_to_system_outputs: true, artifact: <path>, artifact_sha256: <64 hex>} or the dataset is excluded from the quota."
+}

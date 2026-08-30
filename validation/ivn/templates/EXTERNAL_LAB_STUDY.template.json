@@ -1,0 +1,20 @@
+{
+  "study_id": "BN-IVN-LAB-<NNN>",
+  "lab_id": "<lab short id>",
+  "lab_name": "External Laboratory Name",
+  "institution": "Institution (must be distinct across counted studies)",
+  "country": "Country",
+  "capability_id": "scrna.pseudobulk_de",
+  "dataset_id": "BN-PB-IV-002",
+  "host": "codex",
+  "independence": {
+    "declares_independent": true,
+    "signed_by": "Principal Investigator name and role",
+    "conflict_disclosure": "Funding and personnel relationships, or none"
+  },
+  "capsule_path": "validation/ivn/lab_studies/<study_id>/REPORT.json",
+  "capsule_sha256": "",
+  "completed_at": "",
+  "status": "REGISTERED",
+  "notes": "Only VERIFIED studies with a matching capsule hash, a signed independence declaration, and a dataset that itself counts as independent satisfy the external-lab quota. Registered frameworks and lab slots never count (OPEN_QUESTIONS)."
+}
