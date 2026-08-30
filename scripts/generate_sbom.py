@@ -111,12 +111,78 @@ def generate_cyclonedx_sbom() -> Dict[str, Any]:
     return sbom
 
 
+def generate_sbom_from_lockfile(lockfile_path: Path) -> Dict[str, Any]:
+    """CycloneDX SBOM with the EXACT pinned versions from a uv/pip lockfile.
+
+    Unlike the pyproject-declared SBOM above (specifiers, not resolutions),
+    this records the resolved package versions that a container actually
+    installs, with the lockfile command recorded in metadata for provenance.
+    """
+    lock_text = lockfile_path.read_text(encoding="utf-8")
+    components: List[Dict[str, Any]] = [
+        {
+            "type": "application",
+            "name": "bionexus-reliability",
+            "version": PLUGIN_VERSION,
+            "description": "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents",
+            "licenses": [{"license": {"id": "Apache-2.0"}}],
+            "purl": f"pkg:pypi/bionexus-reliability@{PLUGIN_VERSION}",
+        }
+    ]
+    for line in lock_text.splitlines():
+        line = line.strip()
+        if not line or line.startswith(("#", "-")):
+            continue
+        if "==" not in line:
+            continue
+        name, version = line.split("==", 1)
+        version = version.split()[0].rstrip("\\").strip()
+        components.append(
+            {
+                "type": "library",
+                "name": name,
+                "version": version,
+                "purl": f"pkg:pypi/{name}@{version}",
+            }
+        )
+    return {
+        "bomFormat": "CycloneDX",
+        "specVersion": "1.5",
+        "serialNumber": f"urn:uuid:bionexus-sbom-lock-{PLUGIN_VERSION}",
+        "version": 1,
+        "metadata": {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "tools": [{"vendor": "BioNexus", "name": "bionexus-sbom-generator", "version": PLUGIN_VERSION}],
+            "component": {
+                "type": "application",
+                "name": "bionexus-reliability",
+                "version": PLUGIN_VERSION,
+                "licenses": [{"license": {"id": "Apache-2.0"}}],
+            },
+            "properties": [
+                {"name": "bionexus:sbom:lockfile", "value": str(lockfile_path)},
+                {"name": "bionexus:sbom:lockfile_sha256", "value": __import__("hashlib").sha256(lock_text.encode("utf-8")).hexdigest()},
+            ],
+        },
+        "components": components,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Generate BioNexus CycloneDX SBOM")
     parser.add_argument("-o", "--output", default="sbom.json", help="Output JSON path (default: sbom.json)")
+    parser.add_argument(
+        "--from-lockfile",
+        default=None,
+        help="Emit an SBOM with exact pinned versions from a uv/pip lockfile "
+        "(e.g. container/requirements-lock.txt) instead of pyproject declarations",
+    )
     args = parser.parse_args()
 
-    sbom = generate_cyclonedx_sbom()
+    if args.from_lockfile:
+        sbom = generate_sbom_from_lockfile(Path(args.from_lockfile))
+    else:
+        sbom = generate_cyclonedx_sbom()
     out_path = Path(args.output)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(sbom, indent=2), encoding="utf-8")

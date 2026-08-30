@@ -647,11 +647,24 @@ def handle_doctor(args: argparse.Namespace) -> int:
     """Run BioNexus environment doctor diagnostics."""
     report = run_doctor()
     ready = report.get("ready", {})
+    offline_requested = bool(
+        getattr(args, "offline", False) or getattr(args, "require_offline", False)
+    )
+    offline_profile = None
+    if offline_requested:
+        from bionexus.offline_mode import offline_readiness
+
+        offline_profile = offline_readiness()
+        report["offline_profile"] = offline_profile
     if getattr(args, "require_scverse", False) and not ready.get("scverse_ready"):
         print("[ERROR] scverse stack required but missing (scanpy + anndata)", file=sys.stderr)
         return 1
     if getattr(args, "require_spatial", False) and not ready.get("spatial_ready"):
         print("[ERROR] spatial stack required but missing (squidpy)", file=sys.stderr)
+        return 1
+    if offline_requested and not offline_profile["offline_ready"]:
+        failed = [c["name"] for c in offline_profile["checks"] if not c["ok"]]
+        print("[ERROR] offline deployment gate failed: " + ", ".join(failed), file=sys.stderr)
         return 1
 
     if args.json:
@@ -662,6 +675,9 @@ def handle_doctor(args: argparse.Namespace) -> int:
         print("=" * 78)
         print(f"Plugin Version:  {report['plugin_version']}")
         print(f"Tier:            {report['tier']}")
+        if offline_requested:
+            state = "READY" if offline_profile["offline_ready"] else "NOT READY"
+            print(f"Offline profile: {state} (egress mode {offline_profile['egress_mode']})")
         print("\nActive Analytical Capabilities:")
         for cap, status in ready.items():
             pass_str = "[PASS]" if status else "[MISSING]"
@@ -669,6 +685,29 @@ def handle_doctor(args: argparse.Namespace) -> int:
         print("=" * 78)
 
     return 0 if report.get("tier") != "refuse" else 1
+
+
+def handle_offline_check(args: argparse.Namespace) -> int:
+    """Offline deployment gate (air-gapped labs / HPC nodes)."""
+    import os
+
+    from bionexus import offline_mode as offline_mod
+
+    if getattr(args, "enforce", False):
+        os.environ[offline_mod.OFFLINE_ENV_VAR] = "1"
+    report = offline_mod.offline_readiness()
+    if args.json:
+        print(json.dumps(report, indent=2, default=str))
+    else:
+        print("=" * 78)
+        print("                    BioNexus Offline Deployment Check")
+        print("=" * 78)
+        print(f"Offline enforced: {report['offline_enforced']} | egress mode: {report['egress_mode']}")
+        for check in report["checks"]:
+            mark = "[PASS]" if check["ok"] else "[FAIL]"
+            print(f"  {mark} {check['name']}: {check['detail']}")
+        print(f"Offline ready: {report['offline_ready']}")
+    return 0 if report["offline_ready"] else 1
 
 
 def handle_list_skills(args: argparse.Namespace) -> int:
@@ -2581,6 +2620,29 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_doctor.add_argument("--json", action="store_true", help="Output diagnostic report in JSON")
     p_doctor.add_argument("--require-scverse", action="store_true", help="Enforce scverse stack presence")
     p_doctor.add_argument("--require-spatial", action="store_true", help="Enforce spatial stack presence")
+    p_doctor.add_argument(
+        "--offline",
+        action="store_true",
+        help="Add the offline deployment profile report and fail if the air-gapped gate is not ready",
+    )
+    p_doctor.add_argument(
+        "--require-offline",
+        dest="require_offline",
+        action="store_true",
+        help="Alias of --offline for deployment gate scripts",
+    )
+
+    # 2.6 offline-check (lab-grade deployment: air-gapped / HPC profile)
+    p_offline = subparsers.add_parser(
+        "offline-check",
+        help="Offline deployment gate: verify zero-egress readiness (BIONEXUS_OFFLINE=1 profile)",
+    )
+    p_offline.add_argument(
+        "--enforce",
+        action="store_true",
+        help="Set BIONEXUS_OFFLINE=1 for this process before evaluating",
+    )
+    p_offline.add_argument("--json", action="store_true", help="Output the readiness report as JSON")
 
     # 2.5 backend-identity
     p_backend_identity = subparsers.add_parser(
@@ -3481,6 +3543,9 @@ def main(argv: Optional[list[str]] = None) -> int:
             p_comp.print_help()
             return 0
         return handle_compliance(args)
+
+    elif args.command == "offline-check":
+        return handle_offline_check(args)
 
     return 0
 

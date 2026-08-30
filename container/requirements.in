@@ -1,0 +1,19 @@
+# BioNexus container lockfile input (lab-grade deployment).
+#
+# The project's own dependencies come from pyproject.toml (compiled with the
+# extras below); this file adds the deployment-only packages. Compile with:
+#   uv pip compile --python-version 3.11 --generate-hashes #       pyproject.toml container/requirements.in #       --extra goldchain --extra scverse --extra spatial #       --extra deseq --extra survival --extra allotrope --extra mcp #       -o container/requirements-lock.txt
+#
+# The lockfile is what container/apptainer.def installs, so an image rebuilt
+# months later resolves byte-identical wheels. Hashes let air-gapped labs
+# verify every wheel offline (pip verifies hashes automatically in
+# hash-checking mode). The bionexus source tree itself is installed
+# separately in the image with --no-deps -e .
+
+# Deployment-only packages:
+psutil>=5.9
+
+# Editable install of the source tree inside the image needs build tooling
+# present without network access (pip build isolation is unavailable offline):
+setuptools>=69.0.0
+wheel>=0.42.0

@@ -149,6 +149,11 @@ class EgressAuditRecord:
         return asdict(self)
 
 
+def _offline_flag_set() -> bool:
+    """True when the deployment-level offline flag (BIONEXUS_OFFLINE) is truthy."""
+    return os.environ.get("BIONEXUS_OFFLINE", "").strip().lower() in {"1", "true", "yes", "on"}
+
+
 class DataGovernanceGuard:
     """
     BioNexus Runtime Data Governance and Egress Guard.
@@ -170,6 +175,10 @@ class DataGovernanceGuard:
             self.mode = EgressMode(mode.upper())
         else:
             self.mode = mode
+        # Deployment-level offline flag wins over every other configuration:
+        # BIONEXUS_OFFLINE=1 (air-gapped lab / HPC profile) forces zero egress.
+        if _offline_flag_set():
+            self.mode = EgressMode.OFFLINE_STRICT
 
         self.allowed_domains = set(allowed_domains or APPROVED_ALLOWLIST_DOMAINS)
         self.audit_log_path = Path(audit_log_path or os.environ.get("BIONEXUS_AUDIT_LOG", "logs/egress_audit.jsonl"))
@@ -177,7 +186,13 @@ class DataGovernanceGuard:
 
     def set_mode(self, mode: EgressMode | str) -> None:
         """Dynamically update egress mode (e.g. from CLI or policy configuration)."""
-        self.mode = EgressMode(mode) if isinstance(mode, str) else mode
+        resolved = EgressMode(mode) if isinstance(mode, str) else mode
+        if resolved is not EgressMode.OFFLINE_STRICT and _offline_flag_set():
+            raise ValueError(
+                "BIONEXUS_OFFLINE=1 is set: the egress mode is pinned to "
+                "OFFLINE_STRICT for this deployment and cannot be relaxed"
+            )
+        self.mode = resolved
 
     def extract_domain(self, endpoint: str) -> str:
         """Extract hostname domain from URL or MCP endpoint."""
@@ -373,7 +388,14 @@ _GLOBAL_GUARD = DataGovernanceGuard()
 
 
 def get_egress_guard() -> DataGovernanceGuard:
-    """Get the active runtime DataGovernanceGuard instance."""
+    """Get the active runtime DataGovernanceGuard instance.
+
+    The deployment-level offline flag is re-checked on every access so that
+    ``BIONEXUS_OFFLINE=1`` set before any network operation is honored even
+    if the guard singleton was constructed earlier in the process.
+    """
+    if _offline_flag_set() and _GLOBAL_GUARD.mode is not EgressMode.OFFLINE_STRICT:
+        _GLOBAL_GUARD.mode = EgressMode.OFFLINE_STRICT
     return _GLOBAL_GUARD
 
 
