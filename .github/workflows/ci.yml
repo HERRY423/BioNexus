@@ -68,7 +68,9 @@ jobs:
           python -m bionexus.cli doctor
           python -m bionexus.cli list-skills
           python -m bionexus.cli registry --check
-          python -m bionexus.cli eval --level L1 --provider replay
+        # L1/L2/L3 benchmark routing expectations require the canonical scientific
+        # backends; they are enforced by the strict full-benchmark eval in the
+        # Canonical Scientific Stack matrix (skips turn red there).
 
   # --------------------------------------------------------------------------
   # 3. Canonical Scientific Stack Matrix: Promised Combinations (Failures Turn Red)
@@ -92,7 +94,7 @@ jobs:
       - name: Install Canonical Scientific Dependencies (Strict, No Silent Failures)
         shell: bash
         run: |
-          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade pip "setuptools<81" wheel
           pip install -r requirements-dev.txt
           pip install -e ".[dev,goldchain,spatial]"
       - name: Assert Scientific Backends Import Cleanly
