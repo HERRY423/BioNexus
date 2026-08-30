@@ -1001,6 +1001,177 @@ def handle_interop(args: argparse.Namespace) -> int:
     return 0
 
 
+def handle_lims(args: argparse.Namespace) -> int:
+    """Handle the 'lims' command (BNS-LIMS-001): LIMS connectivity, offline/mock by default."""
+    from bionexus.lims_hub import (
+        BenchlingConnector,
+        C04PairingCustodianHub,
+        GenericRestLIMSConnector,
+        LIMSConnectionConfig,
+        LIMSConnectorType,
+    )
+
+    action = getattr(args, "lims_action", None)
+    try:
+        if action == "audit-pairing":
+            report = C04PairingCustodianHub().audit_manifest(args.manifest)
+            if args.json:
+                print(json.dumps(report, indent=2))
+            else:
+                print(f"=== C04 Pairing Manifest Audit: {args.manifest} ===")
+                print(f"Status: {report.get('status', 'ABSTAIN')} (passed: {report.get('passed', False)})")
+                for issue in report.get("issues", []):
+                    print(f"  - {issue}")
+            return 0 if report.get("passed") else 1
+
+        if action == "sync-samples":
+            config = LIMSConnectionConfig(connector_type=LIMSConnectorType.GENERIC_REST, base_url=args.url)
+            records = [{"sample_id": sample} for sample in args.samples]
+            result = GenericRestLIMSConnector(config).sync_samples(records, mock_response=True)
+            return _print_lims_export_result(result, args.json, f"sync {len(records)} sample(s) to {args.url}")
+
+        if action == "export-assay":
+            config = LIMSConnectionConfig(connector_type=LIMSConnectorType.BENCHLING, schema_id=args.schema_id)
+            measurements = [
+                {"well_id": f"W{i + 1:03d}", "plate_id": args.plate_id} for i in range(args.wells)
+            ]
+            result = BenchlingConnector(config).export_assay_results(
+                args.schema_id, args.plate_id, measurements, mock_response=True
+            )
+            return _print_lims_export_result(result, args.json, f"export {len(measurements)} well(s) for {args.plate_id}")
+    except (FileNotFoundError, ValueError, PermissionError) as e:
+        print(f"[ERROR] {e}", file=sys.stderr)
+        return 1
+    print(f"[ERROR] Unknown lims action: {action}", file=sys.stderr)
+    return 1
+
+
+def _print_lims_export_result(result, as_json: bool, summary: str) -> int:
+    if as_json:
+        print(json.dumps(result.to_dict(), indent=2))
+    else:
+        print(f"=== LIMS Export: {summary} ===")
+        print(f"Success: {result.success}; records: {result.records_synced}")
+        print("Mode: mock response (no live network egress; live export is a site adaptation)")
+        for err in result.errors:
+            print(f"  - {err}")
+    return 0 if result.success else 1
+
+
+def handle_instrument(args: argparse.Namespace) -> int:
+    """Handle the 'instrument' command (BNS-INST-001): instrument ingestion to Allotrope ASM."""
+    from dataclasses import asdict
+
+    from bionexus.instrument_gateway import LaboratoryInstrumentGateway
+
+    action = getattr(args, "instrument_action", None)
+    gateway = LaboratoryInstrumentGateway()
+    try:
+        if action == "detect":
+            instrument_type, vendor_model = gateway.detect_instrument_type(args.file)
+            if args.json:
+                print(json.dumps({"instrument_type": str(instrument_type.value), "vendor_model": vendor_model}, indent=2))
+            else:
+                print(f"=== Instrument Detection: {args.file} ===")
+                print(f"Type: {instrument_type.value}; Vendor/Model: {vendor_model}")
+            return 0
+
+        if action == "ingest":
+            result = gateway.ingest_file(args.file, args.output)
+            if args.json:
+                print(json.dumps(asdict(result), indent=2, default=str))
+            else:
+                print(f"=== Instrument Ingestion: {args.file} ===")
+                print(f"Success: {result.success}; type: {result.instrument_type}; records: {result.records_ingested}")
+                if result.output_path:
+                    print(f"Output: {result.output_path}")
+                for err in result.errors:
+                    print(f"  - {err}")
+            return 0 if result.success else 1
+    except (FileNotFoundError, ValueError, PermissionError) as e:
+        print(f"[ERROR] {e}", file=sys.stderr)
+        return 1
+    print(f"[ERROR] Unknown instrument action: {action}", file=sys.stderr)
+    return 1
+
+
+def handle_airgap(args: argparse.Namespace) -> int:
+    """Handle the 'airgap' command (BNS-SEC-011): zero-egress policy and DLP evaluation."""
+    from bionexus.airgap_guard import AirgapNetworkGuard
+
+    action = getattr(args, "airgap_action", None)
+    try:
+        guard = AirgapNetworkGuard(mode=args.mode)
+        if action == "audit":
+            report = guard.get_summary_report()
+            if args.json:
+                print(json.dumps(report, indent=2))
+            else:
+                print("=== Airgap Policy Audit ===")
+                for key, value in report.items():
+                    print(f"{key}: {value}")
+            return 0
+
+        if action == "evaluate":
+            payload = args.payload if args.payload is not None else None
+            permitted, block_reason, receipt = guard.evaluate_egress(args.url, payload=payload)
+            if args.json:
+                print(json.dumps({"permitted": permitted, "block_reason": block_reason, "receipt": receipt}, indent=2, default=str))
+            else:
+                print(f"=== Airgap Egress Evaluation: {args.url} ===")
+                print(f"Permitted: {permitted}" + (f"; reason: {block_reason}" if block_reason else ""))
+            return 0 if permitted else 1
+    except (ValueError, PermissionError) as e:
+        print(f"[ERROR] {e}", file=sys.stderr)
+        return 1
+    print(f"[ERROR] Unknown airgap action: {action}", file=sys.stderr)
+    return 1
+
+
+def handle_compliance(args: argparse.Namespace) -> int:
+    """Handle the 'compliance' command (BNS-COMP-001): 21 CFR Part 11 signatures and GxP chain."""
+    from bionexus.compliance_ledger import ComplianceAuditLedger
+
+    action = getattr(args, "compliance_action", None)
+    try:
+        if action == "sign":
+            ledger = ComplianceAuditLedger()
+            signature = ledger.sign_artifact(args.name, args.email, args.role, args.reason, args.target)
+            if args.json:
+                print(json.dumps(signature.to_dict(), indent=2))
+            else:
+                print(f"=== Electronic Signature Applied: {args.target} ===")
+                print(f"Signature ID: {signature.signature_id}; hash: {signature.signature_hash[:24]}...")
+                print("Scope note: SHA-256 integrity binding, not a 21 CFR Part 11 deployment assertion.")
+            return 0
+
+        if action == "verify-sig":
+            signature = json.loads(Path(args.signature_file).read_text(encoding="utf-8"))
+            valid, reason = ComplianceAuditLedger().verify_signature(signature, args.target)
+            if args.json:
+                print(json.dumps({"valid": valid, "reason": reason}, indent=2))
+            else:
+                print(f"=== Signature Verification: {args.signature_file} vs {args.target} ===")
+                print(f"Valid: {valid}" + (f"; reason: {reason}" if reason else ""))
+            return 0 if valid else 1
+
+        if action == "audit-ledger":
+            intact, issues = ComplianceAuditLedger().verify_ledger_integrity()
+            if args.json:
+                print(json.dumps({"intact": intact, "issues": issues}, indent=2))
+            else:
+                print("=== GxP Audit Ledger Integrity ===")
+                print(f"Chain intact: {intact}")
+                for issue in issues:
+                    print(f"  - {issue}")
+            return 0 if intact else 1
+    except (FileNotFoundError, ValueError, PermissionError, json.JSONDecodeError) as e:
+        print(f"[ERROR] {e}", file=sys.stderr)
+        return 1
+    print(f"[ERROR] Unknown compliance action: {action}", file=sys.stderr)
+    return 1
+
+
 def handle_standards(args: argparse.Namespace) -> int:
     """Handle the 'standards' command (BNS-016): alignment registry."""
     from bionexus.standards import alignments_report, render_alignments
@@ -3314,7 +3485,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_d_sample.add_argument("--json", action="store_true", help="Output audit report as JSON")
     p_d_sample.add_argument("--markdown", "--md", action="store_true", help="Output audit report as Markdown")
 
-    
+
     # 23. lims
     p_lims = subparsers.add_parser("lims", help="BioNexus LIMS Hub (BNS-LIMS-001) — Benchling, LabWare, C04 Pairing Connectors")
     lims_subs = p_lims.add_subparsers(dest="lims_action", help="LIMS actions")
@@ -3527,7 +3698,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             return 0
         return handle_cache(args)
 
-    
+
     elif args.command == "lims":
         if not getattr(args, "lims_action", None):
             p_lims.print_help()

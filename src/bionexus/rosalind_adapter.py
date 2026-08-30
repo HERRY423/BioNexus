@@ -10,8 +10,7 @@ import hashlib
 import json
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Union
 
 from bionexus.ecosystem_claim import (
     ECOSYSTEM_CLAIM_PACKET_VERSION,
@@ -20,15 +19,13 @@ from bionexus.ecosystem_claim import (
     assess_ecosystem_claim,
 )
 from bionexus.ecosystem_intake import (
-    EXTERNAL_EVIDENCE_SCHEMA_VERSION,
-    ExternalCapabilityFamily,
     ExternalEvidenceAudit,
     ExternalEvidenceEnvelope,
     ExternalProducerIdentity,
     IntakeStatus,
     audit_external_evidence,
 )
-from bionexus.tool_receipt import create_tool_receipt, hash_canonical_payload, verify_tool_receipt
+from bionexus.tool_receipt import create_tool_receipt, hash_canonical_payload
 
 _DEFAULT_PLUGIN_ID = "chatgpt-rosalind"
 _DEFAULT_PLUGIN_VERSION = "1.0.0-rc.3"
