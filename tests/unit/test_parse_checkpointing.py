@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-import anndata as ad
 import numpy as np
 import pandas as pd
 import pytest
 from scipy import sparse
+
+ad = pytest.importorskip("anndata", reason="checkpointing test requires anndata")
 
 from scripts.extract_parse_natural_pseudobulk import bounded_cell_id_chunks, bounded_exact_range_batches
 from scripts.freeze_pseudobulk_blinded_packet import _blinded_adata_issues

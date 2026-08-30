@@ -4,10 +4,12 @@ import hashlib
 import json
 from pathlib import Path
 
-import anndata as ad
 import numpy as np
 import pandas as pd
+import pytest
 from scipy import sparse
+
+ad = pytest.importorskip("anndata", reason="scientific-backend test requires anndata")
 
 from bionexus.independent_pseudobulk import (
     aggregate_pseudobulk,

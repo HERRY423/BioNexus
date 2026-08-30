@@ -71,7 +71,7 @@ jobs:
           # vocabulary, not that it permits.
           apptainer exec --bind "$PWD/data:/data:ro" bionexus.sif \
             bionexus preflight /data/flagship/kang2018_pbmc_ifnb/pbmc_ifnb_counts.h5ad \
-            --intent differential-expression \
+            --intent differential-expression --json \
             > preflight_smoke.json
           python - <<'PY'
           import json
