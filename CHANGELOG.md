@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### 🚀 Added (Deployment Foundation — container, Slurm gates, real-data tutorial, scale harness)
+
+- **Apptainer image (`container/apptainer.def` + `.github/workflows/container.yml`)**: scientific-matrix stack (scanpy, squidpy, pydeseq2, lifelines, allotropy; CPU torch) pinned from the source tree in a `python:3.11-slim` SIF. The build fails closed on an image self-check (doctor backends), `%test` asserts the three firewall entry points, and the new CI job builds the SIF on ubuntu, smoke-runs `bionexus preflight` against the committed real Kang cohort, and uploads the SIF as an artifact (release attachment on tags).
+- **Slurm three-gate chain (`cluster/slurm/`)**: `run_three_gates.sh` wires `bionexus preflight -> <analysis> -> bionexus verify` with exact exit-code propagation — a refused preflight (exit 1/2) aborts before compute, and a verify rejection fails the job so downstream `--dependency=afterok` chains cannot consume unwarranted results. Ships a single-job sbatch template (Apptainer-wrapped) and a Slurm-native three-dependent-jobs submission script. Gate semantics covered by real bash tests (`tests/unit/test_slurm_gates.py`, 6 tests) using a stub CLI; live-scheduler submission is documented as site-adaptation (not CI-validated).
+- **Real-data end-to-end tutorial (`docs/tutorials/end-to-end-real-data.md`)**: executed on the committed Kang 2018 GSE96583 cohort (13,487 cells, 8 donors) with captured outputs — preflight refuses the single-replicate declaration (BN-F002 pseudoreplication) yet permits the same file under its real donor structure (evidence ceiling FRAGILE until a purpose is declared), donor-aware pseudobulk PyDESeq2 recovers canonical interferon-stimulated genes (2,788 padj<0.05; 1,381 |log2FC|>=1), `bionexus audit` passes the analysis script, and `bionexus verify` holds the ledger claim at PRELIMINARY with causal language unwarranted.
+- **Scale-benchmark harness (`evals/scale_benchmark.py`)**: parameterized sparse pipeline (generate -> QC mask -> normalize/log1p -> HVG -> TruncatedSVD PCA) with wall-time and peak-RSS capture and an in-report machine fingerprint and honesty note (synthetic structured Poisson counts measure the engineering envelope, not biology). Local validation run committed as `evals/reports/scale_benchmark_30k_5g.json/.md`; the 500k-cell reference number is a cluster job (see `cluster/slurm/`).
+- **Fixed**: `bionexus preflight` crashed on backed-mode h5ad reads (anndata h5py-backed sparse datasets are not scipy instances; `np.isfinite` received a 0-d object array). `preflight.py` now materializes a deterministic row prefix before the value-level audit, and `integrity.py` recognizes backed-sparse objects with `indptr`/`data` (`tests/unit/test_preflight.py` green).
+
+---
+
 ## [1.0.0-rc.3] - 2026-08-29
 
 ### 🤖 Added (ChatGPT & Rosalind Interoperability Adapter)
