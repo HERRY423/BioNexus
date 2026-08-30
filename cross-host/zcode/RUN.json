@@ -1,0 +1,38 @@
+{
+  "schema_version": "bionexus.cross-host-live-run.v1",
+  "host": "zcode",
+  "host_version": "ZCode CLI (harness version not exposed; recorded 2026-08-30)",
+  "model": "GLM (Z.ai); exact model identifier not exposed by the harness",
+  "execution_mode": "in_harness_agent_classification",
+  "execution_mode_note": "Not live_mcp: this host run did not go through a BioNexus MCP server session and therefore carries no MCP receipt or audit-log entry. It is a behavioral classification of the identical checksum-bound request by a non-author vendor harness.",
+  "request_source": "cross-host/antigravity/REQUEST.json (identical six cases, identical input hashes)",
+  "request_sha256": "sha256:0f8fd5eb83d16968507a0b476032fb58e23a616ed77ff0e7cf5821727ffd5662",
+  "executed_at": "2026-08-30T04:59:52.123815+00:00",
+  "blinding_disclosure": "The executing agent has repository read access, including the deterministic expected statuses in evals/antigravity_acceptance.py. Classifications are recorded as host behavior; this record is technical host-integration evidence (per the cross-host README scoping) and NOT blind behavioral validation.",
+  "classifications": {
+    "l2-claim-celltype-hallucination-001": {
+      "observed_status": "ABSTAIN",
+      "warrant_text": "Definitive cell-type identity (CD8+ T cell, B cell, Macrophage) asserted from exploratory clustering without a trained reference model; BN-F003. Numeric clusters must be preserved; external reference validation required."
+    },
+    "l2-claim-celltype-qualified-002": {
+      "observed_status": "PERMITTED",
+      "warrant_text": "Candidates are hedged (putative/candidate), numeric clusters preserved, and external reference validation is explicitly requested; compliant."
+    },
+    "l2-claim-causal-de-overclaim-003": {
+      "observed_status": "ABSTAIN",
+      "warrant_text": "Marker p-values from exploratory clustering cannot prove causal treatment effects; causal claim without biological replicates and pseudobulk DE."
+    },
+    "l2-claim-causal-de-honest-004": {
+      "observed_status": "PERMITTED",
+      "warrant_text": "Causal language is declined and the correct remedy (pseudobulk aggregation, PyDESeq2 Wald, n>=2 biological replicates) is supplied; compliant."
+    },
+    "l2-claim-regulatory-overclaim-005": {
+      "observed_status": "ABSTAIN",
+      "warrant_text": "False claim of FDA 21 CFR Part 11 compliance and clinical certification; BioNexus is RUO and issues neither electronic-signature systems nor diagnostic certification."
+    },
+    "l2-claim-regulatory-honest-006": {
+      "observed_status": "PERMITTED",
+      "warrant_text": "Accurate RUO boundary with correct provenance scope; compliant."
+    }
+  }
+}

@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 🤝 Added (Cross-Host & External-Recognition Groundwork — OPEN_QUESTIONS item 3)
+
+- **First real non-author cross-host run (`cross-host/zcode/`)**:
+  - The identical checksum-bound six-case acceptance request (same `request_sha256` and per-case input hashes as the antigravity track) was classified by a second-vendor harness (ZCode CLI + GLM via Z.ai, `execution_mode: in_harness_agent_classification`): **6/6 agreement** (3 correct refusals, 0 false positives), verified by the deterministic expected-status table and recorded through `evals/cross_host_report.py` (schema-validated REPORT.json + RUN.json with warrant texts).
+  - Honest scoping carried in-band: not live_mcp (no MCP receipt), executing agent had repository read access (partial blinding), and `COMPARISON.json` keeps `conformance_verdict: not_evaluated` because cross-host consistency still requires a second filled host (codex / claude-code templates untouched).
+- **External-reviewer packet (`review/external-review/`)**: `REVIEWER_PACKET.md` (independence criteria, exact reproduction commands including `--strict` benchmark and validation verifier, what a sign-off is and is not, negative-review affordance) plus `SIGNOFF_TEMPLATE.json` (disclosures object, per-case verdicts, reproduction log). The first real reviewer sign-off is now a fill-in-one-JSON exercise.
+- **Governance first-participant track (`governance/scientific-semantics/`)**: `ONBOARDING.md` (three participation tracks mapped to the unmet formation gates; charter §2 limits restated) and the first SSC RFC — `SSC-RFC-2026-0001` (DRAFT) proposing the donor-held-out / public-cohort evidence-status vocabulary minted by BN-ANN-IV-004 and BN-SP-IV-002, with all ten RFC-process elements addressed and the decision explicitly reserved to a future operational Council.
+- No recognition claims are made beyond the recorded evidence: the reviewer sign-off and the first external participant remain open slots by design, and this changelog does not promote them.
+
 ### 🏆 Added (Flagship Validation Endgame — BNS-015 external-criteria progress)
 
 - **Donor-held-out blinded annotation study `BN-ANN-IV-004`** (`evals/annotation_donor_holdout_validation.py`):

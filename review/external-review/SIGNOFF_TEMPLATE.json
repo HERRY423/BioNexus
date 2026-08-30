@@ -1,0 +1,53 @@
+{
+  "$schema": "urn:bionexus:external-review-signoff:1",
+  "instructions": "Fill every field, rename to SIGNOFF-<reviewer-id>.json, submit via PR. Do not delete the required_command_log; paste your own outputs.",
+  "reviewed_head_commit": "[paste git rev-parse HEAD]",
+  "reviewed_branch_or_tag": "",
+  "review_date": "",
+  "reviewer": {
+    "name": "",
+    "affiliation": "",
+    "role_or_title": "",
+    "expertise": []
+  },
+  "disclosures": {
+    "funding": "[explicitly state 'none' if none]",
+    "employment_relationship_with_maintainer": "[none / describe]",
+    "prior_collaboration_with_maintainer": "[none / describe]",
+    "other_conflicts": "[none / describe]"
+  },
+  "reproduction": {
+    "unit_suite_command": "pytest tests -q",
+    "unit_suite_result": "[passed N / failed M — must be 0 failed on scientific-matrix-equivalent env]",
+    "strict_benchmark_command": "bionexus eval --strict",
+    "strict_benchmark_summary": "[gating passed / skipped / failed]",
+    "verifier_command": "python -m bionexus.validation_verifier",
+    "verifier_passed": false
+  },
+  "case_verdicts": {
+    "pseudobulk": {
+      "reviewed": false,
+      "thresholds_attacked": "[describe which thresholds you challenged and how]",
+      "verdict": "[AGREE | AGREE_WITH_LIMITS | DISAGREE]",
+      "notes": ""
+    },
+    "annotation": {
+      "reviewed": false,
+      "thresholds_attacked": "[e.g. donor split blinding adequacy, DC->MONOCYTE mapping direction, panel intersection]",
+      "verdict": "[AGREE | AGREE_WITH_LIMITS | DISAGREE]",
+      "notes": ""
+    },
+    "spatial": {
+      "reviewed": false,
+      "thresholds_attacked": "[e.g. NOT_APPLICABLE exclusions, real-tissue ceiling wording]",
+      "verdict": "[AGREE | AGREE_WITH_LIMITS | DISAGREE]",
+      "notes": ""
+    }
+  },
+  "false_refusals_encountered": [],
+  "overall_recommendation": "[SIGN_OFF | SIGN_OFF_WITH_LIMITS | NO_SIGN_OFF]",
+  "limitations_of_this_review": "[what you did not check]",
+  "signature_statement": "I reproduced the artifacts above, attacked the thresholds and decision rules to the extent described, and my recorded verdicts reflect my independent scientific judgment. This sign-off does not assert biological validity, clinical fitness, or regulatory compliance.",
+  "signature_name": "",
+  "signature_date": ""
+}

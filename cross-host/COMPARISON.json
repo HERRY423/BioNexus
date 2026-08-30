@@ -1,13 +1,38 @@
 {
-  "comparison_date": "",
-  "hosts": ["codex", "claude-code"],
-  "plugin_version": "1.0.0-rc.1",
+  "comparison_date": "2026-08-30",
+  "plugin_version": "1.0.0-rc.3",
+  "hosts": [
+    "codex",
+    "claude-code",
+    "zcode"
+  ],
+  "host_status": {
+    "codex": "not_evaluated",
+    "claude-code": "not_evaluated",
+    "zcode": "real_single_host_run_2026_08_30"
+  },
   "traps_compared": 0,
   "per_trap": [],
+  "single_host_runs": [
+    {
+      "host": "zcode",
+      "report": "cross-host/zcode/REPORT.json",
+      "run": "cross-host/zcode/RUN.json",
+      "summary": {
+        "total_traps": 6,
+        "correct_refusals": 3,
+        "incorrect_refusals": 0,
+        "false_positives": 0,
+        "agreement_rate": 1.0
+      },
+      "scope": "technical host integration (in-harness classification of the identical checksum-bound six-case request); execution_mode=in_harness_agent_classification"
+    }
+  ],
   "overall": {
     "consistent_traps": 0,
     "inconsistent_traps": 0,
     "agreement_rate": null,
-    "conformance_verdict": "not_evaluated"
+    "conformance_verdict": "not_evaluated",
+    "reason": "Cross-host consistency requires at least two hosts with real runs over the same traps. codex and claude-code REPORT.json remain unfilled templates; the zcode run is a single real host run and is reported per-host without a consistency claim."
   }
 }
