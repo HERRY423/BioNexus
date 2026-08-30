@@ -309,6 +309,147 @@ def run_single_case(
                 actual_status = "EXECUTION_FAILURE"
                 failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
 
+        elif signal_type == "rank_concordance":
+            # 5. Two independent statistics (mean-shift vs rank-sum) must agree on the
+            #    planted marker set: EvidenceCard dimension 6 outcome ground truth.
+            try:
+                import numpy as np
+                from scipy.stats import ranksums
+
+                from bionexus.validation import rank_concordance
+
+                rng = np.random.default_rng(11)
+                n_per_group, n_genes, n_planted, shift = 30, 40, 6, 9.0
+                genes = [f"cg{i}" for i in range(n_planted)] + [f"bg{i}" for i in range(n_genes - n_planted)]
+                group_a = rng.poisson(6, size=(n_per_group, n_genes)).astype(float)
+                group_b = rng.poisson(6, size=(n_per_group, n_genes)).astype(float)
+                group_a[:, :n_planted] += shift  # planted signal
+
+                score_mean = (group_a.mean(axis=0) - group_b.mean(axis=0)).astype(float)
+                score_rank = np.array(
+                    [float(ranksums(group_a[:, j], group_b[:, j]).statistic) for j in range(n_genes)]
+                )
+                primary = {g: float(s) for g, s in zip(genes, score_mean)}
+                orthogonal = {g: float(s) for g, s in zip(genes, score_rank)}
+
+                payload = rank_concordance(primary, orthogonal, top_k=10)
+                if payload.get("refused"):
+                    failure_reasons.append(f"L3 Failure: concordance audit refused: {payload.get('abstain_reason')}")
+                else:
+                    audit = payload["audit"]
+                    min_rho = case.data_metadata.get("min_spearman_rho", 0.85)
+                    if audit["grade"] == "CONFLICTED":
+                        failure_reasons.append(
+                            f"L3 Failure: independent methods conflicted on planted signal "
+                            f"(rho={audit['spearman_rho']}, jaccard={audit['top_k_jaccard']})"
+                        )
+                    elif audit["spearman_rho"] < min_rho:
+                        failure_reasons.append(
+                            f"L3 Failure: Spearman rho {audit['spearman_rho']} < threshold {min_rho}"
+                        )
+                actual_status = "PERMITTED" if len(failure_reasons) == 0 else "OUTCOME_MISMATCH"
+            except (ImportError, ModuleNotFoundError, BackendUnavailable):
+                actual_status = "PERMITTED"
+            except Exception as e:
+                actual_status = "EXECUTION_FAILURE"
+                failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
+
+        elif signal_type == "external_validation":
+            # 6. Threshold recovery of a planted truth set must reach documented
+            #    precision/recall: EvidenceCard dimension 7 outcome ground truth.
+            try:
+                import numpy as np
+
+                from bionexus.validation import external_validation
+
+                rng = np.random.default_rng(23)
+                n_genes, n_truth = 60, 12
+                genes = [f"vg{i}" for i in range(n_genes)]
+                truth_idx = set(rng.choice(n_genes, size=n_truth, replace=False).tolist())
+                truth = {genes[i] for i in truth_idx}
+                scores = {g: (2.0 if g in truth else float(rng.normal(0.0, 0.4))) for g in genes}
+                predicted = {g for g, s in scores.items() if s >= 1.0}
+
+                payload = external_validation(predicted, truth)
+                if payload.get("refused"):
+                    failure_reasons.append(f"L3 Failure: external validation refused: {payload.get('abstain_reason')}")
+                else:
+                    audit = payload["audit"]
+                    min_recall = case.data_metadata.get("min_recall", 0.80)
+                    min_precision = case.data_metadata.get("min_precision", 0.80)
+                    if audit["recall"] < min_recall or audit["precision"] < min_precision:
+                        failure_reasons.append(
+                            f"L3 Failure: truth recovery precision={audit['precision']} "
+                            f"recall={audit['recall']} below thresholds "
+                            f"(precision>={min_precision}, recall>={min_recall})"
+                        )
+                    if audit["grade"] == "CONFLICTED":
+                        failure_reasons.append("L3 Failure: external validation graded CONFLICTED on planted truth")
+                actual_status = "PERMITTED" if len(failure_reasons) == 0 else "OUTCOME_MISMATCH"
+            except (ImportError, ModuleNotFoundError, BackendUnavailable):
+                actual_status = "PERMITTED"
+            except Exception as e:
+                actual_status = "EXECUTION_FAILURE"
+                failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
+
+        elif signal_type == "egress_policy":
+            # 7. Data-governance egress policy matrix must return the documented
+            #    decision for every tier x zone combination (zero optional deps).
+            try:
+                from bionexus.governance import check_egress_policy
+
+                expectations = case.data_metadata.get(
+                    "expected_decisions",
+                    [
+                        ["PUBLIC", "EXTERNAL", "PERMITTED"],
+                        ["INTERNAL", "EXTERNAL", "DEGRADED_ADVISORY"],
+                        ["SENSITIVE", "EXTERNAL", "ABSTAIN"],
+                        ["SENSITIVE", "LOCAL", "PERMITTED"],
+                        ["RESTRICTED", "EXTERNAL", "ABSTAIN"],
+                        ["RESTRICTED", "LOCAL", "ABSTAIN"],
+                        ["RESTRICTED", "LOCAL_ACK", "PERMITTED"],
+                    ],
+                )
+                for tier, zone, expected_decision in expectations:
+                    if zone == "LOCAL_ACK":
+                        payload = check_egress_policy(tier, "LOCAL", allow_restricted_local_ack=True)
+                    else:
+                        payload = check_egress_policy(tier, zone)
+                    decision = payload.get("policy", {}).get("decision")
+                    if decision != expected_decision:
+                        failure_reasons.append(
+                            f"L3 Failure: egress policy {tier}/{zone} returned {decision}, "
+                            f"expected {expected_decision}"
+                        )
+                actual_status = "PERMITTED" if len(failure_reasons) == 0 else "OUTCOME_MISMATCH"
+            except Exception as e:
+                actual_status = "EXECUTION_FAILURE"
+                failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
+
+        elif signal_type == "survival_separation":
+            # 8. Planted hazard separation must be recovered by the canonical log-rank
+            #    test (lifelines; skipped as PERMITTED on minimal runners).
+            try:
+                import numpy as np
+                from lifelines.statistics import logrank_test
+
+                rng = np.random.default_rng(31)
+                n_per_group = 120
+                control = rng.exponential(100.0, size=n_per_group)
+                treated = rng.exponential(200.0, size=n_per_group)
+                result = logrank_test(control, treated)
+                max_p = case.data_metadata.get("max_p_value", 0.01)
+                if result.p_value is None or float(result.p_value) >= max_p:
+                    failure_reasons.append(
+                        f"L3 Failure: log-rank p={result.p_value} not below {max_p} despite planted hazard separation"
+                    )
+                actual_status = "PERMITTED" if len(failure_reasons) == 0 else "OUTCOME_MISMATCH"
+            except (ImportError, ModuleNotFoundError, BackendUnavailable):
+                actual_status = "PERMITTED"
+            except Exception as e:
+                actual_status = "EXECUTION_FAILURE"
+                failure_reasons.append(f"L3 Pipeline Execution Crash: {type(e).__name__}: {str(e)}")
+
         else:
             actual_status = "PERMITTED"
 

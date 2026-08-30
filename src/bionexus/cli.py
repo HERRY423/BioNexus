@@ -12,6 +12,10 @@ Commands:
   bionexus ingest           Fetch a dataset with streaming SHA-256 verification
   bionexus chain            Execute a Run Capsule chain (fail-closed orchestration)
   bionexus project          Manage the cross-session project ledger
+  bionexus data-classify    Classify dataset sensitivity (governance sidecar)
+  bionexus policy           Data-sensitivity x egress-zone policy decisions
+  bionexus concordance      Cross-method rank concordance audit (EvidenceCard dim 6)
+  bionexus external-validation  Ground-truth validation audit (EvidenceCard dim 7)
 """
 
 from __future__ import annotations
@@ -1074,6 +1078,104 @@ def handle_project(args: argparse.Namespace) -> int:
     return 0
 
 
+def handle_data_classify(args: argparse.Namespace) -> int:
+    """Classify a dataset's sensitivity tier and write a governance sidecar."""
+    from bionexus.governance import classify_dataset
+
+    payload = classify_dataset(args.path, declared_tier=args.tier, write_sidecar=not args.no_sidecar)
+    if args.json:
+        print(json.dumps(payload, indent=2, default=str))
+    else:
+        print("\n=== BioNexus Data Governance Classification ===")
+        if payload.get("refused"):
+            print(f"[REFUSED] {payload.get('abstain_reason')}")
+            return 1
+        rec = payload["classification"]
+        print(f"[OK] Effective tier: {rec['effective_tier']}")
+        print(f"  - Declared: {rec['declared_tier'] or '(none -> INTERNAL default)'}")
+        print(f"  - Signals:  {rec['signals_detected'] or 'none'}")
+        if rec.get("sidecar"):
+            print(f"  - Sidecar:  {rec['sidecar']}")
+    return 1 if payload.get("refused") else 0
+
+
+def handle_policy(args: argparse.Namespace) -> int:
+    """Evaluate the data-sensitivity x egress-zone policy matrix."""
+    from bionexus.governance import assert_query_permitted
+
+    payload = assert_query_permitted(
+        args.tier,
+        args.endpoint,
+        allow_restricted_local_ack=args.ack_restricted_local,
+    )
+    if args.json:
+        print(json.dumps(payload, indent=2, default=str))
+    else:
+        print("\n=== BioNexus Egress Policy Decision ===")
+        if payload.get("refused"):
+            print(f"[REFUSED] {payload.get('abstain_reason')}")
+            return 1
+        pol = payload["policy"]
+        print(f"**Decision**: `{pol['decision']}` | Endpoint: {pol.get('endpoint')} ({pol.get('zone')})")
+        print(f"Rationale: {pol['rationale']}")
+        for r in pol.get("remedies", []):
+            print(f"  * {r}")
+        for note in pol.get("limitations", []):
+            print(f"  - Note: {note}")
+    decision = payload.get("policy", {}).get("decision")
+    return 1 if decision == "ABSTAIN" else 0
+
+
+def handle_concordance(args: argparse.Namespace) -> int:
+    """Audit cross-method concordance (EvidenceCard dimension 6) between two rankings."""
+    from bionexus.validation import rank_concordance
+
+    try:
+        payload = rank_concordance(args.primary, args.orthogonal, top_k=args.top_k)
+    except (FileNotFoundError, ValueError) as e:
+        print(f"[ERROR] {e}", file=sys.stderr)
+        return 1
+    if args.json:
+        print(json.dumps(payload, indent=2, default=str))
+    else:
+        print("\n=== BioNexus Cross-Method Concordance Audit (Dimension 6) ===")
+        if payload.get("refused"):
+            print(f"[REFUSED] {payload.get('abstain_reason')}")
+            return 1
+        audit = payload["audit"]
+        print(f"**Grade**: `{audit['grade']}`")
+        print(f"  - Spearman rho:   {audit['spearman_rho']}")
+        print(f"  - Top-{audit['top_k']} Jaccard: {audit['top_k_jaccard']}")
+        print(f"  - Shared items:   {audit['shared_items']}")
+    return 1 if payload.get("audit", {}).get("grade") == "CONFLICTED" else 0
+
+
+def handle_external_validation(args: argparse.Namespace) -> int:
+    """Audit predicted calls against an independent truth set (EvidenceCard dimension 7)."""
+    from bionexus.validation import external_validation
+
+    try:
+        payload = external_validation(args.predicted, args.truth, truth_key=args.truth_key)
+    except (FileNotFoundError, ValueError, json.JSONDecodeError, KeyError) as e:
+        print(f"[ERROR] {e}", file=sys.stderr)
+        return 1
+    if args.json:
+        print(json.dumps(payload, indent=2, default=str))
+    else:
+        print("\n=== BioNexus External Validation Audit (Dimension 7) ===")
+        if payload.get("refused"):
+            print(f"[REFUSED] {payload.get('abstain_reason')}")
+            return 1
+        audit = payload["audit"]
+        print(f"**Grade**: `{audit['grade']}`")
+        print(
+            f"  - Precision: {audit['precision']} | Recall: {audit['recall']} | F1: {audit['f1']} "
+            f"| Jaccard: {audit['jaccard']}"
+        )
+        print(f"  - TP {audit['true_positives']} / predicted {audit['predicted_size']} / truth {audit['truth_size']}")
+    return 1 if payload.get("audit", {}).get("grade") == "CONFLICTED" else 0
+
+
 # ==============================================================================
 # Main Parser & Router
 # ==============================================================================
@@ -1310,6 +1412,53 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_project_status.add_argument("--root", default=None, help="Project root (default: discovered from cwd)")
     p_project_status.add_argument("--json", action="store_true", help="Output status as JSON")
 
+    # 14. data-classify (Data governance classification)
+    p_classify = subparsers.add_parser(
+        "data-classify", help="Classify dataset sensitivity tier with a hash-bound governance sidecar"
+    )
+    p_classify.add_argument("path", help="Path to the dataset file")
+    p_classify.add_argument(
+        "--tier",
+        choices=["PUBLIC", "INTERNAL", "SENSITIVE", "RESTRICTED"],
+        default=None,
+        help="Declared sensitivity tier (default: INTERNAL unless heuristic signals cap it)",
+    )
+    p_classify.add_argument("--no-sidecar", action="store_true", help="Do not write the governance sidecar")
+    p_classify.add_argument("--json", action="store_true", help="Output result payload as JSON")
+
+    # 15. policy (Egress policy matrix)
+    p_policy = subparsers.add_parser(
+        "policy", help="Evaluate data-sensitivity x egress-zone policy for an endpoint"
+    )
+    policy_subs = p_policy.add_subparsers(dest="policy_action", help="Policy actions")
+    p_policy_check = policy_subs.add_parser("check", help="Check one tier x endpoint combination")
+    p_policy_check.add_argument("--tier", required=True, choices=["PUBLIC", "INTERNAL", "SENSITIVE", "RESTRICTED"])
+    p_policy_check.add_argument("--endpoint", required=True, help="Endpoint id (hosted id, or 'local')")
+    p_policy_check.add_argument(
+        "--ack-restricted-local",
+        action="store_true",
+        help="Explicit acknowledgement for local-only RESTRICTED (PHI) analysis (RUO limitations apply)",
+    )
+    p_policy_check.add_argument("--json", action="store_true", help="Output decision payload as JSON")
+
+    # 16. concordance (Cross-method concordance audit, EvidenceCard dimension 6)
+    p_concordance = subparsers.add_parser(
+        "concordance", help="Rank-concordance audit between two method outputs (dimension 6)"
+    )
+    p_concordance.add_argument("primary", help="Primary ranked table (CSV/TSV with gene,score columns)")
+    p_concordance.add_argument("orthogonal", help="Orthogonal ranked table (CSV/TSV)")
+    p_concordance.add_argument("--top-k", type=int, default=20, help="Top-k overlap size (default: 20)")
+    p_concordance.add_argument("--json", action="store_true", help="Output audit payload as JSON")
+
+    # 17. external-validation (Ground-truth audit, EvidenceCard dimension 7)
+    p_extval = subparsers.add_parser(
+        "external-validation", help="Validate predicted calls against an independent truth set (dimension 7)"
+    )
+    p_extval.add_argument("predicted", help="Predicted calls: CSV/TSV/JSON path")
+    p_extval.add_argument("truth", help="Ground truth: CSV/TSV/JSON path")
+    p_extval.add_argument("--truth-key", default=None, help="JSON key selecting the truth array")
+    p_extval.add_argument("--json", action="store_true", help="Output audit payload as JSON")
+
     args = parser.parse_args(argv)
 
     if not args.command:
@@ -1354,6 +1503,17 @@ def main(argv: Optional[list[str]] = None) -> int:
             p_project.print_help()
             return 0
         return handle_project(args)
+    elif args.command == "data-classify":
+        return handle_data_classify(args)
+    elif args.command == "policy":
+        if not getattr(args, "policy_action", None):
+            p_policy.print_help()
+            return 0
+        return handle_policy(args)
+    elif args.command == "concordance":
+        return handle_concordance(args)
+    elif args.command == "external-validation":
+        return handle_external_validation(args)
 
     return 0
 

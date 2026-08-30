@@ -28,6 +28,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🔄 Changed
 - CLI: new `ingest`, `chain`, and `project` subcommands; `research-workflow-orchestrator` moved from `LEGACY_SKILLS` to `DEFAULT_SKILLS`.
 
+### 🛡️ Trust & Evidence Depth (Accuracy & Trustworthiness)
+- **Data Governance (`bionexus.governance`)**:
+  - `bionexus data-classify`: declaration-driven sensitivity tiers (PUBLIC / INTERNAL / SENSITIVE / RESTRICTED) with a deterministic keyword-signal cap that only ever restricts, writing a SHA-256-bound governance sidecar.
+  - `bionexus policy check`: tier x egress-zone policy matrix (LOCAL / ORGANIZATION / EXTERNAL) returning router-vocabulary decisions (`PERMITTED` / `DEGRADED_ADVISORY` / `ABSTAIN`); RESTRICTED (PHI/clinical) data is refused for any external zone unconditionally and locally only behind an explicit RUO acknowledgement.
+  - `bionexus.governance.assert_query_permitted()` gates hosted-endpoint queries that would carry data fragments to external processors; unknown endpoint ids resolve conservatively to EXTERNAL.
+- **Orthogonal Evidence Audits (`bionexus.validation`)**:
+  - `rank_concordance()` (EvidenceCard dimension 6): Spearman rank correlation + top-k Jaccard overlap between two method rankings, with documented A/B/C/CONFLICTED grading; refuses degenerate overlaps.
+  - `external_validation()` (EvidenceCard dimension 7): precision/recall/F1/Jaccard of predicted calls against an independent truth set (e.g. ClinVar-style controls), grading A/B/C/CONFLICTED.
+  - `bionexus concordance` / `bionexus external-validation` CLI audits; `apply_cross_method_concordance()` / `apply_external_validation()` write audited grades into EvidenceCards.
+  - New `scrna_cross_method_audit.py` gold-chain script audits Wilcoxon marker rankings against PyDESeq2 pseudobulk DE rankings (explicit lower-is-better handling for pvalue/padj columns).
+- **Eval L3 Expansion (4 → 8 outcome cases; 39 → 43 total)**:
+  - `rank_concordance`: two independent statistics (mean-shift vs rank-sum) must agree on planted markers (rho >= 0.85).
+  - `external_validation`: planted truth-set recovery must reach precision/recall >= 0.80.
+  - `egress_policy`: the governance matrix must return the documented decision for all 7 tier x zone combinations.
+  - `survival_separation`: canonical log-rank test must detect planted hazard separation (lifelines optional; skipped as PERMITTED on minimal runners).
+
 ---
 
 ## [0.8.0] - 2026-08-15

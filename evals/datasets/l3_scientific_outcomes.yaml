@@ -50,3 +50,45 @@
     planted_signal: "clustering_stability"
     target_ari_min: 0.80
   description: "L3 Outcome: Parameter perturbation audit achieves ARI >= 0.80 on stable clusters"
+
+- id: l3-outcome-rank-concordance-005
+  level: L3
+  category: scientific_outcome
+  prompt: "Cross-method concordance: mean-shift and rank-sum statistics must agree on planted markers."
+  expected_status: PERMITTED
+  expected_capability: scrna.pseudobulk_de
+  data_metadata:
+    planted_signal: "rank_concordance"
+    min_spearman_rho: 0.85
+  description: "L3 Outcome: EvidenceCard dimension 6 machinery detects agreement between independent statistics on planted signal"
+
+- id: l3-outcome-external-validation-006
+  level: L3
+  category: scientific_outcome
+  prompt: "Recover a planted truth set and validate predictions against it with precision and recall >= 0.80."
+  expected_status: PERMITTED
+  data_metadata:
+    planted_signal: "external_validation"
+    min_precision: 0.80
+    min_recall: 0.80
+  description: "L3 Outcome: EvidenceCard dimension 7 machinery recovers a planted truth set at documented thresholds"
+
+- id: l3-outcome-egress-policy-007
+  level: L3
+  category: scientific_outcome
+  prompt: "Enforce the data-sensitivity egress policy matrix for every tier and zone combination."
+  expected_status: PERMITTED
+  data_metadata:
+    planted_signal: "egress_policy"
+  description: "L3 Outcome: Governance layer returns the documented PERMITTED/DEGRADED_ADVISORY/ABSTAIN decision for each tier x zone"
+
+- id: l3-outcome-survival-separation-008
+  level: L3
+  category: scientific_outcome
+  prompt: "Recover planted hazard separation between two survival groups with the canonical log-rank test."
+  expected_status: PERMITTED
+  expected_capability: survival.kaplan_meier
+  data_metadata:
+    planted_signal: "survival_separation"
+    max_p_value: 0.01
+  description: "L3 Outcome: lifelines log-rank test detects planted hazard separation (skipped on minimal runners)"
