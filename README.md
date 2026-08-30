@@ -8,7 +8,7 @@
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-purple.svg?style=flat-square)](https://claude.ai/)
 [![Cursor MCP](https://img.shields.io/badge/Cursor-MCP%20Ready-black.svg?style=flat-square)](https://cursor.com/)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg?style=flat-square)](https://www.python.org/)
-[![Tests](https://img.shields.io/badge/Tests-270%2B%20Passed-success.svg?style=flat-square)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-280%2B%20Passed-success.svg?style=flat-square)](tests/)
 [![Eval CRI](https://img.shields.io/badge/Eval%20CRI-96.2%25-blueviolet.svg?style=flat-square)](evals/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
 [![RUO](https://img.shields.io/badge/Status-Research%20Use%20Only-yellow.svg?style=flat-square)](#-regulatory-notice--compliance)
@@ -26,6 +26,7 @@
 ✓ 6-Stage Scientific Intent & Invariant Router    ✓ BioNexus Eval Agent Behavior Benchmark (96.2% CRI)
 ✓ Zero-Key Out-of-the-Box Core Databases          ✓ Deterministic Scientific Refusal Protocols
 ✓ Data Sensitivity & Egress Policy Governance     ✓ Cross-Method / External-Validation Audits (Dims 6 & 7)
+✓ One-Click Capsule Export: Report / Notebook / Supplement   ✓ Zero-Dependency Self-Contained Deliverables
 ```
 
 </div>
@@ -294,6 +295,23 @@ RESTRICTED (PHI / clinical) data is refused for any external zone unconditionall
 locally only behind an explicit RUO acknowledgement. Policy matrix, sidecar schema, and
 honest limits: [`docs/data-governance.md`](docs/data-governance.md).
 
+### One-click delivery from any Run Capsule
+
+Turn verified capsules into the artifacts collaborators, reviewers, and journals expect —
+without leaving the capsule lineage:
+
+```bash
+bionexus export all chain_runs/qc -o dist/qc
+#   dist/qc/report.html        self-contained interactive report (embedded figures,
+#                              EvidenceCard chart, integrity banner, viewer hints)
+#   dist/qc/reproduce.ipynb    reproducibility notebook (hash verification + parameter replay)
+#   dist/qc/supplement/        figures/, tables/, methods.md, data_availability.md, manifest.json
+```
+
+Methods text is activity-kind-aware and writes only what the capsule records; the
+supplement export is fail-closed (refuses tampered capsules). See the
+[Delivery & Export section](docs/artifact-contract.md) of the artifact contract.
+
 ---
 
 ## 🌐 Model Context Protocol (MCP) Biological Layer
@@ -361,7 +379,7 @@ python scripts/registry_compiler.py --validate-endpoints
 BioNexus is continuously tested on **Linux, Windows, and macOS** with **Python 3.10, 3.11, 3.12, and 3.13**:
 
 ```bash
-# Run full unit test suite (270+ tests)
+# Run full unit test suite (280+ tests)
 pytest
 
 # Run BioNexus Eval Benchmark across all 8 reliability pillars

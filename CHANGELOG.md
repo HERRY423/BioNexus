@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `external_validation`: planted truth-set recovery must reach precision/recall >= 0.80.
   - `egress_policy`: the governance matrix must return the documented decision for all 7 tier x zone combinations.
   - `survival_separation`: canonical log-rank test must detect planted hazard separation (lifelines optional; skipped as PERMITTED on minimal runners).
+- **Delivery & Export Layer (`bionexus.delivery`)**:
+  - `bionexus export report`: self-contained interactive HTML report from a Run Capsule — inline CSS/SVG dimension chart, figures embedded as base64 (≤5 MB), integrity banner, structure/sequence viewer hints, RUO notice; zero external assets.
+  - `bionexus export notebook`: nbformat-4.5 reproducibility notebook that re-loads the capsule, verifies artifact hashes, replays recorded parameters, and prints (never auto-executes) recorded chain commands.
+  - `bionexus export supplement`: journal-style bundle (figures/, tables/, methods.md, data_availability.md, manifest.json with per-file SHA-256) — fail-closed, refuses tampered capsules.
+  - `bionexus export methods`: activity-kind-aware Methods text from capsule records only (scrna_qc / scvi / variant / structure / pipeline / generic); never invents procedures.
+  - `bionexus export all`: report + notebook + supplement in one directory.
 
 ---
 

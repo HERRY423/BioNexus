@@ -191,6 +191,45 @@ Chain invariants:
 
 ---
 
+## 📦 Delivery & Export (Human- and Journal-Facing)
+
+Capsules are machine-readable by design; `bionexus.delivery` derives the human-facing
+deliverables **from** the capsule without ever modifying it. Every export embeds the
+capsule's integrity-verification status:
+
+```bash
+# Self-contained interactive HTML report (inline CSS/SVG, figures embedded as base64,
+# integrity banner, viewer hints for structure/sequence artifacts, RUO notice)
+bionexus export report run/ -o report.html
+
+# Reproducibility notebook: re-loads the capsule, verifies hashes, replays recorded
+# parameters (chain commands are printed, not auto-executed)
+bionexus export notebook run/ -o reproduce.ipynb
+
+# Journal-style supplementary bundle: figures/, tables/, methods.md,
+# data_availability.md, manifest.json (SHA-256 of every shipped file).
+# Fail-closed: refuses tampered capsules outright.
+bionexus export supplement run/ -o supplement/
+
+# Methods text only (activity-kind-aware; never invents procedures)
+bionexus export methods run/
+
+# Everything at once
+bionexus export all run/ -o dist/
+```
+
+Delivery invariants:
+
+1. **No fabrication**: Methods text writes only what the capsule records (parameters,
+   environment, hashes); dimension grades are reported exactly as audited or `UNTESTED`.
+2. **Integrity carried through**: the HTML report shows a warning banner on tampered
+   capsules; the supplement export refuses them entirely.
+3. **Self-containment**: the HTML report references no external assets — figures ≤5 MB
+   are base64-embedded, structure (`pdb`/`cif`) and sequence (`fasta`) artifacts are
+   annotated with viewer hints.
+
+---
+
 ## 🔒 Immutability & Audit Invariants
 
 1. **Deterministic Hashes**: All input and output datasets have SHA-256 digests generated at creation time.

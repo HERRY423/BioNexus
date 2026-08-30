@@ -16,6 +16,7 @@ Commands:
   bionexus policy           Data-sensitivity x egress-zone policy decisions
   bionexus concordance      Cross-method rank concordance audit (EvidenceCard dim 6)
   bionexus external-validation  Ground-truth validation audit (EvidenceCard dim 7)
+  bionexus export           Export capsules: HTML report / notebook / supplement
 """
 
 from __future__ import annotations
@@ -1176,6 +1177,75 @@ def handle_external_validation(args: argparse.Namespace) -> int:
     return 1 if payload.get("audit", {}).get("grade") == "CONFLICTED" else 0
 
 
+def handle_export(args: argparse.Namespace) -> int:
+    """Export a Run Capsule into human- and journal-facing deliverables."""
+    from bionexus.delivery import (
+        build_methods_text,
+        export_supplement,
+        load_capsule_bundle,
+        render_html_report,
+        render_notebook,
+    )
+
+    try:
+        bundle = load_capsule_bundle(args.capsule)
+    except FileNotFoundError as e:
+        print(f"[ERROR] {e}", file=sys.stderr)
+        return 1
+
+    run_id = bundle.run_id
+    action = args.export_action
+
+    if action == "methods":
+        print(build_methods_text(bundle))
+        return 0
+
+    out_root = Path(args.output) if args.output else Path("dist") / run_id
+
+    if action == "report":
+        target = out_root if out_root.suffix == ".html" else out_root / "report.html"
+        payload = render_html_report(args.capsule, target)
+    elif action == "notebook":
+        target = out_root if out_root.suffix == ".ipynb" else out_root / "reproduce.ipynb"
+        payload = render_notebook(args.capsule, target)
+    elif action == "supplement":
+        payload = export_supplement(args.capsule, out_root)
+    elif action == "all":
+        report = render_html_report(args.capsule, out_root / "report.html")
+        notebook = render_notebook(args.capsule, out_root / "reproduce.ipynb")
+        supplement = export_supplement(args.capsule, out_root / "supplement")
+        payload = {
+            "refused": any(p.get("refused") for p in (report, notebook, supplement)),
+            "export": {
+                "format": "all",
+                "path": str(out_root),
+                "run_id": run_id,
+                "report": report.get("export"),
+                "notebook": notebook.get("export"),
+                "supplement": supplement.get("export"),
+                "abstain_reason": "; ".join(
+                    p.get("abstain_reason") for p in (report, notebook, supplement) if p.get("refused")
+                )
+                or None,
+            },
+        }
+    else:
+        print(f"[ERROR] Unknown export action '{action}'", file=sys.stderr)
+        return 1
+
+    if getattr(args, "json", False):
+        print(json.dumps(payload, indent=2, default=str))
+    else:
+        export = payload.get("export", {})
+        if payload.get("refused"):
+            print(f"[REFUSED] {payload.get('abstain_reason')}", file=sys.stderr)
+            return 1
+        print(f"[OK] {export.get('format')} exported -> {export.get('path')}")
+        if export.get("integrity_verified") is False:
+            print("  [WARN] Capsule integrity verification failed; the report carries a warning banner.")
+    return 1 if payload.get("refused") else 0
+
+
 # ==============================================================================
 # Main Parser & Router
 # ==============================================================================
@@ -1459,6 +1529,28 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_extval.add_argument("--truth-key", default=None, help="JSON key selecting the truth array")
     p_extval.add_argument("--json", action="store_true", help="Output audit payload as JSON")
 
+    # 18. export (Delivery layer: report / notebook / supplement)
+    p_export = subparsers.add_parser(
+        "export", help="Export a Run Capsule as an HTML report, reproducibility notebook, or supplement bundle"
+    )
+    export_subs = p_export.add_subparsers(dest="export_action", help="Export actions")
+
+    def _capsule_arg(parser: argparse.ArgumentParser) -> None:
+        parser.add_argument("capsule", help="Path to a Run Capsule directory (or run.json)")
+        parser.add_argument("-o", "--output", default=None, help="Output path (default: dist/<run_id>/)")
+        parser.add_argument("--json", action="store_true", help="Output result payload as JSON")
+
+    p_exp_report = export_subs.add_parser("report", help="Self-contained interactive HTML report")
+    _capsule_arg(p_exp_report)
+    p_exp_notebook = export_subs.add_parser("notebook", help="Reproducibility Jupyter notebook (.ipynb)")
+    _capsule_arg(p_exp_notebook)
+    p_exp_supp = export_subs.add_parser("supplement", help="Journal-style supplementary bundle (fail-closed on tampered capsules)")
+    _capsule_arg(p_exp_supp)
+    p_exp_all = export_subs.add_parser("all", help="Report + notebook + supplement in one directory")
+    _capsule_arg(p_exp_all)
+    p_exp_methods = export_subs.add_parser("methods", help="Print capsule-level Methods text (markdown)")
+    p_exp_methods.add_argument("capsule", help="Path to a Run Capsule directory (or run.json)")
+
     args = parser.parse_args(argv)
 
     if not args.command:
@@ -1514,6 +1606,11 @@ def main(argv: Optional[list[str]] = None) -> int:
         return handle_concordance(args)
     elif args.command == "external-validation":
         return handle_external_validation(args)
+    elif args.command == "export":
+        if not getattr(args, "export_action", None):
+            p_export.print_help()
+            return 0
+        return handle_export(args)
 
     return 0
 
