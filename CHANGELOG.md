@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### 🏆 Added (Flagship Validation Endgame — BNS-015 external-criteria progress)
+
+- **Donor-held-out blinded annotation study `BN-ANN-IV-004`** (`evals/annotation_donor_holdout_validation.py`):
+  - Addresses the BN-ANN-IV-003 published limitation (`NOT_BLINDED_TO_LABEL_DISTRIBUTION`): the acceptance threshold is derived only on development donors of a never-seen donor-aware cohort — **Kang et al. 2018, GSE96583** (8 donors, 13,487 cells, committed `data/flagship/kang2018_pbmc_ifnb/pbmc_ifnb_counts.h5ad`, SHA-256-pinned) — and held-out donors are scored strictly after the preregistration lock.
+  - Panel audit frozen before any scoring: TRBC1/TRBC2 are absent from the GSE96583 capture panel; the preregistration freezes the intersected marker modules (T: CD3D/CD3E/LCK) with a disclosed amendment history.
+  - All preregistered endpoints passed on the 4 held-out donors (7,084 mapped cells): accepted precision 0.9402 (Wilson lower 0.9325 ≥ 0.9), accuracy improvement +14.75 pp (≥ 3), coverage 0.580 (in [0.1, 0.8]), 4/4 lineages ≥ 20 cells, donor direction consistency 4/4. Status: `CANDIDATE_EXTERNAL_REFERENCE_DONOR_HELD_OUT` (honestly capped below independent blinded validation / CERTIFIED).
+- **Public-biological-cohort spatial study `BN-SP-IV-002`** (`evals/spatial_public_cohort_validation.py`):
+  - Addresses the BN-SP-IV-001 published limitation (vendor format-test material): the identical technical controls run on a full biological public cohort — **10x Xenium FFPE Human Breast Cancer Replicate 1** (XOA 1.0.1; 167,780 cells; 313-plex panel; invasive ductal carcinoma tissue; official individual files committed and SHA-256-pinned under `data/flagship/xenium_breast_rep1/`).
+  - All 4 applicable endpoints passed (segmentation leakage direction, cell-size bias Δ=0.277, transcript-density bias Δ=0.962, coordinate-permutation hash invariants). The FOV-confounding control is declared NOT_APPLICABLE before execution (no per-cell FOV metadata in the official file distribution) and remains exercised on the BN-SP-IV-001 artifact track.
+  - Status: `REAL_TISSUE_TECHNICAL_ACCEPTANCE_PUBLIC_BIOLOGICAL_COHORT`; `public_reference_dataset_standard_satisfied: true` for the spatial flagship, `independent_ground_truth` honestly retained false.
+
+---
+
 ## [1.0.0-rc.3] - 2026-08-29
 
 ### 🤖 Added (ChatGPT & Rosalind Interoperability Adapter)

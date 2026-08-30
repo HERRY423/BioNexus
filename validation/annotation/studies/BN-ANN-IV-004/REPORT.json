@@ -1,0 +1,201 @@
+{
+  "schema_version": "bionexus.annotation-donor-holdout-report.v1",
+  "study_id": "BN-ANN-IV-004",
+  "generated_at": "2026-08-30T05:27:17.473066+00:00",
+  "preregistration": {
+    "sha256": "927cea19b21dd494e68c9d09c5bbdb7dc919f75517735a568e635172577dcbaa",
+    "locked_at": "2026-08-30T05:25:35.051488+00:00",
+    "study_status_at_lock": "PREREGISTERED_AFTER_DEV_PHASE_BEFORE_HOLDOUT_EXECUTION",
+    "claim_target": "With the BN-ANN-IV-001 candidate rule unchanged except for the capture-panel intersection of its marker modules (frozen before any scoring), the RNA margin gate with a threshold derived only on development donors selectively enriches agreement with the published external reference labels on held-out donors never used for threshold derivation.",
+    "claim_exclusions": [
+      "independent blinded external validation",
+      "BioNexus cell-type assignment",
+      "fine-grained subtype validity",
+      "cross-tissue transfer",
+      "clinical validity",
+      "certification promotion without cross-host execution and external review"
+    ]
+  },
+  "dataset": {
+    "path": "data/flagship/kang2018_pbmc_ifnb/pbmc_ifnb_counts.h5ad",
+    "sha256": "46122ba4e196561a781123614d856fed7d1ca05743d39a1d117597fd6d0bb993",
+    "n_cells": 13487,
+    "n_genes": 14053,
+    "reference_labels": "geo_cell_type (published Kang et al. 2017 GEO/Seurat assignments, corroborated by the committed GSE96583_batch2.total.tsne.df.tsv.gz supplementary)",
+    "source_citation": "Kang et al. 2017, Nat Biotechnol 35:404-406, GSE96583 (GPL24676)"
+  },
+  "input_contract": {
+    "raw_nonnegative_integer_counts_verified": true,
+    "zero_library_cells": 0,
+    "matrix_source": "adata.X (verified finite non-negative integer raw counts)"
+  },
+  "access_disclosure": {
+    "dataset_structure_seen": true,
+    "dev_label_distributions_seen": true,
+    "holdout_label_marginal_counts_seen_before_lock": false,
+    "holdout_label_category_names_seen": true,
+    "panel_audit_before_any_scoring": true,
+    "blinding_status": "THRESHOLD_DERIVED_ON_DEV_DONORS_HOLDOUT_LABELS_NOT_CONSULTED_BEFORE_LOCK",
+    "consequence": "Same-implementer blinding cannot be absolute; a successful result is capped below independent blinded external validation and below CERTIFIED, which additionally requires cross-host execution and an external reviewer."
+  },
+  "locked_gate": {
+    "rna_margin_min": 0.65,
+    "selected_on": "development donors only (101, 107, 1015, 1016) of GSE96583; holdout labels not consulted",
+    "development_coverage": 0.5502864417568428,
+    "development_precision": 0.9129554655870445,
+    "development_precision_wilson_lower_95": 0.9030955235689,
+    "development_accuracy_improvement": 0.1435410798454787
+  },
+  "holdout": {
+    "donors": [
+      "1039",
+      "1244",
+      "1256",
+      "1488"
+    ],
+    "mapped_cells": 7084,
+    "unmapped_cells": 119,
+    "original_label_counts": {
+      "B cells": 1301,
+      "CD14+ Monocytes": 4147,
+      "CD4 T cells": 5008,
+      "CD8 T cells": 551,
+      "Dendritic cells": 399,
+      "FCGR3A+ Monocytes": 1340,
+      "Megakaryocytes": 119,
+      "NK cells": 622
+    },
+    "mapped_lineage_counts": {
+      "T": 3632,
+      "B": 629,
+      "MONOCYTE": 2539,
+      "NK": 284
+    },
+    "accepted_cells": 4112,
+    "accepted_by_external_lineage": {
+      "T": 2017,
+      "B": 575,
+      "MONOCYTE": 1261,
+      "NK": 259
+    },
+    "ungated_accuracy": 0.7926312817617166,
+    "accepted_precision": 0.9401750972762646,
+    "accepted_precision_wilson_95": [
+      0.9325071986669196,
+      0.9470213342511665
+    ],
+    "coverage": 0.5804630152456239,
+    "per_donor_accuracy_improvement": {
+      "1039": 0.20692524321556582,
+      "1244": 0.13825317716956886,
+      "1256": 0.1344740196834313,
+      "1488": 0.14733582615781327
+    }
+  },
+  "primary_endpoints": {
+    "mapped_holdout_cells": {
+      "observed": 7084,
+      "threshold": 1000,
+      "passed": true
+    },
+    "accepted_precision_wilson_lower_95": {
+      "observed": 0.9325071986669196,
+      "threshold": 0.9,
+      "passed": true
+    },
+    "accuracy_improvement": {
+      "observed": 0.14754381551454798,
+      "threshold": 0.03,
+      "passed": true
+    },
+    "accepted_lineages": {
+      "observed": 4,
+      "threshold": 3,
+      "passed": true
+    },
+    "coverage_range": {
+      "observed": 0.5804630152456239,
+      "threshold": [
+        0.1,
+        0.8
+      ],
+      "passed": true
+    }
+  },
+  "coverage_range": {
+    "observed": 0.5804630152456239,
+    "minimum": 0.1,
+    "maximum": 0.8,
+    "passed": true
+  },
+  "status": "CANDIDATE_EXTERNAL_REFERENCE_DONOR_HELD_OUT",
+  "claim_boundary": "Donor-held-out candidate external-reference evidence on one published PBMC cohort. It does not establish independent blinded validation, cross-host conformance, external reviewer sign-off, or certification promotion.",
+  "markers_used": {
+    "panel_intersected_marker_modules": {
+      "T": [
+        "CD3D",
+        "CD3E",
+        "LCK"
+      ],
+      "B": [
+        "MS4A1",
+        "CD79A",
+        "CD79B",
+        "CD37",
+        "CD74"
+      ],
+      "MONOCYTE": [
+        "LST1",
+        "S100A8",
+        "S100A9",
+        "CTSS",
+        "LILRB1"
+      ],
+      "NK": [
+        "NKG7",
+        "GNLY",
+        "PRF1",
+        "KLRD1",
+        "CTSW"
+      ]
+    },
+    "markers_dropped_by_panel_audit": {
+      "T": [
+        "TRBC1",
+        "TRBC2"
+      ]
+    }
+  },
+  "evidence_files": [
+    "evidence/holdout_cell_decisions.csv.gz"
+  ],
+  "provenance": {
+    "data_source": "Kang et al. 2017, Nat Biotechnol 35:404-406, GSE96583 (GPL24676)",
+    "download_date": "2026-08-30T05:27:17.585143+00:00",
+    "commit_sha": "897038144b67cb9d1a8729c685c3ab86141b1c97",
+    "git_dirty": false,
+    "environment_lockfile_hashes": {
+      "pyproject.toml": "a1fc0fd54da675b8ae8caea63c2a18dde07d31a956a56600c5d3735c32548063",
+      "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
+      "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
+    },
+    "command": [
+      "evals/annotation_donor_holdout_validation.py",
+      "--phase",
+      "holdout"
+    ],
+    "command_str": "evals/annotation_donor_holdout_validation.py --phase holdout",
+    "generator_version": "1.0.0-rc.3",
+    "python_version": "3.13.14",
+    "platform": "Windows-10-10.0.19041-SP0",
+    "timestamp": "2026-08-30T05:27:17.585143+00:00",
+    "extra_metadata": {
+      "study_id": "BN-ANN-IV-004",
+      "phase": "holdout",
+      "lock_sha256": "927cea19b21dd494e68c9d09c5bbdb7dc919f75517735a568e635172577dcbaa"
+    },
+    "repository_dirty_at_execution": true,
+    "validation_source_dirty": false,
+    "source_snapshot_sha256": "acf5e5303f1ef497bdab0cbdc2b562970702ca3dca93ea902dbaefd28f6a35a6"
+  }
+}

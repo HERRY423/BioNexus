@@ -1,0 +1,183 @@
+{
+  "schema_version": "bionexus.annotation-donor-holdout-validation-preregistration.v1",
+  "study_id": "BN-ANN-IV-004",
+  "title": "Donor-held-out blinded successor evaluation on the never-seen Kang 2018 GSE96583 cohort",
+  "amendment_history": [
+    {
+      "at": "before-dev-phase",
+      "change": "initial preregistration draft failed the panel audit at scoring time (TRBC1/TRBC2 absent from the GSE96583 capture panel); the design was amended to freeze panel-intersected modules before any scoring. No labels were accessed and no threshold was derived at amendment time."
+    }
+  ],
+  "locked_at": "2026-08-30T05:25:35.051488+00:00",
+  "study_status_at_lock": "PREREGISTERED_AFTER_DEV_PHASE_BEFORE_HOLDOUT_EXECUTION",
+  "capability_id": "scrna.annotation_evidence",
+  "predecessor": {
+    "study_id": "BN-ANN-IV-003",
+    "retained_result": "candidate_external_reference_nonblinded",
+    "reason_for_successor": "BN-ANN-IV-003 met all endpoints but was explicitly NOT_BLINDED_TO_LABEL_DISTRIBUTION on a single-pool external reference. This successor derives the threshold only on development donors of a never-seen donor-aware cohort and locks before any holdout label access; BN-ANN-IV-003 remains unchanged."
+  },
+  "access_disclosure": {
+    "dataset_structure_seen": true,
+    "dev_label_distributions_seen": true,
+    "holdout_label_marginal_counts_seen_before_lock": false,
+    "holdout_label_category_names_seen": true,
+    "panel_audit_before_any_scoring": true,
+    "blinding_status": "THRESHOLD_DERIVED_ON_DEV_DONORS_HOLDOUT_LABELS_NOT_CONSULTED_BEFORE_LOCK",
+    "consequence": "Same-implementer blinding cannot be absolute; a successful result is capped below independent blinded external validation and below CERTIFIED, which additionally requires cross-host execution and an external reviewer."
+  },
+  "claim_target": "With the BN-ANN-IV-001 candidate rule unchanged except for the capture-panel intersection of its marker modules (frozen before any scoring), the RNA margin gate with a threshold derived only on development donors selectively enriches agreement with the published external reference labels on held-out donors never used for threshold derivation.",
+  "claim_exclusions": [
+    "independent blinded external validation",
+    "BioNexus cell-type assignment",
+    "fine-grained subtype validity",
+    "cross-tissue transfer",
+    "clinical validity",
+    "certification promotion without cross-host execution and external review"
+  ],
+  "external_holdout": {
+    "path": "data/flagship/kang2018_pbmc_ifnb/pbmc_ifnb_counts.h5ad",
+    "sha256": "46122ba4e196561a781123614d856fed7d1ca05743d39a1d117597fd6d0bb993",
+    "n_cells": 13487,
+    "n_genes": 14053,
+    "n_donors": 8,
+    "reference_labels": "geo_cell_type (published Kang et al. 2017 GEO/Seurat assignments, corroborated by the committed GSE96583_batch2.total.tsne.df.tsv.gz supplementary)",
+    "source_citation": "Kang et al. 2017, Nat Biotechnol 35:404-406, GSE96583 (GPL24676)"
+  },
+  "donor_split": {
+    "rule": "sorted donor identifiers, first half development, second half holdout",
+    "development_donors": [
+      "101",
+      "107",
+      "1015",
+      "1016"
+    ],
+    "holdout_donors": [
+      "1039",
+      "1244",
+      "1256",
+      "1488"
+    ],
+    "holdout_labels_accessed_before_lock": false
+  },
+  "rna_candidate_rule": {
+    "matrix_source": "adata.X (verified finite non-negative integer raw counts)",
+    "normalization": "per-cell raw counts per 10000 followed by log1p",
+    "label": "highest mean expression across the panel-intersected lineage modules",
+    "marker_modules_reference": {
+      "T": [
+        "CD3D",
+        "CD3E",
+        "TRBC1",
+        "TRBC2",
+        "LCK"
+      ],
+      "B": [
+        "MS4A1",
+        "CD79A",
+        "CD79B",
+        "CD37",
+        "CD74"
+      ],
+      "MONOCYTE": [
+        "LST1",
+        "S100A8",
+        "S100A9",
+        "CTSS",
+        "LILRB1"
+      ],
+      "NK": [
+        "NKG7",
+        "GNLY",
+        "PRF1",
+        "KLRD1",
+        "CTSW"
+      ]
+    },
+    "panel_intersected_marker_modules": {
+      "T": [
+        "CD3D",
+        "CD3E",
+        "LCK"
+      ],
+      "B": [
+        "MS4A1",
+        "CD79A",
+        "CD79B",
+        "CD37",
+        "CD74"
+      ],
+      "MONOCYTE": [
+        "LST1",
+        "S100A8",
+        "S100A9",
+        "CTSS",
+        "LILRB1"
+      ],
+      "NK": [
+        "NKG7",
+        "GNLY",
+        "PRF1",
+        "KLRD1",
+        "CTSW"
+      ]
+    },
+    "markers_dropped_by_panel_audit": {
+      "T": [
+        "TRBC1",
+        "TRBC2"
+      ]
+    },
+    "minimum_module_size_rule": "every intersected module retains >= 2 markers; otherwise the study design must change",
+    "confidence_score": "top module mean minus runner-up module mean",
+    "external_label_mapping": {
+      "B cells": "B",
+      "CD4 T cells": "T",
+      "CD8 T cells": "T",
+      "CD14+ Monocytes": "MONOCYTE",
+      "FCGR3A+ Monocytes": "MONOCYTE",
+      "Dendritic cells": "MONOCYTE",
+      "NK cells": "NK",
+      "Megakaryocytes": null
+    },
+    "excluded_labels": [
+      "Megakaryocytes"
+    ],
+    "mapping_notes": "Dendritic cells map to the coarse MONOCYTE family (shared myeloid module markers); this is the conservative direction. Megakaryocytes have no preregistered module and are excluded and enumerated."
+  },
+  "threshold_selection_protocol": {
+    "grid": {
+      "start": 0.0,
+      "stop": 3.0,
+      "step": 0.05
+    },
+    "eligibility": "development-donor pooled accepted-precision Wilson lower 95 >= 0.9 AND development coverage in [0.1, 0.8]",
+    "selection": "eligible threshold with maximum development coverage; ties broken toward the smaller margin",
+    "no_eligible_threshold_outcome": "NOT_EVALUATED_NO_ELIGIBLE_THRESHOLD (negative result retained)"
+  },
+  "locked_candidate_threshold": {
+    "rna_margin_min": 0.65,
+    "selected_on": "development donors only (101, 107, 1015, 1016) of GSE96583; holdout labels not consulted",
+    "development_coverage": 0.5502864417568428,
+    "development_precision": 0.9129554655870445,
+    "development_precision_wilson_lower_95": 0.9030955235689,
+    "development_accuracy_improvement": 0.1435410798454787,
+    "changed_from_BN_ANN_IV_001_rule": false
+  },
+  "locked_external_endpoints": {
+    "minimum_mapped_holdout_cells": 1000,
+    "accepted_precision_wilson_lower_95_min": 0.9,
+    "accuracy_improvement_min": 0.03,
+    "coverage_min": 0.1,
+    "coverage_max": 0.8,
+    "accepted_lineages_min": 3,
+    "accepted_cells_per_lineage_min": 20,
+    "donor_direction_consistency_min_donors": 3,
+    "per_donor_accuracy_improvement_min": 0.0
+  },
+  "governance": {
+    "successful_result_maximum_status": "CANDIDATE_EXTERNAL_REFERENCE_DONOR_HELD_OUT",
+    "independent_ground_truth": false,
+    "independent_ground_truth_reason": "Published GEO/Seurat assignments are external reference labels, not an independent experimental truth standard; same-implementer blinding is partial by construction.",
+    "negative_results_retained": true
+  }
+}

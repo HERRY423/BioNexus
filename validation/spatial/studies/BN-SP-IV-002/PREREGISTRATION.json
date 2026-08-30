@@ -1,0 +1,59 @@
+{
+  "schema_version": "bionexus.spatial-public-cohort-validation-preregistration.v1",
+  "study_id": "BN-SP-IV-002",
+  "title": "Technical artifact-sensitivity controls on a full biological public Xenium cohort (breast cancer Rep1)",
+  "locked_before_endpoint_analysis": true,
+  "locked_at": "2026-08-30T05:36:00.224199+00:00",
+  "study_status_at_lock": "PREREGISTERED_NOT_RUN",
+  "capability_id": "spatial.inference_validity",
+  "predecessor": {
+    "study_id": "BN-SP-IV-001",
+    "retained_result": "locked_negative_4_of_5_endpoints_on_format_test_material",
+    "reason_for_successor": "The tiny kidney output is vendor format-testing material, which blocks promotion to public biological reference evidence. This successor runs the identical controls on a full biological public cohort; BN-SP-IV-001 remains unchanged."
+  },
+  "dataset": {
+    "cohort": "10x Genomics Xenium FFPE Human Breast Cancer, Replicate 1 (XOA 1.0.1)",
+    "source_urls": [
+      "https://cf.10xgenomics.com/samples/xenium/1.0.1/Xenium_FFPE_Human_Breast_Cancer_Rep1/Xenium_FFPE_Human_Breast_Cancer_Rep1_cell_feature_matrix.h5",
+      "https://cf.10xgenomics.com/samples/xenium/1.0.1/Xenium_FFPE_Human_Breast_Cancer_Rep1/Xenium_FFPE_Human_Breast_Cancer_Rep1_cells.parquet"
+    ],
+    "files": [
+      {
+        "path": "data/flagship/xenium_breast_rep1/Xenium_FFPE_Human_Breast_Cancer_Rep1_cell_feature_matrix.h5",
+        "sha256": "681e1c1dfce0e517aa63a43dcdbe25df3de81498a3684f4168c9a8e166a48404",
+        "size_bytes": 12148885
+      },
+      {
+        "path": "data/flagship/xenium_breast_rep1/Xenium_FFPE_Human_Breast_Cancer_Rep1_cells.parquet",
+        "sha256": "aac8cc395143de2d7a73a951028686c9eb4c06b9a3b32677ff1413cd20f65bd3",
+        "size_bytes": 3453894
+      }
+    ],
+    "acquisition_note": "Official individual CDN files pinned by SHA-256 after acquisition; the full 9.86 GB output bundle was intentionally not downloaded (the transcript-molecule file and morphology images are not required by the preregistered controls)."
+  },
+  "input_gates": {
+    "raw_nonnegative_integer_cell_feature_gene_counts": true,
+    "physical_centroids_required": true,
+    "cell_area_required": true,
+    "minimum_cells": 100,
+    "file_hashes_must_match": true
+  },
+  "locked_endpoints": {
+    "segmentation_leakage": "mean nearest-neighbor cosine similarity must increase after deterministic 20% neighbor mixing",
+    "cell_size_bias": "Spearman correlation between cell area and total counts must increase by at least 0.20 after deterministic area scaling",
+    "transcript_density_bias": "Spearman correlation between local density and total counts must increase by at least 0.20 after deterministic density scaling",
+    "coordinate_permutation": "coordinate permutation must change the coordinate SHA-256 while preserving the expression matrix SHA-256",
+    "fov_confounding": {
+      "applicability_rule": "applicable only when the cohort distribution provides per-cell FOV metadata with at least two distinct FOVs; declared before execution",
+      "status_at_preregistration": "NOT_APPLICABLE_NO_PER_CELL_FOV_METADATA_IN_OFFICIAL_FILE_DISTRIBUTION",
+      "retained_track": "the control remains exercised on the BN-SP-IV-001 artifact track"
+    }
+  },
+  "governance": {
+    "successful_result_maximum_status": "REAL_TISSUE_TECHNICAL_ACCEPTANCE_PUBLIC_BIOLOGICAL_COHORT",
+    "public_reference_dataset_standard_satisfied": true,
+    "independent_ground_truth_standard_satisfied": false,
+    "reason": "Segmentation is the vendor's own; no machine-readable independent pathologist polygon truth set ships with the official file distribution. Blinded independent ground truth and cross-host execution remain open certification criteria.",
+    "negative_results_retained": true
+  }
+}

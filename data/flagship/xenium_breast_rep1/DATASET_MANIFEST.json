@@ -1,0 +1,33 @@
+{
+  "schema_version": "bionexus.public-dataset-manifest.v1",
+  "dataset_id": "xenium_breast_rep1",
+  "dataset_track": "real_public_xenium_biological_cohort",
+  "acquired_at": "2026-08-30",
+  "license_note": "10x Genomics public Xenium FFPE Human Breast Cancer dataset (Replicate 1), distributed under the 10x Genomics End User Software License (free for non-commercial research).",
+  "scientific_boundary": {
+    "public_reference_dataset": true,
+    "independent_reference_annotations": false,
+    "independent_ground_truth": false,
+    "reason": "Full biological public cohort (167,780 cells, invasive ductal carcinoma tissue) with vendor segmentation. No machine-readable independent pathologist polygon truth set ships with the official individual-file distribution; the cohort is used for technical artifact-sensitivity controls on real tissue (BN-SP-IV-002), not biological validity claims."
+  },
+  "files": [
+    {
+      "role": "preregistered_study_input",
+      "path": "Xenium_FFPE_Human_Breast_Cancer_Rep1_cell_feature_matrix.h5",
+      "source_url": "https://cf.10xgenomics.com/samples/xenium/1.0.1/Xenium_FFPE_Human_Breast_Cancer_Rep1/Xenium_FFPE_Human_Breast_Cancer_Rep1_cell_feature_matrix.h5",
+      "sha256": "681e1c1dfce0e517aa63a43dcdbe25df3de81498a3684f4168c9a8e166a48404",
+      "size_bytes": 12148885,
+      "observed_shape": [167780, 541],
+      "study_ids": ["BN-SP-IV-002"]
+    },
+    {
+      "role": "preregistered_study_input",
+      "path": "Xenium_FFPE_Human_Breast_Cancer_Rep1_cells.parquet",
+      "source_url": "https://cf.10xgenomics.com/samples/xenium/1.0.1/Xenium_FFPE_Human_Breast_Cancer_Rep1/Xenium_FFPE_Human_Breast_Cancer_Rep1_cells.parquet",
+      "sha256": "aac8cc395143de2d7a73a951028686c9eb4c06b9a3b32677ff1413cd20f65bd3",
+      "size_bytes": 3453894,
+      "observed_shape": [167780, 9],
+      "study_ids": ["BN-SP-IV-002"]
+    }
+  ]
+}

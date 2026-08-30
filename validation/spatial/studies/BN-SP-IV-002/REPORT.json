@@ -1,0 +1,97 @@
+{
+  "schema_version": "bionexus.spatial-public-cohort-validation-report.v1",
+  "study_id": "BN-SP-IV-002",
+  "generated_at": "2026-08-30T04:45:21.006581+00:00",
+  "preregistration": {
+    "sha256": "9c2b00303448bbac202e17b73d7c20025bb5fbfdd72e9c54f139aed15add5048",
+    "locked_at": "2026-08-30T05:36:00.224199+00:00",
+    "study_status_at_lock": "PREREGISTERED_NOT_RUN"
+  },
+  "dataset": {
+    "cohort": "10x Genomics Xenium FFPE Human Breast Cancer, Replicate 1 (XOA 1.0.1)",
+    "n_cells": 167780,
+    "n_gene_expression_features": 313,
+    "cell_area_um2": {
+      "mean": 193.67498830686017,
+      "median": 140.30046875,
+      "min": 5.19296875,
+      "max": 1532.73859375
+    },
+    "total_gene_counts": {
+      "mean": 191.3395756347598,
+      "median": 164.0
+    }
+  },
+  "input_contract": {
+    "raw_nonnegative_integer_counts_verified": true,
+    "physical_centroids_verified": true,
+    "cell_area_verified": true,
+    "file_hashes_matched": true
+  },
+  "endpoints": {
+    "segmentation_leakage": {
+      "baseline_mean_neighbor_cosine": 0.6149700573394014,
+      "injected_mean_neighbor_cosine": 0.7920461225246536,
+      "delta": 0.1770760651852522,
+      "passed": true
+    },
+    "cell_size_bias": {
+      "baseline_spearman": 0.6825767542457865,
+      "injected_spearman": 0.9595744170661374,
+      "delta": 0.276997662820351,
+      "threshold": 0.2,
+      "passed": true
+    },
+    "transcript_density_bias": {
+      "baseline_spearman": -0.5626599187641329,
+      "injected_spearman": 0.3997169405245259,
+      "delta": 0.9623768592886588,
+      "threshold": 0.2,
+      "passed": true
+    },
+    "coordinate_permutation": {
+      "coordinate_sha256_changed": true,
+      "expression_sha256_preserved": true,
+      "passed": true
+    },
+    "fov_confounding": {
+      "status": "NOT_APPLICABLE",
+      "reason": "The official individual-file distribution for this cohort carries no per-cell FOV metadata and the run is single-section; declared NOT_APPLICABLE before execution. The control remains exercised on the BN-SP-IV-001 artifact track.",
+      "passed": null
+    }
+  },
+  "applicable_endpoints_passed": "4/4",
+  "status": "REAL_TISSUE_TECHNICAL_ACCEPTANCE_PUBLIC_BIOLOGICAL_COHORT",
+  "claim_boundary": "Deterministic manufactured confounders are detected in the expected direction on an authentic public biological Xenium cohort. This is technical artifact sensitivity on real tissue, not biological validity, not segmentation accuracy against independent pathology truth, and not an approved spatial calibration profile.",
+  "evidence_files": [
+    "evidence/cell_diagnostics.csv.gz"
+  ],
+  "provenance": {
+    "data_source": "10x Genomics Xenium FFPE Human Breast Cancer Replicate 1 (XOA 1.0.1)",
+    "download_date": "2026-08-30T04:45:26.136036+00:00",
+    "commit_sha": "897038144b67cb9d1a8729c685c3ab86141b1c97",
+    "git_dirty": false,
+    "environment_lockfile_hashes": {
+      "pyproject.toml": "a1fc0fd54da675b8ae8caea63c2a18dde07d31a956a56600c5d3735c32548063",
+      "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
+      "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
+    },
+    "command": [
+      "evals/spatial_public_cohort_validation.py",
+      "--phase",
+      "run"
+    ],
+    "command_str": "evals/spatial_public_cohort_validation.py --phase run",
+    "generator_version": "1.0.0-rc.3",
+    "python_version": "3.13.14",
+    "platform": "Windows-10-10.0.19041-SP0",
+    "timestamp": "2026-08-30T04:45:26.136036+00:00",
+    "extra_metadata": {
+      "study_id": "BN-SP-IV-002",
+      "rng_seed": 20260830
+    },
+    "repository_dirty_at_execution": false,
+    "validation_source_dirty": null,
+    "source_snapshot_sha256": "acf5e5303f1ef497bdab0cbdc2b562970702ca3dca93ea902dbaefd28f6a35a6"
+  }
+}
