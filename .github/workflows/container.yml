@@ -8,6 +8,13 @@ on:
       - "src/bionexus/**"
       - "pyproject.toml"
       - ".github/workflows/container.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "container/apptainer.def"
+      - "src/bionexus/**"
+      - "pyproject.toml"
+      - ".github/workflows/container.yml"
   workflow_dispatch:
   release:
     types: [published]
