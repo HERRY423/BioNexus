@@ -996,6 +996,8 @@ ruff check .
 
 - 🛠️ **[Developer & Skill Development Guide](docs/plugin-development.md)**: Anatomy of a Gold Reference skill and CLI scaffolding.
 
+- 🧪 **[Lab-Grade Deployment](docs/deployment.md)**: Digest-pinned Apptainer image, hashed lockfile, CycloneDX SBOM, offline mode, CPU/GPU profiles, Slurm reference profiles, and executed scale-benchmark evidence (500k-1M cells).
+
 - 🤝 **[Contributing Guidelines](CONTRIBUTING.md)**: Scientific honesty contract and pull request acceptance criteria.
 
 ---

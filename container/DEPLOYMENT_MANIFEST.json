@@ -1,0 +1,95 @@
+{
+  "schema_version": "bionexus.deployment-manifest.v1",
+  "generated_at": "2026-08-30T00:00:00+00:00",
+  "image": {
+    "name": "bionexus.sif",
+    "definition_file": "container/apptainer.def",
+    "base_image": {
+      "reference": "python:3.11-slim-bookworm",
+      "digest_sha256": "0bee7276f83efd4a1ee05bbbf4281d95ed28e079220a9457f25a93e3f1e3c31b",
+      "digest_kind": "oci_image_index",
+      "pinned_at": "2026-08-30",
+      "note": "Pinned by digest in container/apptainer.def (From: python@sha256:...). CI re-resolves the tag and fails the build when the digest no longer matches."
+    },
+    "oci_digest": {
+      "value": null,
+      "status": "RECORDED_AT_BUILD_TIME",
+      "note": "The built SIF digest is computed in CI (sha256 of the SIF artifact) and attached to the build summary and release; it is not knowable from the source tree. This is an OCI/Apptainer content address, not a registry push — BioNexus does not publish to a registry; labs pull the release artifact or build from the pinned definition."
+    },
+    "apptainer_version_ci": "1.3.6"
+  },
+  "lockfile": {
+    "path": "container/requirements-lock.txt",
+    "input": [
+      "pyproject.toml",
+      "container/requirements.in"
+    ],
+    "compile_command": "uv pip compile --python-version 3.11 --generate-hashes pyproject.toml container/requirements.in --extra goldchain --extra scverse --extra spatial --extra deseq --extra survival --extra allotrope --extra mcp -o container/requirements-lock.txt",
+    "target_python": "3.11",
+    "packages_pinned": 208,
+    "sha256": "e121e9df13c38316ef5f79ff9b0336508af3f4aba5bc4f2b5a593893758ed0d0",
+    "hashes": "every entry carries wheel SHA-256 hashes; pip hash-checking mode verifies them at install time, which is also the offline supply-chain control"
+  },
+  "sbom": {
+    "path": "container/sbom-python.json",
+    "format": "CycloneDX 1.5",
+    "components": 209,
+    "sha256": "059e6e05b948d35863e3380477690883959d43e129474105968c18dc2e6f910f",
+    "generator": "scripts/generate_sbom.py --from-lockfile container/requirements-lock.txt",
+    "note": "Records the exact resolved versions the image installs (not pyproject specifiers)."
+  },
+  "profiles": {
+    "cpu": {
+      "container_command": "apptainer exec bionexus.sif bionexus <gate|tool>",
+      "validated_in_ci": true
+    },
+    "gpu": {
+      "container_command": "apptainer exec --nv bionexus.sif bionexus <gate|tool>",
+      "requirement": "host NVIDIA driver + CUDA 12 userspace injected by --nv; the Linux torch build in the lockfile carries CUDA kernels",
+      "validated_in_ci": false,
+      "note": "CI runners have no GPU: the GPU profile is exercised on HPC nodes via cluster/slurm/profiles/hpc-gpu.sbatch. The image self-check verifies the stack imports, never that a GPU is present."
+    },
+    "offline": {
+      "environ": "BIONEXUS_OFFLINE=1",
+      "gate_command": "bionexus offline-check --enforce",
+      "validated_in_ci": true,
+      "note": "Forces the OFFLINE_STRICT egress mode (zero hosted endpoints) regardless of other configuration; the gate runs in the image %test and in the Slurm reference profiles."
+    }
+  },
+  "slurm_reference_profiles": [
+    "cluster/slurm/profiles/hpc-cpu.sbatch",
+    "cluster/slurm/profiles/hpc-gpu.sbatch",
+    "cluster/slurm/profiles/run_scale_benchmark.sbatch"
+  ],
+  "scale_benchmark_evidence": [
+    {
+      "report": "evals/reports/scale_benchmark_30k_5g.json",
+      "scale": "30k cells x 5k genes (validation)",
+      "machine_class": "small single node (8 cores, 8 GB RAM, Windows)"
+    },
+    {
+      "report": "evals/reports/scale_benchmark_500k_5g.json",
+      "scale": "500k cells x 5k genes @ 8% nonzero density",
+      "machine_class": "small single node (8 cores, 8 GB RAM, Windows)"
+    },
+    {
+      "report": "evals/reports/scale_benchmark_1000k_5g.json",
+      "scale": "1M cells x 5k genes @ 5% nonzero density",
+      "machine_class": "small single node (8 cores, 8 GB RAM, Windows)"
+    }
+  ],
+  "honesty": {
+    "executed_runs": "The committed scale-benchmark reports were really executed (wall time, peak memory, machine fingerprint recorded per report); they are single small-node runs, NOT HPC runs. Top-lab HPC evidence requires running cluster/slurm/profiles/run_scale_benchmark.sbatch on the target cluster and committing the resulting report.",
+    "ci_validated": [
+      "image build with pinned base digest and locked wheels (fails closed on self-check)",
+      "doctor + offline gate + three firewall entry points inside the image",
+      "preflight smoke gate against committed real data"
+    ],
+    "site_adapted": [
+      "live Slurm submission (sbatch placeholders: account/partition/paths)",
+      "GPU execution (--nv on a GPU node; CI has no GPU)",
+      "site module names and scheduler behaviors"
+    ],
+    "adoption_boundary": "A digest, lockfile, SBOM, or benchmark report is deployment engineering evidence. It is not independent scientific validation (see BNS-023) and not institutional adoption or endorsement."
+  }
+}

@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "container/apptainer.def"
+      - "container/**"
       - "src/bionexus/**"
       - "pyproject.toml"
       - ".github/workflows/container.yml"
@@ -37,6 +37,46 @@ jobs:
             --tmpdir $PWD/.apptainer-tmp \
             bionexus.sif container/apptainer.def
 
+      - name: Verify pinned base-image digest
+        run: |
+          set -euo pipefail
+          # The definition pins the base image by digest; re-resolve the tag
+          # from Docker Hub and fail the build when they diverge (a silently
+          # moved base must never produce a "reproducible" image).
+          EXPECTED="sha256:0bee7276f83efd4a1ee05bbbf4281d95ed28e079220a9457f25a93e3f1e3c31b"
+          TOKEN=$(python -c "import json,urllib.request; print(json.load(urllib.request.urlopen('https://auth.docker.io/token?service=registry.docker.io&scope=repository:library/python:pull'))['token'])")
+          DIGEST=$(python - "$TOKEN" <<'PY'
+          import sys, urllib.request
+          req = urllib.request.Request(
+              "https://registry-1.docker.io/v2/library/python/manifests/3.11-slim-bookworm",
+              headers={
+                  "Authorization": "Bearer " + sys.argv[1],
+                  "Accept": "application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.docker.distribution.manifest.v2+json",
+              },
+              method="HEAD")
+          with urllib.request.urlopen(req, timeout=30) as r:
+              print(r.headers["Docker-Content-Digest"])
+          PY
+          )
+          echo "resolved base digest: $DIGEST"
+          test "$DIGEST" = "$EXPECTED" || { echo "base-image digest drift: expected $EXPECTED, registry serves $DIGEST"; exit 1; }
+
+      - name: Record SIF content digest
+        run: |
+          set -euo pipefail
+          SIF_SHA=$(sha256sum bionexus.sif | cut -d' ' -f1)
+          echo "sif_sha256=$SIF_SHA" >> "$GITHUB_OUTPUT"
+          echo "BioNexus SIF sha256: $SIF_SHA"
+          python - <<'PY'
+          import json, hashlib, pathlib
+          manifest = json.loads(pathlib.Path("container/DEPLOYMENT_MANIFEST.json").read_text(encoding="utf-8"))
+          for rel in ("container/requirements-lock.txt", "container/sbom-python.json"):
+              digest = hashlib.sha256(pathlib.Path(rel).read_bytes()).hexdigest()
+              recorded = manifest["lockfile"]["sha256"] if rel.endswith("lock.txt") else manifest["sbom"]["sha256"]
+              assert digest == recorded, f"deployment manifest drift for {rel}: {digest} != {recorded}"
+          print("DEPLOYMENT_MANIFEST digests match the source tree")
+          PY
+
       - name: Image self-verification
         run: |
           set -euo pipefail
@@ -48,6 +88,20 @@ jobs:
           for name in ("core_ready", "scverse_ready", "spatial_ready", "survival_ready"):
               assert ready.get(name), f"container doctor missing {name}: {ready}"
           print("container doctor OK:", sorted(k for k, v in ready.items() if v))
+          PY
+          apptainer exec bionexus.sif bionexus offline-check --enforce
+          echo "offline deployment gate OK inside the image (BIONEXUS_OFFLINE=1 profile)"
+          # SBOM inside the image must carry the locked versions, not specifiers.
+          apptainer exec --bind "$PWD:/src" bionexus.sif             python /opt/bionexus/scripts/generate_sbom.py               --from-lockfile /src/container/requirements-lock.txt -o /src/sbom_image_check.json
+          python - <<'PY'
+          import json
+          in_image = json.loads(open("sbom_image_check.json").read())
+          committed = json.loads(open("container/sbom-python.json").read())
+          pinned = {c["name"]: c["version"] for c in in_image["components"]}
+          for component in committed["components"]:
+              assert pinned.get(component["name"]) == component["version"], (
+                  f"SBOM drift for {component['name']}: {pinned.get(component['name'])} != {component['version']}")
+          print(f"SBOM consistent for {len(committed['components'])} components")
           PY
           apptainer exec bionexus.sif bionexus preflight --help > /dev/null
           apptainer exec bionexus.sif bionexus audit --help > /dev/null

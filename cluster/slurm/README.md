@@ -13,6 +13,9 @@ job** even when the compute itself succeeded.
 | `run_three_gates.sh` | Gate-chain runner: preflight → analysis → verify with exact exit-code propagation. Tested by `tests/unit/test_slurm_gates.py` (real bash, stub CLI). |
 | `bionexus_three_gates.sbatch` | Single-job sbatch template running all three gates inside the Apptainer image. |
 | `submit_dependency_chain.sh` | Slurm-native alternative: three dependent jobs (`--dependency=afterok`), one gate per job. |
+| `profiles/hpc-cpu.sbatch` | Reference CPU profile: doctor -> offline deployment gate -> three-gate chain. |
+| `profiles/hpc-gpu.sbatch` | Reference GPU profile: same SIF via `--nv`, with node-level CUDA evidence. |
+| `profiles/run_scale_benchmark.sbatch` | HPC reproduction of the committed scale-benchmark evidence (evals/reports/). |
 
 ## Key properties
 
