@@ -1,6 +1,6 @@
 {
   "schema_version": "bionexus.ivn.registry.v1",
-  "generated_at": "2026-08-31T02:46:13+00:00",
+  "generated_at": "2026-08-31T02:51:29+00:00",
   "requirements": {},
   "author_roster": [
     {
@@ -85,7 +85,7 @@
       "status": "VERIFIED",
       "notes": "All endpoints passed but maximum_maturity FRAGILE (independent_ground_truth false): counts as an executed independent dataset, not as blinding or truth evidence.",
       "preregistration_sha256": "00a645c983e23283ecaaf3593b0b742ad6e9a63844cf673135e3d312a2fdb88f",
-      "report_sha256": "fd518feb648eaeb41f4afe2c67b6e1d3728fe8268c132283061b94ea5726d890"
+      "report_sha256": "d3880c36f804c9e48322032501c472cafedd717b6ff7bcf11a05c8f13569a1fd"
     },
     {
       "dataset_id": "BN-ANN-IV-003",
@@ -131,7 +131,7 @@
       "status": "VERIFIED",
       "notes": "REAL_INSTRUMENT_TECHNICAL_ACCEPTANCE on a tiny instrument sample; public_reference_dataset false and NO independent pathology/segmentation truth yet, so it does not count toward the spatial independent-dataset quota.",
       "preregistration_sha256": "5fd7ec8b5302d7697755d4aba1d97da77da9eec501b1b3645a3f718bfadfdded",
-      "report_sha256": "df04c29b509d1ea62c020d3f2f72f47ca4bf09fa1e6265b253e1b44a5eeba7ba"
+      "report_sha256": "caccfe314bfc124e0e536d0ffda53d4b9a903c6c9b1283190b97bc4133ec50af"
     }
   ],
   "lab_studies": [],

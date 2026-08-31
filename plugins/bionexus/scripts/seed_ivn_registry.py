@@ -7,18 +7,24 @@ regenerating the registry.
 """
 
 import datetime
-import hashlib
 import json
 import pathlib
 import subprocess
+import sys
+
+REPO_ROOT = next(
+    (parent for parent in pathlib.Path(__file__).resolve().parents if (parent / "src" / "bionexus").is_dir()),
+    pathlib.Path.cwd(),
+)
+if str(REPO_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from bionexus.provenance import sha256_file
 
 
 def sha(path: str) -> str:
-    digest = hashlib.sha256()
-    with open(path, "rb") as handle:
-        for chunk in iter(lambda: handle.read(1 << 20), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+    """Use the verifier's canonical cross-platform text hashing rule."""
+    return sha256_file(pathlib.Path(path))
 
 
 STUDIES = {
