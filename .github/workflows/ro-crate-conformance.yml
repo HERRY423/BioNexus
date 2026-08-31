@@ -1,0 +1,63 @@
+name: Official RO-Crate Conformance
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  official-validator:
+    name: roc-validator 0.11.2 (REQUIRED)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install BioNexus and pinned official validator
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install "roc-validator==0.11.2"
+      - name: Build a sealed Workflow Run RO-Crate fixture
+        run: python scripts/build_official_rocrate_fixture.py --output-dir .artifacts/official-rocrate
+      - name: Validate inherited profile chain with the official CLI
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p .artifacts/rocrate-cache
+          rocrate-validator --version
+          rocrate-validator cache warm \
+            --cache-path .artifacts/rocrate-cache \
+            --profile-identifier ro-crate-1.1 \
+            --profile-identifier process-run-crate-0.5 \
+            --profile-identifier workflow-ro-crate-1.0 \
+            --profile-identifier workflow-run-crate-0.5 \
+            --profile-identifier provenance-run-crate-0.5
+          rocrate-validator --no-interactive --disable-color validate \
+            --profile-identifier provenance-run-crate-0.5 \
+            --requirement-severity required \
+            --output-format text \
+            --cache-path .artifacts/rocrate-cache \
+            --offline \
+            .artifacts/official-rocrate/crate \
+            2>&1 | tee .artifacts/official-rocrate/OFFICIAL_VALIDATION.log
+      - name: Write machine-readable validation receipt
+        run: |
+          python scripts/write_official_rocrate_receipt.py \
+            --crate-dir .artifacts/official-rocrate/crate \
+            --validation-log .artifacts/official-rocrate/OFFICIAL_VALIDATION.log \
+            --output .artifacts/official-rocrate/OFFICIAL_VALIDATION_RECEIPT.json
+      - name: Upload crate, validator log, and receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-rocrate-validation
+          path: .artifacts/official-rocrate/

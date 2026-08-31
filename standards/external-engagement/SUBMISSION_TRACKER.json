@@ -1,0 +1,41 @@
+{
+  "schema_version": "bionexus.external-standards-submission-tracker.v1",
+  "as_of": "2026-08-30",
+  "disclaimer": "Prepared artifacts are not submissions, endorsements, certifications, or external adoption.",
+  "targets": {
+    "ga4gh_ai_work_stream": {
+      "official_entrypoint": "https://www.ga4gh.org/get-involved/join-our-community/join/",
+      "packet": "ga4gh-aiws-contribution.md",
+      "status": "READY_BLOCKED_IDENTITY",
+      "blockers": [
+        "named human participant",
+        "affiliation and contact details",
+        "human acceptance of GA4GH participation rules"
+      ],
+      "receipt": null
+    },
+    "workflowhub": {
+      "official_entrypoint": "https://workflowhub.eu/workflows",
+      "documentation": "https://about.workflowhub.eu/developer/ro-crate-api/",
+      "packet": "CI artifact official-rocrate-validation/crate.zip",
+      "status": "READY_BLOCKED_CREDENTIALS",
+      "blockers": [
+        "WorkflowHub API token",
+        "owning WorkflowHub Team ID",
+        "human decision on visibility and metadata policy"
+      ],
+      "receipt": null
+    },
+    "elixir_interoperability": {
+      "official_entrypoint": "https://elixir-europe.org/platforms/interoperability",
+      "packet": "elixir-interoperability-contribution.md",
+      "status": "READY_BLOCKED_IDENTITY",
+      "blockers": [
+        "named human contact",
+        "affiliation and ELIXIR Node relationship if any",
+        "human approval of outbound communication"
+      ],
+      "receipt": null
+    }
+  }
+}

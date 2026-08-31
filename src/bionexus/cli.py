@@ -6,7 +6,7 @@ Commands:
   bionexus audit         Audit notebooks/scripts for scientific flaws, or data-matrix integrity
   bionexus verify        Verify final results against their Claim-Evidence Ledger (BNS-013)
   bionexus bench         BioFailureBench trap corpus: validate / summary (BNS-014)
-  bionexus interop       Standards exports: RO-Crate / Workflow Run Crate / BioCompute Object (BNS-016)
+  bionexus interop       Standards exports: RO-Crate / Workflow Run RO-Crate / BioCompute Object (BNS-016)
   bionexus standards     Standards alignment registry with honest statuses (BNS-016)
   bionexus create-plugin Scaffold a new skill following the Gold Reference pattern
   bionexus create-skill  Alias for create-plugin
@@ -898,12 +898,16 @@ def handle_interop(args: argparse.Namespace) -> int:
     from bionexus.interop import (
         export_bco,
         export_ro_crate,
+        export_workflow_run_crate,
         ledger_to_ro_crate,
+        load_adjacent_ledger,
         load_interop_source,
         run_bundle_to_bco,
         run_bundle_to_ro_crate,
+        run_bundle_to_workflow_run_crate,
         validate_bco,
         validate_ro_crate,
+        validate_workflow_run_crate,
     )
     from bionexus.ledger import ClaimLedger
 
@@ -940,6 +944,38 @@ def handle_interop(args: argparse.Namespace) -> int:
             print(f"[OK] {'RO-Crate' if action == 'ro-crate' else 'BioCompute Object'} written to: {target}")
             return 0
 
+        elif action == "wfrun-crate":
+            if out is None:
+                kind, manifest, siblings = load_interop_source(args.path)
+                if kind != "run":
+                    print(
+                        "[ERROR] Workflow Run Crates describe computations: export a run capsule "
+                        "(run.json). A ledger embeds via --ledger or exports via 'interop ro-crate'.",
+                        file=sys.stderr,
+                    )
+                    return 1
+                ledger_doc = load_adjacent_ledger(args.path)
+                doc = run_bundle_to_workflow_run_crate(
+                    manifest, siblings, steps=manifest.get("steps") or [], ledger=ledger_doc
+                )
+                errors = validate_workflow_run_crate(doc)
+                print(json.dumps(doc, indent=2))
+                return 0 if not errors else 1
+
+            result = export_workflow_run_crate(
+                args.path,
+                out,
+                ledger_path=getattr(args, "ledger", None),
+                zip_archive=bool(getattr(args, "zip", False)),
+            )
+            report = result.to_dict()
+            print(f"[OK] Workflow Run RO-Crate written to: {result.crate_dir}")
+            print(f"     files copied: {report['files_copied']}; steps projected: {report['steps_projected']}; ledger embedded: {report['ledger_included']}")
+            print(f"     post-write verification: {'PASS' if report['verified'] else 'FAIL'}")
+            if result.zip_path:
+                print(f"     zip archive: {result.zip_path}")
+            return 0 if report["verified"] else 1
+
         elif action == "check":
             kind, manifest, siblings = load_interop_source(args.path)
             crate = (
@@ -949,8 +985,15 @@ def handle_interop(args: argparse.Namespace) -> int:
             )
             crate_errors = validate_ro_crate(crate)
             bco_errors: list = ["n/a: ledgers do not project to BCO"]
+            wfrun_errors: list = ["n/a: ledgers do not project to Workflow Run Crates"]
+            wfrun_doc = None
             if kind == "run":
                 bco_errors = validate_bco(run_bundle_to_bco(manifest, siblings))
+                ledger_doc = load_adjacent_ledger(args.path)
+                wfrun_doc = run_bundle_to_workflow_run_crate(
+                    manifest, siblings, steps=manifest.get("steps") or [], ledger=ledger_doc
+                )
+                wfrun_errors = validate_workflow_run_crate(wfrun_doc)
             print(f"=== Interop check: {args.path} (source kind: {kind}) ===")
             print(f"RO-Crate 1.1 structural validation: {'PASS' if not crate_errors else 'FAIL'}")
             for e in crate_errors:
@@ -958,7 +1001,18 @@ def handle_interop(args: argparse.Namespace) -> int:
             print(f"IEEE 2791-2020 BCO structural validation: {'PASS' if not bco_errors else 'FAIL'}")
             for e in bco_errors:
                 print(f"  - {e}")
-            return 0 if not crate_errors and not (kind == "run" and bco_errors) else 1
+            print(
+                "Workflow Run RO-Crate (bundle projection): "
+                f"{'PASS' if not wfrun_errors else 'FAIL'}"
+            )
+            for e in wfrun_errors:
+                print(f"  - {e}")
+            return (
+                0
+                if not crate_errors
+                and not (kind == "run" and (bco_errors or wfrun_errors))
+                else 1
+            )
     except (FileNotFoundError, ValueError) as e:
         print(f"[ERROR] {e}", file=sys.stderr)
         return 1
@@ -3040,7 +3094,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     # 5.8 interop (standards-based exports, BNS-016)
     p_interop = subparsers.add_parser(
         "interop",
-        help="Standards-based exports: RO-Crate / Workflow Run Crate / BioCompute Object (BNS-016)",
+        help="Standards-based exports: RO-Crate / Workflow Run RO-Crate / BioCompute Object (BNS-016)",
     )
     interop_subs = p_interop.add_subparsers(dest="interop_action", help="Interoperability actions")
     p_io_crate = interop_subs.add_parser(
@@ -3053,6 +3107,19 @@ def main(argv: Optional[list[str]] = None) -> int:
     )
     p_io_bco.add_argument("path", help="Run capsule directory or run.json file")
     p_io_bco.add_argument("--out", default=None, help="Output file (default: print to stdout)")
+    p_io_wfrun = interop_subs.add_parser(
+        "wfrun-crate",
+        help=(
+            "Export a run capsule as a Workflow Run RO-Crate Research Object "
+            "(inputs, software, execution, steps, outputs, EvidenceCard, Claim Ledger)"
+        ),
+    )
+    p_io_wfrun.add_argument("path", help="Run capsule directory or run.json file")
+    p_io_wfrun.add_argument("--out", default=None, help="Output crate directory (default: print to stdout)")
+    p_io_wfrun.add_argument(
+        "--ledger", default=None, help="Claim–Evidence Ledger JSON to embed (default: adjacent bionexus.ledger.json)"
+    )
+    p_io_wfrun.add_argument("--zip", action="store_true", help="Also write a deterministic .zip of the crate")
     p_io_check = interop_subs.add_parser(
         "check", help="Structurally validate the projections for a run capsule or ledger"
     )

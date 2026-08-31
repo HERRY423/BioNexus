@@ -153,3 +153,63 @@ def test_cli_run_commands(capsys):
         assert rc_list == 0
         out_list = capsys.readouterr().out
         assert "Found 1 BioNexus Run Capsule(s)" in out_list
+
+
+def test_run_bundle_step_records(tmp_path):
+    """Step recording persists into the sealed manifest (Provenance Run Crate source)."""
+    input_file = tmp_path / "counts.h5ad"
+    input_file.write_text("counts", encoding="utf-8")
+    run_dir = tmp_path / "run"
+    bundle = RunBundle.create(run_dir, "scrna.pseudobulk_de", "single-cell-rna-qc", run_id="run_steps_1")
+    bundle.record_input("counts", input_file, "raw_counts")
+    (run_dir / "results").mkdir(parents=True, exist_ok=True)
+    out_file = run_dir / "results" / "de.csv"
+    out_file.write_text("gene,p\nX,0.01\n", encoding="utf-8")
+    bundle.add_result("de", out_file, "de_table")
+    bundle.record_step("normalize", "scanpy.pp.normalize_total", inputs=["counts"])
+    bundle.record_step("de", "pydeseq2", tool_version="0.4.9", inputs=["counts"], outputs=["de"])
+    bundle.attach_evidence_card(EvidenceCard())
+    master = bundle.finalize()
+
+    manifest = load_run_bundle(master)
+    assert len(manifest["steps"]) == 2
+    assert manifest["steps"][1]["tool"] == "pydeseq2"
+    assert manifest["steps"][1]["tool_version"] == "0.4.9"
+    # the seal covers the step records: verification still passes
+    assert verify_run_bundle(run_dir).valid
+
+
+def test_run_bundle_step_bindings_fail_closed(tmp_path):
+    """finalize refuses steps that reference unknown artifacts or claim outputs twice."""
+    input_file = tmp_path / "counts.h5ad"
+    input_file.write_text("counts", encoding="utf-8")
+    run_dir = tmp_path / "run"
+    bundle = RunBundle.create(run_dir, "cap.x", "skill-x", run_id="run_steps_2")
+    bundle.record_input("counts", input_file, "raw_counts")
+    (run_dir / "results").mkdir(parents=True, exist_ok=True)
+    out_file = run_dir / "results" / "a.csv"
+    out_file.write_text("a\n", encoding="utf-8")
+    bundle.add_result("a", out_file, "table")
+
+    bundle.record_step("s1", "toolA", inputs=["no_such_input"], outputs=["a"])
+    import pytest
+
+    with pytest.raises(ValueError, match="neither a capsule input"):
+        bundle.finalize()
+
+    bundle2 = RunBundle.create(tmp_path / "run2", "cap.x", "skill-x", run_id="run_steps_3")
+    bundle2.record_input("counts", input_file, "raw_counts")
+    (tmp_path / "run2" / "results").mkdir(parents=True, exist_ok=True)
+    b2_out = tmp_path / "run2" / "results" / "a.csv"
+    b2_out.write_text("a\n", encoding="utf-8")
+    bundle2.add_result("a", b2_out, "table")
+    bundle2.record_step("s1", "toolA", outputs=["a"])
+    bundle2.record_step("s2", "toolB", outputs=["a"])
+    with pytest.raises(ValueError, match="more than one step"):
+        bundle2.finalize()
+
+    bundle3 = RunBundle.create(tmp_path / "run3", "cap.x", "skill-x", run_id="run_steps_4")
+    bundle3.record_input("counts", input_file, "raw_counts")
+    bundle3.record_step("s1", "toolA", status="FAILED")
+    with pytest.raises(ValueError, match="recorded no error detail"):
+        bundle3.finalize()

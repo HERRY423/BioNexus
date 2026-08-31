@@ -106,6 +106,30 @@ class DownstreamSuggestion:
 
 
 @dataclass
+class StepRecord:
+    """
+    One recorded execution step inside a run capsule.
+
+    Steps are the honest source for step-level provenance (Workflow Run
+    RO-Crate / Provenance Run Crate projections, BNS-IO-014): a step names the
+    tool that ran and binds capsule artifacts as its inputs/outputs. Inputs
+    reference capsule input names or output result names of *earlier* steps;
+    outputs reference result names already registered via `add_result`.
+    """
+
+    name: str
+    tool: str
+    description: str = ""
+    inputs: List[str] = field(default_factory=list)
+    outputs: List[str] = field(default_factory=list)
+    status: str = "COMPLETED"
+    error: str = ""
+    tool_version: Optional[str] = None
+    started_at: Optional[str] = None
+    ended_at: Optional[str] = None
+
+
+@dataclass
 class BundleVerificationResult:
     """Result of validating a run bundle's integrity."""
 
@@ -155,6 +179,7 @@ class RunBundle:
 
         self.evidence_card: Optional[EvidenceCard] = None
         self.downstream_suggestions: List[DownstreamSuggestion] = []
+        self.steps: List[StepRecord] = []
         self.log_messages: List[str] = []
 
         # Directory layout
@@ -293,6 +318,68 @@ class RunBundle:
             )
         )
 
+    def record_step(
+        self,
+        name: str,
+        tool: str,
+        *,
+        description: str = "",
+        inputs: Optional[List[str]] = None,
+        outputs: Optional[List[str]] = None,
+        status: str = "COMPLETED",
+        error: str = "",
+        tool_version: Optional[str] = None,
+        started_at: Optional[str] = None,
+        ended_at: Optional[str] = None,
+    ) -> StepRecord:
+        """
+        Record one executed workflow step (call after the step completed).
+
+        `inputs` must reference capsule input names or result names produced by
+        earlier steps; `outputs` must reference result names already registered
+        via `add_result`. Full binding validation happens in `finalize`.
+        """
+        record = StepRecord(
+            name=name,
+            tool=tool,
+            description=description,
+            inputs=list(inputs or []),
+            outputs=list(outputs or []),
+            status=status,
+            error=error,
+            tool_version=tool_version,
+            started_at=started_at,
+            ended_at=ended_at or datetime.now(timezone.utc).isoformat(),
+        )
+        self.steps.append(record)
+        self.log(f"Recorded step '{name}' (tool: {tool}, status: {status})")
+        return record
+
+    def _validate_steps(self) -> None:
+        """Fail-closed binding checks for recorded steps (run.json seal scope)."""
+        seen_outputs: set[str] = set()
+        known = set(self.inputs) | set(self.results)
+        for idx, step in enumerate(self.steps):
+            if not step.name or not step.tool:
+                raise ValueError(f"Step #{idx} must record both a name and a tool.")
+            if step.status.upper() in ("FAILED", "ERROR") and not step.error:
+                raise ValueError(f"Step '{step.name}' failed but recorded no error detail.")
+            for out in step.outputs:
+                if out not in self.results:
+                    raise ValueError(
+                        f"Step '{step.name}' output '{out}' is not a registered result artifact."
+                    )
+                if out in seen_outputs:
+                    raise ValueError(f"Result '{out}' is claimed as output by more than one step.")
+                seen_outputs.add(out)
+            for inp in step.inputs:
+                if inp not in known:
+                    raise ValueError(
+                        f"Step '{step.name}' input '{inp}' is neither a capsule input "
+                        f"nor an output of an earlier step."
+                    )
+            known = set(self.inputs) | seen_outputs
+
     def finalize(self, status: str = "COMPLETED") -> Path:
         """
         Finalize and write all capsule descriptor files.
@@ -301,6 +388,7 @@ class RunBundle:
         self.status = status
         self.timestamp_end = datetime.now(timezone.utc).isoformat()
         duration = round(time.perf_counter() - self._t0, 3)
+        self._validate_steps()
 
         self.results_dir.mkdir(parents=True, exist_ok=True)
         self.figures_dir.mkdir(parents=True, exist_ok=True)
@@ -370,6 +458,8 @@ class RunBundle:
             },
             "downstream_suggestions": [asdict(v) for v in self.downstream_suggestions],
         }
+        if self.steps:
+            manifest["steps"] = [asdict(v) for v in self.steps]
 
         descriptor_hashes = {
             rel_path: sha256_file(self.run_dir / rel_path)
