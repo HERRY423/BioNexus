@@ -37,7 +37,7 @@
     "provenance": {
       "data_source": "10x Genomics official Xenium XOA v4 tiny human kidney output bundle",
       "download_date": "2026-08-28",
-      "commit_sha": "18f20859ecaf1fb708051c8f43840d52e82ff3a8",
+      "commit_sha": "8923d8bf514de5c59d78addf7191f6677ea40c13",
       "git_dirty": false,
       "environment_lockfile_hashes": {
         "pyproject.toml": "772fb5490fe7ca624de747e378cc10a9810fdcd9a07ad4eb5c5abf0a55c477ba",
@@ -51,7 +51,7 @@
       "generator_version": "1.0.0-rc.3",
       "python_version": "3.13.9",
       "platform": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-08-31T01:15:32.562335+00:00",
+      "timestamp": "2026-08-31T01:33:10.435028+00:00",
       "extra_metadata": {
         "capability": "spatial.inference_validity",
         "dataset_id": "xenium_spatial_truth",
@@ -59,7 +59,7 @@
       },
       "repository_dirty_at_execution": true,
       "validation_source_dirty": false,
-      "source_snapshot_sha256": "90a4161f090ea9f0b35f57516c37672c75369b284ccd36b92fee2d6ef831a6cb"
+      "source_snapshot_sha256": "85f252ba86519616c831b3f7a0dd940c193078472ee5a311bc63d834133a8c17"
     }
   },
   "metrics": [
@@ -134,7 +134,7 @@
     "The vendor states this tiny three-patch/two-FOV dataset is for format testing and not biological conclusions.",
     "BN-SP-IV-001 retained a negative result because the cell-size-bias effect did not meet its locked threshold."
   ],
-  "timestamp": "2026-08-31T01:15:32.683841+00:00",
+  "timestamp": "2026-08-31T01:33:10.625536+00:00",
   "evidence_files": [
     "validation\\spatial\\studies\\BN-SP-IV-001\\evidence\\cell_diagnostics.csv",
     "validation\\spatial\\studies\\BN-SP-IV-001\\PREREGISTRATION.json",

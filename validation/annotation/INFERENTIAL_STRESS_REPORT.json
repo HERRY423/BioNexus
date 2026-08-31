@@ -6,8 +6,8 @@
   "dataset_checksum_sha256": "d3ecbf0e65a40e783c1c80ef4e9c21872cf0d8b8544de48ec5c9f7c32fa24bed",
   "provenance": {
     "data_source": "synthetic_generator (in-silico generated multimodal fixture)",
-    "download_date": "2026-08-31T01:15:07.525945+00:00",
-    "commit_sha": "18f20859ecaf1fb708051c8f43840d52e82ff3a8",
+    "download_date": "2026-08-31T01:32:36.569128+00:00",
+    "commit_sha": "8923d8bf514de5c59d78addf7191f6677ea40c13",
     "git_dirty": false,
     "environment_lockfile_hashes": {
       "pyproject.toml": "772fb5490fe7ca624de747e378cc10a9810fdcd9a07ad4eb5c5abf0a55c477ba",
@@ -21,7 +21,7 @@
     "generator_version": "1.0.0-rc.3",
     "python_version": "3.13.9",
     "platform": "Windows-11-10.0.26200-SP0",
-    "timestamp": "2026-08-31T01:15:07.691414+00:00",
+    "timestamp": "2026-08-31T01:32:36.739250+00:00",
     "extra_metadata": {
       "dataset_track": "synthetic_technical_acceptance",
       "n_cells": 1200,
@@ -47,10 +47,10 @@
     },
     "repository_dirty_at_execution": true,
     "validation_source_dirty": false,
-    "source_snapshot_sha256": "90a4161f090ea9f0b35f57516c37672c75369b284ccd36b92fee2d6ef831a6cb"
+    "source_snapshot_sha256": "85f252ba86519616c831b3f7a0dd940c193078472ee5a311bc63d834133a8c17"
   },
-  "timestamp": "2026-08-31T01:15:07.874136+00:00",
-  "elapsed_seconds": 0.42,
+  "timestamp": "2026-08-31T01:32:36.935074+00:00",
+  "elapsed_seconds": 0.44,
   "overall_status": "PASS",
   "dimensions": {
     "dim1_1_synthetic_technical_acceptance_baseline": {
