@@ -54,7 +54,7 @@ first heading. A document is not part of the BNS series until it is registered.
 | [BNS-020](BNS-020-conformance-test-kit.md) | BioNexus Conformance Test Kit (BCTK) | Target-bound development diagnostics; certification and badges suspended | `src/bionexus/bctk/`, `bctk` CLI |
 | [BNS-021](BNS-021-evidence-debt.md) | Scientific Evidence Debt & Epistemic DAG Amortization | Structured scientific debt taxonomy, keystone bottleneck analysis, optimal repayment schedule | `src/bionexus/debt.py`, `bionexus debt` |
 | [BNS-022](BNS-022-scientific-semantics-neutral-governance.md) | Scientific Semantics Neutral Governance & Institutional Adoption | Independent Council formation, technical/commercial/certification separation, evidence-bound institutional adoption | `governance/scientific-semantics/`, `scripts/validate_semantic_governance.py` |
-| [BNS-023](BNS-023-independent-validation-network.md) | Independent Validation Network | Computed flagship external-validation quotas (3 independent datasets x 2 external labs x 1 non-author reviewer), annotation cross-disease/tissue/technology coverage, spatial independent truth, calibration freeze on held-out contexts | `src/bionexus/ivn.py`, `src/bionexus/calibration_freeze.py`, `bionexus ivn` |
+| [BNS-023](BNS-023-validation-transparency-network.md) | Validation Transparency Network | Portable, dual-attested validation events and deterministic candidate-slot state | `src/bionexus/validation_network.py` |
 
 ## Conformance classes
 

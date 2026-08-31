@@ -26,6 +26,13 @@ Biological-semantics and cross-host checks remain `NOT_ASSESSED` unless future
 versions receive target-specific fixtures and host-native traces. BCTK no longer
 tests BioNexus/NumPy and attributes those results to a third-party target.
 
+Reports also project the eight dimensions into independently adoptable protocol
+profiles: `BNS-Core`, `BNS-Warrant`, `BNS-Provenance`, `BNS-Agent`,
+`BNS-Validation`, and `BNS-Full`. Profiles are not score bands. If any mandatory
+dimension is missing, skipped, or not applicable, that profile is
+`NOT_ASSESSED`; a high score elsewhere cannot average the gap away. Every profile
+has `certification_effect: NONE` during the trust reset.
+
 The commands below intentionally fail without writing a badge:
 
 ```bash

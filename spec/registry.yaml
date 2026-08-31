@@ -24,4 +24,4 @@ documents:
   - {id: BNS-020, file: BNS-020-conformance-test-kit.md, title: BioNexus Conformance Test Kit, status: development_not_certifiable}
   - {id: BNS-021, file: BNS-021-evidence-debt.md, title: Scientific Evidence Debt & Epistemic DAG Amortization, status: development}
   - {id: BNS-022, file: BNS-022-scientific-semantics-neutral-governance.md, title: Scientific Semantics Neutral Governance & Institutional Adoption, status: draft_council_forming}
-  - {id: BNS-023, file: BNS-023-independent-validation-network.md, title: Independent Validation Network, status: development}
+  - {id: BNS-023, file: BNS-023-validation-transparency-network.md, title: Validation Transparency Network, status: development_no_certification_effect}

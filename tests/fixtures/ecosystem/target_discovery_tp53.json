@@ -18,7 +18,7 @@
         "plugin_id": "science-literature",
         "capability": "literature",
         "tool_name": "literature_search_europepmc",
-        "plugin_version": "1.0.0-rc.3"
+        "plugin_version": "1.0.0-rc.4"
       },
       "captured_at": "2026-08-29T00:00:00+00:00",
       "source_context": {
@@ -49,7 +49,7 @@
         "plugin_id": "science-uniprot",
         "capability": "database",
         "tool_name": "search_uniprot",
-        "plugin_version": "1.0.0-rc.3"
+        "plugin_version": "1.0.0-rc.4"
       },
       "captured_at": "2026-08-29T00:00:00+00:00",
       "source_context": {
@@ -106,12 +106,12 @@
         "plugin_id": "bionexus",
         "capability": "analysis",
         "tool_name": "run_pseudobulk_de",
-        "plugin_version": "1.0.0-rc.3"
+        "plugin_version": "1.0.0-rc.4"
       },
       "captured_at": "2026-08-29T00:00:00+00:00",
       "source_context": {
         "backend_name": "bionexus.pseudobulk_de",
-        "backend_version": "1.0.0-rc.3",
+        "backend_version": "1.0.0-rc.4",
         "input_artifact_sha256": "5c357d36efc715f5c3577d6fb86bb5d5d8525b6a71adccdbdaffaa3d5e27863e",
         "parameters_sha256": "1adccdbdaffaa3d5e27863ef55a6d36efc715f5c3577d6fb86bb5d5d8525b6a7",
         "execution_receipt_sha256": "3d5e27863ef55a6d36efc715f5c3577d6fb86bb5d5d8525b6a71adccdbdaffaa",

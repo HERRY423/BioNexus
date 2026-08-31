@@ -142,6 +142,7 @@ class ConformanceReport:
     conformance_tier: ConformanceTier
     biofailurebench_score: Optional[float]
     dimension_results: Dict[str, DimensionResult]
+    profile_results: Dict[str, Dict[str, Any]]
     critical_violations: List[Dict[str, Any]] = field(default_factory=list)
     assessment_status: str = "DEVELOPMENT_NOT_CERTIFIABLE"
     diagnostic_tier: ConformanceTier = ConformanceTier.NOT_ASSESSED
@@ -172,6 +173,7 @@ class ConformanceReport:
             "overall_score": round(self.overall_score, 2),
             "conformance_tier": self.conformance_tier.value,
             "dimensions": {dim: res.to_dict() for dim, res in self.dimension_results.items()},
+            "profiles": self.profile_results,
             "critical_violations": self.critical_violations,
         }
         raw_json = json.dumps(canonical_repr, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
@@ -198,6 +200,7 @@ class ConformanceReport:
             "cryptographic_fingerprint": self.cryptographic_fingerprint or self.compute_fingerprint(),
             "badge_markdown": self.badge_markdown,
             "dimensions": {k: v.to_dict() for k, v in self.dimension_results.items()},
+            "profiles": self.profile_results,
             "critical_violations": self.critical_violations,
             "summary": self.summary_text,
         }

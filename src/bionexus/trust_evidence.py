@@ -288,6 +288,7 @@ def verify_attestation(
     registry: TrustRegistry,
     *,
     artifact_path: Optional[PathLike] = None,
+    artifact_bytes: Optional[bytes] = None,
     at_time: Optional[datetime] = None,
 ) -> AttestationVerification:
     """Verify trust, signature, revocation, expiry, and concrete artifact binding."""
@@ -331,14 +332,25 @@ def verify_attestation(
     if not _signature_valid(attestation.unsigned_payload(), attestation.signature_b64, key):
         return AttestationVerification(TrustDecision.INVALID_SIGNATURE, ("Ed25519 signature verification failed",), aid)
 
-    if artifact_path is None:
+    if artifact_path is not None and artifact_bytes is not None:
+        return AttestationVerification(
+            TrustDecision.MALFORMED,
+            ("supply artifact_path or artifact_bytes, not both",),
+            aid,
+            attestation.subject.artifact_sha256,
+        )
+    if artifact_path is None and artifact_bytes is None:
         return AttestationVerification(
             TrustDecision.NOT_ASSESSED,
             ("artifact bytes were not supplied; digest binding was not verified",),
             aid,
             attestation.subject.artifact_sha256,
         )
-    actual_digest = sha256_file(artifact_path)
+    actual_digest = (
+        hashlib.sha256(artifact_bytes).hexdigest()
+        if artifact_bytes is not None
+        else sha256_file(artifact_path)
+    )
     if actual_digest != attestation.subject.artifact_sha256:
         return AttestationVerification(
             TrustDecision.ARTIFACT_MISMATCH,

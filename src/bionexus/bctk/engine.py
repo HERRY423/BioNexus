@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 from bionexus.abi import ABI_VERSION
+from bionexus.bctk.profiles import evaluate_protocol_profiles
 from bionexus.bctk.spec import (
     BCTK_RULE_CATALOG,
     ConformanceDimension,
@@ -110,6 +111,10 @@ def run_conformance_test(
 
     # Preserve the old score mapping only as an explicitly non-certifying diagnostic.
     diagnostic_tier = calculate_conformance_tier(overall_score, dimension_results, total_critical_failures)
+    profile_results = {
+        profile_id: result.to_dict()
+        for profile_id, result in evaluate_protocol_profiles(dimension_results).items()
+    }
 
     # BioFailureBench score from failure handling dimension
     bfb_score = None
@@ -133,6 +138,7 @@ def run_conformance_test(
         conformance_tier=ConformanceTier.NOT_ASSESSED,
         biofailurebench_score=bfb_score,
         dimension_results=dimension_results,
+        profile_results=profile_results,
         critical_violations=critical_violations,
         assessment_status="DEVELOPMENT_NOT_CERTIFIABLE",
         diagnostic_tier=diagnostic_tier,

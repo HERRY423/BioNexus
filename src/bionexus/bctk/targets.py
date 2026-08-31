@@ -67,8 +67,22 @@ _SNAPSHOT_EXTENSIONS = {
 _SNAPSHOT_EXCLUDED_DIRS = {
     ".git", ".mypy_cache", ".pytest_cache", ".ruff_cache", "__pycache__",
     ".venv", ".vendor", "build", "dist", "logs", "node_modules", "validation", "venv",
-    "data", "interoperability",
+    "data", "interoperability", "runtime_lance", "runtime_wheels",
 }
+_SNAPSHOT_EXCLUDED_PREFIXES = (
+    ".codex_tmp",
+    ".codex_p",
+    ".codex_pytest",
+    ".download_parts",
+    ".hypothesis",
+    ".lo-profile",
+    ".phase2-",
+    ".pytest-",
+    ".pytest_",
+    "_benchmark_",
+    "_eval_",
+    "_evaluation_",
+)
 
 
 def snapshot_target(target: TargetDescriptor, *, max_files: int = 5000) -> TargetSnapshot:
@@ -92,7 +106,7 @@ def snapshot_target(target: TargetDescriptor, *, max_files: int = 5000) -> Targe
                 continue
             if any(
                 part in _SNAPSHOT_EXCLUDED_DIRS
-                or part.startswith((".pytest-tmp", ".phase2-", "_eval_", "_evaluation_", "_benchmark_"))
+                or part.startswith(_SNAPSHOT_EXCLUDED_PREFIXES)
                 for part in relative.parts
             ):
                 continue

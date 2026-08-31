@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bionexus:validation-event-packet-schema:1",
+  "title": "BNS Validation Transparency Event Packet",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "event_id",
+    "event_type",
+    "subject",
+    "issuer",
+    "bns_release",
+    "bctk_release",
+    "profile_ids",
+    "result",
+    "evidence",
+    "occurred_at"
+  ],
+  "properties": {
+    "schema_version": {"const": "bionexus.validation-event-packet.v1"},
+    "event_id": {"type": "string", "minLength": 1},
+    "event_type": {
+      "enum": [
+        "DATASET_EXECUTION",
+        "EXTERNAL_LAB_REPLICATION",
+        "NON_AUTHOR_REVIEW",
+        "CROSS_HOST_COMPARISON",
+        "CALIBRATION_FREEZE",
+        "REVOCATION"
+      ]
+    },
+    "subject": {
+      "type": "object",
+      "required": ["project_id", "capability_id", "artifact_sha256"],
+      "properties": {
+        "project_id": {"type": "string", "minLength": 1},
+        "capability_id": {"type": "string", "minLength": 1},
+        "artifact_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "issuer": {
+      "type": "object",
+      "required": ["issuer_id", "institution_id", "relationship_to_subject"],
+      "properties": {
+        "issuer_id": {"type": "string", "minLength": 1},
+        "institution_id": {"type": "string", "minLength": 1},
+        "relationship_to_subject": {"enum": ["INDEPENDENT", "SAME_TEAM", "UNKNOWN"]}
+      },
+      "additionalProperties": false
+    },
+    "bns_release": {"type": "string", "minLength": 1},
+    "bctk_release": {"type": "string", "minLength": 1},
+    "profile_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["BNS-Core", "BNS-Warrant", "BNS-Provenance", "BNS-Agent", "BNS-Validation", "BNS-Full"]
+      }
+    },
+    "result": {"enum": ["PASS", "FAIL", "NEGATIVE", "INCONCLUSIVE", "NOT_ASSESSED"]},
+    "evidence": {
+      "type": "object",
+      "required": ["artifact_uri", "artifact_sha256"],
+      "properties": {
+        "artifact_uri": {"type": "string", "format": "uri"},
+        "artifact_sha256": {"$ref": "#/$defs/sha256"},
+        "dataset_sha256": {"$ref": "#/$defs/sha256"},
+        "host_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "limitations": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": false
+    },
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "supersedes": {"type": "string", "minLength": 1},
+    "revokes": {"type": "string", "minLength": 1}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"event_type": {"const": "REVOCATION"}}},
+      "then": {"required": ["revokes"]}
+    },
+    {
+      "if": {"properties": {"event_type": {"const": "CROSS_HOST_COMPARISON"}}},
+      "then": {
+        "properties": {
+          "evidence": {
+            "required": ["host_ids"],
+            "properties": {"host_ids": {"minItems": 2}}
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^(sha256:)?[0-9a-f]{64}$"}
+  },
+  "additionalProperties": false
+}

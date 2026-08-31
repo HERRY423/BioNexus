@@ -1,0 +1,33 @@
+{
+  "schema_version": "bns.conformance-profiles.v1",
+  "status": "DEVELOPMENT_NOT_CERTIFIABLE",
+  "profiles": {
+    "BNS-Core": [
+      "BIOLOGICAL SEMANTICS",
+      "INPUT STATE HONESTY",
+      "BACKEND IDENTITY",
+      "ABSTENTION"
+    ],
+    "BNS-Warrant": [
+      "CLAIM WARRANT",
+      "ABSTENTION",
+      "FAILURE HANDLING"
+    ],
+    "BNS-Provenance": [
+      "PROVENANCE",
+      "BACKEND IDENTITY"
+    ],
+    "BNS-Agent": [
+      "CROSS-HOST CONSISTENCY",
+      "CLAIM WARRANT",
+      "ABSTENTION"
+    ],
+    "BNS-Validation": [
+      "FAILURE HANDLING",
+      "CROSS-HOST CONSISTENCY",
+      "PROVENANCE"
+    ]
+  },
+  "full_profile": "BNS-Full",
+  "certification_effect": "NONE"
+}

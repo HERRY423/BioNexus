@@ -130,3 +130,17 @@ commercial operators may not select assessors or issue certificates; and only a
 recognized independent conformity assessment body may issue, suspend, or revoke
 a future certificate. Cryptographic validity alone does not satisfy these
 governance and impartiality gates.
+
+## 6. Independently adoptable protocol profiles
+
+- **BNS-CT-001** BCTK MUST publish profile results for `BNS-Core`,
+  `BNS-Warrant`, `BNS-Provenance`, `BNS-Agent`, `BNS-Validation`, and
+  `BNS-Full` so an implementation can adopt a bounded contract surface.
+- **BNS-CT-002** A mandatory dimension that is missing, skipped,
+  `NOT_APPLICABLE`, or `NOT_ASSESSED` MUST make its profile `NOT_ASSESSED`.
+- **BNS-CT-003** A failed mandatory dimension MUST make its profile fail; a
+  score from other dimensions MUST NOT average away the failure.
+- **BNS-CT-004** `BNS-Full` MUST be deterministically derived from the component
+  profiles and MUST NOT pass while any component is failed or unassessed.
+- **BNS-CT-005** Profile results are technical diagnostics and MUST retain
+  `certification_effect=NONE` while BNS-GV-020 is unmet.

@@ -73,6 +73,17 @@ def test_verified_attestation_is_bound_to_artifact(tmp_path):
     assert result.accepted is True
 
 
+def test_verified_attestation_accepts_portable_artifact_bytes(tmp_path):
+    artifact, _, registry, attestation = _fixture(tmp_path)
+    result = verify_attestation(
+        attestation,
+        registry,
+        artifact_bytes=artifact.read_bytes(),
+        at_time=datetime(2026, 8, 2, tzinfo=timezone.utc),
+    )
+    assert result.decision == TrustDecision.VERIFIED
+
+
 def test_missing_or_changed_artifact_fails_closed(tmp_path):
     artifact, _, registry, attestation = _fixture(tmp_path)
     no_bytes = verify_attestation(attestation, registry, at_time=datetime(2026, 8, 2, tzinfo=timezone.utc))

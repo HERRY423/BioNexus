@@ -208,6 +208,9 @@ def test_full_engine_run_and_fingerprint():
     assert len(report.target_content_sha256) == 64
     assert report.target_file_count > 0
     assert len(report.dimension_results) == 8
+    assert report.profile_results["BNS-Core"]["status"] == "NOT_ASSESSED"
+    assert report.profile_results["BNS-Full"]["status"] == "NOT_ASSESSED"
+    assert report.profile_results["BNS-Full"]["certification_effect"] == "NONE"
     assert len(report.cryptographic_fingerprint) == 64
 
     # Verify deterministic fingerprint

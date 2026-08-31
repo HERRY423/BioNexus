@@ -21,7 +21,7 @@
         "plugin_id": "bionexus-spatial",
         "capability": "slide",
         "tool_name": "spatial_svg_moran",
-        "plugin_version": "1.0.0-rc.3"
+        "plugin_version": "1.0.0-rc.4"
       },
       "captured_at": "2026-08-29T00:00:00+00:00",
       "source_context": {
@@ -67,12 +67,12 @@
         "plugin_id": "bionexus",
         "capability": "analysis",
         "tool_name": "single_cell_qc",
-        "plugin_version": "1.0.0-rc.3"
+        "plugin_version": "1.0.0-rc.4"
       },
       "captured_at": "2026-08-29T00:00:00+00:00",
       "source_context": {
         "backend_name": "bionexus.annotation_evidence",
-        "backend_version": "1.0.0-rc.3",
+        "backend_version": "1.0.0-rc.4",
         "input_artifact_sha256": "abd7e8f7fd047dcc6afdb1e9eece90d4533d3ead053c6f05c482be050bdf79d2",
         "parameters_sha256": "4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c",
         "execution_receipt_sha256": "6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a",
@@ -106,7 +106,7 @@
         "plugin_id": "bionexus-spatial",
         "capability": "slide",
         "tool_name": "spatial_artifact_verifier",
-        "plugin_version": "1.0.0-rc.3"
+        "plugin_version": "1.0.0-rc.4"
       },
       "captured_at": "2026-08-29T00:00:00+00:00",
       "source_context": {
