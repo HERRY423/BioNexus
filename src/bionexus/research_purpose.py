@@ -198,6 +198,10 @@ class PurposeContext:
     override_active: bool = False
     override_justification: str = ""
 
+    def __post_init__(self) -> None:
+        if self.override_active and self.purpose not in OVERRIDABLE_PURPOSES:
+            self.override_active = False
+
     @property
     def required_evidence(self) -> ConclusionMaturity:
         """The minimum ConclusionMaturity this intended use demands."""

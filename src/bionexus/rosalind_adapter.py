@@ -26,9 +26,10 @@ from bionexus.ecosystem_intake import (
     audit_external_evidence,
 )
 from bionexus.tool_receipt import create_tool_receipt, hash_canonical_payload
+from bionexus.versions import VERSION
 
 _DEFAULT_PLUGIN_ID = "chatgpt-rosalind"
-_DEFAULT_PLUGIN_VERSION = "1.0.0-rc.3"
+_DEFAULT_PLUGIN_VERSION = VERSION
 
 # Canonical capability-to-evidence-family mapping
 _TOOL_FAMILY_MAPPING: Dict[str, str] = {

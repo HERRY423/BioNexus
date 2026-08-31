@@ -18,7 +18,7 @@ import json
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 PathLike = Union[str, Path]
 
@@ -267,3 +267,117 @@ def verify_receipt_log_chain(log_path: PathLike) -> Tuple[bool, List[str]]:
         prev_hash = r.get("receipt_hash")
 
     return len(errors) == 0, errors
+
+
+def extract_evidence_factors_from_receipt(
+    receipt: Dict[str, Any],
+) -> Tuple[Set[str], List[str]]:
+    """Extract and cryptographically verify evidence factors certified by a tool execution receipt.
+
+    Args:
+        receipt: A tool execution receipt dictionary conforming to SCHEMA_VERSION.
+
+    Returns:
+        (set_of_verified_factors, list_of_audit_notes)
+    """
+    valid, errors = verify_tool_receipt(receipt)
+    if not valid:
+        return set(), [f"Tool receipt verification failed: {', '.join(errors)}"]
+
+    status = receipt.get("execution_status", "").upper()
+    if status != "SUCCESS":
+        return set(), [f"Tool receipt execution_status '{status}' is not SUCCESS (no factors certified)"]
+
+    factors: Set[str] = set()
+    notes: List[str] = []
+
+    # A valid cryptographic execution receipt provides tamper-evident proof of execution
+    factors.add("backend_fidelity")
+    factors.add("provenance")
+    notes.append(
+        f"Receipt {receipt.get('receipt_id')} ({receipt.get('tool_name')}): verified cryptographic execution proof"
+    )
+
+    metadata = receipt.get("metadata", {})
+    if isinstance(metadata, dict):
+        for key in ("evidence_factors", "satisfied_factors", "declared_factors"):
+            raw_factors = metadata.get(key)
+            if isinstance(raw_factors, (list, tuple, set)):
+                for f in raw_factors:
+                    if isinstance(f, str) and f.strip():
+                        factors.add(f.strip().lower())
+
+        # Metadata-derived design & empirical factors
+        reps = (
+            metadata.get("min_replicates_per_condition")
+            or metadata.get("donors_per_condition")
+            or metadata.get("biological_replicates_count")
+            or metadata.get("num_donors")
+            or 0
+        )
+        try:
+            reps_int = int(reps)
+        except (ValueError, TypeError):
+            reps_int = 0
+
+        if reps_int >= 2 or metadata.get("sample_design") or metadata.get("has_sample_design"):
+            factors.add("sample_design")
+        if reps_int >= 2 or metadata.get("replication") or metadata.get("replicated"):
+            factors.add("replication")
+        if metadata.get("confound_controls") or metadata.get("covariates_adjusted") or metadata.get("batch_corrected"):
+            factors.add("confound_controls")
+        if metadata.get("sensitivity_analysis") or metadata.get("parameter_sweep") or metadata.get("stability_verified"):
+            factors.add("sensitivity_analysis")
+            factors.add("effect_stability")
+        if metadata.get("effect_stability"):
+            factors.add("effect_stability")
+        if metadata.get("external_validation") or metadata.get("independent_validation"):
+            factors.add("external_validation")
+        if metadata.get("has_spatial") or metadata.get("spatial_colocalization"):
+            factors.add("spatial_colocalization")
+        if metadata.get("ligand_receptor_inference"):
+            factors.add("ligand_receptor_inference")
+        if metadata.get("perturbation") or metadata.get("is_perturbation"):
+            factors.add("perturbation")
+        if metadata.get("temporal_evidence") or metadata.get("time_series"):
+            factors.add("temporal_evidence")
+        if metadata.get("reference_ground_truth") or metadata.get("clinical_ground_truth"):
+            factors.add("reference_ground_truth")
+        if metadata.get("regulatory_certification") or metadata.get("clia_cap_certified") or metadata.get("fda_cleared"):
+            factors.add("regulatory_certification")
+            factors.add("regulatory_context")
+
+    return factors, notes
+
+
+def extract_evidence_factors_from_receipt_log(
+    log_path: PathLike,
+) -> Tuple[Set[str], List[str]]:
+    """Verify receipt log chain and extract all certified evidence factors from it.
+
+    Returns:
+        (set_of_verified_factors, list_of_audit_notes)
+    """
+    valid, errors = verify_receipt_log_chain(log_path)
+    if not valid:
+        return set(), [f"Receipt log chain verification failed: {', '.join(errors)}"]
+
+    path = Path(log_path)
+    all_factors: Set[str] = set()
+    all_notes: List[str] = [f"Verified hash-chain log at {path}"]
+
+    with path.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            line_str = line.strip()
+            if not line_str:
+                continue
+            try:
+                receipt = json.loads(line_str)
+                factors, notes = extract_evidence_factors_from_receipt(receipt)
+                all_factors.update(factors)
+                all_notes.extend(notes)
+            except Exception:
+                pass
+
+    return all_factors, all_notes
+

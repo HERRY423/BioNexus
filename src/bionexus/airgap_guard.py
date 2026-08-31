@@ -22,6 +22,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 from urllib.parse import urlsplit
 
 from bionexus.tool_receipt import create_tool_receipt
+from bionexus.versions import VERSION
 
 
 class AirgapPolicyMode(str, enum.Enum):
@@ -130,7 +131,7 @@ class AirgapNetworkGuard:
             "benchling.internal",
         })
         self.plugin_id = "bionexus"
-        self.plugin_version = "1.0.0-rc.3"
+        self.plugin_version = VERSION
         self.audit_records: List[AirgapAuditRecord] = []
 
     def is_internal_destination(self, host_or_url: str) -> bool:

@@ -23,7 +23,7 @@ import re
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 from bionexus.abi import detect_forbidden_claims_in_query
 from bionexus.capabilities import (
@@ -36,9 +36,14 @@ from bionexus.contracts import (
     EvidenceCard,
     ExecutionState,
 )
+from bionexus.evidence_model import (
+    ClaimClass,
+    ClaimContext,
+)
 from bionexus.integrity import audit_expression_matrix
 from bionexus.lab_policy import get_lab_policy
 from bionexus.research_purpose import (
+    OVERRIDABLE_PURPOSES,
     PurposeContext,
     ResearchPurpose,
     infer_research_purpose,
@@ -878,6 +883,10 @@ def route_scientific_intent(
     override_justification: str = "",
     lab_policy: Optional[str] = None,
     nominated_capability: Optional[str] = None,
+    evidence_factors: Optional[Sequence[Any]] = None,
+    claim_context: Optional[Union[ClaimContext, ClaimClass, str]] = None,
+    documented_extras: Optional[Sequence[str]] = None,
+    tool_receipts: Optional[Sequence[Dict[str, Any]]] = None,
 ) -> RoutingDecision:
     """
     Evaluate scientific intent and determine execution validity.
@@ -919,14 +928,33 @@ def route_scientific_intent(
     decision for auditability.
     """
     meta = dict(data_metadata or {})
+    if tool_receipts:
+        for rcpt in tool_receipts:
+            rcpt_meta = rcpt.get("metadata") or {}
+            for k, v in rcpt_meta.items():
+                if k not in meta:
+                    meta[k] = v
     intents = list(intent_keywords or [])
+
+    # Resolve ClaimContext if provided
+    resolved_claim: Optional[ClaimContext] = None
+    if isinstance(claim_context, ClaimContext):
+        resolved_claim = claim_context
+    elif isinstance(claim_context, ClaimClass):
+        resolved_claim = ClaimContext(claim_class=claim_context)
+    elif isinstance(claim_context, str):
+        try:
+            resolved_claim = ClaimContext(claim_class=ClaimClass(claim_context.lower()))
+        except ValueError:
+            resolved_claim = ClaimContext(statement=claim_context)
 
     # 0. Build PurposeContext (explicit or inferred from query).
     if research_purpose:
+        purpose_val = purpose_from_string(research_purpose)
         pctx = PurposeContext(
-            purpose=purpose_from_string(research_purpose),
+            purpose=purpose_val,
             explicitly_declared=True,
-            override_active=bool(override_justification),
+            override_active=bool(override_justification) and (purpose_val in OVERRIDABLE_PURPOSES),
             override_justification=override_justification,
         )
     else:
@@ -934,7 +962,7 @@ def route_scientific_intent(
         pctx = PurposeContext(
             purpose=inferred,
             explicitly_declared=False,
-            override_active=bool(override_justification),
+            override_active=bool(override_justification) and (inferred in OVERRIDABLE_PURPOSES),
             override_justification=override_justification,
         )
 
@@ -947,6 +975,8 @@ def route_scientific_intent(
     def _stamp(d: RoutingDecision) -> RoutingDecision:
         d.routing_layer = routing_layer
         d.routing_audit = routing_audit
+        if d.purpose_context is None:
+            d.purpose_context = pctx
         return d
 
     if cap is None:
@@ -1100,6 +1130,10 @@ def route_scientific_intent(
         input_metadata=meta,
         purpose_context=pctx,
         lab_policy=policy,
+        evidence_factors=evidence_factors or (),
+        claim_context=resolved_claim,
+        documented_extras=documented_extras or (),
+        tool_receipts=tool_receipts or (),
     )
 
     script_map = {

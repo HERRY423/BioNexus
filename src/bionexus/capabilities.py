@@ -351,13 +351,14 @@ class CapabilityContract:
         evidence_factors: Sequence[Any] = (),
         claim_context: Optional[Any] = None,
         documented_extras: Sequence[str] = (),
+        tool_receipts: Sequence[Dict[str, Any]] = (),
     ) -> CapabilityEvaluationResult:
         """Purpose-aware, warrant/policy-separated evaluation.
 
         Three strictly separated objects:
 
         1. **EvidenceAssessment** (purpose- and policy-independent): what the
-           evidence IS worth, from declared evidence factors and active
+           evidence IS worth, from declared evidence factors, tool receipts, and active
            violations.  Purpose never raises or lowers it.
         2. **WarrantAssessment** (policy-independent): the capped claim
            maturity and unsupported claims, starting from the evidence
@@ -375,13 +376,27 @@ class CapabilityContract:
         Execution invariants (safety/integrity) and missing canonical backends
         always BLOCK/ESCALATE regardless of policy or override.
         """
-        from bionexus.evidence_model import assess_evidence, evaluate_sufficiency
+        from bionexus.evidence_model import (
+            assess_evidence,
+            evaluate_sufficiency,
+            extract_evidence_factors,
+        )
         from bionexus.rule_classification import RuleCategory
         from bionexus.warrant import PolicyAction, assess_warrant, decide_policy
 
         policy = lab_policy or DEFAULT_LAB_POLICY
         pctx = purpose_context or PurposeContext()
         base = self.evaluate_viability(input_metadata=input_metadata, context=context)
+
+        # Extract and merge evidence factors from explicit argument, input_metadata, tool receipts, and execution integrity
+        backend_ok = base.backend_available is not False
+        combined_factors = extract_evidence_factors(
+            metadata=input_metadata,
+            backend_fidelity=backend_ok,
+            has_provenance=True,
+            explicit_factors=evidence_factors,
+            tool_receipts=tool_receipts,
+        )
 
         def _attach(
             card: EvidenceCard,
@@ -403,7 +418,7 @@ class CapabilityContract:
         if base.permitted:
             evidence = assess_evidence(
                 base_maturity=base.conclusion_maturity,
-                satisfied_factors=evidence_factors,
+                satisfied_factors=combined_factors,
             )
             assessment = assess_warrant(
                 purpose_context=pctx,
@@ -482,7 +497,7 @@ class CapabilityContract:
         # ------------------------------------------------------------------
         evidence = assess_evidence(
             base_maturity=base.conclusion_maturity,
-            satisfied_factors=evidence_factors,
+            satisfied_factors=combined_factors,
             warrant_triggers=warrant_triggers,
             invariant_triggers=invariant_triggers,
         )
@@ -1329,13 +1344,19 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             "cluster_config",
             "batch_compute_launch",
             "rnaseq_pipeline",
+            "scrnaseq_pipeline",
+            "differentialabundance_pipeline",
+            "sarek_pipeline",
+            "spatialtranscriptomics_pipeline",
+            "nextflow_receipt",
+            "harvest_nextflow_run",
         ],
         inputs={
             "sample_manifest": InputSpecification(
                 name="sample_manifest",
                 semantic_type=SemanticInputType.SAMPLE_METADATA.value,
                 required=True,
-                description="Directory of FASTQ/BAM files or raw sample CSV metadata.",
+                description="Directory of FASTQ/BAM files, raw sample CSV metadata, or completed Nextflow run directory.",
             ),
         },
         preconditions=[
@@ -1351,7 +1372,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             import_name="bionexus",
             minimum_version="0.8.0",
             extra="dev",
-            description="nf-core sample generator and cluster launch compiler",
+            description="nf-core sample generator, cluster launch compiler, and Nextflow run harvester",
         ),
         refusal_conditions=[
             RefusalTrigger(
@@ -1365,6 +1386,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
             "samplesheet.csv",
             "nextflow.config",
             "launch_command.sh",
+            "nextflow_tool_receipt (JSON)",
             "evidence_card (JSON/Markdown)",
         ],
         evidence_requirements=EvidenceRequirement(

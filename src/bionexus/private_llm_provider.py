@@ -19,6 +19,7 @@ from typing import Any, Dict, List, Optional
 
 from bionexus.airgap_guard import AirgapNetworkGuard, AirgapPolicyMode
 from bionexus.tool_receipt import create_tool_receipt
+from bionexus.versions import VERSION
 
 
 class PrivateLLMBackendType(str, enum.Enum):
@@ -86,7 +87,7 @@ class PrivateLLMProvider:
 
         self.airgap_guard = airgap_guard or AirgapNetworkGuard(mode=AirgapPolicyMode.AIRGAP_STRICT)
         self.plugin_id = "bionexus"
-        self.plugin_version = "1.0.0-rc.3"
+        self.plugin_version = VERSION
 
     def compute_model_fingerprint(self) -> str:
         """Calculate deterministic fingerprint of the model configuration and declared weights."""

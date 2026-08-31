@@ -19,6 +19,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
+from bionexus.versions import VERSION
 
 class UserRole(str, enum.Enum):
     """Laboratory personnel roles for Role-Based Access Control (RBAC)."""
@@ -137,7 +138,7 @@ class ComplianceAuditLedger:
         self.entries: List[GxPAuditEntry] = []
         self.signatures: List[ElectronicSignature] = []
         self.plugin_id = "bionexus"
-        self.plugin_version = "1.0.0-rc.3"
+        self.plugin_version = VERSION
 
     def append_audit_entry(
         self,

@@ -148,3 +148,142 @@ def test_summarize_report_for_receipt_shape():
     assert payload["gating_summary"]["cri"] == 100.0
     assert payload["frontier_summary"]["passed_cases"] == 0
     assert len(payload["case_digests"]) == 2
+
+
+def test_extract_evidence_factors_from_valid_tool_receipt():
+    from bionexus.tool_receipt import create_tool_receipt, extract_evidence_factors_from_receipt
+
+    receipt = create_tool_receipt(
+        plugin_id="bionexus-gold",
+        plugin_version="1.0.0-rc.3",
+        tool_name="scrna.pseudobulk_de",
+        request_payload={"adata_path": "data/kang.h5ad", "design": "~condition"},
+        response_payload={"de_table_sha256": "abcdef1234567890"},
+        execution_status="SUCCESS",
+        metadata={
+            "min_replicates_per_condition": 3,
+            "confound_controls": True,
+            "sensitivity_analysis": True,
+            "external_validation": True,
+        },
+    )
+    factors, notes = extract_evidence_factors_from_receipt(receipt)
+    assert "backend_fidelity" in factors
+    assert "provenance" in factors
+    assert "sample_design" in factors
+    assert "replication" in factors
+    assert "confound_controls" in factors
+    assert "sensitivity_analysis" in factors
+    assert "external_validation" in factors
+    assert any("verified cryptographic execution proof" in n for n in notes)
+
+
+def test_tampered_tool_receipt_fails_verification_and_grants_no_factors():
+    from bionexus.tool_receipt import create_tool_receipt, extract_evidence_factors_from_receipt
+
+    receipt = create_tool_receipt(
+        plugin_id="bionexus-gold",
+        plugin_version="1.0.0-rc.3",
+        tool_name="scrna.pseudobulk_de",
+        request_payload={"data": "real"},
+        response_payload={"result": "valid"},
+        execution_status="SUCCESS",
+        metadata={"min_replicates_per_condition": 5},
+    )
+    tampered = dict(receipt)
+    tampered["request_sha256"] = "0000000000000000000000000000000000000000000000000000000000000000"
+    factors, notes = extract_evidence_factors_from_receipt(tampered)
+    assert len(factors) == 0
+    assert any("verification failed" in n for n in notes)
+
+
+def test_failed_tool_execution_status_grants_no_factors():
+    from bionexus.tool_receipt import create_tool_receipt, extract_evidence_factors_from_receipt
+
+    receipt = create_tool_receipt(
+        plugin_id="bionexus-gold",
+        plugin_version="1.0.0-rc.3",
+        tool_name="scrna.pseudobulk_de",
+        request_payload={"data": "bad"},
+        response_payload={"error": "failed"},
+        execution_status="ERROR",
+        metadata={"min_replicates_per_condition": 3},
+    )
+    factors, notes = extract_evidence_factors_from_receipt(receipt)
+    assert len(factors) == 0
+    assert any("not SUCCESS" in n for n in notes)
+
+
+def test_tool_receipt_log_chain_extraction(tmp_path):
+    from bionexus.tool_receipt import append_receipt_log, create_tool_receipt, extract_evidence_factors_from_receipt_log
+
+    log_path = tmp_path / "audit_receipts.jsonl"
+    r1 = create_tool_receipt(
+        plugin_id="bionexus-gold",
+        plugin_version="1.0.0-rc.3",
+        tool_name="scrna.qc_filter",
+        request_payload={"in": "raw.h5ad"},
+        response_payload={"out": "qc.h5ad"},
+        execution_status="SUCCESS",
+        metadata={"min_replicates_per_condition": 3},
+        chain_index=0,
+    )
+    append_receipt_log(r1, log_path)
+    r2 = create_tool_receipt(
+        plugin_id="bionexus-gold",
+        plugin_version="1.0.0-rc.3",
+        tool_name="scrna.pseudobulk_de",
+        request_payload={"in": "qc.h5ad"},
+        response_payload={"out": "de.csv"},
+        execution_status="SUCCESS",
+        metadata={"confound_controls": True, "sensitivity_analysis": True},
+        previous_receipt_hash=r1["receipt_hash"],
+        chain_index=1,
+    )
+    append_receipt_log(r2, log_path)
+    factors, notes = extract_evidence_factors_from_receipt_log(log_path)
+    assert "sample_design" in factors
+    assert "replication" in factors
+    assert "confound_controls" in factors
+    assert "sensitivity_analysis" in factors
+    assert "backend_fidelity" in factors
+    assert "provenance" in factors
+
+
+def test_e2e_route_scientific_intent_with_tool_receipts():
+    from bionexus.evidence_model import ClaimClass, SufficiencyVerdict
+    from bionexus.intent_router import route_scientific_intent
+    from bionexus.tool_receipt import create_tool_receipt
+
+    receipt = create_tool_receipt(
+        plugin_id="bionexus-gold",
+        plugin_version="1.0.0-rc.3",
+        tool_name="scrna.pseudobulk_de",
+        request_payload={"kang_counts": "verified"},
+        response_payload={"pvalues_computed": True},
+        execution_status="SUCCESS",
+        metadata={
+            "min_replicates_per_condition": 3,
+            "confound_controls": True,
+            "sensitivity_analysis": True,
+        },
+    )
+    decision = route_scientific_intent(
+        "pseudobulk differential expression analysis",
+        research_purpose="confirmatory",
+        claim_context=ClaimClass.POPULATION_EFFECT,
+        data_metadata={"is_integer_like": True, "is_normalized": False, "conditions": 2},
+        tool_receipts=[receipt],
+    )
+    assert decision.status.value == "PERMITTED"
+    card = decision.evidence_card_template
+    assert card is not None
+    assert card.details["evidence_assessment"]["evidence_maturity"] == "ROBUST"
+    assert "backend_fidelity" in card.details["evidence_assessment"]["satisfied_factors"]
+    assert "provenance" in card.details["evidence_assessment"]["satisfied_factors"]
+    assert "sample_design" in card.details["evidence_assessment"]["satisfied_factors"]
+    assert "replication" in card.details["evidence_assessment"]["satisfied_factors"]
+    assert "confound_controls" in card.details["evidence_assessment"]["satisfied_factors"]
+    assert "sensitivity_analysis" in card.details["evidence_assessment"]["satisfied_factors"]
+    assert card.details["sufficiency"]["verdict"] == SufficiencyVerdict.WARRANTED.value
+

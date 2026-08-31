@@ -23,6 +23,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import pandas as pd
 
 from bionexus.tool_receipt import create_tool_receipt
+from bionexus.versions import VERSION
 
 
 class InstrumentType(str, enum.Enum):
@@ -59,7 +60,7 @@ class LaboratoryInstrumentGateway:
 
     def __init__(self) -> None:
         self.plugin_id = "bionexus"
-        self.plugin_version = "1.0.0-rc.3"
+        self.plugin_version = VERSION
 
     def detect_instrument_type(self, file_path: Path | str) -> Tuple[InstrumentType, str]:
         """Auto-detect instrument type and vendor model from file headers and naming."""

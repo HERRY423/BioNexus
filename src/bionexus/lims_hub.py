@@ -18,6 +18,7 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin
 
 from bionexus.tool_receipt import create_tool_receipt
+from bionexus.versions import VERSION
 
 
 class LIMSConnectorType(str, enum.Enum):
@@ -71,7 +72,7 @@ class BenchlingConnector:
     def __init__(self, config: LIMSConnectionConfig) -> None:
         self.config = config
         self.plugin_id = "bionexus"
-        self.plugin_version = "1.0.0-rc.3"
+        self.plugin_version = VERSION
 
     def format_assay_payload(
         self,
@@ -200,7 +201,7 @@ class GenericRestLIMSConnector:
     def __init__(self, config: LIMSConnectionConfig) -> None:
         self.config = config
         self.plugin_id = "bionexus"
-        self.plugin_version = "1.0.0-rc.3"
+        self.plugin_version = VERSION
 
     def sync_samples(
         self,
@@ -254,7 +255,7 @@ class C04PairingCustodianHub:
 
     def __init__(self) -> None:
         self.plugin_id = "bionexus"
-        self.plugin_version = "1.0.0-rc.3"
+        self.plugin_version = VERSION
 
     def audit_manifest(self, manifest_path: Path | str) -> Dict[str, Any]:
         """Validate C04 pairing invariants fail-closed without exposing participant identifiers."""

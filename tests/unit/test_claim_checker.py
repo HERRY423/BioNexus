@@ -83,3 +83,52 @@ def test_cli_audit_claims(capsys):
     assert rc_good == 0
     captured_good = capsys.readouterr()
     assert "[PASS]" in captured_good.out
+
+
+def test_structured_ir_causal_mechanism_audit():
+    """Verify BNS-017 structured IR catches unbacked causal assertions with actionable remedies."""
+    bad_causal = "We conclude that IFNG directly causes STAT1 phosphorylation and drives cell differentiation."
+    res = audit_prohibited_claims(bad_causal)
+    assert res.passed is False
+    assert any(
+        v.violation_type in (ClaimViolationType.UNWARRANTED_CAUSAL_MECHANISM, ClaimViolationType.CAUSAL_TREATMENT_DE_OVERCLAIM)
+        for v in res.violations
+    )
+    causal_v = [v for v in res.violations if v.violation_type == ClaimViolationType.UNWARRANTED_CAUSAL_MECHANISM]
+    if causal_v:
+        assert "perturbation" in causal_v[0].remedy.lower() or "downgrade" in causal_v[0].remedy.lower()
+
+
+def test_structured_ir_cleared_by_verified_factors():
+    """Supplying verified perturbation and confound controls factors warrants causal claims."""
+    causal_text = "We conclude that IFNG drives STAT1 activation in the analyzed cohort."
+    # Without factors -> fails
+    res_unbacked = audit_prohibited_claims(causal_text)
+    assert res_unbacked.passed is False
+
+    # With verified perturbation & confound factors -> passes
+    res_backed = audit_prohibited_claims(
+        causal_text,
+        evidence_factors=["perturbation", "confound_controls", "sample_design"],
+    )
+    assert res_backed.passed is True
+
+
+def test_structured_ir_cleared_by_tool_receipt():
+    """Supplying a verified tool execution receipt certifying perturbation clears causal claim."""
+    from bionexus.tool_receipt import create_tool_receipt
+
+    receipt = create_tool_receipt(
+        plugin_id="bionexus-gold",
+        plugin_version="1.0.0-rc.3",
+        tool_name="functional.crispr_perturbation",
+        request_payload={"target": "IFNG"},
+        response_payload={"knockout_validated": True},
+        execution_status="SUCCESS",
+        metadata={"perturbation": True, "confound_controls": True, "sample_design": True},
+    )
+
+    causal_text = "We conclude that IFNG drives STAT1 activation in the analyzed cohort."
+    res = audit_prohibited_claims(causal_text, tool_receipts=[receipt])
+    assert res.passed is True
+

@@ -44,6 +44,7 @@ from typing import Any, Dict, List, Optional, Sequence, Set, Tuple, Union
 
 from bionexus.contracts import _MATURITY_RANK, ConclusionMaturity
 from bionexus.research_purpose import (
+    OVERRIDABLE_PURPOSES,
     PURPOSE_EVIDENCE_REQUIREMENT,
     PURPOSE_EXTRA_REQUIREMENTS,
     PurposeContext,
@@ -71,22 +72,46 @@ class EvidenceFactor(str, Enum):
     PERTURBATION = "perturbation"
     TEMPORAL_EVIDENCE = "temporal_evidence"
     REFERENCE_GROUND_TRUTH = "reference_ground_truth"
+    REGULATORY_CERTIFICATION = "regulatory_certification"
+    REGULATORY_CONTEXT = "regulatory_context"
 
 
 #: Positive support ladder: reaching a maturity level requires ALL listed
 #: factors to be satisfied.  Ordered from strongest to weakest.
+#: The ladder is strictly cumulative (REPLICATED ⊃ ROBUST ⊃ SUPPORTED ⊃ PRELIMINARY).
 FACTOR_SUPPORT_LADDER: List[Tuple[ConclusionMaturity, Set[EvidenceFactor]]] = [
-    (ConclusionMaturity.REPLICATED, {EvidenceFactor.REPLICATION, EvidenceFactor.EXTERNAL_VALIDATION}),
+    (
+        ConclusionMaturity.REPLICATED,
+        {
+            EvidenceFactor.SAMPLE_DESIGN,
+            EvidenceFactor.REPLICATION,
+            EvidenceFactor.CONFOUND_CONTROLS,
+            EvidenceFactor.SENSITIVITY_ANALYSIS,
+            EvidenceFactor.EXTERNAL_VALIDATION,
+        },
+    ),
     (
         ConclusionMaturity.ROBUST,
         {
             EvidenceFactor.SAMPLE_DESIGN,
+            EvidenceFactor.REPLICATION,
             EvidenceFactor.CONFOUND_CONTROLS,
             EvidenceFactor.SENSITIVITY_ANALYSIS,
         },
     ),
-    (ConclusionMaturity.SUPPORTED, {EvidenceFactor.SAMPLE_DESIGN, EvidenceFactor.REPLICATION}),
-    (ConclusionMaturity.PRELIMINARY, {EvidenceFactor.SAMPLE_DESIGN}),
+    (
+        ConclusionMaturity.SUPPORTED,
+        {
+            EvidenceFactor.SAMPLE_DESIGN,
+            EvidenceFactor.REPLICATION,
+        },
+    ),
+    (
+        ConclusionMaturity.PRELIMINARY,
+        {
+            EvidenceFactor.SAMPLE_DESIGN,
+        },
+    ),
 ]
 
 #: Integrity prerequisites for ROBUST and above: a robust claim must rest on
@@ -134,7 +159,12 @@ class EvidenceAssessment:
 def _factor_set(factors: Sequence[Union[str, EvidenceFactor]]) -> Set[EvidenceFactor]:
     result: Set[EvidenceFactor] = set()
     for f in factors:
-        result.add(EvidenceFactor(f.value if isinstance(f, EvidenceFactor) else str(f)))
+        val = f.value if isinstance(f, EvidenceFactor) else str(f)
+        try:
+            result.add(EvidenceFactor(val))
+        except ValueError:
+            # Unrecognized/misspelled factor strings are safely ignored (fail-closed, weak evidence)
+            pass
     return result
 
 
@@ -165,20 +195,30 @@ def assess_evidence(
         break
 
     maturity = supported
-    base = base_maturity.value if isinstance(base_maturity, ConclusionMaturity) else str(base_maturity)
+    base_str = base_maturity.value if isinstance(base_maturity, ConclusionMaturity) else str(base_maturity)
+    try:
+        base_enum = ConclusionMaturity(base_str)
+    except ValueError:
+        base_enum = ConclusionMaturity.UNASSESSED
+
     # Only an actual evidence level (FRAGILE and above) can cap the
     # assessment; UNASSESSED and ABSTAIN mean "no conclusion produced", not
     # a weak evidence level.
     if (
-        base not in (ConclusionMaturity.UNASSESSED.value, ConclusionMaturity.ABSTAIN.value)
-        and _MATURITY_RANK.get(base, 0) < _MATURITY_RANK.get(maturity.value, 0)
+        base_enum not in (ConclusionMaturity.UNASSESSED, ConclusionMaturity.ABSTAIN)
+        and _MATURITY_RANK.get(base_enum.value, 0) < _MATURITY_RANK.get(maturity.value, 0)
     ):
-        maturity = ConclusionMaturity(base)
+        maturity = base_enum
 
+    # L1: Filter malformed triggers (empty strings or missing condition_id attributes)
     caps: List[str] = []
     for trigger in list(invariant_triggers) + list(warrant_triggers):
-        caps.append(getattr(trigger, "condition_id", ""))
-    if caps and _MATURITY_RANK.get(VIOLATION_MATURITY_CAP.value, 0) < _MATURITY_RANK.get(maturity.value, 0):
+        cid = getattr(trigger, "condition_id", None) or (trigger if isinstance(trigger, str) else "")
+        if isinstance(cid, str) and cid.strip():
+            caps.append(cid.strip())
+
+    # M1: Active violations cap maturity at FRAGILE, but MUST NOT erase CONFLICTED status
+    if caps and maturity != ConclusionMaturity.CONFLICTED and _MATURITY_RANK.get(VIOLATION_MATURITY_CAP.value, 0) < _MATURITY_RANK.get(maturity.value, 0):
         maturity = VIOLATION_MATURITY_CAP
 
     if caps:
@@ -204,6 +244,7 @@ def assess_evidence(
 class ClaimClass(str, Enum):
     """What the researcher wants to claim."""
 
+    UNSPECIFIED = "unspecified"
     DESCRIPTIVE = "descriptive"
     ASSOCIATION = "association"
     POPULATION_EFFECT = "population_effect"
@@ -220,11 +261,11 @@ class ClaimContext:
     """The claim under evaluation.
 
     Attributes:
-        claim_class: The epistemic class of the claim.
+        claim_class: The epistemic class of the claim. Defaults to UNSPECIFIED (fail-closed).
         statement: Free-text claim statement (audited by claim_checker).
     """
 
-    claim_class: ClaimClass = ClaimClass.DESCRIPTIVE
+    claim_class: ClaimClass = ClaimClass.UNSPECIFIED
     statement: str = ""
 
     def to_dict(self) -> Dict[str, Any]:
@@ -234,13 +275,17 @@ class ClaimContext:
 #: Minimum maturity and extra conditions each claim class demands, regardless
 #: of declared purpose.  A claim cannot cost less than its own class.
 CLAIM_REQUIREMENTS: Dict[ClaimClass, Tuple[ConclusionMaturity, List[str]]] = {
+    ClaimClass.UNSPECIFIED: (ConclusionMaturity.FRAGILE, []),
     ClaimClass.DESCRIPTIVE: (ConclusionMaturity.PRELIMINARY, []),
     ClaimClass.ASSOCIATION: (ConclusionMaturity.PRELIMINARY, []),
     ClaimClass.POPULATION_EFFECT: (ConclusionMaturity.SUPPORTED, []),
     ClaimClass.CELL_IDENTITY: (ConclusionMaturity.SUPPORTED, []),
     ClaimClass.SPATIAL_DEPENDENCY: (ConclusionMaturity.SUPPORTED, ["confound_controls"]),
     ClaimClass.MECHANISTIC: (ConclusionMaturity.ROBUST, ["confound_controls"]),
-    ClaimClass.CAUSAL: (ConclusionMaturity.SUPPORTED, ["causal_identification"]),
+    ClaimClass.CAUSAL: (
+        ConclusionMaturity.ROBUST,
+        ["causal_identification", "confound_controls"],
+    ),
     ClaimClass.PREDICTIVE: (ConclusionMaturity.ROBUST, ["external_validation"]),
     ClaimClass.CLINICAL_ACTIONABILITY: (
         ConclusionMaturity.REPLICATED,
@@ -273,8 +318,10 @@ class UseRequirement:
 
 def use_requirement_for(purpose: ResearchPurpose, claim_class: ClaimClass) -> UseRequirement:
     """Compose the requirement from the intended use and the claim class."""
-    purpose_maturity = PURPOSE_EVIDENCE_REQUIREMENT.get(purpose, ConclusionMaturity.FRAGILE)
-    claim_maturity, claim_extras = CLAIM_REQUIREMENTS[claim_class]
+    purpose_maturity = PURPOSE_EVIDENCE_REQUIREMENT.get(purpose, ConclusionMaturity.REPLICATED)
+    claim_maturity, claim_extras = CLAIM_REQUIREMENTS.get(
+        claim_class, (ConclusionMaturity.REPLICATED, [])
+    )
     required = (
         purpose_maturity
         if _MATURITY_RANK.get(purpose_maturity.value, 0) >= _MATURITY_RANK.get(claim_maturity.value, 0)
@@ -290,22 +337,151 @@ def use_requirement_for(purpose: ResearchPurpose, claim_class: ClaimClass) -> Us
 
 
 class SufficiencyVerdict(str, Enum):
-    """Is the evidence sufficient for the intended use?"""
+    """Authoritative verdict of the BioNexus Evidence Sufficiency Engine."""
 
     WARRANTED = "WARRANTED"
     WARRANTED_WITH_LIMITS = "WARRANTED_WITH_LIMITS"
     NOT_SUFFICIENT_FOR_INTENDED_USE = "NOT_SUFFICIENT_FOR_INTENDED_USE"
 
 
-#: Extra requirements that a declared evidence factor can satisfy.
+#: Extra conditions that can be satisfied by caller documentation alone
+DOCUMENTABLE_EXTRAS: Set[str] = {
+    "causal_identification",
+}
+
+#: Factor mappings for conditions that require verified empirical/evidence factors
 _EXTRA_SATISFIED_BY: Dict[str, Set[EvidenceFactor]] = {
-    "external_validation": {EvidenceFactor.EXTERNAL_VALIDATION},
     "confound_controls": {EvidenceFactor.CONFOUND_CONTROLS},
-    "causal_identification": {EvidenceFactor.PERTURBATION},
+    "external_validation": {EvidenceFactor.EXTERNAL_VALIDATION},
     "spatial_colocalization": {EvidenceFactor.SPATIAL_COLOCALIZATION},
     "ligand_receptor_inference": {EvidenceFactor.LIGAND_RECEPTOR_INFERENCE},
     "reference_ground_truth": {EvidenceFactor.REFERENCE_GROUND_TRUTH},
+    "regulatory_context": {EvidenceFactor.REGULATORY_CERTIFICATION},
 }
+
+
+def extract_evidence_factors(
+    metadata: Optional[Dict[str, Any]] = None,
+    *,
+    backend_fidelity: bool = True,
+    has_provenance: bool = True,
+    explicit_factors: Sequence[Union[str, EvidenceFactor]] = (),
+    tool_receipts: Sequence[Dict[str, Any]] = (),
+    receipt_log_path: Optional[Any] = None,
+) -> List[str]:
+    """Extract and normalize satisfied evidence factor string names from metadata,
+    explicit declarations, and verified cryptographic tool execution receipts (BNS-021).
+
+    Converts:
+    1. Cryptographic Tool Execution Receipts (`tool_receipts`, `receipt_log_path`).
+    2. Explicit factor lists (`evidence_factors`, `satisfied_factors`).
+    3. Dataset & design metadata (e.g. min_replicates_per_condition >= 2, donors_per_condition >= 2,
+       replications count, confound_controls, sensitivity_analysis, spatial coordinates, perturbation, etc.).
+    4. Verified backend fidelity & provenance indicators.
+    """
+    factors: Set[str] = set()
+
+    # 1. Extract from verified cryptographic tool receipts
+    if tool_receipts:
+        from bionexus.tool_receipt import extract_evidence_factors_from_receipt
+
+        for rcpt in tool_receipts:
+            rcpt_factors, _ = extract_evidence_factors_from_receipt(rcpt)
+            factors.update(rcpt_factors)
+
+    if receipt_log_path:
+        from bionexus.tool_receipt import extract_evidence_factors_from_receipt_log
+
+        rcpt_factors, _ = extract_evidence_factors_from_receipt_log(receipt_log_path)
+        factors.update(rcpt_factors)
+
+    for ef in explicit_factors:
+        val = ef.value if isinstance(ef, EvidenceFactor) else str(ef)
+        try:
+            factors.add(EvidenceFactor(val).value)
+        except ValueError:
+            pass
+
+    meta = dict(metadata or {})
+
+    for key in ("evidence_factors", "satisfied_factors", "declared_factors"):
+        raw_list = meta.get(key)
+        if isinstance(raw_list, (list, tuple, set)):
+            for ef in raw_list:
+                val = ef.value if isinstance(ef, EvidenceFactor) else str(ef)
+                try:
+                    factors.add(EvidenceFactor(val).value)
+                except ValueError:
+                    pass
+
+    def _is_truthy(k: str) -> bool:
+        v = meta.get(k)
+        if isinstance(v, str):
+            return v.lower() in ("true", "1", "yes")
+        return bool(v is True or v == 1)
+
+    reps = (
+        meta.get("min_replicates_per_condition")
+        or meta.get("donors_per_condition")
+        or meta.get("biological_replicates_count")
+        or meta.get("num_donors")
+        or meta.get("biological_replicates")
+        or 0
+    )
+    try:
+        reps_int = int(reps)
+    except (ValueError, TypeError):
+        reps_int = 0
+
+    if reps_int >= 2 or _is_truthy("sample_design") or _is_truthy("has_sample_design"):
+        factors.add(EvidenceFactor.SAMPLE_DESIGN.value)
+
+    if reps_int >= 2 or _is_truthy("replication") or _is_truthy("replicated") or int(meta.get("independent_replications") or 0) >= 1:
+        factors.add(EvidenceFactor.REPLICATION.value)
+
+    if _is_truthy("confound_controls") or _is_truthy("has_confound_controls") or _is_truthy("covariates_adjusted") or _is_truthy("batch_corrected"):
+        factors.add(EvidenceFactor.CONFOUND_CONTROLS.value)
+
+    if _is_truthy("sensitivity_analysis") or _is_truthy("has_sensitivity_analysis") or _is_truthy("parameter_sweep") or _is_truthy("stability_verified"):
+        factors.add(EvidenceFactor.SENSITIVITY_ANALYSIS.value)
+        factors.add(EvidenceFactor.EFFECT_STABILITY.value)
+
+    if _is_truthy("effect_stability"):
+        factors.add(EvidenceFactor.EFFECT_STABILITY.value)
+
+    if _is_truthy("external_validation") or _is_truthy("independent_validation") or _is_truthy("has_external_validation"):
+        factors.add(EvidenceFactor.EXTERNAL_VALIDATION.value)
+
+    if _is_truthy("has_spatial") or _is_truthy("has_spatial_coords") or _is_truthy("spatial_colocalization"):
+        factors.add(EvidenceFactor.SPATIAL_COLOCALIZATION.value)
+
+    if _is_truthy("ligand_receptor_inference"):
+        factors.add(EvidenceFactor.LIGAND_RECEPTOR_INFERENCE.value)
+
+    if _is_truthy("perturbation") or _is_truthy("is_perturbation"):
+        factors.add(EvidenceFactor.PERTURBATION.value)
+
+    if _is_truthy("temporal_evidence") or _is_truthy("time_series"):
+        factors.add(EvidenceFactor.TEMPORAL_EVIDENCE.value)
+
+    if _is_truthy("reference_ground_truth") or _is_truthy("clinical_ground_truth"):
+        factors.add(EvidenceFactor.REFERENCE_GROUND_TRUTH.value)
+
+    if _is_truthy("regulatory_certification") or _is_truthy("clia_cap_certified") or _is_truthy("fda_cleared"):
+        factors.add(EvidenceFactor.REGULATORY_CERTIFICATION.value)
+        factors.add(EvidenceFactor.REGULATORY_CONTEXT.value)
+
+    if _is_truthy("regulatory_context"):
+        factors.add(EvidenceFactor.REGULATORY_CONTEXT.value)
+        factors.add(EvidenceFactor.REGULATORY_CERTIFICATION.value)
+
+    if backend_fidelity or _is_truthy("backend_fidelity"):
+        factors.add(EvidenceFactor.BACKEND_FIDELITY.value)
+
+    if has_provenance or _is_truthy("provenance") or _is_truthy("has_provenance") or "bionexus_provenance" in meta:
+        factors.add(EvidenceFactor.PROVENANCE.value)
+
+    return sorted(factors)
 
 
 @dataclass
@@ -336,13 +512,25 @@ def evaluate_sufficiency(
 ) -> SufficiencyAssessment:
     """Compare evidence against the intended-use requirement.
 
-    ``documented_extras`` are extra conditions the caller documents outside
-    the factor model (e.g. a causal identification strategy, a regulatory
-    context).  ``override_acknowledged`` records that a researcher accepted
-    the insufficiency with documented limits — the verdict downgrades to
-    WARRANTED_WITH_LIMITS, the requirement itself never changes.
+    ``documented_extras`` are non-invariant extra conditions the caller documents
+    outside the factor model (e.g. a causal identification strategy).
+    Clinical regulatory context and verified factors cannot be satisfied by unverified
+    documented free-text strings alone.
+
+    ``override_acknowledged`` records that a researcher accepted the insufficiency
+    with documented limits — for overridable purposes, the verdict downgrades to
+    WARRANTED_WITH_LIMITS; for clinical or unspecified purposes, overrides are denied
+    under patient safety invariants and the verdict remains NOT_SUFFICIENT_FOR_INTENDED_USE.
     """
-    claim = claim_context or ClaimContext()
+    if isinstance(claim_context, str):
+        try:
+            claim = ClaimContext(claim_class=ClaimClass(claim_context))
+        except ValueError:
+            claim = ClaimContext(claim_class=ClaimClass.UNSPECIFIED)
+    elif isinstance(claim_context, ClaimClass):
+        claim = ClaimContext(claim_class=claim_context)
+    else:
+        claim = claim_context or ClaimContext()
     requirement = use_requirement_for(purpose_context.purpose, claim.claim_class)
     factors = _factor_set(evidence.satisfied_factors)
     documented = set(documented_extras)
@@ -350,21 +538,35 @@ def evaluate_sufficiency(
     gaps: List[str] = []
     if purpose_context.purpose == ResearchPurpose.UNSPECIFIED:
         gaps.append("intended_use_undeclared")
+    if claim.claim_class == ClaimClass.UNSPECIFIED:
+        gaps.append("claim_class_undeclared")
+    if evidence.evidence_maturity == ConclusionMaturity.CONFLICTED.value:
+        gaps.append("evidence_conflicted: contradictory findings across alternative methods or benchmarks")
 
     if _MATURITY_RANK.get(evidence.evidence_maturity, 0) < _MATURITY_RANK.get(requirement.required_maturity.value, 0):
         gaps.append(f"evidence_maturity {evidence.evidence_maturity} < required {requirement.required_maturity.value}")
 
     for extra in requirement.extra_requirements:
-        if extra in documented:
+        # Only explicitly documentable conditions may be satisfied by caller documentation
+        if extra in documented and extra in DOCUMENTABLE_EXTRAS:
             continue
         satisfied_by = _EXTRA_SATISFIED_BY.get(extra)
-        if satisfied_by is not None and satisfied_by.issubset(factors):
+        if satisfied_by is not None and (
+            satisfied_by.issubset(factors)
+            or (
+                extra == "regulatory_context"
+                and (
+                    EvidenceFactor.REGULATORY_CERTIFICATION in factors
+                    or EvidenceFactor.REGULATORY_CONTEXT in factors
+                )
+            )
+        ):
             continue
         gaps.append(f"missing_required_condition:{extra}")
 
     if not gaps:
         verdict = SufficiencyVerdict.WARRANTED
-    elif override_acknowledged:
+    elif override_acknowledged and purpose_context.purpose in OVERRIDABLE_PURPOSES:
         verdict = SufficiencyVerdict.WARRANTED_WITH_LIMITS
     else:
         verdict = SufficiencyVerdict.NOT_SUFFICIENT_FOR_INTENDED_USE
