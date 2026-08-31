@@ -887,7 +887,7 @@ def handle_bench(args: argparse.Namespace) -> int:
         return 0 if report.valid else 1
     elif action == "validate-trap":
         import yaml
-        from pathlib import Path
+
         from evals.biofailurebench import validate_single_trap
 
         trap_path = Path(args.file)
@@ -914,7 +914,6 @@ def handle_bench(args: argparse.Namespace) -> int:
                 print(f"  * {err}")
             return 1
     elif action == "template":
-        from pathlib import Path
         template_file = Path(__file__).resolve().parents[2] / "evals" / "datasets" / "templates" / "FAILURE_TRAP.template.yaml"
         if template_file.is_file():
             content = template_file.read_text(encoding="utf-8")
@@ -938,7 +937,7 @@ def handle_bench(args: argparse.Namespace) -> int:
         print("\n=== BioFailureBench Scientific Data Flywheel & Failure Taxonomy v1 ===\n")
         print(f"**Total Traps**: {report.total_cases} ({report.gating_cases} Gating, {report.frontier_cases} Frontier)")
         print(f"**Taxonomy Modes**: {tax_v1['total_modes']} modes ({tax_v1['summary']['total_benchmark_case_links']} total benchmark links)")
-        print(f"**Data Flywheel Moat Depth**: 100% full coverage across all 12 failure modes\n")
+        print("**Data Flywheel Moat Depth**: 100% full coverage across all 12 failure modes\n")
         print("| Mode | Name | Category | Severity | Gating Traps | Total Linked |")
         print("|---|---|---|---|---|---|")
         for m in tax_v1["modes"]:
