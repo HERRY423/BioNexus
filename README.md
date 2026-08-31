@@ -380,6 +380,40 @@ tool registration when dedicated ecosystem plugins are installed.
 
 ---
 
+## 🪤 BioFailureBench: The Scientific Failure Corpus & Data Flywheel (BNS-014)
+
+Functional plugins, prompt templates, and agent tool wrappers are easily duplicated. An **expert-annotated, ground-truth biological failure corpus with deterministic traps and fail-closed invariants** is a defensible scientific evaluation and data flywheel moat.
+
+BioNexus formalizes **Failure Taxonomy v1** (`bionexus.failure_taxonomy.v1`) across 12 core failure modes (`BN-F001` .. `BN-F012`) and links them to **38 canonical seed traps** (`BF-001` .. `BF-038`) across 4 categories:
+
+- **`DATA_INTEGRITY`**: Assay-state confusion (`BN-F001`), Identifier mismatches (`BN-F004`), Cross-database contradictions (`BN-F008`), Missing spatial provenance (`BN-F009`).
+- **`INFERENTIAL_DESIGN`**: Pseudoreplication (`BN-F002`), Missing FDR control (`BN-F005`), Invalid model assumptions (`BN-F006`), Parameter instability (`BN-F007`).
+- **`SEMANTIC_CLAIM`**: Unsupported annotations (`BN-F003`), Claim inflation (`BN-F011`), Unexecuted maturity claims (`BN-F012`).
+- **`SYSTEM_DEGRADATION`**: Backend masquerading (`BN-F010`).
+
+### Open Community Flywheel & Validation
+
+Scientists can lint and contribute new failure traps using standardized JSON Schema and CLI validation:
+
+```bash
+# Display corpus coverage and data flywheel metrics
+bionexus bench stats
+
+# Validate entire corpus integrity and taxonomy linkage
+bionexus bench validate
+
+# Output community trap submission template
+bionexus bench template -o new_trap.yaml
+
+# Validate a community trap submission file
+bionexus bench validate-trap new_trap.yaml
+
+# Inspect Capability x Failure Mode mapping matrix
+bionexus failures matrix
+```
+
+---
+
 ## 🌐 Standards & Interoperability (BNS-016)
 
 BioNexus does **not** invent a proprietary research-data standard. Run capsules and Claim–Evidence Ledgers export through published community standards (`bionexus interop ro-crate|bco|wfrun-crate|check`):
@@ -806,7 +840,7 @@ BioNexus is governed by a normative, machine-enforced scientific contract publis
 
 **Flagship certification track (BNS-015)**: *three CERTIFIED capabilities with independent external validation outweigh ten self-tested certifications.* The flagship set concentrates effort on the three highest-frequency failure surfaces — `scrna.pseudobulk_de` (cell ≠ biological replicate), `scrna.annotation_evidence` (how much evidence backs a cell-type label), and `spatial.inference_validity` (can a spatial conclusion survive its alternative explanations). The four external criteria (public dataset, independent ground truth, cross-host test, external reviewer) cannot be satisfied by the implementer alone — that is the point.
 
-**Independent Validation Network (BNS-023)**: the flagship external-validation quota — **≥ 3 independent datasets × ≥ 2 external labs × ≥ 1 non-author reviewer per capability** — is computed from hash-verified artifacts via `bionexus ivn status`, never asserted. Annotation evidence must span cross-disease / cross-tissue / cross-technology contexts; spatial evidence must carry independent pathology or segmentation truth; threshold/calibration profiles authorize a positive warrant only when frozen on held-out contexts (`bionexus ivn freeze-profile` / `authorize`). Every gate fails closed: author-associated datasets, registered-but-unverified frameworks and reviewer slots, tampered artifacts, and unfrozen profiles never count. Protocol, current assessed gaps, and OPEN_QUESTIONS alignment: [`docs/independent-validation-network.md`](docs/independent-validation-network.md).
+**Independent Validation Network (BNS-023)**: the flagship external-validation quota — **≥ 3 independent datasets × ≥ 2 external labs × ≥ 1 non-author reviewer per capability** — is computed from hash-verified artifacts via `bionexus ivn status` and published as an **open, append-only, signed public ledger portal (`docs/ivn/index.html` on GitHub Pages)**. Publishing an honest, unfilled ledger with standardized submission templates is our active external recruitment engine ("空账本 + 明确的填法，本身就是对外招募工具") and the only scientific moat that automatically deepens over time. Annotation evidence must span cross-disease / cross-tissue / cross-technology contexts; spatial evidence must carry independent pathology or segmentation truth; threshold/calibration profiles authorize a positive warrant only when frozen on held-out contexts (`bionexus ivn freeze-profile` / `authorize`). Every gate fails closed: author-associated datasets, registered-but-unverified frameworks and reviewer slots, tampered artifacts, and unfrozen profiles never count. Protocol, public ledger, and RFV recruitment guides: [`docs/independent-validation-network.md`](docs/independent-validation-network.md).
 
 **Scientific failure taxonomy** (`bionexus failures list`): twelve failure modes (BN-F001 assay-state confusion … BN-F012 unexecuted maturity claim), each with definition, detection rule, required fail-closed behavior, acceptable degradation, and benchmark coverage. Since BioFailureBench, **all twelve modes carry wired detection and passing benchmark traps** — the three formerly-open gaps (BN-F004 identifier mismatch, BN-F005 missing FDR, BN-F008 cross-database contradiction) are closed. This ontology is BioNexus's durable asset.
 

@@ -32,22 +32,22 @@ benchmark coverage cannot.
   mode with no exercisable case MUST be flagged `open_gap` and tracked in the
   frontier philosophy (honest gaps, never hidden).
 
-## 3. Current taxonomy (summary)
+## 3. Current taxonomy (summary v1 - `bionexus.failure_taxonomy.v1`)
 
-| ID | Name | Required behavior |
-|---|---|---|
-| BN-F001 | Assay-state confusion | REFUSE |
-| BN-F002 | Pseudoreplication | REFUSE |
-| BN-F003 | Unsupported annotation | BLOCK CLAIM |
-| BN-F004 | Identifier mismatch | REFUSE (wired: router trap screen, BF-008/BF-025) |
-| BN-F005 | Missing multiple-testing correction | CAP EVIDENCE LEVEL (wired: statistical warrant, BF-005) |
-| BN-F006 | Invalid model assumption | BLOCK CLAIM |
-| BN-F007 | Parameter instability | CAP EVIDENCE LEVEL (FRAGILE) |
-| BN-F008 | Cross-database contradiction | CONFLICTED (wired: router trap screen, BF-016) |
-| BN-F009 | Missing spatial provenance | REFUSE / DEGRADE WITH DISCLOSURE |
-| BN-F010 | Backend degradation masquerading | DEGRADE WITH DISCLOSURE |
-| BN-F011 | Claim inflation | BLOCK CLAIM |
-| BN-F012 | Unexecuted maturity claim | CAP EVIDENCE LEVEL |
+| ID | Name | Category | Severity | Required behavior |
+|---|---|---|---|---|
+| BN-F001 | Assay-state confusion | `DATA_INTEGRITY` | `CRITICAL` | REFUSE |
+| BN-F002 | Pseudoreplication | `INFERENTIAL_DESIGN` | `CRITICAL` | REFUSE |
+| BN-F003 | Unsupported annotation | `SEMANTIC_CLAIM` | `HIGH` | BLOCK CLAIM |
+| BN-F004 | Identifier mismatch | `DATA_INTEGRITY` | `CRITICAL` | REFUSE (wired: router trap screen, BF-008/BF-025) |
+| BN-F005 | Missing multiple-testing correction | `INFERENTIAL_DESIGN` | `HIGH` | CAP EVIDENCE LEVEL (wired: statistical warrant, BF-005) |
+| BN-F006 | Invalid model assumption | `INFERENTIAL_DESIGN` | `CRITICAL` | BLOCK CLAIM |
+| BN-F007 | Parameter instability | `INFERENTIAL_DESIGN` | `MEDIUM` | CAP EVIDENCE LEVEL (FRAGILE) |
+| BN-F008 | Cross-database contradiction | `DATA_INTEGRITY` | `HIGH` | CONFLICTED (wired: router trap screen, BF-016) |
+| BN-F009 | Missing spatial provenance | `DATA_INTEGRITY` | `CRITICAL` | REFUSE / DEGRADE WITH DISCLOSURE |
+| BN-F010 | Backend degradation masquerading | `SYSTEM_DEGRADATION` | `CRITICAL` | DEGRADE WITH DISCLOSURE |
+| BN-F011 | Claim inflation | `SEMANTIC_CLAIM` | `CRITICAL` | BLOCK CLAIM |
+| BN-F012 | Unexecuted maturity claim | `SEMANTIC_CLAIM` | `HIGH` | CAP EVIDENCE LEVEL |
 
 ## 4. Runtime integration
 
@@ -58,7 +58,12 @@ benchmark coverage cannot.
   for capability certification (BNS-CF criterion 4): a capability is only
   VALIDATED when its failure modes are linked with detection rules.
 - **BNS-FT-008** Benchmark suites SHOULD grow by attaching cases to open-gap
-  failure modes; closing an open gap is a changelog-recorded event.
+  failure modes, maintaining the data flywheel moat.
+- **BNS-FT-009** Failure modes MUST be categorized into one of 4 canonical categories
+  (`DATA_INTEGRITY`, `INFERENTIAL_DESIGN`, `SEMANTIC_CLAIM`, `SYSTEM_DEGRADATION`) and
+  assigned an epistemic severity (`CRITICAL`, `HIGH`, `MEDIUM`).
+- **BNS-FT-010** Community contributions of failure modes and traps MUST adhere to
+  the formal JSON schema `spec/schemas/failure_trap.schema.json` and pass `bionexus bench validate-trap`.
 
 ## 5. Conformance verification
 

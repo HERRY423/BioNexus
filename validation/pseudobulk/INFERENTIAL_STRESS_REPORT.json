@@ -9,7 +9,7 @@
   "provenance": {
     "data_source": "GEO GSE96583 (Kang et al. 2018, Nat Biotechnol doi:10.1038/nbt.4042)",
     "download_date": "2026-08-19T00:00:00+00:00",
-    "commit_sha": "db2444a706cd93702745c7eef238d2057e8206a4",
+    "commit_sha": "671d0afba93fc294d03935ac57d26c9d34e66544",
     "git_dirty": false,
     "environment_lockfile_hashes": {
       "pyproject.toml": "772fb5490fe7ca624de747e378cc10a9810fdcd9a07ad4eb5c5abf0a55c477ba",
@@ -30,7 +30,7 @@
     },
     "repository_dirty_at_execution": false,
     "validation_source_dirty": false,
-    "source_snapshot_sha256": "33351ca384dc3558340b32dce9cc3f9d37c8b9dc66b258c4c8d6723fd5357e36"
+    "source_snapshot_sha256": "8280113f74d78d0d7b6a1800409a89533618b94e59d851aad3316ce4a0aa1ba0"
   },
   "timestamp": "2026-08-31T02:48:56.432353+00:00",
   "elapsed_seconds": 48.99,

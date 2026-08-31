@@ -119,12 +119,50 @@ def test_classify_violation_signatures():
 
 
 def test_failures_cli(capsys):
-    """CLI exposes the taxonomy: list + show."""
+    """CLI exposes the taxonomy: list + show + matrix + taxonomy."""
     assert cli_main(["failures", "list"]) == 0
     out = capsys.readouterr().out
     assert "BN-F001" in out
+    assert "DATA_INTEGRITY" in out
     assert "Open gaps (no benchmark coverage yet):" in out  # honest even when empty
     assert cli_main(["failures", "show", "BN-F002"]) == 0
     out = capsys.readouterr().out
     assert "Pseudoreplication" in out and "Detection rule" in out
     assert cli_main(["failures", "show", "BN-F999"]) == 1
+    _ = capsys.readouterr()
+
+    assert cli_main(["failures", "matrix"]) == 0
+    matrix_out = capsys.readouterr().out
+    assert "scrna.pseudobulk_de" in matrix_out
+    assert "BN-F001" in matrix_out
+
+    assert cli_main(["failures", "taxonomy"]) == 0
+    tax_out = capsys.readouterr().out
+    assert "bionexus.failure_taxonomy.v1" in tax_out
+
+
+def test_taxonomy_v1_schema_and_categories():
+    """Taxonomy v1 schema, categories, severities, and matrix must be well-formed."""
+    from bionexus.failures import (
+        TAXONOMY_SCHEMA_VERSION,
+        failure_modes_matrix,
+        get_taxonomy_v1,
+    )
+
+    assert TAXONOMY_SCHEMA_VERSION == "bionexus.failure_taxonomy.v1"
+    tax = get_taxonomy_v1()
+    assert tax["schema_version"] == "bionexus.failure_taxonomy.v1"
+    assert tax["total_modes"] == 12
+    assert "DATA_INTEGRITY" in tax["categories"]
+    assert "INFERENTIAL_DESIGN" in tax["categories"]
+    assert "SEMANTIC_CLAIM" in tax["categories"]
+    assert "SYSTEM_DEGRADATION" in tax["categories"]
+
+    for m in FAILURE_TAXONOMY.values():
+        assert m.category in ("DATA_INTEGRITY", "INFERENTIAL_DESIGN", "SEMANTIC_CLAIM", "SYSTEM_DEGRADATION")
+        assert m.severity in ("CRITICAL", "HIGH", "MEDIUM")
+
+    mat = failure_modes_matrix()
+    assert "scrna.pseudobulk_de" in mat
+    assert mat["scrna.pseudobulk_de"]["failure_mode_count"] >= 6
+

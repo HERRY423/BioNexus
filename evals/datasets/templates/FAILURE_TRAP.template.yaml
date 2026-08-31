@@ -1,0 +1,29 @@
+# ==============================================================================
+# BioFailureBench: Community Failure Trap Submission Template (BNS-014 / BNS-011)
+#
+# INSTRUCTIONS FOR CONTRIBUTORS:
+# 1. Fill out all 8 required fields below.
+# 2. Assign the appropriate Failure Taxonomy v1 ID (BN-F001 .. BN-F012).
+# 3. Test locally using:
+#      bionexus bench validate-trap <this_file.yaml>
+# 4. Submit via GitHub Issue ("BioFailureBench Trap Submission") or Pull Request.
+# ==============================================================================
+
+- id: BF-042
+  category: scientific_semantics
+  prompt: "Compute Moran's I spatial autocorrelation on my Visium dataset, but note all spatial spot coordinates are scaled between 0.0 and 1.0 without physical micron aspect ratio preservation."
+  expected_status: ABSTAIN
+  expected_capability: spatial.morans_svg
+  data_metadata:
+    n_spatial_spots: 500
+    is_aspect_ratio_distorted: true
+  expected_violations:
+    - "aspect ratio"
+  required_remedies:
+    - "physical coordinates"
+  allowed_computation: "Topological neighborhood graphs with explicit metric distortion caveat"
+  forbidden_claim: "Physical spatial variable gene statistics from distorted coordinate geometry"
+  failure_mode: BN-F009
+  reference: "BNS-II spatial provenance invariant; Squidpy spatial coordinates standard"
+  description: "TRAP: distorted-spatial-aspect-ratio. Spatial coordinates have anisotropic scaling, corrupting Euclidean distance thresholds in spatial KNN graph construction."
+  known_limitation: false

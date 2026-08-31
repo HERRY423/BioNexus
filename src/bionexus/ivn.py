@@ -65,6 +65,8 @@ __all__ = [
     "evaluate_network",
     "open_questions_alignment",
     "verify_registry_integrity",
+    "generate_merkle_root",
+    "render_public_ledger_html",
 ]
 
 IVN_SCHEMA_VERSION = "bionexus.ivn.registry.v1"
@@ -1164,3 +1166,29 @@ def verify_registry_integrity(
         "drift": drift,
         "integrity": "PASS" if not drift else "FAIL",
     }
+
+
+def generate_merkle_root(registry: IVNRegistry) -> str:
+    """Compute a deterministic Merkle-style root hash over all registry entities."""
+    from bionexus.ivn_ledger_page import generate_merkle_root as _gen_root
+
+    return _gen_root(registry)
+
+
+def render_public_ledger_html(
+    registry: IVNRegistry,
+    *,
+    network_assessment: Optional[Mapping[str, Any]] = None,
+    repo_root: Optional[Path] = None,
+    custom_title: str = "BioNexus Independent Validation Network (IVN) — Public Evidence Ledger",
+) -> str:
+    """Render a standalone, zero-dependency HTML document representing the IVN Public Ledger."""
+    from bionexus.ivn_ledger_page import render_public_ledger_html as _render_html
+
+    return _render_html(
+        registry,
+        network_assessment=network_assessment,
+        repo_root=repo_root,
+        custom_title=custom_title,
+    )
+

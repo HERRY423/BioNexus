@@ -94,6 +94,49 @@ def test_bench_cli(capsys):
     assert "Integrity: VALID" in out
     assert "bionexus eval --suite biofailurebench" in out
 
+    assert cli_main(["bench", "stats"]) == 0
+    stats_out = capsys.readouterr().out
+    assert "Total Traps" in stats_out
+    assert "Data Flywheel Moat Depth" in stats_out
+    assert "BN-F001" in stats_out
+
+    template_path = _REPO_ROOT / "evals" / "datasets" / "templates" / "FAILURE_TRAP.template.yaml"
+    assert template_path.is_file()
+    assert cli_main(["bench", "validate-trap", str(template_path)]) == 0
+    trap_val_out = capsys.readouterr().out
+    assert "VALID and conforms" in trap_val_out
+
+    assert cli_main(["bench", "template"]) == 0
+    tpl_out = capsys.readouterr().out
+    assert "BF-" in tpl_out
+
+
+def test_validate_single_trap():
+    from evals.biofailurebench import validate_single_trap
+
+    valid_trap = {
+        "id": "BF-999",
+        "category": "refusal",
+        "prompt": "Run DESeq2 on continuous normalized matrix",
+        "expected_status": "ABSTAIN",
+        "expected_capability": "scrna.pseudobulk_de",
+        "data_metadata": {"is_normalized": True},
+        "required_remedies": ["raw integer counts"],
+        "allowed_computation": "None",
+        "forbidden_claim": "DE from normalized matrix",
+        "failure_mode": "BN-F001",
+        "reference": "BNS-II-002",
+        "description": "TRAP: continuous-matrix-passed-to-count-model",
+    }
+    valid, errors = validate_single_trap(valid_trap)
+    assert valid is True
+    assert errors == []
+
+    invalid_trap = {"id": "BF-998"}
+    valid, errors = validate_single_trap(invalid_trap)
+    assert valid is False
+    assert len(errors) > 0
+
 
 def test_corpus_file_is_wired_into_eval_suites():
     """The corpus path is a standard eval dataset file (host-agnostic)."""
@@ -101,3 +144,4 @@ def test_corpus_file_is_wired_into_eval_suites():
     assert p.is_file()
     assert p.parent == (p.parent)  # datasets dir
     assert any(c.id.startswith("BF-") for c in load_eval_cases(suite=str(p.stem)))
+

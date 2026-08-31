@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bionexus.org/schemas/failure_trap.schema.json",
+  "title": "BioFailureBench Scientific Failure Trap Schema (BNS-014 / BNS-011)",
+  "description": "Schema definition for community-submitted scientific failure traps in BioFailureBench.",
+  "type": "object",
+  "required": [
+    "id",
+    "prompt",
+    "expected_status",
+    "data_metadata",
+    "required_remedies",
+    "allowed_computation",
+    "forbidden_claim",
+    "failure_mode",
+    "reference",
+    "description"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^BF-[0-9]{3}$",
+      "description": "Unique, immutable trap identifier (e.g. BF-042)."
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "refusal",
+        "scientific_semantics",
+        "capability_claim",
+        "adversarial",
+        "backend_failure",
+        "routing"
+      ],
+      "default": "scientific_semantics",
+      "description": "Evaluation benchmark category."
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 10,
+      "description": "The user query / analytical request containing the hidden scientific flaw."
+    },
+    "expected_status": {
+      "type": "string",
+      "enum": [
+        "PERMITTED",
+        "PERMITTED_WITH_LIMITS",
+        "NEEDS_DATA",
+        "ABSTAIN",
+        "DEGRADED_ADVISORY"
+      ],
+      "description": "Authoritative routing / fail-closed verdict expected from BioNexus."
+    },
+    "expected_capability": {
+      "type": "string",
+      "description": "The target capability ID (e.g. scrna.pseudobulk_de, spatial.morans_svg, variant.acmg_classification)."
+    },
+    "expected_maturity": {
+      "type": "string",
+      "enum": [
+        "UNASSESSED",
+        "PRELIMINARY",
+        "FRAGILE",
+        "SUPPORTED",
+        "ROBUST",
+        "REPLICATED",
+        "TENTATIVE",
+        "ABSTAIN"
+      ],
+      "description": "Expected synthesized conclusion maturity (if PERMITTED)."
+    },
+    "data_metadata": {
+      "type": "object",
+      "description": "Input data context metadata (replicates, coordinate variance, normalization state, etc.)."
+    },
+    "expected_violations": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Substrings expected in the decision violation list."
+    },
+    "required_remedies": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Substrings expected in the actionable scientific remedies."
+    },
+    "allowed_computation": {
+      "type": "string",
+      "minLength": 5,
+      "description": "Exact description of what computation remains scientifically legal under this flaw."
+    },
+    "forbidden_claim": {
+      "type": "string",
+      "minLength": 5,
+      "description": "The scientific claim that is explicitly blocked and forbidden."
+    },
+    "failure_mode": {
+      "type": "string",
+      "pattern": "^(BN-F00[1-9]|BN-F01[0-2]|NONE)$",
+      "description": "The failure mode ID in Failure Taxonomy v1 (BN-F001..BN-F012, or NONE for positive controls)."
+    },
+    "reference": {
+      "type": "string",
+      "minLength": 5,
+      "description": "Peer-reviewed literature citation or standard operating procedure justifying the ground truth."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Description of the trap prefixed with 'TRAP:' (or 'CONTROL:' for positive controls, 'FRONTIER TRAP:' for known limitations)."
+    },
+    "known_limitation": {
+      "type": "boolean",
+      "default": false,
+      "description": "Set to true if this trap represents a known frontier limitation that is not yet deterministic."
+    }
+  },
+  "additionalProperties": true
+}

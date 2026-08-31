@@ -1,12 +1,19 @@
 {
   "schema_version": "bionexus.ivn.registry.v1",
-  "generated_at": "2026-08-31T02:51:29+00:00",
+  "generated_at": "2026-08-31T11:25:12+00:00",
   "requirements": {},
   "author_roster": [
     {
       "name": "HERRY423",
       "identifiers": [
         "z1326434525@gmail.com"
+      ]
+    },
+    {
+      "name": "Zhang1178",
+      "identifiers": [
+        "1326434525@qq.com",
+        "Zhang1178@users.noreply.github.com"
       ]
     }
   ],
@@ -45,7 +52,7 @@
       "preregistration_path": "validation/pseudobulk/studies/BN-PB-IV-004/PREREGISTRATION.json",
       "report_path": "validation/pseudobulk/studies/BN-PB-IV-004/REPORT.json",
       "status": "VERIFIED",
-      "notes": "Preregistration-locked blinded analysis; whole-PBMC prospective cohort concordance 0.5532 < 0.65, frozen as negative_result. Data collected at an independent laboratory, but the blinded analysis was executed by the BioNexus team, so this is dataset evidence only — no external-lab quota credit.",
+      "notes": "Preregistration-locked blinded analysis; whole-PBMC prospective cohort concordance 0.5532 < 0.65, frozen as negative_result. Data collected at an independent laboratory, but the blinded analysis was executed by the BioNexus team, so this is dataset evidence only \u2014 no external-lab quota credit.",
       "preregistration_sha256": "43091d359320611f07bdda0b5815f8e2318020c3aee7e2af170042f33b49e308",
       "report_sha256": "19a6e32f9ec668b7e622b180dd905eb799c8a307a0091ae053225d982bc3f0e4"
     },
@@ -85,7 +92,7 @@
       "status": "VERIFIED",
       "notes": "All endpoints passed but maximum_maturity FRAGILE (independent_ground_truth false): counts as an executed independent dataset, not as blinding or truth evidence.",
       "preregistration_sha256": "00a645c983e23283ecaaf3593b0b742ad6e9a63844cf673135e3d312a2fdb88f",
-      "report_sha256": "d3880c36f804c9e48322032501c472cafedd717b6ff7bcf11a05c8f13569a1fd"
+      "report_sha256": "94dee8a7e5af252e6ebbf0996ba89aff2994e3db4e28363682336d6111b8a4b5"
     },
     {
       "dataset_id": "BN-ANN-IV-003",
@@ -109,7 +116,7 @@
     {
       "dataset_id": "BN-SP-IV-001",
       "capability_id": "spatial.inference_validity",
-      "title": "Xenium V1 human kidney tiny — real-instrument technical acceptance",
+      "title": "Xenium V1 human kidney tiny \u2014 real-instrument technical acceptance",
       "source_uri": "https://www.10xgenomics.com Xenium_V1_Protein_Human_Kidney_tiny_outs",
       "accession": "",
       "disease": "non_diseased_reference",
@@ -131,7 +138,7 @@
       "status": "VERIFIED",
       "notes": "REAL_INSTRUMENT_TECHNICAL_ACCEPTANCE on a tiny instrument sample; public_reference_dataset false and NO independent pathology/segmentation truth yet, so it does not count toward the spatial independent-dataset quota.",
       "preregistration_sha256": "5fd7ec8b5302d7697755d4aba1d97da77da9eec501b1b3645a3f718bfadfdded",
-      "report_sha256": "caccfe314bfc124e0e536d0ffda53d4b9a903c6c9b1283190b97bc4133ec50af"
+      "report_sha256": "2ffd0f9282dd22450327530bf77504da766baf62d5d982e538d4d9442494603a"
     }
   ],
   "lab_studies": [],

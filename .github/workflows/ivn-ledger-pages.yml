@@ -1,0 +1,81 @@
+name: IVN Public Ledger & GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+    tags: ["v*"]
+    paths:
+      - "validation/ivn/**"
+      - "src/bionexus/ivn*"
+      - "docs/ivn/**"
+      - "docs/independent-validation-network.md"
+      - ".github/workflows/ivn-ledger-pages.yml"
+  pull_request:
+    branches: [main, master]
+    paths:
+      - "validation/ivn/**"
+      - "src/bionexus/ivn*"
+      - "docs/ivn/**"
+      - "docs/independent-validation-network.md"
+      - ".github/workflows/ivn-ledger-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-verify-ledger:
+    name: Verify & Build IVN Public Ledger
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Verify IVN Registry Cryptographic Integrity (Drift Check)
+        run: |
+          python -m bionexus.cli ivn verify
+
+      - name: Check IVN Status & Quotas
+        run: |
+          python -m bionexus.cli ivn status
+
+      - name: Build Public Ledger HTML
+        run: |
+          mkdir -p public
+          python -m bionexus.cli ivn build-ledger --output public/index.html
+
+      - name: Upload Pages Artifact
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public/
+
+  deploy-pages:
+    name: Deploy to GitHub Pages
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    needs: build-and-verify-ledger
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -39,18 +39,18 @@ def source_snapshots(obj: any) -> set[str]:
 
 def sync_nested_provenance(obj: any, commit_sha: str, snapshot: str, *, update_commit: bool) -> None:
     if isinstance(obj, dict):
-        for k, v in obj.items():
+        for k, v in list(obj.items()):
             if k == 'source_snapshot_sha256':
                 obj[k] = snapshot
             elif k == 'commit_sha' and update_commit:
                 obj[k] = commit_sha
             elif k in ('git_dirty', 'repository_dirty_at_execution', 'validation_source_dirty'):
                 obj[k] = False
-            elif k in ('generator_version', 'project_version'):
+            elif k in ('generator_version', 'project_version', 'target_release_candidate', 'certification_version'):
                 obj[k] = VERSION
             elif k == 'reason' and isinstance(v, str) and 'version 1.0.0-rc' in v:
                 obj[k] = re.sub(r'version 1\.0\.0-rc\.\d+', f'version {VERSION}', v)
-            else:
+            if isinstance(v, (dict, list)):
                 sync_nested_provenance(v, commit_sha, snapshot, update_commit=update_commit)
     elif isinstance(obj, list):
         for item in obj:

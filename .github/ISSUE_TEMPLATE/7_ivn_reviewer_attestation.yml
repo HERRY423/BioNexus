@@ -1,0 +1,96 @@
+name: 🔬 IVN Track 3: Non-Author Reviewer Attestation
+description: Submit a blinded peer review evaluation and scientific attestation for a BioNexus capability (BNS-023).
+title: "[IVN-Review]: "
+labels: ["ivn", "reviewer-attestation", "bns-023"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## IVN Track 3: Blinded Non-Author Peer Review (BNS-023)
+        BioNexus requires **>= 1 verified non-author reviewer** per flagship capability.
+        To qualify:
+        - The reviewer must **not** appear on the BioNexus author roster.
+        - The review must have been conducted under **blinded** evaluation conditions.
+        - Must declare a formal verdict (`ENDORSED`, `ENDORSED_WITH_LIMITS`, or `CHALLENGED`).
+        - Must record a unique attestation ID and hash-bound review artifact.
+  - type: dropdown
+    id: capability_id
+    attributes:
+      label: Capability Under Review
+      options:
+        - "scrna.pseudobulk_de"
+        - "scrna.annotation_evidence"
+        - "spatial.inference_validity"
+    validations:
+      required: true
+  - type: input
+    id: subject_id
+    attributes:
+      label: Target Study / Cohort ID
+      description: The study or dataset ID evaluated (e.g. BN-PB-IV-002, BN-ANN-IV-001).
+      placeholder: "e.g. BN-PB-IV-002"
+    validations:
+      required: true
+  - type: input
+    id: reviewer_name_affil
+    attributes:
+      label: Reviewer Name and Institutional Affiliation
+      placeholder: "Dr. Jane Doe, Department of Biostatistics, ..."
+    validations:
+      required: true
+  - type: dropdown
+    id: verdict
+    attributes:
+      label: Review Verdict
+      options:
+        - "ENDORSED"
+        - "ENDORSED_WITH_LIMITS"
+        - "CHALLENGED"
+    validations:
+      required: true
+  - type: checkboxes
+    id: declarations
+    attributes:
+      label: Epistemic & Blinded Review Declarations
+      options:
+        - label: "I formally declare that I am not a BioNexus core author or contributor (declared_non_author: true)."
+          required: true
+        - label: "This evaluation was conducted with blinded access to study artifacts (blinded: true)."
+          required: true
+  - type: textarea
+    id: review_summary
+    attributes:
+      label: Review Summary & Attestation Rationale
+      description: Detailed assessment of statistical validity, replicate handling, and reproducibility.
+      placeholder: "I reviewed the preregistered hypotheses and differential expression results..."
+    validations:
+      required: true
+  - type: input
+    id: attestation_id
+    attributes:
+      label: Unique Attestation ID
+      placeholder: "e.g. ATTEST-2026-PB-001"
+    validations:
+      required: true
+  - type: textarea
+    id: json_payload
+    attributes:
+      label: INDEPENDENT_REVIEW.json Payload
+      description: Formatted JSON payload conforming to validation/ivn/templates/INDEPENDENT_REVIEW.template.json.
+      placeholder: |
+        {
+          "review_id": "BN-IVN-REV-001",
+          "capability_id": "scrna.pseudobulk_de",
+          "subject_id": "BN-PB-IV-002",
+          "reviewer_id": "rev-jdoe",
+          "reviewer_name": "Dr. Jane Doe",
+          "affiliation": "...",
+          "verdict": "ENDORSED_WITH_LIMITS",
+          "blinded": true,
+          "declared_non_author": true,
+          "attestation_id": "ATTEST-2026-PB-001",
+          "review_path": "validation/ivn/reviews/BN-IVN-REV-001/REVIEW.md",
+          "review_sha256": "..."
+        }
+    validations:
+      required: true

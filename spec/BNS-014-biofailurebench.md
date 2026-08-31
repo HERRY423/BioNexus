@@ -57,6 +57,32 @@ run the identical suite (`bionexus eval --suite biofailurebench`).
   same hidden flaw under different wording (each trap teaches a distinct
   detection). Contributors SHOULD document the detection a new trap teaches;
   trivial rewordings of existing traps MAY be rejected in review.
+- **BNS-BF-010** Community submissions MUST validate against the formal JSON Schema
+  `spec/schemas/failure_trap.schema.json` via `bionexus bench validate-trap <file.yaml>`,
+  carry non-empty input metadata, and declare an explicit Failure Taxonomy v1 ID.
+
+## 3. Tooling & CLI Integration
+
+```bash
+# Validate corpus integrity and taxonomy linkage
+bionexus bench validate
+
+# Output community trap submission template
+bionexus bench template -o my_trap.yaml
+
+# Lint and validate a community trap file
+bionexus bench validate-trap my_trap.yaml
+
+# Display corpus statistics and flywheel moat depth
+bionexus bench stats
+```
+
+## 4. Current Corpus Composition (38 Canonical Traps)
+
+- **Gating Traps**: 35 (100% passing deterministically across all 12 failure modes)
+- **Frontier Traps**: 3 (honest known limitations under active development)
+- **Failure Taxonomy Coverage**: 100% (77 total benchmark case linkages across suites)
+
 
 ## 3. Current corpus state (honest)
 

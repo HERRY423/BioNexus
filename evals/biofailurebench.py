@@ -26,7 +26,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import yaml
 
@@ -162,6 +162,44 @@ def validate_corpus(datasets_dir: Optional[Path] = None) -> CorpusReport:
     return report
 
 
+def validate_single_trap(trap: Dict[str, Any]) -> Tuple[bool, List[str]]:
+    """Validate a single community-submitted trap against BNS-BF schema invariants."""
+    from bionexus.failures import FAILURE_TAXONOMY
+
+    errors: List[str] = []
+    cid = trap.get("id", "<missing-id>")
+
+    for f in CORPUS_FIELDS:
+        if f not in trap or trap.get(f) in (None, "", [], {}):
+            if f == "required_remedies" and trap.get(f) == []:
+                continue
+            errors.append(f"Field '{f}' is required and cannot be empty.")
+
+    description = str(trap.get("description", ""))
+    is_frontier = bool(trap.get("known_limitation", False))
+    is_control = trap.get("failure_mode") == "NONE"
+
+    if not is_frontier and not (
+        description.startswith(GATING_PREFIX) or (is_control and description.startswith(CONTROL_PREFIX))
+    ):
+        errors.append(
+            f"Gating traps must prefix description with '{GATING_PREFIX}:' (positive controls use '{CONTROL_PREFIX}:')"
+        )
+    if is_frontier and not description.startswith(FRONTIER_PREFIX):
+        errors.append(f"Frontier traps must prefix description with '{FRONTIER_PREFIX}:'")
+
+    failure_mode = trap.get("failure_mode")
+    if failure_mode and failure_mode != "NONE":
+        if failure_mode not in FAILURE_TAXONOMY:
+            errors.append(f"failure_mode '{failure_mode}' does not exist in Failure Taxonomy v1 ({list(FAILURE_TAXONOMY.keys())})")
+
+    status = trap.get("expected_status")
+    if status not in ("PERMITTED", "PERMITTED_WITH_LIMITS", "NEEDS_DATA", "ABSTAIN", "DEGRADED_ADVISORY"):
+        errors.append(f"Invalid expected_status '{status}'. Must be one of PERMITTED, PERMITTED_WITH_LIMITS, NEEDS_DATA, ABSTAIN, DEGRADED_ADVISORY.")
+
+    return (len(errors) == 0, errors)
+
+
 def render_corpus_report(report: CorpusReport) -> str:
     lines: List[str] = []
     lines.append("=== BioFailureBench: Scientific Trap Corpus (BNS-014) ===")
@@ -183,3 +221,4 @@ def render_corpus_report(report: CorpusReport) -> str:
         lines.append("")
     lines.append("Run the suite on any host:  bionexus eval --suite biofailurebench")
     return "\n".join(lines)
+

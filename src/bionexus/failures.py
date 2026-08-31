@@ -4,7 +4,7 @@ BioNexus Scientific Failure Taxonomy (BNS-011).
 An ontology of the ways agentic computational biology actually goes wrong.
 Each failure mode is a first-class record with: definition, canonical example,
 affected capabilities, detection rule, required behavior, acceptable
-degradation, and benchmark cases that exercise it.
+degradation, category, severity, and benchmark cases that exercise it.
 
 BioNexus is not "providing bioinformatics knowledge" — it is building the
 failure ontology for agentic computational biology. Every refusal, ceiling
@@ -17,6 +17,8 @@ from dataclasses import asdict, dataclass
 from typing import Any, Dict, List, Optional
 
 from bionexus.capabilities import CANONICAL_CAPABILITIES
+
+TAXONOMY_SCHEMA_VERSION = "bionexus.failure_taxonomy.v1"
 
 
 @dataclass(frozen=True)
@@ -33,6 +35,8 @@ class FailureMode:
     acceptable_degradation: str
     benchmark_cases: tuple[str, ...] = ()
     open_gap: bool = False  # True when no benchmark case exercises this mode yet
+    category: str = "INFERENTIAL_DESIGN"  # DATA_INTEGRITY, INFERENTIAL_DESIGN, SEMANTIC_CLAIM, SYSTEM_DEGRADATION
+    severity: str = "HIGH"  # CRITICAL, HIGH, MEDIUM
 
 
 FAILURE_TAXONOMY: Dict[str, FailureMode] = {
@@ -41,6 +45,8 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
         FailureMode(
             failure_id="BN-F001",
             name="Assay-state confusion",
+            category="DATA_INTEGRITY",
+            severity="CRITICAL",
             definition=(
                 "An analysis is executed on a matrix whose semantic assay state (raw integer counts "
                 "vs log/CPM-normalized vs z-scored expression) does not match the model's likelihood "
@@ -62,11 +68,14 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
                 "frontier-boundary-normalized-to-spatial-010",
                 "BF-001",
                 "BF-019",
+                "BF-031",
             ),
         ),
         FailureMode(
             failure_id="BN-F002",
             name="Pseudoreplication",
+            category="INFERENTIAL_DESIGN",
+            severity="CRITICAL",
             definition=(
                 "Condition-level inference performed on cell-level observations without biological "
                 "replicate aggregation, treating thousands of cells from one sample as independent "
@@ -83,16 +92,21 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
             benchmark_cases=(
                 "refuse-pseudorep-001",
                 "refuse-pseudorep-002",
+                "refuse-needs-data-001",
                 "adv-force-pseudorep-001",
                 "semantics-marker-vs-de-001",
                 "frontier-boundary-exactly-two-replicates-009",
                 "BF-002",
                 "BF-010",
+                "BF-029",
+                "BF-032",
             ),
         ),
         FailureMode(
             failure_id="BN-F003",
             name="Unsupported annotation",
+            category="SEMANTIC_CLAIM",
+            severity="HIGH",
             definition=(
                 "Unsupervised computational structures (clusters, latent embeddings, neighborhoods) "
                 "promoted to biological identities (cell types, lineages) without an explicit "
@@ -116,12 +130,15 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
                 "refuse-forbidden-celltype-promotion-003",
                 "BF-004",
                 "BF-006",
+                "BF-014",
                 "BF-022",
             ),
         ),
         FailureMode(
             failure_id="BN-F004",
             name="Identifier mismatch",
+            category="DATA_INTEGRITY",
+            severity="CRITICAL",
             definition=(
                 "Entity identifiers from different namespaces are conflated or silently mapped "
                 "(gene symbols vs ENSEMBL/Entrez, HGVS vs rsID/dbSNP, sample vs patient IDs), "
@@ -147,6 +164,8 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
         FailureMode(
             failure_id="BN-F005",
             name="Missing multiple-testing correction",
+            category="INFERENTIAL_DESIGN",
+            severity="HIGH",
             definition=(
                 "Genome-scale scan statistics reported without false-discovery control (uncorrected "
                 "p-values across thousands of genes presented as findings)."
@@ -170,6 +189,8 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
         FailureMode(
             failure_id="BN-F006",
             name="Invalid model assumption",
+            category="INFERENTIAL_DESIGN",
+            severity="CRITICAL",
             definition=(
                 "A structural statistical assumption of the chosen method is violated beyond assay "
                 "state: proportional hazards for Cox/log-rank, independence of censoring, "
@@ -180,11 +201,21 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
             detection_rule="Capability preconditions (no_auto_pvs1_without_mechanism, positive_durations, non_zero_events) + assumption-specific audits (PLANNED: PH residual tests)",
             required_behavior="BLOCK CLAIM: downgrade to association language; REFUSE where the estimator is undefined (BNS-II-011..013)",
             acceptable_degradation="Descriptive statistics without inferential claims.",
-            benchmark_cases=("refuse-survival-all-censored-001", "BF-003", "BF-015", "BF-021"),
+            benchmark_cases=(
+                "refuse-survival-all-censored-001",
+                "BF-003",
+                "BF-011",
+                "BF-013",
+                "BF-015",
+                "BF-021",
+                "BF-028",
+            ),
         ),
         FailureMode(
             failure_id="BN-F007",
             name="Parameter instability",
+            category="INFERENTIAL_DESIGN",
+            severity="MEDIUM",
             definition=(
                 "Reported findings are not stable under defensible perturbations of tunable "
                 "parameters (clustering resolution, KNN graph k, number of HVGs, seeds)."
@@ -198,11 +229,17 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
             detection_rule="integrity.audit_parameter_stability across the declared sweep; ARI below capability threshold",
             required_behavior="CAP EVIDENCE LEVEL: cap conclusion maturity at FRAGILE (BNS-XM-003)",
             acceptable_degradation="Findings reported as parameter-sensitive with the sweep attached in provenance.",
-            benchmark_cases=("l3-outcome-clustering-ari-stability-004", "BF-018"),
+            benchmark_cases=(
+                "l3-outcome-clustering-ari-stability-004",
+                "BF-018",
+                "BF-038",
+            ),
         ),
         FailureMode(
             failure_id="BN-F008",
             name="Cross-database contradiction",
+            category="DATA_INTEGRITY",
+            severity="HIGH",
             definition=(
                 "Independent knowledge sources disagree about the same entity (ClinVar classifications "
                 "without concordance, conflicting pathway memberships, mismatched gene mappings across "
@@ -223,6 +260,8 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
         FailureMode(
             failure_id="BN-F009",
             name="Missing spatial provenance",
+            category="DATA_INTEGRITY",
+            severity="CRITICAL",
             definition=(
                 "Spatial statistics computed on coordinates whose origin is unrecorded or "
                 "illegitimately substituted (a UMAP/PCA embedding passed off as physical tissue "
@@ -237,16 +276,20 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
             required_behavior="REFUSE substitution, or DEGRADED advisory only when the capability explicitly allows justified_spatial_embedding (BNS-II-005/006)",
             acceptable_degradation="Analysis on a justified embedding with the substitution named in the evidence card and maturity capped FRAGILE.",
             benchmark_cases=(
+                "refuse-spatial-degenerate-001",
                 "frontier-coordinate-umap-substitution-001",
                 "semantics-spatial-degenerate-coords-001",
-                "refuse-spatial-degenerate-001",
                 "BF-007",
                 "BF-020",
+                "BF-027",
+                "BF-033",
             ),
         ),
         FailureMode(
             failure_id="BN-F010",
             name="Backend degradation masquerading",
+            category="SYSTEM_DEGRADATION",
+            severity="CRITICAL",
             definition=(
                 "Output of a heuristic fallback or partial stack presented as if the canonical "
                 "gold-standard backend had executed."
@@ -259,14 +302,21 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
             benchmark_cases=(
                 "backend-lifelines-missing-001",
                 "backend-lifelines-strict-001",
+                "backend-pydeseq2-missing-001",
+                "backend-frontier-fallback-001",
+                "backend-frontier-nofallback-001",
                 "route-survival-km-001",
                 "l2-claim-regulatory-honest-006",
                 "BF-017",
+                "BF-034",
+                "BF-035",
             ),
         ),
         FailureMode(
             failure_id="BN-F011",
             name="Claim inflation",
+            category="SEMANTIC_CLAIM",
+            severity="CRITICAL",
             definition=(
                 "A scientific claim asserted beyond the warrant of the underlying evidence class: "
                 "causation from correlation, mechanism from autocorrelation, clinical action from "
@@ -289,11 +339,14 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
                 "BF-009",
                 "BF-023",
                 "BF-026",
+                "BF-030",
             ),
         ),
         FailureMode(
             failure_id="BN-F012",
             name="Unexecuted maturity claim",
+            category="SEMANTIC_CLAIM",
+            severity="HIGH",
             definition=(
                 "Evidence maturity asserted for an analysis that did not execute, or above the "
                 "capability's evidence ceiling: calibration claims without executions inflate "
@@ -310,6 +363,8 @@ FAILURE_TAXONOMY: Dict[str, FailureMode] = {
                 "frontier-ceiling-acmg-clinvar-replicated-007",
                 "frontier-ceiling-clustering-robust-claim-008",
                 "BF-012",
+                "BF-036",
+                "BF-037",
             ),
         ),
     ]
@@ -330,11 +385,19 @@ def get_failure_mode(failure_id: str) -> FailureMode:
     return FAILURE_TAXONOMY[failure_id]
 
 
-def list_failure_modes(capability_id: Optional[str] = None) -> List[FailureMode]:
-    """List failure modes, optionally filtered by affected capability."""
+def list_failure_modes(
+    capability_id: Optional[str] = None,
+    category: Optional[str] = None,
+    severity: Optional[str] = None,
+) -> List[FailureMode]:
+    """List failure modes, optionally filtered by capability, category, or severity."""
     modes = list(FAILURE_TAXONOMY.values())
     if capability_id:
         modes = [m for m in modes if capability_id in m.affected_capabilities]
+    if category:
+        modes = [m for m in modes if m.category.upper() == category.upper()]
+    if severity:
+        modes = [m for m in modes if m.severity.upper() == severity.upper()]
     return modes
 
 
@@ -374,11 +437,48 @@ def classify_violation(violation_text: str) -> List[str]:
     return hits
 
 
+def get_taxonomy_v1() -> Dict[str, Any]:
+    """Return the full Failure Taxonomy v1 specification dictionary."""
+    modes = list(FAILURE_TAXONOMY.values())
+    return {
+        "schema_version": TAXONOMY_SCHEMA_VERSION,
+        "total_modes": len(modes),
+        "categories": {
+            "DATA_INTEGRITY": [m.failure_id for m in modes if m.category == "DATA_INTEGRITY"],
+            "INFERENTIAL_DESIGN": [m.failure_id for m in modes if m.category == "INFERENTIAL_DESIGN"],
+            "SEMANTIC_CLAIM": [m.failure_id for m in modes if m.category == "SEMANTIC_CLAIM"],
+            "SYSTEM_DEGRADATION": [m.failure_id for m in modes if m.category == "SYSTEM_DEGRADATION"],
+        },
+        "severities": {
+            "CRITICAL": [m.failure_id for m in modes if m.severity == "CRITICAL"],
+            "HIGH": [m.failure_id for m in modes if m.severity == "HIGH"],
+            "MEDIUM": [m.failure_id for m in modes if m.severity == "MEDIUM"],
+        },
+        "summary": taxonomy_summary(),
+        "modes": [failure_to_dict(m) for m in modes],
+    }
+
+
+def failure_modes_matrix() -> Dict[str, Dict[str, Any]]:
+    """Return a mapping matrix between capabilities and failure modes."""
+    by_cap = failure_modes_by_capability()
+    matrix = {}
+    for cid, fids in by_cap.items():
+        matrix[cid] = {
+            "capability_id": cid,
+            "failure_mode_count": len(fids),
+            "failure_mode_ids": sorted(fids),
+            "critical_count": sum(1 for fid in fids if FAILURE_TAXONOMY[fid].severity == "CRITICAL"),
+        }
+    return matrix
+
+
 def taxonomy_summary() -> Dict[str, Any]:
     """Structural summary: counts, per-capability index, open gaps."""
     modes = list(FAILURE_TAXONOMY.values())
     total_cases = sum(len(m.benchmark_cases) for m in modes)
     return {
+        "schema_version": TAXONOMY_SCHEMA_VERSION,
         "total_modes": len(modes),
         "modes_with_benchmark_coverage": sum(1 for m in modes if not m.open_gap and m.benchmark_cases),
         "open_gaps": [m.failure_id for m in modes if m.open_gap],

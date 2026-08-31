@@ -1,4 +1,4 @@
-# BNS-023: Validation Transparency Network
+# BNS-024: Validation Transparency Network
 
 **Status**: Development / No Certification Effect | **Version**: 0.1 | **Supersedes**: none  
 **Applies to**: `src/bionexus/validation_network.py`, validation event packets, mirrors, and derived candidate-slot state.  

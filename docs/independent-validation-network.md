@@ -6,9 +6,24 @@ capabilities may claim. It exists because frameworks and reviewer slots do
 not count as completed evidence — only hash-verified artifacts do.
 
 - **Specification**: [`spec/BNS-023-independent-validation-network.md`](../spec/BNS-023-independent-validation-network.md)
-- **Implementation**: `src/bionexus/ivn.py` (network), `src/bionexus/calibration_freeze.py` (calibration freeze)
+- **Implementation**: `src/bionexus/ivn.py` (network), `src/bionexus/calibration_freeze.py` (calibration freeze), `src/bionexus/ivn_ledger_page.py` (public ledger portal)
 - **Registry**: `validation/ivn/REGISTRY.json`
-- **CLI**: `bionexus ivn {status | verify | register-dataset | register-lab-study | register-review | freeze-profile | authorize}`
+- **Public Append-Only Ledger Portal**: `docs/ivn/index.html` (Deployed via GitHub Pages)
+- **CLI**: `bionexus ivn {status | verify | build-ledger | register-dataset | register-lab-study | register-review | freeze-profile | authorize}`
+
+## The Moat That Deepens Over Time (Asset Transformation)
+
+The IVN transforms verification from an internal compliance check into a **public, append-only, cryptographically signed asset**.
+Algorithms and computational heuristics can be cloned overnight; an immutable, timestamped ledger of multi-center biological holdouts,
+frozen negative results, independent lab replications, and blinded peer reviews **cannot be copied**.
+
+Publishing an **honest, empty ledger with clear recruitment slots** ("空账本 + 明确的填法") functions as an active Request for Validation (RFV)
+recruitment tool across four community tracks:
+
+1. **Track 1: Independent Dataset Provider** (`.github/ISSUE_TEMPLATE/5_ivn_dataset_submission.yml`)
+2. **Track 2: External Laboratory Replication** (`.github/ISSUE_TEMPLATE/6_ivn_external_lab_study.yml`)
+3. **Track 3: Blinded Non-Author Peer Review** (`.github/ISSUE_TEMPLATE/7_ivn_reviewer_attestation.yml`)
+4. **Track 4: Calibration Profile Freeze** (Held-out context threshold locking)
 
 ## The quota
 
@@ -81,6 +96,9 @@ bionexus ivn status
 
 # Recompute every recorded artifact hash (drift check)
 bionexus ivn verify
+
+# Compile and generate the public standalone HTML ledger (GitHub Pages portal)
+bionexus ivn build-ledger --output docs/ivn/index.html
 
 # Register new evidence (templates in validation/ivn/templates/)
 bionexus ivn register-dataset     --payload validation/ivn/templates/INDEPENDENT_DATASET.template.json

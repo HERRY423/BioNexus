@@ -1,0 +1,96 @@
+name: 🏢 IVN Track 2: External Laboratory Replication Study
+description: Register an external laboratory execution of a BioNexus flagship benchmark to satisfy the external-lab quota (BNS-023).
+title: "[IVN-Lab-Study]: "
+labels: ["ivn", "external-lab-study", "bns-023"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## IVN Track 2: External Laboratory Replication (BNS-023)
+        BioNexus requires **>= 2 distinct external laboratories** per flagship capability.
+        To qualify:
+        - The laboratory must be independent of BioNexus authors.
+        - Must provide a signed independence declaration.
+        - Must record host environment (e.g. Codex, Claude, Local HPC) and a hash-bound capsule artifact.
+        - Must target a registered dataset that itself qualifies as independent.
+  - type: dropdown
+    id: capability_id
+    attributes:
+      label: Capability Under Replication
+      options:
+        - "scrna.pseudobulk_de"
+        - "scrna.annotation_evidence"
+        - "spatial.inference_validity"
+    validations:
+      required: true
+  - type: input
+    id: dataset_id
+    attributes:
+      label: Target Registered Dataset ID
+      description: The dataset ID being replicated (e.g. BN-PB-IV-002, BN-ANN-IV-001).
+      placeholder: "e.g. BN-PB-IV-002"
+    validations:
+      required: true
+  - type: input
+    id: lab_name
+    attributes:
+      label: Laboratory / Facility Name
+      placeholder: "e.g. Computational Genomics Core Laboratory"
+    validations:
+      required: true
+  - type: input
+    id: institution_country
+    attributes:
+      label: Institution and Country
+      description: Institution must be distinct across counted studies.
+      placeholder: "e.g. Karolinska Institutet, Sweden"
+    validations:
+      required: true
+  - type: input
+    id: host_environment
+    attributes:
+      label: Execution Host Environment
+      description: HPC / Agent host platform (e.g. Codex, Claude, Slurm, Local Container).
+      placeholder: "e.g. codex / slurm-cluster-v2"
+    validations:
+      required: true
+  - type: textarea
+    id: signed_independence
+    attributes:
+      label: Signed Independence Declaration
+      description: State name and title of the Principal Investigator / Facility Director signing this declaration, along with any conflict disclosures.
+      placeholder: "Signed by: Dr. Alice Smith, Director of Genomics Core.\nConflict Disclosure: No financial or co-authorship conflicts with BioNexus authors."
+    validations:
+      required: true
+  - type: input
+    id: capsule_sha256
+    attributes:
+      label: Execution Capsule / Report SHA-256 Digest
+      placeholder: "64-character SHA-256 hex string"
+    validations:
+      required: true
+  - type: textarea
+    id: json_payload
+    attributes:
+      label: EXTERNAL_LAB_STUDY.json Payload
+      description: Formatted JSON payload conforming to validation/ivn/templates/EXTERNAL_LAB_STUDY.template.json.
+      placeholder: |
+        {
+          "study_id": "BN-IVN-LAB-001",
+          "lab_id": "core-lab-01",
+          "lab_name": "...",
+          "institution": "...",
+          "country": "...",
+          "capability_id": "scrna.pseudobulk_de",
+          "dataset_id": "BN-PB-IV-002",
+          "host": "codex",
+          "independence": {
+            "declares_independent": true,
+            "signed_by": "Dr. Alice Smith",
+            "conflict_disclosure": "None"
+          },
+          "capsule_path": "validation/ivn/lab_studies/BN-IVN-LAB-001/REPORT.json",
+          "capsule_sha256": "..."
+        }
+    validations:
+      required: true
