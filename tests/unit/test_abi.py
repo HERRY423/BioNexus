@@ -159,7 +159,7 @@ def test_router_blocks_forbidden_claim_requests():
     assert celltype.status.value == "ABSTAIN"
 
 
-def test_router_preserves_legitimate_requests():
+def test_router_preserves_legitimate_requests(canonical_backends_available):
     """Forbidden-claim screening MUST NOT block legitimate requests (no false positives)."""
     ok_spatial = route_scientific_intent(
         "Compute Moran's I spatial autocorrelation on my Visium spatial transcriptomics data",

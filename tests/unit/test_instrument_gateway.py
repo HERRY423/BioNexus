@@ -1,6 +1,5 @@
 """Unit tests for BioNexus Laboratory Instrument Ingestion Gateway (BNS-INST-001)."""
 
-from pathlib import Path
 from bionexus.instrument_gateway import (
     InstrumentType,
     LaboratoryInstrumentGateway,
@@ -9,7 +8,7 @@ from bionexus.instrument_gateway import (
 
 def test_detect_instrument_type(tmp_path):
     gw = LaboratoryInstrumentGateway()
-    
+
     f_ngs = tmp_path / "RunInfo.xml"
     f_ngs.write_text("<Run><Flowcell>ABC</Flowcell></Run>", encoding="utf-8")
     itype, vendor = gw.detect_instrument_type(f_ngs)

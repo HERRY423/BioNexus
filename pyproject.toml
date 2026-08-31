@@ -52,7 +52,9 @@ goldchain = [
     "h5py>=3.8.0,<4.0.0",
     "leidenalg>=0.10.0",
     "igraph>=0.10.0",
-    "harmonypy>=0.0.9",
+    # harmonypy 2.x has no Windows wheels and needs a system BLAS toolchain.
+    # The 0.x line is the cross-platform pure-Python implementation tested here.
+    "harmonypy>=0.0.9,<2.0.0",
     "pydeseq2>=0.4.0"
 ]
 deseq = [
@@ -129,6 +131,9 @@ python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = "-v --tb=short"
+markers = [
+    "flagship_data: requires the pinned public flagship datasets to be materialized",
+]
 
 [tool.ruff]
 line-length = 120

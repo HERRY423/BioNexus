@@ -50,9 +50,15 @@ from bionexus.egress_guard import guarded_urlopen
 from bionexus.versions import PLUGIN_VERSION
 
 try:
-    from mcp.server.fastmcp import FastMCP
+    # Official MCP Python SDK v2 renamed FastMCP to MCPServer and moved it to
+    # mcp.server. Keep the v1 import as a compatibility fallback for installed
+    # hosts that have not yet migrated.
+    from mcp.server import MCPServer as FastMCP
 except ImportError:
-    FastMCP = None  # type: ignore
+    try:
+        from mcp.server.fastmcp import FastMCP
+    except ImportError:
+        FastMCP = None  # type: ignore
 
 # --- Logging Configuration ---
 LOG_FILE = os.environ.get(
@@ -2091,7 +2097,10 @@ def get_prompt_content(name: str, arguments: Optional[Dict[str, Any]] = None) ->
 def create_mcp_server():
     """Create and configure the official FastMCP Server for BioNexus."""
     if FastMCP is None:
-        raise ImportError("Official MCP Python SDK (`mcp`) is not installed. Install via `pip install mcp`.")
+        raise ImportError(
+            "Official MCP Python SDK (`mcp`) is not installed or exposes an unsupported server API. "
+            "Install a compatible release via `pip install mcp`."
+        )
 
     mcp = FastMCP("bionexus-local-mcp")
 

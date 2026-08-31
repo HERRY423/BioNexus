@@ -58,7 +58,7 @@ def test_load_eval_cases():
     assert "L3" in levels
 
 
-def test_run_benchmark_accounting_integrity():
+def test_run_benchmark_accounting_integrity(canonical_backends_available):
     """Verify gating track passes with high Composite Reliability Index; frontier reported honestly."""
     report = run_benchmark()
     assert report.total_cases >= 35
@@ -216,7 +216,7 @@ def test_cli_eval_subcommand(capsys):
     assert "Gating Accuracy" in captured.out or "Overall Accuracy" in captured.out
 
 
-def test_cli_eval_strict_flag(capsys):
+def test_cli_eval_strict_flag(capsys, canonical_backends_available):
     """Verify the --strict flag is wired through to the benchmark runner."""
     rc = cli_main(["eval", "--level", "L1", "--strict"])
     assert rc == 0  # L1 never depends on scientific backends

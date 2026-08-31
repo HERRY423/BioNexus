@@ -23,7 +23,10 @@ def test_doctor_reports_tier_and_forbids_clia():
     assert "spatial_ready" in report["ready"]
     assert "celltypepilot" not in report["flags"]
     assert "CLIA/CAP diagnostic interpretation" in report["forbidden_claims"]
-    assert any("scrna_pipeline" in a or "scverse" in a for a in report["allowed_next_actions"])
+    if report["ready"]["scverse_ready"]:
+        assert any("scrna_pipeline" in a for a in report["allowed_next_actions"])
+    else:
+        assert any("goldchain" in a for a in report["allowed_next_actions"])
     assert "single-cell-rna-qc" in report["core_skills"]
     names = {s["name"] for s in core_skills()}
     assert names == {

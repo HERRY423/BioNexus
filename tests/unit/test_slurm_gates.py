@@ -20,7 +20,10 @@ import pytest
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CHAIN = PROJECT_ROOT / "cluster" / "slurm" / "run_three_gates.sh"
 
-pytestmark = pytest.mark.skipif(shutil.which("bash") is None, reason="bash not available")
+pytestmark = pytest.mark.skipif(
+    os.name == "nt" or shutil.which("bash") is None,
+    reason="Slurm gate-chain contract requires a POSIX bash environment",
+)
 
 # The chain script invokes `bionexus preflight <arg>` / `bionexus verify <arg>`;
 # the stub switches on the subcommand plus the caller-supplied argument word.

@@ -8,6 +8,8 @@
   expected_status: ABSTAIN
   expected_capability: survival.kaplan_meier
   allow_degraded: true
+  data_metadata:
+    simulate_missing_backend: "lifelines"
   expected_violations:
     - "backend"
   required_remedies:
@@ -20,6 +22,8 @@
   expected_status: ABSTAIN
   expected_capability: survival.kaplan_meier
   allow_degraded: false
+  data_metadata:
+    simulate_missing_backend: "lifelines"
   expected_violations:
     - "backend"
   required_remedies:
@@ -49,6 +53,8 @@
   expected_capability: perturbation.gears_prediction
   allow_frontier: true
   allow_degraded: true
+  data_metadata:
+    simulate_missing_backend: "gears"
   expected_violations:
     - "backend"
   description: "FRONTIER + opt-in + backend absent + explicit fallback -> disclosed Grade C degradation (assumes gears absent)"
@@ -60,6 +66,8 @@
   expected_capability: spatial.nicheformer_forecasting
   allow_frontier: true
   allow_degraded: false
+  data_metadata:
+    simulate_missing_backend: "nicheformer"
   expected_violations:
     - "backend"
   description: "FRONTIER + opt-in + backend absent + no fallback consent -> strict refusal (assumes nicheformer absent)"

@@ -13,14 +13,11 @@ from __future__ import annotations
 import enum
 import hashlib
 import json
-import os
 import time
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
-
-from bionexus.tool_receipt import create_tool_receipt
 
 
 class UserRole(str, enum.Enum):

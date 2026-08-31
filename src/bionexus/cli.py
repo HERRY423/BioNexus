@@ -61,6 +61,24 @@ from bionexus.registry import (
 from bionexus.versions import PLUGIN_VERSION
 
 
+def _configure_console_streams() -> None:
+    """Keep CLI diagnostics printable on restricted Windows code pages.
+
+    Scientific inventory text legitimately contains symbols such as Greek
+    delta.  Windows runners and redirected consoles can still expose cp1252;
+    preserve their configured encoding, but render unsupported characters as
+    explicit escapes instead of crashing after otherwise successful checks.
+    """
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            try:
+                reconfigure(errors="backslashreplace")
+            except (OSError, ValueError):
+                # StringIO and host-provided streams may reject reconfiguration.
+                pass
+
+
 def _to_snake_case(name: str) -> str:
     """Convert hyphenated or mixed name to snake_case."""
     s = re.sub(r"[\s\-_]+", "_", name)
@@ -2523,12 +2541,151 @@ def handle_cache(args: argparse.Namespace) -> int:
     return 0
 
 
+def _emit_cli_payload(payload: dict, as_json: bool = False) -> None:
+    """Print a deterministic CLI result without implying unperformed work."""
+    if as_json:
+        print(json.dumps(payload, indent=2, ensure_ascii=False, default=str))
+        return
+    for key, value in payload.items():
+        print(f"{key}: {value}")
+
+
+def handle_lims(args: argparse.Namespace) -> int:
+    """Run local LIMS checks; refuse commands that would only simulate a sync."""
+    if args.lims_action == "audit-pairing":
+        from bionexus.lims_hub import C04PairingCustodianHub
+
+        result = C04PairingCustodianHub().audit_manifest(args.manifest)
+        _emit_cli_payload(result, args.json)
+        return 0 if result.get("passed") else 1
+
+    result = {
+        "status": "REFUSED_NOT_CONFIGURED",
+        "executed": False,
+        "action": args.lims_action,
+        "reason": (
+            "Live LIMS transport and authenticated destination are not configured. "
+            "BioNexus will not report a mock response as a completed laboratory sync."
+        ),
+    }
+    _emit_cli_payload(result, args.json)
+    return 2
+
+
+def handle_instrument(args: argparse.Namespace) -> int:
+    """Detect or locally ingest an instrument export with a bound receipt."""
+    from bionexus.instrument_gateway import LaboratoryInstrumentGateway
+
+    gateway = LaboratoryInstrumentGateway()
+    if args.instrument_action == "detect":
+        instrument_type, vendor = gateway.detect_instrument_type(args.file)
+        exists = Path(args.file).is_file()
+        result = {
+            "status": "DETECTED" if exists else "REFUSED_MISSING_INPUT",
+            "instrument_type": instrument_type.value,
+            "vendor_model": vendor,
+            "source_exists": exists,
+        }
+        _emit_cli_payload(result, args.json)
+        return 0 if exists else 1
+
+    result = gateway.ingest_file(args.file, output_path=args.output)
+    payload = result.to_dict()
+    _emit_cli_payload(payload, args.json)
+    return 0 if result.success else 1
+
+
+def handle_airgap(args: argparse.Namespace) -> int:
+    """Evaluate the local zero-egress guard without claiming DLP certification."""
+    from bionexus.airgap_guard import AirgapNetworkGuard, AirgapPolicyMode
+
+    guard = AirgapNetworkGuard(mode=AirgapPolicyMode(args.mode))
+    if args.airgap_action == "audit":
+        result = guard.get_summary_report()
+        result["status"] = "LOCAL_POLICY_DIAGNOSTIC_ONLY"
+        result["certification"] = "NOT_ASSESSED"
+        _emit_cli_payload(result, args.json)
+        return 0
+
+    permitted, reason, receipt = guard.evaluate_egress(args.url, payload=args.payload)
+    result = {
+        "status": "PERMITTED" if permitted else "ABSTAIN",
+        "permitted": permitted,
+        "reason": reason,
+        "receipt": receipt,
+        "certification": "NOT_ASSESSED",
+    }
+    _emit_cli_payload(result, args.json)
+    return 0 if permitted else 1
+
+
+def handle_compliance(args: argparse.Namespace) -> int:
+    """Create or verify local hash records without asserting regulatory compliance."""
+    from bionexus.compliance_ledger import ComplianceAuditLedger, ElectronicSignature
+
+    ledger = ComplianceAuditLedger()
+    if args.compliance_action == "sign":
+        target = Path(args.target)
+        if not target.is_file():
+            result = {
+                "status": "REFUSED_MISSING_INPUT",
+                "signed": False,
+                "target": str(target),
+                "regulatory_compliance": "NOT_ASSESSED",
+            }
+            _emit_cli_payload(result, args.json)
+            return 1
+        signature = ledger.sign_artifact(
+            signer_name=args.name,
+            signer_email=args.email,
+            signer_role=args.role,
+            signing_reason=args.reason,
+            artifact_path_or_bytes=target,
+        )
+        result = signature.to_dict()
+        result["regulatory_compliance"] = "NOT_ASSESSED"
+        _emit_cli_payload(result, args.json)
+        return 0
+
+    if args.compliance_action == "verify-sig":
+        target = Path(args.target)
+        signature_path = Path(args.signature_file)
+        if not target.is_file() or not signature_path.is_file():
+            result = {
+                "status": "REFUSED_MISSING_INPUT",
+                "verified": False,
+                "regulatory_compliance": "NOT_ASSESSED",
+            }
+            _emit_cli_payload(result, args.json)
+            return 1
+        signature = ElectronicSignature(**json.loads(signature_path.read_text(encoding="utf-8")))
+        verified, reason = ledger.verify_signature(signature, target)
+        result = {
+            "status": "VERIFIED_HASH_BINDING" if verified else "ABSTAIN",
+            "verified": verified,
+            "reason": reason,
+            "regulatory_compliance": "NOT_ASSESSED",
+        }
+        _emit_cli_payload(result, args.json)
+        return 0 if verified else 1
+
+    result = {
+        "status": "NOT_ASSESSED",
+        "verified": False,
+        "reason": "No persisted ledger was supplied; an empty in-memory ledger is not audit evidence.",
+        "regulatory_compliance": "NOT_ASSESSED",
+    }
+    _emit_cli_payload(result, args.json)
+    return 2
+
+
 # ==============================================================================
 # Main Parser & Router
 # ==============================================================================
 
 
 def main(argv: Optional[list[str]] = None) -> int:
+    _configure_console_streams()
     parser = argparse.ArgumentParser(
         prog="bionexus",
         description="BioNexus: The Scientific Reliability Layer for Agentic Biology",
@@ -3247,7 +3404,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_d_sample.add_argument("--json", action="store_true", help="Output audit report as JSON")
     p_d_sample.add_argument("--markdown", "--md", action="store_true", help="Output audit report as Markdown")
 
-    
+
     # 23. lims
     p_lims = subparsers.add_parser("lims", help="BioNexus LIMS Hub (BNS-LIMS-001) — Benchling, LabWare, C04 Pairing Connectors")
     lims_subs = p_lims.add_subparsers(dest="lims_action", help="LIMS actions")
@@ -3460,7 +3617,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             return 0
         return handle_cache(args)
 
-    
+
     elif args.command == "lims":
         if not getattr(args, "lims_action", None):
             p_lims.print_help()

@@ -62,7 +62,7 @@ def test_frontier_traps_use_prefix_and_flag():
             assert rec["description"].startswith(("TRAP", "CONTROL")), rec["id"]
 
 
-def test_gating_traps_pass_deterministically():
+def test_gating_traps_pass_deterministically(canonical_backends_available):
     """Every non-frontier trap MUST pass through the standard runner."""
     cases = {c.id: c for c in load_eval_cases(suite="biofailurebench")}
     gating = [c for c in cases.values() if not c.known_limitation]
