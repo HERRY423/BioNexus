@@ -2541,6 +2541,222 @@ def handle_cache(args: argparse.Namespace) -> int:
     return 0
 
 
+def handle_ivn(args: argparse.Namespace) -> int:
+    """Independent Validation Network CLI (BNS-023)."""
+    import json as ivn_json
+    from dataclasses import replace as dc_replace
+    from pathlib import Path as IvnPath
+
+    from bionexus import ivn as ivn_mod
+    from bionexus.calibration_freeze import (
+        CalibrationFreezeError,
+        CalibrationFreezeRecord,
+        HeldOutContext,
+        authorize_context,
+        freeze_profile,
+        profile_from_payload,
+    )
+
+    action = getattr(args, "ivn_action", "")
+    repo_root = IvnPath(getattr(args, "repo_root", ".") or ".")
+    registry_arg = getattr(args, "registry", None)
+    as_json = getattr(args, "json", False)
+
+    def _registry_path() -> IvnPath:
+        return IvnPath(registry_arg) if registry_arg else ivn_mod.default_registry_path(repo_root)
+
+    def _load_or_bootstrap():
+        """status/verify require an existing registry; registration and freeze
+        may bootstrap a fresh empty one (quotas stay unsatisfied either way)."""
+        path = _registry_path()
+        if path.is_file():
+            return ivn_mod.load_registry(path)
+        if action in ("register-dataset", "register-lab-study", "register-review", "freeze-profile"):
+            return ivn_mod.IVNRegistry()
+        raise ivn_mod.IVNError(f"IVN registry not found: {path}")
+
+    def _read_json(path: str):
+        payload_path = IvnPath(path)
+        if not payload_path.is_file():
+            raise FileNotFoundError(f"payload file not found: {payload_path}")
+        return ivn_json.loads(payload_path.read_text(encoding="utf-8"))
+
+    def _artifact_sha(path_value: str, label: str) -> str:
+        if not path_value:
+            return ""
+        artifact = repo_root / path_value
+        if not artifact.is_file():
+            raise ivn_mod.IVNError(f"{label} artifact not found on disk: {path_value}")
+        from bionexus.provenance import sha256_file
+
+        return sha256_file(artifact)
+
+    try:
+        registry = _load_or_bootstrap()
+
+        if action == "status":
+            network = ivn_mod.evaluate_network(registry, repo_root=repo_root)
+            if as_json:
+                print(ivn_json.dumps(network, indent=2, ensure_ascii=False))
+                return 0
+            print("=" * 78)
+            print("BioNexus Independent Validation Network (BNS-023)")
+            print(f"Network status: {network['network_status']}")
+            print(f"Quota per flagship: {network['quota']}")
+            for capability_id, assessment in network["capabilities"].items():
+                print()
+                print(f"[{capability_id}]  complete={assessment['complete']}")
+                for check in assessment["checks"]:
+                    mark = "PASS" if check["satisfied"] else "GAP "
+                    print(f"   {mark} {check['requirement']}: required {check['required']}, observed {check['observed']}")
+                for gap in assessment["blocking_gaps"]:
+                    print(f"   gap: {gap}")
+                for excluded in assessment["excluded_datasets"]:
+                    print(f"   excluded dataset {excluded['dataset_id']}: {excluded['reason']}")
+                for excluded in assessment["excluded_lab_studies"]:
+                    print(f"   excluded lab study {excluded['study_id']}: {excluded['reason']}")
+                for excluded in assessment["excluded_reviews"]:
+                    print(f"   excluded review {excluded['review_id']}: {excluded['reason']}")
+            print()
+            print("OPEN_QUESTIONS alignment (docs/context/OPEN_QUESTIONS.md):")
+            for blocker_id, blocker in network["open_questions"]["blockers"].items():
+                state = "OPEN" if blocker["still_open"] else "RESOLVED"
+                print(f"   {state:<8s} {blocker_id}")
+            return 0
+
+        if action == "verify":
+            report = ivn_mod.verify_registry_integrity(registry, repo_root=repo_root)
+            if as_json:
+                print(ivn_json.dumps(report, indent=2, ensure_ascii=False))
+            else:
+                print(f"IVN registry integrity: {report['integrity']} ({report['checked_entities']} entities checked)")
+                for item in report["drift"]:
+                    print(f"   drift: {item['entity']} {item['artifact']} -> {item['problem']}")
+            return 0 if report["integrity"] == "PASS" else 1
+
+        if action in ("register-dataset", "register-lab-study", "register-review"):
+            payload = _read_json(args.payload)
+            if action == "register-dataset":
+                entity = ivn_mod.IVNDataset.from_dict(payload)
+                if any(d.dataset_id == entity.dataset_id for d in registry.datasets):
+                    raise ivn_mod.IVNError(f"dataset id already registered: {entity.dataset_id}")
+                entity = dc_replace(
+                    entity,
+                    preregistration_sha256=entity.preregistration_sha256
+                    or _artifact_sha(entity.preregistration_path, "preregistration"),
+                    report_sha256=entity.report_sha256 or _artifact_sha(entity.report_path, "report"),
+                )
+                registry = ivn_mod.IVNRegistry(
+                    schema_version=registry.schema_version,
+                    generated_at=registry.generated_at,
+                    requirements=registry.requirements,
+                    author_roster=registry.author_roster,
+                    datasets=registry.datasets + (entity,),
+                    lab_studies=registry.lab_studies,
+                    reviews=registry.reviews,
+                    calibration_freezes=registry.calibration_freezes,
+                )
+                registered_id = entity.dataset_id
+            elif action == "register-lab-study":
+                entity = ivn_mod.ExternalLabStudy.from_dict(payload)
+                if any(s.study_id == entity.study_id for s in registry.lab_studies):
+                    raise ivn_mod.IVNError(f"lab study id already registered: {entity.study_id}")
+                entity = dc_replace(
+                    entity,
+                    capsule_sha256=entity.capsule_sha256 or _artifact_sha(entity.capsule_path, "capsule"),
+                )
+                registry = ivn_mod.IVNRegistry(
+                    schema_version=registry.schema_version,
+                    generated_at=registry.generated_at,
+                    requirements=registry.requirements,
+                    author_roster=registry.author_roster,
+                    datasets=registry.datasets,
+                    lab_studies=registry.lab_studies + (entity,),
+                    reviews=registry.reviews,
+                    calibration_freezes=registry.calibration_freezes,
+                )
+                registered_id = entity.study_id
+            else:
+                entity = ivn_mod.NonAuthorReview.from_dict(payload)
+                if any(r.review_id == entity.review_id for r in registry.reviews):
+                    raise ivn_mod.IVNError(f"review id already registered: {entity.review_id}")
+                if registry.reviewer_is_author(entity):
+                    raise ivn_mod.IVNError(
+                        "refusing registration: reviewer matches the author roster "
+                        "(or the roster is empty, so non-authorship cannot be established)"
+                    )
+                entity = dc_replace(
+                    entity,
+                    review_sha256=entity.review_sha256 or _artifact_sha(entity.review_path, "review"),
+                )
+                registry = ivn_mod.IVNRegistry(
+                    schema_version=registry.schema_version,
+                    generated_at=registry.generated_at,
+                    requirements=registry.requirements,
+                    author_roster=registry.author_roster,
+                    datasets=registry.datasets,
+                    lab_studies=registry.lab_studies,
+                    reviews=registry.reviews + (entity,),
+                    calibration_freezes=registry.calibration_freezes,
+                )
+                registered_id = entity.review_id
+            registry.save(_registry_path())
+            if as_json:
+                print(ivn_json.dumps({"registered": registered_id, "action": action}, indent=2))
+            else:
+                print(f"Registered {action.removeprefix('register-')} '{registered_id}' into {_registry_path()}")
+                print("Note: registration alone never satisfies a quota; only VERIFIED entities with")
+                print("matching artifact hashes count toward the network assessment.")
+            return 0
+
+        if action == "freeze-profile":
+            profile = profile_from_payload(_read_json(args.profile_json))
+            contexts = [HeldOutContext.from_dict(item) for item in _read_json(args.held_out_json)]
+            record = freeze_profile(
+                profile,
+                contexts,
+                freeze_id=args.freeze_id,
+                frozen_by=args.frozen_by,
+                notes=getattr(args, "notes", ""),
+            )
+            if any(f.get("freeze_id") == record.freeze_id for f in registry.calibration_freezes):
+                raise CalibrationFreezeError(f"freeze id already recorded: {record.freeze_id}")
+            registry = ivn_mod.IVNRegistry(
+                schema_version=registry.schema_version,
+                generated_at=registry.generated_at,
+                requirements=registry.requirements,
+                author_roster=registry.author_roster,
+                datasets=registry.datasets,
+                lab_studies=registry.lab_studies,
+                reviews=registry.reviews,
+                calibration_freezes=registry.calibration_freezes + (record.to_dict(),),
+            )
+            registry.save(_registry_path())
+            if as_json:
+                print(ivn_json.dumps(record.to_dict(), indent=2, ensure_ascii=False))
+            else:
+                print(f"Frozen {record.profile_id}:{record.profile_version} as {record.freeze_id}")
+                print(f"  profile_sha256: {record.profile_sha256}")
+                print(f"  held-out contexts bound: {len(record.held_out_contexts)}")
+            return 0
+
+        if action == "authorize":
+            profile = profile_from_payload(_read_json(args.profile_json))
+            context = HeldOutContext.from_dict(_read_json(args.context_json))
+            freezes = [CalibrationFreezeRecord.from_dict(item) for item in registry.calibration_freezes]
+            decision = authorize_context(profile, freezes, context)
+            if as_json:
+                print(ivn_json.dumps(decision, indent=2, ensure_ascii=False))
+            else:
+                print(f"Decision: {decision['decision']} (authorizing={decision['authorizing']})")
+                print(f"  {decision['reason']}")
+            return 0 if decision["authorizing"] else 1
+
+        print(f"Error: unknown ivn action '{action}'")
+        return 2
+    except (ivn_mod.IVNError, CalibrationFreezeError, FileNotFoundError) as exc:
+        print(f"Error: {exc}")
+        return 2
 def _emit_cli_payload(payload: dict, as_json: bool = False) -> None:
     """Print a deterministic CLI result without implying unperformed work."""
     if as_json:
@@ -2677,8 +2893,6 @@ def handle_compliance(args: argparse.Namespace) -> int:
     }
     _emit_cli_payload(result, args.json)
     return 2
-
-
 # ==============================================================================
 # Main Parser & Router
 # ==============================================================================
@@ -3112,6 +3326,59 @@ def main(argv: Optional[list[str]] = None) -> int:
     # rule list-challenges
     p_r_lchal = rule_subs.add_parser("list-challenges", help="List all recorded scientific challenges and statuses")
     p_r_lchal.add_argument("--json", action="store_true", help="Output challenges as JSON")
+
+    # 9.5 ivn (Independent Validation Network, BNS-023)
+    p_ivn = subparsers.add_parser(
+        "ivn",
+        help="Independent Validation Network: >= 3 independent datasets x >= 2 external labs x >= 1 non-author reviewer per flagship (BNS-023)",
+    )
+    ivn_subs = p_ivn.add_subparsers(dest="ivn_action", help="IVN actions")
+
+    p_ivn_status = ivn_subs.add_parser(
+        "status", help="Assess every flagship capability against the IVN quotas and OPEN_QUESTIONS blockers"
+    )
+    p_ivn_status.add_argument("--registry", default=None, help="Path to the IVN registry (default: validation/ivn/REGISTRY.json)")
+    p_ivn_status.add_argument("--repo-root", default=".", help="Repository root used to resolve artifact paths")
+    p_ivn_status.add_argument("--json", action="store_true", help="Output the full assessment as JSON")
+
+    p_ivn_verify = ivn_subs.add_parser(
+        "verify", help="Recompute every recorded artifact hash in the IVN registry (drift check)"
+    )
+    p_ivn_verify.add_argument("--registry", default=None, help="Path to the IVN registry")
+    p_ivn_verify.add_argument("--repo-root", default=".", help="Repository root used to resolve artifact paths")
+    p_ivn_verify.add_argument("--json", action="store_true", help="Output the integrity report as JSON")
+
+    for register_kind, register_help in (
+        ("register-dataset", "Register an independent dataset (requires on-disk preregistration/report artifacts)"),
+        ("register-lab-study", "Register an external-lab study executed against a registered dataset"),
+        ("register-review", "Register a blinded non-author review (refuses author-roster overlap)"),
+    ):
+        p_reg = ivn_subs.add_parser(register_kind, help=register_help)
+        p_reg.add_argument("--payload", required=True, help="Entity JSON payload (see validation/ivn/templates/)")
+        p_reg.add_argument("--registry", default=None, help="Path to the IVN registry")
+        p_reg.add_argument("--repo-root", default=".", help="Repository root used to resolve artifact paths")
+        p_reg.add_argument("--json", action="store_true", help="Output the registration receipt as JSON")
+
+    p_ivn_freeze = ivn_subs.add_parser(
+        "freeze-profile", help="Freeze an APPROVED calibration profile to its held-out contexts (fail-closed)"
+    )
+    p_ivn_freeze.add_argument("--profile-json", required=True, help="Calibration profile JSON payload")
+    p_ivn_freeze.add_argument("--held-out-json", required=True, help="JSON list of held-out context payloads")
+    p_ivn_freeze.add_argument("--freeze-id", required=True, help="Unique freeze id")
+    p_ivn_freeze.add_argument("--frozen-by", required=True, help="Accountable person or body performing the freeze")
+    p_ivn_freeze.add_argument("--notes", default="", help="Freeze notes")
+    p_ivn_freeze.add_argument("--registry", default=None, help="Path to the IVN registry (freezes are recorded there)")
+    p_ivn_freeze.add_argument("--repo-root", default=".", help="Repository root used to resolve default registry path")
+    p_ivn_freeze.add_argument("--json", action="store_true", help="Output the freeze record as JSON")
+
+    p_ivn_authorize = ivn_subs.add_parser(
+        "authorize", help="Fail-closed gate: may a calibration profile authorize this context? (requires an intact freeze)"
+    )
+    p_ivn_authorize.add_argument("--profile-json", required=True, help="Calibration profile JSON payload")
+    p_ivn_authorize.add_argument("--context-json", required=True, help="Held-out context JSON payload")
+    p_ivn_authorize.add_argument("--registry", default=None, help="Path to the IVN registry")
+    p_ivn_authorize.add_argument("--repo-root", default=".", help="Repository root used to resolve default registry path")
+    p_ivn_authorize.add_argument("--json", action="store_true", help="Output the decision as JSON")
 
     # 10. run (Run Capsule Artifact Contract)
     p_run = subparsers.add_parser("run", help="Manage and inspect standardized BioNexus Run Capsule Artifacts")
@@ -3638,6 +3905,12 @@ def main(argv: Optional[list[str]] = None) -> int:
             p_comp.print_help()
             return 0
         return handle_compliance(args)
+
+    elif args.command == "ivn":
+        if not getattr(args, "ivn_action", None):
+            p_ivn.print_help()
+            return 0
+        return handle_ivn(args)
 
     return 0
 

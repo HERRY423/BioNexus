@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 🔬 Added (Independent Validation Network — BNS-023)
+
+- **Independent Validation Network (`bionexus.ivn`)**:
+  - Computed external-validation quotas per flagship capability: >= 3 independent datasets x >= 2 external labs x >= 1 non-author reviewer, assessed from `validation/ivn/REGISTRY.json` (`bionexus ivn status`).
+  - Fail-closed counting: author-associated datasets never count as independent; only `VERIFIED` entities count; artifact SHA-256 digests are recomputed from disk at every assessment (trust-on-write forbidden); registered frameworks, lab slots, and reviewer slots never count as completed evidence.
+  - Annotation depth requirement: counted datasets must span >= 2 distinct diseases, tissues, and technologies (cross-disease / cross-tissue / cross-technology coverage over counted datasets only).
+  - Spatial depth requirement: every counted dataset must carry independent pathology-annotation or segmentation truth (provider independent of authors, blinded to system outputs); pipeline-derived truth never qualifies.
+  - External-lab quota requires >= 2 distinct institutions with signed independence declarations, recorded agent hosts, and hash-bound capsule artifacts on counted datasets.
+  - Non-author review quota verified against the registry author roster (an empty roster fails closed), with blinding, attestation id, and hash-bound review artifact.
+- **Calibration freeze on held-out contexts (`bionexus.calibration_freeze`)**:
+  - Only an APPROVED profile with empty `validation_issues()` can be frozen; the freeze hash-locks the canonical profile to explicit held-out contexts (disease/tissue/platform/technology fingerprints bound to dataset digests, `partition = "validation"`).
+  - Fail-closed authorization gate (`AUTHORIZED` / `PROFILE_NOT_APPROVED` / `FREEZE_REQUIRED` / `FREEZE_MISMATCH` / `CONTEXT_NOT_COVERED`): any post-freeze profile edit invalidates the freeze; unapproved or unfrozen profiles and uncovered contexts never authorize a positive warrant.
+  - The packaged calibration registry ships zero APPROVED profiles, therefore zero freezes — the calibration blocker stays open (fail-closed frontier preserved).
+- **CLI (`bionexus ivn`)**: `status` (per-flagship quota gaps + OPEN_QUESTIONS blocker alignment), `verify` (registry integrity drift check), `register-dataset` / `register-lab-study` / `register-review` (payload templates under `validation/ivn/templates/`; review registration refuses author-roster overlap), `freeze-profile`, `authorize`.
+- **Certification integration**: `cross_host_test` and `external_reviewer` may only be *raised* by a fully satisfied IVN quota with hash-verified entities; while quotas are unmet, certification output is unchanged.
+- **Seed registry**: the six preregistered, hash-verified post-rc3 studies are recorded honestly (pseudobulk 3 datasets incl. frozen negative results; annotation 2 PBMC datasets with coverage gaps; spatial 0 counted — the Xenium kidney tiny study lacks independent truth); all four OPEN_QUESTIONS blockers remain open, now derived from evidence (`docs/independent-validation-network.md`, `spec/BNS-023-independent-validation-network.md`).
+
+---
+
 ### 🚀 Added (Deployment Foundation — container, Slurm gates, real-data tutorial, scale harness)
 
 - **Apptainer image (`container/apptainer.def` + `.github/workflows/container.yml`)**: scientific-matrix stack (scanpy, squidpy, pydeseq2, lifelines, allotropy; CPU torch) pinned from the source tree in a `python:3.11-slim` SIF. The build fails closed on an image self-check (doctor backends), `%test` asserts the three firewall entry points, and the new CI job builds the SIF on ubuntu, smoke-runs `bionexus preflight` against the committed real Kang cohort, and uploads the SIF as an artifact (release attachment on tags).

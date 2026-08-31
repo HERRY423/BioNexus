@@ -147,7 +147,10 @@ def test_badging_remains_fail_closed() -> None:
 def test_bns022_is_registered_without_mutating_frozen_bns019_release() -> None:
     assert validate_spec_registry(REPOSITORY_ROOT / "spec") == []
     registry = yaml.safe_load((REPOSITORY_ROOT / "spec" / "registry.yaml").read_text(encoding="utf-8"))
-    assert registry["documents"][-1]["id"] == "BNS-022"
+    document_ids = [document["id"] for document in registry["documents"]]
+    # The registry grows monotonically (never reuses ids); BNS-022 must stay
+    # registered, but it is no longer necessarily the last document.
+    assert "BNS-022" in document_ids
     release = read_json(REPOSITORY_ROOT / "standards" / "scientific-semantic-conventions" / "release-manifest.json")
     assert release["version"] == "0.1.0"
     assert release["release_digest_sha256"] == "b3164afe6ccd69dc9d7738c2ee58195ac65862701e29f9db1f98c12e1a97e934"

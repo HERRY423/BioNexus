@@ -324,12 +324,61 @@ def compute_tier(criteria: Dict[str, CriterionEvidence | bool]) -> Certification
     return CertificationTier.CONNECTOR_ONLY
 
 
+def _ivn_external_overrides(capability_id: str) -> Dict[str, tuple[bool, str, str]]:
+    """IVN-derived evidence for the two external criteria of a flagship.
+
+    The Independent Validation Network (BNS-023) can only ever *raise* a
+    criterion above its static baseline: while the network quotas are unmet
+    the static verdicts stand and this returns an empty dict, so certification
+    output is unchanged until hash-verified external-lab studies or blinded
+    non-author reviews actually exist in ``validation/ivn/REGISTRY.json``.
+    """
+    if capability_id not in FLAGSHIP_CAPABILITIES:
+        return {}
+    try:
+        from pathlib import Path
+
+        from bionexus import ivn as _ivn
+
+        registry = _ivn.load_registry()
+        assessment = _ivn.evaluate_capability(capability_id, registry, repo_root=Path.cwd())
+    except Exception:  # no registry, unreadable, or unusable cwd: keep static evidence
+        return {}
+    checks = {check.requirement: check for check in assessment.checks}
+    counted_ids = set(assessment.counted_lab_studies)
+    counted_studies = [study for study in registry.lab_studies if study.study_id in counted_ids]
+    distinct_hosts = {study.host.strip().casefold() for study in counted_studies if study.host.strip()}
+    overrides: Dict[str, tuple[bool, str, str]] = {}
+    labs = checks.get("external_labs")
+    if labs and labs.satisfied and len(distinct_hosts) >= 2:
+        overrides["cross_host_test"] = (
+            True,
+            "validation/ivn/REGISTRY.json (IVN external labs: "
+            f"{labs.observed}; distinct hosts: {len(distinct_hosts)})",
+            "Independent Validation Network external-lab quota satisfied with "
+            "hash-verified studies executed on >= 2 distinct hosts",
+        )
+    reviewers = checks.get("non_author_reviewers")
+    if reviewers and reviewers.satisfied:
+        overrides["external_reviewer"] = (
+            True,
+            "validation/ivn/REGISTRY.json (IVN non-author reviewers: "
+            f"{reviewers.observed})",
+            "Independent Validation Network non-author reviewer quota satisfied "
+            "with blinded, attested reviews by reviewers outside the author roster",
+        )
+    return overrides
+
+
 def certify_capability(capability_id: str) -> CertificationRecord:
     """Compute the honest certification record for a capability."""
     if capability_id not in CANONICAL_CAPABILITIES:
         raise KeyError(f"Unknown capability '{capability_id}'. Available: {sorted(CANONICAL_CAPABILITIES)}")
 
-    evidence = _EVIDENCE.get(capability_id)
+    static = _EVIDENCE.get(capability_id)
+    evidence = dict(static) if static else None
+    if evidence is not None:
+        evidence.update(_ivn_external_overrides(capability_id))
     criteria: Dict[str, CriterionEvidence]
     if evidence is None:
         # No recorded evidence at all: connector-grade only.

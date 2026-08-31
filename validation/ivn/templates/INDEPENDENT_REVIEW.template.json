@@ -1,0 +1,17 @@
+{
+  "review_id": "BN-IVN-REV-<NNN>",
+  "capability_id": "scrna.annotation_evidence",
+  "subject_id": "BN-ANN-IV-003",
+  "reviewer_id": "0000-0002-XXXX-XXXX",
+  "reviewer_name": "Reviewer Full Name",
+  "affiliation": "Reviewer institution (must not be a BioNexus author affiliation)",
+  "verdict": "ENDORSED_WITH_LIMITS",
+  "blinded": true,
+  "declared_non_author": true,
+  "attestation_id": "bionexus evidence-attestation id binding this review",
+  "review_path": "validation/ivn/reviews/<review_id>/REVIEW.json",
+  "review_sha256": "",
+  "reviewed_at": "",
+  "status": "REGISTERED",
+  "notes": "Reviews count only for reviewers absent from the registry author_roster, with blinding, an attestation id, and a hash-bound review artifact. Pending reviewer slots never count."
+}

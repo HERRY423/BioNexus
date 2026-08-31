@@ -1,0 +1,9 @@
+{
+  "dataset_id": "<dataset backing this held-out context>",
+  "dataset_sha256": "<64 hex characters of the dataset artifact>",
+  "disease": "systemic_lupus_erythematosus",
+  "tissue": "PBMC_blood",
+  "platform": "10x_chromium_3prime_droplet",
+  "technology": "CITE-seq_10x_protein_v3",
+  "partition": "validation"
+}

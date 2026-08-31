@@ -802,6 +802,8 @@ BioNexus is governed by a normative, machine-enforced scientific contract publis
 
 **Flagship certification track (BNS-015)**: *three CERTIFIED capabilities with independent external validation outweigh ten self-tested certifications.* The flagship set concentrates effort on the three highest-frequency failure surfaces — `scrna.pseudobulk_de` (cell ≠ biological replicate), `scrna.annotation_evidence` (how much evidence backs a cell-type label), and `spatial.inference_validity` (can a spatial conclusion survive its alternative explanations). The four external criteria (public dataset, independent ground truth, cross-host test, external reviewer) cannot be satisfied by the implementer alone — that is the point.
 
+**Independent Validation Network (BNS-023)**: the flagship external-validation quota — **≥ 3 independent datasets × ≥ 2 external labs × ≥ 1 non-author reviewer per capability** — is computed from hash-verified artifacts via `bionexus ivn status`, never asserted. Annotation evidence must span cross-disease / cross-tissue / cross-technology contexts; spatial evidence must carry independent pathology or segmentation truth; threshold/calibration profiles authorize a positive warrant only when frozen on held-out contexts (`bionexus ivn freeze-profile` / `authorize`). Every gate fails closed: author-associated datasets, registered-but-unverified frameworks and reviewer slots, tampered artifacts, and unfrozen profiles never count. Protocol, current assessed gaps, and OPEN_QUESTIONS alignment: [`docs/independent-validation-network.md`](docs/independent-validation-network.md).
+
 **Scientific failure taxonomy** (`bionexus failures list`): twelve failure modes (BN-F001 assay-state confusion … BN-F012 unexecuted maturity claim), each with definition, detection rule, required fail-closed behavior, acceptable degradation, and benchmark coverage. Since BioFailureBench, **all twelve modes carry wired detection and passing benchmark traps** — the three formerly-open gaps (BN-F004 identifier mismatch, BN-F005 missing FDR, BN-F008 cross-database contradiction) are closed. This ontology is BioNexus's durable asset.
 
 **Claim–Evidence Ledger** (`bionexus ledger`): claims as auditable dependency graphs (`supported_by` / `contradicted_by` / `depends_on` → fail-closed status resolution), persisted as JSON and projectable to PROV-O JSON-LD. Deliberately a data structure, not a graph platform. `bionexus verify` is its productized form.
@@ -995,6 +997,8 @@ ruff check .
 - ⏳ **[Deprecation Policy & Sunset Schedule](docs/deprecation-policy.md)**: 3-phase deprecation policy and timeline.
 
 - 🛠️ **[Developer & Skill Development Guide](docs/plugin-development.md)**: Anatomy of a Gold Reference skill and CLI scaffolding.
+
+- 🔬 **[Independent Validation Network](docs/independent-validation-network.md)**: Computed flagship external-validation quotas, calibration freeze on held-out contexts, and honest gap ledger (BNS-023).
 
 - 🤝 **[Contributing Guidelines](CONTRIBUTING.md)**: Scientific honesty contract and pull request acceptance criteria.
 

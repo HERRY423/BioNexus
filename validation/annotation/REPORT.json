@@ -36,7 +36,7 @@
     "provenance": {
       "data_source": "YosefLab/scVI-data processed public 10x PBMC 10k and PBMC 5k CITE-seq datasets used by the official scvi-tools totalVI tutorials",
       "download_date": "2026-08-28",
-      "commit_sha": "8923d8bf514de5c59d78addf7191f6677ea40c13",
+      "commit_sha": "febd4434b8493aa8ebf1bf4be796efd9e69bac9e",
       "git_dirty": false,
       "environment_lockfile_hashes": {
         "pyproject.toml": "772fb5490fe7ca624de747e378cc10a9810fdcd9a07ad4eb5c5abf0a55c477ba",
@@ -50,7 +50,7 @@
       "generator_version": "1.0.0-rc.3",
       "python_version": "3.13.9",
       "platform": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-08-31T01:33:07.659641+00:00",
+      "timestamp": "2026-08-31T02:49:26.928040+00:00",
       "extra_metadata": {
         "capability": "scrna.annotation_evidence",
         "dataset_id": "citeseq_pbmc_sorted",
@@ -58,7 +58,7 @@
       },
       "repository_dirty_at_execution": true,
       "validation_source_dirty": false,
-      "source_snapshot_sha256": "85f252ba86519616c831b3f7a0dd940c193078472ee5a311bc63d834133a8c17"
+      "source_snapshot_sha256": "bb7067481f221eb9e171776310bf1b798cb52a21c853e2ad5a509da3e44b3817"
     }
   },
   "metrics": [
@@ -120,7 +120,7 @@
     "BN-ANN-IV-001 met its numeric endpoints with a zero threshold and 100% coverage; the post-run scientific audit therefore classifies the gate as non-selective and inconclusive.",
     "BN-ANN-IV-002 retained an input-ineligible non-evaluation because X was normalized; the separately locked BN-ANN-IV-003 raw-count successor met its endpoints but was not blinded to label distributions and is capped at CANDIDATE_EXTERNAL_REFERENCE_NONBLINDED."
   ],
-  "timestamp": "2026-08-31T01:33:07.829721+00:00",
+  "timestamp": "2026-08-31T02:49:27.032482+00:00",
   "evidence_files": [
     "validation\\annotation\\studies\\BN-ANN-IV-001\\evidence\\holdout_cell_decisions.csv",
     "validation\\annotation\\studies\\BN-ANN-IV-001\\PREREGISTRATION.json",
