@@ -61,6 +61,24 @@ from bionexus.registry import (
 from bionexus.versions import PLUGIN_VERSION
 
 
+def _configure_console_streams() -> None:
+    """Keep CLI diagnostics printable on restricted Windows code pages.
+
+    Scientific inventory text legitimately contains symbols such as Greek
+    delta.  Windows runners and redirected consoles can still expose cp1252;
+    preserve their configured encoding, but render unsupported characters as
+    explicit escapes instead of crashing after otherwise successful checks.
+    """
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            try:
+                reconfigure(errors="backslashreplace")
+            except (OSError, ValueError):
+                # StringIO and host-provided streams may reject reconfiguration.
+                pass
+
+
 def _to_snake_case(name: str) -> str:
     """Convert hyphenated or mixed name to snake_case."""
     s = re.sub(r"[\s\-_]+", "_", name)
@@ -2667,6 +2685,7 @@ def handle_compliance(args: argparse.Namespace) -> int:
 
 
 def main(argv: Optional[list[str]] = None) -> int:
+    _configure_console_streams()
     parser = argparse.ArgumentParser(
         prog="bionexus",
         description="BioNexus: The Scientific Reliability Layer for Agentic Biology",
