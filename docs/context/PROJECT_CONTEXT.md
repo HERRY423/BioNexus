@@ -7,7 +7,7 @@ Current, evidence-bounded context for agents and maintainers. Repository impleme
 ## Source snapshot
 
 - Collected: `2026-08-27T11:13:51Z`
-- Branch / HEAD: `main` / `7a0e0e180d07773c392ccfe61daa5a86837b280f`
+- Branch / HEAD: `main` / `897038144b67cb9d1a8729c685c3ab86141b1c97`
 - Dirty checkout: `True` (19 entries)
 - Evidence boundary: selected working-tree files; hosted CI was not verified by this snapshot.
 
@@ -39,4 +39,4 @@ Product priority is evidence depth over catalog breadth: close the external evid
 
 - Source node: `30_Evidence/Findings/BioNexus-current-repository-snapshot-2026-08-27.md`; type: `evidence`; status: `verified`; evidence scope: `engineering_contract`; verification: `internal_reproduced`.
 
-Evidence snapshot: branch `main`, HEAD `7a0e0e180d07773c392ccfe61daa5a86837b280f`, dirty checkout. Use the SHA-256 source manifest to reproduce exactly which files informed this context; do not present the snapshot as an immutable release.
+Evidence snapshot: branch `main`, HEAD `897038144b67cb9d1a8729c685c3ab86141b1c97`, dirty checkout. Use the SHA-256 source manifest to reproduce exactly which files informed this context; do not present the snapshot as an immutable release.

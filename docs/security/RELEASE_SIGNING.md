@@ -53,7 +53,7 @@ not signer identity or scientific validity.
 
 ### Using GitHub CLI:
 ```bash
-gh attestation verify dist/bionexus_reliability-1.0.0rc2-py3-none-any.whl --owner HERRY423
+gh attestation verify dist/bionexus_reliability-1.0.0rc4-py3-none-any.whl --owner HERRY423
 ```
 
 ### Using Sigstore Cosign:
@@ -61,8 +61,8 @@ gh attestation verify dist/bionexus_reliability-1.0.0rc2-py3-none-any.whl --owne
 cosign verify-blob \
   --certificate-identity "https://github.com/HERRY423/BioNexus/.github/workflows/release.yml@refs/heads/main" \
   --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-  --bundle dist/bionexus-1.0.0-rc.2.bundle \
-  dist/bionexus_reliability-1.0.0rc2-py3-none-any.whl
+  --bundle dist/bionexus-1.0.0-rc.4.bundle \
+  dist/bionexus_reliability-1.0.0rc4-py3-none-any.whl
 ```
 
 ### Using Local SHA-256 Manifest:

@@ -1384,12 +1384,24 @@ def handle_route(args: argparse.Namespace) -> int:
         meta["is_normalized"] = True
         meta["is_integer_like"] = False
 
+    raw_factors = getattr(args, "factors", None)
+    factors_list = [f.strip() for f in raw_factors.split(",") if f.strip()] if raw_factors else None
+
+    raw_extras = getattr(args, "documented_extras", None)
+    extras_list = [e.strip() for e in raw_extras.split(",") if e.strip()] if raw_extras else None
+
     decision = route_scientific_intent(
         query=args.query,
         data_path=args.data,
         data_metadata=meta,
         allow_degraded=args.allow_degraded,
         allow_frontier=getattr(args, "allow_frontier", False),
+        research_purpose=getattr(args, "purpose", None),
+        override_justification=getattr(args, "override_justification", ""),
+        lab_policy=getattr(args, "lab_policy", None),
+        evidence_factors=factors_list,
+        claim_context=getattr(args, "claim_class", None),
+        documented_extras=extras_list,
     )
 
     if args.json:
@@ -2947,6 +2959,100 @@ def handle_compliance(args: argparse.Namespace) -> int:
     }
     _emit_cli_payload(result, args.json)
     return 2
+
+
+def handle_nextflow(args: argparse.Namespace) -> int:
+    from bionexus.nextflow_bridge import create_nextflow_tool_receipt, harvest_nextflow_run
+
+    action = getattr(args, "nextflow_action", "inspect")
+    if action == "ingest":
+        run_dir = getattr(args, "run_dir", None)
+        if not run_dir:
+            print("Error: Must provide --run-dir path to Nextflow execution directory")
+            return 2
+        p_name = getattr(args, "pipeline_name", None)
+        sheet = getattr(args, "samplesheet", None)
+        out_path = getattr(args, "output", None)
+
+        try:
+            receipt = create_nextflow_tool_receipt(run_dir, pipeline_name=p_name, samplesheet_path=sheet)
+            if out_path:
+                p = Path(out_path)
+                p.parent.mkdir(parents=True, exist_ok=True)
+                p.write_text(json.dumps(receipt, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+                print(f"[OK] Nextflow tool receipt written to: {p}")
+            if getattr(args, "json", False) or not out_path:
+                print(json.dumps(receipt, indent=2, ensure_ascii=False))
+            return 0
+        except Exception as e:
+            print(f"Error harvesting Nextflow run: {e}")
+            return 1
+
+    elif action == "inspect":
+        run_dir = getattr(args, "run_dir", None)
+        if not run_dir:
+            print("Error: Must provide --run-dir path to Nextflow execution directory")
+            return 2
+        try:
+            summary = harvest_nextflow_run(run_dir)
+            if getattr(args, "json", False):
+                print(json.dumps(summary.to_dict(), indent=2, ensure_ascii=False))
+            else:
+                print("=" * 60)
+                print(f"Nextflow Execution Summary: {summary.pipeline_name}")
+                print("=" * 60)
+                print(f"Status: {summary.execution_status}")
+                print(
+                    f"Processes: {summary.succeeded_processes}/{summary.total_processes} succeeded "
+                    f"({summary.failed_processes} failed, {summary.cached_processes} cached)"
+                )
+                print(f"CPU Hours: {summary.total_cpu_hours} | Peak RSS: {summary.peak_rss_gb} GB")
+                print(
+                    f"Samples: {summary.sample_count} (min replicates/cond: {summary.min_replicates_per_condition}, "
+                    f"biological replicates: {summary.biological_replicates_count})"
+                )
+                print(f"Derived Evidence Factors: {', '.join(summary.derived_evidence_factors)}")
+                print(f"Primary Outputs: {len(summary.primary_outputs)} files indexed")
+                print("=" * 60)
+            return 0
+        except Exception as e:
+            print(f"Error inspecting Nextflow run: {e}")
+            return 1
+
+    elif action == "launch":
+        import importlib.util
+
+        script_path = (
+            Path(__file__).resolve().parents[2]
+            / "skills"
+            / "nextflow-development"
+            / "scripts"
+            / "nfcore_launch.py"
+        )
+        if not script_path.is_file():
+            print(f"Error: nfcore_launch.py not found at {script_path}")
+            return 2
+        spec = importlib.util.spec_from_file_location("nfcore_launch", script_path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+
+        pipeline = getattr(args, "pipeline", None)
+        samplesheet = getattr(args, "samplesheet", None)
+        outdir = getattr(args, "outdir", "results")
+        output = getattr(args, "output", "run.sh")
+        profile = getattr(args, "profile", "docker")
+
+        cmd = mod.build_launch_command(
+            pipeline=pipeline, samplesheet=samplesheet, outdir=outdir, profile=profile
+        )
+        dest = mod.write_launch_script(cmd, Path(output))
+        print(f"[OK] Nextflow launch script generated at: {dest}")
+        print(f"Command: {' '.join(cmd)}")
+        return 0
+
+    return 0
+
+
 # ==============================================================================
 # Main Parser & Router
 # ==============================================================================
@@ -3251,6 +3357,12 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_route.add_argument(
         "--allow-frontier", action="store_true", help="Explicit opt-in to execute experimental frontier capabilities"
     )
+    p_route.add_argument("--purpose", "--research-purpose", dest="purpose", default=None, help="Explicit research purpose (exploratory / screening / confirmatory / causal / clinical)")
+    p_route.add_argument("--factors", "--evidence-factors", dest="factors", default=None, help="Comma-separated declared evidence factors")
+    p_route.add_argument("--claim-class", dest="claim_class", default=None, help="Claim class under evaluation")
+    p_route.add_argument("--documented-extras", dest="documented_extras", default=None, help="Comma-separated documentable extra conditions")
+    p_route.add_argument("--override-justification", default="", help="Justification string for researcher override")
+    p_route.add_argument("--lab-policy", default=None, help="Lab policy profile name")
     p_route.add_argument("--json", action="store_true", help="Output routing decision as JSON")
 
     # 8. eval (BioNexus Agent Behavior & Epistemic Benchmark)
@@ -3805,6 +3917,46 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_cmp_ledger = comp_subs.add_parser("audit-ledger", help="Audit GxP hash chain integrity")
     p_cmp_ledger.add_argument("--json", action="store_true", help="Output JSON report")
 
+    # 27. nextflow (Enterprise Laboratory Infrastructure Bridge)
+    p_nextflow = subparsers.add_parser(
+        "nextflow", help="Nextflow and nf-core Enterprise Laboratory Bridge (BNS-019 / BNS-021)"
+    )
+    nf_subs = p_nextflow.add_subparsers(dest="nextflow_action", help="Nextflow actions")
+
+    p_nf_ingest = nf_subs.add_parser(
+        "ingest", help="Harvest Nextflow run directory and emit signed tool execution receipt"
+    )
+    p_nf_ingest.add_argument("--run-dir", "-r", required=True, help="Path to Nextflow execution directory")
+    p_nf_ingest.add_argument("--pipeline-name", "-p", default=None, help="Pipeline name (e.g. nf-core/rnaseq)")
+    p_nf_ingest.add_argument("--samplesheet", "-s", default=None, help="Optional path to samplesheet.csv")
+    p_nf_ingest.add_argument("-o", "--output", default=None, help="Output path for receipt JSON")
+    p_nf_ingest.add_argument("--json", action="store_true", help="Output JSON receipt to stdout")
+
+    p_nf_inspect = nf_subs.add_parser(
+        "inspect", help="Inspect Nextflow run directory and display execution summary"
+    )
+    p_nf_inspect.add_argument("run_dir", help="Path to Nextflow execution directory")
+    p_nf_inspect.add_argument("--json", action="store_true", help="Output execution summary as JSON")
+
+    p_nf_launch = nf_subs.add_parser("launch", help="Prepare nf-core launch script and configurations")
+    p_nf_launch.add_argument(
+        "--pipeline",
+        required=True,
+        choices=[
+            "rnaseq",
+            "scrnaseq",
+            "differentialabundance",
+            "sarek",
+            "spatialtranscriptomics",
+            "ampliseq",
+        ],
+        help="nf-core pipeline name",
+    )
+    p_nf_launch.add_argument("--samplesheet", required=True, help="Path to input samplesheet.csv")
+    p_nf_launch.add_argument("--outdir", default="results", help="Pipeline output directory")
+    p_nf_launch.add_argument("-o", "--output", default="run.sh", help="Output path for run script")
+    p_nf_launch.add_argument("--profile", default="docker", help="Execution profile (e.g. docker, singularity, slurm)")
+
     args = parser.parse_args(argv)
 
     if not args.command:
@@ -3972,6 +4124,11 @@ def main(argv: Optional[list[str]] = None) -> int:
             p_comp.print_help()
             return 0
         return handle_compliance(args)
+    elif args.command == "nextflow":
+        if not getattr(args, "nextflow_action", None):
+            p_nextflow.print_help()
+            return 0
+        return handle_nextflow(args)
 
     elif args.command == "ivn":
         if not getattr(args, "ivn_action", None):

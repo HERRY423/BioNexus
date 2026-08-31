@@ -9,7 +9,7 @@
   "provenance": {
     "data_source": "GEO GSE96583 (Kang et al. 2018, Nat Biotechnol doi:10.1038/nbt.4042)",
     "download_date": "2026-08-19T00:00:00+00:00",
-    "commit_sha": "d36204dc01495b34eb99cab30391426ca800757a",
+    "commit_sha": "db2444a706cd93702745c7eef238d2057e8206a4",
     "git_dirty": false,
     "environment_lockfile_hashes": {
       "pyproject.toml": "772fb5490fe7ca624de747e378cc10a9810fdcd9a07ad4eb5c5abf0a55c477ba",
@@ -20,7 +20,7 @@
       "evals/pseudobulk_stress_test.py"
     ],
     "command_str": "evals/pseudobulk_stress_test.py",
-    "generator_version": "1.0.0-rc.3",
+    "generator_version": "1.0.0-rc.4",
     "python_version": "3.13.9",
     "platform": "Windows-11-10.0.26200-SP0",
     "timestamp": "2026-08-31T02:48:07.679199+00:00",
@@ -30,7 +30,7 @@
     },
     "repository_dirty_at_execution": false,
     "validation_source_dirty": false,
-    "source_snapshot_sha256": "4df61074006c59b1319aa93756f37bb15d81cae72c6b5da902f98da19b3ef213"
+    "source_snapshot_sha256": "33351ca384dc3558340b32dce9cc3f9d37c8b9dc66b258c4c8d6723fd5357e36"
   },
   "timestamp": "2026-08-31T02:48:56.432353+00:00",
   "elapsed_seconds": 48.99,

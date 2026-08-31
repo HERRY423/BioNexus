@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bionexus-reliability"
-version = "1.0.0-rc.3"
+version = "1.0.0-rc.4"
 description = "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents (Warrant-First Evidence Assessment, Fail-Closed Invariants, Evidence-Capped Claims, Zero Silent Substitution)."
 authors = [{ name = "BioNexus Team" }]
 license = { text = "Apache-2.0" }

@@ -70,3 +70,11 @@ A capability MUST satisfy all of the following to be CERTIFIED:
 |---|---|
 | BNS-CF-001..004 | `tests/unit/test_certification.py`; `bionexus certification` CLI |
 | BNS-CF-005..007 | Certification report gap section; spec review on change |
+| BNS-CF-008 | `tests/unit/test_validation_verifier.py`; `CERTIFICATION.json` schema |
+
+## 6. Semantic Authority & CAB Distinction (BNS-010 / BNS-022)
+
+- **BNS-CF-008** Semantic Scope and Authority Limitation:
+  - Internal capability tiers (`CERTIFIED`, `VALIDATED`) measure internal evidence completeness (`assessment_authority: "INTERNAL_EVIDENCE_ASSESSMENT"`).
+  - All emitted capability certification artifacts carry `certification_effect: "NONE"` and `independent_assurance_status: "NOT_ASSESSED"`.
+  - Internal evidence completeness MUST NEVER be represented as or conflated with third-party accredited Conformity Assessment Body (CAB) conformity certification or formal regulatory clearance (CLIA/CAP/FDA).

@@ -2,7 +2,7 @@
   "host": "claude-code",
   "host_version": "",
   "execution_date": "",
-  "plugin_version": "1.0.0-rc.1",
+  "plugin_version": "1.0.0-rc.4",
   "records": [],
   "summary": {
     "total_traps": 0,

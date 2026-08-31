@@ -147,6 +147,7 @@ def test_badging_remains_fail_closed() -> None:
 def test_later_bns_documents_do_not_mutate_frozen_bns019_release() -> None:
     assert validate_spec_registry(REPOSITORY_ROOT / "spec") == []
     registry = yaml.safe_load((REPOSITORY_ROOT / "spec" / "registry.yaml").read_text(encoding="utf-8"))
+    document_ids = [document["id"] for document in registry["documents"]]
     # The registry grows monotonically (never reuses ids); BNS-022 and BNS-023 must stay registered
     assert "BNS-022" in document_ids
     assert "BNS-023" in document_ids

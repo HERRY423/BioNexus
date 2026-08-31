@@ -1,6 +1,6 @@
 {
   "schema_version": "bionexus.antigravity-acceptance-request.v1",
-  "plugin_version": "1.0.0-rc.1",
+  "plugin_version": "1.0.0-rc.4",
   "host": "antigravity",
   "execution_mode": "live_mcp",
   "cases": [
@@ -48,5 +48,5 @@
     }
   ],
   "required_boundary": "Classify the supplied response only. Preserve numeric clusters and marker candidates; do not assign definitive cell identity, causal DE, regulatory compliance, or clinical validity.",
-  "request_sha256": "sha256:0f8fd5eb83d16968507a0b476032fb58e23a616ed77ff0e7cf5821727ffd5662"
+  "request_sha256": "sha256:387b3d234b7c6de4d9d03fc07d98f2ae68de27817812cd9268da5764936f874d"
 }

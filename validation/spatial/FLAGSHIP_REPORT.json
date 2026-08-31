@@ -7,7 +7,7 @@
     "checksum_sha256": "unavailable"
   },
   "pipeline": {
-    "version": "1.0.0-rc.3",
+    "version": "1.0.0-rc.4",
     "backend_identity": {
       "capability_id": "spatial.inference_validity",
       "track": "canonical",
@@ -28,12 +28,12 @@
       "state": "CONFORMANT",
       "action": "RUN PERMITTED (identity)",
       "failure_mode_ids": [],
-      "reason": "declared_backend == observed_backend: 'local deterministic alternative-explanation tester' (distribution 'bionexus', version 1.0.0-rc.3, entry points 2/2 resolved, fallback False)."
+      "reason": "declared_backend == observed_backend: 'local deterministic alternative-explanation tester' (distribution 'bionexus', version 1.0.0-rc.4, entry points 2/2 resolved, fallback False)."
     },
     "provenance": {
       "data_source": "10x Genomics Xenium public datasets (e.g. Human Breast FFPE) / Vizgen MERSCOPE public releases (Moffitt et al. 2016-style MERFISH)",
       "download_date": "2026-08-28T09:08:29.762388+00:00",
-      "commit_sha": "d36204dc01495b34eb99cab30391426ca800757a",
+      "commit_sha": "db2444a706cd93702745c7eef238d2057e8206a4",
       "git_dirty": false,
       "environment_lockfile_hashes": {
         "pyproject.toml": "72b298385f6617e259e0387200a8ccae03ee1a22567d0a7f73e5b82f12aa0de8",
@@ -44,7 +44,7 @@
         "scripts/run_flagship_validation.py"
       ],
       "command_str": "scripts/run_flagship_validation.py",
-      "generator_version": "1.0.0-rc.3",
+      "generator_version": "1.0.0-rc.4",
       "python_version": "3.13.9",
       "platform": "Windows-11-10.0.26200-SP0",
       "timestamp": "2026-08-28T09:08:29.762388+00:00",
@@ -55,7 +55,7 @@
       },
       "repository_dirty_at_execution": false,
       "validation_source_dirty": false,
-      "source_snapshot_sha256": "4df61074006c59b1319aa93756f37bb15d81cae72c6b5da902f98da19b3ef213"
+      "source_snapshot_sha256": "33351ca384dc3558340b32dce9cc3f9d37c8b9dc66b258c4c8d6723fd5357e36"
     }
   },
   "metrics": [

@@ -510,11 +510,23 @@ def verify_validation_artifacts(
                 except ValueError:
                     errors.append(f"{cap_id} evidence_file '{ef_clean}' is outside repository root")
 
-        # Certification consistency
+        # Certification consistency & semantic disclaimers (BNS-010 / BNS-022)
         rec = certify_capability(cap_id)
         if cert_data.get("certification_level") != rec.tier.value:
             errors.append(
                 f"{cap_id} CERTIFICATION.json certification_level '{cert_data.get('certification_level')}' != computed tier '{rec.tier.value}'"
+            )
+        if cert_data.get("assessment_authority") != "INTERNAL_EVIDENCE_ASSESSMENT":
+            errors.append(
+                f"{cap_id} CERTIFICATION.json assessment_authority '{cert_data.get('assessment_authority')}' != expected 'INTERNAL_EVIDENCE_ASSESSMENT'"
+            )
+        if cert_data.get("certification_effect") != "NONE":
+            errors.append(
+                f"{cap_id} CERTIFICATION.json certification_effect '{cert_data.get('certification_effect')}' != expected 'NONE'"
+            )
+        if cert_data.get("independent_assurance_status") != "NOT_ASSESSED":
+            errors.append(
+                f"{cap_id} CERTIFICATION.json independent_assurance_status '{cert_data.get('independent_assurance_status')}' != expected 'NOT_ASSESSED'"
             )
 
         standards = {s["standard_id"]: s for s in cert_data.get("standards", [])}

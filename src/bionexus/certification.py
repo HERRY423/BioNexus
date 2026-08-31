@@ -110,11 +110,17 @@ class CertificationRecord:
     satisfied_count: int = 0
     blocking_for_certified: List[str] = field(default_factory=list)
     blocking_for_validated: List[str] = field(default_factory=list)
+    assessment_authority: str = "INTERNAL_EVIDENCE_ASSESSMENT"
+    certification_effect: str = "NONE"
+    independent_assurance_status: str = "NOT_ASSESSED"
 
     def to_dict(self) -> Dict[str, Any]:
         return {
             "capability_id": self.capability_id,
             "tier": self.tier.value,
+            "assessment_authority": self.assessment_authority,
+            "certification_effect": self.certification_effect,
+            "independent_assurance_status": self.independent_assurance_status,
             "satisfied_count": self.satisfied_count,
             "total_criteria": len(CERTIFICATION_CRITERIA),
             "blocking_for_certified": self.blocking_for_certified,
@@ -448,6 +454,9 @@ def certification_report() -> Dict[str, Any]:
 
     certified_count = len(tiers[CertificationTier.CERTIFIED.value])
     return {
+        "assessment_authority": "INTERNAL_EVIDENCE_ASSESSMENT",
+        "certification_effect": "NONE",
+        "independent_assurance_status": "NOT_ASSESSED",
         "tier_distribution": tiers,
         "certified_count": certified_count,
         "m4_target_certified": 10,

@@ -132,6 +132,7 @@ from .empirical_warrant import (
 )
 from .evidence_model import (
     CLAIM_REQUIREMENTS,
+    DOCUMENTABLE_EXTRAS,
     FACTOR_SUPPORT_LADDER,
     ClaimClass,
     ClaimContext,
@@ -142,6 +143,7 @@ from .evidence_model import (
     UseRequirement,
     assess_evidence,
     evaluate_sufficiency,
+    extract_evidence_factors,
     use_requirement_for,
 )
 from .gate import DoctorGateError, require_doctor, write_doctor_report
@@ -200,6 +202,14 @@ from .lab_policy import (
 from .local_cache import (
     BioLocalCache,
     default_local_cache,
+)
+from .nextflow_bridge import (
+    NextflowExecutionSummary,
+    create_nextflow_tool_receipt,
+    harvest_nextflow_run,
+    parse_samplesheet,
+    parse_trace_file,
+    parse_versions_file,
 )
 from .pipeline_config import load_pipeline_config, merge_config
 from .preflight import (
@@ -343,6 +353,13 @@ from .standards import (
     alignments_report,
     render_alignments,
 )
+from .tool_receipt import (
+    create_tool_receipt,
+    extract_evidence_factors_from_receipt,
+    extract_evidence_factors_from_receipt_log,
+    verify_receipt_log_chain,
+    verify_tool_receipt,
+)
 from .trust_evidence import (
     AttestationVerification,
     EvidenceAttestation,
@@ -465,8 +482,10 @@ __all__ = [
     "SufficiencyVerdict",
     "SufficiencyAssessment",
     "CLAIM_REQUIREMENTS",
+    "DOCUMENTABLE_EXTRAS",
     "FACTOR_SUPPORT_LADDER",
     "assess_evidence",
+    "extract_evidence_factors",
     "use_requirement_for",
     "evaluate_sufficiency",
     "Precondition",
@@ -697,4 +716,15 @@ __all__ = [
     "create_revocation",
     "public_key_id",
     "verify_attestation",
+    "create_tool_receipt",
+    "extract_evidence_factors_from_receipt",
+    "extract_evidence_factors_from_receipt_log",
+    "verify_receipt_log_chain",
+    "verify_tool_receipt",
+    "NextflowExecutionSummary",
+    "create_nextflow_tool_receipt",
+    "harvest_nextflow_run",
+    "parse_samplesheet",
+    "parse_trace_file",
+    "parse_versions_file",
 ]

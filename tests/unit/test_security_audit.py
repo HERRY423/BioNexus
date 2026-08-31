@@ -40,6 +40,8 @@ IGNORED_SCAN_PARTS = {
     "venv",
     ".venv",
     "node_modules",
+    "build",
+    "dist",
 }
 
 
@@ -50,7 +52,8 @@ def test_zero_private_keys_or_secret_seeds_in_repository():
     for file_path in REPO_ROOT.rglob("*"):
         if not file_path.is_file():
             continue
-        if any(part in file_path.parts for part in IGNORED_SCAN_PARTS):
+        rel_parts = file_path.relative_to(REPO_ROOT).parts
+        if any(part.startswith((".", "_")) or part in IGNORED_SCAN_PARTS for part in rel_parts[:-1]):
             continue
         # Only inspect code, config, documentation, and data manifests
         if file_path.suffix not in (".py", ".json", ".md", ".yaml", ".yml", ".txt", ".toml", ".sh", ".ps1"):

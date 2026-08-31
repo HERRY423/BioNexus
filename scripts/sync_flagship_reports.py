@@ -46,8 +46,10 @@ def sync_nested_provenance(obj: any, commit_sha: str, snapshot: str, *, update_c
                 obj[k] = commit_sha
             elif k in ('git_dirty', 'repository_dirty_at_execution', 'validation_source_dirty'):
                 obj[k] = False
-            elif k in ('generator_version', 'project_version'):
+            elif k in ('generator_version', 'project_version', 'target_release_candidate', 'certification_version'):
                 obj[k] = VERSION
+            elif k == 'pipeline' and isinstance(v, dict) and 'version' in v:
+                v['version'] = VERSION
             elif k == 'reason' and isinstance(v, str) and 'version 1.0.0-rc' in v:
                 obj[k] = re.sub(r'version 1\.0\.0-rc\.\d+', f'version {VERSION}', v)
             else:

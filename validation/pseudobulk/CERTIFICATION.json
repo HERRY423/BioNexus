@@ -2,8 +2,11 @@
   "schema_version": "1.0",
   "capability_id": "scrna.pseudobulk_de",
   "certification_level": "VALIDATED",
+  "assessment_authority": "INTERNAL_EVIDENCE_ASSESSMENT",
+  "certification_effect": "NONE",
+  "independent_assurance_status": "NOT_ASSESSED",
   "assessment_date": "2026-08-19",
-  "project_version": "1.0.0-rc.3",
+  "project_version": "1.0.0-rc.4",
   "standards": [
     {
       "standard_id": "reference_backend",

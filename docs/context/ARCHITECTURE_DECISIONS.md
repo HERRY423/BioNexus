@@ -7,7 +7,7 @@ Accepted and proposed decisions are kept distinct. A proposed entry is not imple
 ## Source snapshot
 
 - Collected: `2026-08-27T11:13:51Z`
-- Branch / HEAD: `main` / `7a0e0e180d07773c392ccfe61daa5a86837b280f`
+- Branch / HEAD: `main` / `897038144b67cb9d1a8729c685c3ab86141b1c97`
 - Dirty checkout: `True` (19 entries)
 - Evidence boundary: selected working-tree files; hosted CI was not verified by this snapshot.
 

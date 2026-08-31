@@ -21,6 +21,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 
 from bionexus.versions import VERSION
 
+
 class UserRole(str, enum.Enum):
     """Laboratory personnel roles for Role-Based Access Control (RBAC)."""
     GUEST_VIEWER = "GUEST_VIEWER"
