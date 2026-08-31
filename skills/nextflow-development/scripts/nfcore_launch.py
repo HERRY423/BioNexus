@@ -20,7 +20,14 @@ if _SRC.is_dir() and str(_SRC) not in sys.path:
 
 from bionexus.contracts import GRADE_A, attach_meta, refuse
 
-ALLOWED = ("rnaseq", "scrnaseq")
+ALLOWED = (
+    "rnaseq",
+    "scrnaseq",
+    "differentialabundance",
+    "sarek",
+    "spatialtranscriptomics",
+    "ampliseq",
+)
 
 
 def build_launch_command(

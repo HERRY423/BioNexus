@@ -98,8 +98,8 @@ def test_pydeseq2_recovers_planted_gene():
 def test_nfcore_launch_writes_script_and_rejects_unknown_pipeline():
     from nfcore_launch import build_launch_command, write_launch_script
 
-    with pytest.raises(ValueError, match="rnaseq"):
-        build_launch_command(pipeline="sarek", samplesheet="s.csv", outdir="out")
+    with pytest.raises(ValueError, match="supported"):
+        build_launch_command(pipeline="unsupported_custom_pipeline", samplesheet="s.csv", outdir="out")
     cmd = build_launch_command(pipeline="rnaseq", samplesheet="s.csv", outdir="results")
     assert cmd[:3] == ["nextflow", "run", "nf-core/rnaseq"]
     dest = PROJECT_ROOT / "tests" / "_tmp_nfcore_run.sh"
