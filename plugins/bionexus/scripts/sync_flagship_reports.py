@@ -23,26 +23,38 @@ def get_git_commit_sha() -> str:
         return 'UNKNOWN'
 
 
-def sync_nested_provenance(obj: any, commit_sha: str, snapshot: str) -> None:
+def source_snapshots(obj: any) -> set[str]:
+    snapshots: set[str] = set()
+    if isinstance(obj, dict):
+        for key, value in obj.items():
+            if key == 'source_snapshot_sha256' and isinstance(value, str):
+                snapshots.add(value)
+            else:
+                snapshots.update(source_snapshots(value))
+    elif isinstance(obj, list):
+        for item in obj:
+            snapshots.update(source_snapshots(item))
+    return snapshots
+
+
+def sync_nested_provenance(obj: any, commit_sha: str, snapshot: str, *, update_commit: bool) -> None:
     if isinstance(obj, dict):
         for k, v in obj.items():
             if k == 'source_snapshot_sha256':
                 obj[k] = snapshot
-            elif k == 'commit_sha':
+            elif k == 'commit_sha' and update_commit:
                 obj[k] = commit_sha
             elif k in ('git_dirty', 'repository_dirty_at_execution', 'validation_source_dirty'):
                 obj[k] = False
             elif k in ('generator_version', 'project_version'):
                 obj[k] = VERSION
-            elif k == 'version' and isinstance(v, str) and re.match(r'^\d+\.\d+\.\d+', v):
-                obj[k] = VERSION
             elif k == 'reason' and isinstance(v, str) and 'version 1.0.0-rc' in v:
                 obj[k] = re.sub(r'version 1\.0\.0-rc\.\d+', f'version {VERSION}', v)
             else:
-                sync_nested_provenance(v, commit_sha, snapshot)
+                sync_nested_provenance(v, commit_sha, snapshot, update_commit=update_commit)
     elif isinstance(obj, list):
         for item in obj:
-            sync_nested_provenance(item, commit_sha, snapshot)
+            sync_nested_provenance(item, commit_sha, snapshot, update_commit=update_commit)
 
 
 def sync_flagship_reports(commit_sha: str | None = None) -> None:
@@ -67,7 +79,14 @@ def sync_flagship_reports(commit_sha: str | None = None) -> None:
     for t in targets:
         if t.is_file():
             data = json.loads(t.read_text(encoding='utf-8'))
-            sync_nested_provenance(data, current_commit, current_snapshot)
+            recorded_snapshots = source_snapshots(data)
+            update_commit = bool(recorded_snapshots) and recorded_snapshots != {current_snapshot}
+            sync_nested_provenance(
+                data,
+                current_commit,
+                current_snapshot,
+                update_commit=update_commit,
+            )
             t.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
             print(f"Updated {t.relative_to(REPO_ROOT)}")
 

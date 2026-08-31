@@ -37,7 +37,7 @@
     "provenance": {
       "data_source": "10x Genomics official Xenium XOA v4 tiny human kidney output bundle",
       "download_date": "2026-08-28",
-      "commit_sha": "febd4434b8493aa8ebf1bf4be796efd9e69bac9e",
+      "commit_sha": "d36204dc01495b34eb99cab30391426ca800757a",
       "git_dirty": false,
       "environment_lockfile_hashes": {
         "pyproject.toml": "772fb5490fe7ca624de747e378cc10a9810fdcd9a07ad4eb5c5abf0a55c477ba",
@@ -57,9 +57,9 @@
         "dataset_id": "xenium_spatial_truth",
         "present": true
       },
-      "repository_dirty_at_execution": true,
+      "repository_dirty_at_execution": false,
       "validation_source_dirty": false,
-      "source_snapshot_sha256": "bb7067481f221eb9e171776310bf1b798cb52a21c853e2ad5a509da3e44b3817"
+      "source_snapshot_sha256": "4df61074006c59b1319aa93756f37bb15d81cae72c6b5da902f98da19b3ef213"
     }
   },
   "metrics": [
