@@ -46,6 +46,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `src/bionexus/artifacts.py`: `RunBundle.record_step()` + `StepRecord` — capsule-native step recording with fail-closed binding validation at `finalize()` (outputs must be registered results, inputs must be capsule inputs or earlier-step outputs); persisted inside the sealed `run.json`.
 - `src/bionexus/interop.py`: `validate_workflow_run_crate()` / `verify_workflow_run_crate()` structural validators (profile chain, CreateAction/ControlAction/OrganizeAction wiring, checksum hygiene) with explicit scope disclosure (BNS-IO-010).
 - `tests/unit/test_wfrun_crate.py`: bundle structure, profile conformance, step wiring, checksum agreement, determinism (byte-identical metadata + zip), fail-closed refusals; `bionexus interop check` now also validates the bundle projection (BNS-016).
+- `.github/workflows/ro-crate-conformance.yml`: pins the official CRS4 `roc-validator==0.11.2`, builds a sealed deterministic fixture, and requires all 83 REQUIRED checks across RO-Crate 1.1 + Process/Workflow/Provenance Run Crate 0.5 + Workflow RO-Crate 1.0 to pass. CI uploads the crate, exact validator log, and a hash-bound `THIRD_PARTY_TOOL_VALIDATED` receipt that explicitly leaves external adoption `NOT_ESTABLISHED` (BNS-IO-010).
+- Fixed official conformance defects exposed by the third-party validator: BioNexus JSON-LD extension properties now use compact context terms, Python is a resolvable schema.org `ComputerLanguage`, and the root Dataset declares its Apache-2.0 license.
 ## [1.0.0-rc.3] - 2026-08-29
 
 ### 🤖 Added (ChatGPT & Rosalind Interoperability Adapter)

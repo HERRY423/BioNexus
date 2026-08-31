@@ -1,0 +1,18 @@
+{
+  "@context": {
+    "bns": "https://bionexus.dev/ns#",
+    "bnsAssumptionValidity": "bns:assumptionValidity",
+    "bnsConclusionMaturity": "bns:conclusionMaturity",
+    "bnsCrossMethodConcordance": "bns:crossMethodConcordance",
+    "bnsEvidenceKind": "bns:evidenceKind",
+    "bnsEvidenceStatus": "bns:evidenceStatus",
+    "bnsExecutionState": "bns:executionState",
+    "bnsExternalValidation": "bns:externalValidation",
+    "bnsInputIntegrity": "bns:inputIntegrity",
+    "bnsMaturity": "bns:maturity",
+    "bnsParameterRobustness": "bns:parameterRobustness",
+    "bnsRunStatus": "bns:runStatus",
+    "bnsStatisticalSupport": "bns:statisticalSupport",
+    "bnsValidationRole": "bns:validationRole"
+  }
+}

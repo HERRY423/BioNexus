@@ -14,6 +14,10 @@ Statuses are a closed vocabulary and MUST reflect reality:
                 conformance testing against the full official validator)
 - proposal      BioNexus material offered into an external forum (not adopted)
 - tracked       engagement venue monitored; no material offered yet
+
+Implementation and independent verification are separate axes. A shipped
+projection does not become externally adopted merely because a third-party
+validator accepts a deterministic conformance fixture.
 """
 
 from __future__ import annotations
@@ -28,6 +32,7 @@ STANDARDS_DISCLAIMER = (
 )
 
 STATUSES = ("implemented", "aligned", "proposal", "tracked")
+VERIFICATION_STATUSES = ("repository_tested", "third_party_tool_validated", "not_assessed")
 
 
 @dataclass(frozen=True)
@@ -40,10 +45,16 @@ class StandardAlignment:
     status: str  # STATUSES
     role: str  # what BioNexus uses it for / contributes to it
     since: str = ""
+    verification: str = "not_assessed"
 
     def __post_init__(self) -> None:
         if self.status not in STATUSES:
             raise ValueError(f"Unknown alignment status '{self.status}' (must be one of {STATUSES})")
+        if self.verification not in VERIFICATION_STATUSES:
+            raise ValueError(
+                f"Unknown verification status '{self.verification}' "
+                f"(must be one of {VERIFICATION_STATUSES})"
+            )
 
 
 ALIGNMENTS: Dict[str, StandardAlignment] = {
@@ -56,14 +67,19 @@ ALIGNMENTS: Dict[str, StandardAlignment] = {
             status="implemented",
             role="Claim–Evidence Ledger JSON-LD projection and provenance sidecars",
             since="0.8.0",
+            verification="repository_tested",
         ),
         StandardAlignment(
             key="ro-crate",
             name="RO-Crate 1.1",
             url="https://w3id.org/ro/crate/1.1",
             status="implemented",
-            role="Run capsules and ledgers exported as crates (structural validation included)",
+            role=(
+                "Run capsules and ledgers exported as crates; the Workflow Run fixture is "
+                "accepted by the pinned official roc-validator profile chain"
+            ),
             since="0.10.0",
+            verification="third_party_tool_validated",
         ),
         StandardAlignment(
             key="workflow-run-crate",
@@ -73,10 +89,11 @@ ALIGNMENTS: Dict[str, StandardAlignment] = {
             role=(
                 "Execution provenance: document projections plus full Research Object "
                 "bundle exports (inputs, software, execution, steps, outputs, EvidenceCard, "
-                "Claim Ledger) with structural profile validation; official "
-                "ro-crate-validator integration is not claimed (BNS-IO-010)"
+                "Claim Ledger), with CI validation by official roc-validator 0.11.2 at "
+                "REQUIRED severity across the inherited five-profile chain (BNS-IO-010)"
             ),
             since="0.10.0",
+            verification="third_party_tool_validated",
         ),
         StandardAlignment(
             key="bco",
@@ -85,6 +102,7 @@ ALIGNMENTS: Dict[str, StandardAlignment] = {
             status="implemented",
             role="Six-domain computation objects exported from run capsules (structural validation)",
             since="0.10.0",
+            verification="repository_tested",
         ),
         StandardAlignment(
             key="bioschemas",
@@ -104,10 +122,11 @@ ALIGNMENTS: Dict[str, StandardAlignment] = {
             key="ga4gh-ai-workstream",
             name="GA4GH Artificial Intelligence Work Stream",
             url="https://www.ga4gh.org/",
-            status="proposal",
+            status="tracked",
             role=(
-                "BNS offered as an implementation proposal: capability contracts, evidence "
-                "boundaries, refusal semantics, host conformance, BioFailureBench tests"
+                "Contribution packet ready but not submitted: capability contracts, evidence "
+                "boundaries, refusal semantics, host conformance, BioFailureBench tests; "
+                "submission requires a named human participant"
             ),
         ),
         StandardAlignment(
@@ -161,11 +180,18 @@ def render_alignments() -> str:
     lines.append("")
     lines.append(f'"{STANDARDS_DISCLAIMER}"')
     lines.append("")
-    lines.append("| Standard | Status | Role in BioNexus | Since |")
-    lines.append("|---|---|---|---|")
+    lines.append("| Standard | Status | Verification | Role in BioNexus | Since |")
+    lines.append("|---|---|---|---|---|")
     for a in ALIGNMENTS.values():
-        lines.append(f"| [{a.name}]({a.url}) | `{a.status}` | {a.role} | {a.since or '-'} |")
+        lines.append(
+            f"| [{a.name}]({a.url}) | `{a.status}` | `{a.verification}` | "
+            f"{a.role} | {a.since or '-'} |"
+        )
     lines.append("")
     lines.append("Statuses: `implemented` shipped+tested here | `aligned` follows the spec in use |")
     lines.append("`proposal` offered into an external forum | `tracked` venue monitored.")
+    lines.append(
+        "Verification is separate: `third_party_tool_validated` is technical conformance, "
+        "not certification, endorsement, or adoption."
+    )
     return "\n".join(lines)

@@ -217,13 +217,13 @@ def test_profile_chain_and_graph_wiring(tmp_path):
 
     # EvidenceCard rides inside the crate with BNS extension terms
     card = by_id["#evidence-card"]
-    assert card["https://bionexus.dev/ns#executionState"] == "EXECUTED"
+    assert card["bnsExecutionState"] == "EXECUTED"
     assert card["about"] == {"@id": "#run/run_wfrun_demo"}
 
     # Claim Ledger claims are contextual entities with isBasedOn edges
     claim = by_id["#claim/CLAIM-1"]
     assert claim["isBasedOn"] == [{"@id": "#evidence/E-METHOD-1"}]
-    assert claim["https://bionexus.dev/ns#evidenceStatus"] == "SUPPORTED"
+    assert claim["bnsEvidenceStatus"] == "SUPPORTED"
 
 
 def test_exported_sha256_matches_crate_bytes(tmp_path):

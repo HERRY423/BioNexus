@@ -44,10 +44,15 @@ without adopting anything else from BioNexus.
 - **BNS-IO-009** The BCO `etag` MUST be computed from the object's content
   (SHA-256 over the canonical JSON), never asserted; validation MUST recompute
   and reject mismatches.
-- **BNS-IO-010** Validators MUST disclose their scope: they are structural
-  checks against the specifications cited here, not the official
-  ro-crate-validator / IEEE schema runs (integration is tracked in the
-  standards registry, BNS-IO-007).
+- **BNS-IO-010** Validator scope MUST be machine-readable. Workflow Run
+  RO-Crate CI MUST build a sealed deterministic fixture and run the pinned
+  official `roc-validator` CLI at REQUIRED severity against Provenance Run
+  Crate 0.5 with profile inheritance enabled. A successful run MUST emit a
+  hash-bound receipt with status `THIRD_PARTY_TOOL_VALIDATED`. That status
+  proves technical conformance of the fixture only; it MUST NOT be described
+  as certification, endorsement, ecosystem adoption, or scientific validation.
+  BCO remains repository-structurally-tested until an independent IEEE schema
+  validation gate is added.
 - **BNS-IO-011** Crate root datasets SHOULD carry Bioschemas-compatible
   schema.org typing; full Bioschemas profile validation MAY follow and MUST
   be reflected honestly in the registry before `implemented` status is claimed.
@@ -73,6 +78,9 @@ without adopting anything else from BioNexus.
   `implemented` (shipped and tested here), `aligned` (follows the external
   spec in use), `proposal` (offered into an external forum, not adopted),
   `tracked` (venue monitored). A status MUST reflect verifiable reality.
+  Registry entries MUST also carry the independent verification axis
+  (`repository_tested`, `third_party_tool_validated`, or `not_assessed`), so
+  implementation, tool validation, and external adoption cannot be conflated.
 - **BNS-IO-008** The alignment report MUST publish this disclaimer verbatim:
   *BioNexus is not an industry standard and does not claim to be one. The BNS
   series is an implementation proposal; standards status is earned by external
@@ -102,3 +110,6 @@ without adopting anything else from BioNexus.
 - `tests/unit/test_product_matrix.py` — documented module mapping is real.
 - `bionexus interop check <run|ledger>` — CLI-level validation.
 - `bionexus interop wfrun-crate <run> --out <dir>` — CLI-level bundle export.
+- `.github/workflows/ro-crate-conformance.yml` — pinned official
+  `roc-validator==0.11.2`, full inherited REQUIRED profile gate, validator log,
+  and hash-bound validation receipt.

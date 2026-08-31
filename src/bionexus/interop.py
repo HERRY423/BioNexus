@@ -49,15 +49,31 @@ BCO_SPEC_VERSION = "https://w3id.org/ieee/ieee-2791-std/schema/2791-2020"
 
 # Workflow Run RO-Crate bundle export (BNS-IO-014). The bundle uses the
 # published profile chain; sha256 and related terms resolve through the
-# workflow-run extension context, so the crate @context is the two-element
-# array mandated by the profiles.
+# workflow-run extension context. BioNexus extension properties are compacted
+# through an explicit local term map so standards tooling never has to accept
+# absolute IRIs as JSON object keys.
 WORKFLOW_RUN_CONTEXT = "https://w3id.org/ro/terms/workflow-run/context"
-WORKFLOW_RUN_CRATE_CONTEXT = [RO_CRATE_CONTEXT, WORKFLOW_RUN_CONTEXT]
 WORKFLOW_RO_CRATE_PROFILE_1_0 = "https://w3id.org/workflowhub/workflow-ro-crate/1.0"
 WORKFLOW_RUN_CRATE_PROFILE = "https://w3id.org/ro/wfrun/workflow/0.5"
 PROVENANCE_RUN_CRATE_PROFILE = "https://w3id.org/ro/wfrun/provenance/0.5"
 FORMAL_PARAMETER_PROFILE = "https://bioschemas.org/profiles/FormalParameter/1.0-RELEASE"
 BNS_NAMESPACE = "https://bionexus.dev/ns#"
+BNS_CONTEXT = {
+    "bnsEvidenceKind": f"{BNS_NAMESPACE}evidenceKind",
+    "bnsMaturity": f"{BNS_NAMESPACE}maturity",
+    "bnsValidationRole": f"{BNS_NAMESPACE}validationRole",
+    "bnsEvidenceStatus": f"{BNS_NAMESPACE}evidenceStatus",
+    "bnsExecutionState": f"{BNS_NAMESPACE}executionState",
+    "bnsConclusionMaturity": f"{BNS_NAMESPACE}conclusionMaturity",
+    "bnsInputIntegrity": f"{BNS_NAMESPACE}inputIntegrity",
+    "bnsAssumptionValidity": f"{BNS_NAMESPACE}assumptionValidity",
+    "bnsStatisticalSupport": f"{BNS_NAMESPACE}statisticalSupport",
+    "bnsParameterRobustness": f"{BNS_NAMESPACE}parameterRobustness",
+    "bnsCrossMethodConcordance": f"{BNS_NAMESPACE}crossMethodConcordance",
+    "bnsExternalValidation": f"{BNS_NAMESPACE}externalValidation",
+    "bnsRunStatus": f"{BNS_NAMESPACE}runStatus",
+}
+WORKFLOW_RUN_CRATE_CONTEXT = [RO_CRATE_CONTEXT, WORKFLOW_RUN_CONTEXT, BNS_CONTEXT]
 BIONEXUS_AGENT_ID = "https://github.com/HERRY423/BioNexus"
 
 _PROFILE_ENTITIES: Dict[str, Tuple[str, str]] = {
@@ -818,7 +834,7 @@ def plan_workflow_run_crate(
             f"BioNexus capability '{capability_id}' (skill: "
             f"{manifest.get('skill_name', 'unknown')}) as executed in run {run_id}."
         ),
-        "programmingLanguage": {"@id": "#language/python"},
+        "programmingLanguage": {"@id": "https://www.python.org/"},
     }
     graph.append(workflow)
     root_has_part.append({"@id": workflow_rel})
@@ -984,8 +1000,8 @@ def plan_workflow_run_crate(
     graph.append(engine)
     graph.append(
         {
-            "@id": "#language/python",
-            "@type": "ProgrammingLanguage",
+            "@id": "https://www.python.org/",
+            "@type": "ComputerLanguage",
             "name": "Python",
             "url": "https://www.python.org/",
         }
@@ -1137,9 +1153,9 @@ def plan_workflow_run_crate(
                     "@id": f"#evidence/{rid}",
                     "@type": "CreativeWork",
                     "name": str(rid),
-                    f"{BNS_NAMESPACE}evidenceKind": ref.get("kind", ""),
-                    f"{BNS_NAMESPACE}maturity": ref.get("maturity", ""),
-                    f"{BNS_NAMESPACE}validationRole": ref.get("validation_role", ""),
+                    "bnsEvidenceKind": ref.get("kind", ""),
+                    "bnsMaturity": ref.get("maturity", ""),
+                    "bnsValidationRole": ref.get("validation_role", ""),
                     "description": f"{ref.get('summary') or ref.get('kind', '')} "
                     f"(maturity: {ref.get('maturity', '')})",
                 }
@@ -1150,7 +1166,7 @@ def plan_workflow_run_crate(
                 "@id": f"#claim/{cid}",
                 "@type": "CreativeWork",
                 "name": str(claim.get("statement", cid)),
-                f"{BNS_NAMESPACE}evidenceStatus": claim.get("evidence_status", ""),
+                "bnsEvidenceStatus": claim.get("evidence_status", ""),
                 "description": f"evidence_status: {claim.get('evidence_status', '')}"
                 + (f"; capability: {claim['capability_id']}" if claim.get("capability_id") else ""),
             }
@@ -1175,20 +1191,20 @@ def plan_workflow_run_crate(
         "name": "BioNexus EvidenceCard 2.0",
         "about": {"@id": f"#run/{run_id}"},
         "description": f"execution_state={execution_state}; conclusion_maturity={maturity}",
-        f"{BNS_NAMESPACE}executionState": execution_state,
-        f"{BNS_NAMESPACE}conclusionMaturity": maturity,
+        "bnsExecutionState": execution_state,
+        "bnsConclusionMaturity": maturity,
     }
     evidence_sib = sib.get("evidence") or {}
     for dim, key in (
-        ("input_integrity", "inputIntegrity"),
-        ("assumption_validity", "assumptionValidity"),
-        ("statistical_support", "statisticalSupport"),
-        ("parameter_robustness", "parameterRobustness"),
-        ("cross_method_concordance", "crossMethodConcordance"),
-        ("external_validation", "externalValidation"),
+        ("input_integrity", "bnsInputIntegrity"),
+        ("assumption_validity", "bnsAssumptionValidity"),
+        ("statistical_support", "bnsStatisticalSupport"),
+        ("parameter_robustness", "bnsParameterRobustness"),
+        ("cross_method_concordance", "bnsCrossMethodConcordance"),
+        ("external_validation", "bnsExternalValidation"),
     ):
         if evidence_sib.get(dim):
-            evidence_entity[f"{BNS_NAMESPACE}{key}"] = evidence_sib[dim]
+            evidence_entity[key] = evidence_sib[dim]
     graph.append(evidence_entity)
 
     # ---- main workflow run CreateAction --------------------------------------
@@ -1202,8 +1218,8 @@ def plan_workflow_run_crate(
             f"status={run_status}; execution_state={execution_state}; "
             f"conclusion_maturity={maturity}"
         ),
-        f"{BNS_NAMESPACE}runStatus": run_status,
-        f"{BNS_NAMESPACE}conclusionMaturity": maturity,
+        "bnsRunStatus": run_status,
+        "bnsConclusionMaturity": maturity,
     }
     if manifest.get("timestamp_start"):
         action["startTime"] = manifest["timestamp_start"]
@@ -1253,6 +1269,7 @@ def plan_workflow_run_crate(
         "mentions": mention_refs,
         "conformsTo": [{"@id": p} for p in declared_profiles],
         "author": {"@id": BIONEXUS_AGENT_ID},
+        "license": {"@id": "https://www.apache.org/licenses/LICENSE-2.0"},
     }
     if manifest.get("timestamp_end"):
         root["datePublished"] = manifest["timestamp_end"]
@@ -1293,7 +1310,7 @@ def validate_workflow_run_crate(doc: Dict[str, Any]) -> List[str]:
     context = doc.get("@context")
     if context != WORKFLOW_RUN_CRATE_CONTEXT:
         errors.append(
-            f"@context MUST be the two-element array {WORKFLOW_RUN_CRATE_CONTEXT}"
+            f"@context MUST be the profile contexts plus BioNexus term map {WORKFLOW_RUN_CRATE_CONTEXT}"
         )
     graph = doc.get("@graph")
     if not isinstance(graph, list) or not graph:
