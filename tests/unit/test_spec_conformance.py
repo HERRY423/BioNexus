@@ -195,4 +195,9 @@ def test_normative_requirements_backed_by_implementation():
     assert report["disclaimer"] == STANDARDS_DISCLAIMER
     assert "not an industry standard" in STANDARDS_DISCLAIMER
     assert report["status_counts"]["implemented"] >= 3
-    assert report["status_counts"]["proposal"] >= 1  # GA4GH offered, not claimed
+    # A prepared packet is not an external proposal. GA4GH stays tracked until
+    # a named human submits it and the tracker carries a real receipt.
+    assert report["status_counts"]["proposal"] == 0
+    ga4gh = report["alignments"]["ga4gh-ai-workstream"]
+    assert ga4gh["status"] == "tracked"
+    assert "not submitted" in ga4gh["role"]
