@@ -87,7 +87,7 @@ _DE_META = {
 _DE_QUERY = "Run differential expression between conditions"
 
 
-def test_shadow_policy_permits_and_records_warrant_violation():
+def test_shadow_policy_permits_and_records_warrant_violation(canonical_backends_available):
     decision = route_scientific_intent(
         _DE_QUERY, data_metadata=_DE_META, research_purpose="screening", lab_policy="shadow_audit"
     )
@@ -104,7 +104,7 @@ def test_shadow_policy_permits_and_records_warrant_violation():
     assert card.details["policy_decision"]["action"] == "ALLOW_WITH_ACK"
 
 
-def test_discovery_policy_auto_acknowledges_screening_without_override():
+def test_discovery_policy_auto_acknowledges_screening_without_override(canonical_backends_available):
     decision = route_scientific_intent(_DE_QUERY, data_metadata=_DE_META, research_purpose="screening")
     assert decision.status.value == "PERMITTED_WITH_LIMITS"
     pd = decision.evidence_card_template.details["policy_decision"]
@@ -115,7 +115,7 @@ def test_discovery_policy_auto_acknowledges_screening_without_override():
     assert decision.override_records == []
 
 
-def test_warrant_assessment_is_identical_across_policies():
+def test_warrant_assessment_is_identical_across_policies(canonical_backends_available):
     """The theoretical core: policy decides the intervention, never the
     evidence value.  n=1 donor/condition must yield the SAME assessment
     (ceiling=FRAGILE, same unsupported claims) in shadow, advisory, and
@@ -145,7 +145,7 @@ def test_warrant_assessment_is_identical_across_policies():
     )
 
 
-def test_discovery_policy_still_requires_override_for_confirmatory_gap():
+def test_discovery_policy_still_requires_override_for_confirmatory_gap(canonical_backends_available):
     decision = route_scientific_intent(
         _DE_QUERY,
         data_metadata=_DE_META,
@@ -158,7 +158,7 @@ def test_discovery_policy_still_requires_override_for_confirmatory_gap():
     assert pd["requires_user_action"] is True
 
 
-def test_advisory_policy_override_yields_permitted_with_limits():
+def test_advisory_policy_override_yields_permitted_with_limits(canonical_backends_available):
     decision = route_scientific_intent(
         _DE_QUERY,
         data_metadata=_DE_META,

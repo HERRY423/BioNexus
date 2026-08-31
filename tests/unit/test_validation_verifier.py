@@ -84,6 +84,7 @@ def mock_repo_env(tmp_path: Path) -> Path:
 class TestValidationVerifierPositive:
     """Positive verification tests."""
 
+    @pytest.mark.flagship_data
     def test_verify_validation_artifacts_passes_on_current_repo(self):
         """Development artifacts must be internally valid even when provenance records a dirty tree.
 

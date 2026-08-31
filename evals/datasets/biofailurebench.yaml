@@ -267,6 +267,7 @@
   expected_capability: survival.kaplan_meier
   allow_degraded: true
   data_metadata:
+    simulate_missing_backend: "lifelines"
     positive_durations: true
     n_events: 42
   expected_violations:

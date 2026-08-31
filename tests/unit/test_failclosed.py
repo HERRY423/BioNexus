@@ -44,7 +44,7 @@ def test_invalid_input_refuses():
     assert "BN-F001" in d.failure_mode_ids
 
 
-def test_assumption_violated_blocks_claim():
+def test_assumption_violated_blocks_claim(canonical_backends_available):
     d = prevent_invalid_run(
         "Run condition DE comparing treatment vs control in 1 sample per condition",
         data_metadata={"min_replicates_per_condition": 1, "is_integer_like": True},
@@ -102,7 +102,7 @@ def test_backend_unavailable_degrades_only_for_opted_in_frontier():
     assert "BN-F010" in d2.failure_mode_ids
 
 
-def test_external_validation_absent_caps_evidence():
+def test_external_validation_absent_caps_evidence(canonical_backends_available):
     d = prevent_invalid_run(
         "Compute Moran's I spatial autocorrelation on my Visium data",
         data_metadata={"n_spatial_spots": 100},
@@ -116,7 +116,7 @@ def test_external_validation_absent_caps_evidence():
     assert d.failure_mode_ids == ["BN-F012"]
 
 
-def test_clean_run_permitted():
+def test_clean_run_permitted(canonical_backends_available):
     d = prevent_invalid_run(
         "Cluster my single cells and find marker genes",
         data_metadata={"is_integer_like": True},
@@ -153,7 +153,7 @@ def test_fail_closed_table_is_complete():
         assert row["action"] != "RUN"
 
 
-def test_prevent_cli(capsys):
+def test_prevent_cli(capsys, canonical_backends_available):
     rc = cli_main(["prevent", "Run condition DE comparing treatment vs control with 1 replicate", "--min-replicates", "1"])
     assert rc == 1
     out = capsys.readouterr().out

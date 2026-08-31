@@ -38,6 +38,33 @@ def pytest_configure(config):
             config.option.basetemp = tempfile.mkdtemp(prefix="pytest_basetemp_")
 
 
+@pytest.fixture
+def canonical_backends_available(monkeypatch):
+    """Make capability-level backend readiness explicit in semantic tests.
+
+    These tests exercise routing, warrant, and accounting behavior after the
+    capability's canonical backend has passed its readiness gate.  They do not
+    execute the backend itself; execution tests remain in the scientific-stack
+    jobs.  Keeping the assumption in an opt-in fixture prevents core-only CI
+    from depending on whichever optional packages happen to be installed.
+    """
+    from bionexus.backends import BackendState, BackendStatus
+
+    def _ready(name: str) -> BackendStatus:
+        return BackendStatus(
+            name=name,
+            available=True,
+            import_name=name,
+            extra=None,
+            note="test fixture: canonical backend readiness already established",
+            state=BackendState.INSTALLED,
+            version="999.0.0",
+        )
+
+    monkeypatch.setattr("bionexus.capabilities.probe", _ready)
+    return _ready
+
+
 
 @pytest.fixture
 def synthetic_sparse_counts():

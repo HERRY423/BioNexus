@@ -53,7 +53,7 @@ def test_normal_power_design_not_degraded():
     assert decision.status.value != "DEGRADED_ADVISORY"
 
 
-def test_bare_n2_design_stays_permitted():
+def test_bare_n2_design_stays_permitted(canonical_backends_available):
     """Boundary guarantee (BNS-II-010): n=2 alone is legal; no overclaim, no advisory."""
     decision = route_scientific_intent(
         "Run condition DE comparing treatment vs control with exactly 2 biological replicates per condition",
