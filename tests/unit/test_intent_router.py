@@ -22,10 +22,6 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-
-import pytest
-
-pytest.importorskip("squidpy", reason="SKIPPED_NO_BACKEND: canonical backend squidpy not installed (runs in the Canonical Scientific Stack matrix)")
 from bionexus.agent_routing import (
     RoutingStatus,
     extract_scientific_capability,
@@ -57,7 +53,7 @@ def test_extract_scientific_capability_patterns():
     assert cap5.id == "scvi.probabilistic_vae"
 
 
-def test_route_pseudobulk_de_lifecycle():
+def test_route_pseudobulk_de_lifecycle(canonical_backends_available):
     """Verify full decision lifecycle for condition differential expression."""
     # 1. NEEDS_DATA: Query without replicates or data path
     dec_needs = route_scientific_intent("Compare drug treated vs control in scRNA")
@@ -97,7 +93,7 @@ def test_route_pseudobulk_de_lifecycle():
     assert dec_perm.target_skill == "single-cell-rna-qc"
 
 
-def test_route_spatial_moran_svg():
+def test_route_spatial_moran_svg(canonical_backends_available):
     """Verify spatial transcriptomics routing."""
     dec = route_scientific_intent(
         "Find spatially variable genes in 10x Visium tissue",

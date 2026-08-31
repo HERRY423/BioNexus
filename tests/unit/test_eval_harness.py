@@ -13,8 +13,6 @@ import builtins
 import sys
 from pathlib import Path
 
-import pytest
-
 # Ensure src and repo root are on sys.path
 _REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 _SRC = _REPO_ROOT / "src"
@@ -22,21 +20,6 @@ if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
-
-def _module_available(name: str) -> bool:
-    import importlib.util
-
-    return importlib.util.find_spec(name) is not None
-
-
-scanpy_required = pytest.mark.skipif(
-    not _module_available("scanpy"),
-    reason="SKIPPED_NO_BACKEND: canonical backend scanpy not installed (runs in the Canonical Scientific Stack matrix)",
-)
-squidpy_required = pytest.mark.skipif(
-    not _module_available("squidpy"),
-    reason="SKIPPED_NO_BACKEND: canonical backend squidpy not installed (runs in the Canonical Scientific Stack matrix)",
-)
 
 from bionexus.cli import main as cli_main
 from evals.runner import format_benchmark_markdown, load_eval_cases, run_benchmark, run_single_case
@@ -75,8 +58,7 @@ def test_load_eval_cases():
     assert "L3" in levels
 
 
-@scanpy_required
-def test_run_benchmark_accounting_integrity():
+def test_run_benchmark_accounting_integrity(canonical_backends_available):
     """Verify gating track passes with high Composite Reliability Index; frontier reported honestly."""
     report = run_benchmark()
     assert report.total_cases >= 35
@@ -234,8 +216,7 @@ def test_cli_eval_subcommand(capsys):
     assert "Gating Accuracy" in captured.out or "Overall Accuracy" in captured.out
 
 
-@squidpy_required
-def test_cli_eval_strict_flag(capsys):
+def test_cli_eval_strict_flag(capsys, canonical_backends_available):
     """Verify the --strict flag is wired through to the benchmark runner."""
     rc = cli_main(["eval", "--level", "L1", "--strict"])
     assert rc == 0  # L1 never depends on scientific backends

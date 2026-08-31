@@ -6,11 +6,11 @@
   "dataset_checksum_sha256": "d3ecbf0e65a40e783c1c80ef4e9c21872cf0d8b8544de48ec5c9f7c32fa24bed",
   "provenance": {
     "data_source": "synthetic_generator (in-silico generated multimodal fixture)",
-    "download_date": "2026-08-29T06:54:28.378356+00:00",
-    "commit_sha": "276359b0dc38b98729ff484deefaf61e8a551d44",
+    "download_date": "2026-08-31T02:49:05.220677+00:00",
+    "commit_sha": "febd4434b8493aa8ebf1bf4be796efd9e69bac9e",
     "git_dirty": false,
     "environment_lockfile_hashes": {
-      "pyproject.toml": "72b298385f6617e259e0387200a8ccae03ee1a22567d0a7f73e5b82f12aa0de8",
+      "pyproject.toml": "772fb5490fe7ca624de747e378cc10a9810fdcd9a07ad4eb5c5abf0a55c477ba",
       "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
       "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
     },
@@ -21,7 +21,7 @@
     "generator_version": "1.0.0-rc.3",
     "python_version": "3.13.9",
     "platform": "Windows-11-10.0.26200-SP0",
-    "timestamp": "2026-08-29T06:54:28.554715+00:00",
+    "timestamp": "2026-08-31T02:49:05.362722+00:00",
     "extra_metadata": {
       "dataset_track": "synthetic_technical_acceptance",
       "n_cells": 1200,
@@ -45,12 +45,12 @@
       },
       "packaged_runtime_registry_eligible": false
     },
-    "repository_dirty_at_execution": false,
+    "repository_dirty_at_execution": true,
     "validation_source_dirty": false,
-    "source_snapshot_sha256": "acf5e5303f1ef497bdab0cbdc2b562970702ca3dca93ea902dbaefd28f6a35a6"
+    "source_snapshot_sha256": "bb7067481f221eb9e171776310bf1b798cb52a21c853e2ad5a509da3e44b3817"
   },
-  "timestamp": "2026-08-29T06:54:28.936058+00:00",
-  "elapsed_seconds": 0.66,
+  "timestamp": "2026-08-31T02:49:05.483445+00:00",
+  "elapsed_seconds": 0.34,
   "overall_status": "PASS",
   "dimensions": {
     "dim1_1_synthetic_technical_acceptance_baseline": {

@@ -22,10 +22,6 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-
-import pytest
-
-pytest.importorskip("scanpy", reason="SKIPPED_NO_BACKEND: canonical backend scanpy not installed (runs in the Canonical Scientific Stack matrix)")
 from bionexus.capabilities import (
     CANONICAL_CAPABILITIES,
     evaluate_capability_preconditions,
@@ -158,7 +154,7 @@ def test_cli_capability_commands(capsys):
     assert "Fewer than 2 biological replicates" in captured.out
 
 
-def test_preflight_vs_postexecution_evidence_distinction():
+def test_preflight_vs_postexecution_evidence_distinction(canonical_backends_available):
     """Verify EvidenceCard 2.1 preflight evidence remains UNASSESSED and UNTESTED for statistics."""
     eval_res = evaluate_capability_preconditions(
         "scrna.exploratory_clustering",

@@ -65,6 +65,7 @@
   expected_capability: survival.kaplan_meier
   allow_degraded: true
   data_metadata:
+    simulate_missing_backend: "lifelines"
     positive_durations: true
     n_events: 42
   expected_violations:
@@ -79,6 +80,7 @@
   expected_status: ABSTAIN
   expected_capability: scvi.probabilistic_vae
   data_metadata:
+    simulate_missing_backend: "scvi"
     is_integer_like: true
   expected_violations:
     - "backend"
@@ -91,6 +93,8 @@
   prompt: "Standardize multi-well spectrophotometer plate reader raw CSV export into Allotrope ASM JSON"
   expected_status: ABSTAIN
   expected_capability: allotrope.format_conversion
+  data_metadata:
+    simulate_missing_backend: "allotropy"
   expected_violations:
     - "backend"
   required_remedies:
@@ -130,6 +134,8 @@
   expected_status: ABSTAIN
   expected_capability: scfm.scgpt_canonical
   allow_frontier: true
+  data_metadata:
+    simulate_missing_backend: "transformers"
   expected_violations:
     - "backend"
   description: "Frontier opt-in alone does not waive the capability-bound backend gate (assumes transformers absent)"

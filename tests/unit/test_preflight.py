@@ -17,10 +17,6 @@ if str(_SRC) not in sys.path:
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-
-import pytest
-
-pytest.importorskip("scanpy", reason="SKIPPED_NO_BACKEND: canonical backend scanpy not installed (runs in the Canonical Scientific Stack matrix)")
 from bionexus.cli import main as cli_main
 from bionexus.preflight import (
     INTENT_ALIASES,
@@ -67,7 +63,7 @@ def test_preflight_output_contract_blocked(tmp_path):
         assert section in rendered, section
 
 
-def test_preflight_permits_clean_request_and_caps_maturity():
+def test_preflight_permits_clean_request_and_caps_maturity(canonical_backends_available):
     """A sound request passes with exit 0; REPLICATED is capped at the ceiling."""
     report = run_preflight(
         intent="differential-expression",
@@ -133,7 +129,7 @@ def test_preflight_unverifiable_state_is_distinct(tmp_path):
     assert any(c.passed is None for c in report2.data_state)
 
 
-def test_preflight_cli_exit_codes(tmp_path, capsys):
+def test_preflight_cli_exit_codes(tmp_path, capsys, canonical_backends_available):
     """CLI wiring: exit 0 clean, exit 1 refused, JSON projection available."""
     meta_clean = tmp_path / "clean.json"
     meta_clean.write_text(

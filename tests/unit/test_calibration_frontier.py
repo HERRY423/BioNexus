@@ -19,10 +19,6 @@ if str(_REPO_ROOT) not in sys.path:
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-
-import pytest
-
-pytest.importorskip("squidpy", reason="SKIPPED_NO_BACKEND: canonical backend squidpy not installed (runs in the Canonical Scientific Stack matrix)")
 from evals.metrics import (
     compute_cross_host_consistency,
     compute_epistemic_calibration,
@@ -48,7 +44,7 @@ def test_frontier_track_loads():
     assert "frontier-cluster-vs-condition-de-conflation-004" in ids
 
 
-def test_gating_and_frontier_separation():
+def test_gating_and_frontier_separation(canonical_backends_available):
     """Gating track MUST stay clean; frontier failures MUST NOT gate but MUST be visible."""
     report = run_benchmark()
 
@@ -72,7 +68,7 @@ def test_gating_and_frontier_separation():
     assert all(fc["failure_reasons"] for fc in fm["failed_cases"])
 
 
-def test_ceiling_clamp_frontier_cases_pass_via_abi():
+def test_ceiling_clamp_frontier_cases_pass_via_abi(canonical_backends_available):
     """ABI evidence-ceiling frontier cases are graduation-eligible (BNS-LC-005)."""
     report = run_benchmark()
     eligible = set(report.frontier_metrics["graduation_eligible"])

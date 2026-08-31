@@ -16,7 +16,7 @@
       "capability_id": "spatial.inference_validity",
       "track": "canonical",
       "claimed_backend": "local deterministic alternative-explanation tester",
-      "observed_backend": "bionexus",
+      "observed_backend": "bionexus-reliability",
       "entry_points_declared": [
         "bionexus.spatial_alternative_battery",
         "bionexus.spatial_inference"
@@ -27,20 +27,20 @@
       ],
       "entry_points_missing": [],
       "version": "1.0.0-rc.3",
-      "execution_fingerprint": "1a6365760e367cd9",
+      "execution_fingerprint": "c6f747ae8e4c574d",
       "fallback": false,
       "state": "CONFORMANT",
       "action": "RUN PERMITTED (identity)",
       "failure_mode_ids": [],
-      "reason": "declared_backend == observed_backend: 'local deterministic alternative-explanation tester' (distribution 'bionexus', version 1.0.0-rc.3, entry points 2/2 resolved, fallback False)."
+      "reason": "declared_backend == observed_backend: 'local deterministic alternative-explanation tester' (distribution 'bionexus-reliability', version 1.0.0-rc.3, entry points 2/2 resolved, fallback False)."
     },
     "provenance": {
       "data_source": "10x Genomics official Xenium XOA v4 tiny human kidney output bundle",
       "download_date": "2026-08-28",
-      "commit_sha": "276359b0dc38b98729ff484deefaf61e8a551d44",
+      "commit_sha": "febd4434b8493aa8ebf1bf4be796efd9e69bac9e",
       "git_dirty": false,
       "environment_lockfile_hashes": {
-        "pyproject.toml": "a1fc0fd54da675b8ae8caea63c2a18dde07d31a956a56600c5d3735c32548063",
+        "pyproject.toml": "772fb5490fe7ca624de747e378cc10a9810fdcd9a07ad4eb5c5abf0a55c477ba",
         "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
         "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
       },
@@ -51,15 +51,15 @@
       "generator_version": "1.0.0-rc.3",
       "python_version": "3.13.9",
       "platform": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-08-29T07:16:21.182389+00:00",
+      "timestamp": "2026-08-31T02:49:28.895990+00:00",
       "extra_metadata": {
         "capability": "spatial.inference_validity",
         "dataset_id": "xenium_spatial_truth",
         "present": true
       },
-      "repository_dirty_at_execution": false,
+      "repository_dirty_at_execution": true,
       "validation_source_dirty": false,
-      "source_snapshot_sha256": "acf5e5303f1ef497bdab0cbdc2b562970702ca3dca93ea902dbaefd28f6a35a6"
+      "source_snapshot_sha256": "bb7067481f221eb9e171776310bf1b798cb52a21c853e2ad5a509da3e44b3817"
     }
   },
   "metrics": [
@@ -134,7 +134,7 @@
     "The vendor states this tiny three-patch/two-FOV dataset is for format testing and not biological conclusions.",
     "BN-SP-IV-001 retained a negative result because the cell-size-bias effect did not meet its locked threshold."
   ],
-  "timestamp": "2026-08-29T07:16:21.368614+00:00",
+  "timestamp": "2026-08-31T02:49:28.995868+00:00",
   "evidence_files": [
     "validation\\spatial\\studies\\BN-SP-IV-001\\evidence\\cell_diagnostics.csv",
     "validation\\spatial\\studies\\BN-SP-IV-001\\PREREGISTRATION.json",

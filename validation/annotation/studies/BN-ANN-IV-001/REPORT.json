@@ -1,7 +1,7 @@
 {
   "schema_version": "bionexus.annotation-independent-validation-report.v1",
   "study_id": "BN-ANN-IV-001",
-  "generated_at": "2026-08-29T09:29:40.585232+00:00",
+  "generated_at": "2026-08-31T02:49:26.759538+00:00",
   "preregistration": {
     "path": "validation/annotation/studies/BN-ANN-IV-001/PREREGISTRATION.json",
     "sha256": "00a645c983e23283ecaaf3593b0b742ad6e9a63844cf673135e3d312a2fdb88f",
@@ -161,27 +161,26 @@
   "provenance": {
     "data_source": "YosefLab/scVI-data processed public 10x PBMC CITE-seq",
     "download_date": "2026-08-28",
-    "commit_sha": "c8622075dd1461f8936391304dc1348f1b3b5e31",
-    "git_dirty": true,
+    "commit_sha": "febd4434b8493aa8ebf1bf4be796efd9e69bac9e",
+    "git_dirty": false,
     "environment_lockfile_hashes": {
-      "pyproject.toml": "a1fc0fd54da675b8ae8caea63c2a18dde07d31a956a56600c5d3735c32548063",
+      "pyproject.toml": "772fb5490fe7ca624de747e378cc10a9810fdcd9a07ad4eb5c5abf0a55c477ba",
       "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
       "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
     },
     "command": [
-      "C:\\Users\\13264\\anaconda3\\Scripts\\pytest",
-      "tests/unit"
+      "scripts/run_flagship_validation.py"
     ],
-    "command_str": "C:\\Users\\13264\\anaconda3\\Scripts\\pytest tests/unit",
+    "command_str": "scripts/run_flagship_validation.py",
     "generator_version": "1.0.0-rc.3",
     "python_version": "3.13.9",
     "platform": "Windows-11-10.0.26200-SP0",
-    "timestamp": "2026-08-29T09:29:40.406218+00:00",
+    "timestamp": "2026-08-31T02:49:26.655552+00:00",
     "extra_metadata": {
       "study_id": "BN-ANN-IV-001"
     },
     "repository_dirty_at_execution": true,
-    "validation_source_dirty": true,
-    "source_snapshot_sha256": "49c19f3dbadebf91ec30e4dafb2e7e692add4decf716b198a9627b099b21e34e"
+    "validation_source_dirty": false,
+    "source_snapshot_sha256": "bb7067481f221eb9e171776310bf1b798cb52a21c853e2ad5a509da3e44b3817"
   }
 }

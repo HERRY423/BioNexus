@@ -1,0 +1,42 @@
+{
+  "profile_id": "empirical.annotation.marker_consistency",
+  "version": "v2",
+  "metric": "marker_consistency",
+  "direction": "AT_LEAST",
+  "threshold": 0.62,
+  "regime": {
+    "tissues": ["PBMC_blood"],
+    "platforms": ["10x_chromium_3prime_droplet"],
+    "references": ["*"],
+    "tasks": ["annotation_evidence"],
+    "evidence_sources": ["*"]
+  },
+  "review_status": "CANDIDATE",
+  "evidence": [
+    {
+      "evidence_id": "<profile_id>:<version>:held_out",
+      "dataset_id": "<held-out cohort id>",
+      "source_uri": "<uri>",
+      "source_sha256": "<64 hex>",
+      "sample_size": 200,
+      "positive_outcomes": 180,
+      "negative_outcomes": 20,
+      "outcome_definition": "annotation supported by independent orthogonal evidence",
+      "estimator": "wilson_lower_bound",
+      "validation_partition": "validation",
+      "independent_validation": true,
+      "observed_precision": 0.9,
+      "precision_interval": [0.85, 0.94]
+    }
+  ],
+  "approvals": [
+    {
+      "reviewer_id": "0000-0002-XXXX-XXXX",
+      "reviewed_at": "2026-01-01T00:00:00+00:00",
+      "decision": "APPROVE",
+      "scope": "profile <profile_id>:<version>",
+      "attestation_sha256": "<64 hex>"
+    }
+  ],
+  "applicability_notes": "Only an APPROVED profile with non-empty validation_issues() can be frozen, and only for the held-out contexts bound at freeze time."
+}

@@ -11,10 +11,6 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-
-import pytest
-
-pytest.importorskip("scanpy", reason="SKIPPED_NO_BACKEND: canonical backend scanpy not installed (runs in the Canonical Scientific Stack matrix)")
 from bionexus.intent_router import route_scientific_intent
 
 
@@ -57,7 +53,7 @@ def test_normal_power_design_not_degraded():
     assert decision.status.value != "DEGRADED_ADVISORY"
 
 
-def test_bare_n2_design_stays_permitted():
+def test_bare_n2_design_stays_permitted(canonical_backends_available):
     """Boundary guarantee (BNS-II-010): n=2 alone is legal; no overclaim, no advisory."""
     decision = route_scientific_intent(
         "Run condition DE comparing treatment vs control with exactly 2 biological replicates per condition",
