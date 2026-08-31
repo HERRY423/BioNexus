@@ -250,7 +250,7 @@ def test_tool_receipt_log_chain_extraction(tmp_path):
     assert "provenance" in factors
 
 
-def test_e2e_route_scientific_intent_with_tool_receipts():
+def test_e2e_route_scientific_intent_with_tool_receipts(canonical_backends_available):
     from bionexus.evidence_model import ClaimClass, SufficiencyVerdict
     from bionexus.intent_router import route_scientific_intent
     from bionexus.tool_receipt import create_tool_receipt
@@ -286,4 +286,3 @@ def test_e2e_route_scientific_intent_with_tool_receipts():
     assert "confound_controls" in card.details["evidence_assessment"]["satisfied_factors"]
     assert "sensitivity_analysis" in card.details["evidence_assessment"]["satisfied_factors"]
     assert card.details["sufficiency"]["verdict"] == SufficiencyVerdict.WARRANTED.value
-

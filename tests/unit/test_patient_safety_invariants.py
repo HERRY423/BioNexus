@@ -78,7 +78,9 @@ class TestSafetyInvariantsS1AndS2:
         assert result.sufficiency["verdict"] == SufficiencyVerdict.NOT_SUFFICIENT_FOR_INTENDED_USE.value
         assert "intended_use_undeclared" in result.sufficiency["gaps"]
 
-    def test_e2e_p5_replicated_evidence_with_bare_regulatory_context_string_blocked(self):
+    def test_e2e_p5_replicated_evidence_with_bare_regulatory_context_string_blocked(
+        self, canonical_backends_available
+    ):
         """Probe P5:
 
         REPLICATED evidence + documented_extras=["regulatory_context"] must NOT
@@ -120,7 +122,9 @@ class TestSafetyInvariantsS1AndS2:
         assert result.sufficiency["verdict"] == SufficiencyVerdict.NOT_SUFFICIENT_FOR_INTENDED_USE.value
         assert "missing_required_condition:regulatory_context" in result.sufficiency["gaps"]
 
-    def test_e2e_verified_regulatory_certification_factor_yields_warranted(self):
+    def test_e2e_verified_regulatory_certification_factor_yields_warranted(
+        self, canonical_backends_available
+    ):
         """When genuine regulatory_certification factor is supplied with REPLICATED evidence,
 
         clinical actionability is WARRANTED.
@@ -188,7 +192,9 @@ class TestSafetyInvariantsS1AndS2:
         assert decision.purpose_context.purpose == ResearchPurpose.EXPLORATORY
         assert decision.purpose_context.override_active is True
 
-    def test_e2e_h1_router_wiring_elevates_evidence_from_preliminary(self):
+    def test_e2e_h1_router_wiring_elevates_evidence_from_preliminary(
+        self, canonical_backends_available
+    ):
         """H1: Router and capability wiring allows empirical evidence to reach ROBUST and clear confirmatory bar."""
         decision = route_scientific_intent(
             "pseudobulk differential expression",
@@ -213,7 +219,7 @@ class TestSafetyInvariantsS1AndS2:
         assert "sensitivity_analysis" in card.details["evidence_assessment"]["satisfied_factors"]
         assert card.details["sufficiency"]["verdict"] == SufficiencyVerdict.WARRANTED.value
 
-    def test_e2e_h2_p1_and_p2_probes_via_capability(self):
+    def test_e2e_h2_p1_and_p2_probes_via_capability(self, canonical_backends_available):
         """H2: Probes P1 (no shortcut to REPLICATED) and P2 (no shortcut to ROBUST without replication)."""
         cap = ALL_CAPABILITIES["scrna.pseudobulk_de"]
         pctx = PurposeContext(purpose=ResearchPurpose.CONFIRMATORY)
@@ -238,7 +244,9 @@ class TestSafetyInvariantsS1AndS2:
         assert res_p2.evidence_assessment["evidence_maturity"] != "SUPPORTED"
         assert res_p2.evidence_assessment["evidence_maturity"] == "PRELIMINARY"
 
-    def test_e2e_h3_p6_probe_omitted_claim_class_fails_closed(self):
+    def test_e2e_h3_p6_probe_omitted_claim_class_fails_closed(
+        self, canonical_backends_available
+    ):
         """H3: Probe P6 - omitting claim_context must fail closed with claim_class_undeclared gap."""
         cap = ALL_CAPABILITIES["scrna.pseudobulk_de"]
         pctx = PurposeContext(purpose=ResearchPurpose.EXPLORATORY)
@@ -260,4 +268,3 @@ class TestSafetyInvariantsS1AndS2:
         )
         assert res_declared.sufficiency["verdict"] == SufficiencyVerdict.WARRANTED.value
         assert "claim_class_undeclared" not in res_declared.sufficiency["gaps"]
-
