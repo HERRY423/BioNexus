@@ -9,6 +9,8 @@ import numpy as np
 import pytest
 from scipy import sparse
 
+pytest.importorskip("h5py", reason="spatial flagship evidence test requires h5py")
+
 from evals.annotation_external_holdout_validation import _map_reference_label, _validate_and_score_counts
 from evals.annotation_external_validation import _fit_candidate_threshold, wilson_interval
 from evals.flagship_validation import FLAGSHIP_DATASETS

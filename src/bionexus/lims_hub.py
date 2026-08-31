@@ -11,13 +11,10 @@ Provides enterprise LIMS connectivity for top-tier laboratories:
 from __future__ import annotations
 
 import enum
-import hashlib
-import json
-import time
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin
 
 from bionexus.tool_receipt import create_tool_receipt
@@ -115,7 +112,6 @@ class BenchlingConnector:
         mock_response: bool = True,
     ) -> LIMSExportResult:
         """Export assay results to Benchling and return a cryptographically signed receipt."""
-        t0 = time.perf_counter()
         payload = self.format_assay_payload(schema_id, plate_id, measurements)
 
         if mock_response:

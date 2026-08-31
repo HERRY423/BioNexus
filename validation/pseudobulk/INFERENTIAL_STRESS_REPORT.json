@@ -9,10 +9,10 @@
   "provenance": {
     "data_source": "GEO GSE96583 (Kang et al. 2018, Nat Biotechnol doi:10.1038/nbt.4042)",
     "download_date": "2026-08-19T00:00:00+00:00",
-    "commit_sha": "276359b0dc38b98729ff484deefaf61e8a551d44",
+    "commit_sha": "8923d8bf514de5c59d78addf7191f6677ea40c13",
     "git_dirty": false,
     "environment_lockfile_hashes": {
-      "pyproject.toml": "72b298385f6617e259e0387200a8ccae03ee1a22567d0a7f73e5b82f12aa0de8",
+      "pyproject.toml": "772fb5490fe7ca624de747e378cc10a9810fdcd9a07ad4eb5c5abf0a55c477ba",
       "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
       "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
     },
@@ -23,17 +23,17 @@
     "generator_version": "1.0.0-rc.3",
     "python_version": "3.13.9",
     "platform": "Windows-11-10.0.26200-SP0",
-    "timestamp": "2026-08-29T06:53:13.140428+00:00",
+    "timestamp": "2026-08-31T01:30:49.195864+00:00",
     "extra_metadata": {
       "n_cells": 13487,
       "n_donors": 8
     },
     "repository_dirty_at_execution": false,
     "validation_source_dirty": false,
-    "source_snapshot_sha256": "acf5e5303f1ef497bdab0cbdc2b562970702ca3dca93ea902dbaefd28f6a35a6"
+    "source_snapshot_sha256": "85f252ba86519616c831b3f7a0dd940c193078472ee5a311bc63d834133a8c17"
   },
-  "timestamp": "2026-08-29T06:54:22.503565+00:00",
-  "elapsed_seconds": 69.6,
+  "timestamp": "2026-08-31T01:32:25.327474+00:00",
+  "elapsed_seconds": 96.48,
   "overall_status": "PASS",
   "dimensions": {
     "dim1_public_reference": {

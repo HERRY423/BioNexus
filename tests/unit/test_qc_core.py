@@ -4,6 +4,10 @@ Tests vectorized sparse calculations, MAD outlier filtering, doublet detection, 
 """
 
 import numpy as np
+import pytest
+
+pytest.importorskip("anndata", reason="single-cell QC test requires anndata")
+
 from ambient_rna import correct_ambient_rna
 from doublet_detection import run_doublet_detection, simulate_doublets
 from qc_core import apply_hard_threshold, calculate_qc_metrics_chunked, calculate_qc_metrics_fast, detect_outliers_mad

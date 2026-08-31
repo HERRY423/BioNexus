@@ -4,6 +4,7 @@ Unit tests for BioNexus Unified CLI.
 
 from __future__ import annotations
 
+import io
 import json
 import sys
 from pathlib import Path
@@ -67,6 +68,20 @@ def test_cli_list_skills(capsys):
     assert "single-cell-rna-qc" in captured.out
     assert "spatial-transcriptomics" in captured.out
     assert "canonical" in captured.out
+
+
+def test_cli_list_skills_survives_restricted_windows_code_page(monkeypatch):
+    """Unsupported scientific symbols are escaped, never fatal to the CLI."""
+    raw = io.BytesIO()
+    restricted_stdout = io.TextIOWrapper(raw, encoding="cp1252", errors="strict")
+    monkeypatch.setattr(sys, "stdout", restricted_stdout)
+
+    assert main(["list-skills"]) == 0
+    restricted_stdout.flush()
+    output = raw.getvalue().decode("cp1252")
+
+    assert "single-cell-rna-qc" in output
+    assert "\\u0394" in output
 
 
 def test_cli_list_skills_filter_tier(capsys):

@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import sys
+import urllib.request
 import zipfile
 from pathlib import Path
 
@@ -65,8 +66,15 @@ def _download_verified(url: str, destination: Path, expected_sha256: str | None)
         return
     destination.parent.mkdir(parents=True, exist_ok=True)
     partial = destination.with_suffix(destination.suffix + ".part")
-    with guarded_urlopen(
+    request = urllib.request.Request(
         url,
+        headers={
+            "User-Agent": "BioNexus/1.0 flagship-validation",
+            "Accept": "application/octet-stream,*/*;q=0.8",
+        },
+    )
+    with guarded_urlopen(
+        request,
         timeout=120,
         purpose=f"download pinned BioNexus public flagship dataset {destination.name}",
         data_classification=DataClassification.PUBLIC_BENCHMARK,

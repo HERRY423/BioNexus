@@ -10,6 +10,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
+pytest.importorskip("matplotlib", reason="multiome visualization test requires matplotlib")
+
 # Add skill script directories to sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "skills" / "multiome-integration" / "scripts"))
 

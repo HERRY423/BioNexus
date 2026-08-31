@@ -154,7 +154,7 @@ def test_cli_capability_commands(capsys):
     assert "Fewer than 2 biological replicates" in captured.out
 
 
-def test_preflight_vs_postexecution_evidence_distinction():
+def test_preflight_vs_postexecution_evidence_distinction(canonical_backends_available):
     """Verify EvidenceCard 2.1 preflight evidence remains UNASSESSED and UNTESTED for statistics."""
     eval_res = evaluate_capability_preconditions(
         "scrna.exploratory_clustering",
