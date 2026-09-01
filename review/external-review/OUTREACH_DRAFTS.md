@@ -2,8 +2,9 @@
 
 Prepared 2026-08-31. Recheck each institutional contact immediately before
 sending. These are unsent drafts, not evidence of contact, participation, or
-review. `__IMMUTABLE_REVIEW_COMMIT__` is replaced only after the review
-candidate is committed and pushed; never use `main`.
+review. All three drafts are pinned to pushed candidate
+`4a7147aa9b017261395f4253e03df7ef71c89f87` (`ivn-rfv-003`); never substitute
+`main`.
 
 ## 1. Michael I. Love — UNC Chapel Hill
 
@@ -27,15 +28,15 @@ multiple testing and effect size, refusal behavior, and the maximum biological
 claim those rules permit.
 
 The review has two phases. Before viewing BioNexus outputs, please lock the
-methods-only assessment described in the [blinding protocol](https://github.com/HERRY423/BioNexus/blob/__IMMUTABLE_REVIEW_COMMIT__/review/external-review/BLINDING_PROTOCOL.md), using the [packet](https://raw.githubusercontent.com/HERRY423/BioNexus/__IMMUTABLE_REVIEW_COMMIT__/review/external-review/BLINDED_REVIEW_PACKET.json) and [pre-output JSON template](https://raw.githubusercontent.com/HERRY423/BioNexus/__IMMUTABLE_REVIEW_COMMIT__/review/external-review/PREOUTPUT_ASSESSMENT_TEMPLATE.json). Then run:
+methods-only assessment described in the [blinding protocol](https://github.com/HERRY423/BioNexus/blob/4a7147aa9b017261395f4253e03df7ef71c89f87/review/external-review/BLINDING_PROTOCOL.md), using the [packet](https://raw.githubusercontent.com/HERRY423/BioNexus/4a7147aa9b017261395f4253e03df7ef71c89f87/review/external-review/BLINDED_REVIEW_PACKET.json) and [pre-output JSON template](https://raw.githubusercontent.com/HERRY423/BioNexus/4a7147aa9b017261395f4253e03df7ef71c89f87/review/external-review/PREOUTPUT_ASSESSMENT_TEMPLATE.json). Then run:
 
 ```bash
-REVIEW_COMMIT="__IMMUTABLE_REVIEW_COMMIT__" REVIEW_ID="BN-IVN-REV-001" && test "${#REVIEW_COMMIT}" -eq 40 && git clone https://github.com/HERRY423/BioNexus.git BioNexus-IVN-review && cd BioNexus-IVN-review && git checkout --detach "$REVIEW_COMMIT" && python3 -m venv .venv && . .venv/bin/activate && python -m pip install --upgrade pip && python -m pip install -e ".[review]" && python review/external-review/build_review_capsule.py --expected-commit "$REVIEW_COMMIT" --review-id "$REVIEW_ID"
+REVIEW_COMMIT="4a7147aa9b017261395f4253e03df7ef71c89f87" REVIEW_ID="BN-IVN-REV-001" && test "${#REVIEW_COMMIT}" -eq 40 && git clone https://github.com/HERRY423/BioNexus.git BioNexus-IVN-review && cd BioNexus-IVN-review && git checkout --detach "$REVIEW_COMMIT" && python3 -m venv .venv && . .venv/bin/activate && python -m pip install --upgrade pip && python -m pip install -e ".[review]" && python review/external-review/build_review_capsule.py --expected-commit "$REVIEW_COMMIT" --review-id "$REVIEW_ID"
 ```
 
 The capsule preserves commit identity, a resolved environment snapshot, every
 exit code, and complete logs. Please return the locked pre-output file plus
-the completed [reviewer JSON](https://raw.githubusercontent.com/HERRY423/BioNexus/__IMMUTABLE_REVIEW_COMMIT__/review/external-review/SIGNOFF_TEMPLATE.json). The allowed verdicts are `ENDORSED`, `ENDORSED_WITH_LIMITS`, and `CHALLENGED`.
+the completed [reviewer JSON](https://raw.githubusercontent.com/HERRY423/BioNexus/4a7147aa9b017261395f4253e03df7ef71c89f87/review/external-review/SIGNOFF_TEMPLATE.json). The allowed verdicts are `ENDORSED`, `ENDORSED_WITH_LIMITS`, and `CHALLENGED`.
 
 This is technical reproduction and a bounded scientific judgment—not
 external-lab replication, clinical/regulatory evidence, certification, or a
@@ -68,15 +69,15 @@ experimental-unit rules, pseudobulk thresholds, refusal behavior, and public
 evidence boundary are scientifically defensible rather than merely runnable.
 
 The review has two phases. Before viewing BioNexus outputs, please lock the
-methods-only assessment described in the [blinding protocol](https://github.com/HERRY423/BioNexus/blob/__IMMUTABLE_REVIEW_COMMIT__/review/external-review/BLINDING_PROTOCOL.md), using the [packet](https://raw.githubusercontent.com/HERRY423/BioNexus/__IMMUTABLE_REVIEW_COMMIT__/review/external-review/BLINDED_REVIEW_PACKET.json) and [pre-output JSON template](https://raw.githubusercontent.com/HERRY423/BioNexus/__IMMUTABLE_REVIEW_COMMIT__/review/external-review/PREOUTPUT_ASSESSMENT_TEMPLATE.json). Then run:
+methods-only assessment described in the [blinding protocol](https://github.com/HERRY423/BioNexus/blob/4a7147aa9b017261395f4253e03df7ef71c89f87/review/external-review/BLINDING_PROTOCOL.md), using the [packet](https://raw.githubusercontent.com/HERRY423/BioNexus/4a7147aa9b017261395f4253e03df7ef71c89f87/review/external-review/BLINDED_REVIEW_PACKET.json) and [pre-output JSON template](https://raw.githubusercontent.com/HERRY423/BioNexus/4a7147aa9b017261395f4253e03df7ef71c89f87/review/external-review/PREOUTPUT_ASSESSMENT_TEMPLATE.json). Then run:
 
 ```bash
-REVIEW_COMMIT="__IMMUTABLE_REVIEW_COMMIT__" REVIEW_ID="BN-IVN-REV-002" && test "${#REVIEW_COMMIT}" -eq 40 && git clone https://github.com/HERRY423/BioNexus.git BioNexus-IVN-review && cd BioNexus-IVN-review && git checkout --detach "$REVIEW_COMMIT" && python3 -m venv .venv && . .venv/bin/activate && python -m pip install --upgrade pip && python -m pip install -e ".[review]" && python review/external-review/build_review_capsule.py --expected-commit "$REVIEW_COMMIT" --review-id "$REVIEW_ID"
+REVIEW_COMMIT="4a7147aa9b017261395f4253e03df7ef71c89f87" REVIEW_ID="BN-IVN-REV-002" && test "${#REVIEW_COMMIT}" -eq 40 && git clone https://github.com/HERRY423/BioNexus.git BioNexus-IVN-review && cd BioNexus-IVN-review && git checkout --detach "$REVIEW_COMMIT" && python3 -m venv .venv && . .venv/bin/activate && python -m pip install --upgrade pip && python -m pip install -e ".[review]" && python review/external-review/build_review_capsule.py --expected-commit "$REVIEW_COMMIT" --review-id "$REVIEW_ID"
 ```
 
 The capsule preserves commit identity, a resolved environment snapshot, every
 exit code, and complete logs. Please return the locked pre-output file plus
-the completed [reviewer JSON](https://raw.githubusercontent.com/HERRY423/BioNexus/__IMMUTABLE_REVIEW_COMMIT__/review/external-review/SIGNOFF_TEMPLATE.json). The allowed verdicts are `ENDORSED`, `ENDORSED_WITH_LIMITS`, and `CHALLENGED`.
+the completed [reviewer JSON](https://raw.githubusercontent.com/HERRY423/BioNexus/4a7147aa9b017261395f4253e03df7ef71c89f87/review/external-review/SIGNOFF_TEMPLATE.json). The allowed verdicts are `ENDORSED`, `ENDORSED_WITH_LIMITS`, and `CHALLENGED`.
 
 This is technical reproduction and a bounded scientific judgment—not
 external-lab replication, clinical/regulatory evidence, certification, or a
@@ -109,15 +110,15 @@ pseudobulk requirements, failure modes, and claim ceiling are scientifically
 defensible rather than merely technically reproducible.
 
 The review has two phases. Before viewing BioNexus outputs, please lock the
-methods-only assessment described in the [blinding protocol](https://github.com/HERRY423/BioNexus/blob/__IMMUTABLE_REVIEW_COMMIT__/review/external-review/BLINDING_PROTOCOL.md), using the [packet](https://raw.githubusercontent.com/HERRY423/BioNexus/__IMMUTABLE_REVIEW_COMMIT__/review/external-review/BLINDED_REVIEW_PACKET.json) and [pre-output JSON template](https://raw.githubusercontent.com/HERRY423/BioNexus/__IMMUTABLE_REVIEW_COMMIT__/review/external-review/PREOUTPUT_ASSESSMENT_TEMPLATE.json). Then run:
+methods-only assessment described in the [blinding protocol](https://github.com/HERRY423/BioNexus/blob/4a7147aa9b017261395f4253e03df7ef71c89f87/review/external-review/BLINDING_PROTOCOL.md), using the [packet](https://raw.githubusercontent.com/HERRY423/BioNexus/4a7147aa9b017261395f4253e03df7ef71c89f87/review/external-review/BLINDED_REVIEW_PACKET.json) and [pre-output JSON template](https://raw.githubusercontent.com/HERRY423/BioNexus/4a7147aa9b017261395f4253e03df7ef71c89f87/review/external-review/PREOUTPUT_ASSESSMENT_TEMPLATE.json). Then run:
 
 ```bash
-REVIEW_COMMIT="__IMMUTABLE_REVIEW_COMMIT__" REVIEW_ID="BN-IVN-REV-003" && test "${#REVIEW_COMMIT}" -eq 40 && git clone https://github.com/HERRY423/BioNexus.git BioNexus-IVN-review && cd BioNexus-IVN-review && git checkout --detach "$REVIEW_COMMIT" && python3 -m venv .venv && . .venv/bin/activate && python -m pip install --upgrade pip && python -m pip install -e ".[review]" && python review/external-review/build_review_capsule.py --expected-commit "$REVIEW_COMMIT" --review-id "$REVIEW_ID"
+REVIEW_COMMIT="4a7147aa9b017261395f4253e03df7ef71c89f87" REVIEW_ID="BN-IVN-REV-003" && test "${#REVIEW_COMMIT}" -eq 40 && git clone https://github.com/HERRY423/BioNexus.git BioNexus-IVN-review && cd BioNexus-IVN-review && git checkout --detach "$REVIEW_COMMIT" && python3 -m venv .venv && . .venv/bin/activate && python -m pip install --upgrade pip && python -m pip install -e ".[review]" && python review/external-review/build_review_capsule.py --expected-commit "$REVIEW_COMMIT" --review-id "$REVIEW_ID"
 ```
 
 The capsule preserves commit identity, a resolved environment snapshot, every
 exit code, and complete logs. Please return the locked pre-output file plus
-the completed [reviewer JSON](https://raw.githubusercontent.com/HERRY423/BioNexus/__IMMUTABLE_REVIEW_COMMIT__/review/external-review/SIGNOFF_TEMPLATE.json). The allowed verdicts are `ENDORSED`, `ENDORSED_WITH_LIMITS`, and `CHALLENGED`.
+the completed [reviewer JSON](https://raw.githubusercontent.com/HERRY423/BioNexus/4a7147aa9b017261395f4253e03df7ef71c89f87/review/external-review/SIGNOFF_TEMPLATE.json). The allowed verdicts are `ENDORSED`, `ENDORSED_WITH_LIMITS`, and `CHALLENGED`.
 
 This is technical reproduction and a bounded scientific judgment—not
 external-lab replication, clinical/regulatory evidence, certification, or a
