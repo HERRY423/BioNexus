@@ -12,7 +12,6 @@ Tests:
 
 from __future__ import annotations
 
-import json
 import sys
 from pathlib import Path
 
@@ -26,12 +25,9 @@ if str(_REPO_ROOT / "src") not in sys.path:
 
 from bionexus.ivn import (
     FLAGSHIP_CAPABILITIES,
-    IVNDataset,
-    IVNError,
     IVNRegistry,
     NonAuthorReview,
     default_registry_path,
-    evaluate_capability,
     evaluate_network,
     generate_merkle_root,
     load_registry,

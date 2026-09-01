@@ -167,8 +167,6 @@ def validate_single_trap(trap: Dict[str, Any]) -> Tuple[bool, List[str]]:
     from bionexus.failures import FAILURE_TAXONOMY
 
     errors: List[str] = []
-    cid = trap.get("id", "<missing-id>")
-
     for f in CORPUS_FIELDS:
         if f not in trap or trap.get(f) in (None, "", [], {}):
             if f == "required_remedies" and trap.get(f) == []:
@@ -221,4 +219,3 @@ def render_corpus_report(report: CorpusReport) -> str:
         lines.append("")
     lines.append("Run the suite on any host:  bionexus eval --suite biofailurebench")
     return "\n".join(lines)
-
