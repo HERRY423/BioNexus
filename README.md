@@ -440,9 +440,9 @@ Institutional pipelines (Galaxy, DNAnexus, Seven Bridges, WorkflowHub) can inges
 
 ---
 
-## ⚡ 30-Second Quick Start: Choose Your AI Environment
+## ⚡ 5-Minute Plugin Quickstart
 
-Install BioNexus into your preferred environment in seconds:
+Install BioNexus into your preferred environment and complete a first audit:
 
 ```
 
@@ -460,67 +460,65 @@ Install BioNexus into your preferred environment in seconds:
 
 ```
 
-### 🤖 Path A: AI Coding Agents (No Python Setup Required)
+### 🤖 Path A: ChatGPT / Codex or Claude Code
 
-#### 1. OpenAI Codex / ChatGPT (Recommended)
+Plugin installation does not install the Python package. Running BioNexus
+analyses, `doctor.py`, or the local stdio MCP server requires Python 3.10+.
 
-* **Option 1 (GUI — 3 clicks)**:
+#### 1. ChatGPT / Codex repo marketplace
 
-  1. In the Codex / ChatGPT interface, open **Settings → Plugins → Add Plugin Marketplace**.
+Add the repository marketplace:
 
-  2. Enter the repository details:
+```bash
+codex plugin marketplace add HERRY423/BioNexus --ref main
+```
 
-     - **Source**: `HERRY423/BioNexus` *(or `https://github.com/HERRY423/BioNexus.git`)*
+Restart the ChatGPT desktop app, open the Plugins Directory, select
+**BioNexus Marketplace**, and install **BioNexus**. Repo marketplaces are for
+development, team distribution, and testing; they are separate from the
+universal public Plugins Directory.
 
-     - **Git Reference**: `main`
+When the public submission is approved and published, search the universal
+Plugins Directory for **BioNexus** instead; one public listing is shared by
+supported ChatGPT and Codex surfaces.
 
-     - **Sparse Path**: *(Leave EMPTY — do NOT enter `.`)*
+#### 2. Claude Code marketplace
 
-  3. Search for **`BioNexus`** and click **Install**.
+```bash
+claude plugin marketplace add HERRY423/BioNexus
+claude plugin install bionexus-reliability@bionexus-marketplace
+```
 
-* **Option 2 (CLI)**:
+Start a fresh session after installation:
 
-  ```bash
+```bash
+claude
+```
 
-  codex plugin marketplace add HERRY423/BioNexus --ref main
+#### 3. First reliability audit
 
-  codex plugin add bionexus@bionexus-marketplace
+Try this prompt in either host:
 
-  ```
+```text
+Use BioNexus to audit this differential-expression result.
 
-#### 2. Anthropic Claude Code & Claude Desktop
+1. Identify the experimental unit.
+2. Check for pseudoreplication and missing biological replicates.
+3. Separate computational support from biological interpretation.
+4. State the maximum warranted claim and every blocking evidence gap.
+5. Abstain rather than invent missing provenance, labels, or validation.
+```
 
-* **Claude Code (CLI)**:
+For a local environment check after cloning the repository:
 
-  ```bash
+```bash
+python scripts/doctor.py
+```
 
-  claude plugin add HERRY423/BioNexus
+See the [plugin distribution guide](docs/plugin-distribution.md) for manifest
+validation, workspace distribution, and public submission checklists.
 
-  ```
-
-* **Claude Desktop (`claude_desktop_config.json`)**:
-
-  ```json
-
-  {
-
-    "mcpServers": {
-
-      "bionexus": {
-
-        "command": "python",
-
-        "args": ["<absolute-path-to-BioNexus>/scripts/local_mcp_server.py"]
-
-      }
-
-    }
-
-  }
-
-  ```
-
-#### 3. Cursor / Windsurf / VS Code (Model Context Protocol)
+#### 4. Cursor / Windsurf / VS Code (Model Context Protocol)
 
 In Cursor **Settings → Features → MCP Servers → Add New MCP Server**:
 

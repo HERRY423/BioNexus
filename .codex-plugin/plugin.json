@@ -24,7 +24,6 @@
     "squidpy"
   ],
   "skills": "./skills/",
-  "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "BioNexus",
     "shortDescription": "The Scientific Reliability Layer for Agentic Biology",

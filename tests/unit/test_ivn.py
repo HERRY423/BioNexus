@@ -12,6 +12,7 @@ Tests:
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -66,6 +67,20 @@ class TestIVNRegistryBasics:
         root2 = generate_merkle_root(canonical_registry)
         assert len(root1) == 64
         assert root1 == root2
+
+    def test_external_signoff_and_ivn_registration_templates_match(self):
+        handoff = json.loads(
+            (_REPO_ROOT / "review" / "external-review" / "SIGNOFF_TEMPLATE.json").read_text(encoding="utf-8")
+        )
+        canonical = json.loads(
+            (_REPO_ROOT / "validation" / "ivn" / "templates" / "INDEPENDENT_REVIEW.template.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        assert handoff == canonical
+        assert handoff["status"] == "REGISTERED"
+        assert handoff["blinded"] is False
+        assert handoff["verdict"] == ""
 
 
 class TestIVNNetworkAssessment:

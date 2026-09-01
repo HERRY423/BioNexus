@@ -31,9 +31,12 @@ from bionexus.registry import (
     sync_mirror_trees,
     to_agent_plugins_mcp_json,
     to_agent_plugins_plugin_json,
+    to_claude_marketplace_json,
     to_claude_mcp_json,
     to_claude_plugin_json,
     to_codex_config,
+    to_codex_plugin_json,
+    to_openai_marketplace_json,
     validate_endpoints,
     validate_registry_structure,
 )
@@ -105,6 +108,29 @@ def test_generate_codex_config():
         "${PLUGIN_ROOT}/.bionexus-audit/mcp-host-audit.jsonl",
     ]
     assert "pubmed" not in codex_conf["mcpServers"]
+
+
+def test_marketplace_serializations_are_host_specific():
+    """Claude and OpenAI marketplace source contracts must never be conflated."""
+    registry = load_canonical_registry(_REPO_ROOT / "bionexus.registry.yaml")
+    openai_marketplace = to_openai_marketplace_json(registry)
+    claude_marketplace = to_claude_marketplace_json(registry)
+
+    openai_entry = openai_marketplace["plugins"][0]
+    assert openai_entry["source"] == {"source": "local", "path": "./plugins/bionexus"}
+    assert openai_entry["policy"] == {"installation": "AVAILABLE", "authentication": "ON_INSTALL"}
+
+    claude_entry = claude_marketplace["plugins"][0]
+    assert claude_entry["source"] == "./"
+    assert "policy" not in claude_entry
+    assert claude_marketplace["description"]
+
+
+def test_codex_skills_only_manifest_does_not_declare_empty_mcp():
+    registry = load_canonical_registry(_REPO_ROOT / "bionexus.registry.yaml")
+    manifest = to_codex_plugin_json(registry)
+    assert manifest["skills"] == "./skills/"
+    assert "mcpServers" not in manifest
 
 
 def test_endpoint_validation():

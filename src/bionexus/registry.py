@@ -253,7 +253,6 @@ def to_codex_plugin_json(registry: Dict[str, Any]) -> Dict[str, Any]:
         "license": pkg.get("license", "Apache-2.0"),
         "keywords": list(pkg.get("keywords", [])),
         "skills": "./skills/",
-        "mcpServers": "./.mcp.json",
         "interface": {
             "displayName": display_name,
             "shortDescription": "The Scientific Reliability Layer for Agentic Biology",
@@ -271,12 +270,23 @@ def to_codex_plugin_json(registry: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def to_marketplace_json(registry: Dict[str, Any]) -> Dict[str, Any]:
-    """Generate Codex / Claude Marketplace registry manifest (marketplace.json)."""
+def _marketplace_metadata(registry: Dict[str, Any]) -> Tuple[Dict[str, Any], str]:
+    """Return shared marketplace metadata without conflating host schemas."""
     pkg = registry["package"]
     author_name = (
         pkg.get("author", {}).get("name", "BioNexus Team") if isinstance(pkg.get("author"), dict) else "BioNexus Team"
     )
+    return pkg, author_name
+
+
+def to_openai_marketplace_json(registry: Dict[str, Any]) -> Dict[str, Any]:
+    """Generate the OpenAI repo-marketplace manifest.
+
+    OpenAI repo marketplaces use a typed local source object.  The canonical
+    entry points at the self-contained plugin mirror under ``plugins/`` as
+    recommended by the public plugin packaging documentation.
+    """
+    pkg, author_name = _marketplace_metadata(registry)
     return {
         "name": "bionexus-marketplace",
         "interface": {"displayName": "BioNexus Marketplace"},
@@ -286,8 +296,31 @@ def to_marketplace_json(registry: Dict[str, Any]) -> Dict[str, Any]:
                 "name": pkg["name"].lower(),
                 "description": pkg["description"],
                 "version": pkg["version"],
-                "source": {"source": "local", "path": "."},
+                "source": {"source": "local", "path": "./plugins/bionexus"},
                 "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+                "category": "Science",
+            }
+        ],
+    }
+
+
+def to_claude_marketplace_json(registry: Dict[str, Any]) -> Dict[str, Any]:
+    """Generate the Claude Code marketplace manifest.
+
+    Claude Code uses a string for a repository-relative plugin source.  This
+    serialization must remain separate from OpenAI's typed local-source object.
+    """
+    pkg, author_name = _marketplace_metadata(registry)
+    return {
+        "name": "bionexus-marketplace",
+        "description": "BioNexus scientific reliability workflows for AI-assisted biology.",
+        "owner": {"name": author_name},
+        "plugins": [
+            {
+                "name": pkg["name"].lower(),
+                "description": pkg["description"],
+                "version": pkg["version"],
+                "source": "./",
                 "category": "Science",
             }
         ],
@@ -308,7 +341,8 @@ def get_expected_manifests(registry: Dict[str, Any]) -> Dict[str, Dict[str, Any]
     `./skills/` directory that never existed there.
     """
     codex_plugin = to_codex_plugin_json(registry)
-    mkt = to_marketplace_json(registry)
+    openai_mkt = to_openai_marketplace_json(registry)
+    claude_mkt = to_claude_marketplace_json(registry)
     agent_plugin = to_agent_plugins_plugin_json(registry)
     agent_mcp = to_agent_plugins_mcp_json(registry)
     return {
@@ -322,10 +356,10 @@ def get_expected_manifests(registry: Dict[str, Any]) -> Dict[str, Dict[str, Any]
         "plugins/bionexus/plugin.json": agent_plugin,
         "plugins/bionexus/mcp.json": agent_mcp,
         "plugins/bionexus/.mcp.json": to_claude_mcp_json(registry),
-        ".agents/plugins/marketplace.json": mkt,
-        ".codex/marketplace.json": mkt,
-        ".claude-plugin/marketplace.json": mkt,
-        "marketplace.json": mkt,
+        ".agents/plugins/marketplace.json": openai_mkt,
+        ".codex/marketplace.json": openai_mkt,
+        ".claude-plugin/marketplace.json": claude_mkt,
+        "marketplace.json": openai_mkt,
     }
 
 
