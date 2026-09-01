@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Workflow adapter core used by the nf-core-compatible Nextflow module."""
+"""Frozen adapter core for the historical standalone Nextflow trial fixture.
+
+This is not a supported nf-core integration surface. New workflow work consumes
+an existing RO-Crate with the zero-touch artifact annotator under ../ro-crate/.
+"""
 
 from __future__ import annotations
 

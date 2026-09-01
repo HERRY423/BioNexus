@@ -1,0 +1,31 @@
+{
+  "@context": "https://w3id.org/ro/crate/1.1/context",
+  "@graph": [
+    {
+      "@id": "ro-crate-metadata.json",
+      "@type": "CreativeWork",
+      "about": {"@id": "./"},
+      "conformsTo": {"@id": "https://w3id.org/ro/crate/1.1"}
+    },
+    {
+      "@id": "./",
+      "@type": "Dataset",
+      "name": "Minimal unchanged workflow run"
+    },
+    {
+      "@id": "artifacts/gene_counts.tsv",
+      "@type": "File",
+      "name": "Gene counts"
+    },
+    {
+      "@id": "artifacts/log_expression.tsv",
+      "@type": "File",
+      "name": "Log-normalized expression"
+    },
+    {
+      "@id": "artifacts/report.html",
+      "@type": "File",
+      "name": "Workflow report"
+    }
+  ]
+}

@@ -1,12 +1,16 @@
-"""Nextflow and nf-core Enterprise Laboratory Bridge (BNS-019 / BNS-021).
+"""Passive Nextflow execution-provenance harvester (BNS-021).
 
 Provides:
 1. Parsing of Nextflow execution directories (execution_trace.txt, software_versions.yml,
    samplesheet.csv, output artifact digests).
 2. Production of cryptographic tool execution receipts (bionexus.tool-execution-receipt.v1).
-3. Automated evidence factor derivation from real Nextflow pipeline runs (sample design,
-   replicate counts, confound controls, backend fidelity, provenance).
-4. Direct integration into BioNexus evidence model and capability router.
+3. Optional descriptive parsing of a samplesheet only when the caller supplies
+   its path explicitly.
+
+This module does not implement the generic BNS-019 workflow boundary. It never
+turns workflow success, samplesheet shape, filenames, or software names into
+scientific evidence factors. Artifact-level scientific meaning belongs in an
+explicit external BNS-019 annotation over existing provenance such as WRROC.
 """
 
 from __future__ import annotations
@@ -258,19 +262,7 @@ def harvest_nextflow_run(
         if trace_matches:
             trace_file = trace_matches[0]
 
-    trace_stats = (
-        parse_trace_file(trace_file)
-        if trace_file
-        else {
-            "total_processes": 1,
-            "succeeded_processes": 1,
-            "failed_processes": 0,
-            "cached_processes": 0,
-            "execution_status": "SUCCESS",
-            "total_cpu_hours": 0.1,
-            "peak_rss_gb": 0.5,
-        }
-    )
+    trace_stats = parse_trace_file(trace_file) if trace_file else parse_trace_file(rdir / "__missing_trace__")
 
     # 2. Locate versions file
     versions_candidates = [
@@ -290,22 +282,11 @@ def harvest_nextflow_run(
 
     versions = parse_versions_file(versions_file) if versions_file else {}
 
-    # 3. Locate samplesheet
-    sheet_candidates = [
-        Path(samplesheet_path) if samplesheet_path else None,
-        rdir / "samplesheet.csv",
-        rdir / "pipeline_info" / "samplesheet.csv",
-        rdir / "input_samplesheet.csv",
-    ]
-    sheet_file: Optional[Path] = None
-    for s_cand in sheet_candidates:
-        if s_cand and s_cand.is_file():
-            sheet_file = s_cand
-            break
-    if not sheet_file:
-        s_matches = list(rdir.glob("**/*samplesheet*.csv"))
-        if s_matches:
-            sheet_file = s_matches[0]
+    # 3. A generic run has no authoritative samplesheet shape. Parse one only
+    # when a caller explicitly supplies a domain-specific path.
+    sheet_file = Path(samplesheet_path) if samplesheet_path else None
+    if sheet_file is not None and not sheet_file.is_file():
+        raise FileNotFoundError(f"Explicit samplesheet does not exist: {sheet_file}")
 
     samples, design_facts = (
         parse_samplesheet(sheet_file)
@@ -340,22 +321,11 @@ def harvest_nextflow_run(
                 f.endswith(ext)
                 for ext in (".tsv", ".csv", ".h5ad", ".vcf.gz", ".bam", ".html", ".parquet", ".json")
             ):
-                primary_outputs[fp.name] = _sha256_file(fp)
+                primary_outputs[fp.relative_to(rdir).as_posix()] = _sha256_file(fp)
 
-    # 6. Derive evidence factors
-    derived_factors: List[str] = ["backend_fidelity", "provenance"]
+    # 6. Execution provenance never creates scientific evidence factors.
+    derived_factors: List[str] = []
     min_reps = design_facts.get("min_replicates_per_condition", 0)
-    sample_cnt = design_facts.get("sample_count", len(samples))
-    if min_reps >= 2 or sample_cnt >= 2:
-        derived_factors.append("sample_design")
-    if min_reps >= 2 or design_facts.get("biological_replicates_count", 0) >= 3:
-        derived_factors.append("replication")
-    if design_facts.get("conditions_count", 0) >= 2:
-        derived_factors.append("confound_controls")
-    if any(
-        term in k.lower() for k in versions for term in ("deseq", "salmon", "star", "kallisto", "bwa", "gatk")
-    ):
-        derived_factors.append("sensitivity_analysis")
 
     return NextflowExecutionSummary(
         pipeline_name=p_name,
@@ -389,15 +359,19 @@ def create_nextflow_tool_receipt(
     plugin_version: Optional[str] = None,
     extra_metadata: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-    """Generate a signed, tamper-evident Tool Execution Receipt (BNS-021) from a Nextflow pipeline run."""
+    """Generate a tamper-evident provenance receipt for one Nextflow run.
+
+    A content hash is not a signature. The receipt proves neither producer
+    identity nor scientific design, replication, confound control, sensitivity,
+    external validation, or warrant.
+    """
     summary = harvest_nextflow_run(run_dir, pipeline_name=pipeline_name, samplesheet_path=samplesheet_path)
     p_ver = plugin_version or VERSION
 
     request_payload = {
         "pipeline_name": summary.pipeline_name,
         "samplesheet_path": summary.samplesheet_path,
-        "sample_count": summary.sample_count,
-        "samples": summary.samples,
+        "samplesheet_sha256": _sha256_file(summary.samplesheet_path) if summary.samplesheet_path else None,
     }
 
     response_payload = {
@@ -410,23 +384,39 @@ def create_nextflow_tool_receipt(
         "software_versions": summary.software_versions,
     }
 
-    min_reps = summary.min_replicates_per_condition
     meta = {
         "pipeline_name": summary.pipeline_name,
         "pipeline_version": summary.pipeline_version,
         "nextflow_version": summary.nextflow_version,
-        "min_replicates_per_condition": min_reps,
-        "biological_replicates_count": summary.biological_replicates_count,
-        "conditions_count": summary.conditions_count,
-        "sample_design": min_reps >= 2 or summary.sample_count >= 2,
-        "replication": min_reps >= 2 or summary.biological_replicates_count >= 3,
-        "confound_controls": summary.conditions_count >= 2,
-        "sensitivity_analysis": "sensitivity_analysis" in summary.derived_evidence_factors,
-        "backend_fidelity": True,
-        "provenance": True,
-        "derived_evidence_factors": summary.derived_evidence_factors,
+        "provenance_only": True,
+        "scientific_evidence_effect": "NONE",
+        "semantic_inference": "DISABLED",
     }
     if extra_metadata:
+        forbidden = {
+            "evidence_factors",
+            "satisfied_factors",
+            "declared_factors",
+            "sample_design",
+            "has_sample_design",
+            "replication",
+            "replicated",
+            "confound_controls",
+            "covariates_adjusted",
+            "batch_corrected",
+            "sensitivity_analysis",
+            "parameter_sweep",
+            "stability_verified",
+            "effect_stability",
+            "external_validation",
+            "independent_validation",
+        }
+        overlap = forbidden.intersection(extra_metadata)
+        if overlap:
+            raise ValueError(
+                "Nextflow provenance receipts cannot declare scientific evidence factors: "
+                + ", ".join(sorted(overlap))
+            )
         meta.update(extra_metadata)
 
     return create_tool_receipt(

@@ -10,11 +10,19 @@ implementation.
 | R | independent validator | same unpacked release | `jsonlite` + `digest`; no Python |
 | Scanpy/AnnData | host adapter | same unpacked release | `adata.uns["bionexus"]` only |
 | Seurat | host adapter | same unpacked release | `object@misc$bionexus` only |
-| nf-core/Nextflow | workflow adapter | same unpacked release | JSON workflow record + `versions.yml` |
+| RO-Crate artifact annotator | zero-touch sidecar | same unpacked release | existing RO-Crate + explicit per-artifact declarations |
 
 “Independent validator” and “host adapter” are deliberately different
-claims. Scanpy, Seurat, and nf-core integrations do not count as additional
+claims. Scanpy, Seurat, and workflow integrations do not count as additional
 independent semantic engines when they reuse a validator.
+
+The recommended workflow boundary is now
+[`ro-crate/`](ro-crate/): run the pipeline unchanged, consume provenance
+already produced by the engine or `nf-prov`, and annotate only selected
+hash-bound artifacts. The older [`nf-core/`](nf-core/) Nextflow process is
+retained solely as a frozen historical interoperability-trial fixture; it is
+not a proposed deployment mechanism and must not be copied into nf-core
+pipelines.
 
 Run the locally available tracks:
 

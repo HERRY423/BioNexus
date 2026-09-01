@@ -103,7 +103,7 @@ def test_r_independent_validator_agrees_when_runtime_is_available(tmp_path: Path
     assert r_result["case_results"] == python_result["case_results"]
 
 
-def test_scanpy_adapter_contract_is_uns_only_and_nfcore_is_not_counted_without_nextflow() -> None:
+def test_scanpy_adapter_contract_and_historical_nextflow_fixture_boundaries() -> None:
     scanpy_source = (INTEROP_ROOT / "scanpy" / "bns019_scanpy_adapter.py").read_text(encoding="utf-8")
     seurat_source = (INTEROP_ROOT / "seurat" / "bns019_seurat_adapter.R").read_text(encoding="utf-8")
     nextflow_source = (INTEROP_ROOT / "nf-core" / "modules" / "local" / "bns019_semconv" / "main.nf").read_text(
@@ -116,6 +116,7 @@ def test_scanpy_adapter_contract_is_uns_only_and_nfcore_is_not_counted_without_n
     assert "object@misc[[HOST_KEY]]" in seurat_source
     assert "@assays" not in seurat_source
     assert "process BNS019_SEMCONV" in nextflow_source
+    assert "Historical standalone trial fixture" in nextflow_source
     assert "versions.yml" in nextflow_source
 
 
@@ -153,11 +154,112 @@ def test_nfcore_adapter_core_binds_release_digest(tmp_path: Path) -> None:
     assert release["release_digest_sha256"] in versions.read_text(encoding="utf-8")
 
 
+def test_zero_touch_rocrate_adapter_is_artifact_addressable_and_non_mutating(tmp_path: Path) -> None:
+    adapter = INTEROP_ROOT / "ro-crate" / "bns019_artifact_annotator.py"
+    crate = INTEROP_ROOT / "ro-crate" / "fixtures" / "minimal-crate" / "ro-crate-metadata.json"
+    declarations = INTEROP_ROOT / "ro-crate" / "fixtures" / "artifact-semantics.json"
+    output = tmp_path / "annotations.json"
+    before = crate.read_bytes()
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(adapter),
+            "--validator",
+            str(INTEROP_ROOT / "python" / "bns019_validator.py"),
+            "--standard-root",
+            str(STANDARD_ROOT),
+            "--crate",
+            str(crate),
+            "--declarations",
+            str(declarations),
+            "--output",
+            str(output),
+        ],
+        cwd=REPOSITORY_ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert completed.returncode == 0, completed.stderr
+    assert crate.read_bytes() == before
+    result = json.loads(output.read_text(encoding="utf-8"))
+    assert result["provenance_container"]["mutated"] is False
+    assert result["inference_policy"] == "EXPLICIT_ONLY_NO_FILENAME_CONTENT_OR_WORKFLOW_SHAPE_INFERENCE"
+    assert [item["entity_id"] for item in result["annotations"]] == [
+        "artifacts/gene_counts.tsv",
+        "artifacts/log_expression.tsv",
+    ]
+    assert result["annotations"][0]["semantic_envelope"]["attributes"] == {
+        "biological.unit": "sample",
+        "matrix.state": "raw_counts",
+    }
+    assert result["annotations"][1]["semantic_envelope"]["attributes"]["matrix.state"] == "log_normalized"
+    assert "artifacts/report.html" in result["unannotated_entities_observed"]
+
+
+def test_zero_touch_rocrate_adapter_refuses_hash_mismatch_and_run_level_semantics(tmp_path: Path) -> None:
+    source = json.loads(
+        (INTEROP_ROOT / "ro-crate" / "fixtures" / "artifact-semantics.json").read_text(encoding="utf-8")
+    )
+    source["annotations"][0]["expected_sha256"] = "0" * 64
+    source["attributes"] = {"biological.unit": "sample"}
+    declarations = tmp_path / "bad-declarations.json"
+    declarations.write_text(json.dumps(source), encoding="utf-8")
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(INTEROP_ROOT / "ro-crate" / "bns019_artifact_annotator.py"),
+            "--validator",
+            str(INTEROP_ROOT / "python" / "bns019_validator.py"),
+            "--standard-root",
+            str(STANDARD_ROOT),
+            "--crate",
+            str(INTEROP_ROOT / "ro-crate" / "fixtures" / "minimal-crate" / "ro-crate-metadata.json"),
+            "--declarations",
+            str(declarations),
+            "--output",
+            str(tmp_path / "out.json"),
+        ],
+        cwd=REPOSITORY_ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert completed.returncode == 2
+    assert "run-level attributes are forbidden" in completed.stderr
+
+
+def test_zero_touch_adapter_contains_no_pipeline_shape_or_samplesheet_logic() -> None:
+    source = (INTEROP_ROOT / "ro-crate" / "bns019_artifact_annotator.py").read_text(encoding="utf-8")
+    executable_source = "\n".join(line for line in source.splitlines() if not line.lstrip().startswith('"'))
+    assert "parse_samplesheet" not in executable_source
+    assert "nextflow run" not in executable_source.lower()
+    assert "evidence_maturity" not in executable_source
+
+
 def test_scoreboard_cannot_claim_public_success_without_external_submission() -> None:
     scoreboard = json.loads((INTEROP_ROOT / "trial" / "results" / "scoreboard.json").read_text(encoding="utf-8"))
     assert scoreboard["accepted_external_submissions"] == []
     assert scoreboard["public_success_gate"] == "NOT_MET"
     assert scoreboard["publication_status"] == "open_on_publication"
+
+
+def test_external_engagement_registry_cannot_self_promote_private_feedback() -> None:
+    root = REPOSITORY_ROOT / "standards" / "external-engagement"
+    registry = json.loads((root / "EXTERNAL_ENGAGEMENT_REGISTRY.json").read_text(encoding="utf-8"))
+    schema = json.loads(
+        (root / "schemas" / "external-engagement-registry.schema.json").read_text(encoding="utf-8")
+    )
+    Draft202012Validator.check_schema(schema)
+    Draft202012Validator(schema).validate(registry)
+    assert registry["records"] == []
+    derived = {state: 0 for state in registry["state_definitions"]}
+    for record in registry["records"]:
+        derived[record["state"]] += 1
+    assert registry["observed_counts"] == derived
+    assert all(count == 0 for count in registry["observed_counts"].values())
 
 
 def test_result_and_future_submission_contracts_are_machine_enforced() -> None:

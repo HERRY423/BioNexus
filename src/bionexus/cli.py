@@ -3233,11 +3233,8 @@ def handle_nextflow(args: argparse.Namespace) -> int:
                     f"({summary.failed_processes} failed, {summary.cached_processes} cached)"
                 )
                 print(f"CPU Hours: {summary.total_cpu_hours} | Peak RSS: {summary.peak_rss_gb} GB")
-                print(
-                    f"Samples: {summary.sample_count} (min replicates/cond: {summary.min_replicates_per_condition}, "
-                    f"biological replicates: {summary.biological_replicates_count})"
-                )
-                print(f"Derived Evidence Factors: {', '.join(summary.derived_evidence_factors)}")
+                print("Samplesheet semantics: NOT_INSPECTED (generic provenance-only mode)")
+                print("Scientific Evidence Effect: NONE")
                 print(f"Primary Outputs: {len(summary.primary_outputs)} files indexed")
                 print("=" * 60)
             return 0
@@ -4194,18 +4191,23 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_cmp_ledger = comp_subs.add_parser("audit-ledger", help="Audit GxP hash chain integrity")
     p_cmp_ledger.add_argument("--json", action="store_true", help="Output JSON report")
 
-    # 27. nextflow (Enterprise Laboratory Infrastructure Bridge)
+    # 27. nextflow (execution provenance and explicit launch preparation)
     p_nextflow = subparsers.add_parser(
-        "nextflow", help="Nextflow and nf-core Enterprise Laboratory Bridge (BNS-019 / BNS-021)"
+        "nextflow", help="Passive Nextflow execution-provenance harvester and launch preparation (BNS-021)"
     )
     nf_subs = p_nextflow.add_subparsers(dest="nextflow_action", help="Nextflow actions")
 
     p_nf_ingest = nf_subs.add_parser(
-        "ingest", help="Harvest Nextflow run directory and emit signed tool execution receipt"
+        "ingest", help="Harvest a run directory and emit a hash-bound provenance-only receipt"
     )
     p_nf_ingest.add_argument("--run-dir", "-r", required=True, help="Path to Nextflow execution directory")
     p_nf_ingest.add_argument("--pipeline-name", "-p", default=None, help="Pipeline name (e.g. nf-core/rnaseq)")
-    p_nf_ingest.add_argument("--samplesheet", "-s", default=None, help="Optional path to samplesheet.csv")
+    p_nf_ingest.add_argument(
+        "--samplesheet",
+        "-s",
+        default=None,
+        help="Optional explicit descriptive input; never creates scientific evidence factors",
+    )
     p_nf_ingest.add_argument("-o", "--output", default=None, help="Output path for receipt JSON")
     p_nf_ingest.add_argument("--json", action="store_true", help="Output JSON receipt to stdout")
 

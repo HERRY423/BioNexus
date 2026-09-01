@@ -1,5 +1,9 @@
 nextflow.enable.dsl = 2
 
+// Frozen historical interoperability-trial fixture only. Do not inject this
+// process into nf-core pipelines. The current zero-touch PoC consumes an
+// existing RO-Crate under ../ro-crate/ after the workflow has completed.
+
 include { BNS019_SEMCONV } from './modules/local/bns019_semconv/main'
 
 params.record = null

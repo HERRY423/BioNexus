@@ -1,8 +1,30 @@
 {
   "schema_version": "bionexus.external-standards-submission-tracker.v1",
-  "as_of": "2026-08-30",
+  "as_of": "2026-09-01",
   "disclaimer": "Prepared artifacts are not submissions, endorsements, certifications, or external adoption.",
   "targets": {
+    "nf_core": {
+      "official_entrypoint": "https://nf-co.re/community/",
+      "packet": "nfcore-zero-touch-proposal.md",
+      "status": "POC_REVISED_NOT_SUBMITTED",
+      "blockers": [
+        "execute the zero-touch RO-Crate proof of concept against a real unchanged nf-core/nf-prov run",
+        "named human approval of outbound message",
+        "permanent third-party discussion URL before any external_discussed status"
+      ],
+      "receipt": null
+    },
+    "workflow_run_ro_crate": {
+      "official_entrypoint": "https://www.researchobject.org/workflow-run-crate/",
+      "packet": "bionexus-workflow-run-profile.md",
+      "status": "MODELING_QUESTION_NOT_SUBMITTED",
+      "blockers": [
+        "real example crate with artifact-level annotation sidecar",
+        "named human approval of outbound message",
+        "permanent third-party discussion URL before any external_discussed status"
+      ],
+      "receipt": null
+    },
     "ga4gh_ai_work_stream": {
       "official_entrypoint": "https://www.ga4gh.org/get-involved/join-our-community/join/",
       "packet": "ga4gh-aiws-contribution.md",

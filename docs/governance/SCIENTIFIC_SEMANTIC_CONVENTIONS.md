@@ -6,11 +6,12 @@ The durable asset is not another analysis wrapper. It is a shared language for
 what a scientific result means and what its evidence permits.
 
 ```text
-CellTypePilot ───────┐
-Spatial Evidence ───┤
-nf-core workflow ───┼── Scientific Semantic Envelope ── researcher / agent / archive
-Scanpy/Seurat ──────┤
-third-party plugin ─┘
+unchanged workflow ──> Workflow Run RO-Crate ──> artifact entities
+                                                   │
+explicit producer/domain adapter ──────────────────┤
+                                                   ├─ artifact A -> BNS-019
+                                                   ├─ artifact B -> BNS-019
+                                                   └─ artifact C -> unannotated
 ```
 
 When every producer independently invents fields such as `unit`, `scale`,
@@ -50,6 +51,12 @@ The source of truth is the manifest-bound release under
 `standards/scientific-semantic-conventions/`. `registry.json`, JSON Schemas,
 and conformance fixtures are normative; Python modules and prose are
 implementations or explanations.
+
+RO-Crate owns execution provenance; BNS-019 does not duplicate it. The run is
+only the container. Scientific meaning attaches to an individual output entity
+and only when the meaning is explicitly supplied. A successful run, a familiar
+filename, a samplesheet column, or a numeric matrix pattern is never sufficient
+to infer scientific semantics.
 
 ## Minimal public contract
 
@@ -112,8 +119,9 @@ path to a defensible network effect is:
    trips it through a consumer.
 2. **First-party adapters** — CellTypePilot and Spatial Evidence Layer map
    without semantic loss; ambiguous legacy fields are surfaced to researchers.
-3. **Workflow and ecosystem adapters** — nf-core, Scanpy, and Seurat exporters
-   use the same conformance fixtures.
+3. **Workflow and ecosystem adapters** — unchanged workflows emit native or
+   RO-Crate provenance; an external adapter annotates only explicitly understood
+   artifacts. Scanpy and Seurat exporters use the same conformance fixtures.
 4. **Cross-agent consumption** — Claude/Codex plugins preserve unknown values,
    source hashes, and warrant boundaries.
 5. **External governance** — independent maintainers review names, collision

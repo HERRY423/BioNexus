@@ -61,7 +61,7 @@ def test_registry_covers_required_alignments():
     """The four alignment families from BNS-016 MUST be present."""
     keys = set(ALIGNMENTS)
     assert {"prov-o", "ro-crate", "workflow-run-crate", "bco"} <= keys          # data standards
-    assert {"bioschemas", "nf-core"} <= keys                                    # aligned ecosystems
+    assert {"bioschemas", "nf-core"} <= keys                                    # ecosystem relationships
     assert "ga4gh-ai-workstream" in keys                                        # proposal venue
     assert {"elixir", "scverse", "bioconductor", "workflowhub"} <= keys         # tracked venues
 
@@ -81,6 +81,8 @@ def test_statuses_reflect_reality():
     ga4gh = ALIGNMENTS["ga4gh-ai-workstream"]
     assert ga4gh.status == "tracked"
     assert "not submitted" in ga4gh.role
+    assert ALIGNMENTS["nf-core"].status == "tracked"
+    assert "no public proposal receipt" in ALIGNMENTS["nf-core"].role
 
 
 def test_alignment_report_counts():
@@ -105,7 +107,7 @@ def test_external_vocabulary_and_submission_state_are_honest():
 
     tracker = json.loads((packet_dir / "SUBMISSION_TRACKER.json").read_text(encoding="utf-8"))
     for target in tracker["targets"].values():
-        assert target["status"].startswith("READY_BLOCKED_")
+        assert target["status"] not in {"SUBMITTED", "PUBLISHED", "ACCEPTED"}
         assert target["receipt"] is None
 
 

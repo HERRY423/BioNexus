@@ -1,16 +1,14 @@
-"""Tests for the Nextflow & nf-core Enterprise Laboratory Bridge (BNS-019 / BNS-021)."""
+"""Tests for the passive Nextflow execution-provenance harvester (BNS-021)."""
 
 from __future__ import annotations
 
 import json
-import subprocess
 import sys
 from pathlib import Path
 
 import pytest
 
 from bionexus.cli import main as cli_main
-from bionexus.intent_router import route_scientific_intent
 from bionexus.nextflow_bridge import (
     NextflowExecutionSummary,
     create_nextflow_tool_receipt,
@@ -114,21 +112,23 @@ def test_parse_samplesheet(mock_nextflow_run: Path):
     assert facts["biological_replicates_count"] == 6
 
 
-def test_harvest_nextflow_run_e2e(mock_nextflow_run: Path):
+def test_harvest_nextflow_run_e2e_does_not_infer_samplesheet_or_scientific_evidence(mock_nextflow_run: Path):
     summary = harvest_nextflow_run(mock_nextflow_run, pipeline_name="nf-core/rnaseq")
     assert isinstance(summary, NextflowExecutionSummary)
     assert summary.pipeline_name == "nf-core/rnaseq"
     assert summary.execution_status == "SUCCESS"
-    assert summary.sample_count == 6
-    assert summary.min_replicates_per_condition == 3
+    assert summary.samplesheet_path is None
+    assert summary.sample_count == 0
+    assert summary.derived_evidence_factors == []
     assert "salmon.merged.gene_counts.tsv" in summary.primary_outputs
     assert "multiqc_report.html" in summary.primary_outputs
-    # Derived factors
-    assert "backend_fidelity" in summary.derived_evidence_factors
-    assert "provenance" in summary.derived_evidence_factors
-    assert "sample_design" in summary.derived_evidence_factors
-    assert "replication" in summary.derived_evidence_factors
-    assert "confound_controls" in summary.derived_evidence_factors
+
+
+def test_harvest_missing_trace_stays_unknown(tmp_path: Path):
+    (tmp_path / "result.tsv").write_text("x\n", encoding="utf-8")
+    summary = harvest_nextflow_run(tmp_path)
+    assert summary.execution_status == "UNKNOWN"
+    assert summary.total_processes == 0
 
 
 def test_create_nextflow_tool_receipt_and_cryptographic_verification(mock_nextflow_run: Path):
@@ -144,37 +144,22 @@ def test_create_nextflow_tool_receipt_and_cryptographic_verification(mock_nextfl
     assert not ver_err
 
 
-def test_nextflow_receipt_binds_to_evidence_model_and_elevates_maturity(mock_nextflow_run: Path):
+def test_nextflow_receipt_is_provenance_only_and_does_not_mint_scientific_factors(mock_nextflow_run: Path):
     receipt = create_nextflow_tool_receipt(mock_nextflow_run, pipeline_name="nf-core/rnaseq")
     factors, notes = extract_evidence_factors_from_receipt(receipt)
     assert len(notes) > 0
-    assert "sample_design" in factors
-    assert "replication" in factors
-    assert "confound_controls" in factors
     assert "backend_fidelity" in factors
     assert "provenance" in factors
+    assert not {"sample_design", "replication", "confound_controls", "sensitivity_analysis"} & factors
+    assert receipt["metadata"]["scientific_evidence_effect"] == "NONE"
 
-    # Route through intent_router with this verified receipt
-    decision = route_scientific_intent(
-        query="nextflow_pipeline",
-        tool_receipts=[receipt],
-        research_purpose="confirmatory",
-        claim_context="population_effect",
-        data_metadata={"n_replicates": 3, "conditions": 2},
-    )
-    assert decision.status.value == "PERMITTED"
-    assert decision.matched_capability is not None
 
-    from bionexus.research_purpose import PurposeContext, ResearchPurpose
-
-    eval_res = decision.matched_capability.evaluate_viability_with_purpose(
-        input_metadata={"n_replicates": 3, "conditions": 2},
-        purpose_context=PurposeContext(purpose=ResearchPurpose.CONFIRMATORY),
-        claim_context="population_effect",
-        tool_receipts=[receipt],
-    )
-    assert eval_res.evidence_assessment["evidence_maturity"] in ("ROBUST", "REPLICATED")
-    assert eval_res.sufficiency["verdict"] in ("WARRANTED", "WARRANTED_WITH_LIMITS")
+def test_nextflow_receipt_refuses_scientific_factor_injection(mock_nextflow_run: Path):
+    with pytest.raises(ValueError, match="cannot declare scientific evidence factors"):
+        create_nextflow_tool_receipt(
+            mock_nextflow_run,
+            extra_metadata={"replication": True},
+        )
 
 
 def test_cli_nextflow_inspect(mock_nextflow_run: Path, capsys: pytest.CaptureFixture):
@@ -202,41 +187,16 @@ def test_cli_nextflow_ingest(mock_nextflow_run: Path, tmp_path: Path):
     assert data["tool_name"] == "nf-core.pipeline"
 
 
-def test_bns019_receipt_generator_standalone(mock_nextflow_run: Path, tmp_path: Path):
+def test_unsafe_bns019_pipeline_injection_generator_is_retired(mock_nextflow_run: Path, tmp_path: Path):
     script = Path(__file__).resolve().parents[2] / "interoperability" / "bns019" / "nf-core" / "bin" / "bns019_receipt_generator.py"
-    assert script.is_file()
+    module = script.parents[1] / "modules" / "local" / "bns019_receipt" / "main.nf"
+    assert not script.exists()
+    assert not module.exists()
 
-    out_json = tmp_path / "bns019_receipt.json"
-    out_card = tmp_path / "bns019_card.json"
-
-    completed = subprocess.run(
-        [
-            sys.executable,
-            str(script),
-            "--pipeline-name",
-            "nf-core/rnaseq",
-            "--samplesheet",
-            str(mock_nextflow_run / "samplesheet.csv"),
-            "--versions",
-            str(mock_nextflow_run / "pipeline_info" / "software_versions.yml"),
-            "--outputs",
-            str(mock_nextflow_run / "salmon.merged.gene_counts.tsv"),
-            "--output",
-            str(out_json),
-            "--card-output",
-            str(out_card),
-        ],
-        capture_output=True,
-        text=True,
-    )
-    assert completed.returncode == 0, completed.stderr
-    assert out_json.is_file()
-    rcpt = json.loads(out_json.read_text(encoding="utf-8"))
-    assert rcpt["schema_version"] == "bionexus.tool-execution-receipt.v1"
-    assert rcpt["tool_name"] == "nf-core.rnaseq"
-    ver_ok, ver_err = verify_tool_receipt(rcpt)
-    assert ver_ok is True
-    assert not ver_err
+    zero_touch = script.parents[2] / "ro-crate" / "bns019_artifact_annotator.py"
+    source = zero_touch.read_text(encoding="utf-8")
+    assert "parse_samplesheet" not in source
+    assert "evidence_maturity" not in source
 
 
 def test_nfcore_launch_extended_pipelines(tmp_path: Path):

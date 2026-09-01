@@ -1,4 +1,5 @@
 process BNS019_SEMCONV {
+    // Historical standalone trial fixture, not a reusable nf-core module.
     tag "$meta.id"
 
     conda "conda-forge::python=3.11"

@@ -9,7 +9,8 @@ Conformance manifest: `standards/scientific-semantic-conventions/conformance/man
 ## 1. Purpose
 
 BioNexus Scientific Semantic Conventions define a shared, machine-readable
-language for the meaning and evidence boundary of scientific AI outputs. They
+language for the meaning and evidence boundary of individually addressable
+scientific artifacts. They
 are modeled after the interoperability role of OpenTelemetry Semantic
 Conventions: a common vocabulary, not a workflow engine or analysis method.
 
@@ -27,7 +28,21 @@ Conformance to BNS-019 is a software-contract statement. It is not evidence of
 biological correctness, empirical calibration, external validation, or
 community adoption.
 
-## 1.1 Distribution boundary
+## 1.1 Relationship to execution provenance
+
+BNS-019 is not an execution-provenance format. Workflow Run RO-Crate and
+engine-native provenance remain authoritative for what ran, which software and
+inputs were involved, and which output entities were produced. BNS-019 is an
+optional semantic layer over explicitly selected, hash-bound artifacts.
+
+A generic workflow adapter MUST NOT infer scientific semantics from a
+samplesheet, filename, numeric appearance, successful task, workflow shape, or
+provenance graph. It MUST NOT require a pipeline to add BNS inputs, processes,
+or Python scripts. Scientific attributes are populated only when an accountable
+producer or domain-specific adapter explicitly declares them. Unknown meaning
+remains unannotated rather than being converted into guessed metadata.
+
+## 1.2 Distribution boundary
 
 BNS-019 is released as a language-neutral standards artifact, not as private
 Python package data. Its normative contract uses UTF-8 JSON, JSON Schema
@@ -145,7 +160,7 @@ and fingerprint mismatches.
 
 ## 7. Envelope
 
-Every portable semantic envelope contains:
+Every portable semantic envelope binds one source record or artifact:
 
 ```json
 {
@@ -171,6 +186,25 @@ The fingerprint is SHA-256 over UTF-8 canonical JSON of every envelope field
 except `semantic_fingerprint_sha256`, using sorted object keys and compact
 separators. It protects meaning-bearing metadata from silent mutation; it does
 not authenticate the producer.
+
+### 7.1 Artifact-addressable manifests
+
+A workflow run is a provenance container, not a blanket scientific
+interpretation. A non-normative sidecar MAY group several BNS-019 envelopes in
+one run-level manifest, but every envelope retains its own artifact entity ID,
+source SHA-256, attributes, and semantic fingerprint.
+
+```text
+one Workflow Run RO-Crate
+  -> artifact A -> explicit BNS-019 envelope
+  -> artifact B -> different explicit BNS-019 envelope
+  -> artifact C -> no annotation
+```
+
+The grouping manifest MUST NOT copy one artifact's semantics to sibling
+outputs. Unannotated artifacts remain unassessed. This clarification is the
+design direction for a future versioned BNS-019 release; it does not mutate the
+frozen 0.1.0 distribution.
 
 ## 8. Evolution and stability
 
@@ -201,6 +235,13 @@ CellTypePilot, Spatial Evidence Layer, nf-core, Scanpy, Seurat, Claude, Codex,
 and third-party plugins are target integrations, not current conformance or
 adoption claims. A target may be listed as conformant only after it emits or
 consumes a versioned envelope and passes the published contract suite.
+
+The current zero-touch workflow proof of concept consumes an existing
+RO-Crate and emits an external, artifact-addressable annotation manifest. It
+does not modify nf-core pipelines or claim that nf-core/nf-prov produce or
+adopt BNS-019. The earlier injected Nextflow receipt prototype was retired
+because it coupled the semantic layer to pipeline shape and inferred evidence
+factors from samplesheet structure.
 
 The distribution's conformance manifest names each JSON input, validation
 posture, expected validity, canonical normalized output, or stable failure

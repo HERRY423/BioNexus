@@ -1,0 +1,24 @@
+{
+  "schema_version": "bionexus.bns019-artifact-declarations.v1",
+  "producer": "example.explicit-domain-adapter",
+  "annotations": [
+    {
+      "entity_id": "artifacts/gene_counts.tsv",
+      "expected_sha256": "ec8f24c4e933c5df46346215a5ed53f44aad2ca2ae329d8c46b5874a2344dd9e",
+      "convention": "scientific.dataset",
+      "attributes": {
+        "biological.unit": "sample",
+        "matrix.state": "raw_counts"
+      }
+    },
+    {
+      "entity_id": "artifacts/log_expression.tsv",
+      "expected_sha256": "a77098f4818d27b8d59186c16340fe64249854ba3c769ab6792486764292a0d5",
+      "convention": "scientific.dataset",
+      "attributes": {
+        "biological.unit": "sample",
+        "matrix.state": "log_normalized"
+      }
+    }
+  ]
+}

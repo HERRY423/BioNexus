@@ -41,7 +41,7 @@ and testable without BioNexus infrastructure.
 |---|---|---|
 | GA4GH (AI Work Stream) | Contribution packet prepared; joining/submission requires a named human participant | `tracked` |
 | ELIXIR | Interoperability packet prepared; contact requires a named human/Node relationship | `tracked` |
-| nf-core | Samplesheet schemas; pipeline provenance alignment | `aligned` |
+| nf-core | Zero-touch RO-Crate artifact-annotation PoC revised; no public proposal receipt | `tracked` |
 | scverse | Single-cell Python ecosystem feedback loop | `tracked` |
 | Bioconductor | R-side failure vocabulary exchange | `tracked` |
 | WorkflowHub | Official-validator-passing crate prepared; API publication requires a user token and Team ID | `tracked` |

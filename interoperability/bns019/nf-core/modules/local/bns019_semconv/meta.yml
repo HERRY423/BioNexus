@@ -1,9 +1,9 @@
 name: bns019_semconv
-description: Attach a manifest-verified BNS-019 scientific semantic envelope to a workflow record
+description: Historical standalone trial fixture; not a reusable or proposed nf-core module
 keywords:
   - scientific semantics
   - interoperability
-  - provenance
+  - historical trial
 tools:
   - python:
       description: Python programming language

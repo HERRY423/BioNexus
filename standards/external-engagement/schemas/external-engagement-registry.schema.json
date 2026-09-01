@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bionexus:external-engagement-registry-schema:1",
+  "type": "object",
+  "required": ["schema_version", "as_of", "state_definitions", "records", "observed_counts", "claim_boundary"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "schema_version": {"const": "bionexus.external-engagement-registry.v1"},
+    "as_of": {"type": "string", "format": "date"},
+    "state_definitions": {
+      "type": "object",
+      "required": ["external_discussed", "external_referenced", "external_implemented", "external_adopted"],
+      "additionalProperties": {"type": "string", "minLength": 1}
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["record_id", "state", "artifact", "community_or_project", "evidence_url", "observed_at", "recorded_by"],
+        "properties": {
+          "record_id": {"type": "string", "minLength": 1},
+          "state": {"enum": ["external_discussed", "external_referenced", "external_implemented", "external_adopted"]},
+          "artifact": {"type": "string", "minLength": 1},
+          "community_or_project": {"type": "string", "minLength": 1},
+          "evidence_url": {"type": "string", "pattern": "^https://"},
+          "observed_at": {"type": "string", "format": "date-time"},
+          "recorded_by": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "observed_counts": {
+      "type": "object",
+      "required": ["external_discussed", "external_referenced", "external_implemented", "external_adopted"],
+      "additionalProperties": {"type": "integer", "minimum": 0}
+    },
+    "claim_boundary": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}

@@ -1,5 +1,11 @@
 # BNS-019 Public Interoperability Trial 01
 
+> Historical scope note (2026-09-01): this 0.1.0 trial preserves the original
+> standalone Nextflow adapter fixture for reproducibility. It is not the current
+> nf-core integration proposal. The current zero-touch proof of concept consumes
+> an existing RO-Crate and annotates explicit artifact entities outside the
+> pipeline; see `../ro-crate/`.
+
 Trial ID: `BNS019-INTEROP-2026-01`  
 Normative manifest: `trial-manifest.json`  
 Initial state: `open_on_publication`

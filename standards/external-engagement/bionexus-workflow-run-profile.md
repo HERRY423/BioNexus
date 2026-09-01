@@ -17,17 +17,28 @@ BioNexus run crate declares and satisfies:
 The base profile chain remains authoritative. BioNexus terms add evidence and
 claim-boundary annotations; they do not weaken or replace any base constraint.
 
-## Extension entities
+## Composable extension boundary
 
-An EvidenceCard is a schema.org `CreativeWork` whose `about` points to the main
-run `CreateAction`. Compact terms from `bionexus-context.jsonld` may record the
-execution state, conclusion maturity, input integrity, assumption validity,
-statistical support, parameter robustness, cross-method concordance, and
-external validation. Claim and evidence `CreativeWork` entities may record
-evidence status, evidence kind, maturity, and validation role.
+Workflow Run RO-Crate remains authoritative for execution provenance. The
+BioNexus extension is proposed as a separate composable profile, not a change
+to the WRROC core profile and not a replacement for `nf-prov`.
 
-All values are copied from the sealed source capsule or Claim-Evidence Ledger.
-Export MUST NOT promote, infer, or silently fill missing evidence values.
+An EvidenceCard may remain a contextual `CreativeWork` associated with the
+main run `CreateAction`, but scientific semantic annotations are
+artifact-addressable: each annotation targets one crate entity and binds that
+entity's SHA-256. A run-level annotation manifest can group several such
+records without applying one blanket meaning to every output.
+
+The modeling question for external review remains open: reuse existing
+schema.org/PROV-O terms where possible, then determine whether the annotation
+manifest should itself be a contextual entity, an external referenced JSON
+artifact, or a separate Profile Crate. BioNexus does not declare that choice
+settled on behalf of the RO-Crate community.
+
+All values are copied from a sealed source capsule, Claim-Evidence Ledger, or
+an explicit producer/domain-adapter declaration. Export MUST NOT promote,
+infer, or silently fill missing evidence values. Unannotated artifacts remain
+unassessed.
 
 ## Fail-closed conformance
 

@@ -115,8 +115,11 @@ ALIGNMENTS: Dict[str, StandardAlignment] = {
             key="nf-core",
             name="nf-core / Nextflow",
             url="https://nf-co.re/",
-            status="aligned",
-            role="Launch artifacts follow nf-core samplesheet schemas; nf-core provenance metadata tracked",
+            status="tracked",
+            role=(
+                "Zero-touch RO-Crate artifact-annotation proof of concept revised after external "
+                "architecture feedback; no public proposal receipt or nf-core adoption claim"
+            ),
         ),
         StandardAlignment(
             key="ga4gh-ai-workstream",

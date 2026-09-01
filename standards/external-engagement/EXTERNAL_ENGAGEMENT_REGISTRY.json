@@ -1,0 +1,19 @@
+{
+  "$schema": "schemas/external-engagement-registry.schema.json",
+  "schema_version": "bionexus.external-engagement-registry.v1",
+  "as_of": "2026-09-01",
+  "state_definitions": {
+    "external_discussed": "A third-party community or maintainer substantively discussed the artifact at a permanent public URL.",
+    "external_referenced": "A third-party project document, issue, or specification references the artifact.",
+    "external_implemented": "A non-BioNexus party produces or consumes the artifact with reproducible evidence.",
+    "external_adopted": "A third-party project formally includes the artifact in supported practice or a normative specification."
+  },
+  "records": [],
+  "observed_counts": {
+    "external_discussed": 0,
+    "external_referenced": 0,
+    "external_implemented": 0,
+    "external_adopted": 0
+  },
+  "claim_boundary": "Only attributable third-party public evidence may create a record. Maintainer drafts, self-tests, private conversation summaries, screenshots, and repository mentions do not count."
+}
