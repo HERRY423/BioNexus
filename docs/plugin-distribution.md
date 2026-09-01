@@ -110,6 +110,19 @@ server requires Python 3.10+ and the dependencies for the selected workflow.
 8. Submit for review. Submission is not publication. After approval, the
    verified publisher chooses when to publish.
 
+Repository submission assets are now explicit:
+
+- [support policy](../SUPPORT.md)
+- [privacy notice](plugin-privacy.md)
+- [terms](plugin-terms.md)
+- [five positive and three negative test cases](plugin-review-test-cases.md)
+- [square SVG logo](../assets/bionexus-plugin-logo.svg)
+
+These files make a review packet ready to populate; they do not prove that a
+portal submission, publisher verification, host-install test, or approval has
+occurred. Convert the SVG to the portal's required raster dimensions if its
+current upload form does not accept SVG.
+
 Public review should be for the skills-only reliability layer. Do not attach
 the local stdio MCP as if it were a public production HTTP service.
 
@@ -137,6 +150,10 @@ python scripts/registry_compiler.py --check
 python -m pytest -q tests/unit/test_registry_compiler.py
 python scripts/doctor.py
 ```
+
+Also execute and record every case in
+[`plugin-review-test-cases.md`](plugin-review-test-cases.md); the file's
+expected outcomes alone are not test evidence.
 
 Also run the full applicable test/CI matrix from a clean release commit, verify
 the installation in a fresh host session, and record any unavailable external

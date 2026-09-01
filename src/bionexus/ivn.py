@@ -64,6 +64,7 @@ __all__ = [
     "evaluate_capability",
     "evaluate_network",
     "open_questions_alignment",
+    "validate_external_review_artifact",
     "verify_registry_integrity",
     "generate_merkle_root",
     "render_public_ledger_html",
@@ -267,7 +268,8 @@ class IVNDataset:
         """True when preregistration and report files exist (hash drift is
         reported separately by :func:`verify_registry_integrity`)."""
         for rel in (self.preregistration_path, self.report_path):
-            if not rel or not (repo_root / rel).is_file():
+            path = _contained_artifact(repo_root, rel) if rel else None
+            if path is None or not path.is_file():
                 return False
         return True
 
@@ -280,8 +282,8 @@ class IVNDataset:
         for rel, digest in pairs:
             if not digest:
                 return False
-            path = repo_root / rel
-            if not path.is_file() or sha256_file(path).lower() != digest.lower():
+            path = _contained_artifact(repo_root, rel)
+            if path is None or not path.is_file() or sha256_file(path).lower() != digest.lower():
                 return False
         return True
 
@@ -431,6 +433,8 @@ class NonAuthorReview:
     attestation_id: str = ""
     review_path: str = ""
     review_sha256: str = ""
+    verification_receipt_path: str = ""
+    verification_receipt_sha256: str = ""
     reviewed_at: str = ""
     status: str = EntityStatus.REGISTERED.value
     notes: str = ""
@@ -448,6 +452,8 @@ class NonAuthorReview:
             raise IVNError(f"{prefix}: verdict must be one of {valid}") from exc
         if self.review_sha256 and not _is_sha256(self.review_sha256):
             raise IVNError(f"{prefix}: review_sha256 must be 64 hex characters")
+        if self.verification_receipt_sha256 and not _is_sha256(self.verification_receipt_sha256):
+            raise IVNError(f"{prefix}: verification_receipt_sha256 must be 64 hex characters")
         _entity_status(self.status, prefix)
 
     def to_dict(self) -> Dict[str, Any]:
@@ -464,6 +470,8 @@ class NonAuthorReview:
             "attestation_id": self.attestation_id,
             "review_path": self.review_path,
             "review_sha256": self.review_sha256,
+            "verification_receipt_path": self.verification_receipt_path,
+            "verification_receipt_sha256": self.verification_receipt_sha256,
             "reviewed_at": self.reviewed_at,
             "status": self.status,
             "notes": self.notes,
@@ -484,6 +492,8 @@ class NonAuthorReview:
             attestation_id=payload.get("attestation_id", ""),
             review_path=payload.get("review_path", ""),
             review_sha256=payload.get("review_sha256", ""),
+            verification_receipt_path=payload.get("verification_receipt_path", ""),
+            verification_receipt_sha256=payload.get("verification_receipt_sha256", ""),
             reviewed_at=payload.get("reviewed_at", ""),
             status=payload.get("status", EntityStatus.REGISTERED.value),
             notes=payload.get("notes", ""),
@@ -733,6 +743,17 @@ def load_registry(path: Optional[Path] = None) -> IVNRegistry:
 # ------------------------------------------------------------------------------
 
 
+def _contained_artifact(repo_root: Path, relative_path: str) -> Optional[Path]:
+    """Resolve an artifact only when it remains inside the selected repository."""
+    root = Path(repo_root).resolve()
+    candidate = (root / relative_path).resolve()
+    try:
+        candidate.relative_to(root)
+    except ValueError:
+        return None
+    return candidate
+
+
 def _dataset_exclusion_reason(dataset: IVNDataset, registry: IVNRegistry, repo_root: Path) -> str:
     if dataset.status == EntityStatus.RETRACTED.value:
         return "retracted"
@@ -775,8 +796,8 @@ def _lab_study_exclusion_reason(
         return "independence declaration not signed"
     if not study.capsule_path or not study.capsule_sha256:
         return "missing hash-bound capsule/report artifact"
-    capsule = repo_root / study.capsule_path
-    if not capsule.is_file():
+    capsule = _contained_artifact(repo_root, study.capsule_path)
+    if capsule is None or not capsule.is_file():
         return "capsule/report artifact missing on disk"
     if sha256_file(capsule).lower() != study.capsule_sha256.lower():
         return "recorded SHA-256 does not match capsule artifact on disk"
@@ -802,12 +823,187 @@ def _review_exclusion_reason(review: NonAuthorReview, registry: IVNRegistry, rep
         return "missing reviewer attestation id"
     if not review.review_path or not review.review_sha256:
         return "missing hash-bound review artifact"
-    review_file = repo_root / review.review_path
-    if not review_file.is_file():
+    review_file = _contained_artifact(repo_root, review.review_path)
+    if review_file is None or not review_file.is_file():
         return "review artifact missing on disk"
     if sha256_file(review_file).lower() != review.review_sha256.lower():
         return "recorded SHA-256 does not match review artifact on disk"
+    if not review.verification_receipt_path or not review.verification_receipt_sha256:
+        return "missing hash-bound verification receipt"
+    receipt_file = _contained_artifact(repo_root, review.verification_receipt_path)
+    if receipt_file is None or not receipt_file.is_file():
+        return "verification receipt missing on disk"
+    if sha256_file(receipt_file).lower() != review.verification_receipt_sha256.lower():
+        return "recorded SHA-256 does not match verification receipt on disk"
+    try:
+        receipt = json.loads(receipt_file.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return "verification receipt is unreadable"
+    if (
+        receipt.get("schema_version") != "bionexus.ivn-review-verification.v1"
+        or receipt.get("decision") != EntityStatus.VERIFIED.value
+        or receipt.get("review_id") != review.review_id
+        or receipt.get("review_path") != review.review_path
+        or str(receipt.get("review_sha256", "")).lower() != review.review_sha256.lower()
+    ):
+        return "verification receipt does not bind this review artifact"
+    required_checks = {
+        "identity_matches_ledger",
+        "non_author_declared",
+        "two_phase_blinding_bound",
+        "immutable_commit_bound",
+        "capsule_hash_recorded",
+        "disclosures_complete",
+        "scientific_review_complete",
+        "reviewer_signature_complete",
+    }
+    checks = receipt.get("checks")
+    if not isinstance(checks, Mapping) or any(checks.get(name) is not True for name in required_checks):
+        return "verification receipt is missing a required passing check"
+    if not isinstance(receipt.get("verified_by"), str) or not receipt["verified_by"].strip():
+        return "verification receipt is missing accountable verifier identity"
+    if not isinstance(receipt.get("verified_at"), str) or not receipt["verified_at"].strip():
+        return "verification receipt is missing verification time"
+    if not isinstance(receipt.get("expected_commit"), str) or len(receipt["expected_commit"]) != 40:
+        return "verification receipt is missing the immutable reviewed commit"
     return ""
+
+
+def _review_timestamp(value: Any, label: str) -> datetime:
+    if not isinstance(value, str) or not value.strip():
+        raise IVNError(f"external review artifact: {label} is required")
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise IVNError(f"external review artifact: {label} must be an ISO-8601 timestamp") from exc
+
+
+def validate_external_review_artifact(
+    review: NonAuthorReview,
+    payload: Mapping[str, Any],
+    *,
+    expected_commit: str,
+    repo_root: Path,
+) -> Dict[str, bool]:
+    """Validate a reviewer-controlled v3 artifact before governed promotion.
+
+    This check is deliberately strict.  It verifies identity and verdict
+    agreement with the ledger record, a two-phase pre-output lock, bounded
+    reproduction provenance, disclosures, and a reviewer signature.  It does
+    not infer scientific correctness or turn technical reproduction into
+    external-laboratory evidence.
+    """
+    if len(expected_commit) != 40 or any(ch not in "0123456789abcdefABCDEF" for ch in expected_commit):
+        raise IVNError("expected_commit must be a full 40-character immutable Git commit SHA")
+    if payload.get("$schema") != "urn:bionexus:external-review-signoff:3":
+        raise IVNError("external review artifact: unsupported or missing v3 schema")
+
+    expected_fields = {
+        "review_id": review.review_id,
+        "capability_id": review.capability_id,
+        "subject_id": review.subject_id,
+        "reviewer_id": review.reviewer_id,
+        "reviewer_name": review.reviewer_name,
+        "affiliation": review.affiliation,
+        "verdict": review.verdict,
+        "attestation_id": review.attestation_id,
+    }
+    for field_name, expected in expected_fields.items():
+        if payload.get(field_name) != expected:
+            raise IVNError(f"external review artifact: {field_name} does not match the ledger record")
+    if payload.get("blinded") is not True or not review.blinded:
+        raise IVNError("external review artifact: blinded must be true in both artifact and ledger record")
+    if payload.get("declared_non_author") is not True or not review.declared_non_author:
+        raise IVNError("external review artifact: declared_non_author must be true")
+
+    reproduction = payload.get("reproduction")
+    if not isinstance(reproduction, Mapping):
+        raise IVNError("external review artifact: reproduction object is required")
+    if str(reproduction.get("reviewed_commit", "")).lower() != expected_commit.lower():
+        raise IVNError("external review artifact: reviewed_commit does not match expected_commit")
+    if not _is_sha256(reproduction.get("capsule_sha256", "")):
+        raise IVNError("external review artifact: capsule_sha256 must be 64 hex characters")
+    if reproduction.get("all_checks_passed") not in (True, False):
+        raise IVNError("external review artifact: all_checks_passed must be true or false")
+    nonzero = reproduction.get("nonzero_checks_reviewed")
+    if not isinstance(nonzero, list) or (
+        reproduction.get("all_checks_passed") is False and not nonzero
+    ):
+        raise IVNError("external review artifact: nonzero checks must be listed when checks did not all pass")
+
+    blinding = payload.get("blinding")
+    if not isinstance(blinding, Mapping):
+        raise IVNError("external review artifact: blinding object is required")
+    if blinding.get("protocol_version") != "bionexus.two-phase-review.v1":
+        raise IVNError("external review artifact: unsupported blinding protocol")
+    if blinding.get("system_outputs_unseen_until_lock") is not True:
+        raise IVNError("external review artifact: pre-output blinding was not affirmed")
+    locked_at = _review_timestamp(blinding.get("preoutput_locked_at"), "preoutput_locked_at")
+    unblinded_at = _review_timestamp(blinding.get("unblinded_at"), "unblinded_at")
+    if locked_at > unblinded_at:
+        raise IVNError("external review artifact: preoutput lock must precede unblinding")
+    for label in ("blinded_packet", "preoutput_assessment"):
+        rel = blinding.get(f"{label}_path", "")
+        digest = blinding.get(f"{label}_sha256", "")
+        if not isinstance(rel, str) or not rel or not _is_sha256(digest):
+            raise IVNError(f"external review artifact: {label} path and SHA-256 are required")
+        root = Path(repo_root).resolve()
+        path = (root / rel).resolve()
+        try:
+            path.relative_to(root)
+        except ValueError as exc:
+            raise IVNError(f"external review artifact: {label} path escapes repo_root") from exc
+        if not path.is_file() or sha256_file(path).lower() != digest.lower():
+            raise IVNError(f"external review artifact: {label} artifact is missing or hash-mismatched")
+
+    disclosures = payload.get("disclosures")
+    disclosure_fields = (
+        "funding",
+        "employment_relationship_with_maintainer",
+        "prior_collaboration_with_maintainer",
+        "other_conflicts",
+    )
+    if not isinstance(disclosures, Mapping) or any(
+        not isinstance(disclosures.get(field_name), str) for field_name in disclosure_fields
+    ):
+        raise IVNError("external review artifact: every disclosure field must be present as text")
+
+    scientific = payload.get("scientific_review")
+    required_scientific = (
+        "experimental_unit_and_biological_replicates",
+        "pseudobulk_design_and_contrasts",
+        "multiple_testing_and_effect_size",
+        "claim_ceiling",
+        "limitations",
+    )
+    if not isinstance(scientific, Mapping) or any(
+        not isinstance(scientific.get(field_name), str) or not scientific.get(field_name, "").strip()
+        for field_name in required_scientific
+    ):
+        raise IVNError("external review artifact: substantive scientific-review text is incomplete")
+    attacks = scientific.get("thresholds_or_rules_attacked")
+    if not isinstance(attacks, list) or not attacks:
+        raise IVNError("external review artifact: at least one attacked threshold or rule is required")
+
+    if payload.get("signature_name") != review.reviewer_name:
+        raise IVNError("external review artifact: signature_name must match reviewer_name")
+    if not isinstance(payload.get("signature_statement"), str) or not payload["signature_statement"].strip():
+        raise IVNError("external review artifact: signature_statement is required")
+    _review_timestamp(payload.get("signature_date"), "signature_date")
+    _review_timestamp(payload.get("reviewed_at"), "reviewed_at")
+    if not isinstance(payload.get("overall_recommendation"), str) or not payload["overall_recommendation"].strip():
+        raise IVNError("external review artifact: overall_recommendation is required")
+
+    return {
+        "identity_matches_ledger": True,
+        "non_author_declared": True,
+        "two_phase_blinding_bound": True,
+        "immutable_commit_bound": True,
+        "capsule_hash_recorded": True,
+        "disclosures_complete": True,
+        "scientific_review_complete": True,
+        "reviewer_signature_complete": True,
+    }
 
 
 def _distinct(values: Sequence[str]) -> int:
@@ -1129,7 +1325,7 @@ def verify_registry_integrity(
         ):
             if not rel and not digest:
                 continue
-            path = root / rel if rel else None
+            path = _contained_artifact(root, rel) if rel else None
             if not digest or not path or not path.is_file():
                 drift.append(
                     {"entity": dataset.dataset_id, "artifact": rel, "problem": "missing"}
@@ -1141,7 +1337,7 @@ def verify_registry_integrity(
     for study in registry.lab_studies:
         if not study.capsule_path and not study.capsule_sha256:
             continue
-        path = root / study.capsule_path if study.capsule_path else None
+        path = _contained_artifact(root, study.capsule_path) if study.capsule_path else None
         if not study.capsule_sha256 or not path or not path.is_file():
             drift.append({"entity": study.study_id, "artifact": study.capsule_path, "problem": "missing"})
         elif sha256_file(path).lower() != study.capsule_sha256.lower():
@@ -1149,15 +1345,19 @@ def verify_registry_integrity(
                 {"entity": study.study_id, "artifact": study.capsule_path, "problem": "sha256_mismatch"}
             )
     for review in registry.reviews:
-        if not review.review_path and not review.review_sha256:
-            continue
-        path = root / review.review_path if review.review_path else None
-        if not review.review_sha256 or not path or not path.is_file():
-            drift.append({"entity": review.review_id, "artifact": review.review_path, "problem": "missing"})
-        elif sha256_file(path).lower() != review.review_sha256.lower():
-            drift.append(
-                {"entity": review.review_id, "artifact": review.review_path, "problem": "sha256_mismatch"}
-            )
+        for label, rel, digest in (
+            ("review", review.review_path, review.review_sha256),
+            ("verification_receipt", review.verification_receipt_path, review.verification_receipt_sha256),
+        ):
+            if not rel and not digest:
+                continue
+            path = _contained_artifact(root, rel) if rel else None
+            if not digest or not path or not path.is_file():
+                drift.append({"entity": review.review_id, "artifact": rel, "kind": label, "problem": "missing"})
+            elif sha256_file(path).lower() != digest.lower():
+                drift.append(
+                    {"entity": review.review_id, "artifact": rel, "kind": label, "problem": "sha256_mismatch"}
+                )
     return {
         "schema_version": IVN_SCHEMA_VERSION,
         "checked_entities": len(registry.datasets)
@@ -1191,4 +1391,3 @@ def render_public_ledger_html(
         repo_root=repo_root,
         custom_title=custom_title,
     )
-

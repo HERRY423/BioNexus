@@ -68,7 +68,7 @@ class TestIVNRegistryBasics:
         assert len(root1) == 64
         assert root1 == root2
 
-    def test_external_signoff_and_ivn_registration_templates_match(self):
+    def test_external_signoff_and_ivn_registration_templates_are_separate(self):
         handoff = json.loads(
             (_REPO_ROOT / "review" / "external-review" / "SIGNOFF_TEMPLATE.json").read_text(encoding="utf-8")
         )
@@ -77,8 +77,13 @@ class TestIVNRegistryBasics:
                 encoding="utf-8"
             )
         )
-        assert handoff == canonical
-        assert handoff["status"] == "REGISTERED"
+        assert handoff != canonical
+        assert handoff["$schema"] == "urn:bionexus:external-review-signoff:3"
+        assert "status" not in handoff
+        assert "review_path" not in handoff
+        assert canonical["$schema"] == "urn:bionexus:ivn-non-author-review-record:1"
+        assert canonical["status"] == "REGISTERED"
+        assert canonical["verification_receipt_path"] == ""
         assert handoff["blinded"] is False
         assert handoff["verdict"] == ""
 

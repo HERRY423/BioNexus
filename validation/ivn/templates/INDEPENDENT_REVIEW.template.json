@@ -1,5 +1,5 @@
 {
-  "$schema": "urn:bionexus:external-review-signoff:2",
+  "$schema": "urn:bionexus:ivn-non-author-review-record:1",
   "review_id": "BN-IVN-REV-001",
   "capability_id": "scrna.pseudobulk_de",
   "subject_id": "BN-PB-IV-002",
@@ -12,36 +12,9 @@
   "attestation_id": "",
   "review_path": "validation/ivn/reviews/BN-IVN-REV-001/REVIEW.json",
   "review_sha256": "",
+  "verification_receipt_path": "",
+  "verification_receipt_sha256": "",
   "reviewed_at": "",
   "status": "REGISTERED",
-  "notes": "Unfilled or merely REGISTERED packets never count toward an IVN reviewer quota.",
-  "disclosures": {
-    "funding": "",
-    "employment_relationship_with_maintainer": "",
-    "prior_collaboration_with_maintainer": "",
-    "other_conflicts": ""
-  },
-  "reproduction": {
-    "reviewed_commit": "",
-    "capsule_filename": "",
-    "capsule_sha256": "",
-    "all_checks_passed": null,
-    "nonzero_checks_reviewed": [],
-    "environment_or_installation_limitations": ""
-  },
-  "scientific_review": {
-    "blinding_protocol": "",
-    "experimental_unit_and_biological_replicates": "",
-    "pseudobulk_design_and_contrasts": "",
-    "multiple_testing_and_effect_size": "",
-    "claim_ceiling": "",
-    "thresholds_or_rules_attacked": [],
-    "false_refusals_encountered": [],
-    "unreviewed_scope": [],
-    "limitations": ""
-  },
-  "overall_recommendation": "",
-  "signature_statement": "I reproduced the artifacts identified above, challenged the thresholds and decision rules to the extent described, and recorded my independent scientific judgment. This review does not assert clinical fitness, regulatory compliance, or correctness outside the stated scope.",
-  "signature_name": "",
-  "signature_date": ""
+  "notes": "Maintainer-created ledger record. The reviewer-controlled REVIEW.json remains unchanged. REGISTERED never counts."
 }

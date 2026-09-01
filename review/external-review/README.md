@@ -1,122 +1,112 @@
 # BioNexus independent-review handoff
 
-This directory is the external handoff for the first human IVN review. It is
-deliberately narrower than an external-laboratory replication.
+This packet supports one bounded, non-author review of
+`scrna.pseudobulk_de`. It separates the reviewer-controlled evidence from the
+maintainer-controlled IVN ledger record and uses a two-phase, hash-bound
+pre-output lock.
 
-## What this packet can establish
+It can establish technical reproduction and a named scientific judgment. It
+cannot establish external-lab quota credit, biological truth, clinical or
+regulatory fitness, certification, or endorsement of BioNexus as a whole.
 
-- A reviewer reproduced a fixed Git commit and retained all pass, fail, and
-  abstention outputs in a SHA-256-bound capsule.
-- A named non-author documented an independent scientific judgment about the
-  `scrna.pseudobulk_de` rules and claim ceiling.
-- The signed review can be registered in the IVN without the maintainer
-  rewriting the reviewer's conclusions.
+## Phase 1: pre-output lock
 
-It does **not** establish external-lab quota credit, biological truth,
-certification, clinical validity, or endorsement of BioNexus as a whole.
-The portable capsule excludes the repository-wide positive artifact test that
-requires separately retained flagship annotation and spatial data files; its
-fail-closed verifier tests remain included. This exclusion is recorded in the
-capsule summary rather than being treated as a pass.
+Before cloning the repository or viewing CI, reports, expected verdicts, or
+BioNexus output:
 
-## Maintainer preparation: mandatory before outreach
+1. Read `BLINDING_PROTOCOL.md` and only the methods-only
+   `BLINDED_REVIEW_PACKET.json`.
+2. Record the packet SHA-256.
+3. Copy `PREOUTPUT_ASSESSMENT_TEMPLATE.json` to
+   `PREOUTPUT_ASSESSMENT.json`, fill every field, record an ISO-8601 lock time,
+   sign it by name, and compute its SHA-256.
+4. Retain the completed file unchanged. If outputs were already seen, set the
+   blinding claims to `false`; the review remains useful but does not satisfy
+   the blinded-review quota.
 
-1. Commit the implementation and documentation changes.
-2. From that committed source state, run
-   `python scripts/sync_flagship_reports.py`, then rerun the validation verifier
-   and commit the provenance-only report rebinding. Do not rebind reports while
-   the source changes are uncommitted: that would falsely pair a dirty source
-   snapshot with the previous commit identity.
-3. Push the final review commit to the public repository.
-4. Select that full 40-character commit SHA. Do not use `main` or a movable
-   branch name.
-5. Keep the invitation drafts pinned to the immutable review commit below.
-6. Run the command yourself from a fresh clone and retain the resulting hash.
-7. Assign a unique review ID. The first proposed ID is `BN-IVN-REV-001`.
-8. Confirm the intended reviewer is absent from
-   `validation/ivn/REGISTRY.json` `author_roster`.
+## Phase 2: immutable reproduction
 
-## One-click reproduction command
+The invitation supplies a full 40-character commit SHA and a unique review
+ID. Never substitute `main` or another movable ref.
 
-macOS/Linux:
+macOS/Linux (replace the two placeholders):
 
 ```bash
-REVIEW_COMMIT="a08f7a8be74b86adc1361587fd652f9c573e4c3d" && \
+REVIEW_COMMIT="__IMMUTABLE_REVIEW_COMMIT__" REVIEW_ID="BN-IVN-REV-001" && \
 test "${#REVIEW_COMMIT}" -eq 40 && \
 git clone https://github.com/HERRY423/BioNexus.git BioNexus-IVN-review && \
-cd BioNexus-IVN-review && \
-git checkout --detach "$REVIEW_COMMIT" && \
-python3 -m venv .venv && \
-. .venv/bin/activate && \
+cd BioNexus-IVN-review && git checkout --detach "$REVIEW_COMMIT" && \
+python3 -m venv .venv && . .venv/bin/activate && \
 python -m pip install --upgrade pip && \
-python -m pip install -e . && \
+python -m pip install -e ".[review]" && \
 python review/external-review/build_review_capsule.py \
-  --expected-commit "$REVIEW_COMMIT" \
-  --review-id BN-IVN-REV-001
+  --expected-commit "$REVIEW_COMMIT" --review-id "$REVIEW_ID"
 ```
 
 Windows PowerShell:
 
 ```powershell
-$reviewCommit = 'a08f7a8be74b86adc1361587fd652f9c573e4c3d'
+$reviewCommit = '__IMMUTABLE_REVIEW_COMMIT__'
+$reviewId = 'BN-IVN-REV-001'
 if ($reviewCommit.Length -ne 40) { throw 'A full immutable commit SHA is required.' }
 git clone https://github.com/HERRY423/BioNexus.git BioNexus-IVN-review
 Set-Location BioNexus-IVN-review
 git checkout --detach $reviewCommit
 py -3 -m venv .venv
 & .\.venv\Scripts\python.exe -m pip install --upgrade pip
-& .\.venv\Scripts\python.exe -m pip install -e .
+& .\.venv\Scripts\python.exe -m pip install -e '.[review]'
 & .\.venv\Scripts\python.exe review\external-review\build_review_capsule.py `
-  --expected-commit $reviewCommit `
-  --review-id BN-IVN-REV-001
+  --expected-commit $reviewCommit --review-id $reviewId
 ```
 
-The capsule builder refuses a dirty checkout or a mismatched commit. It runs
-focused pseudobulk/IVN checks, certification reporting, artifact verification,
-and IVN status/integrity checks. Non-zero checks are recorded and packaged
-instead of discarded.
+The builder refuses a dirty or mismatched checkout and refuses to start if the
+bounded review dependency is absent. It records focused verifier-contract
+tests, manifest drift checking, certification output, IVN status/integrity,
+complete logs, and a resolved `pip freeze --all` environment snapshot. Failed
+checks remain evidence; they are not hidden. The environment snapshot is not
+a cross-platform lockfile.
 
-## Reviewer action
+## Reviewer return packet
 
-1. Run one command above.
-2. Inspect `SUMMARY.json` and every log inside the generated ZIP.
-3. Copy `SIGNOFF_TEMPLATE.json` to `REVIEW.json`.
-4. Fill every identity, disclosure, reproduction, scientific-review, verdict,
-   and signature field. Keep `status` as `REGISTERED`; do not claim
-   `VERIFIED` merely because the form is complete.
-5. Return `REVIEW.json` through a reviewer-authored pull request or another
-   provenance-preserving channel. Negative and partial reviews are valid.
+Inspect `SUMMARY.json`, `ENVIRONMENT.json`, `PIP_FREEZE.txt`, and every log in
+the ZIP. Copy `SIGNOFF_TEMPLATE.json` to `REVIEW.json` and fill every field.
+Allowed verdicts are `ENDORSED`, `ENDORSED_WITH_LIMITS`, and `CHALLENGED`.
+Return these two unchanged, reviewer-authored artifacts through a pull request
+or another provenance-preserving channel:
 
-Allowed IVN verdicts are `ENDORSED`, `ENDORSED_WITH_LIMITS`, and `REJECTED`.
-The reviewer may also decline to submit the packet. Never translate a blank or
-informal response into a verdict.
+- `PREOUTPUT_ASSESSMENT.json`
+- `REVIEW.json`
 
-## Maintainer registration after receipt
+Blank, informal, or maintainer-rewritten responses are never converted into a
+verdict.
 
-Place the unchanged reviewer artifact at the `review_path` stated in the JSON,
-then register it:
+## Maintainer registration and governed promotion
+
+The reviewer artifact is not a ledger payload. Create a separate record from
+`validation/ivn/templates/INDEPENDENT_REVIEW.template.json`, copying only the
+matching identity, subject, verdict, attestation, timestamps, and artifact
+path. Keep `status=REGISTERED` and both receipt fields empty.
 
 ```bash
 bionexus ivn register-review \
-  --payload validation/ivn/reviews/BN-IVN-REV-001/REVIEW.json \
+  --payload validation/ivn/reviews/BN-IVN-REV-001/LEDGER_RECORD.json \
+  --repo-root .
+bionexus ivn verify-review \
+  --review-id BN-IVN-REV-001 \
+  --expected-commit __IMMUTABLE_REVIEW_COMMIT__ \
+  --verified-by "NAMED_MAINTAINER_OR_GOVERNANCE_BODY" \
   --repo-root .
 bionexus ivn verify --repo-root .
 bionexus ivn status --repo-root . --json
 ```
 
-Registration computes and stores the artifact SHA-256, but `REGISTERED` still
-does not count. Promotion to `VERIFIED` requires a separate, documented check
-of non-authorship, the actual blinding protocol, the attestation, the review
-artifact hash, and the reviewer-controlled signature. If any condition is
-missing, leave the record `REGISTERED` and report the gap.
+Registration always forces `REGISTERED`, even if an incoming ledger payload
+claims otherwise. `verify-review` checks author-roster exclusion, the frozen
+review SHA, two-phase blinding artifacts and timestamps, commit/capsule
+provenance, disclosures, substantive review fields, and signature. It then
+creates a separate hash-bound verification receipt and promotes the ledger
+record. Any missing or mismatched condition refuses the transition.
 
-After a justified status transition, rebuild and inspect the ledger:
-
-```bash
-bionexus ivn verify --repo-root .
-bionexus ivn status --repo-root . --json
-bionexus ivn build-ledger --repo-root . --output docs/ivn/index.html
-```
-
-The signed JSON must never be edited by the maintainer to improve its verdict.
-Any correction must come from the reviewer as a new, attributable artifact.
+The reviewer files must never be edited to improve a verdict. A correction
+must arrive as a new reviewer-authored artifact and be registered through an
+explicit supersession process.

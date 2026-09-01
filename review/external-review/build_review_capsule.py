@@ -97,6 +97,13 @@ def build_capsule(*, expected_commit: str, output_dir: Path, review_id: str) -> 
     if dirty:
         raise RuntimeError("review checkout is not clean; refuse to create an ambiguous capsule")
 
+    pytest_version = _installed_version("pytest")
+    if pytest_version == "NOT_INSTALLED":
+        raise RuntimeError(
+            "pytest is required for the review capsule; install the bounded review extra "
+            "with: python -m pip install -e \".[review]\""
+        )
+
     output_dir = output_dir.resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
     created_at = datetime.now(timezone.utc).isoformat()
@@ -107,17 +114,28 @@ def build_capsule(*, expected_commit: str, output_dir: Path, review_id: str) -> 
         logs = staging / "logs"
         logs.mkdir(parents=True)
 
+        freeze = _run((sys.executable, "-m", "pip", "freeze", "--all"), cwd=REPO_ROOT)
+        if freeze.returncode != 0:
+            raise RuntimeError(f"pip freeze --all failed:\n{freeze.stdout}")
+        freeze_path = staging / "PIP_FREEZE.txt"
+        freeze_path.write_text(freeze.stdout, encoding="utf-8")
+
         environment = {
-            "schema_version": "bionexus.review-environment.v1",
+            "schema_version": "bionexus.review-environment.v2",
             "created_at": created_at,
             "git_commit": head,
             "git_describe": _git("describe", "--always", "--dirty", "--tags"),
             "python": sys.version,
             "python_executable": sys.executable,
+            "python_prefix": sys.prefix,
             "platform": platform.platform(),
             "machine": platform.machine(),
             "bionexus_distribution_version": _installed_version("bionexus-reliability"),
-            "pytest_version": _installed_version("pytest"),
+            "pytest_version": pytest_version,
+            "pip_freeze_command": [sys.executable, "-m", "pip", "freeze", "--all"],
+            "pip_freeze_exit_code": freeze.returncode,
+            "pip_freeze_path": "PIP_FREEZE.txt",
+            "pip_freeze_sha256": _sha256(freeze_path),
         }
         (staging / "ENVIRONMENT.json").write_text(
             json.dumps(environment, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
@@ -154,6 +172,10 @@ def build_capsule(*, expected_commit: str, output_dir: Path, review_id: str) -> 
                 "The repository-wide positive validation-artifact test requires separately retained "
                 "flagship data files and is excluded from this portable pseudobulk/IVN capsule. "
                 "Its fail-closed negative tests remain included."
+            ),
+            "environment_scope_note": (
+                "PIP_FREEZE.txt records the resolved Python environment; it is evidence, not a "
+                "cross-platform lockfile or proof that non-Python system dependencies are identical."
             ),
             "checks": results,
             "all_checks_passed": all(item["exit_code"] == 0 for item in results),

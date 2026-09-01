@@ -1,0 +1,18 @@
+{
+  "$schema": "urn:bionexus:blinded-review-packet:1",
+  "capability_id": "scrna.pseudobulk_de",
+  "subject_id": "BN-PB-IV-002",
+  "phase": "PRE_OUTPUT",
+  "system_outputs_included": false,
+  "expected_verdict_included": false,
+  "purpose": "Lock an independent assessment of the design and attack plan before any BioNexus output is viewed.",
+  "questions": [
+    "What is the defensible biological experimental unit for this analysis?",
+    "Which pseudobulk design and contrast failures would invalidate inference?",
+    "Which multiple-testing and effect-size rules should be attacked?",
+    "What refusal behavior should occur when replicate or design assumptions fail?",
+    "What is the maximum claim ceiling even if every technical check passes?"
+  ],
+  "required_lock_artifact": "PREOUTPUT_ASSESSMENT.json",
+  "note": "This packet contains methods questions only. Clone, source code, expected results, logs, and BioNexus verdicts must remain unseen until the pre-output artifact is written and SHA-256 locked."
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "urn:bionexus:preoutput-assessment:1",
+  "review_id": "BN-IVN-REV-001",
+  "reviewer_id": "",
+  "reviewer_name": "",
+  "blinded_packet_sha256": "",
+  "system_outputs_seen": false,
+  "locked_at": "",
+  "experimental_unit_assessment": "",
+  "anticipated_failure_modes": [],
+  "thresholds_or_rules_to_attack": [],
+  "precommitted_claim_ceiling": "",
+  "signature_name": ""
+}

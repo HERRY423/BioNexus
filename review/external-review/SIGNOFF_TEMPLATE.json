@@ -1,5 +1,5 @@
 {
-  "$schema": "urn:bionexus:external-review-signoff:2",
+  "$schema": "urn:bionexus:external-review-signoff:3",
   "review_id": "BN-IVN-REV-001",
   "capability_id": "scrna.pseudobulk_de",
   "subject_id": "BN-PB-IV-002",
@@ -10,16 +10,22 @@
   "blinded": false,
   "declared_non_author": false,
   "attestation_id": "",
-  "review_path": "validation/ivn/reviews/BN-IVN-REV-001/REVIEW.json",
-  "review_sha256": "",
   "reviewed_at": "",
-  "status": "REGISTERED",
-  "notes": "Unfilled or merely REGISTERED packets never count toward an IVN reviewer quota.",
   "disclosures": {
     "funding": "",
     "employment_relationship_with_maintainer": "",
     "prior_collaboration_with_maintainer": "",
     "other_conflicts": ""
+  },
+  "blinding": {
+    "protocol_version": "bionexus.two-phase-review.v1",
+    "blinded_packet_path": "review/external-review/BLINDED_REVIEW_PACKET.json",
+    "blinded_packet_sha256": "",
+    "preoutput_assessment_path": "validation/ivn/reviews/BN-IVN-REV-001/PREOUTPUT_ASSESSMENT.json",
+    "preoutput_assessment_sha256": "",
+    "preoutput_locked_at": "",
+    "system_outputs_unseen_until_lock": false,
+    "unblinded_at": ""
   },
   "reproduction": {
     "reviewed_commit": "",
@@ -30,7 +36,6 @@
     "environment_or_installation_limitations": ""
   },
   "scientific_review": {
-    "blinding_protocol": "",
     "experimental_unit_and_biological_replicates": "",
     "pseudobulk_design_and_contrasts": "",
     "multiple_testing_and_effect_size": "",
@@ -41,7 +46,7 @@
     "limitations": ""
   },
   "overall_recommendation": "",
-  "signature_statement": "I reproduced the artifacts identified above, challenged the thresholds and decision rules to the extent described, and recorded my independent scientific judgment. This review does not assert clinical fitness, regulatory compliance, or correctness outside the stated scope.",
+  "signature_statement": "I locked the pre-output assessment before viewing BioNexus outputs, reproduced the artifacts identified above, challenged the thresholds and decision rules to the extent described, and recorded my independent scientific judgment. This review does not assert clinical fitness, regulatory compliance, or correctness outside the stated scope.",
   "signature_name": "",
   "signature_date": ""
 }

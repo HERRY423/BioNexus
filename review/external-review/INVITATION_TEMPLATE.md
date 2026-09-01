@@ -1,47 +1,33 @@
-**Subject: Independent BioNexus review request — one fixed run, one JSON, negative results welcome**
+**Subject: Independent BioNexus pseudobulk review — two phases, one fixed run, negative results welcome**
 
 Dear Dr. [Name],
 
-I maintain [BioNexus](https://github.com/HERRY423/BioNexus), an open-source
-scientific reliability layer for AI-assisted biology. It records evidence
-boundaries, refusal conditions, provenance, and claim ceilings; it is not an
-autonomous scientist and it does not replace human scientific judgment.
+I maintain [BioNexus](https://github.com/HERRY423/BioNexus), an open-source,
+passive scientific reliability layer for AI-assisted biology. I am inviting a
+small number of computational-biology researchers to challenge one bounded
+track, `scrna.pseudobulk_de`. This is not a request for endorsement: a limited
+or negative review is a valid result and will remain reviewer-authored.
 
-I am inviting a small number of computational-biology researchers to create
-the first external human record in its Independent Validation Network. This is
-**not a request for endorsement**. A negative or limited review is a valid
-result and will be preserved without being rewritten by the maintainer.
+[One personalized sentence explaining why this reviewer is relevant.]
 
-I am asking you to challenge one fixed evidence track,
-`scrna.pseudobulk_de`, because [one personalized sentence]. In particular, I
-would value your judgment on the biological-replicate assumptions, pseudobulk
-design and contrasts, multiple-testing/effect-size rules, refusal behavior,
-and the maximum biological claim those rules permit.
-
-The task is bounded:
-
-1. Run one command against immutable commit
-   `a08f7a8be74b86adc1361587fd652f9c573e4c3d` (macOS/Linux shown; a PowerShell equivalent is
-   in `review/external-review/README.md`):
+The review uses a two-phase pre-output lock. First, without viewing BioNexus
+outputs, fill and SHA-256 lock the methods-only pre-output assessment. Then run
+the following command against the immutable commit. Full protocol:
+[BLINDING_PROTOCOL.md](https://github.com/HERRY423/BioNexus/blob/__IMMUTABLE_REVIEW_COMMIT__/review/external-review/BLINDING_PROTOCOL.md).
 
 ```bash
-REVIEW_COMMIT="a08f7a8be74b86adc1361587fd652f9c573e4c3d" && test "${#REVIEW_COMMIT}" -eq 40 && git clone https://github.com/HERRY423/BioNexus.git BioNexus-IVN-review && cd BioNexus-IVN-review && git checkout --detach "$REVIEW_COMMIT" && python3 -m venv .venv && . .venv/bin/activate && python -m pip install --upgrade pip && python -m pip install -e . && python review/external-review/build_review_capsule.py --expected-commit "$REVIEW_COMMIT" --review-id BN-IVN-REV-001
+REVIEW_COMMIT="__IMMUTABLE_REVIEW_COMMIT__" REVIEW_ID="__UNIQUE_REVIEW_ID__" && test "${#REVIEW_COMMIT}" -eq 40 && git clone https://github.com/HERRY423/BioNexus.git BioNexus-IVN-review && cd BioNexus-IVN-review && git checkout --detach "$REVIEW_COMMIT" && python3 -m venv .venv && . .venv/bin/activate && python -m pip install --upgrade pip && python -m pip install -e ".[review]" && python review/external-review/build_review_capsule.py --expected-commit "$REVIEW_COMMIT" --review-id "$REVIEW_ID"
 ```
 
-2. Inspect the generated ZIP. It includes the exact commit/environment,
-   command exit codes, and complete logs. Failed checks are retained rather
-   than hidden. The ZIP's SHA-256 is emitted as a sidecar file.
-3. Fill one file: `review/external-review/SIGNOFF_TEMPLATE.json`. You may return
-   `ENDORSED`, `ENDORSED_WITH_LIMITS`, or `REJECTED`, and explicitly list what
-   you did not review.
+Reviewer JSON template:
+[SIGNOFF_TEMPLATE.json](https://raw.githubusercontent.com/HERRY423/BioNexus/__IMMUTABLE_REVIEW_COMMIT__/review/external-review/SIGNOFF_TEMPLATE.json).
+The packet preserves all exit codes and logs and records a resolved environment
+snapshot. It is technical reproduction evidence, not external-laboratory,
+clinical, regulatory, or certification evidence.
 
-The capsule is technical reproduction evidence, not an external-laboratory
-replication. A signed review covers only the stated scope and does not assert
-clinical fitness, regulatory compliance, or correctness of other BioNexus
-capabilities. You retain authorship and control of the review artifact.
-
-If you are willing to participate, a short reply is enough. I will confirm the
-review ID and immutable commit before you begin.
+Allowed verdicts are `ENDORSED`, `ENDORSED_WITH_LIMITS`, and `CHALLENGED`.
+If you are willing to participate, a short reply is enough; I will send the
+methods-only Phase 1 files before you access the repository.
 
 Best regards,
 Herry

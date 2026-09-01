@@ -41,6 +41,7 @@ def test_capsule_preserves_nonzero_checks_and_hashes_archive(tmp_path: Path, mon
 
     monkeypatch.setattr(capsule_module, "REPO_ROOT", tmp_path)
     monkeypatch.setattr(capsule_module, "_git", fake_git)
+    monkeypatch.setattr(capsule_module, "_installed_version", lambda name: "9.0.0" if name == "pytest" else "1.0.0")
     monkeypatch.setattr(
         capsule_module,
         "DEFAULT_CHECKS",
@@ -69,6 +70,28 @@ def test_capsule_preserves_nonzero_checks_and_hashes_archive(tmp_path: Path, mon
         assert summary["ivn_status_effect"] == "NONE_UNTIL_SEPARATE_REVIEW_AND_REGISTRATION"
         assert [item["exit_code"] for item in summary["checks"]] == [0, 7]
         assert summary["checks"][1]["outcome"] == "NONZERO_RECORDED"
+        environment_name = next(name for name in bundle.namelist() if name.endswith("/ENVIRONMENT.json"))
+        environment = json.loads(bundle.read(environment_name))
+        freeze_name = next(name for name in bundle.namelist() if name.endswith("/PIP_FREEZE.txt"))
+        assert environment["pip_freeze_sha256"] == hashlib.sha256(bundle.read(freeze_name)).hexdigest()
+
+
+def test_capsule_refuses_when_review_dependency_is_missing(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    commit = "a" * 40
+    monkeypatch.setattr(capsule_module, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(
+        capsule_module,
+        "_git",
+        lambda *args: commit if args == ("rev-parse", "HEAD") else "",
+    )
+    monkeypatch.setattr(capsule_module, "_installed_version", lambda name: "NOT_INSTALLED")
+
+    with pytest.raises(RuntimeError, match=r"\.\[review\]"):
+        capsule_module.build_capsule(
+            expected_commit=commit,
+            output_dir=tmp_path / "capsules",
+            review_id="BN-IVN-REV-TEST",
+        )
 
 
 def test_capsule_refuses_mutable_or_mismatched_identity(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):

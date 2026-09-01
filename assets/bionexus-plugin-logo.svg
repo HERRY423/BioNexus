@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">BioNexus</title>
+  <desc id="desc">Interlocking blue and green evidence nodes forming a nexus</desc>
+  <rect width="512" height="512" rx="96" fill="#071a2b"/>
+  <path d="M128 152L256 88l128 64v208l-128 64-128-64z" fill="none" stroke="#55d6be" stroke-width="28"/>
+  <path d="M128 152l128 104 128-104M256 256v168" fill="none" stroke="#65a8ff" stroke-width="28" stroke-linecap="round"/>
+  <circle cx="128" cy="152" r="30" fill="#55d6be"/>
+  <circle cx="384" cy="152" r="30" fill="#55d6be"/>
+  <circle cx="256" cy="256" r="36" fill="#f4f8ff"/>
+  <circle cx="256" cy="424" r="30" fill="#65a8ff"/>
+</svg>

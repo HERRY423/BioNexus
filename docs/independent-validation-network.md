@@ -9,7 +9,7 @@ not count as completed evidence — only hash-verified artifacts do.
 - **Implementation**: `src/bionexus/ivn.py` (network), `src/bionexus/calibration_freeze.py` (calibration freeze), `src/bionexus/ivn_ledger_page.py` (public ledger portal)
 - **Registry**: `validation/ivn/REGISTRY.json`
 - **Public Append-Only Ledger Portal**: `docs/ivn/index.html` (Deployed via GitHub Pages)
-- **CLI**: `bionexus ivn {status | verify | build-ledger | register-dataset | register-lab-study | register-review | freeze-profile | authorize}`
+- **CLI**: `bionexus ivn {status | verify | build-ledger | register-dataset | register-lab-study | register-review | verify-review | freeze-profile | authorize}`
 
 ## The Moat That Deepens Over Time (Asset Transformation)
 
@@ -58,9 +58,11 @@ framework or an empty lab slot never counts.
 
 **Non-author reviews** count only when the reviewer is absent from the
 registry's author roster (an empty roster means non-authorship cannot be
-established, so no review counts), the review was blinded, an attestation id
-is recorded, and the review artifact hash matches. Pending reviewer slots
-never count.
+established, so no review counts), a two-phase pre-output blinding record is
+bound, an attestation id is recorded, and both the reviewer artifact and the
+separate maintainer verification receipt match their SHA-256 digests. Pending
+reviewer slots and review artifacts without a verification receipt never
+count.
 
 Every quota re-verification recomputes artifact digests from disk. Trust-on-
 write is forbidden: editing an artifact after registration excludes the
@@ -106,6 +108,13 @@ bionexus ivn register-lab-study   --payload validation/ivn/templates/EXTERNAL_LA
 bionexus ivn register-review      --payload validation/ivn/templates/INDEPENDENT_REVIEW.template.json
 #   registration refuses author-roster overlap for reviews and computes
 #   artifact digests from disk; registration alone never satisfies a quota.
+
+# Governed review promotion; validates the reviewer-controlled v3 artifact,
+# two-phase blinding lock, immutable commit, disclosures, and signature, then
+# emits a separate verification receipt. It does not endorse the verdict.
+bionexus ivn verify-review --review-id BN-IVN-REV-001 \
+    --expected-commit FULL_40_CHARACTER_COMMIT \
+    --verified-by "named governance reviewer"
 
 # Freeze an APPROVED calibration profile to its held-out contexts
 bionexus ivn freeze-profile --profile-json profile.json --held-out-json contexts.json \

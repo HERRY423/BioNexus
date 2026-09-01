@@ -121,6 +121,31 @@ def _lab(tmp_path: Path, **overrides) -> ExternalLabStudy:
 
 def _review(tmp_path: Path, **overrides) -> NonAuthorReview:
     rev_path, rev_sha = _write(tmp_path, "reviews/R1/REVIEW.json")
+    receipt_payload = {
+        "schema_version": "bionexus.ivn-review-verification.v1",
+        "decision": "VERIFIED",
+        "review_id": "R1",
+        "review_path": str(rev_path.relative_to(tmp_path)),
+        "review_sha256": rev_sha,
+        "expected_commit": "a" * 40,
+        "verified_at": "2026-01-01T00:00:00+00:00",
+        "verified_by": "IVN governance",
+        "checks": {
+            "identity_matches_ledger": True,
+            "non_author_declared": True,
+            "two_phase_blinding_bound": True,
+            "immutable_commit_bound": True,
+            "capsule_hash_recorded": True,
+            "disclosures_complete": True,
+            "scientific_review_complete": True,
+            "reviewer_signature_complete": True,
+        },
+    }
+    receipt_path, receipt_sha = _write(
+        tmp_path,
+        "reviews/R1/VERIFICATION_RECEIPT.json",
+        json.dumps(receipt_payload),
+    )
     fields = dict(
         review_id="R1",
         capability_id="scrna.pseudobulk_de",
@@ -134,6 +159,8 @@ def _review(tmp_path: Path, **overrides) -> NonAuthorReview:
         attestation_id="att-1",
         review_path=str(rev_path.relative_to(tmp_path)),
         review_sha256=rev_sha,
+        verification_receipt_path=str(receipt_path.relative_to(tmp_path)),
+        verification_receipt_sha256=receipt_sha,
         status="VERIFIED",
     )
     fields.update(overrides)
@@ -489,6 +516,30 @@ def test_valid_non_author_review_counts(tmp_path):
     assert _check(assessment, "non_author_reviewers").satisfied is True
 
 
+def test_verified_review_without_receipt_does_not_count(tmp_path):
+    dataset = _dataset(tmp_path)
+    review = _review(
+        tmp_path,
+        verification_receipt_path="",
+        verification_receipt_sha256="",
+    )
+    assessment = evaluate_capability(
+        "scrna.pseudobulk_de",
+        _registry(tmp_path, datasets=(dataset,), reviews=(review,)),
+        repo_root=tmp_path,
+    )
+    assert assessment.counted_reviews == ()
+    assert "verification receipt" in assessment.excluded_reviews[0]["reason"]
+
+
+def test_review_receipt_drift_is_detected(tmp_path):
+    review = _review(tmp_path)
+    (tmp_path / review.verification_receipt_path).write_text("tampered", encoding="utf-8")
+    report = verify_registry_integrity(_registry(tmp_path, reviews=(review,)), repo_root=tmp_path)
+    assert report["integrity"] == "FAIL"
+    assert any(item.get("kind") == "verification_receipt" for item in report["drift"])
+
+
 # ------------------------------------------------------------------------------
 # 8. Positive end-to-end path: pseudobulk quota completion
 # ------------------------------------------------------------------------------
@@ -746,6 +797,130 @@ def test_cli_register_review_refuses_author_roster_overlap(tmp_path, capsys):
     )
     assert code == 2
     assert "author roster" in out
+
+
+def test_cli_review_registration_and_governed_verification(tmp_path, capsys):
+    registry_path = tmp_path / "REGISTRY.json"
+    IVNRegistry(
+        author_roster=({"name": "BioNexus Author", "identifiers": ["author@example.org"]},)
+    ).save(registry_path)
+    packet_path, packet_sha = _write(tmp_path, "review/BLINDED_REVIEW_PACKET.json", "packet")
+    preoutput_path, preoutput_sha = _write(
+        tmp_path,
+        "validation/ivn/reviews/R-EXT/PREOUTPUT_ASSESSMENT.json",
+        "locked assessment",
+    )
+    review_rel = "validation/ivn/reviews/R-EXT/REVIEW.json"
+    commit = "a" * 40
+    artifact = {
+        "$schema": "urn:bionexus:external-review-signoff:3",
+        "review_id": "R-EXT",
+        "capability_id": "scrna.pseudobulk_de",
+        "subject_id": "d1",
+        "reviewer_id": "0000-0001-0002-0003",
+        "reviewer_name": "External Reviewer",
+        "affiliation": "Independent Institute",
+        "verdict": "ENDORSED_WITH_LIMITS",
+        "blinded": True,
+        "declared_non_author": True,
+        "attestation_id": "attestation-R-EXT",
+        "reviewed_at": "2026-01-02T00:00:00+00:00",
+        "disclosures": {
+            "funding": "none",
+            "employment_relationship_with_maintainer": "none",
+            "prior_collaboration_with_maintainer": "none",
+            "other_conflicts": "none",
+        },
+        "blinding": {
+            "protocol_version": "bionexus.two-phase-review.v1",
+            "blinded_packet_path": str(packet_path.relative_to(tmp_path)),
+            "blinded_packet_sha256": packet_sha,
+            "preoutput_assessment_path": str(preoutput_path.relative_to(tmp_path)),
+            "preoutput_assessment_sha256": preoutput_sha,
+            "preoutput_locked_at": "2026-01-01T00:00:00+00:00",
+            "system_outputs_unseen_until_lock": True,
+            "unblinded_at": "2026-01-01T01:00:00+00:00",
+        },
+        "reproduction": {
+            "reviewed_commit": commit,
+            "capsule_filename": "capsule.zip",
+            "capsule_sha256": "c" * 64,
+            "all_checks_passed": True,
+            "nonzero_checks_reviewed": [],
+            "environment_or_installation_limitations": "none",
+        },
+        "scientific_review": {
+            "experimental_unit_and_biological_replicates": "Donor is the unit.",
+            "pseudobulk_design_and_contrasts": "Contrasts were challenged.",
+            "multiple_testing_and_effect_size": "FDR and effect size were reviewed.",
+            "claim_ceiling": "Dataset-bound technical inference only.",
+            "thresholds_or_rules_attacked": ["minimum donor count"],
+            "false_refusals_encountered": [],
+            "unreviewed_scope": ["clinical use"],
+            "limitations": "One technical reproduction.",
+        },
+        "overall_recommendation": "Endorse only within the stated limits.",
+        "signature_statement": "I attest to this independent review.",
+        "signature_name": "External Reviewer",
+        "signature_date": "2026-01-02",
+    }
+    review_path = tmp_path / review_rel
+    review_path.parent.mkdir(parents=True, exist_ok=True)
+    review_path.write_text(json.dumps(artifact), encoding="utf-8")
+    ledger_payload = {
+        "review_id": "R-EXT",
+        "capability_id": "scrna.pseudobulk_de",
+        "subject_id": "d1",
+        "reviewer_id": "0000-0001-0002-0003",
+        "reviewer_name": "External Reviewer",
+        "affiliation": "Independent Institute",
+        "verdict": "ENDORSED_WITH_LIMITS",
+        "blinded": True,
+        "declared_non_author": True,
+        "attestation_id": "attestation-R-EXT",
+        "review_path": review_rel,
+        "status": "VERIFIED",
+    }
+    payload_path = tmp_path / "ledger-review.json"
+    payload_path.write_text(json.dumps(ledger_payload), encoding="utf-8")
+
+    code, _ = _run_cli(
+        capsys,
+        "ivn", "register-review",
+        "--payload", str(payload_path),
+        "--registry", str(registry_path),
+        "--repo-root", str(tmp_path),
+    )
+    assert code == 0
+    assert load_registry(registry_path).reviews[0].status == "REGISTERED"
+
+    code, out = _run_cli(
+        capsys,
+        "ivn", "verify-review",
+        "--review-id", "R-EXT",
+        "--expected-commit", commit,
+        "--verified-by", "IVN governance",
+        "--registry", str(registry_path),
+        "--repo-root", str(tmp_path),
+        "--json",
+    )
+    assert code == 0, out
+    result = json.loads(out)
+    assert result["status"] == "VERIFIED"
+    verified = load_registry(registry_path).reviews[0]
+    assert verified.verification_receipt_sha256
+    assert verify_registry_integrity(load_registry(registry_path), repo_root=tmp_path)["integrity"] == "PASS"
+
+
+def test_validate_external_review_refuses_unlocked_blinding(tmp_path):
+    review = _review(tmp_path, status="REGISTERED", verification_receipt_path="", verification_receipt_sha256="")
+    with pytest.raises(IVNError, match="schema"):
+        ivn_mod.validate_external_review_artifact(
+            review,
+            {"$schema": "urn:bionexus:external-review-signoff:2"},
+            expected_commit="a" * 40,
+            repo_root=tmp_path,
+        )
 
 
 def test_cli_freeze_profile_end_to_end(tmp_path, capsys):
