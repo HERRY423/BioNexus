@@ -27,6 +27,18 @@ def test_default_checks_are_portable_and_do_not_invoke_a_noop_module():
     assert all("-m bionexus.validation_verifier" not in command for command in rendered)
 
 
+def test_git_ignores_nonfatal_stderr_warnings(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(capsule_module, "REPO_ROOT", tmp_path)
+
+    class Result:
+        returncode = 0
+        stdout = "\n"
+        stderr = "warning: inaccessible global excludes file\n"
+
+    monkeypatch.setattr(capsule_module.subprocess, "run", lambda *args, **kwargs: Result())
+    assert capsule_module._git("status", "--short") == ""
+
+
 def test_capsule_preserves_nonzero_checks_and_hashes_archive(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     commit = "a" * 40
 

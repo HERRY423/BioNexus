@@ -60,9 +60,19 @@ def _run(command: Sequence[str], *, cwd: Path) -> subprocess.CompletedProcess[st
 
 
 def _git(*args: str) -> str:
-    result = _run(("git", *args), cwd=REPO_ROOT)
+    result = subprocess.run(
+        ["git", *args],
+        cwd=REPO_ROOT,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
     if result.returncode != 0:
-        raise RuntimeError(f"git {' '.join(args)} failed:\n{result.stdout}")
+        detail = "\n".join(part for part in (result.stdout.strip(), result.stderr.strip()) if part)
+        raise RuntimeError(f"git {' '.join(args)} failed:\n{detail}")
     return result.stdout.strip()
 
 
