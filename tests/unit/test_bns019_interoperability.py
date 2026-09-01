@@ -239,6 +239,17 @@ def test_zero_touch_adapter_contains_no_pipeline_shape_or_samplesheet_logic() ->
     assert "evidence_maturity" not in executable_source
 
 
+def test_hosted_interoperability_gate_exercises_zero_touch_surface_only() -> None:
+    workflow = (REPOSITORY_ROOT / ".github" / "workflows" / "bns019-interoperability.yml").read_text(
+        encoding="utf-8"
+    )
+    assert "zero-touch-rocrate:" in workflow
+    assert "bns019_artifact_annotator.py" in workflow
+    assert "nf-core/setup-nextflow" not in workflow
+    assert "nextflow run" not in workflow
+    assert "--confcutdir=tests/unit" in workflow
+
+
 def test_scoreboard_cannot_claim_public_success_without_external_submission() -> None:
     scoreboard = json.loads((INTEROP_ROOT / "trial" / "results" / "scoreboard.json").read_text(encoding="utf-8"))
     assert scoreboard["accepted_external_submissions"] == []
