@@ -5,7 +5,7 @@ institutional pages. Recheck them immediately before sending. These are drafts,
 not evidence that a message was sent or received.
 
 These drafts are pinned to pushed, immutable commit
-`339cefb98643d5e9bd2483c44469481fed7a31f6`; exercise the fresh-clone command
+`a08f7a8be74b86adc1361587fd652f9c573e4c3d`; exercise the fresh-clone command
 before sending.
 
 ## 1. Michael I. Love — UNC Chapel Hill
@@ -32,7 +32,7 @@ value your criticism of our biological-replicate requirements, pseudobulk
 design assumptions, multiple-testing/effect-size rules, and the boundary
 between statistical association and stronger biological claims.
 
-The review is bounded to immutable commit `339cefb98643d5e9bd2483c44469481fed7a31f6` and the
+The review is bounded to immutable commit `a08f7a8be74b86adc1361587fd652f9c573e4c3d` and the
 `scrna.pseudobulk_de` track. One command creates a SHA-256-bound capsule with
 the exact environment, exit codes, and complete logs; failed checks are
 retained. You then fill one JSON and may return `ENDORSED`,
@@ -79,7 +79,7 @@ benchmarking, I would especially value your criticism of whether the
 pseudobulk evidence thresholds, experimental-unit rules, and externally
 verifiable ledger model form an appropriate scientific validation boundary.
 
-The review is bounded to immutable commit `339cefb98643d5e9bd2483c44469481fed7a31f6` and the
+The review is bounded to immutable commit `a08f7a8be74b86adc1361587fd652f9c573e4c3d` and the
 `scrna.pseudobulk_de` track. One command creates a SHA-256-bound capsule with
 the exact environment, exit codes, and complete logs; failed checks are
 retained. You then fill one JSON and may return `ENDORSED`,
@@ -126,7 +126,7 @@ computational biology, I would especially value your assessment of whether our
 pseudobulk requirements are scientifically defensible rather than merely
 technically reproducible.
 
-The review is bounded to immutable commit `339cefb98643d5e9bd2483c44469481fed7a31f6` and the
+The review is bounded to immutable commit `a08f7a8be74b86adc1361587fd652f9c573e4c3d` and the
 `scrna.pseudobulk_de` track. One command creates a SHA-256-bound capsule with
 the exact environment, exit codes, and complete logs; failed checks are
 retained. You then fill one JSON and may return `ENDORSED`,

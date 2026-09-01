@@ -41,7 +41,7 @@ capsule summary rather than being treated as a pass.
 macOS/Linux:
 
 ```bash
-REVIEW_COMMIT="339cefb98643d5e9bd2483c44469481fed7a31f6" && \
+REVIEW_COMMIT="a08f7a8be74b86adc1361587fd652f9c573e4c3d" && \
 test "${#REVIEW_COMMIT}" -eq 40 && \
 git clone https://github.com/HERRY423/BioNexus.git BioNexus-IVN-review && \
 cd BioNexus-IVN-review && \
@@ -58,7 +58,7 @@ python review/external-review/build_review_capsule.py \
 Windows PowerShell:
 
 ```powershell
-$reviewCommit = '339cefb98643d5e9bd2483c44469481fed7a31f6'
+$reviewCommit = 'a08f7a8be74b86adc1361587fd652f9c573e4c3d'
 if ($reviewCommit.Length -ne 40) { throw 'A full immutable commit SHA is required.' }
 git clone https://github.com/HERRY423/BioNexus.git BioNexus-IVN-review
 Set-Location BioNexus-IVN-review

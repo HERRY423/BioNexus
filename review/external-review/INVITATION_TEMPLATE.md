@@ -21,11 +21,11 @@ and the maximum biological claim those rules permit.
 The task is bounded:
 
 1. Run one command against immutable commit
-   `339cefb98643d5e9bd2483c44469481fed7a31f6` (macOS/Linux shown; a PowerShell equivalent is
+   `a08f7a8be74b86adc1361587fd652f9c573e4c3d` (macOS/Linux shown; a PowerShell equivalent is
    in `review/external-review/README.md`):
 
 ```bash
-REVIEW_COMMIT="339cefb98643d5e9bd2483c44469481fed7a31f6" && test "${#REVIEW_COMMIT}" -eq 40 && git clone https://github.com/HERRY423/BioNexus.git BioNexus-IVN-review && cd BioNexus-IVN-review && git checkout --detach "$REVIEW_COMMIT" && python3 -m venv .venv && . .venv/bin/activate && python -m pip install --upgrade pip && python -m pip install -e . && python review/external-review/build_review_capsule.py --expected-commit "$REVIEW_COMMIT" --review-id BN-IVN-REV-001
+REVIEW_COMMIT="a08f7a8be74b86adc1361587fd652f9c573e4c3d" && test "${#REVIEW_COMMIT}" -eq 40 && git clone https://github.com/HERRY423/BioNexus.git BioNexus-IVN-review && cd BioNexus-IVN-review && git checkout --detach "$REVIEW_COMMIT" && python3 -m venv .venv && . .venv/bin/activate && python -m pip install --upgrade pip && python -m pip install -e . && python review/external-review/build_review_capsule.py --expected-commit "$REVIEW_COMMIT" --review-id BN-IVN-REV-001
 ```
 
 2. Inspect the generated ZIP. It includes the exact commit/environment,
