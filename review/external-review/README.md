@@ -14,6 +14,10 @@ deliberately narrower than an external-laboratory replication.
 
 It does **not** establish external-lab quota credit, biological truth,
 certification, clinical validity, or endorsement of BioNexus as a whole.
+The portable capsule excludes the repository-wide positive artifact test that
+requires separately retained flagship annotation and spatial data files; its
+fail-closed verifier tests remain included. This exclusion is recorded in the
+capsule summary rather than being treated as a pass.
 
 ## Maintainer preparation: mandatory before outreach
 
@@ -26,7 +30,7 @@ certification, clinical validity, or endorsement of BioNexus as a whole.
 3. Push the final review commit to the public repository.
 4. Select that full 40-character commit SHA. Do not use `main` or a movable
    branch name.
-5. Replace every `__IMMUTABLE_REVIEW_COMMIT__` token in the invitation drafts.
+5. Keep the invitation drafts pinned to the immutable review commit below.
 6. Run the command yourself from a fresh clone and retain the resulting hash.
 7. Assign a unique review ID. The first proposed ID is `BN-IVN-REV-001`.
 8. Confirm the intended reviewer is absent from
@@ -37,7 +41,7 @@ certification, clinical validity, or endorsement of BioNexus as a whole.
 macOS/Linux:
 
 ```bash
-REVIEW_COMMIT="__IMMUTABLE_REVIEW_COMMIT__" && \
+REVIEW_COMMIT="339cefb98643d5e9bd2483c44469481fed7a31f6" && \
 test "${#REVIEW_COMMIT}" -eq 40 && \
 git clone https://github.com/HERRY423/BioNexus.git BioNexus-IVN-review && \
 cd BioNexus-IVN-review && \
@@ -54,7 +58,7 @@ python review/external-review/build_review_capsule.py \
 Windows PowerShell:
 
 ```powershell
-$reviewCommit = '__IMMUTABLE_REVIEW_COMMIT__'
+$reviewCommit = '339cefb98643d5e9bd2483c44469481fed7a31f6'
 if ($reviewCommit.Length -ne 40) { throw 'A full immutable commit SHA is required.' }
 git clone https://github.com/HERRY423/BioNexus.git BioNexus-IVN-review
 Set-Location BioNexus-IVN-review

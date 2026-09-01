@@ -19,6 +19,14 @@ capsule_module = importlib.util.module_from_spec(_SPEC)
 _SPEC.loader.exec_module(capsule_module)
 
 
+def test_default_checks_are_portable_and_do_not_invoke_a_noop_module():
+    rendered = [" ".join(command) for command in capsule_module.DEFAULT_CHECKS]
+
+    assert any("scripts/registry_compiler.py --check" in command for command in rendered)
+    assert any("not test_verify_validation_artifacts_passes_on_current_repo" in command for command in rendered)
+    assert all("-m bionexus.validation_verifier" not in command for command in rendered)
+
+
 def test_capsule_preserves_nonzero_checks_and_hashes_archive(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     commit = "a" * 40
 

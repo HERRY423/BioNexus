@@ -4,8 +4,9 @@ Prepared 2026-08-31. Public contact channels were checked on the named lab or
 institutional pages. Recheck them immediately before sending. These are drafts,
 not evidence that a message was sent or received.
 
-Do not send until `__IMMUTABLE_REVIEW_COMMIT__` has been replaced by a pushed,
-full 40-character commit SHA and the fresh-clone command has been exercised.
+These drafts are pinned to pushed, immutable commit
+`339cefb98643d5e9bd2483c44469481fed7a31f6`; exercise the fresh-clone command
+before sending.
 
 ## 1. Michael I. Love — UNC Chapel Hill
 
@@ -31,7 +32,7 @@ value your criticism of our biological-replicate requirements, pseudobulk
 design assumptions, multiple-testing/effect-size rules, and the boundary
 between statistical association and stronger biological claims.
 
-The review is bounded to immutable commit `__IMMUTABLE_REVIEW_COMMIT__` and the
+The review is bounded to immutable commit `339cefb98643d5e9bd2483c44469481fed7a31f6` and the
 `scrna.pseudobulk_de` track. One command creates a SHA-256-bound capsule with
 the exact environment, exit codes, and complete logs; failed checks are
 retained. You then fill one JSON and may return `ENDORSED`,
@@ -50,8 +51,8 @@ You retain authorship and control of the review artifact.
 If you are willing to participate, a short reply is enough. I will confirm the
 review ID and immutable commit before you begin.
 
-Best regards,  
-Herry  
+Best regards,
+Herry
 BioNexus maintainer
 
 ## 2. Mark D. Robinson — University of Zurich
@@ -78,7 +79,7 @@ benchmarking, I would especially value your criticism of whether the
 pseudobulk evidence thresholds, experimental-unit rules, and externally
 verifiable ledger model form an appropriate scientific validation boundary.
 
-The review is bounded to immutable commit `__IMMUTABLE_REVIEW_COMMIT__` and the
+The review is bounded to immutable commit `339cefb98643d5e9bd2483c44469481fed7a31f6` and the
 `scrna.pseudobulk_de` track. One command creates a SHA-256-bound capsule with
 the exact environment, exit codes, and complete logs; failed checks are
 retained. You then fill one JSON and may return `ENDORSED`,
@@ -97,8 +98,8 @@ You retain authorship and control of the review artifact.
 If you are willing to participate, a short reply is enough. I will confirm the
 review ID and immutable commit before you begin.
 
-Best regards,  
-Herry  
+Best regards,
+Herry
 BioNexus maintainer
 
 ## 3. Charlotte Soneson — Friedrich Miescher Institute
@@ -125,7 +126,7 @@ computational biology, I would especially value your assessment of whether our
 pseudobulk requirements are scientifically defensible rather than merely
 technically reproducible.
 
-The review is bounded to immutable commit `__IMMUTABLE_REVIEW_COMMIT__` and the
+The review is bounded to immutable commit `339cefb98643d5e9bd2483c44469481fed7a31f6` and the
 `scrna.pseudobulk_de` track. One command creates a SHA-256-bound capsule with
 the exact environment, exit codes, and complete logs; failed checks are
 retained. You then fill one JSON and may return `ENDORSED`,
@@ -144,8 +145,8 @@ You retain authorship and control of the review artifact.
 If you are willing to participate, a short reply is enough. I will confirm the
 review ID and immutable commit before you begin.
 
-Best regards,  
-Herry  
+Best regards,
+Herry
 BioNexus maintainer
 
 ## Reserve targets after track-specific packets exist
