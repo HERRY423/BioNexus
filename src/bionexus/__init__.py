@@ -305,17 +305,6 @@ from .scientific_semantics import (
     spatial_battery_semantic_envelope,
     warrant_semantics_from_maturity,
 )
-from .spatial_alternative_battery import (
-    BatteryDiagnostic,
-    DiagnosticState,
-    SpatialBatteryData,
-    SpatialBatteryError,
-    SpatialBatteryPlan,
-    SpatialBatteryResult,
-    SpatialClaimKind,
-    SpatialObservation,
-    run_spatial_alternative_battery,
-)
 from .spatial_empirical_gold import (
     DEFAULT_SPATIAL_GOLD_ROOT,
     SPATIAL_CONTROL_METRICS,
@@ -391,6 +380,29 @@ from .warrant import (
     assess_warrant,
     decide_policy,
 )
+
+_LAZY_SPATIAL_BATTERY_EXPORTS = {
+    "BatteryDiagnostic",
+    "DiagnosticState",
+    "SpatialBatteryData",
+    "SpatialBatteryError",
+    "SpatialBatteryPlan",
+    "SpatialBatteryResult",
+    "SpatialClaimKind",
+    "SpatialObservation",
+    "run_spatial_alternative_battery",
+}
+
+
+def __getattr__(name: str):
+    """Preserve top-level API exports without importing SciPy at package import."""
+    if name in _LAZY_SPATIAL_BATTERY_EXPORTS:
+        from . import spatial_alternative_battery
+
+        value = getattr(spatial_alternative_battery, name)
+        globals()[name] = value
+        return value
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 __version__ = VERSION
 

@@ -96,9 +96,10 @@ class TestIVNNetworkAssessment:
         assert network["network_status"] == "INCOMPLETE"
         assert set(network["capabilities"].keys()) == set(FLAGSHIP_CAPABILITIES)
 
-        # 1. scrna.pseudobulk_de: 3 datasets (negative results), 0 labs, 0 reviews
+        # 1. Only the non-author-associated dataset counts; two executed studies are excluded.
         pb = network["capabilities"]["scrna.pseudobulk_de"]
-        assert len(pb["counted_datasets"]) == 3
+        assert pb["counted_datasets"] == ["BN-PB-IV-002"]
+        assert {item["dataset_id"] for item in pb["excluded_datasets"]} == {"BN-PB-IV-004", "BN-PB-IV-005"}
         assert len(pb["counted_lab_studies"]) == 0
         assert len(pb["counted_reviews"]) == 0
         assert pb["complete"] is False

@@ -163,6 +163,33 @@ def test_cross_host_evaluator():
     assert res.score_percentage == 0.0
 
 
+def test_cross_host_headless_repo_comparison_is_not_live_l2():
+    """The committed 6-trap ABSTAIN comparison is not a BNS-HC-007 live matrix."""
+    repo = Path(__file__).resolve().parents[2]
+    target = TargetDescriptor(name="bionexus", target_type=TargetType.PLUGIN, root_path=repo)
+    res = evaluate_cross_host(target)
+    assert res.status == DimensionStatus.NOT_ASSESSED
+    assert res.score_percentage == 0.0
+    assert all(item.status == DimensionStatus.NOT_ASSESSED for item in res.rule_evaluations)
+
+
+def test_cross_host_live_provider_matrix_can_pass(tmp_path):
+    """A live openai/anthropic matrix with agreement still may PASS."""
+    payload = {
+        "hosts": ["openai", "anthropic"],
+        "providers": ["openai", "anthropic"],
+        "execution_mode": "live",
+        "traps_compared": 6,
+        "per_trap": [{"trap_id": "BF-001", "consistent": True}],
+        "overall": {"agreement_rate": 1.0, "conformance_verdict": "pass"},
+    }
+    (tmp_path / "COMPARISON.json").write_text(json.dumps(payload), encoding="utf-8")
+    target = TargetDescriptor(name="fixture", target_type=TargetType.PLUGIN, root_path=tmp_path)
+    res = evaluate_cross_host(target, cross_host_dir=tmp_path)
+    assert res.status == DimensionStatus.PASS
+    assert res.passed_rules == 3
+
+
 # ==============================================================================
 # 3. Tier Calculation & Cryptographic Fingerprinting Tests
 # ==============================================================================
@@ -226,6 +253,17 @@ def test_target_content_change_invalidates_report_binding(tmp_path):
     second = run_conformance_test(target)
     assert first.target_content_sha256 != second.target_content_sha256
     assert first.cryptographic_fingerprint != second.cryptographic_fingerprint
+
+
+def test_target_snapshot_ignores_local_codex_workspaces(tmp_path):
+    target = tmp_path / "target.py"
+    target.write_text("VALUE = 1\n", encoding="utf-8")
+    baseline = run_conformance_test(tmp_path)
+    local_runtime = tmp_path / ".codex-review-probe"
+    local_runtime.mkdir()
+    (local_runtime / "generated.py").write_text("LOCAL = True\n", encoding="utf-8")
+    after = run_conformance_test(tmp_path)
+    assert after.target_content_sha256 == baseline.target_content_sha256
 
 
 # ==============================================================================

@@ -95,6 +95,48 @@ def test_readme_does_not_cite_unverifiable_static_scores():
     )
 
 
+def test_readme_ci_badge_is_live_github_actions_status():
+    """CI status must come from Actions, not a static shields 'Passing' image."""
+    assert not re.search(r"img\.shields\.io/badge/[^)\s]*[Pp]assing", _README)
+    assert re.search(
+        r"https://github.com/HERRY423/BioNexus/actions/workflows/ci\.yml/badge\.svg",
+        _README,
+    ), "README must use the live GitHub Actions badge for ci.yml"
+
+
+def test_live_host_benchmark_report_is_quarantined():
+    """The architecture write-up must not be citable as a second 100% report."""
+    text = (_REPO_ROOT / "docs" / "reports" / "live_host_benchmark_report.md").read_text(
+        encoding="utf-8"
+    )
+    assert "DO NOT CITE" in text
+    assert "evals/reports/benchmark_report.md" in text
+    assert "SKIPPED_NO_BACKEND" in text
+    assert "MISALIGNED" in text
+    citeable = []
+    for line in text.splitlines():
+        if "100%" not in line and "100.0%" not in line:
+            continue
+        lowered = line.lower()
+        if any(
+            token in lowered
+            for token in (
+                "do not cite",
+                "not the canonical",
+                "superseded",
+                "originally printed",
+                "previously appeared",
+                "second 100%",
+                "cri 100%",
+                "l1/l2/l3 100%",
+                "l3 4/4 or cri 100%",
+            )
+        ):
+            continue
+        citeable.append(line)
+    assert citeable == [], f"citeable 100% remains in live_host report: {citeable}"
+
+
 def test_primary_active_python_versions_exist_in_ci_matrix():
     """Any 'Primary Active' Python claim must be covered by the CI test matrix."""
     ci_versions = set()
@@ -113,3 +155,13 @@ def test_primary_active_python_versions_exist_in_ci_matrix():
                 f"compatibility-matrix.md marks Python {m.group(1)} as 'Primary Active' but the CI "
                 f"matrix only covers {sorted(ci_versions)}. Add it to ci.yml or downgrade the claim."
             )
+
+
+def test_workflows_do_not_use_node20_checkout_or_setup_python_actions():
+    """GitHub's Node 20 action runtime is retired; keep every workflow on v6."""
+    stale: list[str] = []
+    for workflow in sorted((_REPO_ROOT / ".github" / "workflows").glob("*.yml")):
+        text = workflow.read_text(encoding="utf-8")
+        if "actions/checkout@v4" in text or "actions/setup-python@v5" in text:
+            stale.append(workflow.name)
+    assert not stale, f"Node 20-era GitHub Actions remain in: {stale}"

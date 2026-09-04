@@ -1,5 +1,9 @@
 # Historical BNS-019 Nextflow trial fixture — not an integration surface
 
+> [!WARNING]
+> **ARCHIVED HISTORICAL FIXTURE**: BioNexus does NOT inject processes or Python scripts into Nextflow pipelines.
+> Modifying pipeline DAGs or samplesheets violates separation of concerns. For the non-intrusive, zero-touch integration that consumes native `nf-prov` RO-Crates externally, see [`../ro-crate/`](../ro-crate/).
+
 This directory preserves the development 0.1.0 interoperability trial that
 executed a BNS-019 validator inside a standalone Nextflow test workflow. It is
 retained for reproducibility of the recorded trial, not as a proposal to add a

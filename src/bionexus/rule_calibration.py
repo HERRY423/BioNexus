@@ -27,6 +27,7 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import asdict, dataclass, field
+from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
@@ -613,3 +614,37 @@ class ChallengeNetwork:
         p = Path(path) if path else self.registry_file
         p.write_text(json.dumps(self.to_dict(), indent=2), encoding="utf-8")
         return p
+
+
+def create_challenge_from_connector_conflict(
+    *,
+    challenge_id: str,
+    target_rule_id: str,
+    challenger_identity: str,
+    connector_id: str,
+    conflict_description: str,
+    empirical_evidence_refs: List[str],
+    reproduction_script_sha256: str = "",
+    challenge_type: ChallengeType = ChallengeType.EMPIRICAL_COUNTEREXAMPLE,
+) -> RuleChallenge:
+    """
+    Synthesize a formal BNS-018 Scientific Rule Challenge from an empirical connector conflict (BNS-018 / BNS-014).
+
+    When external connectors yield contradictory evidence or violate platform boundary assumptions,
+    this function translates the conflict into a structured, peer-reviewable challenge proposal,
+    closing the loop between ecosystem execution and scientific rule calibration.
+    """
+    return RuleChallenge(
+        challenge_id=challenge_id,
+        target_rule_id=target_rule_id,
+        challenger_identity=challenger_identity,
+        challenge_type=challenge_type,
+        title=f"Empirical Connector Conflict from {connector_id} on {target_rule_id}",
+        description=(
+            f"Automated challenge originating from connector '{connector_id}': {conflict_description}"
+        ),
+        empirical_evidence_refs=list(empirical_evidence_refs),
+        reproduction_script_sha256=reproduction_script_sha256,
+        status=ChallengeStatus.PROPOSED,
+        created_at=datetime.now(timezone.utc).isoformat(),
+    )

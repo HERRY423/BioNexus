@@ -36,10 +36,10 @@
     "provenance": {
       "data_source": "YosefLab/scVI-data processed public 10x PBMC 10k and PBMC 5k CITE-seq datasets used by the official scvi-tools totalVI tutorials",
       "download_date": "2026-08-28",
-      "commit_sha": "021105f4705cb9cd0b593fff3ba06d532843cb87",
+      "commit_sha": "cfb0691713cd1d43a5c2b68c9de3903d750fcbed",
       "git_dirty": false,
       "environment_lockfile_hashes": {
-        "pyproject.toml": "6595d1bb0272f36f76a8881e3d0fb754894fd4dc519816fe43b604e0a0893ae3",
+        "pyproject.toml": "dfe58e8d642567724533c023f0029bc2ab6cc94352fe6170c56b756b0307e166",
         "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
         "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
       },
@@ -50,7 +50,7 @@
       "generator_version": "1.0.0-rc.4",
       "python_version": "3.13.9",
       "platform": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-08-31T11:24:48.547549+00:00",
+      "timestamp": "2026-09-03T02:17:27.600767+00:00",
       "extra_metadata": {
         "capability": "scrna.annotation_evidence",
         "dataset_id": "citeseq_pbmc_sorted",
@@ -58,7 +58,7 @@
       },
       "repository_dirty_at_execution": false,
       "validation_source_dirty": false,
-      "source_snapshot_sha256": "93d67ef59fabc79fe9ce62032be3131e7e43e71587cd34295d24c53e26387afa"
+      "source_snapshot_sha256": "3afd26d0c711a659bdb66c81a684b79e20dce926c12e1daea6430e0141a12e0d"
     }
   },
   "metrics": [
@@ -120,7 +120,7 @@
     "BN-ANN-IV-001 met its numeric endpoints with a zero threshold and 100% coverage; the post-run scientific audit therefore classifies the gate as non-selective and inconclusive.",
     "BN-ANN-IV-002 retained an input-ineligible non-evaluation because X was normalized; the separately locked BN-ANN-IV-003 raw-count successor met its endpoints but was not blinded to label distributions and is capped at CANDIDATE_EXTERNAL_REFERENCE_NONBLINDED."
   ],
-  "timestamp": "2026-08-31T11:24:48.663131+00:00",
+  "timestamp": "2026-09-03T02:17:27.726621+00:00",
   "evidence_files": [
     "validation\\annotation\\studies\\BN-ANN-IV-001\\evidence\\holdout_cell_decisions.csv",
     "validation\\annotation\\studies\\BN-ANN-IV-001\\PREREGISTRATION.json",

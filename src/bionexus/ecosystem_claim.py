@@ -24,6 +24,12 @@ from bionexus.ecosystem_intake import (
     audit_external_evidence,
     external_evidence_to_ledger_ref,
 )
+from bionexus.epistemic_lineage import (
+    EpistemicLineage,
+    EvidenceIndependenceGraph,
+    IndependenceMetrics,
+    OriginType,
+)
 from bionexus.ledger import MATURITY_RANKS, ClaimLedger, ClaimRecord, EvidenceRef
 
 ECOSYSTEM_CLAIM_PACKET_VERSION = "bionexus.ecosystem-claim-packet.v1"
@@ -140,6 +146,8 @@ class EcosystemClaimAudit:
     missing_adjudications: Tuple[str, ...]
     duplicate_payload_groups: Tuple[Tuple[str, ...], ...]
     context_conflicts: Tuple[Dict[str, Any], ...]
+    epistemic_lineage_metrics: Optional[Dict[str, Any]] = None
+    epistemic_resolution_summary: str = ""
     human_decision_required: bool = True
 
     def to_dict(self) -> Dict[str, Any]:
@@ -268,6 +276,7 @@ def _make_evidence_card(
     duplicate_groups: Sequence[Tuple[str, ...]],
     context_conflicts: Sequence[Dict[str, Any]],
     errors: Sequence[str],
+    independence_metrics: Optional[IndependenceMetrics] = None,
 ) -> EvidenceCard:
     if audit_status is ClaimAuditStatus.BLOCKED:
         execution_state = ExecutionState.REFUSED.value
@@ -299,9 +308,66 @@ def _make_evidence_card(
             "claim_conclusion_maturity": maturity,
             "duplicate_payload_groups": [list(group) for group in duplicate_groups],
             "context_conflicts": list(context_conflicts),
+            "epistemic_lineage_metrics": (
+                independence_metrics.to_dict() if independence_metrics else None
+            ),
+            "epistemic_resolution_summary": (
+                independence_metrics.summary_statement if independence_metrics else ""
+            ),
+            "conclusion_notes": (
+                independence_metrics.summary_statement
+                if independence_metrics
+                else "Scientific epistemic evaluation synthesized across all dimensions."
+            ),
             "statistical_notes": "Inherited from reviewed evidence; not recomputed by this intake assessment.",
             "validation_notes": "External validation requires explicit ledger qualification.",
         },
+    )
+
+
+def _extract_lineage(envelope: ExternalEvidenceEnvelope) -> EpistemicLineage:
+    if envelope.epistemic_lineage:
+        return EpistemicLineage.from_dict(envelope.epistemic_lineage)
+    ctx = envelope.source_context
+    origin_id = None
+    origin_type = OriginType.UNKNOWN.value
+    dataset_identity = ctx.get("dataset_id") or ctx.get("dataset_accession")
+    assay_identity = ctx.get("assay_id") or ctx.get("assay_accession")
+    model_identity = None
+    source_ids: Tuple[str, ...] = ()
+
+    if envelope.family == "literature":
+        identifiers = ctx.get("identifiers")
+        if isinstance(identifiers, (list, tuple)) and identifiers:
+            identifiers = EpistemicLineage.from_dict({"primary_source_ids": identifiers}).primary_source_ids
+            if len(identifiers) == 1:
+                origin_id = identifiers[0]
+            else:
+                source_ids = identifiers
+        elif ctx.get("doi"):
+            origin_id = f"doi:{ctx['doi']}"
+        elif ctx.get("pmid"):
+            origin_id = f"PMID:{ctx['pmid']}"
+        # Publication status does not identify a primary study: peer-reviewed
+        # reviews and summaries also exist. Keep the origin type undeclared.
+    elif envelope.family == "database":
+        record_ids = ctx.get("record_ids")
+        source = ctx.get("source_name", "db")
+        if isinstance(record_ids, (list, tuple)) and record_ids:
+            origin_id = f"{source}:{record_ids[0]}"
+        origin_type = OriginType.DATABASE_MIRROR.value
+    elif envelope.family == "analysis":
+        # A shared software package is not a shared fitted model.
+        model_identity = ctx.get("model_identity")
+        origin_type = OriginType.COMPUTATIONAL_MODEL.value
+
+    return EpistemicLineage(
+        origin_id=origin_id,
+        origin_type=origin_type,
+        dataset_identity=dataset_identity,
+        assay_identity=assay_identity,
+        model_identity=model_identity,
+        primary_source_ids=source_ids,
     )
 
 
@@ -398,6 +464,24 @@ def assess_ecosystem_claim(packet: EcosystemClaimPacket) -> EcosystemClaimAssess
     depends_on: List[str] = []
     seen_payload_relationships: set[Tuple[str, str]] = set()
 
+    graph = EvidenceIndependenceGraph()
+    for envelope in packet.envelopes:
+        lineage = _extract_lineage(envelope)
+        graph.add_evidence(
+            evidence_id=envelope.evidence_id,
+            lineage=lineage,
+            payload_sha256=envelope.payload_sha256,
+            connector_id=envelope.producer.plugin_id,
+            family=envelope.family,
+        )
+    independence_metrics = graph.compute_metrics()
+    if independence_metrics.unresolved_evidence_ids:
+        warnings.append(
+            "SOURCE_LINEAGE_UNRESOLVED: "
+            f"{independence_metrics.unresolved_evidence_ids}; explicitly reviewed support "
+            "does not establish independent replication"
+        )
+
     if not errors:
         for envelope in packet.envelopes:
             adjudication = adjudication_by_id[envelope.evidence_id]
@@ -409,7 +493,8 @@ def assess_ecosystem_claim(packet: EcosystemClaimPacket) -> EcosystemClaimAssess
             ledger.add_evidence(ref)
             relationship = EvidenceRelationship(adjudication.relationship)
             dedupe_key = (envelope.payload_sha256, relationship.value)
-            if dedupe_key in seen_payload_relationships:
+            if (relationship is not EvidenceRelationship.SUPPORTS
+                    and dedupe_key in seen_payload_relationships):
                 depends_on.append(ref.ref_id)
                 continue
             seen_payload_relationships.add(dedupe_key)
@@ -419,6 +504,21 @@ def assess_ecosystem_claim(packet: EcosystemClaimPacket) -> EcosystemClaimAssess
                 contradicted_by.append(ref.ref_id)
             else:
                 depends_on.append(ref.ref_id)
+
+    if not errors:
+        # Adjudicated support and verified independence are separate states.
+        # Choose representatives only after seeing all candidates, so a summary
+        # arriving before its primary source cannot displace that source.
+        supported_by, dependent_support = graph.get_independent_support_set(
+            supported_by, require_resolved=False,
+        )
+        depends_on.extend(dependent_support)
+        if dependent_support:
+            warnings.append(
+                f"Epistemic double counting prevented: {len(dependent_support)} supporting object(s) "
+                "share declared origins, resources or payloads and are retained as context "
+                f"dependencies ({independence_metrics.summary_statement})"
+            )
 
     if errors:
         # Do not let a partly constructed graph look claim-bearing.
@@ -439,6 +539,8 @@ def assess_ecosystem_claim(packet: EcosystemClaimPacket) -> EcosystemClaimAssess
             "claim_context": dict(packet.claim_context),
             "decision_owner": packet.decision_owner,
             "final_decision": "PENDING_HUMAN_DECISION",
+            "epistemic_lineage": independence_metrics.to_dict(),
+            "epistemic_resolution_summary": independence_metrics.summary_statement,
         },
     )
     ledger.add_claim(claim)
@@ -463,6 +565,19 @@ def assess_ecosystem_claim(packet: EcosystemClaimPacket) -> EcosystemClaimAssess
         except Exception as exc:
             warnings.append(f"deterministic warrant evaluation unavailable: {exc}")
 
+    debt_report_dict = None
+    if ledger.claims and not errors:
+        try:
+            from bionexus.debt import EvidenceDebtEngine
+
+            debt_report = EvidenceDebtEngine.audit_ledger(ledger)
+            debt_report_dict = debt_report.to_dict()
+            for d in debt_report.debt_items:
+                if d.severity.value in ("CRITICAL", "HIGH"):
+                    warnings.append(f"Evidence debt [{d.debt_kind.value}]: {d.title}")
+        except Exception as exc:
+            warnings.append(f"evidence debt evaluation unavailable: {exc}")
+
     if errors:
         audit_status = ClaimAuditStatus.BLOCKED
     elif contradicted_by:
@@ -478,6 +593,8 @@ def assess_ecosystem_claim(packet: EcosystemClaimPacket) -> EcosystemClaimAssess
         missing_adjudications=missing_adjudications,
         duplicate_payload_groups=duplicate_payload_groups,
         context_conflicts=tuple(context_conflicts),
+        epistemic_lineage_metrics=independence_metrics.to_dict(),
+        epistemic_resolution_summary=independence_metrics.summary_statement,
     )
     card = _make_evidence_card(
         audit_status=audit_status,
@@ -485,7 +602,12 @@ def assess_ecosystem_claim(packet: EcosystemClaimPacket) -> EcosystemClaimAssess
         duplicate_groups=duplicate_payload_groups,
         context_conflicts=context_conflicts,
         errors=errors,
+        independence_metrics=independence_metrics,
     )
+    card_dict = card.to_dict()
+    if debt_report_dict:
+        card_dict.setdefault("details", {})["evidence_debt_report"] = debt_report_dict
+
     return EcosystemClaimAssessment(
         schema_version=ECOSYSTEM_CLAIM_ASSESSMENT_VERSION,
         claim_id=claim.claim_id,
@@ -499,7 +621,7 @@ def assess_ecosystem_claim(packet: EcosystemClaimPacket) -> EcosystemClaimAssess
             "evidence_gaps": ["deterministic_warrant_evaluation_unavailable"],
         },
         audit=audit,
-        evidence_card=card.to_dict(),
+        evidence_card=card_dict,
         ledger=ledger.to_dict(),
         decision_owner=packet.decision_owner,
     )

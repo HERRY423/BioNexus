@@ -1,0 +1,2456 @@
+[unit-test-runner] NUMBA_CACHE_DIR=C:\Plugin\BioNexus\.codex-p0-integration\.numba-cache
+[unit-test-runner] pytest tests -q -p no:cacheprovider --capture=tee-sys --tb=short --durations=50 --basetemp=.pytest-tmp-full-p0-complete
+============================= test session starts =============================
+platform win32 -- Python 3.13.9, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Plugin\BioNexus\.codex-p0-integration
+configfile: pyproject.toml
+plugins: anyio-4.14.2, fast-array-utils-1.4.1, hypothesis-6.156.6, langsmith-0.10.10, cov-7.1.0, typeguard-4.5.2, zarr-3.2.1
+collected 1299 items
+
+tests\unit\test_abi.py .........
+=== ABI Claim Audit: `spatial.morans_svg` -> CONFORMANT ===
+
+.                                        [  0%]
+tests\unit\test_airgap_guard.py ..                                       [  0%]
+tests\unit\test_analysis_audit.py .............=== Auditing Biological Data File: C:\Plugin\BioNexus\.codex-p0-integration\.pytest-tmp-full-p0-complete\test_cli_audit_data_file_still0\matrix.csv ===
+[NOTE] Reading text/csv matrix: C:\Plugin\BioNexus\.codex-p0-integration\.pytest-tmp-full-p0-complete\test_cli_audit_data_file_still0\matrix.csv
+ [MATRIX AUDIT] Grade: A
+  - Verified raw integer count distribution.
+.                         [  2%]
+tests\unit\test_antigravity_acceptance.py ......                         [  2%]
+tests\unit\test_artifacts.py ....                                        [  2%]
+tests\unit\test_backend_conformance.py [unit-test-heartbeat] elapsed=30s completed=36/1299 current=tests/unit/test_backend_conformance.py::test_installed_canonical_backend_is_conformant
+[ERROR] Unknown capability 'nope.nope'.
+.........                         [  3%]
+tests\unit\test_backend_matrix.py ...................................... [  6%]
+...                                                                      [  6%]
+tests\unit\test_bctk.py .......................[SUCCESS] Created .bctk.yaml
+.                         [  8%]
+tests\unit\test_benchmark_evidence_integrity.py ........................ [ 10%]
+..                                                                       [ 10%]
+tests\unit\test_bigdata_streaming.py .......                             [ 11%]
+tests\unit\test_biofailurebench.py ...........                           [ 11%]
+tests\unit\test_biologics_design.py ...                                  [ 12%]
+tests\unit\test_bns019_interoperability.py .............                 [ 13%]
+tests\unit\test_bns_profiles.py ....                                     [ 13%]
+tests\unit\test_c04_lims_pairing.py ..                                   [ 13%]
+Fitting size factors...
+... done in 0.01 seconds.
+
+Fitting dispersions...
+... done in 0.76 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.25 seconds.
+
+Fitting MAP dispersions...
+... done in 0.85 seconds.
+
+Fitting LFCs...
+... done in 0.85 seconds.
+
+Calculating cook's distance...
+... done in 0.02 seconds.
+
+Replacing 13 outlier genes.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Running Wald tests...
+... done in 0.62 seconds.
+
+  File "C:\Users\13264\anaconda3\Lib\site-packages\joblib\externals\loky\backend\context.py", line 247, in _count_physical_cores
+    cpu_count_physical = _count_physical_cores_win32()
+  File "C:\Users\13264\anaconda3\Lib\site-packages\joblib\externals\loky\backend\context.py", line 299, in _count_physical_cores_win32
+    cpu_info = subprocess.run(
+        "wmic CPU Get NumberOfCores /Format:csv".split(),
+        capture_output=True,
+        text=True,
+    )
+  File "C:\Users\13264\anaconda3\Lib\subprocess.py", line 554, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\13264\anaconda3\Lib\subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\13264\anaconda3\Lib\subprocess.py", line 1554, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+                       ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+                             # no special security
+                             ^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+                             cwd,
+                             ^^^^
+                             startupinfo)
+                             ^^^^^^^^^^^^
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.01 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.01 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.01 seconds.
+
+tests\unit\test_calibration_frontier.py .Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition stim vs ctrl
+                baseMean  log2FoldChange  ...    pvalue      padj
+AL627309.1      0.189098       -1.434101  ...  0.470083       NaN
+RP11-206L10.2   0.210231       -1.530231  ...  0.498844       NaN
+LINC00115       2.816909       -0.669349  ...  0.156023  0.346604
+NOC2L          56.203949       -0.076405  ...  0.610823  0.791276
+KLHL17          0.734001       -1.362167  ...  0.172664       NaN
+...                  ...             ...  ...       ...       ...
+AP001437.1      0.403054        1.979020  ...  0.220532       NaN
+TMPRSS3         0.216910        1.614554  ...  0.473075       NaN
+AP001626.1      0.129118        1.088645  ...  0.656350       NaN
+AP001062.7      0.187672        1.256529  ...  0.583418       NaN
+LRRC3DN         0.281750        1.861111  ...  0.310590       NaN
+
+[14053 rows x 6 columns]
+[unit-test-heartbeat] elapsed=60s completed=177/1299 current=tests/unit/test_calibration_frontier.py::test_gating_and_frontier_separation
+INFO     Creating graph using `None` transform and `1` libraries.
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   58.713138        2.447571  0.257492  9.505427  1.992284e-21  3.984569e-20
+g1   22.151209       -0.133531  0.280869 -0.475422  6.344859e-01  8.390297e-01
+g2   21.513237       -0.079479  0.294348 -0.270017  7.871473e-01  8.390297e-01
+g3   19.214591        0.037900  0.297807  0.127265  8.987305e-01  8.987305e-01
+g4   18.414116        0.096784  0.303369  0.319032  7.497019e-01  8.390297e-01
+g5   18.923619        0.262545  0.299473  0.876692  3.806541e-01  8.390297e-01
+g6   16.656694        0.244021  0.310608  0.785622  4.320890e-01  8.390297e-01
+g7   21.593181        0.074105  0.288199  0.257130  7.970782e-01  8.390297e-01
+g8   19.273093       -0.198104  0.304845 -0.649852  5.157875e-01  8.390297e-01
+g9   20.287907       -0.378940  0.302378 -1.253198  2.101337e-01  8.390297e-01
+g10  23.553641        0.314915  0.296576  1.061837  2.883095e-01  8.390297e-01
+g11  17.519435       -0.288229  0.313769 -0.918605  3.583023e-01  8.390297e-01
+g12  20.573596        0.115189  0.295391  0.389954  6.965707e-01  8.390297e-01
+g13  20.353465       -0.210839  0.321446 -0.655906  5.118843e-01  8.390297e-01
+g14  20.203299       -0.193375  0.292226 -0.661731  5.081437e-01  8.390297e-01
+g15  21.606420        0.373979  0.285925  1.307962  1.908861e-01  8.390297e-01
+g16  19.528248       -0.202345  0.300144 -0.674160  5.002097e-01  8.390297e-01
+g17  17.286418       -0.091734  0.320596 -0.286137  7.747729e-01  8.390297e-01
+g18  18.456226        0.171498  0.299026  0.573524  5.662896e-01  8.390297e-01
+g19  17.393070       -0.398663  0.307634 -1.295899  1.950104e-01  8.390297e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   58.713138        2.447571  0.257492  9.505427  1.992284e-21  3.984569e-20
+g1   22.151209       -0.133531  0.280869 -0.475422  6.344859e-01  8.390297e-01
+g2   21.513237       -0.079479  0.294348 -0.270017  7.871473e-01  8.390297e-01
+g3   19.214591        0.037900  0.297807  0.127265  8.987305e-01  8.987305e-01
+g4   18.414116        0.096784  0.303369  0.319032  7.497019e-01  8.390297e-01
+g5   18.923619        0.262545  0.299473  0.876692  3.806541e-01  8.390297e-01
+g6   16.656694        0.244021  0.310608  0.785622  4.320890e-01  8.390297e-01
+g7   21.593181        0.074105  0.288199  0.257130  7.970782e-01  8.390297e-01
+g8   19.273093       -0.198104  0.304845 -0.649852  5.157875e-01  8.390297e-01
+g9   20.287907       -0.378940  0.302378 -1.253198  2.101337e-01  8.390297e-01
+g10  23.553641        0.314915  0.296576  1.061837  2.883095e-01  8.390297e-01
+g11  17.519435       -0.288229  0.313769 -0.918605  3.583023e-01  8.390297e-01
+g12  20.573596        0.115189  0.295391  0.389954  6.965707e-01  8.390297e-01
+g13  20.353465       -0.210839  0.321446 -0.655906  5.118843e-01  8.390297e-01
+g14  20.203299       -0.193375  0.292226 -0.661731  5.081437e-01  8.390297e-01
+g15  21.606420        0.373979  0.285925  1.307962  1.908861e-01  8.390297e-01
+g16  19.528248       -0.202345  0.300144 -0.674160  5.002097e-01  8.390297e-01
+g17  17.286418       -0.091734  0.320596 -0.286137  7.747729e-01  8.390297e-01
+g18  18.456226        0.171498  0.299026  0.573524  5.662896e-01  8.390297e-01
+g19  17.393070       -0.398663  0.307634 -1.295899  1.950104e-01  8.390297e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   64.622935        2.376692  0.306023  7.766397  8.075036e-15  1.615007e-13
+g1   21.961399       -0.138115  0.325614 -0.424168  6.714430e-01  8.571318e-01
+g2   21.750446       -0.140942  0.340336 -0.414127  6.787808e-01  8.571318e-01
+g3   18.762949        0.120748  0.347939  0.347039  7.285620e-01  8.571318e-01
+g4   18.632522        0.061565  0.350749  0.175525  8.606672e-01  8.721164e-01
+g5   19.336689        0.216714  0.345768  0.626761  5.308157e-01  8.571318e-01
+g6   17.150403        0.167145  0.354345  0.471701  6.371400e-01  8.571318e-01
+g7   22.508721       -0.069455  0.324615 -0.213961  8.305774e-01  8.721164e-01
+g8   18.911285       -0.184200  0.354152 -0.520114  6.029839e-01  8.571318e-01
+g9   19.031838       -0.252040  0.350813 -0.718446  4.724826e-01  8.571318e-01
+g10  24.233125        0.254463  0.347400  0.732479  4.638762e-01  8.571318e-01
+g11  17.328313       -0.310780  0.361953 -0.858619  3.905508e-01  8.571318e-01
+g12  20.540284        0.126672  0.344829  0.367346  7.133606e-01  8.571318e-01
+g13  20.430399       -0.266325  0.374608 -0.710944  4.771188e-01  8.571318e-01
+g14  20.532150       -0.285526  0.332603 -0.858460  3.906387e-01  8.571318e-01
+g15  21.740392        0.411181  0.335076  1.227126  2.197752e-01  8.571318e-01
+g16  19.478484       -0.239723  0.345968 -0.692904  4.883699e-01  8.571318e-01
+g17  16.413162        0.060238  0.374217  0.160971  8.721164e-01  8.721164e-01
+g18  18.409397        0.200959  0.347227  0.578753  5.627558e-01  8.571318e-01
+g19  16.938115       -0.387526  0.353213 -1.097145  2.725779e-01  8.571318e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   53.787226        2.462345  0.267367  9.209601  3.273392e-20  6.546784e-19
+g1   22.476655       -0.143711  0.301071 -0.477333  6.331253e-01  9.030231e-01
+g2   21.267380       -0.165242  0.316079 -0.522788  6.011221e-01  9.030231e-01
+g3   19.144012       -0.012758  0.320981 -0.039747  9.682946e-01  9.975482e-01
+g4   17.781455       -0.049995  0.328238 -0.152313  8.789400e-01  9.766000e-01
+g5   18.849575        0.266320  0.317887  0.837781  4.021539e-01  9.030231e-01
+g6   16.267534        0.179332  0.332996  0.538540  5.902045e-01  9.030231e-01
+g7   21.691004        0.064307  0.308127  0.208704  8.346792e-01  9.766000e-01
+g8   20.002727       -0.135618  0.322035 -0.421128  6.736615e-01  9.030231e-01
+g9   21.328407       -0.297044  0.318707 -0.932027  3.513224e-01  9.030231e-01
+g10  24.664095        0.462972  0.302093  1.532548  1.253871e-01  7.634484e-01
+g11  18.779811       -0.135461  0.325475 -0.416195  6.772673e-01  9.030231e-01
+g12  21.548824        0.238818  0.306498  0.779182  4.358727e-01  9.030231e-01
+g13  19.103283       -0.545679  0.341935 -1.595857  1.105208e-01  7.634484e-01
+g14  20.073820       -0.289683  0.315916 -0.916962  3.591625e-01  9.030231e-01
+g15  20.682513        0.267058  0.306064  0.872556  3.829053e-01  9.030231e-01
+g16  20.411202       -0.106850  0.314214 -0.340055  7.338149e-01  9.172686e-01
+g17  18.042769        0.001035  0.336826  0.003073  9.975482e-01  9.975482e-01
+g18  18.802714        0.221267  0.316353  0.699431  4.842825e-01  9.030231e-01
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.02 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+g19  17.589121       -0.478397  0.334521 -1.430095  1.526897e-01  7.634484e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   64.293988        2.407731  0.271352  8.873090  7.114350e-19  1.422870e-17
+g1   22.387715       -0.207327  0.289547 -0.716040  4.739666e-01  9.370381e-01
+g2   19.940531        0.139183  0.306194  0.454559  6.494269e-01  9.370381e-01
+g3   19.474723       -0.022574  0.308682 -0.073131  9.417022e-01  9.709106e-01
+g4   18.981256       -0.011355  0.311379 -0.036466  9.709106e-01  9.709106e-01
+g5   19.407349        0.194150  0.310761  0.624756  5.321315e-01  9.370381e-01
+g6   16.684451        0.257354  0.327200  0.786534  4.315548e-01  9.370381e-01
+g7   21.450437        0.085755  0.301202  0.284711  7.758656e-01  9.370381e-01
+g8   19.108513       -0.221948  0.316248 -0.701817  4.827936e-01  9.370381e-01
+g9   20.420447       -0.469337  0.309302 -1.517405  1.291644e-01  9.370381e-01
+g10  23.393947        0.372416  0.310747  1.198453  2.307409e-01  9.370381e-01
+g11  16.828817       -0.232663  0.327876 -0.709606  4.779488e-01  9.370381e-01
+g12  20.870666        0.062315  0.306283  0.203455  8.387791e-01  9.370381e-01
+g13  18.341236        0.068937  0.327575  0.210447  8.333187e-01  9.370381e-01
+g14  19.734735       -0.171202  0.305142 -0.561055  5.747599e-01  9.370381e-01
+g15  22.326684        0.294410  0.296219  0.993891  3.202758e-01  9.370381e-01
+g16  18.680711       -0.115861  0.314118 -0.368844  7.122438e-01  9.370381e-01
+g17  16.282705        0.066515  0.336564  0.197630  8.433343e-01  9.370381e-01
+g18  18.457297        0.177040  0.314089  0.563662  5.729839e-01  9.370381e-01
+g19  17.258909       -0.451523  0.318065 -1.419593  1.557262e-01  9.370381e-01
+Fitting size factors...
+... done in 0.01 seconds.
+
+Fitting dispersions...
+... done in 1.07 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.25 seconds.
+
+Fitting MAP dispersions...
+... done in 1.25 seconds.
+
+Fitting LFCs...
+... done in 1.41 seconds.
+
+Calculating cook's distance...
+... done in 0.02 seconds.
+
+Replacing 13 outlier genes.
+
+Fitting dispersions...
+... done in 0.02 seconds.
+
+Fitting MAP dispersions...
+... done in 0.02 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Running Wald tests...
+... done in 0.63 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.01 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.02 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+.Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition stim vs ctrl
+                baseMean  log2FoldChange  ...    pvalue      padj
+AL627309.1      0.189098       -1.434101  ...  0.470083       NaN
+RP11-206L10.2   0.210231       -1.530231  ...  0.498844       NaN
+LINC00115       2.816909       -0.669349  ...  0.156023  0.346604
+NOC2L          56.203949       -0.076405  ...  0.610823  0.791276
+KLHL17          0.734001       -1.362167  ...  0.172664       NaN
+...                  ...             ...  ...       ...       ...
+AP001437.1      0.403054        1.979020  ...  0.220532       NaN
+TMPRSS3         0.216910        1.614554  ...  0.473075       NaN
+AP001626.1      0.129118        1.088645  ...  0.656350       NaN
+AP001062.7      0.187672        1.256529  ...  0.583418       NaN
+LRRC3DN         0.281750        1.861111  ...  0.310590       NaN
+
+[14053 rows x 6 columns]
+[unit-test-heartbeat] elapsed=90s completed=178/1299 current=tests/unit/test_calibration_frontier.py::test_ceiling_clamp_frontier_cases_pass_via_abi
+INFO     Creating graph using `None` transform and `1` libraries.
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   58.713138        2.447571  0.257492  9.505427  1.992284e-21  3.984569e-20
+g1   22.151209       -0.133531  0.280869 -0.475422  6.344859e-01  8.390297e-01
+g2   21.513237       -0.079479  0.294348 -0.270017  7.871473e-01  8.390297e-01
+g3   19.214591        0.037900  0.297807  0.127265  8.987305e-01  8.987305e-01
+g4   18.414116        0.096784  0.303369  0.319032  7.497019e-01  8.390297e-01
+g5   18.923619        0.262545  0.299473  0.876692  3.806541e-01  8.390297e-01
+g6   16.656694        0.244021  0.310608  0.785622  4.320890e-01  8.390297e-01
+g7   21.593181        0.074105  0.288199  0.257130  7.970782e-01  8.390297e-01
+g8   19.273093       -0.198104  0.304845 -0.649852  5.157875e-01  8.390297e-01
+g9   20.287907       -0.378940  0.302378 -1.253198  2.101337e-01  8.390297e-01
+g10  23.553641        0.314915  0.296576  1.061837  2.883095e-01  8.390297e-01
+g11  17.519435       -0.288229  0.313769 -0.918605  3.583023e-01  8.390297e-01
+g12  20.573596        0.115189  0.295391  0.389954  6.965707e-01  8.390297e-01
+g13  20.353465       -0.210839  0.321446 -0.655906  5.118843e-01  8.390297e-01
+g14  20.203299       -0.193375  0.292226 -0.661731  5.081437e-01  8.390297e-01
+g15  21.606420        0.373979  0.285925  1.307962  1.908861e-01  8.390297e-01
+g16  19.528248       -0.202345  0.300144 -0.674160  5.002097e-01  8.390297e-01
+g17  17.286418       -0.091734  0.320596 -0.286137  7.747729e-01  8.390297e-01
+g18  18.456226        0.171498  0.299026  0.573524  5.662896e-01  8.390297e-01
+g19  17.393070       -0.398663  0.307634 -1.295899  1.950104e-01  8.390297e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   58.713138        2.447571  0.257492  9.505427  1.992284e-21  3.984569e-20
+g1   22.151209       -0.133531  0.280869 -0.475422  6.344859e-01  8.390297e-01
+g2   21.513237       -0.079479  0.294348 -0.270017  7.871473e-01  8.390297e-01
+g3   19.214591        0.037900  0.297807  0.127265  8.987305e-01  8.987305e-01
+g4   18.414116        0.096784  0.303369  0.319032  7.497019e-01  8.390297e-01
+g5   18.923619        0.262545  0.299473  0.876692  3.806541e-01  8.390297e-01
+g6   16.656694        0.244021  0.310608  0.785622  4.320890e-01  8.390297e-01
+g7   21.593181        0.074105  0.288199  0.257130  7.970782e-01  8.390297e-01
+g8   19.273093       -0.198104  0.304845 -0.649852  5.157875e-01  8.390297e-01
+g9   20.287907       -0.378940  0.302378 -1.253198  2.101337e-01  8.390297e-01
+g10  23.553641        0.314915  0.296576  1.061837  2.883095e-01  8.390297e-01
+g11  17.519435       -0.288229  0.313769 -0.918605  3.583023e-01  8.390297e-01
+g12  20.573596        0.115189  0.295391  0.389954  6.965707e-01  8.390297e-01
+g13  20.353465       -0.210839  0.321446 -0.655906  5.118843e-01  8.390297e-01
+g14  20.203299       -0.193375  0.292226 -0.661731  5.081437e-01  8.390297e-01
+g15  21.606420        0.373979  0.285925  1.307962  1.908861e-01  8.390297e-01
+g16  19.528248       -0.202345  0.300144 -0.674160  5.002097e-01  8.390297e-01
+g17  17.286418       -0.091734  0.320596 -0.286137  7.747729e-01  8.390297e-01
+g18  18.456226        0.171498  0.299026  0.573524  5.662896e-01  8.390297e-01
+g19  17.393070       -0.398663  0.307634 -1.295899  1.950104e-01  8.390297e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   64.622935        2.376692  0.306023  7.766397  8.075036e-15  1.615007e-13
+g1   21.961399       -0.138115  0.325614 -0.424168  6.714430e-01  8.571318e-01
+g2   21.750446       -0.140942  0.340336 -0.414127  6.787808e-01  8.571318e-01
+g3   18.762949        0.120748  0.347939  0.347039  7.285620e-01  8.571318e-01
+g4   18.632522        0.061565  0.350749  0.175525  8.606672e-01  8.721164e-01
+g5   19.336689        0.216714  0.345768  0.626761  5.308157e-01  8.571318e-01
+g6   17.150403        0.167145  0.354345  0.471701  6.371400e-01  8.571318e-01
+g7   22.508721       -0.069455  0.324615 -0.213961  8.305774e-01  8.721164e-01
+g8   18.911285       -0.184200  0.354152 -0.520114  6.029839e-01  8.571318e-01
+g9   19.031838       -0.252040  0.350813 -0.718446  4.724826e-01  8.571318e-01
+g10  24.233125        0.254463  0.347400  0.732479  4.638762e-01  8.571318e-01
+g11  17.328313       -0.310780  0.361953 -0.858619  3.905508e-01  8.571318e-01
+g12  20.540284        0.126672  0.344829  0.367346  7.133606e-01  8.571318e-01
+g13  20.430399       -0.266325  0.374608 -0.710944  4.771188e-01  8.571318e-01
+g14  20.532150       -0.285526  0.332603 -0.858460  3.906387e-01  8.571318e-01
+g15  21.740392        0.411181  0.335076  1.227126  2.197752e-01  8.571318e-01
+g16  19.478484       -0.239723  0.345968 -0.692904  4.883699e-01  8.571318e-01
+g17  16.413162        0.060238  0.374217  0.160971  8.721164e-01  8.721164e-01
+g18  18.409397        0.200959  0.347227  0.578753  5.627558e-01  8.571318e-01
+g19  16.938115       -0.387526  0.353213 -1.097145  2.725779e-01  8.571318e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   53.787226        2.462345  0.267367  9.209601  3.273392e-20  6.546784e-19
+g1   22.476655       -0.143711  0.301071 -0.477333  6.331253e-01  9.030231e-01
+g2   21.267380       -0.165242  0.316079 -0.522788  6.011221e-01  9.030231e-01
+g3   19.144012       -0.012758  0.320981 -0.039747  9.682946e-01  9.975482e-01
+g4   17.781455       -0.049995  0.328238 -0.152313  8.789400e-01  9.766000e-01
+g5   18.849575        0.266320  0.317887  0.837781  4.021539e-01  9.030231e-01
+g6   16.267534        0.179332  0.332996  0.538540  5.902045e-01  9.030231e-01
+g7   21.691004        0.064307  0.308127  0.208704  8.346792e-01  9.766000e-01
+g8   20.002727       -0.135618  0.322035 -0.421128  6.736615e-01  9.030231e-01
+g9   21.328407       -0.297044  0.318707 -0.932027  3.513224e-01  9.030231e-01
+g10  24.664095        0.462972  0.302093  1.532548  1.253871e-01  7.634484e-01
+g11  18.779811       -0.135461  0.325475 -0.416195  6.772673e-01  9.030231e-01
+g12  21.548824        0.238818  0.306498  0.779182  4.358727e-01  9.030231e-01
+g13  19.103283       -0.545679  0.341935 -1.595857  1.105208e-01  7.634484e-01
+g14  20.073820       -0.289683  0.315916 -0.916962  3.591625e-01  9.030231e-01
+g15  20.682513        0.267058  0.306064  0.872556  3.829053e-01  9.030231e-01
+g16  20.411202       -0.106850  0.314214 -0.340055  7.338149e-01  9.172686e-01
+g17  18.042769        0.001035  0.336826  0.003073  9.975482e-01  9.975482e-01
+g18  18.802714        0.221267  0.316353  0.699431  4.842825e-01  9.030231e-01
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+g19  17.589121       -0.478397  0.334521 -1.430095  1.526897e-01  7.634484e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   64.293988        2.407731  0.271352  8.873090  7.114350e-19  1.422870e-17
+g1   22.387715       -0.207327  0.289547 -0.716040  4.739666e-01  9.370381e-01
+g2   19.940531        0.139183  0.306194  0.454559  6.494269e-01  9.370381e-01
+g3   19.474723       -0.022574  0.308682 -0.073131  9.417022e-01  9.709106e-01
+g4   18.981256       -0.011355  0.311379 -0.036466  9.709106e-01  9.709106e-01
+g5   19.407349        0.194150  0.310761  0.624756  5.321315e-01  9.370381e-01
+g6   16.684451        0.257354  0.327200  0.786534  4.315548e-01  9.370381e-01
+g7   21.450437        0.085755  0.301202  0.284711  7.758656e-01  9.370381e-01
+g8   19.108513       -0.221948  0.316248 -0.701817  4.827936e-01  9.370381e-01
+g9   20.420447       -0.469337  0.309302 -1.517405  1.291644e-01  9.370381e-01
+g10  23.393947        0.372416  0.310747  1.198453  2.307409e-01  9.370381e-01
+g11  16.828817       -0.232663  0.327876 -0.709606  4.779488e-01  9.370381e-01
+g12  20.870666        0.062315  0.306283  0.203455  8.387791e-01  9.370381e-01
+g13  18.341236        0.068937  0.327575  0.210447  8.333187e-01  9.370381e-01
+g14  19.734735       -0.171202  0.305142 -0.561055  5.747599e-01  9.370381e-01
+g15  22.326684        0.294410  0.296219  0.993891  3.202758e-01  9.370381e-01
+g16  18.680711       -0.115861  0.314118 -0.368844  7.122438e-01  9.370381e-01
+g17  16.282705        0.066515  0.336564  0.197630  8.433343e-01  9.370381e-01
+g18  18.457297        0.177040  0.314089  0.563662  5.729839e-01  9.370381e-01
+g19  17.258909       -0.451523  0.318065 -1.419593  1.557262e-01  9.370381e-01
+Fitting size factors...
+... done in 0.01 seconds.
+
+Fitting dispersions...
+... done in 1.06 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.24 seconds.
+
+Fitting MAP dispersions...
+... done in 1.27 seconds.
+
+Fitting LFCs...
+... done in 0.70 seconds.
+
+Calculating cook's distance...
+... done in 0.03 seconds.
+
+Replacing 13 outlier genes.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting MAP dispersions...
+... done in 0.02 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Running Wald tests...
+... done in 0.66 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.02 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.01 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.02 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.02 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.01 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.01 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.01 seconds.
+
+.Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition stim vs ctrl
+                baseMean  log2FoldChange  ...    pvalue      padj
+AL627309.1      0.189098       -1.434101  ...  0.470083       NaN
+RP11-206L10.2   0.210231       -1.530231  ...  0.498844       NaN
+LINC00115       2.816909       -0.669349  ...  0.156023  0.346604
+NOC2L          56.203949       -0.076405  ...  0.610823  0.791276
+KLHL17          0.734001       -1.362167  ...  0.172664       NaN
+...                  ...             ...  ...       ...       ...
+AP001437.1      0.403054        1.979020  ...  0.220532       NaN
+TMPRSS3         0.216910        1.614554  ...  0.473075       NaN
+AP001626.1      0.129118        1.088645  ...  0.656350       NaN
+AP001062.7      0.187672        1.256529  ...  0.583418       NaN
+LRRC3DN         0.281750        1.861111  ...  0.310590       NaN
+
+[14053 rows x 6 columns]
+INFO     Creating graph using `None` transform and `1` libraries.
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   58.713138        2.447571  0.257492  9.505427  1.992284e-21  3.984569e-20
+g1   22.151209       -0.133531  0.280869 -0.475422  6.344859e-01  8.390297e-01
+g2   21.513237       -0.079479  0.294348 -0.270017  7.871473e-01  8.390297e-01
+g3   19.214591        0.037900  0.297807  0.127265  8.987305e-01  8.987305e-01
+g4   18.414116        0.096784  0.303369  0.319032  7.497019e-01  8.390297e-01
+g5   18.923619        0.262545  0.299473  0.876692  3.806541e-01  8.390297e-01
+g6   16.656694        0.244021  0.310608  0.785622  4.320890e-01  8.390297e-01
+g7   21.593181        0.074105  0.288199  0.257130  7.970782e-01  8.390297e-01
+g8   19.273093       -0.198104  0.304845 -0.649852  5.157875e-01  8.390297e-01
+g9   20.287907       -0.378940  0.302378 -1.253198  2.101337e-01  8.390297e-01
+g10  23.553641        0.314915  0.296576  1.061837  2.883095e-01  8.390297e-01
+g11  17.519435       -0.288229  0.313769 -0.918605  3.583023e-01  8.390297e-01
+g12  20.573596        0.115189  0.295391  0.389954  6.965707e-01  8.390297e-01
+g13  20.353465       -0.210839  0.321446 -0.655906  5.118843e-01  8.390297e-01
+g14  20.203299       -0.193375  0.292226 -0.661731  5.081437e-01  8.390297e-01
+g15  21.606420        0.373979  0.285925  1.307962  1.908861e-01  8.390297e-01
+g16  19.528248       -0.202345  0.300144 -0.674160  5.002097e-01  8.390297e-01
+g17  17.286418       -0.091734  0.320596 -0.286137  7.747729e-01  8.390297e-01
+g18  18.456226        0.171498  0.299026  0.573524  5.662896e-01  8.390297e-01
+g19  17.393070       -0.398663  0.307634 -1.295899  1.950104e-01  8.390297e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   58.713138        2.447571  0.257492  9.505427  1.992284e-21  3.984569e-20
+g1   22.151209       -0.133531  0.280869 -0.475422  6.344859e-01  8.390297e-01
+g2   21.513237       -0.079479  0.294348 -0.270017  7.871473e-01  8.390297e-01
+g3   19.214591        0.037900  0.297807  0.127265  8.987305e-01  8.987305e-01
+g4   18.414116        0.096784  0.303369  0.319032  7.497019e-01  8.390297e-01
+g5   18.923619        0.262545  0.299473  0.876692  3.806541e-01  8.390297e-01
+g6   16.656694        0.244021  0.310608  0.785622  4.320890e-01  8.390297e-01
+g7   21.593181        0.074105  0.288199  0.257130  7.970782e-01  8.390297e-01
+g8   19.273093       -0.198104  0.304845 -0.649852  5.157875e-01  8.390297e-01
+g9   20.287907       -0.378940  0.302378 -1.253198  2.101337e-01  8.390297e-01
+g10  23.553641        0.314915  0.296576  1.061837  2.883095e-01  8.390297e-01
+g11  17.519435       -0.288229  0.313769 -0.918605  3.583023e-01  8.390297e-01
+g12  20.573596        0.115189  0.295391  0.389954  6.965707e-01  8.390297e-01
+g13  20.353465       -0.210839  0.321446 -0.655906  5.118843e-01  8.390297e-01
+g14  20.203299       -0.193375  0.292226 -0.661731  5.081437e-01  8.390297e-01
+g15  21.606420        0.373979  0.285925  1.307962  1.908861e-01  8.390297e-01
+g16  19.528248       -0.202345  0.300144 -0.674160  5.002097e-01  8.390297e-01
+g17  17.286418       -0.091734  0.320596 -0.286137  7.747729e-01  8.390297e-01
+g18  18.456226        0.171498  0.299026  0.573524  5.662896e-01  8.390297e-01
+g19  17.393070       -0.398663  0.307634 -1.295899  1.950104e-01  8.390297e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   64.622935        2.376692  0.306023  7.766397  8.075036e-15  1.615007e-13
+g1   21.961399       -0.138115  0.325614 -0.424168  6.714430e-01  8.571318e-01
+g2   21.750446       -0.140942  0.340336 -0.414127  6.787808e-01  8.571318e-01
+g3   18.762949        0.120748  0.347939  0.347039  7.285620e-01  8.571318e-01
+g4   18.632522        0.061565  0.350749  0.175525  8.606672e-01  8.721164e-01
+g5   19.336689        0.216714  0.345768  0.626761  5.308157e-01  8.571318e-01
+g6   17.150403        0.167145  0.354345  0.471701  6.371400e-01  8.571318e-01
+g7   22.508721       -0.069455  0.324615 -0.213961  8.305774e-01  8.721164e-01
+g8   18.911285       -0.184200  0.354152 -0.520114  6.029839e-01  8.571318e-01
+g9   19.031838       -0.252040  0.350813 -0.718446  4.724826e-01  8.571318e-01
+g10  24.233125        0.254463  0.347400  0.732479  4.638762e-01  8.571318e-01
+g11  17.328313       -0.310780  0.361953 -0.858619  3.905508e-01  8.571318e-01
+g12  20.540284        0.126672  0.344829  0.367346  7.133606e-01  8.571318e-01
+g13  20.430399       -0.266325  0.374608 -0.710944  4.771188e-01  8.571318e-01
+g14  20.532150       -0.285526  0.332603 -0.858460  3.906387e-01  8.571318e-01
+g15  21.740392        0.411181  0.335076  1.227126  2.197752e-01  8.571318e-01
+g16  19.478484       -0.239723  0.345968 -0.692904  4.883699e-01  8.571318e-01
+g17  16.413162        0.060238  0.374217  0.160971  8.721164e-01  8.721164e-01
+g18  18.409397        0.200959  0.347227  0.578753  5.627558e-01  8.571318e-01
+g19  16.938115       -0.387526  0.353213 -1.097145  2.725779e-01  8.571318e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   53.787226        2.462345  0.267367  9.209601  3.273392e-20  6.546784e-19
+g1   22.476655       -0.143711  0.301071 -0.477333  6.331253e-01  9.030231e-01
+g2   21.267380       -0.165242  0.316079 -0.522788  6.011221e-01  9.030231e-01
+g3   19.144012       -0.012758  0.320981 -0.039747  9.682946e-01  9.975482e-01
+g4   17.781455       -0.049995  0.328238 -0.152313  8.789400e-01  9.766000e-01
+g5   18.849575        0.266320  0.317887  0.837781  4.021539e-01  9.030231e-01
+g6   16.267534        0.179332  0.332996  0.538540  5.902045e-01  9.030231e-01
+g7   21.691004        0.064307  0.308127  0.208704  8.346792e-01  9.766000e-01
+g8   20.002727       -0.135618  0.322035 -0.421128  6.736615e-01  9.030231e-01
+g9   21.328407       -0.297044  0.318707 -0.932027  3.513224e-01  9.030231e-01
+g10  24.664095        0.462972  0.302093  1.532548  1.253871e-01  7.634484e-01
+g11  18.779811       -0.135461  0.325475 -0.416195  6.772673e-01  9.030231e-01
+g12  21.548824        0.238818  0.306498  0.779182  4.358727e-01  9.030231e-01
+g13  19.103283       -0.545679  0.341935 -1.595857  1.105208e-01  7.634484e-01
+g14  20.073820       -0.289683  0.315916 -0.916962  3.591625e-01  9.030231e-01
+g15  20.682513        0.267058  0.306064  0.872556  3.829053e-01  9.030231e-01
+g16  20.411202       -0.106850  0.314214 -0.340055  7.338149e-01  9.172686e-01
+g17  18.042769        0.001035  0.336826  0.003073  9.975482e-01  9.975482e-01
+g18  18.802714        0.221267  0.316353  0.699431  4.842825e-01  9.030231e-01
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.02 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+g19  17.589121       -0.478397  0.334521 -1.430095  1.526897e-01  7.634484e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   64.293988        2.407731  0.271352  8.873090  7.114350e-19  1.422870e-17
+g1   22.387715       -0.207327  0.289547 -0.716040  4.739666e-01  9.370381e-01
+g2   19.940531        0.139183  0.306194  0.454559  6.494269e-01  9.370381e-01
+g3   19.474723       -0.022574  0.308682 -0.073131  9.417022e-01  9.709106e-01
+g4   18.981256       -0.011355  0.311379 -0.036466  9.709106e-01  9.709106e-01
+g5   19.407349        0.194150  0.310761  0.624756  5.321315e-01  9.370381e-01
+g6   16.684451        0.257354  0.327200  0.786534  4.315548e-01  9.370381e-01
+g7   21.450437        0.085755  0.301202  0.284711  7.758656e-01  9.370381e-01
+g8   19.108513       -0.221948  0.316248 -0.701817  4.827936e-01  9.370381e-01
+g9   20.420447       -0.469337  0.309302 -1.517405  1.291644e-01  9.370381e-01
+g10  23.393947        0.372416  0.310747  1.198453  2.307409e-01  9.370381e-01
+g11  16.828817       -0.232663  0.327876 -0.709606  4.779488e-01  9.370381e-01
+g12  20.870666        0.062315  0.306283  0.203455  8.387791e-01  9.370381e-01
+g13  18.341236        0.068937  0.327575  0.210447  8.333187e-01  9.370381e-01
+g14  19.734735       -0.171202  0.305142 -0.561055  5.747599e-01  9.370381e-01
+g15  22.326684        0.294410  0.296219  0.993891  3.202758e-01  9.370381e-01
+g16  18.680711       -0.115861  0.314118 -0.368844  7.122438e-01  9.370381e-01
+g17  16.282705        0.066515  0.336564  0.197630  8.433343e-01  9.370381e-01
+g18  18.457297        0.177040  0.314089  0.563662  5.729839e-01  9.370381e-01
+g19  17.258909       -0.451523  0.318065 -1.419593  1.557262e-01  9.370381e-01
+Fitting size factors...
+... done in 0.01 seconds.
+
+Fitting dispersions...
+... done in 0.95 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.16 seconds.
+
+Fitting MAP dispersions...
+... done in 1.27 seconds.
+
+Fitting LFCs...
+... done in 1.19 seconds.
+
+Calculating cook's distance...
+... done in 0.02 seconds.
+
+Replacing 13 outlier genes.
+
+Fitting dispersions...
+... done in 0.02 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Running Wald tests...
+... done in 0.62 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.02 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.01 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+.Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition stim vs ctrl
+                baseMean  log2FoldChange  ...    pvalue      padj
+AL627309.1      0.189098       -1.434101  ...  0.470083       NaN
+RP11-206L10.2   0.210231       -1.530231  ...  0.498844       NaN
+LINC00115       2.816909       -0.669349  ...  0.156023  0.346604
+NOC2L          56.203949       -0.076405  ...  0.610823  0.791276
+KLHL17          0.734001       -1.362167  ...  0.172664       NaN
+...                  ...             ...  ...       ...       ...
+AP001437.1      0.403054        1.979020  ...  0.220532       NaN
+TMPRSS3         0.216910        1.614554  ...  0.473075       NaN
+AP001626.1      0.129118        1.088645  ...  0.656350       NaN
+AP001062.7      0.187672        1.256529  ...  0.583418       NaN
+LRRC3DN         0.281750        1.861111  ...  0.310590       NaN
+
+[14053 rows x 6 columns]
+[unit-test-heartbeat] elapsed=120s completed=180/1299 current=tests/unit/test_calibration_frontier.py::test_no_backend_cases_do_not_inflate_calibration
+INFO     Creating graph using `None` transform and `1` libraries.
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   58.713138        2.447571  0.257492  9.505427  1.992284e-21  3.984569e-20
+g1   22.151209       -0.133531  0.280869 -0.475422  6.344859e-01  8.390297e-01
+g2   21.513237       -0.079479  0.294348 -0.270017  7.871473e-01  8.390297e-01
+g3   19.214591        0.037900  0.297807  0.127265  8.987305e-01  8.987305e-01
+g4   18.414116        0.096784  0.303369  0.319032  7.497019e-01  8.390297e-01
+g5   18.923619        0.262545  0.299473  0.876692  3.806541e-01  8.390297e-01
+g6   16.656694        0.244021  0.310608  0.785622  4.320890e-01  8.390297e-01
+g7   21.593181        0.074105  0.288199  0.257130  7.970782e-01  8.390297e-01
+g8   19.273093       -0.198104  0.304845 -0.649852  5.157875e-01  8.390297e-01
+g9   20.287907       -0.378940  0.302378 -1.253198  2.101337e-01  8.390297e-01
+g10  23.553641        0.314915  0.296576  1.061837  2.883095e-01  8.390297e-01
+g11  17.519435       -0.288229  0.313769 -0.918605  3.583023e-01  8.390297e-01
+g12  20.573596        0.115189  0.295391  0.389954  6.965707e-01  8.390297e-01
+g13  20.353465       -0.210839  0.321446 -0.655906  5.118843e-01  8.390297e-01
+g14  20.203299       -0.193375  0.292226 -0.661731  5.081437e-01  8.390297e-01
+g15  21.606420        0.373979  0.285925  1.307962  1.908861e-01  8.390297e-01
+g16  19.528248       -0.202345  0.300144 -0.674160  5.002097e-01  8.390297e-01
+g17  17.286418       -0.091734  0.320596 -0.286137  7.747729e-01  8.390297e-01
+g18  18.456226        0.171498  0.299026  0.573524  5.662896e-01  8.390297e-01
+g19  17.393070       -0.398663  0.307634 -1.295899  1.950104e-01  8.390297e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   58.713138        2.447571  0.257492  9.505427  1.992284e-21  3.984569e-20
+g1   22.151209       -0.133531  0.280869 -0.475422  6.344859e-01  8.390297e-01
+g2   21.513237       -0.079479  0.294348 -0.270017  7.871473e-01  8.390297e-01
+g3   19.214591        0.037900  0.297807  0.127265  8.987305e-01  8.987305e-01
+g4   18.414116        0.096784  0.303369  0.319032  7.497019e-01  8.390297e-01
+g5   18.923619        0.262545  0.299473  0.876692  3.806541e-01  8.390297e-01
+g6   16.656694        0.244021  0.310608  0.785622  4.320890e-01  8.390297e-01
+g7   21.593181        0.074105  0.288199  0.257130  7.970782e-01  8.390297e-01
+g8   19.273093       -0.198104  0.304845 -0.649852  5.157875e-01  8.390297e-01
+g9   20.287907       -0.378940  0.302378 -1.253198  2.101337e-01  8.390297e-01
+g10  23.553641        0.314915  0.296576  1.061837  2.883095e-01  8.390297e-01
+g11  17.519435       -0.288229  0.313769 -0.918605  3.583023e-01  8.390297e-01
+g12  20.573596        0.115189  0.295391  0.389954  6.965707e-01  8.390297e-01
+g13  20.353465       -0.210839  0.321446 -0.655906  5.118843e-01  8.390297e-01
+g14  20.203299       -0.193375  0.292226 -0.661731  5.081437e-01  8.390297e-01
+g15  21.606420        0.373979  0.285925  1.307962  1.908861e-01  8.390297e-01
+g16  19.528248       -0.202345  0.300144 -0.674160  5.002097e-01  8.390297e-01
+g17  17.286418       -0.091734  0.320596 -0.286137  7.747729e-01  8.390297e-01
+g18  18.456226        0.171498  0.299026  0.573524  5.662896e-01  8.390297e-01
+g19  17.393070       -0.398663  0.307634 -1.295899  1.950104e-01  8.390297e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   64.622935        2.376692  0.306023  7.766397  8.075036e-15  1.615007e-13
+g1   21.961399       -0.138115  0.325614 -0.424168  6.714430e-01  8.571318e-01
+g2   21.750446       -0.140942  0.340336 -0.414127  6.787808e-01  8.571318e-01
+g3   18.762949        0.120748  0.347939  0.347039  7.285620e-01  8.571318e-01
+g4   18.632522        0.061565  0.350749  0.175525  8.606672e-01  8.721164e-01
+g5   19.336689        0.216714  0.345768  0.626761  5.308157e-01  8.571318e-01
+g6   17.150403        0.167145  0.354345  0.471701  6.371400e-01  8.571318e-01
+g7   22.508721       -0.069455  0.324615 -0.213961  8.305774e-01  8.721164e-01
+g8   18.911285       -0.184200  0.354152 -0.520114  6.029839e-01  8.571318e-01
+g9   19.031838       -0.252040  0.350813 -0.718446  4.724826e-01  8.571318e-01
+g10  24.233125        0.254463  0.347400  0.732479  4.638762e-01  8.571318e-01
+g11  17.328313       -0.310780  0.361953 -0.858619  3.905508e-01  8.571318e-01
+g12  20.540284        0.126672  0.344829  0.367346  7.133606e-01  8.571318e-01
+g13  20.430399       -0.266325  0.374608 -0.710944  4.771188e-01  8.571318e-01
+g14  20.532150       -0.285526  0.332603 -0.858460  3.906387e-01  8.571318e-01
+g15  21.740392        0.411181  0.335076  1.227126  2.197752e-01  8.571318e-01
+g16  19.478484       -0.239723  0.345968 -0.692904  4.883699e-01  8.571318e-01
+g17  16.413162        0.060238  0.374217  0.160971  8.721164e-01  8.721164e-01
+g18  18.409397        0.200959  0.347227  0.578753  5.627558e-01  8.571318e-01
+g19  16.938115       -0.387526  0.353213 -1.097145  2.725779e-01  8.571318e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   53.787226        2.462345  0.267367  9.209601  3.273392e-20  6.546784e-19
+g1   22.476655       -0.143711  0.301071 -0.477333  6.331253e-01  9.030231e-01
+g2   21.267380       -0.165242  0.316079 -0.522788  6.011221e-01  9.030231e-01
+g3   19.144012       -0.012758  0.320981 -0.039747  9.682946e-01  9.975482e-01
+g4   17.781455       -0.049995  0.328238 -0.152313  8.789400e-01  9.766000e-01
+g5   18.849575        0.266320  0.317887  0.837781  4.021539e-01  9.030231e-01
+g6   16.267534        0.179332  0.332996  0.538540  5.902045e-01  9.030231e-01
+g7   21.691004        0.064307  0.308127  0.208704  8.346792e-01  9.766000e-01
+g8   20.002727       -0.135618  0.322035 -0.421128  6.736615e-01  9.030231e-01
+g9   21.328407       -0.297044  0.318707 -0.932027  3.513224e-01  9.030231e-01
+g10  24.664095        0.462972  0.302093  1.532548  1.253871e-01  7.634484e-01
+g11  18.779811       -0.135461  0.325475 -0.416195  6.772673e-01  9.030231e-01
+g12  21.548824        0.238818  0.306498  0.779182  4.358727e-01  9.030231e-01
+g13  19.103283       -0.545679  0.341935 -1.595857  1.105208e-01  7.634484e-01
+g14  20.073820       -0.289683  0.315916 -0.916962  3.591625e-01  9.030231e-01
+g15  20.682513        0.267058  0.306064  0.872556  3.829053e-01  9.030231e-01
+g16  20.411202       -0.106850  0.314214 -0.340055  7.338149e-01  9.172686e-01
+g17  18.042769        0.001035  0.336826  0.003073  9.975482e-01  9.975482e-01
+g18  18.802714        0.221267  0.316353  0.699431  4.842825e-01  9.030231e-01
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.01 seconds.
+
+g19  17.589121       -0.478397  0.334521 -1.430095  1.526897e-01  7.634484e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   64.293988        2.407731  0.271352  8.873090  7.114350e-19  1.422870e-17
+g1   22.387715       -0.207327  0.289547 -0.716040  4.739666e-01  9.370381e-01
+g2   19.940531        0.139183  0.306194  0.454559  6.494269e-01  9.370381e-01
+g3   19.474723       -0.022574  0.308682 -0.073131  9.417022e-01  9.709106e-01
+g4   18.981256       -0.011355  0.311379 -0.036466  9.709106e-01  9.709106e-01
+g5   19.407349        0.194150  0.310761  0.624756  5.321315e-01  9.370381e-01
+g6   16.684451        0.257354  0.327200  0.786534  4.315548e-01  9.370381e-01
+g7   21.450437        0.085755  0.301202  0.284711  7.758656e-01  9.370381e-01
+g8   19.108513       -0.221948  0.316248 -0.701817  4.827936e-01  9.370381e-01
+g9   20.420447       -0.469337  0.309302 -1.517405  1.291644e-01  9.370381e-01
+g10  23.393947        0.372416  0.310747  1.198453  2.307409e-01  9.370381e-01
+g11  16.828817       -0.232663  0.327876 -0.709606  4.779488e-01  9.370381e-01
+g12  20.870666        0.062315  0.306283  0.203455  8.387791e-01  9.370381e-01
+g13  18.341236        0.068937  0.327575  0.210447  8.333187e-01  9.370381e-01
+g14  19.734735       -0.171202  0.305142 -0.561055  5.747599e-01  9.370381e-01
+g15  22.326684        0.294410  0.296219  0.993891  3.202758e-01  9.370381e-01
+g16  18.680711       -0.115861  0.314118 -0.368844  7.122438e-01  9.370381e-01
+g17  16.282705        0.066515  0.336564  0.197630  8.433343e-01  9.370381e-01
+g18  18.457297        0.177040  0.314089  0.563662  5.729839e-01  9.370381e-01
+g19  17.258909       -0.451523  0.318065 -1.419593  1.557262e-01  9.370381e-01
+Fitting size factors...
+... done in 0.02 seconds.
+
+Fitting dispersions...
+... done in 0.96 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.17 seconds.
+
+Fitting MAP dispersions...
+... done in 1.27 seconds.
+
+Fitting LFCs...
+... done in 1.43 seconds.
+
+Calculating cook's distance...
+... done in 0.01 seconds.
+
+Replacing 13 outlier genes.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Running Wald tests...
+... done in 0.68 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.03 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.01 seconds.
+
+...Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition stim vs ctrl
+                baseMean  log2FoldChange  ...    pvalue      padj
+AL627309.1      0.189098       -1.434101  ...  0.470083       NaN
+RP11-206L10.2   0.210231       -1.530231  ...  0.498844       NaN
+LINC00115       2.816909       -0.669349  ...  0.156023  0.346604
+NOC2L          56.203949       -0.076405  ...  0.610823  0.791276
+KLHL17          0.734001       -1.362167  ...  0.172664       NaN
+...                  ...             ...  ...       ...       ...
+AP001437.1      0.403054        1.979020  ...  0.220532       NaN
+TMPRSS3         0.216910        1.614554  ...  0.473075       NaN
+AP001626.1      0.129118        1.088645  ...  0.656350       NaN
+AP001062.7      0.187672        1.256529  ...  0.583418       NaN
+LRRC3DN         0.281750        1.861111  ...  0.310590       NaN
+
+[14053 rows x 6 columns]
+INFO     Creating graph using `None` transform and `1` libraries.
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   58.713138        2.447571  0.257492  9.505427  1.992284e-21  3.984569e-20
+g1   22.151209       -0.133531  0.280869 -0.475422  6.344859e-01  8.390297e-01
+g2   21.513237       -0.079479  0.294348 -0.270017  7.871473e-01  8.390297e-01
+g3   19.214591        0.037900  0.297807  0.127265  8.987305e-01  8.987305e-01
+g4   18.414116        0.096784  0.303369  0.319032  7.497019e-01  8.390297e-01
+g5   18.923619        0.262545  0.299473  0.876692  3.806541e-01  8.390297e-01
+g6   16.656694        0.244021  0.310608  0.785622  4.320890e-01  8.390297e-01
+g7   21.593181        0.074105  0.288199  0.257130  7.970782e-01  8.390297e-01
+g8   19.273093       -0.198104  0.304845 -0.649852  5.157875e-01  8.390297e-01
+g9   20.287907       -0.378940  0.302378 -1.253198  2.101337e-01  8.390297e-01
+g10  23.553641        0.314915  0.296576  1.061837  2.883095e-01  8.390297e-01
+g11  17.519435       -0.288229  0.313769 -0.918605  3.583023e-01  8.390297e-01
+g12  20.573596        0.115189  0.295391  0.389954  6.965707e-01  8.390297e-01
+g13  20.353465       -0.210839  0.321446 -0.655906  5.118843e-01  8.390297e-01
+g14  20.203299       -0.193375  0.292226 -0.661731  5.081437e-01  8.390297e-01
+g15  21.606420        0.373979  0.285925  1.307962  1.908861e-01  8.390297e-01
+g16  19.528248       -0.202345  0.300144 -0.674160  5.002097e-01  8.390297e-01
+g17  17.286418       -0.091734  0.320596 -0.286137  7.747729e-01  8.390297e-01
+g18  18.456226        0.171498  0.299026  0.573524  5.662896e-01  8.390297e-01
+g19  17.393070       -0.398663  0.307634 -1.295899  1.950104e-01  8.390297e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   58.713138        2.447571  0.257492  9.505427  1.992284e-21  3.984569e-20
+g1   22.151209       -0.133531  0.280869 -0.475422  6.344859e-01  8.390297e-01
+g2   21.513237       -0.079479  0.294348 -0.270017  7.871473e-01  8.390297e-01
+g3   19.214591        0.037900  0.297807  0.127265  8.987305e-01  8.987305e-01
+g4   18.414116        0.096784  0.303369  0.319032  7.497019e-01  8.390297e-01
+g5   18.923619        0.262545  0.299473  0.876692  3.806541e-01  8.390297e-01
+g6   16.656694        0.244021  0.310608  0.785622  4.320890e-01  8.390297e-01
+g7   21.593181        0.074105  0.288199  0.257130  7.970782e-01  8.390297e-01
+g8   19.273093       -0.198104  0.304845 -0.649852  5.157875e-01  8.390297e-01
+g9   20.287907       -0.378940  0.302378 -1.253198  2.101337e-01  8.390297e-01
+g10  23.553641        0.314915  0.296576  1.061837  2.883095e-01  8.390297e-01
+g11  17.519435       -0.288229  0.313769 -0.918605  3.583023e-01  8.390297e-01
+g12  20.573596        0.115189  0.295391  0.389954  6.965707e-01  8.390297e-01
+g13  20.353465       -0.210839  0.321446 -0.655906  5.118843e-01  8.390297e-01
+g14  20.203299       -0.193375  0.292226 -0.661731  5.081437e-01  8.390297e-01
+g15  21.606420        0.373979  0.285925  1.307962  1.908861e-01  8.390297e-01
+g16  19.528248       -0.202345  0.300144 -0.674160  5.002097e-01  8.390297e-01
+g17  17.286418       -0.091734  0.320596 -0.286137  7.747729e-01  8.390297e-01
+g18  18.456226        0.171498  0.299026  0.573524  5.662896e-01  8.390297e-01
+g19  17.393070       -0.398663  0.307634 -1.295899  1.950104e-01  8.390297e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   64.622935        2.376692  0.306023  7.766397  8.075036e-15  1.615007e-13
+g1   21.961399       -0.138115  0.325614 -0.424168  6.714430e-01  8.571318e-01
+g2   21.750446       -0.140942  0.340336 -0.414127  6.787808e-01  8.571318e-01
+g3   18.762949        0.120748  0.347939  0.347039  7.285620e-01  8.571318e-01
+g4   18.632522        0.061565  0.350749  0.175525  8.606672e-01  8.721164e-01
+g5   19.336689        0.216714  0.345768  0.626761  5.308157e-01  8.571318e-01
+g6   17.150403        0.167145  0.354345  0.471701  6.371400e-01  8.571318e-01
+g7   22.508721       -0.069455  0.324615 -0.213961  8.305774e-01  8.721164e-01
+g8   18.911285       -0.184200  0.354152 -0.520114  6.029839e-01  8.571318e-01
+g9   19.031838       -0.252040  0.350813 -0.718446  4.724826e-01  8.571318e-01
+g10  24.233125        0.254463  0.347400  0.732479  4.638762e-01  8.571318e-01
+g11  17.328313       -0.310780  0.361953 -0.858619  3.905508e-01  8.571318e-01
+g12  20.540284        0.126672  0.344829  0.367346  7.133606e-01  8.571318e-01
+g13  20.430399       -0.266325  0.374608 -0.710944  4.771188e-01  8.571318e-01
+g14  20.532150       -0.285526  0.332603 -0.858460  3.906387e-01  8.571318e-01
+g15  21.740392        0.411181  0.335076  1.227126  2.197752e-01  8.571318e-01
+g16  19.478484       -0.239723  0.345968 -0.692904  4.883699e-01  8.571318e-01
+g17  16.413162        0.060238  0.374217  0.160971  8.721164e-01  8.721164e-01
+g18  18.409397        0.200959  0.347227  0.578753  5.627558e-01  8.571318e-01
+g19  16.938115       -0.387526  0.353213 -1.097145  2.725779e-01  8.571318e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   53.787226        2.462345  0.267367  9.209601  3.273392e-20  6.546784e-19
+g1   22.476655       -0.143711  0.301071 -0.477333  6.331253e-01  9.030231e-01
+g2   21.267380       -0.165242  0.316079 -0.522788  6.011221e-01  9.030231e-01
+g3   19.144012       -0.012758  0.320981 -0.039747  9.682946e-01  9.975482e-01
+g4   17.781455       -0.049995  0.328238 -0.152313  8.789400e-01  9.766000e-01
+g5   18.849575        0.266320  0.317887  0.837781  4.021539e-01  9.030231e-01
+g6   16.267534        0.179332  0.332996  0.538540  5.902045e-01  9.030231e-01
+g7   21.691004        0.064307  0.308127  0.208704  8.346792e-01  9.766000e-01
+g8   20.002727       -0.135618  0.322035 -0.421128  6.736615e-01  9.030231e-01
+g9   21.328407       -0.297044  0.318707 -0.932027  3.513224e-01  9.030231e-01
+g10  24.664095        0.462972  0.302093  1.532548  1.253871e-01  7.634484e-01
+g11  18.779811       -0.135461  0.325475 -0.416195  6.772673e-01  9.030231e-01
+g12  21.548824        0.238818  0.306498  0.779182  4.358727e-01  9.030231e-01
+g13  19.103283       -0.545679  0.341935 -1.595857  1.105208e-01  7.634484e-01
+g14  20.073820       -0.289683  0.315916 -0.916962  3.591625e-01  9.030231e-01
+g15  20.682513        0.267058  0.306064  0.872556  3.829053e-01  9.030231e-01
+g16  20.411202       -0.106850  0.314214 -0.340055  7.338149e-01  9.172686e-01
+g17  18.042769        0.001035  0.336826  0.003073  9.975482e-01  9.975482e-01
+g18  18.802714        0.221267  0.316353  0.699431  4.842825e-01  9.030231e-01
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+g19  17.589121       -0.478397  0.334521 -1.430095  1.526897e-01  7.634484e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   64.293988        2.407731  0.271352  8.873090  7.114350e-19  1.422870e-17
+g1   22.387715       -0.207327  0.289547 -0.716040  4.739666e-01  9.370381e-01
+g2   19.940531        0.139183  0.306194  0.454559  6.494269e-01  9.370381e-01
+g3   19.474723       -0.022574  0.308682 -0.073131  9.417022e-01  9.709106e-01
+g4   18.981256       -0.011355  0.311379 -0.036466  9.709106e-01  9.709106e-01
+g5   19.407349        0.194150  0.310761  0.624756  5.321315e-01  9.370381e-01
+g6   16.684451        0.257354  0.327200  0.786534  4.315548e-01  9.370381e-01
+g7   21.450437        0.085755  0.301202  0.284711  7.758656e-01  9.370381e-01
+g8   19.108513       -0.221948  0.316248 -0.701817  4.827936e-01  9.370381e-01
+g9   20.420447       -0.469337  0.309302 -1.517405  1.291644e-01  9.370381e-01
+g10  23.393947        0.372416  0.310747  1.198453  2.307409e-01  9.370381e-01
+g11  16.828817       -0.232663  0.327876 -0.709606  4.779488e-01  9.370381e-01
+g12  20.870666        0.062315  0.306283  0.203455  8.387791e-01  9.370381e-01
+g13  18.341236        0.068937  0.327575  0.210447  8.333187e-01  9.370381e-01
+g14  19.734735       -0.171202  0.305142 -0.561055  5.747599e-01  9.370381e-01
+g15  22.326684        0.294410  0.296219  0.993891  3.202758e-01  9.370381e-01
+g16  18.680711       -0.115861  0.314118 -0.368844  7.122438e-01  9.370381e-01
+g17  16.282705        0.066515  0.336564  0.197630  8.433343e-01  9.370381e-01
+g18  18.457297        0.177040  0.314089  0.563662  5.729839e-01  9.370381e-01
+g19  17.258909       -0.451523  0.318065 -1.419593  1.557262e-01  9.370381e-01
+.                         [ 14%]
+tests\unit\test_capabilities.py ........                                 [ 14%]
+tests\unit\test_causal_dag.py ............                               [ 15%]
+tests\unit\test_certification.py .........                               [ 16%]
+tests\unit\test_claim_checker.py .......                                 [ 16%]
+tests\unit\test_claim_semantics.py ...............                       [ 18%]
+tests\unit\test_clean_install_and_namespace.py ...                       [ 18%]
+tests\unit\test_cli.py ...........                                       [ 19%]
+tests\unit\test_cli_lab_boundaries.py .....                              [ 19%]
+tests\unit\test_clinical_cohort.py ....                                  [ 19%]
+tests\unit\test_closed_loop_perturbation_niche.py [unit-test-heartbeat] elapsed=150s completed=258/1299 current=tests/unit/test_closed_loop_perturbation_niche.py::test_gears_fail_closed_refusal_when_backend_missing
+............           [ 20%]
+tests\unit\test_cluster_profile.py ....                                  [ 21%]
+tests\unit\test_compliance_ledger.py ...                                 [ 21%]
+tests\unit\test_connector_profile.py .....                               [ 21%]
+tests\unit\test_connector_profiles.py ....                               [ 22%]
+tests\unit\test_contract_traceability.py ......                          [ 22%]
+tests\unit\test_cross_host_conformance.py ........................       [ 24%]
+tests\unit\test_cryptographic_verifier.py ..................             [ 25%]
+tests\unit\test_doctor.py ..                                             [ 25%]
+tests\unit\test_ecosystem_claim.py .........                             [ 26%]
+tests\unit\test_ecosystem_fixtures.py ...                                [ 26%]
+tests\unit\test_ecosystem_intake.py ..........                           [ 27%]
+tests\unit\test_egress_guard.py ........{
+  "mode": "ALLOWLIST",
+  "audit_log_path": "logs\\egress_audit.jsonl",
+  "approved_domains_count": 38,
+  "approved_domains": [
+    "alphafold.ebi.ac.uk",
+    "api.biorxiv.org",
+    "api.crossref.org",
+    "api.github.com",
+    "api.openalex.org",
+    "api.opentargets.io",
+    "api.platform.opentargets.org",
+    "api.semanticscholar.org",
+    "cancer.sanger.ac.uk",
+    "cf.10xgenomics.com",
+    "clinicaltrials.gov",
+    "connector.scholargateway.ai",
+    "data.rcsb.org",
+    "eutils.ncbi.nlm.nih.gov",
+    "files.rcsb.org",
+    "ftp.ncbi.nlm.nih.gov",
+    "gnomad.broadinstitute.org",
+    "gtexportal.org",
+    "hcls.mcp.claude.com",
+    "hub.docker.com",
+    "huggingface.co",
+    "mcp.consensus.app",
+    "mcp.platform.opentargets.org",
+    "nf-co.re",
+    "platform.opentargets.org",
+    "pubmed.mcp.claude.com",
+    "pubmed.ncbi.nlm.nih.gov",
+    "raw.githubusercontent.com",
+    "reactome.org",
+    "rest.ensembl.org",
+    "rest.uniprot.org",
+    "search.rcsb.org",
+    "string-db.org",
+    "www.ebi.ac.uk",
+    "www.ncbi.nlm.nih.gov",
+    "www.rcsb.org",
+    "www.uniprot.org",
+    "zenodo.org"
+  ]
+}
+[OK] Generated CycloneDX SBOM (44 components) -> C:\Plugin\BioNexus\.codex-p0-integration\.pytest-tmp-full-p0-complete\test_cli_security_egress_polic0\test_sbom.json
+.                                [ 28%]
+tests\unit\test_empirical_warrant_engine.py .............                [ 29%]
+tests\unit\test_epistemic_calibration.py ...                             [ 29%]
+tests\unit\test_epistemic_lineage.py ..............                      [ 30%]
+Fitting size factors...
+... done in 0.01 seconds.
+
+Fitting dispersions...
+... done in 1.07 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.24 seconds.
+
+Fitting MAP dispersions...
+... done in 1.26 seconds.
+
+Fitting LFCs...
+... done in 0.75 seconds.
+
+Calculating cook's distance...
+... done in 0.01 seconds.
+
+Replacing 13 outlier genes.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Running Wald tests...
+... done in 0.55 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.01 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.01 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.01 seconds.
+
+tests\unit\test_eval_harness.py ..Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition stim vs ctrl
+                baseMean  log2FoldChange  ...    pvalue      padj
+AL627309.1      0.189098       -1.434101  ...  0.470083       NaN
+RP11-206L10.2   0.210231       -1.530231  ...  0.498844       NaN
+LINC00115       2.816909       -0.669349  ...  0.156023  0.346604
+NOC2L          56.203949       -0.076405  ...  0.610823  0.791276
+KLHL17          0.734001       -1.362167  ...  0.172664       NaN
+...                  ...             ...  ...       ...       ...
+AP001437.1      0.403054        1.979020  ...  0.220532       NaN
+TMPRSS3         0.216910        1.614554  ...  0.473075       NaN
+AP001626.1      0.129118        1.088645  ...  0.656350       NaN
+AP001062.7      0.187672        1.256529  ...  0.583418       NaN
+LRRC3DN         0.281750        1.861111  ...  0.310590       NaN
+
+[14053 rows x 6 columns]
+INFO     Creating graph using `None` transform and `1` libraries.
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   58.713138        2.447571  0.257492  9.505427  1.992284e-21  3.984569e-20
+g1   22.151209       -0.133531  0.280869 -0.475422  6.344859e-01  8.390297e-01
+g2   21.513237       -0.079479  0.294348 -0.270017  7.871473e-01  8.390297e-01
+g3   19.214591        0.037900  0.297807  0.127265  8.987305e-01  8.987305e-01
+g4   18.414116        0.096784  0.303369  0.319032  7.497019e-01  8.390297e-01
+g5   18.923619        0.262545  0.299473  0.876692  3.806541e-01  8.390297e-01
+g6   16.656694        0.244021  0.310608  0.785622  4.320890e-01  8.390297e-01
+g7   21.593181        0.074105  0.288199  0.257130  7.970782e-01  8.390297e-01
+g8   19.273093       -0.198104  0.304845 -0.649852  5.157875e-01  8.390297e-01
+g9   20.287907       -0.378940  0.302378 -1.253198  2.101337e-01  8.390297e-01
+g10  23.553641        0.314915  0.296576  1.061837  2.883095e-01  8.390297e-01
+g11  17.519435       -0.288229  0.313769 -0.918605  3.583023e-01  8.390297e-01
+g12  20.573596        0.115189  0.295391  0.389954  6.965707e-01  8.390297e-01
+g13  20.353465       -0.210839  0.321446 -0.655906  5.118843e-01  8.390297e-01
+g14  20.203299       -0.193375  0.292226 -0.661731  5.081437e-01  8.390297e-01
+g15  21.606420        0.373979  0.285925  1.307962  1.908861e-01  8.390297e-01
+g16  19.528248       -0.202345  0.300144 -0.674160  5.002097e-01  8.390297e-01
+g17  17.286418       -0.091734  0.320596 -0.286137  7.747729e-01  8.390297e-01
+g18  18.456226        0.171498  0.299026  0.573524  5.662896e-01  8.390297e-01
+g19  17.393070       -0.398663  0.307634 -1.295899  1.950104e-01  8.390297e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   58.713138        2.447571  0.257492  9.505427  1.992284e-21  3.984569e-20
+g1   22.151209       -0.133531  0.280869 -0.475422  6.344859e-01  8.390297e-01
+g2   21.513237       -0.079479  0.294348 -0.270017  7.871473e-01  8.390297e-01
+g3   19.214591        0.037900  0.297807  0.127265  8.987305e-01  8.987305e-01
+g4   18.414116        0.096784  0.303369  0.319032  7.497019e-01  8.390297e-01
+g5   18.923619        0.262545  0.299473  0.876692  3.806541e-01  8.390297e-01
+g6   16.656694        0.244021  0.310608  0.785622  4.320890e-01  8.390297e-01
+g7   21.593181        0.074105  0.288199  0.257130  7.970782e-01  8.390297e-01
+g8   19.273093       -0.198104  0.304845 -0.649852  5.157875e-01  8.390297e-01
+g9   20.287907       -0.378940  0.302378 -1.253198  2.101337e-01  8.390297e-01
+g10  23.553641        0.314915  0.296576  1.061837  2.883095e-01  8.390297e-01
+g11  17.519435       -0.288229  0.313769 -0.918605  3.583023e-01  8.390297e-01
+g12  20.573596        0.115189  0.295391  0.389954  6.965707e-01  8.390297e-01
+g13  20.353465       -0.210839  0.321446 -0.655906  5.118843e-01  8.390297e-01
+g14  20.203299       -0.193375  0.292226 -0.661731  5.081437e-01  8.390297e-01
+g15  21.606420        0.373979  0.285925  1.307962  1.908861e-01  8.390297e-01
+g16  19.528248       -0.202345  0.300144 -0.674160  5.002097e-01  8.390297e-01
+g17  17.286418       -0.091734  0.320596 -0.286137  7.747729e-01  8.390297e-01
+g18  18.456226        0.171498  0.299026  0.573524  5.662896e-01  8.390297e-01
+g19  17.393070       -0.398663  0.307634 -1.295899  1.950104e-01  8.390297e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   64.622935        2.376692  0.306023  7.766397  8.075036e-15  1.615007e-13
+g1   21.961399       -0.138115  0.325614 -0.424168  6.714430e-01  8.571318e-01
+g2   21.750446       -0.140942  0.340336 -0.414127  6.787808e-01  8.571318e-01
+g3   18.762949        0.120748  0.347939  0.347039  7.285620e-01  8.571318e-01
+g4   18.632522        0.061565  0.350749  0.175525  8.606672e-01  8.721164e-01
+g5   19.336689        0.216714  0.345768  0.626761  5.308157e-01  8.571318e-01
+g6   17.150403        0.167145  0.354345  0.471701  6.371400e-01  8.571318e-01
+g7   22.508721       -0.069455  0.324615 -0.213961  8.305774e-01  8.721164e-01
+g8   18.911285       -0.184200  0.354152 -0.520114  6.029839e-01  8.571318e-01
+g9   19.031838       -0.252040  0.350813 -0.718446  4.724826e-01  8.571318e-01
+g10  24.233125        0.254463  0.347400  0.732479  4.638762e-01  8.571318e-01
+g11  17.328313       -0.310780  0.361953 -0.858619  3.905508e-01  8.571318e-01
+g12  20.540284        0.126672  0.344829  0.367346  7.133606e-01  8.571318e-01
+g13  20.430399       -0.266325  0.374608 -0.710944  4.771188e-01  8.571318e-01
+g14  20.532150       -0.285526  0.332603 -0.858460  3.906387e-01  8.571318e-01
+g15  21.740392        0.411181  0.335076  1.227126  2.197752e-01  8.571318e-01
+g16  19.478484       -0.239723  0.345968 -0.692904  4.883699e-01  8.571318e-01
+g17  16.413162        0.060238  0.374217  0.160971  8.721164e-01  8.721164e-01
+g18  18.409397        0.200959  0.347227  0.578753  5.627558e-01  8.571318e-01
+g19  16.938115       -0.387526  0.353213 -1.097145  2.725779e-01  8.571318e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   53.787226        2.462345  0.267367  9.209601  3.273392e-20  6.546784e-19
+g1   22.476655       -0.143711  0.301071 -0.477333  6.331253e-01  9.030231e-01
+g2   21.267380       -0.165242  0.316079 -0.522788  6.011221e-01  9.030231e-01
+g3   19.144012       -0.012758  0.320981 -0.039747  9.682946e-01  9.975482e-01
+g4   17.781455       -0.049995  0.328238 -0.152313  8.789400e-01  9.766000e-01
+g5   18.849575        0.266320  0.317887  0.837781  4.021539e-01  9.030231e-01
+g6   16.267534        0.179332  0.332996  0.538540  5.902045e-01  9.030231e-01
+g7   21.691004        0.064307  0.308127  0.208704  8.346792e-01  9.766000e-01
+g8   20.002727       -0.135618  0.322035 -0.421128  6.736615e-01  9.030231e-01
+g9   21.328407       -0.297044  0.318707 -0.932027  3.513224e-01  9.030231e-01
+g10  24.664095        0.462972  0.302093  1.532548  1.253871e-01  7.634484e-01
+g11  18.779811       -0.135461  0.325475 -0.416195  6.772673e-01  9.030231e-01
+g12  21.548824        0.238818  0.306498  0.779182  4.358727e-01  9.030231e-01
+g13  19.103283       -0.545679  0.341935 -1.595857  1.105208e-01  7.634484e-01
+g14  20.073820       -0.289683  0.315916 -0.916962  3.591625e-01  9.030231e-01
+g15  20.682513        0.267058  0.306064  0.872556  3.829053e-01  9.030231e-01
+g16  20.411202       -0.106850  0.314214 -0.340055  7.338149e-01  9.172686e-01
+g17  18.042769        0.001035  0.336826  0.003073  9.975482e-01  9.975482e-01
+g18  18.802714        0.221267  0.316353  0.699431  4.842825e-01  9.030231e-01
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.01 seconds.
+
+g19  17.589121       -0.478397  0.334521 -1.430095  1.526897e-01  7.634484e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   64.293988        2.407731  0.271352  8.873090  7.114350e-19  1.422870e-17
+g1   22.387715       -0.207327  0.289547 -0.716040  4.739666e-01  9.370381e-01
+g2   19.940531        0.139183  0.306194  0.454559  6.494269e-01  9.370381e-01
+g3   19.474723       -0.022574  0.308682 -0.073131  9.417022e-01  9.709106e-01
+g4   18.981256       -0.011355  0.311379 -0.036466  9.709106e-01  9.709106e-01
+g5   19.407349        0.194150  0.310761  0.624756  5.321315e-01  9.370381e-01
+g6   16.684451        0.257354  0.327200  0.786534  4.315548e-01  9.370381e-01
+g7   21.450437        0.085755  0.301202  0.284711  7.758656e-01  9.370381e-01
+g8   19.108513       -0.221948  0.316248 -0.701817  4.827936e-01  9.370381e-01
+g9   20.420447       -0.469337  0.309302 -1.517405  1.291644e-01  9.370381e-01
+g10  23.393947        0.372416  0.310747  1.198453  2.307409e-01  9.370381e-01
+g11  16.828817       -0.232663  0.327876 -0.709606  4.779488e-01  9.370381e-01
+g12  20.870666        0.062315  0.306283  0.203455  8.387791e-01  9.370381e-01
+g13  18.341236        0.068937  0.327575  0.210447  8.333187e-01  9.370381e-01
+g14  19.734735       -0.171202  0.305142 -0.561055  5.747599e-01  9.370381e-01
+g15  22.326684        0.294410  0.296219  0.993891  3.202758e-01  9.370381e-01
+g16  18.680711       -0.115861  0.314118 -0.368844  7.122438e-01  9.370381e-01
+g17  16.282705        0.066515  0.336564  0.197630  8.433343e-01  9.370381e-01
+g18  18.457297        0.177040  0.314089  0.563662  5.729839e-01  9.370381e-01
+g19  17.258909       -0.451523  0.318065 -1.419593  1.557262e-01  9.370381e-01
+Fitting size factors...
+... done in 0.01 seconds.
+
+Fitting dispersions...
+... done in 0.99 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.17 seconds.
+
+Fitting MAP dispersions...
+... done in 1.13 seconds.
+
+Fitting LFCs...
+... done in 1.51 seconds.
+
+Calculating cook's distance...
+... done in 0.01 seconds.
+
+Replacing 13 outlier genes.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Running Wald tests...
+... done in 0.61 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.02 seconds.
+
+Fitting LFCs...
+... done in 0.02 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.02 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.01 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+.....Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition stim vs ctrl
+                baseMean  log2FoldChange  ...    pvalue      padj
+AL627309.1      0.189098       -1.434101  ...  0.470083       NaN
+RP11-206L10.2   0.210231       -1.530231  ...  0.498844       NaN
+LINC00115       2.816909       -0.669349  ...  0.156023  0.346604
+NOC2L          56.203949       -0.076405  ...  0.610823  0.791276
+KLHL17          0.734001       -1.362167  ...  0.172664       NaN
+...                  ...             ...  ...       ...       ...
+AP001437.1      0.403054        1.979020  ...  0.220532       NaN
+TMPRSS3         0.216910        1.614554  ...  0.473075       NaN
+AP001626.1      0.129118        1.088645  ...  0.656350       NaN
+AP001062.7      0.187672        1.256529  ...  0.583418       NaN
+LRRC3DN         0.281750        1.861111  ...  0.310590       NaN
+
+[14053 rows x 6 columns]
+INFO     Creating graph using `None` transform and `1` libraries.
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   58.713138        2.447571  0.257492  9.505427  1.992284e-21  3.984569e-20
+g1   22.151209       -0.133531  0.280869 -0.475422  6.344859e-01  8.390297e-01
+g2   21.513237       -0.079479  0.294348 -0.270017  7.871473e-01  8.390297e-01
+g3   19.214591        0.037900  0.297807  0.127265  8.987305e-01  8.987305e-01
+g4   18.414116        0.096784  0.303369  0.319032  7.497019e-01  8.390297e-01
+g5   18.923619        0.262545  0.299473  0.876692  3.806541e-01  8.390297e-01
+g6   16.656694        0.244021  0.310608  0.785622  4.320890e-01  8.390297e-01
+g7   21.593181        0.074105  0.288199  0.257130  7.970782e-01  8.390297e-01
+g8   19.273093       -0.198104  0.304845 -0.649852  5.157875e-01  8.390297e-01
+g9   20.287907       -0.378940  0.302378 -1.253198  2.101337e-01  8.390297e-01
+g10  23.553641        0.314915  0.296576  1.061837  2.883095e-01  8.390297e-01
+g11  17.519435       -0.288229  0.313769 -0.918605  3.583023e-01  8.390297e-01
+g12  20.573596        0.115189  0.295391  0.389954  6.965707e-01  8.390297e-01
+g13  20.353465       -0.210839  0.321446 -0.655906  5.118843e-01  8.390297e-01
+g14  20.203299       -0.193375  0.292226 -0.661731  5.081437e-01  8.390297e-01
+g15  21.606420        0.373979  0.285925  1.307962  1.908861e-01  8.390297e-01
+g16  19.528248       -0.202345  0.300144 -0.674160  5.002097e-01  8.390297e-01
+g17  17.286418       -0.091734  0.320596 -0.286137  7.747729e-01  8.390297e-01
+g18  18.456226        0.171498  0.299026  0.573524  5.662896e-01  8.390297e-01
+g19  17.393070       -0.398663  0.307634 -1.295899  1.950104e-01  8.390297e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   58.713138        2.447571  0.257492  9.505427  1.992284e-21  3.984569e-20
+g1   22.151209       -0.133531  0.280869 -0.475422  6.344859e-01  8.390297e-01
+g2   21.513237       -0.079479  0.294348 -0.270017  7.871473e-01  8.390297e-01
+g3   19.214591        0.037900  0.297807  0.127265  8.987305e-01  8.987305e-01
+g4   18.414116        0.096784  0.303369  0.319032  7.497019e-01  8.390297e-01
+g5   18.923619        0.262545  0.299473  0.876692  3.806541e-01  8.390297e-01
+g6   16.656694        0.244021  0.310608  0.785622  4.320890e-01  8.390297e-01
+g7   21.593181        0.074105  0.288199  0.257130  7.970782e-01  8.390297e-01
+g8   19.273093       -0.198104  0.304845 -0.649852  5.157875e-01  8.390297e-01
+g9   20.287907       -0.378940  0.302378 -1.253198  2.101337e-01  8.390297e-01
+g10  23.553641        0.314915  0.296576  1.061837  2.883095e-01  8.390297e-01
+g11  17.519435       -0.288229  0.313769 -0.918605  3.583023e-01  8.390297e-01
+g12  20.573596        0.115189  0.295391  0.389954  6.965707e-01  8.390297e-01
+g13  20.353465       -0.210839  0.321446 -0.655906  5.118843e-01  8.390297e-01
+g14  20.203299       -0.193375  0.292226 -0.661731  5.081437e-01  8.390297e-01
+g15  21.606420        0.373979  0.285925  1.307962  1.908861e-01  8.390297e-01
+g16  19.528248       -0.202345  0.300144 -0.674160  5.002097e-01  8.390297e-01
+g17  17.286418       -0.091734  0.320596 -0.286137  7.747729e-01  8.390297e-01
+g18  18.456226        0.171498  0.299026  0.573524  5.662896e-01  8.390297e-01
+g19  17.393070       -0.398663  0.307634 -1.295899  1.950104e-01  8.390297e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   64.622935        2.376692  0.306023  7.766397  8.075036e-15  1.615007e-13
+g1   21.961399       -0.138115  0.325614 -0.424168  6.714430e-01  8.571318e-01
+g2   21.750446       -0.140942  0.340336 -0.414127  6.787808e-01  8.571318e-01
+g3   18.762949        0.120748  0.347939  0.347039  7.285620e-01  8.571318e-01
+g4   18.632522        0.061565  0.350749  0.175525  8.606672e-01  8.721164e-01
+g5   19.336689        0.216714  0.345768  0.626761  5.308157e-01  8.571318e-01
+g6   17.150403        0.167145  0.354345  0.471701  6.371400e-01  8.571318e-01
+g7   22.508721       -0.069455  0.324615 -0.213961  8.305774e-01  8.721164e-01
+g8   18.911285       -0.184200  0.354152 -0.520114  6.029839e-01  8.571318e-01
+g9   19.031838       -0.252040  0.350813 -0.718446  4.724826e-01  8.571318e-01
+g10  24.233125        0.254463  0.347400  0.732479  4.638762e-01  8.571318e-01
+g11  17.328313       -0.310780  0.361953 -0.858619  3.905508e-01  8.571318e-01
+g12  20.540284        0.126672  0.344829  0.367346  7.133606e-01  8.571318e-01
+g13  20.430399       -0.266325  0.374608 -0.710944  4.771188e-01  8.571318e-01
+g14  20.532150       -0.285526  0.332603 -0.858460  3.906387e-01  8.571318e-01
+g15  21.740392        0.411181  0.335076  1.227126  2.197752e-01  8.571318e-01
+g16  19.478484       -0.239723  0.345968 -0.692904  4.883699e-01  8.571318e-01
+g17  16.413162        0.060238  0.374217  0.160971  8.721164e-01  8.721164e-01
+g18  18.409397        0.200959  0.347227  0.578753  5.627558e-01  8.571318e-01
+g19  16.938115       -0.387526  0.353213 -1.097145  2.725779e-01  8.571318e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   53.787226        2.462345  0.267367  9.209601  3.273392e-20  6.546784e-19
+g1   22.476655       -0.143711  0.301071 -0.477333  6.331253e-01  9.030231e-01
+g2   21.267380       -0.165242  0.316079 -0.522788  6.011221e-01  9.030231e-01
+g3   19.144012       -0.012758  0.320981 -0.039747  9.682946e-01  9.975482e-01
+g4   17.781455       -0.049995  0.328238 -0.152313  8.789400e-01  9.766000e-01
+g5   18.849575        0.266320  0.317887  0.837781  4.021539e-01  9.030231e-01
+g6   16.267534        0.179332  0.332996  0.538540  5.902045e-01  9.030231e-01
+g7   21.691004        0.064307  0.308127  0.208704  8.346792e-01  9.766000e-01
+g8   20.002727       -0.135618  0.322035 -0.421128  6.736615e-01  9.030231e-01
+g9   21.328407       -0.297044  0.318707 -0.932027  3.513224e-01  9.030231e-01
+g10  24.664095        0.462972  0.302093  1.532548  1.253871e-01  7.634484e-01
+g11  18.779811       -0.135461  0.325475 -0.416195  6.772673e-01  9.030231e-01
+g12  21.548824        0.238818  0.306498  0.779182  4.358727e-01  9.030231e-01
+g13  19.103283       -0.545679  0.341935 -1.595857  1.105208e-01  7.634484e-01
+g14  20.073820       -0.289683  0.315916 -0.916962  3.591625e-01  9.030231e-01
+g15  20.682513        0.267058  0.306064  0.872556  3.829053e-01  9.030231e-01
+g16  20.411202       -0.106850  0.314214 -0.340055  7.338149e-01  9.172686e-01
+g17  18.042769        0.001035  0.336826  0.003073  9.975482e-01  9.975482e-01
+g18  18.802714        0.221267  0.316353  0.699431  4.842825e-01  9.030231e-01
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.02 seconds.
+
+g19  17.589121       -0.478397  0.334521 -1.430095  1.526897e-01  7.634484e-01
+Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   64.293988        2.407731  0.271352  8.873090  7.114350e-19  1.422870e-17
+g1   22.387715       -0.207327  0.289547 -0.716040  4.739666e-01  9.370381e-01
+g2   19.940531        0.139183  0.306194  0.454559  6.494269e-01  9.370381e-01
+g3   19.474723       -0.022574  0.308682 -0.073131  9.417022e-01  9.709106e-01
+g4   18.981256       -0.011355  0.311379 -0.036466  9.709106e-01  9.709106e-01
+g5   19.407349        0.194150  0.310761  0.624756  5.321315e-01  9.370381e-01
+g6   16.684451        0.257354  0.327200  0.786534  4.315548e-01  9.370381e-01
+g7   21.450437        0.085755  0.301202  0.284711  7.758656e-01  9.370381e-01
+g8   19.108513       -0.221948  0.316248 -0.701817  4.827936e-01  9.370381e-01
+g9   20.420447       -0.469337  0.309302 -1.517405  1.291644e-01  9.370381e-01
+g10  23.393947        0.372416  0.310747  1.198453  2.307409e-01  9.370381e-01
+g11  16.828817       -0.232663  0.327876 -0.709606  4.779488e-01  9.370381e-01
+g12  20.870666        0.062315  0.306283  0.203455  8.387791e-01  9.370381e-01
+g13  18.341236        0.068937  0.327575  0.210447  8.333187e-01  9.370381e-01
+g14  19.734735       -0.171202  0.305142 -0.561055  5.747599e-01  9.370381e-01
+g15  22.326684        0.294410  0.296219  0.993891  3.202758e-01  9.370381e-01
+g16  18.680711       -0.115861  0.314118 -0.368844  7.122438e-01  9.370381e-01
+g17  16.282705        0.066515  0.336564  0.197630  8.433343e-01  9.370381e-01
+g18  18.457297        0.177040  0.314089  0.563662  5.729839e-01  9.370381e-01
+g19  17.258909       -0.451523  0.318065 -1.419593  1.557262e-01  9.370381e-01
+...                               [ 31%]
+tests\unit\test_eval_receipt.py ....[unit-test-heartbeat] elapsed=180s completed=411/1299 current=tests/unit/test_eval_receipt.py::test_case_digest_changes_change_event_hash
+.........                            [ 32%]
+tests\unit\test_eval_receipt_integration.py .                            [ 32%]
+tests\unit\test_evaluation_contract.py .....                             [ 32%]
+tests\unit\test_evidence_card.py ............                            [ 33%]
+tests\unit\test_evidence_debt.py ..........                              [ 34%]
+tests\unit\test_evidence_model.py ...................................... [ 37%]
+......                                                                   [ 37%]
+tests\unit\test_experiment_design.py ....                                [ 38%]
+tests\unit\test_failclosed.py ...........                                [ 39%]
+tests\unit\test_failure_taxonomy.py ........                             [ 39%]
+tests\unit\test_flagship_capabilities.py ......................          [ 41%]
+tests\unit\test_flagship_downloader.py .                                 [ 41%]
+tests\unit\test_frontier_routing_disambiguation.py ..........            [ 42%]
+Fitting size factors...
+... done in 0.00 seconds.
+
+Fitting dispersions...
+... done in 0.01 seconds.
+
+Fitting dispersion trend curve...
+... done in 0.00 seconds.
+
+Fitting MAP dispersions...
+... done in 0.01 seconds.
+
+Fitting LFCs...
+... done in 0.01 seconds.
+
+Calculating cook's distance...
+... done in 0.00 seconds.
+
+Replacing 0 outlier genes.
+
+Running Wald tests...
+... done in 0.01 seconds.
+
+tests\unit\test_gold_wrappers.py ....Using None as control genes, passed at DeseqDataSet initialization
+Log2 fold change & Wald test p-value: condition B vs A
+      baseMean  log2FoldChange     lfcSE      stat        pvalue          padj
+g0   58.713138        2.447571  0.257492  9.505427  1.992284e-21  3.984569e-20
+g1   22.151209       -0.133531  0.280869 -0.475422  6.344859e-01  8.390297e-01
+g2   21.513237       -0.079479  0.294348 -0.270017  7.871473e-01  8.390297e-01
+g3   19.214591        0.037900  0.297807  0.127265  8.987305e-01  8.987305e-01
+g4   18.414116        0.096784  0.303369  0.319032  7.497019e-01  8.390297e-01
+g5   18.923619        0.262545  0.299473  0.876692  3.806541e-01  8.390297e-01
+g6   16.656694        0.244021  0.310608  0.785622  4.320890e-01  8.390297e-01
+g7   21.593181        0.074105  0.288199  0.257130  7.970782e-01  8.390297e-01
+g8   19.273093       -0.198104  0.304845 -0.649852  5.157875e-01  8.390297e-01
+g9   20.287907       -0.378940  0.302378 -1.253198  2.101337e-01  8.390297e-01
+g10  23.553641        0.314915  0.296576  1.061837  2.883095e-01  8.390297e-01
+g11  17.519435       -0.288229  0.313769 -0.918605  3.583023e-01  8.390297e-01
+g12  20.573596        0.115189  0.295391  0.389954  6.965707e-01  8.390297e-01
+g13  20.353465       -0.210839  0.321446 -0.655906  5.118843e-01  8.390297e-01
+g14  20.203299       -0.193375  0.292226 -0.661731  5.081437e-01  8.390297e-01
+g15  21.606420        0.373979  0.285925  1.307962  1.908861e-01  8.390297e-01
+g16  19.528248       -0.202345  0.300144 -0.674160  5.002097e-01  8.390297e-01
+g17  17.286418       -0.091734  0.320596 -0.286137  7.747729e-01  8.390297e-01
+g18  18.456226        0.171498  0.299026  0.573524  5.662896e-01  8.390297e-01
+g19  17.393070       -0.398663  0.307634 -1.295899  1.950104e-01  8.390297e-01
+WARNING: Please specify a valid `library_id` or set it permanently in `adata.uns['spatial']`
+...                                 [ 42%]
+tests\unit\test_golden_biology.py .....                                  [ 43%]
+tests\unit\test_guard.py .....                                           [ 43%]
+tests\unit\test_handoff_and_gate.py ...                                  [ 43%]
+tests\unit\test_host_eval.py ...                                         [ 43%]
+tests\unit\test_hpc_cluster.py ...........                               [ 44%]
+tests\unit\test_human_adjudication.py ......                             [ 45%]
+tests\unit\test_independent_pseudobulk.py .............                  [ 46%]
+tests\unit\test_independent_validation_network.py ...................... [ 47%]
+.......................                                                  [ 49%]
+tests\unit\test_instrument_gateway.py .....                              [ 50%]
+tests\unit\test_intent_router.py ......                                  [ 50%]
+tests\unit\test_interop.py ............                                  [ 51%]
+tests\unit\test_ivn.py .........[OK] IVN Public Evidence Ledger built successfully: C:\Plugin\BioNexus\.codex-p0-integration\.pytest-tmp-full-p0-complete\test_cli_build_ledger_executio0\ledger.html (72371 bytes)
+.                                        [ 52%]
+tests\unit\test_kernel_and_honesty.py ............                       [ 53%]
+tests\unit\test_knowledge_graph.py ...                                   [ 53%]
+tests\unit\test_lab_policy.py ..............                             [ 54%]
+tests\unit\test_ledger.py ...........                                    [ 55%]
+tests\unit\test_lims_hub.py .......                                      [ 55%]
+tests\unit\test_local_cache.py ......                                    [ 56%]
+tests\unit\test_mcp_host_audit.py .....                                  [ 56%]
+tests\unit\test_mcp_server.py ...............                            [ 57%]
+tests\unit\test_mcp_server_extended.py .........                         [ 58%]
+tests\unit\test_mcp_warrant_gate.py .....                                [ 58%]
+tests\unit\test_multiome_integration.py .....                            [ 59%]
+tests\unit\test_nextflow_bridge.py ..........[OK] Nextflow tool receipt written to: C:\Plugin\BioNexus\.codex-p0-integration\.pytest-tmp-full-p0-complete\test_cli_nextflow_ingest0\out_receipt.json
+...                         [ 60%]
+tests\unit\test_nextflow_preflight.py ....                               [ 60%]
+tests\unit\test_p0_evidence_consistency.py ..........................    [ 62%]
+tests\unit\test_parse_checkpointing.py ....                              [ 62%]
+tests\unit\test_patient_safety_invariants.py ..........                  [ 63%]
+tests\unit\test_phase1_safety_closure.py ..........                      [ 64%]
+tests\unit\test_phase2_flagship_evidence.py ...........                  [ 65%]
+tests\unit\test_preflight.py .......usage: bionexus preflight [-h] [--intent INTENT] [--query QUERY]
+                          [--metadata METADATA]
+                          [--claim-maturity CLAIM_MATURITY]
+                          [--external-validation] [--allow-degraded]
+                          [--allow-frontier] [--json]
+                          [data]
+
+positional arguments:
+  data                  Optional path to data file (.h5ad)
+
+options:
+  -h, --help            show this help message and exit
+  --intent INTENT       Analytical intent (e.g. differential-expression,
+                        clustering, annotation-evidence, spatial-inference-
+                        validity)
+  --query QUERY         Optional free-text analysis request (routed as-is)
+  --metadata METADATA   Path to input metadata JSON (replicates, namespaces,
+                        ...)
+  --claim-maturity CLAIM_MATURITY
+                        Maturity the host intends to claim (ceiling audit)
+  --external-validation
+                        External (orthogonal) validation evidence exists
+  --allow-degraded      Consent to Grade C degradation
+  --allow-frontier      Explicit opt-in to execute experimental frontier
+                        capabilities
+  --json                Output preflight report as JSON
+.                                    [ 65%]
+tests\unit\test_private_llm_provider.py ..                               [ 66%]
+tests\unit\test_product_matrix.py ....                                   [ 66%]
+tests\unit\test_protein_language_models.py ..                            [ 66%]
+tests\unit\test_protein_structure.py .......                             [ 67%]
+tests\unit\test_provenance_tracker.py .FAIR Provenance manifest saved to: C:\Users\13264\AppData\Local\Temp\tmp2rmvrplg\provenance_manifest.json
+.                                 [ 67%]
+tests\unit\test_pseudobulk_inferential_warrant.py ......                 [ 67%]
+tests\unit\test_public_smoke.py .INFO     Creating graph using `None` transform and `1` libraries.
+..                                      [ 67%]
+tests\unit\test_qc_core.py ..Chunked QC computation: processing 150 cells in chunks of 50...
+Chunked QC computation complete across 150 cells.
+......                                      [ 68%]
+tests\unit\test_readme_consistency.py ......                             [ 69%]
+tests\unit\test_registry_compiler.py .......... [MIRROR] removed stale plugins/bionexus/skills/demo-skill/scripts/stale.py
+...                       [ 70%]
+tests\unit\test_remediation.py ......                                    [ 70%]
+tests\unit\test_research_snapshot.py .......                             [ 71%]
+tests\unit\test_result_verify.py .......                                 [ 71%]
+tests\unit\test_review_capsule.py .....                                  [ 71%]
+tests\unit\test_rosalind_adapter.py .....                                [ 72%]
+tests\unit\test_router_statistical_stage.py ......                       [ 72%]
+tests\unit\test_routing_and_config.py .....                              [ 73%]
+tests\unit\test_rule_calibration.py .......                              [ 73%]
+tests\unit\test_scaffold.py === Scaffolding BioNexus Skill: demo-pathway-scorer ===
+ - Output Directory: C:\Users\13264\AppData\Local\Temp\tmpc7xgf058\skills\demo-pathway-scorer
+ - Tier: core | Grade: A | Status: canonical | Backend: scanpy
+ [CREATED] C:\Users\13264\AppData\Local\Temp\tmpc7xgf058\skills\demo-pathway-scorer\SKILL.md
+ [CREATED] C:\Users\13264\AppData\Local\Temp\tmpc7xgf058\skills\demo-pathway-scorer\scripts\demo_pathway_scorer_pipeline.py
+ [CREATED] C:\Users\13264\AppData\Local\Temp\tmpc7xgf058\skills\demo-pathway-scorer\scripts\_common.py
+ [CREATED] C:\Users\13264\AppData\Local\Temp\tmpc7xgf058\skills\demo-pathway-scorer\references\README.md
+ [CREATED] C:\Users\13264\AppData\Local\Temp\tmpc7xgf058\skills\demo-pathway-scorer\configs\default.yaml
+ [CREATED] C:\Users\13264\AppData\Local\Temp\tmpc7xgf058\tests\test_demo_pathway_scorer.py
+
+[SUCCESS] Skill scaffolding complete! Next steps:
+ 1. Implement analytical logic in: C:\Users\13264\AppData\Local\Temp\tmpc7xgf058\skills\demo-pathway-scorer\scripts\demo_pathway_scorer_pipeline.py
+ 2. Run unit tests: pytest tests/unit/test_demo_pathway_scorer.py -v
+ 3. Sync platform manifests: bionexus registry --generate
+
+.=== Scaffolding BioNexus Skill: alias-skill ===
+ - Output Directory: C:\Users\13264\AppData\Local\Temp\tmpc4j_0q6u\skills\alias-skill
+ - Tier: core | Grade: A | Status: canonical | Backend: scanpy
+ [CREATED] C:\Users\13264\AppData\Local\Temp\tmpc4j_0q6u\skills\alias-skill\SKILL.md
+ [CREATED] C:\Users\13264\AppData\Local\Temp\tmpc4j_0q6u\skills\alias-skill\scripts\alias_skill_pipeline.py
+ [CREATED] C:\Users\13264\AppData\Local\Temp\tmpc4j_0q6u\skills\alias-skill\scripts\_common.py
+ [CREATED] C:\Users\13264\AppData\Local\Temp\tmpc4j_0q6u\skills\alias-skill\references\README.md
+ [CREATED] C:\Users\13264\AppData\Local\Temp\tmpc4j_0q6u\skills\alias-skill\configs\default.yaml
+
+[SUCCESS] Skill scaffolding complete! Next steps:
+ 1. Implement analytical logic in: C:\Users\13264\AppData\Local\Temp\tmpc4j_0q6u\skills\alias-skill\scripts\alias_skill_pipeline.py
+ 2. Run unit tests: pytest tests/unit/test_alias_skill.py -v
+ 3. Sync platform manifests: bionexus registry --generate
+
+.                                           [ 73%]
+tests\unit\test_scfm_foundation_models.py ............                   [ 74%]
+tests\unit\test_scientific_review.py ...............................     [ 77%]
+tests\unit\test_scientific_semantic_conventions.py ............          [ 78%]
+tests\unit\test_scientific_semantics_governance.py ....[unit-test-heartbeat] elapsed=210s completed=1019/1299 current=tests/unit/test_scientific_semantics_governance.py::test_certification_cannot_activate_without_independent_cab_and_council
+.....             [ 78%]
+tests\unit\test_scientific_trust_reset.py ...                            [ 79%]
+tests\unit\test_scrna_gold_chain.py ..                                   [ 79%]
+tests\unit\test_scrna_helpers.py .....                                   [ 79%]
+tests\unit\test_scvi_smoke.py ss                                         [ 79%]
+tests\unit\test_security_audit.py .....                                  [ 80%]
+tests\unit\test_semantic_router.py ..........                            [ 80%]
+tests\unit\test_semantic_standard_release.py ......                      [ 81%]
+tests\unit\test_semantic_understanding.py ..................             [ 82%]
+tests\unit\test_slurm_gates.py ssssss                                    [ 83%]
+tests\unit\test_spatial_alternative_battery.py ........                  [ 83%]
+tests\unit\test_spatial_empirical_gold.py ..............                 [ 84%]
+tests\unit\test_spatial_gold_chain.py ..INFO     Creating graph using `None` transform and `1` libraries.
+..INFO     Creating graph using `None` transform and `1` libraries.
+.                              [ 85%]
+tests\unit\test_spatial_transcriptomics.py ....INFO     Creating graph using `None` transform and `1` libraries.
+..                        [ 85%]
+tests\unit\test_spec_conformance.py .....                                [ 86%]
+tests\unit\test_spec_registry.py .....                                   [ 86%]
+tests\unit\test_standards.py ........                                    [ 87%]
+tests\unit\test_statistical_rules.py ..................                  [ 88%]
+tests\unit\test_structural_and_bioactivity_rules.py ..........           [ 89%]
+tests\unit\test_sync_flagship_reports.py ..                              [ 89%]
+tests\unit\test_tangram_mapping.py ..........                            [ 90%]
+tests\unit\test_tool_receipt.py .................                        [ 91%]
+tests\unit\test_trust_evidence.py ........                               [ 92%]
+tests\unit\test_unit_test_runner.py ..                                   [ 92%]
+tests\unit\test_validation_artifacts.py ................................ [ 94%]
+........                                                                 [ 95%]
+tests\unit\test_validation_network.py ......                             [ 95%]
+tests\unit\test_validation_verifier.py ......................            [ 97%]
+tests\unit\test_variant_interpretation.py .......                        [ 98%]
+tests\unit\test_version_ssot.py .....                                    [ 98%]
+tests\unit\test_wfrun_crate.py ..............                            [ 99%]
+tests\unit\test_workflow_engine.py ...                                   [ 99%]
+tests\unit\test_yaml_mapping_engine.py ...                               [100%]
+
+============================== warnings summary ===============================
+tests/unit/test_calibration_frontier.py::test_gating_and_frontier_separation
+tests/unit/test_calibration_frontier.py::test_ceiling_clamp_frontier_cases_pass_via_abi
+tests/unit/test_calibration_frontier.py::test_calibration_diagnostics_present
+tests/unit/test_calibration_frontier.py::test_no_backend_cases_do_not_inflate_calibration
+tests/unit/test_calibration_frontier.py::test_markdown_report_renders_honest_numbers
+tests/unit/test_eval_harness.py::test_run_benchmark_accounting_integrity
+tests/unit/test_eval_harness.py::test_format_benchmark_markdown
+  C:\Plugin\BioNexus\.codex-p0-integration\evals\flagship_validation.py:366: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
+    agg = adata.obs.groupby(["donor", "condition"]).groups
+
+tests/unit/test_calibration_frontier.py: 10 warnings
+tests/unit/test_eval_harness.py: 4 warnings
+  C:\Plugin\BioNexus\.codex-p0-integration\evals\annotation_external_validation.py:165: OldFormatWarning: Element '/X' was written without encoding metadata.
+    adata = ad.read_h5ad(path)
+
+tests/unit/test_calibration_frontier.py: 10 warnings
+tests/unit/test_eval_harness.py: 4 warnings
+  C:\Plugin\BioNexus\.codex-p0-integration\evals\annotation_external_validation.py:165: OldFormatWarning: '/obs' was written with a very old version of AnnData. Consider rewriting it.
+    adata = ad.read_h5ad(path)
+
+tests/unit/test_calibration_frontier.py: 10 warnings
+tests/unit/test_eval_harness.py: 4 warnings
+  C:\Plugin\BioNexus\.codex-p0-integration\evals\annotation_external_validation.py:165: OldFormatWarning: Element '/obsm' was written without encoding metadata.
+    adata = ad.read_h5ad(path)
+
+tests/unit/test_calibration_frontier.py: 10 warnings
+tests/unit/test_eval_harness.py: 4 warnings
+  C:\Plugin\BioNexus\.codex-p0-integration\evals\annotation_external_validation.py:165: OldFormatWarning: Element '/obsm/protein_expression' was written without encoding metadata.
+    adata = ad.read_h5ad(path)
+
+tests/unit/test_calibration_frontier.py: 10 warnings
+tests/unit/test_eval_harness.py: 4 warnings
+  C:\Plugin\BioNexus\.codex-p0-integration\evals\annotation_external_validation.py:165: OldFormatWarning: Element '/uns' was written without encoding metadata.
+    adata = ad.read_h5ad(path)
+
+tests/unit/test_calibration_frontier.py: 10 warnings
+tests/unit/test_eval_harness.py: 4 warnings
+  C:\Plugin\BioNexus\.codex-p0-integration\evals\annotation_external_validation.py:165: OldFormatWarning: Element '/uns/encode_categories' was written without encoding metadata.
+    adata = ad.read_h5ad(path)
+
+tests/unit/test_calibration_frontier.py: 10 warnings
+tests/unit/test_eval_harness.py: 4 warnings
+  C:\Plugin\BioNexus\.codex-p0-integration\evals\annotation_external_validation.py:165: OldFormatWarning: Element '/uns/protein_names' was written without encoding metadata.
+    adata = ad.read_h5ad(path)
+
+tests/unit/test_calibration_frontier.py: 10 warnings
+tests/unit/test_eval_harness.py: 4 warnings
+  C:\Plugin\BioNexus\.codex-p0-integration\evals\annotation_external_validation.py:165: OldFormatWarning: '/var' was written with a very old version of AnnData. Consider rewriting it.
+    adata = ad.read_h5ad(path)
+
+tests/unit/test_calibration_frontier.py::test_gating_and_frontier_separation
+  C:\Users\13264\anaconda3\Lib\site-packages\joblib\externals\loky\backend\context.py:131: UserWarning: Could not find the number of physical cores for the following reason:
+  [WinError 2] ϵͳ�Ҳ���ָ�����ļ���
+  Returning the number of logical cores instead. You can silence this warning by setting LOKY_MAX_CPU_COUNT to the number of cores you want to use.
+    warnings.warn(
+
+tests/unit/test_calibration_frontier.py: 25 warnings
+tests/unit/test_eval_harness.py: 10 warnings
+tests/unit/test_gold_wrappers.py: 1 warning
+  C:\Users\13264\anaconda3\Lib\site-packages\pydeseq2\dds.py:822: UserWarning: The dispersion trend curve fitting did not converge. Switching to a mean-based dispersion trend.
+    self._fit_parametric_dispersion_trend(vst)
+
+tests/unit/test_closed_loop_perturbation_niche.py::test_gears_fail_closed_refusal_when_backend_missing
+tests/unit/test_closed_loop_perturbation_niche.py::test_gears_fail_closed_refusal_when_backend_missing
+  C:\Users\13264\anaconda3\Lib\site-packages\torch\jit\_script.py:1488: DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+tests/unit/test_closed_loop_perturbation_niche.py::test_forecast_spatial_niche_fallback_honesty
+tests/unit/test_closed_loop_perturbation_niche.py::test_closed_loop_pipeline_end_to_end
+tests/unit/test_closed_loop_perturbation_niche.py::test_closed_loop_pipeline_end_to_end
+tests/unit/test_multiome_integration.py::test_wnn_joint_integration
+tests/unit/test_spatial_transcriptomics.py::test_spatial_clustering
+tests/unit/test_spatial_transcriptomics.py::test_spatial_niche_and_lr_signaling
+tests/unit/test_spatial_transcriptomics.py::test_spatial_visualization_and_html
+  C:\Users\13264\anaconda3\Lib\site-packages\sklearn\cluster\_kmeans.py:1419: UserWarning: KMeans is known to have a memory leak on Windows with MKL, when there are less chunks than available threads. You can avoid it by setting the environment variable OMP_NUM_THREADS=1.
+    warnings.warn(
+
+tests/unit/test_gold_wrappers.py::test_spatial_scatter_writes_stable_name
+  C:\Users\13264\anaconda3\Lib\site-packages\squidpy\pl\_spatial_utils.py:468: FutureWarning: The method obs_vector is deprecated and will be removed in the future. Use anndata.acc.A instead of obs_vector. E.g. `vec = adata[A.obs['foo']]` or `vec = adata[A.layers['l']['bar', :]]`
+    color_source_vector = adata.obs_vector(value_to_plot, layer=layer)
+
+tests/unit/test_gold_wrappers.py::test_spatial_scatter_writes_stable_name
+  C:\Users\13264\anaconda3\Lib\site-packages\squidpy\pl\_spatial_utils.py:979: UserWarning: No data for colormapping provided via 'c'. Parameters 'cmap', 'norm' will be ignored
+    _cax = scatter(
+
+tests/unit/test_qc_core.py::test_run_doublet_detection
+  C:\Users\13264\anaconda3\Lib\site-packages\sklearn\cluster\_kmeans.py:1419: UserWarning: KMeans is known to have a memory leak on Windows with MKL, when there are less chunks than available threads. You can avoid it by setting the environment variable OMP_NUM_THREADS=2.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+============================ slowest 50 durations =============================
+46.27s call     tests/unit/test_calibration_frontier.py::test_gating_and_frontier_separation
+13.12s call     tests/unit/test_calibration_frontier.py::test_markdown_report_renders_honest_numbers
+12.88s call     tests/unit/test_calibration_frontier.py::test_ceiling_clamp_frontier_cases_pass_via_abi
+12.85s call     tests/unit/test_eval_harness.py::test_format_benchmark_markdown
+12.40s call     tests/unit/test_calibration_frontier.py::test_calibration_diagnostics_present
+12.31s call     tests/unit/test_calibration_frontier.py::test_no_backend_cases_do_not_inflate_calibration
+11.49s call     tests/unit/test_eval_harness.py::test_run_benchmark_accounting_integrity
+11.12s call     tests/unit/test_clean_install_and_namespace.py::test_wheel_package_contents_and_metadata
+7.23s call     tests/unit/test_scaffold.py::test_scaffold_create_plugin_end_to_end
+5.41s call     tests/unit/test_artifacts.py::test_run_bundle_lifecycle
+4.76s call     tests/unit/test_backend_conformance.py::test_installed_canonical_backend_is_conformant
+4.33s call     tests/unit/test_qc_core.py::test_qc_core_import_does_not_eagerly_import_scanpy
+3.56s call     tests/unit/test_closed_loop_perturbation_niche.py::test_gears_fail_closed_refusal_when_backend_missing
+2.19s call     tests/unit/test_review_capsule.py::test_capsule_preserves_nonzero_checks_and_hashes_archive
+2.02s call     tests/unit/test_bctk.py::test_full_engine_run_and_fingerprint
+1.89s call     tests/unit/test_bctk.py::test_reporters_render
+1.72s call     tests/unit/test_security_audit.py::test_zero_private_keys_or_secret_seeds_in_repository
+1.33s call     tests/unit/test_registry_compiler.py::test_registry_compiler_cli
+1.15s call     tests/unit/test_gold_wrappers.py::test_scrublet_names_official_api_or_refuses
+1.02s call     tests/unit/test_evidence_model.py::TestFactorSupportLadderCumulative::test_hypothesis_factor_addition_monotonicity
+0.99s call     tests/unit/test_nextflow_preflight.py::test_preflight_skip_network_includes_samplesheet
+0.72s call     tests/unit/test_independent_pseudobulk.py::test_exact_sign_flip_has_4095_assignments_for_twelve_donors
+0.71s call     tests/unit/test_spatial_gold_chain.py::test_normalized_spatial_input_never_fabricates_counts_layer
+0.69s call     tests/unit/test_bns019_interoperability.py::test_r_independent_validator_agrees_when_runtime_is_available
+0.64s call     tests/unit/test_spatial_transcriptomics.py::test_spatial_visualization_and_html
+0.61s call     tests/unit/test_ecosystem_claim.py::test_claim_assessment_cli_writes_reusable_artifact
+0.59s call     tests/unit/test_interop.py::test_interop_cli
+0.49s call     tests/unit/test_routing_and_config.py::test_plot_writes_stable_names
+0.46s call     tests/unit/test_wfrun_crate.py::test_ledger_auto_detection_and_explicit_path
+0.46s call     tests/unit/test_wfrun_crate.py::test_exports_are_deterministic
+0.45s call     tests/unit/test_doctor.py::test_doctor_reports_tier_and_forbids_clia
+0.43s call     tests/unit/test_wfrun_crate.py::test_full_bundle_is_materialized_research_object
+0.43s call     tests/unit/test_connector_profiles.py::test_all_connector_profiles_conform_to_schema
+0.43s call     tests/unit/test_handoff_and_gate.py::test_require_doctor_skip_does_not_write
+0.43s call     tests/unit/test_eval_receipt.py::test_deleted_middle_event_is_detected
+0.42s call     tests/unit/test_wfrun_crate.py::test_post_write_verification_detects_tampering
+0.39s call     tests/unit/test_wfrun_crate.py::test_profile_chain_and_graph_wiring
+0.39s call     tests/unit/test_biofailurebench.py::test_bench_cli
+0.39s call     tests/unit/test_spatial_empirical_gold.py::test_observation_set_binds_manifest_and_enforces_partition_membership
+0.39s call     tests/unit/test_cli.py::test_cli_doctor
+0.37s call     tests/unit/test_wfrun_crate.py::test_export_refuses_overwrite_and_bad_ledger
+0.37s call     tests/unit/test_wfrun_crate.py::test_exported_sha256_matches_crate_bytes
+0.37s call     tests/unit/test_cli.py::test_cli_doctor_json
+0.37s call     tests/unit/test_wfrun_crate.py::test_failed_run_and_failed_step_action_status
+0.37s call     tests/unit/test_handoff_and_gate.py::test_doctor_does_not_mention_celltypepilot
+0.35s setup    tests/unit/test_validation_verifier.py::TestValidationVerifierNegatives::test_negative_stale_version
+0.35s call     tests/unit/test_phase1_safety_closure.py::test_run_bundle_verifies_inputs_figures_descriptors_and_manifest
+0.34s call     tests/unit/test_wfrun_crate.py::test_export_refuses_unsealed_capsule
+0.34s call     tests/unit/test_wfrun_crate.py::test_validator_catches_profile_and_wiring_corruption
+0.34s call     tests/unit/test_validation_verifier.py::TestValidationVerifierNegatives::test_negative_fake_public_reference_claim_without_dataset
+========== 1291 passed, 8 skipped, 168 warnings in 232.07s (0:03:52) ==========

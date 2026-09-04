@@ -146,6 +146,21 @@ _INTENT_PATTERNS: List[Tuple[List[str], str]] = [
         ],
         "scrna.annotation_evidence",
     ),
+    # Explicit spatial statistics outrank generic UMAP/marker/clustering words.
+    # The matched capability must reach the physical-coordinate invariant gate.
+    (
+        [r"\b(?:run|compute|calculate|estimate|detect|test)\b[^.;]{0,120}\bmoran(?:['’]s)?\s+i\b"],
+        "spatial.morans_svg",
+    ),
+    # A stated between-cluster contrast is exploratory marker finding. Retain
+    # the condition-level route when an explicit model or condition effect is
+    # requested; mentioning replicate counts alone does not change the contrast.
+    (
+        [
+            r"^(?!.*(?:pseudobulk|deseq2|negative binomial|condition[- ]specific|condition[- ]level|treatment effect|population[- ]level|between conditions|treatment vs|treated vs|disease vs)).*\bbetween\s+clusters?\s+\w+\s+(?:and|vs\.?|versus)\s+(?:cluster\s+)?\w+",
+        ],
+        "scrna.exploratory_clustering",
+    ),
     # 1. Single-cell condition differential expression
     (
         [
@@ -671,6 +686,26 @@ def _statistical_advisory_stage(
                 ),
             )
 
+        stability_claim = re.search(r"\b(?:stable|stability|robust|reproducible)\b", query, re.IGNORECASE)
+        # Require measurements for stability language at any cell count.
+        if stability_claim:
+            from bionexus.clustering_stability import assess_clustering_stability
+
+            assessment = assess_clustering_stability(meta.get("clustering_stability"), dataset_sha256=meta.get("dataset_sha256"))
+            if not assessment["criterion_met"]:
+                return RoutingDecision(
+                    status=RoutingStatus.DEGRADED_ADVISORY, matched_capability=cap, target_skill=cap.skill_name,
+                    recommended_script="skills/single-cell-rna-qc/scripts/scrna_cluster_stability.py",
+                    recommended_command="python skills/single-cell-rna-qc/scripts/scrna_cluster_stability.py --help",
+                    rationale="Exploratory clustering is permitted, but the requested stability claim lacks adequate measured perturbation support.",
+                    remedies=["Run cell-aligned resampling and resolution perturbations, retain all partitions and declare the acceptance criterion before interpreting stability."] + assessment["limitations"],
+                    evidence_card_template=EvidenceCard(
+                        execution_state=ExecutionState.DEGRADED.value, evidence_ceiling="FRAGILE",
+                        parameter_robustness="UNTESTED" if assessment["status"] == "NOT_ASSESSED" else "C",
+                        details={"failure_mode": "BN-F002", "evidence_ceiling": "FRAGILE", "clustering_stability": assessment},
+                    ),
+                )
+
     return None
 
 
@@ -977,6 +1012,67 @@ def route_scientific_intent(
         d.routing_audit = routing_audit
         if d.purpose_context is None:
             d.purpose_context = pctx
+        if cap is not None and cap.id == "scrna.annotation_evidence":
+            from bionexus.annotation_evidence import assess_annotation_metadata, clamp_annotation_claim
+
+            assessment = assess_annotation_metadata(meta)
+            card = d.evidence_card_template
+            if card is None:
+                card = EvidenceCard(execution_state=ExecutionState.PERMITTED.value)
+                d.evidence_card_template = card
+            ceiling = assessment.warrant_ceiling
+            if d.status == RoutingStatus.ABSTAIN:
+                ceiling = "ABSTAIN"
+            card.details["annotation_assessment"] = assessment.to_dict()
+            card.details["annotation_warrant_ceiling"] = ceiling
+            card.details["evidence_ceiling"] = ceiling
+            card.evidence_ceiling = ceiling
+            # Preserve technical preflight separately; every identity-facing
+            # projection below derives from this one canonical assessment.
+            card.details["execution_preflight"] = {
+                key: card.details[key] for key in ("evidence_assessment", "warrant_assessment", "sufficiency", "policy_decision")
+                if key in card.details
+            }
+            card.details["evidence_assessment"] = {
+                "evidence_maturity": ceiling, "assessment_basis": "annotation_assessment",
+                "rationale": assessment.reasons, "purpose_independent": True, "policy_independent": True,
+            }
+            card.details["warrant_assessment"] = {
+                "claim_maturity": ceiling, "evidence_ceiling": ceiling,
+                "unsupported_claims": [] if ceiling in {"SUPPORTED", "ROBUST"} else ["supported_cell_identity"],
+                "residual_uncertainty": assessment.missing_evidence, "assessment_basis": "annotation_assessment",
+            }
+            card.details["sufficiency"] = {
+                "verdict": "NOT_ASSESSED" if ceiling in {"SUPPORTED", "ROBUST"} else "NOT_SUFFICIENT_FOR_SUPPORTED_IDENTITY",
+                "evidence_maturity": ceiling, "gaps": assessment.missing_evidence,
+                "note": "Intended-use sufficiency still requires a separate declared scientific use and adjudication.",
+            }
+            card.details["policy_decision"] = {
+                "action": "BLOCK" if d.status == RoutingStatus.ABSTAIN else "ALLOW_WITH_LIMITS",
+                "rationale": "Execution permission does not promote the annotation identity warrant.",
+                "identity_ceiling": ceiling,
+            }
+            if "claimed_maturity" in meta:
+                card.details["clamped_claim"] = (
+                    "ABSTAIN" if d.status == RoutingStatus.ABSTAIN
+                    else clamp_annotation_claim(meta["claimed_maturity"], assessment)
+                )
+            d.remedies = list(dict.fromkeys(d.remedies + assessment.missing_evidence))
+            card.residual_limitations = list(dict.fromkeys(card.residual_limitations + assessment.missing_evidence))
+            d.residual_limitations = list(dict.fromkeys(d.residual_limitations + assessment.missing_evidence))
+            if d.status in {RoutingStatus.PERMITTED, RoutingStatus.PERMITTED_WITH_LIMITS}:
+                d.rationale = f"Annotation assessment is permitted. The candidate identity warrant is {ceiling}; execution permission and research purpose do not promote it."
+            if ceiling not in {"SUPPORTED", "ROBUST"}:
+                limit = "Do not assert SUPPORTED cell identity; retain the annotation assessment and its calibration gaps."
+                d.blocked_claims = list(dict.fromkeys(d.blocked_claims + [limit]))
+                card.blocked_claims = list(dict.fromkeys(card.blocked_claims + [limit]))
+        if cap is not None and cap.id == "scrna.exploratory_clustering" and "clustering_stability" in meta:
+            from bionexus.clustering_stability import assess_clustering_stability
+
+            if d.evidence_card_template is not None:
+                d.evidence_card_template.details["clustering_stability"] = assess_clustering_stability(
+                    meta["clustering_stability"], dataset_sha256=meta.get("dataset_sha256")
+                )
         return d
 
     if cap is None:
@@ -1116,7 +1212,8 @@ def route_scientific_intent(
     # 3.6 Statistical-level advisories (Epistemic Ladder stages 2 & 4):
     # power/MDE regime for pseudobulk DE, doublet-rate audit for clustering.
     stat_decision = _statistical_advisory_stage(cap, meta, query)
-    if stat_decision is not None:
+    stability_advisory = stat_decision is not None and "clustering_stability" in stat_decision.evidence_card_template.details
+    if stat_decision is not None and not stability_advisory:
         return _stamp(stat_decision)
 
     # 4. Scientific Validity + Availability Evaluation (purpose-aware).
@@ -1135,6 +1232,9 @@ def route_scientific_intent(
         documented_extras=documented_extras or (),
         tool_receipts=tool_receipts or (),
     )
+    if stability_advisory and eval_result.permitted:
+        # The advisory cannot bypass backend or input-integrity refusal.
+        return _stamp(stat_decision)
 
     script_map = {
         "scrna.pseudobulk_de": "skills/single-cell-rna-qc/scripts/scrna_deseq.py",

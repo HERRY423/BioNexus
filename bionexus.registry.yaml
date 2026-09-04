@@ -38,6 +38,13 @@ mcp_servers:
       cwd: "${PLUGIN_ROOT}"
       description: "BioNexus local fallback MCP server with a fail-closed, tamper-evident host-probe audit log"
 
+  # ----------------------------------------------------------------------------
+  # Architectural Notice: BioNexus Core knows only the protocol and does not
+  # act as an MCP router or marketplace. The endpoints listed below under
+  # 'hosted' are legacy transport placeholders. Canonical scientific contracts
+  # for connector output are maintained declaratively by the community in the
+  # Connector Profile Registry (standards/connector-profiles/profiles/).
+  # ----------------------------------------------------------------------------
   hosted:
     pubmed:
       name: "NCBI PubMed"

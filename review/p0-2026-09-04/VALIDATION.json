@@ -1,0 +1,24 @@
+{
+  "independent_validation": "NOT_ESTABLISHED",
+  "supported_python312_local": "INSTALLING",
+  "hosted_ci": "PENDING",
+  "local_full_suite": {
+    "passed": 1291,
+    "command": "python scripts/run_unit_tests.py --test-path tests -- --basetemp=.pytest-tmp-full-p0-complete",
+    "note": "Python 3.13 is outside the promised CI matrix; this is supplemental local evidence.",
+    "skipped": 8,
+    "failed": 0,
+    "log": "full-tests-python313.txt",
+    "status": "PASSED_WITH_EXPLICIT_SKIPS",
+    "python": "3.13.9"
+  },
+  "bounded_benchmark": {
+    "excluded_suites": [
+      "flagship_validation"
+    ],
+    "manifest": "benchmark/manifest.json",
+    "skipped": 0,
+    "passed": 98,
+    "failed": 0
+  }
+}

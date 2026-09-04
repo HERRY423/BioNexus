@@ -70,8 +70,7 @@ _SNAPSHOT_EXCLUDED_DIRS = {
     "data", "interoperability", "runtime_lance", "runtime_wheels",
 }
 _SNAPSHOT_EXCLUDED_PREFIXES = (
-    ".codex_tmp",
-    ".codex_p",
+    ".codex",
     ".codex_pytest",
     ".download_parts",
     ".hypothesis",

@@ -18,7 +18,7 @@ A vanity score hides these liabilities. **BioNexus Evidence Debt** exposes them 
 
 ---
 
-## 2. The Keystone Effect: 70x Payoff Multipliers
+## 2. Upstream Evidence Remediation: Graph Dependency Leverage
 
 Consider a research project with 20 core claims:
 ```
@@ -31,9 +31,28 @@ TRANSFORM-ANNOTATION-X (Heuristic gating on tumor infiltrate)
 Atlas Reference Domain Mismatch (PBMC reference)
 ```
 
-Because 7 claims depend on `TRANSFORM-ANNOTATION-X`, fixing this **single upstream node** amortizes the Evidence Debt for all 7 downstream claims at once:
-- **Debt Leverage Multiplier**: $7 \text{ claims} \times 10.0 \text{ (CRITICAL severity)} = \mathbf{70.0\times}$.
+Because 7 claims depend on `TRANSFORM-ANNOTATION-X`, resolving this **single upstream dependency** amortizes the evidence debt for all 7 downstream claims simultaneously:
+- **Dependency Leverage**: $7 \text{ claims} \times 10.0 \text{ (CRITICAL severity)} = \mathbf{70.0\times}$ cumulative risk reduction.
 - Re-annotating or validating this single step upgrades the project maturity floor from `FRAGILE` to `SUPPORTED`.
+
+### Connector Ecosystems & Citation Collapsing
+
+Consider an AI Agent assessing a drug candidate:
+```
+Claim: "Drug X is likely effective in disease Y"
+   ↓ depends on
+ChEMBL IC50 activity
+   ↓
+OpenTargets association
+   ↓
+Enrichr pathway enrichment
+   ↓
+Consensus literature review
+```
+BioNexus penetrates this apparent 4-way corroboration and discovers:
+- All 4 connectors collapse to the **same 2 publications and a single in-vitro cell line experiment**.
+- Generates `DERIVED_EVIDENCE_DOUBLE_COUNT` and `CLAIM_EXCEEDS_CONNECTOR_PROFILE`.
+- **Optimal Repayment Verdict**: The highest epistemic keystone is **NOT** querying a 5th connector (e.g. EuropePMC/PubChem), but conducting **independent in-vivo / orthogonal animal model validation**.
 
 ---
 

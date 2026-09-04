@@ -38,7 +38,8 @@ git clone https://github.com/HERRY423/BioNexus.git BioNexus-IVN-review && \
 cd BioNexus-IVN-review && git checkout --detach "$REVIEW_COMMIT" && \
 python3 -m venv .venv && . .venv/bin/activate && \
 python -m pip install --upgrade pip && \
-python -m pip install -e ".[review]" && \
+python -m pip install --no-deps -e . && \
+python -m pip install -r review/external-review/requirements-review.txt && \
 python review/external-review/build_review_capsule.py \
   --expected-commit "$REVIEW_COMMIT" --review-id "$REVIEW_ID"
 ```
@@ -54,12 +55,15 @@ Set-Location BioNexus-IVN-review
 git checkout --detach $reviewCommit
 py -3 -m venv .venv
 & .\.venv\Scripts\python.exe -m pip install --upgrade pip
-& .\.venv\Scripts\python.exe -m pip install -e '.[review]'
+& .\.venv\Scripts\python.exe -m pip install --no-deps -e .
+& .\.venv\Scripts\python.exe -m pip install -r review\external-review\requirements-review.txt
 & .\.venv\Scripts\python.exe review\external-review\build_review_capsule.py `
   --expected-commit $reviewCommit --review-id $reviewId
 ```
 
-The builder refuses a dirty or mismatched checkout and refuses to start if the
+The bounded profile intentionally omits Pandas, SciPy, scikit-learn, requests,
+and optional scientific backends; it is not a general BioNexus runtime. The
+builder refuses a dirty or mismatched checkout and refuses to start if any
 bounded review dependency is absent. It records focused verifier-contract
 tests, manifest drift checking, certification output, IVN status/integrity,
 complete logs, and a resolved `pip freeze --all` environment snapshot. Failed

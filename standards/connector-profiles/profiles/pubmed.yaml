@@ -1,0 +1,36 @@
+﻿connector: pubmed
+tool: search_pubmed
+
+production_mode: literature_retrieval
+domain: biomedical_literature
+
+required_context:
+  - source_name
+  - identifiers
+  - publication_status
+  - study_design
+
+default_evidence_role:
+  supporting
+
+maximum_default_claim:
+  reported_association
+
+forbidden_claims:
+  - consensus_proven
+  - absolute_absence_of_evidence
+  - independent_experimental_replication
+
+independence:
+  preprints_and_journal_publications_share_study_identity
+
+semantic_profile:
+  claim.type: associative
+  evidence.type:
+    - primary_literature
+  warrant.level: preliminary
+  warrant.status: unassessed
+
+epistemic_lineage_mapping:
+  origin_id_field: identifiers
+  origin_type: primary_study

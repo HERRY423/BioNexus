@@ -53,3 +53,32 @@ def test_ingest_single_cell_metrics(tmp_path):
     assert res.instrument_type == InstrumentType.SINGLE_CELL_CONTROLLER.value
     assert res.summary_metrics["Estimated Number of Cells"] == 3500
     assert res.receipt["execution_status"] == "SUCCESS"
+
+
+def test_ingest_plate_reader_corrupted_fails_closed(tmp_path):
+    gw = LaboratoryInstrumentGateway()
+    corrupted_csv = tmp_path / "corrupted_plate.csv"
+    corrupted_csv.write_text("Corrupted Binary or Invalid Header\n---\n???\n", encoding="utf-8")
+
+    res = gw.ingest_plate_reader(corrupted_csv)
+    assert res.success is False
+    assert res.records_ingested == 0
+    assert res.asm_document is None
+    assert res.summary_metrics == {}
+    assert len(res.errors) > 0
+    assert "fail-closed" in res.errors[0]
+    assert res.receipt["execution_status"] == "ERROR"
+
+
+def test_ingest_single_cell_corrupted_fails_closed(tmp_path):
+    gw = LaboratoryInstrumentGateway()
+    empty_csv = tmp_path / "empty_metrics.csv"
+    empty_csv.write_text("", encoding="utf-8")
+
+    res = gw.ingest_single_cell_metrics(empty_csv)
+    assert res.success is False
+    assert res.records_ingested == 0
+    assert res.summary_metrics == {}
+    assert len(res.errors) > 0
+    assert "fail-closed" in res.errors[0]
+    assert res.receipt["execution_status"] == "ERROR"

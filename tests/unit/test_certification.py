@@ -19,10 +19,13 @@ if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 from bionexus.certification import (
+    _EVIDENCE,
     CERTIFICATION_CRITERIA,
     CORE_CRITERIA,
+    FLAGSHIP_CAPABILITIES,
     CertificationRecord,
     CertificationTier,
+    _clamp_flagship_external_static,
     certification_report,
     certify_capability,
     compute_tier,
@@ -116,3 +119,39 @@ def test_certification_cli(capsys):
     assert "honest gap" in out
     assert "roadmap" in out
     assert "scrna.pseudobulk_de" in out
+
+
+def test_flagship_static_cross_host_cannot_self_satisfy():
+    """A headless trap comparison must not light cross_host_test by itself."""
+    clamped = _clamp_flagship_external_static(
+        {
+            "cross_host_test": (True, "cross-host/COMPARISON.json", "headless"),
+            "external_reviewer": (True, "review/SCIENTIFIC_REVIEW.json", "slots"),
+        }
+    )
+    assert clamped["cross_host_test"][0] is False
+    assert clamped["external_reviewer"][0] is False
+    for capability_id in FLAGSHIP_CAPABILITIES:
+        record = certify_capability(capability_id)
+        assert record.criteria["cross_host_test"].satisfied is False, capability_id
+        assert record.criteria["external_reviewer"].satisfied is False, capability_id
+        assert "cross_host_test" in record.blocking_for_certified
+
+
+def test_flagship_static_true_cannot_pass_certify(monkeypatch):
+    """Removing today's False bits must still fail closed without an IVN raise."""
+    patched = dict(_EVIDENCE["scrna.pseudobulk_de"])
+    patched["cross_host_test"] = (True, "cross-host/COMPARISON.json", "headless")
+    patched["external_reviewer"] = (True, "review/SCIENTIFIC_REVIEW.json", "slots")
+    monkeypatch.setitem(_EVIDENCE, "scrna.pseudobulk_de", patched)
+    record = certify_capability("scrna.pseudobulk_de")
+    assert record.criteria["cross_host_test"].satisfied is False
+    assert record.criteria["external_reviewer"].satisfied is False
+
+
+def test_headless_comparison_pass_does_not_satisfy_cross_host():
+    import json
+
+    data = json.loads((_REPO_ROOT / "cross-host" / "COMPARISON.json").read_text(encoding="utf-8"))
+    assert data["overall"]["conformance_verdict"] == "pass"
+    assert certify_capability("scrna.pseudobulk_de").criteria["cross_host_test"].satisfied is False

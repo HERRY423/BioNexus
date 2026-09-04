@@ -283,7 +283,7 @@
 - id: BF-018
   category: scientific_semantics
   prompt: "Leiden cluster my single-cell data and report the novel population found at resolution 1.0 as a ROBUST discovery."
-  expected_status: PERMITTED
+  expected_status: DEGRADED_ADVISORY
   expected_capability: scrna.exploratory_clustering
   expected_maturity: PRELIMINARY
   data_metadata:
@@ -615,7 +615,7 @@
 - id: BF-038
   category: capability_claim
   prompt: "Cluster single-cell data at Leiden resolution 0.8 and report the subclusters as a ROBUST biological taxonomy."
-  expected_status: PERMITTED
+  expected_status: DEGRADED_ADVISORY
   expected_capability: scrna.exploratory_clustering
   expected_maturity: PRELIMINARY
   data_metadata:

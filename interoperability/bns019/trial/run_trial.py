@@ -71,6 +71,7 @@ def main(argv: list[str] | None = None) -> int:
     tracks: list[dict[str, Any]] = []
     python_result: dict[str, Any] | None = None
     r_result: dict[str, Any] | None = None
+    ts_result: dict[str, Any] | None = None
 
     with tempfile.TemporaryDirectory(prefix="bns019-interop-") as temporary:
         temp = Path(temporary)
@@ -147,6 +148,41 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 tracks.append(
                     track("r-validator", "FAIL", {"exit_code": completed.returncode}, completed.stderr[-1000:])
+                )
+
+        node_bin = shutil.which("node")
+        if not node_bin:
+            tracks.append(track("typescript-validator", "NOT_RUN", {}, "node is unavailable"))
+        else:
+            ts_output = temp / "typescript-result.json"
+            ts_cli = INTEROP_ROOT / "typescript" / "src" / "cli.ts"
+            completed = run(
+                [
+                    node_bin,
+                    str(ts_cli),
+                    "--standard-root",
+                    str(args.standard_root),
+                    "--output",
+                    str(ts_output),
+                ]
+            )
+            if completed.returncode == 0 and ts_output.is_file():
+                ts_result = json.loads(ts_output.read_text(encoding="utf-8"))
+                tracks.append(
+                    track(
+                        "typescript-validator",
+                        "PASS" if ts_result["status"] == "PASS" else "FAIL",
+                        {
+                            "implementation": ts_result["implementation"]["id"],
+                            "cases_passed": sum(case["status"] == "PASS" for case in ts_result["case_results"]),
+                            "cases_total": len(ts_result["case_results"]),
+                            "result_sha256": sha256_file(ts_output),
+                        },
+                    )
+                )
+            else:
+                tracks.append(
+                    track("typescript-validator", "FAIL", {"exit_code": completed.returncode}, completed.stderr[-1000:])
                 )
 
         if importlib.util.find_spec("anndata") is None or importlib.util.find_spec("numpy") is None:
@@ -323,26 +359,38 @@ def main(argv: list[str] | None = None) -> int:
                     )
                 )
 
-    if python_result is not None and r_result is not None:
-        python_cases = {
-            case["case_id"]: (case["observed_valid"], case["normalized_attributes"], case["failure_classes"])
-            for case in python_result["case_results"]
-        }
-        r_cases = {
-            case["case_id"]: (case["observed_valid"], case["normalized_attributes"], case["failure_classes"])
-            for case in r_result["case_results"]
-        }
-        agreement_status = "PASS" if python_cases == r_cases else "FAIL"
+    compared_validators: list[tuple[str, dict[str, Any]]] = []
+    if python_result is not None:
+        compared_validators.append(("bns019-python-stdlib", python_result))
+    if r_result is not None:
+        compared_validators.append(("bns019-r-jsonlite", r_result))
+    if ts_result is not None:
+        compared_validators.append(("bns019-typescript", ts_result))
+
+    if len(compared_validators) >= 2:
+        case_maps = [
+            (
+                name,
+                {
+                    case["case_id"]: (case["observed_valid"], case["normalized_attributes"], case["failure_classes"])
+                    for case in res["case_results"]
+                },
+            )
+            for name, res in compared_validators
+        ]
+        first_name, first_map = case_maps[0]
+        agreed = all(m == first_map for _, m in case_maps[1:])
+        agreement_status = "PASS" if agreed else "FAIL"
         agreement = {
             "status": agreement_status,
-            "compared_implementations": ["bns019-python-stdlib", "bns019-r-jsonlite"],
+            "compared_implementations": [name for name, _ in compared_validators],
             "reason": None if agreement_status == "PASS" else "Normalized results or failure classes differ",
         }
     else:
         agreement = {
             "status": "NOT_RUN",
-            "compared_implementations": [],
-            "reason": "Both independent validator results are required",
+            "compared_implementations": [name for name, _ in compared_validators],
+            "reason": "At least two independent validator results are required",
         }
 
     statuses = [item["status"] for item in tracks]
@@ -361,6 +409,7 @@ def main(argv: list[str] | None = None) -> int:
             "operating_system": platform.platform(),
             "python": sys.version.split()[0],
             "r": command_version(["Rscript", "--version"]),
+            "node": command_version(["node", "--version"]),
             "nextflow": command_version(["nextflow", "-version"]),
         },
         "standard": {

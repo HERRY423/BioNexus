@@ -160,3 +160,59 @@ def test_truncated_mirror_is_detected_with_external_head(tmp_path):
     log_path.write_text("", encoding="utf-8")
     _, errors = verify_log(log_path, expected_head=event["event_hash"])
     assert "log head does not match external expected_head" in errors
+
+
+def test_connector_conformance_execution_event(tmp_path):
+    """Verifies that CONNECTOR_CONFORMANCE_EXECUTION packets are validated, appended, and reduced into state."""
+    evidence_path = tmp_path / "connector-evidence.json"
+    evidence_path.write_text('{"connector_bctk_score": 1.0}\n', encoding="utf-8")
+    packet = {
+        "schema_version": "bionexus.validation-event-packet.v1",
+        "event_id": "VN-CONN-001",
+        "event_type": "CONNECTOR_CONFORMANCE_EXECUTION",
+        "subject": {
+            "project_id": "external-connector-repo",
+            "capability_id": "bioactivity.affinity_audit",
+            "artifact_sha256": "c" * 64,
+        },
+        "issuer": {
+            "issuer_id": "scientist@example.org",
+            "institution_id": "independent-lab",
+            "relationship_to_subject": "INDEPENDENT",
+        },
+        "bns_release": "0.1.0",
+        "bctk_release": "0.3.0",
+        "profile_ids": ["BNS-Connector"],
+        "result": "PASS",
+        "evidence": {
+            "artifact_uri": evidence_path.as_uri(),
+            "artifact_sha256": sha256_file(evidence_path),
+            "connector_id": "chembl-mcp-v1",
+        },
+        "occurred_at": "2026-08-30T00:00:00Z",
+    }
+    schema_path = (
+        Path(__file__).resolve().parents[2]
+        / "standards/validation-transparency-network/validation-event-packet.schema.json"
+    )
+    Draft202012Validator(json.loads(schema_path.read_text(encoding="utf-8"))).validate(packet)
+    packet_path = tmp_path / "VN-CONN-001.json"
+    packet_path.write_text(json.dumps(packet, sort_keys=True), encoding="utf-8")
+
+    issuer, independence, registry = _attestations(packet, packet_path)
+    log_path = tmp_path / "connector_validation.jsonl"
+    event = append_packet(
+        log_path,
+        packet_path,
+        evidence_artifact_path=evidence_path,
+        issuer_attestation=issuer,
+        independence_attestation=independence,
+        trust_registry=registry,
+        at_time=NOW,
+    )
+    assert event["event_hash"].startswith("sha256:")
+
+    state = compute_state_from_log(log_path, trust_registry=registry, expected_head=event["event_hash"], at_time=NOW)
+    assert state["candidate_slot_counts"]["connector_conformance_runs"] == 1
+    assert state["candidate_slot_counts"]["validated_connectors"] == 1
+    assert state["certification_status"] == "NOT_ASSESSED"

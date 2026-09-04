@@ -180,6 +180,7 @@ class ExternalEvidenceEnvelope:
     payload_sha256: str
     request_sha256: Optional[str] = None
     semantic_envelope: Optional[Dict[str, Any]] = None
+    epistemic_lineage: Optional[Dict[str, Any]] = None
 
     @classmethod
     def create(
@@ -193,6 +194,7 @@ class ExternalEvidenceEnvelope:
         request: Any = None,
         captured_at: Optional[str] = None,
         semantic_envelope: Optional[Mapping[str, Any]] = None,
+        epistemic_lineage: Optional[Mapping[str, Any]] = None,
     ) -> "ExternalEvidenceEnvelope":
         family_value = family.value if isinstance(family, ExternalCapabilityFamily) else str(family)
         return cls(
@@ -206,6 +208,7 @@ class ExternalEvidenceEnvelope:
             payload_sha256=_sha256(payload),
             request_sha256=_sha256(request) if request is not None else None,
             semantic_envelope=dict(semantic_envelope) if semantic_envelope is not None else None,
+            epistemic_lineage=dict(epistemic_lineage) if epistemic_lineage is not None else None,
         )
 
     @classmethod
@@ -216,6 +219,8 @@ class ExternalEvidenceEnvelope:
             raise ValueError("producer must be an object")
         data["producer"] = ExternalProducerIdentity(**dict(producer))
         data["source_context"] = dict(data.get("source_context") or {})
+        if data.get("epistemic_lineage") is not None:
+            data["epistemic_lineage"] = dict(data["epistemic_lineage"])
         return cls(**data)
 
     def to_dict(self) -> Dict[str, Any]:
@@ -360,6 +365,7 @@ def external_evidence_to_ledger_ref(
             "request_sha256": envelope.request_sha256,
             "producer": asdict(envelope.producer),
             "source_context": dict(envelope.source_context),
+            "epistemic_lineage": dict(envelope.epistemic_lineage) if envelope.epistemic_lineage else None,
             "intake_status": result.status,
             "identity_status": result.producer_identity_status,
         },

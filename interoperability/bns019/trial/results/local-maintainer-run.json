@@ -1,12 +1,13 @@
 {
   "schema": "urn:bionexus:bns019-trial-run-result:1",
   "trial_id": "BNS019-INTEROP-2026-01",
-  "run_id": "local-maintainer-2026-08-21",
-  "executed_at": "2026-08-22T05:16:51Z",
+  "run_id": "local-20260903T105531Z",
+  "executed_at": "2026-09-03T10:55:31Z",
   "environment": {
     "operating_system": "Windows-11-10.0.26200-SP0",
     "python": "3.13.9",
     "r": "Rscript (R) version 4.5.3 (2026-03-11)",
+    "node": "v24.13.0",
     "nextflow": null
   },
   "standard": {
@@ -34,6 +35,17 @@
         "cases_passed": 5,
         "cases_total": 5,
         "result_sha256": "fccf6413d4fe5fa87fb47c4fc34d6c15abbde6a3e22743c7c892611316ce2dca"
+      },
+      "reason": null
+    },
+    {
+      "id": "typescript-validator",
+      "status": "PASS",
+      "evidence": {
+        "implementation": "bns019-typescript",
+        "cases_passed": 5,
+        "cases_total": 5,
+        "result_sha256": "f912fc765a1eb057ed453ca2c91bbe1d421d4d30e8b5e690ddcb8b6bc1370e3d"
       },
       "reason": null
     },
@@ -81,7 +93,8 @@
     "status": "PASS",
     "compared_implementations": [
       "bns019-python-stdlib",
-      "bns019-r-jsonlite"
+      "bns019-r-jsonlite",
+      "bns019-typescript"
     ],
     "reason": null
   },

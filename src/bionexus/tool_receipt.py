@@ -1,4 +1,4 @@
-"""BioNexus Tool Execution Receipt Engine (BNS-021).
+"""BioNexus Tool Execution Receipt Engine (BNS-025).
 
 Provides tamper-evident cryptographic execution receipts binding:
 - plugin_id: identifier of the executing plugin
@@ -17,12 +17,30 @@ import hashlib
 import json
 import uuid
 from datetime import datetime, timezone
+from enum import IntEnum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 PathLike = Union[str, Path]
 
 SCHEMA_VERSION = "bionexus.tool-execution-receipt.v1"
+
+
+class ToolReceiptLevel(IntEnum):
+    """Declared receipt tier (BNS-025), not a verified trust state.
+
+    LEVEL_0_CONTENT_INTEGRITY: Binds request SHA, response SHA, timestamp, and declared tool name.
+        Proves tamper-evidence only. Producer identity is UNVERIFIED; backend fidelity is UNASSESSED.
+        Certifies ZERO scientific evidence factors.
+    LEVEL_1_HOST_OBSERVED: Recorded by an independent host observer (ChatGPT, Claude, Rosalind, BCTK).
+        Records a claimed host observation; trusted observer verification is not implemented.
+    LEVEL_2_PROVIDER_ATTESTED: Binds a provider cryptographic signature or independent verification attestation.
+        Carries a claimed attestation; trusted signature verification is not implemented.
+    """
+
+    LEVEL_0_CONTENT_INTEGRITY = 0
+    LEVEL_1_HOST_OBSERVED = 1
+    LEVEL_2_PROVIDER_ATTESTED = 2
 
 
 def canonical_json(data: Any) -> str:
@@ -61,12 +79,15 @@ def create_tool_receipt(
     response_payload: Any,
     execution_status: str = "SUCCESS",
     metadata: Optional[Dict[str, Any]] = None,
+    receipt_level: int = ToolReceiptLevel.LEVEL_0_CONTENT_INTEGRITY.value,
+    host_context: Optional[Dict[str, Any]] = None,
+    attestation: Optional[Dict[str, Any]] = None,
     previous_receipt_hash: Optional[str] = None,
     chain_index: Optional[int] = None,
     receipt_id: Optional[str] = None,
     timestamp: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Generate a tamper-evident cryptographic tool execution receipt.
+    """Generate a tamper-evident cryptographic tool execution receipt (BNS-025).
 
     Args:
         plugin_id: Unique identifier for the plugin (e.g. 'bionexus-reliability').
@@ -76,6 +97,9 @@ def create_tool_receipt(
         response_payload: Raw response dictionary, results, or JSON string.
         execution_status: Status ('SUCCESS', 'ABSTAIN', 'REJECTED', 'ERROR').
         metadata: Optional dictionary with auxiliary execution context.
+        receipt_level: Tier level (0=Content Integrity, 1=Host Observed, 2=Provider Attested).
+        host_context: Optional Level 1 host observer context.
+        attestation: Optional Level 2 cryptographic provider/assessor attestation.
         previous_receipt_hash: Optional SHA-256 of the prior receipt for chaining.
         chain_index: Optional sequential integer in audit chain.
         receipt_id: Optional explicit receipt ID; generated if None.
@@ -100,6 +124,7 @@ def create_tool_receipt(
     receipt: Dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
         "receipt_id": rid,
+        "receipt_level": int(receipt_level),
         "timestamp": ts,
         "plugin_id": str(plugin_id),
         "plugin_version": str(plugin_version),
@@ -110,6 +135,10 @@ def create_tool_receipt(
         "metadata": metadata or {},
     }
 
+    if host_context is not None:
+        receipt["host_context"] = host_context
+    if attestation is not None:
+        receipt["attestation"] = attestation
     if previous_receipt_hash is not None:
         receipt["previous_receipt_hash"] = previous_receipt_hash
     if chain_index is not None:
@@ -117,6 +146,99 @@ def create_tool_receipt(
 
     receipt["receipt_hash"] = compute_receipt_hash(receipt)
     return receipt
+
+
+def create_content_integrity_receipt(
+    *,
+    plugin_id: str,
+    plugin_version: str,
+    tool_name: str,
+    request_payload: Any,
+    response_payload: Any,
+    execution_status: str = "SUCCESS",
+    metadata: Optional[Dict[str, Any]] = None,
+    **kwargs: Any,
+) -> Dict[str, Any]:
+    """Level 0: Generate a Content Integrity Receipt proving payload hash integrity only."""
+    return create_tool_receipt(
+        plugin_id=plugin_id,
+        plugin_version=plugin_version,
+        tool_name=tool_name,
+        request_payload=request_payload,
+        response_payload=response_payload,
+        execution_status=execution_status,
+        metadata=metadata,
+        receipt_level=ToolReceiptLevel.LEVEL_0_CONTENT_INTEGRITY.value,
+        **kwargs,
+    )
+
+
+def create_host_observed_receipt(
+    *,
+    host: str,
+    connector_id: str,
+    tool_name: str,
+    request_payload: Any,
+    response_payload: Any,
+    plugin_version: str = "1.0.0",
+    execution_status: str = "SUCCESS",
+    mcp_server_uri: Optional[str] = None,
+    tool_schema_digest: Optional[str] = None,
+    session_id: Optional[str] = None,
+    transport: str = "mcp",
+    metadata: Optional[Dict[str, Any]] = None,
+    **kwargs: Any,
+) -> Dict[str, Any]:
+    """Level 1: Generate a Host-Observed Execution Receipt recorded by an independent host observer."""
+    host_ctx = {
+        "host": str(host),
+        "connector_id": str(connector_id),
+        "mcp_server_uri": mcp_server_uri,
+        "tool_schema_digest": tool_schema_digest or hashlib.sha256(tool_name.encode()).hexdigest(),
+        "session_id": session_id or uuid.uuid4().hex,
+        "transport": str(transport),
+    }
+    return create_tool_receipt(
+        plugin_id=connector_id,
+        plugin_version=plugin_version,
+        tool_name=tool_name,
+        request_payload=request_payload,
+        response_payload=response_payload,
+        execution_status=execution_status,
+        metadata=metadata,
+        receipt_level=ToolReceiptLevel.LEVEL_1_HOST_OBSERVED.value,
+        host_context=host_ctx,
+        **kwargs,
+    )
+
+
+def create_attested_tool_receipt(
+    *,
+    plugin_id: str,
+    plugin_version: str,
+    tool_name: str,
+    request_payload: Any,
+    response_payload: Any,
+    attestation: Dict[str, Any],
+    execution_status: str = "SUCCESS",
+    metadata: Optional[Dict[str, Any]] = None,
+    **kwargs: Any,
+) -> Dict[str, Any]:
+    """Record a Level 2 attestation declaration; this does not verify its signature."""
+    if not isinstance(attestation, dict) or not attestation:
+        raise ValueError("Level 2 receipt requires non-empty attestation dictionary")
+    return create_tool_receipt(
+        plugin_id=plugin_id,
+        plugin_version=plugin_version,
+        tool_name=tool_name,
+        request_payload=request_payload,
+        response_payload=response_payload,
+        execution_status=execution_status,
+        metadata=metadata,
+        receipt_level=ToolReceiptLevel.LEVEL_2_PROVIDER_ATTESTED.value,
+        attestation=attestation,
+        **kwargs,
+    )
 
 
 def verify_tool_receipt(
@@ -128,7 +250,7 @@ def verify_tool_receipt(
     expected_plugin_version: Optional[str] = None,
     expected_tool_name: Optional[str] = None,
 ) -> Tuple[bool, List[str]]:
-    """Verify cryptographic validity and content integrity of a tool receipt.
+    """Verify self-consistent hash bindings, not producer identity or execution truth.
 
     Returns:
         (is_valid, list_of_error_strings)
@@ -141,6 +263,13 @@ def verify_tool_receipt(
     schema = receipt.get("schema_version")
     if schema != SCHEMA_VERSION:
         errors.append(f"Invalid schema_version '{schema}', expected '{SCHEMA_VERSION}'")
+
+    for key in ("receipt_level", "level"):
+        if key in receipt and (type(receipt[key]) is not int or receipt[key] not in (0, 1, 2)):
+            errors.append(f"Invalid {key}: expected integer 0, 1 or 2")
+    if ("receipt_level" in receipt and "level" in receipt
+            and receipt["receipt_level"] != receipt["level"]):
+        errors.append("Conflicting receipt_level and level declarations")
 
     required_fields = [
         "receipt_id",
@@ -272,82 +401,37 @@ def verify_receipt_log_chain(log_path: PathLike) -> Tuple[bool, List[str]]:
 def extract_evidence_factors_from_receipt(
     receipt: Dict[str, Any],
 ) -> Tuple[Set[str], List[str]]:
-    """Extract and cryptographically verify evidence factors certified by a tool execution receipt.
+    """Check receipt integrity without promoting unverified authority claims.
 
-    Args:
-        receipt: A tool execution receipt dictionary conforming to SCHEMA_VERSION.
-
-    Returns:
-        (set_of_verified_factors, list_of_audit_notes)
+    Receipt tiers, host_context and attestation are supplied by the caller.
+    This module has no trusted observer or provider-signature verifier, so even
+    a well-formed Level 1/2 receipt establishes no scientific evidence factors.
+    Verified external assessments must use their own scoped trust contracts.
     """
     valid, errors = verify_tool_receipt(receipt)
     if not valid:
         return set(), [f"Tool receipt verification failed: {', '.join(errors)}"]
 
-    status = receipt.get("execution_status", "").upper()
-    if status != "SUCCESS":
+    status = receipt.get("execution_status", "")
+    if not isinstance(status, str) or status.upper() != "SUCCESS":
         return set(), [f"Tool receipt execution_status '{status}' is not SUCCESS (no factors certified)"]
 
-    factors: Set[str] = set()
-    notes: List[str] = []
-
-    # A valid cryptographic execution receipt provides tamper-evident proof of execution
-    factors.add("backend_fidelity")
-    factors.add("provenance")
-    notes.append(
-        f"Receipt {receipt.get('receipt_id')} ({receipt.get('tool_name')}): verified cryptographic execution proof"
-    )
-
-    metadata = receipt.get("metadata", {})
-    if isinstance(metadata, dict):
-        for key in ("evidence_factors", "satisfied_factors", "declared_factors"):
-            raw_factors = metadata.get(key)
-            if isinstance(raw_factors, (list, tuple, set)):
-                for f in raw_factors:
-                    if isinstance(f, str) and f.strip():
-                        factors.add(f.strip().lower())
-
-        # Metadata-derived design & empirical factors
-        reps = (
-            metadata.get("min_replicates_per_condition")
-            or metadata.get("donors_per_condition")
-            or metadata.get("biological_replicates_count")
-            or metadata.get("num_donors")
-            or 0
-        )
-        try:
-            reps_int = int(reps)
-        except (ValueError, TypeError):
-            reps_int = 0
-
-        if reps_int >= 2 or metadata.get("sample_design") or metadata.get("has_sample_design"):
-            factors.add("sample_design")
-        if reps_int >= 2 or metadata.get("replication") or metadata.get("replicated"):
-            factors.add("replication")
-        if metadata.get("confound_controls") or metadata.get("covariates_adjusted") or metadata.get("batch_corrected"):
-            factors.add("confound_controls")
-        if metadata.get("sensitivity_analysis") or metadata.get("parameter_sweep") or metadata.get("stability_verified"):
-            factors.add("sensitivity_analysis")
-            factors.add("effect_stability")
-        if metadata.get("effect_stability"):
-            factors.add("effect_stability")
-        if metadata.get("external_validation") or metadata.get("independent_validation"):
-            factors.add("external_validation")
-        if metadata.get("has_spatial") or metadata.get("spatial_colocalization"):
-            factors.add("spatial_colocalization")
-        if metadata.get("ligand_receptor_inference"):
-            factors.add("ligand_receptor_inference")
-        if metadata.get("perturbation") or metadata.get("is_perturbation"):
-            factors.add("perturbation")
-        if metadata.get("temporal_evidence") or metadata.get("time_series"):
-            factors.add("temporal_evidence")
-        if metadata.get("reference_ground_truth") or metadata.get("clinical_ground_truth"):
-            factors.add("reference_ground_truth")
-        if metadata.get("regulatory_certification") or metadata.get("clia_cap_certified") or metadata.get("fda_cleared"):
-            factors.add("regulatory_certification")
-            factors.add("regulatory_context")
-
-    return factors, notes
+    level = receipt.get("receipt_level", receipt.get("level", 0))
+    rid = receipt.get("receipt_id", "unknown")
+    if level == ToolReceiptLevel.LEVEL_0_CONTENT_INTEGRITY.value:
+        return set(), [
+            f"Receipt {rid}: Level 0 Content Integrity receipt; self-consistent hash binding "
+            "verified (producer_identity=UNVERIFIED, backend_fidelity=UNASSESSED, "
+            "external_validation=UNASSESSED). Zero scientific evidence factors certified."
+        ]
+    label = "Host-Observed" if level == 1 else "Provider/Independent Attested"
+    return set(), [
+        f"Receipt {rid}: declared Level {level} {label} receipt; content integrity only. "
+        "ATTESTATION_NOT_VERIFIED: no trusted observer or provider signature verification "
+        "is configured in this receipt contract. producer_identity=UNVERIFIED, "
+        "backend_fidelity=UNASSESSED, external_validation=UNASSESSED. "
+        "Zero scientific evidence factors certified."
+    ]
 
 
 def extract_evidence_factors_from_receipt_log(

@@ -1,0 +1,36 @@
+﻿connector: biorxiv
+tool: search_biorxiv
+
+production_mode: literature_retrieval
+domain: life_sciences_preprints
+
+required_context:
+  - source_name
+  - identifiers
+  - publication_status
+  - study_design
+
+default_evidence_role:
+  supporting
+
+maximum_default_claim:
+  reported_association
+
+forbidden_claims:
+  - peer_reviewed_proven
+  - clinical_guideline
+  - causal_mechanism
+
+independence:
+  preprint_and_published_version_are_not_independent_replications
+
+semantic_profile:
+  claim.type: associative
+  evidence.type:
+    - preprint
+  warrant.level: preliminary
+  warrant.status: unassessed
+
+epistemic_lineage_mapping:
+  origin_id_field: identifiers
+  origin_type: preprint

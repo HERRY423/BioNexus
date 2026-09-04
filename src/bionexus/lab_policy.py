@@ -13,7 +13,8 @@ BioNexus therefore separates the scientific rule from its enforcement posture:
 Three enforcement modes, ordered by strictness:
 
 - **SHADOW**: the violation is recorded in the EvidenceCard and provenance
-  sidecar but does not change the routing decision or cap the claim.  Use for
+  sidecar without a soft-policy intervention. Evidence ceilings and unsupported
+  claims remain recorded and binding. Use for
   evaluation, migration, or telemetry-only deployments where the lab wants to
   *see* what BioNexus would flag before turning enforcement on.
 - **ADVISORY**: the analysis is permitted, but the conclusion maturity is capped
@@ -160,15 +161,16 @@ def _level_to_mode(level: EnforcementLevel) -> EnforcementMode:
 # Pre-built lab policy profiles
 # ---------------------------------------------------------------------------
 
-#: Telemetry / migration mode.  Records every warrant violation but never blocks
-#: or caps.  Use while evaluating BioNexus or migrating an existing pipeline.
+#: Telemetry / migration mode. Records warrant violations while preserving the
+#: evidence ceiling. Invariants and registry-enforced constraints still block.
 SHADOW_AUDIT = LabPolicyProfile(
     name="shadow_audit",
     warrant_mode=EnforcementMode.SHADOW,
     require_override_justification=False,
     notes=(
         "Observe-only: warrant violations are logged to the EvidenceCard but do "
-        "not alter routing or cap claims.  Invariants still block."
+        "not add a soft-policy intervention. Evidence ceilings remain binding; "
+        "invariants and registry-enforced constraints still block."
     ),
 )
 

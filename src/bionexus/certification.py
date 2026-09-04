@@ -147,7 +147,7 @@ _EVIDENCE: Dict[str, Dict[str, tuple[bool, str, str]]] = {
         "parameter_perturbation": (True, "l3-outcome-pseudobulk-stability-005 (declared leave-one-out sample-composition grid; significant-DEG call set Jaccard >= 0.80 via audit_parameter_stability)", ""),
         "degradation_test": (True, "backend-pydeseq2-missing-001 (deterministic backend-absence simulation: canonical refusal with pip-install remedy even under allow_degraded consent)", "Environment-independent eval case"),
         "provenance_test": (True, "tests/unit/test_provenance_tracker.py, test_artifacts.py", ""),
-        "cross_host_test": (False, "cross-host/COMPARISON.json (framework: codex + claude-code; 0 traps compared, agreement_rate null)", "Cross-host framework established but no L2 claim audit executed; blocked: no provider API keys and no codex CLI in environment (only claude-code available), and consistency requires >= 2 hosts"),
+        "cross_host_test": (False, "cross-host/COMPARISON.json (hosts: claude-code + antigravity; 6 traps compared, all ABSTAIN, agreement_rate 1.0)", "Headless COMPARISON.json cannot satisfy BNS-HC-007. Cross-host remains unsatisfied until the IVN external-lab quota is met with hash-verified studies on >= 2 distinct hosts."),
         "external_reviewer": (False, "review/SCIENTIFIC_REVIEW.json (3 reviewer slots; all PENDING; status framework_created_pending_review)", "Scientific review framework established but no review conducted; requires human domain reviewers, not automatable"),
     },
     "scrna.exploratory_clustering": {
@@ -376,6 +376,30 @@ def _ivn_external_overrides(capability_id: str) -> Dict[str, tuple[bool, str, st
     return overrides
 
 
+def _clamp_flagship_external_static(
+    evidence: Dict[str, tuple[bool, str, str]],
+) -> Dict[str, tuple[bool, str, str]]:
+    """Static pointers cannot satisfy flagship external criteria.
+
+    A headless trap comparison or a reviewer-slot framework is implementer
+    evidence only. IVN hash-verified labs/reviews may raise these later.
+    """
+    clamped = dict(evidence)
+    for name in ("cross_host_test", "external_reviewer"):
+        current = clamped.get(name)
+        if current is None or not current[0]:
+            continue
+        pointer, note = current[1], current[2]
+        clamped[name] = (
+            False,
+            pointer,
+            (note + " " if note else "")
+            + "Static flagship evidence cannot self-satisfy this external "
+            "criterion; only IVN quota satisfaction may raise it.",
+        )
+    return clamped
+
+
 def certify_capability(capability_id: str) -> CertificationRecord:
     """Compute the honest certification record for a capability."""
     if capability_id not in CANONICAL_CAPABILITIES:
@@ -384,6 +408,8 @@ def certify_capability(capability_id: str) -> CertificationRecord:
     static = _EVIDENCE.get(capability_id)
     evidence = dict(static) if static else None
     if evidence is not None:
+        if capability_id in FLAGSHIP_CAPABILITIES:
+            evidence = _clamp_flagship_external_static(evidence)
         evidence.update(_ivn_external_overrides(capability_id))
     criteria: Dict[str, CriterionEvidence]
     if evidence is None:

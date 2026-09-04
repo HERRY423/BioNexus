@@ -165,10 +165,12 @@ class BenchmarkReport:
     union_passed: int = 0
     union_accuracy: float = 0.0
     audit_receipt_hash: Optional[str] = None
+    selection: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
             "total_cases": self.total_cases,
+            "selection": self.selection,
             "passed_cases": self.passed_cases,
             "failed_cases": self.failed_cases,
             "skipped_cases": self.skipped_cases,

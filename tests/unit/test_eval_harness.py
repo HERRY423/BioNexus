@@ -40,6 +40,12 @@ _L3_BACKEND_MODULES = {
 }
 
 
+def test_eval_harness_never_rewrites_frozen_flagship_study_reports():
+    source = (_REPO_ROOT / "evals" / "flagship_validation.py").read_text(encoding="utf-8")
+    assert "run_study(write=True)" not in source
+    assert source.count("run_study(write=False)") == 2
+
+
 def test_load_eval_cases():
     """Verify all YAML benchmark suites load properly across L1, L2, L3."""
     cases = load_eval_cases()

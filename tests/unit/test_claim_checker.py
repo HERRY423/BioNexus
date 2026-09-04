@@ -114,9 +114,9 @@ def test_structured_ir_cleared_by_verified_factors():
     assert res_backed.passed is True
 
 
-def test_structured_ir_cleared_by_tool_receipt():
-    """Supplying a verified tool execution receipt certifying perturbation clears causal claim."""
-    from bionexus.tool_receipt import create_tool_receipt
+def test_structured_ir_not_cleared_by_self_attested_tool_receipt():
+    """A self-consistent receipt without a trust anchor cannot clear a causal claim."""
+    from bionexus.tool_receipt import ToolReceiptLevel, create_tool_receipt
 
     receipt = create_tool_receipt(
         plugin_id="bionexus-gold",
@@ -126,9 +126,11 @@ def test_structured_ir_cleared_by_tool_receipt():
         response_payload={"knockout_validated": True},
         execution_status="SUCCESS",
         metadata={"perturbation": True, "confound_controls": True, "sample_design": True},
+        receipt_level=ToolReceiptLevel.LEVEL_2_PROVIDER_ATTESTED.value,
+        attestation={"attested_by": "bionexus-gold"},
     )
 
     causal_text = "We conclude that IFNG drives STAT1 activation in the analyzed cohort."
     res = audit_prohibited_claims(causal_text, tool_receipts=[receipt])
-    assert res.passed is True
-
+    assert res.passed is False
+    assert any(v.violation_type == ClaimViolationType.UNWARRANTED_CAUSAL_MECHANISM for v in res.violations)
