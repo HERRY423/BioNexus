@@ -41,6 +41,7 @@
     is_integer_like: true
     expected_de_genes: ["g0"]
     fdr_q_max: 0.05
+    min_log2fc: 1.0
   description: "L3 Outcome: PyDESeq2 pseudobulk recovers planted condition differential expression"
 
 - id: l3-outcome-clustering-ari-stability-004

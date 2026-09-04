@@ -3,6 +3,10 @@ Unit tests for Single-Cell RNA-seq QC module.
 Tests vectorized sparse calculations, MAD outlier filtering, doublet detection, and ambient RNA correction.
 """
 
+import subprocess
+import sys
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -11,6 +15,25 @@ pytest.importorskip("anndata", reason="single-cell QC test requires anndata")
 from ambient_rna import correct_ambient_rna
 from doublet_detection import run_doublet_detection, simulate_doublets
 from qc_core import apply_hard_threshold, calculate_qc_metrics_chunked, calculate_qc_metrics_fast, detect_outliers_mad
+
+
+def test_qc_core_import_does_not_eagerly_import_scanpy():
+    """Core sparse QC must not make test collection depend on Scanpy import latency."""
+    script = (
+        "import sys; "
+        "sys.path.insert(0, r'skills/single-cell-rna-qc/scripts'); "
+        "import qc_core; "
+        "assert 'scanpy' not in sys.modules"
+    )
+    completed = subprocess.run(
+        [sys.executable, "-c", script],
+        cwd=Path(__file__).resolve().parents[2],
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    assert completed.returncode == 0, completed.stderr
 
 
 def test_calculate_qc_metrics_fast(synthetic_anndata):

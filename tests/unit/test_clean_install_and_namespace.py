@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import importlib
+import subprocess
+import sys
 import zipfile
 from pathlib import Path
 
@@ -48,15 +50,28 @@ def test_no_shadowed_stdlib_or_third_party_names():
         assert stem not in prohibited_top_levels, f"Module '{stem}.py' shadows standard library module!"
 
 
-def test_wheel_package_contents_and_metadata():
-    """Verify that built wheel in dist/ contains all required packages and data files."""
-    dist_dir = _REPO_ROOT / "dist"
-    wheels = list(dist_dir.glob("*.whl"))
-    if not wheels:
-        return
-
-    latest_wheel = sorted(wheels, key=lambda p: p.stat().st_mtime)[-1]
-    with zipfile.ZipFile(latest_wheel, "r") as z:
+def test_wheel_package_contents_and_metadata(tmp_path):
+    """Build and inspect a fresh wheel, independent of ambient dist artifacts."""
+    subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "wheel",
+            ".",
+            "--no-deps",
+            "--no-build-isolation",
+            "--wheel-dir",
+            str(tmp_path),
+        ],
+        cwd=_REPO_ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    wheels = list(tmp_path.glob("*.whl"))
+    assert len(wheels) == 1
+    with zipfile.ZipFile(wheels[0], "r") as z:
         names = z.namelist()
         assert "bionexus/__init__.py" in names
         assert "bionexus/versions.py" in names

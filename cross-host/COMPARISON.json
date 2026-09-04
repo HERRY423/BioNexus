@@ -1,13 +1,71 @@
 {
-  "comparison_date": "",
-  "hosts": ["codex", "claude-code"],
+  "comparison_date": "2026-09-02T16:14:47.656297+00:00",
+  "hosts": [
+    "claude-code",
+    "antigravity"
+  ],
   "plugin_version": "1.0.0-rc.4",
-  "traps_compared": 0,
-  "per_trap": [],
+  "traps_compared": 6,
+  "per_trap": [
+    {
+      "trap_id": "BF-001",
+      "statuses": {
+        "claude-code": "ABSTAIN",
+        "antigravity": "ABSTAIN"
+      },
+      "consistent": true,
+      "notes": ""
+    },
+    {
+      "trap_id": "BF-002",
+      "statuses": {
+        "claude-code": "ABSTAIN",
+        "antigravity": "ABSTAIN"
+      },
+      "consistent": true,
+      "notes": ""
+    },
+    {
+      "trap_id": "BF-003",
+      "statuses": {
+        "claude-code": "ABSTAIN",
+        "antigravity": "ABSTAIN"
+      },
+      "consistent": true,
+      "notes": ""
+    },
+    {
+      "trap_id": "BF-004",
+      "statuses": {
+        "claude-code": "ABSTAIN",
+        "antigravity": "ABSTAIN"
+      },
+      "consistent": true,
+      "notes": ""
+    },
+    {
+      "trap_id": "BF-005",
+      "statuses": {
+        "claude-code": "ABSTAIN",
+        "antigravity": "ABSTAIN"
+      },
+      "consistent": true,
+      "notes": ""
+    },
+    {
+      "trap_id": "BF-006",
+      "statuses": {
+        "claude-code": "ABSTAIN",
+        "antigravity": "ABSTAIN"
+      },
+      "consistent": true,
+      "notes": ""
+    }
+  ],
   "overall": {
-    "consistent_traps": 0,
+    "consistent_traps": 6,
     "inconsistent_traps": 0,
-    "agreement_rate": null,
-    "conformance_verdict": "not_evaluated"
+    "agreement_rate": 1.0,
+    "conformance_verdict": "pass"
   }
 }

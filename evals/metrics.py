@@ -24,6 +24,7 @@ ORDINAL_MATURITY_RANKS: Dict[str, int] = {
     "ABSTAIN": 0,
     "UNASSESSED": 0,
     "PRELIMINARY": 1,
+    "TENTATIVE": 1,  # annotation candidate state, not a positive identity warrant
     "FRAGILE": 2,
     "SUPPORTED": 3,
     "ROBUST": 4,
@@ -35,6 +36,7 @@ CANONICAL_MATURITY_LEVELS: List[str] = [
     "ABSTAIN",
     "UNASSESSED",
     "PRELIMINARY",
+    "TENTATIVE",
     "FRAGILE",
     "SUPPORTED",
     "ROBUST",

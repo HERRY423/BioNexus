@@ -44,6 +44,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Full-package convenience extra. The external-review handoff deliberately
+# uses its bounded requirements-review.txt profile with a --no-deps install.
 review = [
     "pytest>=7.4.0,<10.0.0"
 ]

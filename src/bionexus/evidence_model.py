@@ -363,14 +363,18 @@ _EXTRA_SATISFIED_BY: Dict[str, Set[EvidenceFactor]] = {
 def extract_evidence_factors(
     metadata: Optional[Dict[str, Any]] = None,
     *,
-    backend_fidelity: bool = True,
-    has_provenance: bool = True,
+    backend_fidelity: bool = False,
+    has_provenance: bool = False,
     explicit_factors: Sequence[Union[str, EvidenceFactor]] = (),
     tool_receipts: Sequence[Dict[str, Any]] = (),
     receipt_log_path: Optional[Any] = None,
 ) -> List[str]:
     """Extract and normalize satisfied evidence factor string names from metadata,
-    explicit declarations, and verified cryptographic tool execution receipts (BNS-021).
+    explicit declarations, and integrity-checked tool execution receipts (BNS-025).
+
+    Metadata and explicit factors are caller-supplied assessment inputs, not
+    authenticated evidence. Receipt integrity alone supplies no factors; the
+    receipt module has no trusted host/provider attestation verifier.
 
     Converts:
     1. Cryptographic Tool Execution Receipts (`tool_receipts`, `receipt_log_path`).
@@ -381,7 +385,7 @@ def extract_evidence_factors(
     """
     factors: Set[str] = set()
 
-    # 1. Extract from verified cryptographic tool receipts
+    # 1. Receipt factors fail closed when trusted attestation is unavailable.
     if tool_receipts:
         from bionexus.tool_receipt import extract_evidence_factors_from_receipt
 

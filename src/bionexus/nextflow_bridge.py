@@ -22,7 +22,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
-from bionexus.tool_receipt import create_tool_receipt
+from bionexus.tool_receipt import ToolReceiptLevel, create_tool_receipt
 from bionexus.versions import VERSION
 
 
@@ -427,4 +427,10 @@ def create_nextflow_tool_receipt(
         response_payload=response_payload,
         execution_status=summary.execution_status,
         metadata=meta,
+        receipt_level=ToolReceiptLevel.LEVEL_2_PROVIDER_ATTESTED.value,
+        attestation={
+            "attested_by": "bionexus-nextflow",
+            "attestation_type": "execution_trace_harvest",
+            "nextflow_version": summary.nextflow_version,
+        },
     )

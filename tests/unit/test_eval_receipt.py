@@ -150,8 +150,8 @@ def test_summarize_report_for_receipt_shape():
     assert len(payload["case_digests"]) == 2
 
 
-def test_extract_evidence_factors_from_valid_tool_receipt():
-    from bionexus.tool_receipt import create_tool_receipt, extract_evidence_factors_from_receipt
+def test_hash_valid_receipt_does_not_authenticate_declared_factors():
+    from bionexus.tool_receipt import ToolReceiptLevel, create_tool_receipt, extract_evidence_factors_from_receipt
 
     receipt = create_tool_receipt(
         plugin_id="bionexus-gold",
@@ -166,16 +166,15 @@ def test_extract_evidence_factors_from_valid_tool_receipt():
             "sensitivity_analysis": True,
             "external_validation": True,
         },
+        receipt_level=ToolReceiptLevel.LEVEL_2_PROVIDER_ATTESTED.value,
+        attestation={
+            "attested_by": "bionexus-gold",
+            "external_validation_basis": "independent_replication",
+        },
     )
     factors, notes = extract_evidence_factors_from_receipt(receipt)
-    assert "backend_fidelity" in factors
-    assert "provenance" in factors
-    assert "sample_design" in factors
-    assert "replication" in factors
-    assert "confound_controls" in factors
-    assert "sensitivity_analysis" in factors
-    assert "external_validation" in factors
-    assert any("verified cryptographic execution proof" in n for n in notes)
+    assert factors == set()
+    assert any("ATTESTATION_NOT_VERIFIED" in n for n in notes)
 
 
 def test_tampered_tool_receipt_fails_verification_and_grants_no_factors():
@@ -215,7 +214,12 @@ def test_failed_tool_execution_status_grants_no_factors():
 
 
 def test_tool_receipt_log_chain_extraction(tmp_path):
-    from bionexus.tool_receipt import append_receipt_log, create_tool_receipt, extract_evidence_factors_from_receipt_log
+    from bionexus.tool_receipt import (
+        ToolReceiptLevel,
+        append_receipt_log,
+        create_tool_receipt,
+        extract_evidence_factors_from_receipt_log,
+    )
 
     log_path = tmp_path / "audit_receipts.jsonl"
     r1 = create_tool_receipt(
@@ -227,6 +231,8 @@ def test_tool_receipt_log_chain_extraction(tmp_path):
         execution_status="SUCCESS",
         metadata={"min_replicates_per_condition": 3},
         chain_index=0,
+        receipt_level=ToolReceiptLevel.LEVEL_2_PROVIDER_ATTESTED.value,
+        attestation={"attested_by": "bionexus-gold"},
     )
     append_receipt_log(r1, log_path)
     r2 = create_tool_receipt(
@@ -239,15 +245,14 @@ def test_tool_receipt_log_chain_extraction(tmp_path):
         metadata={"confound_controls": True, "sensitivity_analysis": True},
         previous_receipt_hash=r1["receipt_hash"],
         chain_index=1,
+        receipt_level=ToolReceiptLevel.LEVEL_2_PROVIDER_ATTESTED.value,
+        attestation={"attested_by": "bionexus-gold"},
     )
     append_receipt_log(r2, log_path)
     factors, notes = extract_evidence_factors_from_receipt_log(log_path)
-    assert "sample_design" in factors
-    assert "replication" in factors
-    assert "confound_controls" in factors
-    assert "sensitivity_analysis" in factors
-    assert "backend_fidelity" in factors
-    assert "provenance" in factors
+    assert factors == set()
+    assert any("Verified hash-chain log" in n for n in notes)
+    assert any("ATTESTATION_NOT_VERIFIED" in n for n in notes)
 
 
 def test_e2e_route_scientific_intent_with_tool_receipts(canonical_backends_available):

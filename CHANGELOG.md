@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 🛑 Fixed (Week-0 hemostasis — evidence over spec)
+
+- **Specification freeze at BNS-025**: `spec/registry.yaml` now requires `numbering_freeze.max_id: BNS-025`. CI rejects `BNS-026+`. Unfreeze is a registry/test edit, not an automatic IVN side-effect. BNS-024/025 stay registered as `development_no_certification_effect` engineering contracts; they do not raise certification tiers.
+- **Flagship `cross_host_test` restored to False**: `scrna.pseudobulk_de` no longer treats the 6-trap headless `claude-code`/`antigravity` ABSTAIN comparison as BNS-HC-007. Static pointers cannot self-satisfy flagship `cross_host_test` or `external_reviewer`. The existing IVN merge may raise `cross_host_test` only when the external-lab check is satisfied with hash-verified studies on >= 2 distinct `study.host` values — that is not itself a live L2 provider matrix. BCTK `evaluate_cross_host()` now treats the same headless COMPARISON.json as `NOT_ASSESSED`.
+- **Canonical benchmark isolation**: `docs/reports/live_host_benchmark_report.md` is marked **DO NOT CITE**. Living numbers remain `evals/reports/benchmark_report.md` (L3 0/4 `SKIPPED_NO_BACKEND`, union calibration MISALIGNED).
+- **README CI badge is live GitHub Actions status**, not a static shields "Passing" image. Codecov is not added: CI does not upload coverage, so a coverage badge would be another unverifiable static claim.
+
 ### 🔬 Added (Independent Validation Network — BNS-023)
 
 - **Independent Validation Network (`bionexus.ivn`)**:

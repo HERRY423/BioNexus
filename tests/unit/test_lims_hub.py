@@ -71,3 +71,98 @@ def test_c04_pairing_hub(tmp_path):
     assert res["status"] == "ABSTAIN"
     assert res["passed"] is False
     assert "Missing manifest" in res["issues"][0]
+
+
+def test_benchling_live_missing_token_fails_closed():
+    config = LIMSConnectionConfig(
+        connector_type=LIMSConnectorType.BENCHLING,
+        base_url="https://api.benchling.com/v2",
+        auth_token=None,
+    )
+    connector = BenchlingConnector(config)
+    res = connector.export_assay_results(
+        schema_id="sch_1",
+        plate_id="PLT-001",
+        measurements=[{"well": "A1", "value": 10.0}],
+        mock_response=False,
+    )
+    assert res.success is False
+    assert res.records_synced == 0
+    assert "auth_token" in res.errors[0]
+    assert res.receipt["execution_status"] == "ERROR"
+
+
+def test_benchling_live_http_dispatch(monkeypatch):
+    config = LIMSConnectionConfig(
+        connector_type=LIMSConnectorType.BENCHLING,
+        base_url="https://api.benchling.com/v2",
+        auth_token="valid_secret_key",
+    )
+    connector = BenchlingConnector(config)
+
+    class MockResponse:
+        def __init__(self, status_code, json_data):
+            self.status_code = status_code
+            self._json_data = json_data
+            self.text = str(json_data)
+
+        def json(self):
+            return self._json_data
+
+    # Test HTTP Success
+    monkeypatch.setattr(
+        "requests.post",
+        lambda url, json, headers, timeout, verify: MockResponse(201, {"status": "CREATED", "id": "asyr_123"}),
+    )
+    res = connector.export_assay_results(
+        schema_id="sch_1",
+        plate_id="PLT-001",
+        measurements=[{"well": "A1", "value": 10.0}],
+        mock_response=False,
+    )
+    assert res.success is True
+    assert res.records_synced == 1
+    assert res.receipt["execution_status"] == "SUCCESS"
+
+    # Test HTTP 500 Error
+    monkeypatch.setattr(
+        "requests.post",
+        lambda url, json, headers, timeout, verify: MockResponse(500, {"error": "Internal Server Error"}),
+    )
+    res_err = connector.export_assay_results(
+        schema_id="sch_1",
+        plate_id="PLT-001",
+        measurements=[{"well": "A1", "value": 10.0}],
+        mock_response=False,
+    )
+    assert res_err.success is False
+    assert res_err.records_synced == 0
+    assert "HTTP 500" in res_err.errors[0]
+    assert res_err.receipt["execution_status"] == "ERROR"
+
+
+def test_generic_lims_live_dispatch(monkeypatch):
+    config = LIMSConnectionConfig(
+        connector_type=LIMSConnectorType.LABWARE,
+        base_url="https://labware.internal/api/v1",
+        auth_token="token_xyz",
+    )
+    connector = GenericRestLIMSConnector(config)
+
+    class MockResponse:
+        def __init__(self, status_code, json_data):
+            self.status_code = status_code
+            self._json_data = json_data
+            self.text = str(json_data)
+
+        def json(self):
+            return self._json_data
+
+    monkeypatch.setattr(
+        "requests.post",
+        lambda url, json, headers, timeout, verify: MockResponse(200, {"processed": 2}),
+    )
+    res = connector.sync_samples([{"sample_id": "S1"}, {"sample_id": "S2"}], mock_response=False)
+    assert res.success is True
+    assert res.records_synced == 2
+    assert res.receipt["execution_status"] == "SUCCESS"

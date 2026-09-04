@@ -48,6 +48,13 @@ METRICS = {
 }
 
 
+def test_top_level_spatial_battery_export_remains_available_lazily():
+    import bionexus
+
+    assert bionexus.SpatialBatteryPlan is SpatialBatteryPlan
+    assert bionexus.run_spatial_alternative_battery is run_spatial_alternative_battery
+
+
 def _context() -> CalibrationContext:
     return CalibrationContext(
         tissue="synthetic_tissue_fixture",

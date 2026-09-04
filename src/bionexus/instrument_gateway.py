@@ -125,21 +125,48 @@ class LaboratoryInstrumentGateway:
 
         try:
             df = pd.read_csv(p)
+            if df.empty:
+                raise ValueError("Plate reader CSV is empty")
             wells = []
             values = []
             for col in df.columns:
                 if col.lower() in ("well", "location", "position"):
-                    wells = df[col].tolist()
+                    wells = df[col].astype(str).tolist()
                 if col.lower() in ("value", "rfu", "fluorescence", "absorbance", "od600", "intensity"):
-                    values = pd.to_numeric(df[col], errors="coerce").fillna(0.0).tolist()
+                    values = pd.to_numeric(df[col], errors="coerce").tolist()
 
-            if not wells:
+            if not wells and not df.empty:
                 wells = [f"A{i+1}" for i in range(len(df))]
-            if not values:
-                values = pd.to_numeric(df.iloc[:, -1], errors="coerce").fillna(0.0).tolist()
-        except Exception:
-            wells = [f"A{i+1}" for i in range(96)]
-            values = [100.0 + i for i in range(96)]
+            if not values and not df.empty:
+                values = pd.to_numeric(df.iloc[:, -1], errors="coerce").tolist()
+
+            if not values or all(pd.isna(v) for v in values):
+                raise ValueError("No valid numeric measurement values found in CSV")
+
+            values = [0.0 if pd.isna(v) else float(v) for v in values]
+            if len(wells) != len(values):
+                raise ValueError(f"Mismatched well identifiers ({len(wells)}) and measurement values ({len(values)})")
+        except Exception as exc:
+            receipt = create_tool_receipt(
+                plugin_id=self.plugin_id,
+                plugin_version=self.plugin_version,
+                tool_name="instrument.ingest_plate_reader",
+                request_payload={"file_path": str(p), "source_sha256": source_sha256},
+                response_payload={"error": str(exc)},
+                execution_status="ERROR",
+            )
+            return InstrumentIngestResult(
+                success=False,
+                instrument_type=inst_type.value,
+                vendor_model=vendor,
+                records_ingested=0,
+                source_file_sha256=f"sha256:{source_sha256}",
+                receipt=receipt,
+                output_path=str(output_json_path) if output_json_path else None,
+                asm_document=None,
+                summary_metrics={},
+                errors=[f"Failed to parse plate reader CSV fail-closed: {exc}"],
+            )
 
         measurements = []
         for w, v in zip(wells, values):
@@ -220,9 +247,30 @@ class LaboratoryInstrumentGateway:
 
         try:
             df = pd.read_csv(p)
+            if df.empty:
+                raise ValueError("Single-cell metrics CSV is empty")
             metrics = df.iloc[0].to_dict()
-        except Exception:
-            metrics = {"Estimated Number of Cells": 3000, "Mean Reads per Cell": 50000}
+            if not metrics:
+                raise ValueError("No metrics extracted from single-cell summary CSV")
+        except Exception as exc:
+            receipt = create_tool_receipt(
+                plugin_id=self.plugin_id,
+                plugin_version=self.plugin_version,
+                tool_name="instrument.ingest_single_cell_metrics",
+                request_payload={"file_path": str(p), "source_sha256": source_sha256},
+                response_payload={"error": str(exc)},
+                execution_status="ERROR",
+            )
+            return InstrumentIngestResult(
+                success=False,
+                instrument_type=InstrumentType.SINGLE_CELL_CONTROLLER.value,
+                vendor_model="10x Genomics Chromium",
+                records_ingested=0,
+                source_file_sha256=f"sha256:{source_sha256}",
+                receipt=receipt,
+                summary_metrics={},
+                errors=[f"Failed to parse single-cell metrics CSV fail-closed: {exc}"],
+            )
 
         cleaned_metrics = {str(k).strip(): v for k, v in metrics.items()}
 

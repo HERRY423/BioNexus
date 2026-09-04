@@ -53,6 +53,7 @@ class AnnotationEvidence:
     orthogonal_protein_evidence: Optional[float] = None
     protein_concordant: Optional[bool] = None
     open_set_detected: bool = False
+    sources_declared: bool = False  # reported existence only; never a measured score
 
 
 @dataclass
@@ -98,6 +99,7 @@ def _comparison_text(assessment: MetricAssessment) -> str:
         f"under {resolution.profile_id}@{resolution.profile_version}"
     )
 
+
 def _calibration_gap(assessment: MetricAssessment) -> str:
     return (
         f"approved empirical calibration for {assessment.metric} "
@@ -134,6 +136,7 @@ def assess_annotation_evidence(
             "orthogonal_protein_evidence",
             "protein_concordant",
             "open_set_detected",
+            "sources_declared",
         )
     }
     ev["calibration_context"] = context.to_dict()
@@ -200,7 +203,7 @@ def assess_annotation_evidence(
             evidence.marker_consistency,
         )
     )
-    if not has_raw_positive:
+    if not has_raw_positive and evidence.sources_declared is not True:
         return AnnotationVerdict(
             label=label,
             verdict="ABSTAIN",
@@ -298,9 +301,71 @@ def assess_annotation_evidence(
     return AnnotationVerdict(
         label=label,
         verdict="TENTATIVE",
-        reasons=reasons or ["Evidence scores are present but unresolved or insufficient for a positive warrant."],
+        reasons=reasons or [
+            "Evidence scores are present but unresolved or insufficient for a positive warrant."
+            if has_raw_positive else "Evidence sources are declared, but no positive measurements were supplied; identity remains a candidate."
+        ],
         missing_evidence=list(dict.fromkeys(missing)),
         evidence=ev,
         calibration=calibration,
         warrant_ceiling="TENTATIVE",
     )
+
+
+def assess_annotation_metadata(metadata: Dict[str, Any]) -> AnnotationVerdict:
+    """Shared host/ABI intake. Recompute from measurements, never trust a supplied verdict.
+
+    Legacy availability booleans declare a source exists but cannot create a
+    measured score or an approved calibration. Invalid/conflicting inputs abstain.
+    """
+    label = metadata.get("candidate_label", "")
+    try:
+        if not isinstance(label, str):
+            raise ValueError("candidate_label must be a string")
+        raw = metadata.get("annotation_evidence", {})
+        context = metadata.get("calibration_context", {})
+        if not isinstance(raw, dict) or not isinstance(context, dict):
+            raise ValueError("annotation_evidence and calibration_context must be mappings")
+        values = dict(raw)
+        for key in ("annotation_evidence_available", "negative_markers_tested"):
+            if key in metadata and type(metadata[key]) is not bool:
+                raise ValueError(f"{key} must be a boolean")
+        if "annotation_evidence_available" in metadata:
+            declared = metadata["annotation_evidence_available"]
+            if "sources_declared" in values and values["sources_declared"] != declared:
+                raise ValueError("conflicting annotation source declarations")
+            values["sources_declared"] = declared
+            if not declared and any(values.get(attr) is not None for attr in _METRIC_INPUTS.values()):
+                raise ValueError("measurements conflict with absent annotation evidence")
+        if metadata.get("negative_markers_tested") is False and values.get("negative_marker_violation") is not None:
+            raise ValueError("negative-marker measurement conflicts with untested declaration")
+        for key in ("open_set_detected", "sources_declared", "ontology_compatible", "protein_concordant"):
+            if key in values and values[key] is not None and type(values[key]) is not bool:
+                raise ValueError(f"{key} must be a boolean")
+        if not isinstance(context.get("evidence_sources", {}), dict):
+            raise ValueError("evidence_sources must be a mapping")
+        return assess_annotation_evidence(
+            label, AnnotationEvidence(**values), calibration_context=CalibrationContext(**context)
+        )
+    except (TypeError, ValueError, AttributeError) as exc:
+        return AnnotationVerdict(
+            label=label if isinstance(label, str) else "",
+            verdict="ABSTAIN",
+            warrant_ceiling="ABSTAIN",
+            reasons=[f"Invalid annotation evidence: {exc}"],
+            missing_evidence=["valid, non-conflicting annotation measurements"],
+        )
+
+
+def clamp_annotation_claim(claimed: str, assessment: AnnotationVerdict) -> str:
+    """Cap identity claims using the canonical assessment; preserve existing refusals."""
+    claimed = str(claimed).upper()
+    if claimed in {"ABSTAIN", "UNASSESSED", "NOT_ASSESSED", "CONFLICTED"}:
+        return claimed
+    ceiling = assessment.warrant_ceiling
+    if ceiling in {"ABSTAIN", "CONFLICTED"}:
+        return ceiling
+    ranks = {"TENTATIVE": 1, "PRELIMINARY": 1, "FRAGILE": 1, "SUPPORTED": 2, "ROBUST": 3, "REPLICATED": 4}
+    if claimed not in ranks:
+        return "ABSTAIN"
+    return ceiling if ranks[claimed] > ranks.get(ceiling, 0) else claimed

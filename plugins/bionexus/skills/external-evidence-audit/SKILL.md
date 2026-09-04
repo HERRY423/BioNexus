@@ -66,3 +66,30 @@ The result contains Warrant, Audit, EvidenceCard, and Claim–Evidence Ledger
 artifacts. Duplicate payloads count once, declared context conflicts block all
 claim-bearing edges, explicit contradictory evidence yields `CONFLICTED`, and
 `final_decision` always remains `PENDING_HUMAN_DECISION`.
+
+## Epistemic Lineage & Independence Graph
+
+When multiple connectors (e.g. PubMed, Consensus, bioRxiv, Open Targets, ChEMBL)
+return distinct payloads, the Evidence Independence Graph resolves their
+epistemic lineage (`origin_id`, `derived_from`, `same_study_as`, `dataset_identity`,
+`assay_identity`) to eliminate epistemic double counting. Derived syntheses,
+preprints, and secondary database mirrors are grouped into primary study clusters:
+
+```text
+Raw Evidence Count = 8
+Independent Origins = 2
+Primary Studies = 2
+Derived Syntheses = 4
+Database Mirrors = 2
+```
+
+The resulting EvidenceCard reports the exact resolution:
+*"8 evidence objects were retrieved through 5 connectors, but they resolve to only 2 independent primary studies."*
+
+## Connector Profile Registry
+
+Scientific contracts for external capabilities are governed declaratively in
+`standards/connector-profiles/profiles/` (e.g. `enrichr.yaml`, `pubmed.yaml`,
+`chembl.yaml`). Each profile defines `required_context`, `default_evidence_role`,
+`maximum_default_claim`, `forbidden_claims`, and BNS-019 `semantic_profile`.
+BioNexus Core knows only the protocol and does not act as an MCP router or marketplace.

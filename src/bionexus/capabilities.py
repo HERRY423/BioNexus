@@ -1912,6 +1912,113 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
         ],
         evidence_ceiling_without_external_validation="SUPPORTED",
     ),
+    "structure.confidence_audit": CapabilityContract(
+        id="structure.confidence_audit",
+        display_name="Macromolecular Structural Confidence & Epistemic Audit",
+        intent=["alphafold_structure_confidence", "protein_disorder_audit", "plddt_verification"],
+        skill_name="alphafold-database-fetch-and-analyze",
+        inputs={
+            "plddt_scores": InputSpecification(
+                name="plddt_scores",
+                semantic_type=SemanticInputType.PDB_STRUCTURE.value,
+                required=True,
+                description="Per-residue or global pLDDT structural confidence scores.",
+            ),
+        },
+        preconditions=[
+            Precondition(
+                id="BNS-STR-001",
+                rule="plddt_in_valid_range",
+                description="pLDDT scores must lie in [0, 100].",
+                fatal_if_violated=True,
+            ),
+        ],
+        backend=BackendRequirement(
+            canonical_name="biopython",
+            import_name="Bio",
+            minimum_version="1.80",
+            description="BioPython PDB/mmCIF structural parser and B-factor auditor.",
+        ),
+        refusal_conditions=[
+            RefusalTrigger(
+                condition_id="REFUSE-IDR-POCKET-001",
+                description="Asserting a rigid binding pocket on an intrinsically disordered region (pLDDT < 50).",
+                remedy="Abstain from rigid pocket assertions; model disordered ensemble or test induced folding.",
+                violated_rule="AlphaFold pLDDT < 50 disorder invariant",
+            ),
+        ],
+        outputs=[
+            "confidence_assessment (StructureConfidenceAssessment)",
+            "evidence_card (EvidenceCard)",
+        ],
+        evidence_requirements=EvidenceRequirement(
+            multiple_testing="not_applicable",
+            effect_size="not_applicable",
+            mandatory_limitations=[
+                "pLDDT < 50 indicates intrinsic disorder and cannot support fixed pocket claims.",
+                "Predicted structures do not substitute for experimental crystallography / cryo-EM.",
+                "Research Use Only. Not for clinical decision-making.",
+            ],
+        ),
+        forbidden_claims=[
+            "crystallographic_ground_truth",
+            "clinical_diagnosis",
+        ],
+        evidence_ceiling_without_external_validation="SUPPORTED",
+    ),
+    "bioactivity.affinity_audit": CapabilityContract(
+        id="bioactivity.affinity_audit",
+        display_name="Small-Molecule Bioactivity & Affinity Epistemic Audit",
+        intent=["chembl_bioactivity_audit", "affinity_potency_tiering", "dose_response_verification"],
+        skill_name="chembl-database",
+        inputs={
+            "affinity_value": InputSpecification(
+                name="affinity_value",
+                semantic_type=SemanticInputType.INSTRUMENT_TABLE.value,
+                required=True,
+                description="Binding affinity or functional inhibition measurement value.",
+            ),
+        },
+        preconditions=[
+            Precondition(
+                id="BNS-BIO-001",
+                rule="positive_affinity_measurement",
+                description="Affinity value in nanomolar must be strictly positive.",
+                fatal_if_violated=True,
+            ),
+        ],
+        backend=BackendRequirement(
+            canonical_name="chembl_webresource_client",
+            import_name="chembl_webresource_client",
+            description="ChEMBL API client and bioactivity validator.",
+        ),
+        refusal_conditions=[
+            RefusalTrigger(
+                condition_id="REFUSE-INACTIVE-LEAD-001",
+                description="Asserting potent targeted inhibition for compound with IC50/Kd > 10 µM.",
+                remedy="Abstain from targeted lead claims; activities > 10 µM are non-specific.",
+                violated_rule="Medicinal chemistry 10 µM non-specific threshold",
+            ),
+        ],
+        outputs=[
+            "bioactivity_assessment (BioactivityAssessment)",
+            "evidence_card (EvidenceCard)",
+        ],
+        evidence_requirements=EvidenceRequirement(
+            multiple_testing="not_applicable",
+            effect_size="not_applicable",
+            mandatory_limitations=[
+                "Affinity > 10 µM is non-specific or inactive in standard medicinal chemistry.",
+                "Single-concentration primary screening requires confirmatory multi-point titration.",
+                "Research Use Only. Not for clinical therapeutic use.",
+            ],
+        ),
+        forbidden_claims=[
+            "potent_lead_from_weak_binding",
+            "clinical_diagnosis",
+        ],
+        evidence_ceiling_without_external_validation="SUPPORTED",
+    ),
 }
 
 # ==============================================================================

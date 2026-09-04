@@ -1,0 +1,38 @@
+﻿connector: opentargets
+tool: get_target_associations
+
+production_mode: curated_database
+domain: drug_target_discovery
+
+required_context:
+  - source_name
+  - record_ids
+  - database_release
+  - identifier_namespace
+  - organism_taxon
+
+default_evidence_role:
+  supporting
+
+maximum_default_claim:
+  target_disease_association
+
+forbidden_claims:
+  - validated_therapeutic_target
+  - causal_mechanism
+  - clinical_trial_success
+
+independence:
+  aggregated_evidence_inherits_identities_of_primary_sources
+
+semantic_profile:
+  claim.type: associative
+  evidence.type:
+    - structured_database_record
+    - computational_result
+  warrant.level: preliminary
+  warrant.status: unassessed
+
+epistemic_lineage_mapping:
+  origin_id_field: record_ids
+  origin_type: database_mirror

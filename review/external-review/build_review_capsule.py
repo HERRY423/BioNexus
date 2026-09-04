@@ -32,6 +32,7 @@ DEFAULT_CHECKS: tuple[tuple[str, ...], ...] = (
         "-q",
         "-p",
         "no:cacheprovider",
+        "--confcutdir=tests/unit",
         "tests/unit/test_pseudobulk_inferential_warrant.py",
         "tests/unit/test_flagship_capabilities.py",
         "tests/unit/test_ivn.py",
@@ -43,6 +44,21 @@ DEFAULT_CHECKS: tuple[tuple[str, ...], ...] = (
     (sys.executable, "scripts/registry_compiler.py", "--check"),
     (sys.executable, "-m", "bionexus.cli", "ivn", "status", "--repo-root", ".", "--json"),
     (sys.executable, "-m", "bionexus.cli", "ivn", "verify", "--repo-root", ".", "--json"),
+)
+
+REVIEW_REQUIRED_DISTRIBUTIONS: tuple[str, ...] = (
+    "pytest",
+    "numpy",
+    "PyYAML",
+    "jsonschema",
+    "cryptography",
+)
+INTENTIONALLY_OMITTED_PROJECT_DEPENDENCIES: tuple[str, ...] = (
+    "pandas",
+    "scipy",
+    "requests",
+    "tqdm",
+    "scikit-learn",
 )
 
 
@@ -107,11 +123,16 @@ def build_capsule(*, expected_commit: str, output_dir: Path, review_id: str) -> 
     if dirty:
         raise RuntimeError("review checkout is not clean; refuse to create an ambiguous capsule")
 
-    pytest_version = _installed_version("pytest")
-    if pytest_version == "NOT_INSTALLED":
+    review_versions = {name: _installed_version(name) for name in REVIEW_REQUIRED_DISTRIBUTIONS}
+    missing_review_dependencies = sorted(
+        name for name, version in review_versions.items() if version == "NOT_INSTALLED"
+    )
+    if missing_review_dependencies:
         raise RuntimeError(
-            "pytest is required for the review capsule; install the bounded review extra "
-            "with: python -m pip install -e \".[review]\""
+            "bounded review dependencies are missing: "
+            + ", ".join(missing_review_dependencies)
+            + "; install with: python -m pip install --no-deps -e . && "
+            "python -m pip install -r review/external-review/requirements-review.txt"
         )
 
     output_dir = output_dir.resolve()
@@ -141,7 +162,10 @@ def build_capsule(*, expected_commit: str, output_dir: Path, review_id: str) -> 
             "platform": platform.platform(),
             "machine": platform.machine(),
             "bionexus_distribution_version": _installed_version("bionexus-reliability"),
-            "pytest_version": pytest_version,
+            "review_dependency_profile": "review/external-review/requirements-review.txt",
+            "review_dependency_versions": review_versions,
+            "intentionally_omitted_project_dependencies": list(INTENTIONALLY_OMITTED_PROJECT_DEPENDENCIES),
+            "installation_scope": "BOUNDED_EXTERNAL_REVIEW_NOT_GENERAL_SCIENTIFIC_RUNTIME",
             "pip_freeze_command": [sys.executable, "-m", "pip", "freeze", "--all"],
             "pip_freeze_exit_code": freeze.returncode,
             "pip_freeze_path": "PIP_FREEZE.txt",

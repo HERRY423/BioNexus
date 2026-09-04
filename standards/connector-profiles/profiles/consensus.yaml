@@ -1,0 +1,36 @@
+﻿connector: consensus
+tool: summarize_evidence
+
+production_mode: meta_synthesis
+domain: scientific_literature_synthesis
+
+required_context:
+  - source_name
+  - identifiers
+  - publication_status
+  - study_design
+
+default_evidence_role:
+  supporting
+
+maximum_default_claim:
+  literature_synthesis
+
+forbidden_claims:
+  - primary_experimental_evidence
+  - independent_replication
+  - clinical_actionability
+
+independence:
+  derived_summary_of_study_is_not_independent_of_original_study
+
+semantic_profile:
+  claim.type: associative
+  evidence.type:
+    - computational_result
+  warrant.level: preliminary
+  warrant.status: unassessed
+
+epistemic_lineage_mapping:
+  origin_id_field: identifiers
+  origin_type: derived_synthesis

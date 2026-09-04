@@ -24,6 +24,7 @@ def test_default_checks_are_portable_and_do_not_invoke_a_noop_module():
 
     assert any("scripts/registry_compiler.py --check" in command for command in rendered)
     assert any("not test_verify_validation_artifacts_passes_on_current_repo" in command for command in rendered)
+    assert any("--confcutdir=tests/unit" in command for command in rendered)
     assert all("-m bionexus.validation_verifier" not in command for command in rendered)
 
 
@@ -86,6 +87,9 @@ def test_capsule_preserves_nonzero_checks_and_hashes_archive(tmp_path: Path, mon
         environment = json.loads(bundle.read(environment_name))
         freeze_name = next(name for name in bundle.namelist() if name.endswith("/PIP_FREEZE.txt"))
         assert environment["pip_freeze_sha256"] == hashlib.sha256(bundle.read(freeze_name)).hexdigest()
+        assert environment["installation_scope"] == "BOUNDED_EXTERNAL_REVIEW_NOT_GENERAL_SCIENTIFIC_RUNTIME"
+        assert environment["review_dependency_profile"].endswith("requirements-review.txt")
+        assert "scipy" in environment["intentionally_omitted_project_dependencies"]
 
 
 def test_capsule_refuses_when_review_dependency_is_missing(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
@@ -96,9 +100,13 @@ def test_capsule_refuses_when_review_dependency_is_missing(tmp_path: Path, monke
         "_git",
         lambda *args: commit if args == ("rev-parse", "HEAD") else "",
     )
-    monkeypatch.setattr(capsule_module, "_installed_version", lambda name: "NOT_INSTALLED")
+    monkeypatch.setattr(
+        capsule_module,
+        "_installed_version",
+        lambda name: "NOT_INSTALLED" if name == "jsonschema" else "1.0.0",
+    )
 
-    with pytest.raises(RuntimeError, match=r"\.\[review\]"):
+    with pytest.raises(RuntimeError, match="bounded review dependencies are missing: jsonschema"):
         capsule_module.build_capsule(
             expected_commit=commit,
             output_dir=tmp_path / "capsules",

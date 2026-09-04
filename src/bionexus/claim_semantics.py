@@ -43,6 +43,9 @@ class ClaimRelationshipType(str, Enum):
     IDENTITY_ASSERTION = "identity_assertion"  # Cell-type identity, cluster assignment
     DIAGNOSTIC_ASSERTION = "diagnostic_assertion"  # Clinical diagnosis, patient disease call
     MODEL_FIDELITY = "model_fidelity"  # Claim about computational model / algorithm backend
+    STRUCTURAL_CONFORMATION = "structural_conformation"  # 3D folding, binding pocket, conformational state
+    BIOACTIVE_BINDING = "bioactive_binding"  # Small-molecule target affinity, IC50/Kd inhibition
+
 
 
 class Directionality(str, Enum):
@@ -198,6 +201,11 @@ class EvidenceProfile:
     regulatory_certification: bool = False  # CLIA/CAP / FDA Part 11 certified
     ruo_disclaimer_present: bool = False  # Research Use Only disclaimer
     cross_method_concordance: bool = False  # Agreement across alternative tools
+    plddt_score: Optional[float] = None  # AlphaFold/ESMFold mean pLDDT confidence (0-100)
+    interdomain_pae: Optional[float] = None  # Inter-domain Predicted Aligned Error in Angstroms
+    bioactivity_nm: Optional[float] = None  # Small-molecule IC50 / Ki / Kd in nanomolar
+    dose_response_curve: bool = True  # True if measured via full concentration titration
+
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -981,6 +989,84 @@ class DeterministicWarrantEngine:
         )
 
         # ----------------------------------------------------------------------
+        # Tier 7: Macromolecular Structural Conformation Warrant
+        # ----------------------------------------------------------------------
+        struct_requested = claim.relationship == ClaimRelationshipType.STRUCTURAL_CONFORMATION
+        struct_warranted = True
+        struct_gaps = []
+        if struct_requested:
+            if ev.plddt_score is not None:
+                if ev.plddt_score < 50.0:
+                    struct_warranted = False
+                    struct_gaps.append("plddt_gte_70_for_rigid_pocket")
+                    rule_violations.append(
+                        f"INTRINSIC_DISORDER_VIOLATION: Asserting rigid pocket/structure on region with pLDDT {ev.plddt_score:.1f} < 50."
+                    )
+                    remedies.append(
+                        "AlphaFold/ESMFold pLDDT < 50 indicates intrinsic disorder (IDR); rigid pocket/docking claims are scientifically invalid."
+                    )
+                elif ev.plddt_score < 70.0:
+                    struct_gaps.append("plddt_gte_70_for_confident_backbone")
+                    remedies.append("pLDDT 50-70 represents low-confidence ribbon; cap claims at candidate screening (FRAGILE).")
+            if ev.interdomain_pae is not None and ev.interdomain_pae > 15.0:
+                struct_gaps.append("pae_lte_15_for_interdomain_orientation")
+                remedies.append("Inter-domain PAE > 15 Å; relative domain orientation is unconstrained.")
+
+        tier_verdicts["structural_conformation_claim"] = WarrantTierVerdict(
+            tier_name="structural_conformation_claim",
+            status=(
+                WarrantTierStatus.NOT_APPLICABLE
+                if not struct_requested
+                else WarrantTierStatus.WARRANTED
+                if struct_warranted
+                else WarrantTierStatus.NOT_WARRANTED
+            ),
+            is_warranted=struct_warranted if struct_requested else False,
+            rationale="Macromolecular structure verified with confident pLDDT metrics."
+            if struct_requested and struct_warranted
+            else "A structural conformation claim was not requested."
+            if not struct_requested
+            else "Structural conformation is unwarranted: low pLDDT indicates intrinsic disorder or unmodeled coordinates.",
+            missing_evidence=struct_gaps,
+        )
+
+        # ----------------------------------------------------------------------
+        # Tier 8: Small-Molecule Bioactivity & Target Binding Warrant
+        # ----------------------------------------------------------------------
+        bioact_requested = claim.relationship == ClaimRelationshipType.BIOACTIVE_BINDING
+        bioact_warranted = True
+        bioact_gaps = []
+        if bioact_requested:
+            if ev.bioactivity_nm is not None and ev.bioactivity_nm > 10000.0:
+                bioact_warranted = False
+                bioact_gaps.append("potency_lte_10000_nm")
+                rule_violations.append(
+                    f"NONSPECIFIC_BINDING_OVERCLAIM: Asserting targeted binding for compound with affinity {ev.bioactivity_nm:.1f} nM > 10 µM."
+                )
+                remedies.append("Binding activities > 10 µM represent weak non-specific binding; targeted claims are refused.")
+            if not ev.dose_response_curve:
+                bioact_gaps.append("concentration_response_titration")
+                remedies.append("Single-concentration screening requires full multi-point concentration-response validation.")
+
+        tier_verdicts["bioactive_binding_claim"] = WarrantTierVerdict(
+            tier_name="bioactive_binding_claim",
+            status=(
+                WarrantTierStatus.NOT_APPLICABLE
+                if not bioact_requested
+                else WarrantTierStatus.WARRANTED
+                if bioact_warranted
+                else WarrantTierStatus.NOT_WARRANTED
+            ),
+            is_warranted=bioact_warranted if bioact_requested else False,
+            rationale="Small-molecule bioactivity confirmed with potent nanomolar affinity."
+            if bioact_requested and bioact_warranted
+            else "A bioactive target binding claim was not requested."
+            if not bioact_requested
+            else "Bioactivity claim unwarranted: affinity exceeds 10 µM medicinal chemistry threshold.",
+            missing_evidence=bioact_gaps,
+        )
+
+        # ----------------------------------------------------------------------
         # Determine Maximum Warranted Claim Class & Ceiling
         # ----------------------------------------------------------------------
         applicable_tiers = [
@@ -1002,12 +1088,18 @@ class DeterministicWarrantEngine:
             warranted_class = ClaimClass.ASSOCIATION
         elif not identity_warranted:
             warranted_class = ClaimClass.DESCRIPTIVE
+        elif not struct_warranted or not bioact_warranted:
+            warranted_class = ClaimClass.DESCRIPTIVE
         else:
             warranted_class = claim.claim_class
 
         # Determine evidence ceiling
         if not assoc_warranted:
             evidence_ceiling = ConclusionMaturity.ABSTAIN.value
+        elif any("INTRINSIC_DISORDER_VIOLATION" in v or "NONSPECIFIC_BINDING_OVERCLAIM" in v for v in rule_violations):
+            evidence_ceiling = ConclusionMaturity.ABSTAIN.value
+        elif struct_requested and ev.plddt_score is not None and ev.plddt_score < 70.0:
+            evidence_ceiling = ConclusionMaturity.FRAGILE.value
         elif not all_tiers_ok:
             if len(rule_violations) > 0:
                 evidence_ceiling = ConclusionMaturity.FRAGILE.value

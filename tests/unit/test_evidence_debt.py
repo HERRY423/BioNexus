@@ -203,3 +203,116 @@ def test_cli_debt_graph(tmp_path, capsys):
 
     captured = capsys.readouterr()
     assert "graph TD" in captured.out
+
+
+# ==============================================================================
+# 5. Connector & Epistemic Lineage Tests (BNS-021)
+# ==============================================================================
+
+
+def test_detect_connector_citation_collapsing_and_keystone():
+    """
+    Verifies that 4 distinct connectors collapsing to the same underlying citations
+    trigger DERIVED_EVIDENCE_DOUBLE_COUNT and CLAIM_EXCEEDS_CONNECTOR_PROFILE,
+    with top remediation prescribing independent in-vivo validation.
+    """
+    from bionexus.debt import create_sample_connector_collapsing_ledger
+
+    ledger = create_sample_connector_collapsing_ledger()
+    report = EvidenceDebtEngine.audit_ledger(ledger)
+
+    assert report.total_claims == 1
+    assert report.total_debt_items >= 2
+
+    kinds = [d.debt_kind for d in report.debt_items]
+    assert DebtKind.DERIVED_EVIDENCE_DOUBLE_COUNT in kinds
+    assert DebtKind.CLAIM_EXCEEDS_CONNECTOR_PROFILE in kinds
+
+    top_repayment = report.optimal_repayment_schedule[0]
+    assert "In-Vivo" in top_repayment.debt_item.remediation.action_title
+    assert "in_vivo" in top_repayment.debt_item.remediation.target_backend_or_method
+
+
+def test_detect_all_connector_debt_kinds():
+    """Tests detection of the other connector evidence debt taxonomy items."""
+    ledger = ClaimLedger()
+    ledger.add_evidence(
+        EvidenceRef(
+            ref_id="EVID-UNAUTH",
+            kind="database",
+            summary="Unauthenticated remote MCP tool output",
+            maturity=ConclusionMaturity.UNASSESSED.value,
+            provenance={"unauthenticated_producer": True},
+        )
+    )
+    ledger.add_evidence(
+        EvidenceRef(
+            ref_id="EVID-DB-NO-RELEASE",
+            kind="database",
+            summary="Target bioactivity lookup without database release tag",
+            maturity=ConclusionMaturity.SUPPORTED.value,
+            provenance={"unknown_database_release": True},
+        )
+    )
+    ledger.add_evidence(
+        EvidenceRef(
+            ref_id="EVID-MODEL-NO-VER",
+            kind="transformation",
+            summary="ESMFold structure inference without model weights hash",
+            maturity=ConclusionMaturity.SUPPORTED.value,
+            provenance={"model_version_missing": True},
+        )
+    )
+    ledger.add_evidence(
+        EvidenceRef(
+            ref_id="EVID-NO-LINEAGE",
+            kind="database",
+            summary="Pathway enrichment without primary citation or accession",
+            maturity=ConclusionMaturity.SUPPORTED.value,
+            provenance={"source_lineage_unresolved": True},
+        )
+    )
+    ledger.add_evidence(
+        EvidenceRef(
+            ref_id="EVID-CONFOUNDED",
+            kind="method_run",
+            summary="Observational cohort association without covariate control",
+            maturity=ConclusionMaturity.SUPPORTED.value,
+            provenance={"uncontrolled_confounding": True},
+        )
+    )
+    ledger.add_evidence(
+        EvidenceRef(
+            ref_id="EVID-NO-INDEP",
+            kind="literature",
+            summary="Screening finding from single commercial lab",
+            maturity=ConclusionMaturity.SUPPORTED.value,
+            provenance={"no_independent_validation": True},
+        )
+    )
+
+    ledger.add_claim(
+        ClaimRecord(
+            claim_id="CLAIM-MULTI-CONNECTOR",
+            statement="Candidate molecule binds kinase and associates with phenotype",
+            capability_id="bioactivity.affinity_audit",
+            supported_by=[
+                "EVID-UNAUTH",
+                "EVID-DB-NO-RELEASE",
+                "EVID-MODEL-NO-VER",
+                "EVID-NO-LINEAGE",
+                "EVID-CONFOUNDED",
+                "EVID-NO-INDEP",
+            ],
+        )
+    )
+
+    report = EvidenceDebtEngine.audit_ledger(ledger)
+    detected_kinds = {d.debt_kind for d in report.debt_items}
+
+    assert DebtKind.UNAUTHENTICATED_PRODUCER in detected_kinds
+    assert DebtKind.UNKNOWN_DATABASE_RELEASE in detected_kinds
+    assert DebtKind.MODEL_VERSION_MISSING in detected_kinds
+    assert DebtKind.SOURCE_LINEAGE_UNRESOLVED in detected_kinds
+    assert DebtKind.UNCONTROLLED_CONFOUNDING in detected_kinds
+    assert DebtKind.NO_INDEPENDENT_VALIDATION in detected_kinds

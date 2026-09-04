@@ -155,6 +155,22 @@ FORBIDDEN_CLAIM_CATALOG: Dict[str, ForbiddenClaim] = {
                 r"\bpipeline\s+(?:results|findings)\s+(?:show|demonstrate|confirm)",
             ),
         ),
+        ForbiddenClaim(
+            claim_id="crystallographic_ground_truth",
+            description="Claiming predicted AlphaFold/ESMFold models are experimental crystallographic ground truth or rigid pockets on disordered loops.",
+            detection_patterns=(
+                r"\bcrystallographic\s+(?:ground\s+truth|resolution)",
+                r"\brigid\s+pocket\s+on\s+disordered",
+            ),
+        ),
+        ForbiddenClaim(
+            claim_id="potent_lead_from_weak_binding",
+            description="Claiming potent targeted inhibition from weak micromolar (>10 µM) binding.",
+            detection_patterns=(
+                r"\bpotent\s+(?:lead|inhibitor)\s+with\s+(?:ic50|kd)\s*>\s*10",
+                r"\bpotent\s+target(?:ed)?\s+inhibitor",
+            ),
+        ),
     ]
 }
 
@@ -629,12 +645,17 @@ def enforce_evidence_ceiling(
     capability_id: str,
     claimed_maturity: str,
     has_external_validation: bool = False,
+    annotation_metadata: Optional[Dict[str, Any]] = None,
 ) -> str:
     """
     Clamp a claimed conclusion maturity to the capability's evidence ceiling
     (BNS-CC-013 / BNS-EM-006). Hosts and pipelines MUST apply this clamp
     before reporting maturity.
     """
+    if capability_id == "scrna.annotation_evidence":
+        from bionexus.annotation_evidence import assess_annotation_metadata, clamp_annotation_claim
+
+        return clamp_annotation_claim(claimed_maturity, assess_annotation_metadata(annotation_metadata or {}))
     abi = get_capability_abi(capability_id)
     return abi.evidence_ceiling.clamp(claimed_maturity, has_external_validation=has_external_validation)
 
@@ -645,6 +666,7 @@ def enforce_statistical_warrant(
     has_external_validation: bool = False,
     has_fdr_correction: Optional[bool] = None,
     min_replicates_per_condition: Optional[int] = None,
+    annotation_metadata: Optional[Dict[str, Any]] = None,
 ) -> str:
     """
     The full statistical-warrant clamp (BNS-CC-009 / BN-F005 / BN-F002):
@@ -664,7 +686,8 @@ def enforce_statistical_warrant(
        through unchanged — they are diagnostics, not warrant levels.
     """
     warranted = enforce_evidence_ceiling(
-        capability_id, claimed_maturity, has_external_validation=has_external_validation
+        capability_id, claimed_maturity, has_external_validation=has_external_validation,
+        annotation_metadata=annotation_metadata,
     )
     ranks = {
         ConclusionMaturity.ABSTAIN.value: 0,

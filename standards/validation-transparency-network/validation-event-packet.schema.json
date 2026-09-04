@@ -26,6 +26,8 @@
         "NON_AUTHOR_REVIEW",
         "CROSS_HOST_COMPARISON",
         "CALIBRATION_FREEZE",
+        "CONNECTOR_CONFORMANCE_EXECUTION",
+        "CONNECTOR_BENCHMARK_EXECUTION",
         "REVOCATION"
       ]
     },
@@ -56,7 +58,7 @@
       "minItems": 1,
       "uniqueItems": true,
       "items": {
-        "enum": ["BNS-Core", "BNS-Warrant", "BNS-Provenance", "BNS-Agent", "BNS-Validation", "BNS-Full"]
+        "enum": ["BNS-Core", "BNS-Warrant", "BNS-Provenance", "BNS-Agent", "BNS-Validation", "BNS-Full", "BNS-Connector"]
       }
     },
     "result": {"enum": ["PASS", "FAIL", "NEGATIVE", "INCONCLUSIVE", "NOT_ASSESSED"]},
@@ -67,6 +69,7 @@
         "artifact_uri": {"type": "string", "format": "uri"},
         "artifact_sha256": {"$ref": "#/$defs/sha256"},
         "dataset_sha256": {"$ref": "#/$defs/sha256"},
+        "connector_id": {"type": "string", "minLength": 1},
         "host_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
         "limitations": {"type": "array", "items": {"type": "string", "minLength": 1}}
       },

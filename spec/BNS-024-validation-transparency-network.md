@@ -43,6 +43,14 @@ blockchain.
   as completed review evidence; an inconclusive or not-assessed event MUST NOT.
 - **BNS-VN-011** Dataset, external-laboratory, cross-host, and calibration slots
   MUST require the event-specific positive result defined by the reducer.
+- **BNS-VN-011A (Connector Conformance and Benchmark Slots)** External connectors
+  MAY be admitted to the log under `CONNECTOR_CONFORMANCE_EXECUTION` or
+  `CONNECTOR_BENCHMARK_EXECUTION` events. Every connector event MUST bind the
+  connector identifier, BCTK profile, and dual attestations (issuer + independent
+  assessor). Derived candidate slots MUST track `connector_conformance_runs` and
+  `validated_connectors` while preserving `certification_status=NOT_ASSESSED`.
+  Admission confirms execution traceability only; it MUST NOT be represented as
+  scientific truth, endorsement, or capability certification.
 - **BNS-VN-012** Derived state MUST remain `certification_status=NOT_ASSESSED`.
   Cryptographic admission MUST NOT be presented as scientific truth,
   institutional authority, accreditation, or certification.

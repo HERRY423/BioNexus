@@ -279,3 +279,214 @@ def assess_doublet_risk(doublet_rate: Optional[float]) -> Optional[DoubletRiskAs
             "downstream cell-type evidence assessment.",
         ],
     )
+
+
+class StructureConfidenceRegime(str, Enum):
+    """AlphaFold/ESMFold per-residue and global confidence tiers (Jumper et al. 2021)."""
+
+    VERY_HIGH = "VERY_HIGH"  # pLDDT >= 90: high accuracy for side chains and pockets
+    CONFIDENT = "CONFIDENT"  # 70 <= pLDDT < 90: reliable backbone topology
+    LOW = "LOW"  # 50 <= pLDDT < 70: low confidence, flexible/unstructured candidate
+    VERY_LOW_DISORDERED = "VERY_LOW_DISORDERED"  # pLDDT < 50: intrinsically disordered region (IDR)
+
+
+@dataclass
+class StructureConfidenceAssessment:
+    """Audit result for macromolecular structural confidence metrics."""
+
+    regime: StructureConfidenceRegime
+    mean_plddt: float
+    min_plddt: float
+    interdomain_pae: Optional[float]
+    sufficient_for_rigid_pocket: bool
+    warnings: List[str] = field(default_factory=list)
+    remedies: List[str] = field(default_factory=list)
+    rule_basis: List[str] = field(default_factory=list)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "regime": self.regime.value,
+            "mean_plddt": round(self.mean_plddt, 2),
+            "min_plddt": round(self.min_plddt, 2),
+            "interdomain_pae": round(self.interdomain_pae, 2) if self.interdomain_pae is not None else None,
+            "sufficient_for_rigid_pocket": self.sufficient_for_rigid_pocket,
+            "warnings": list(self.warnings),
+            "remedies": list(self.remedies),
+            "rule_basis": list(self.rule_basis),
+        }
+
+
+def assess_protein_structure_confidence(
+    mean_plddt: float,
+    min_plddt: Optional[float] = None,
+    interdomain_pae: Optional[float] = None,
+) -> StructureConfidenceAssessment:
+    """
+    Audit AlphaFold/ESMFold structural confidence metrics against epistemic criteria.
+
+    Normative rules:
+    - pLDDT < 50: Strong predictor of intrinsic disorder (IDR); never permits rigid binding site assertions.
+    - 50 <= pLDDT < 70: Low confidence ribbon/backbone; exploratory screening only, no atomic docking claims.
+    - 70 <= pLDDT < 90: Confident backbone; suitable for fold topology and overall domain arrangement.
+    - pLDDT >= 90: High-confidence side-chain coordinates.
+    - Inter-domain PAE > 15.0 Å: Inter-domain orientation cannot be asserted as fixed rigid body.
+    """
+    mean_val = float(mean_plddt)
+    min_val = float(min_plddt) if min_plddt is not None else mean_val
+    warnings: List[str] = []
+    remedies: List[str] = []
+    rule_basis: List[str] = ["Jumper et al. 2021 (AlphaFold2, Nature)", "Akdel et al. 2022 (Nat Struct Mol Biol)"]
+
+    if mean_val >= 90.0 and min_val >= 70.0:
+        regime = StructureConfidenceRegime.VERY_HIGH
+        sufficient_for_rigid_pocket = True
+    elif mean_val >= 70.0:
+        regime = StructureConfidenceRegime.CONFIDENT
+        sufficient_for_rigid_pocket = min_val >= 60.0
+        if min_val < 60.0:
+            warnings.append(
+                f"Global mean pLDDT is confident ({mean_val:.1f}), but local minimum is low ({min_val:.1f}). "
+                "Active site residues may reside in a flexible loop region."
+            )
+            remedies.append("Inspect per-residue pLDDT specifically across active site and binding pocket residues.")
+    elif mean_val >= 50.0:
+        regime = StructureConfidenceRegime.LOW
+        sufficient_for_rigid_pocket = False
+        warnings.append(
+            f"Mean pLDDT is low ({mean_val:.1f}). Backbone prediction is exploratory; coordinates should not be "
+            "treated as an experimental crystallographic ground truth."
+        )
+        remedies.append(
+            "Cap structural conclusions at candidate hypothesis (FRAGILE ceiling); confirm with circular dichroism, "
+            "NMR, or cryo-EM before asserting pocket druggability."
+        )
+    else:
+        regime = StructureConfidenceRegime.VERY_LOW_DISORDERED
+        sufficient_for_rigid_pocket = False
+        warnings.append(
+            f"Mean pLDDT is very low ({mean_val:.1f} < 50.0). Regions with pLDDT < 50 are known to correlate with "
+            "intrinsic disorder (IDR); asserting a fixed 3D pocket or rigid tertiary fold is scientifically invalid."
+        )
+        remedies.append(
+            "Abstain from rigid pocket claims. Model candidate region with IDR-specific disordered ensembles or "
+            "investigate induced-fit folding upon partner binding."
+        )
+
+    if interdomain_pae is not None and float(interdomain_pae) > 15.0:
+        warnings.append(
+            f"Inter-domain Predicted Aligned Error (PAE) is elevated ({float(interdomain_pae):.1f} Å > 15.0 Å). "
+            "Relative domain-domain orientation is unconstrained and cannot warrant a rigid multi-domain interface."
+        )
+        remedies.append("Evaluate individual domains independently; do not assert multi-domain cooperative pocket geometry.")
+
+    return StructureConfidenceAssessment(
+        regime=regime,
+        mean_plddt=mean_val,
+        min_plddt=min_val,
+        interdomain_pae=float(interdomain_pae) if interdomain_pae is not None else None,
+        sufficient_for_rigid_pocket=sufficient_for_rigid_pocket,
+        warnings=warnings,
+        remedies=remedies,
+        rule_basis=rule_basis,
+    )
+
+
+class BioactivityRegime(str, Enum):
+    """Small-molecule potency and affinity tiers (ChEMBL / IUPHAR standard)."""
+
+    POTENT = "POTENT"  # <= 100 nM: potent nanomolar lead candidate
+    MODERATE = "MODERATE"  # 100 nM - 1000 nM (1 uM): confirmed micromolar hit
+    WEAK = "WEAK"  # 1 uM - 10 uM: weak/screening activity requiring SAR optimization
+    INACTIVE_OR_NONSPECIFIC = "INACTIVE_OR_NONSPECIFIC"  # > 10 uM: non-specific or inactive
+
+
+@dataclass
+class BioactivityAssessment:
+    """Audit result for small-molecule binding affinity and bioactivity metrics."""
+
+    regime: BioactivityRegime
+    metric_name: str
+    value_nm: float
+    has_dose_response: bool
+    sufficient_for_lead_claim: bool
+    warnings: List[str] = field(default_factory=list)
+    remedies: List[str] = field(default_factory=list)
+    rule_basis: List[str] = field(default_factory=list)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "regime": self.regime.value,
+            "metric_name": self.metric_name,
+            "value_nm": round(self.value_nm, 2),
+            "has_dose_response": self.has_dose_response,
+            "sufficient_for_lead_claim": self.sufficient_for_lead_claim,
+            "warnings": list(self.warnings),
+            "remedies": list(self.remedies),
+            "rule_basis": list(self.rule_basis),
+        }
+
+
+def assess_bioactivity_affinity(
+    value_nm: float,
+    metric_name: str = "IC50",
+    has_dose_response: bool = True,
+) -> BioactivityAssessment:
+    """
+    Audit small-molecule affinity metrics (IC50, Ki, Kd) against medicinal chemistry warrant tiers.
+
+    Normative rules:
+    - Affinity > 10,000 nM (10 uM): Classified as INACTIVE_OR_NONSPECIFIC; cannot claim targeted inhibitor.
+    - 1,000 nM < Affinity <= 10,000 nM: WEAK screening hit; require SAR optimization caveats.
+    - 100 nM < Affinity <= 1,000 nM: MODERATE hit.
+    - Affinity <= 100 nM: POTENT lead.
+    - Single-concentration screening without dose-response curve: caps claim at PRELIMINARY.
+    """
+    val = float(value_nm)
+    metric = metric_name.upper().strip()
+    warnings: List[str] = []
+    remedies: List[str] = []
+    rule_basis: List[str] = [
+        "IUPHAR / BPS Guidelines for Pharmacology",
+        "Bento et al. 2014 (ChEMBL database, Nucleic Acids Res)",
+    ]
+
+    if val <= 100.0:
+        regime = BioactivityRegime.POTENT
+        sufficient_for_lead_claim = has_dose_response
+    elif val <= 1000.0:
+        regime = BioactivityRegime.MODERATE
+        sufficient_for_lead_claim = False
+    elif val <= 10000.0:
+        regime = BioactivityRegime.WEAK
+        sufficient_for_lead_claim = False
+        warnings.append(
+            f"{metric} of {val:.1f} nM ({val/1000.0:.2f} µM) represents weak micromolar binding. "
+            "Claims of potent or selective inhibition are unwarranted without SAR optimization."
+        )
+        remedies.append("Design analog series for structure-activity relationship (SAR) optimization.")
+    else:
+        regime = BioactivityRegime.INACTIVE_OR_NONSPECIFIC
+        sufficient_for_lead_claim = False
+        warnings.append(
+            f"{metric} exceeds 10,000 nM ({val/1000.0:.1f} µM > 10 µM). In standard medicinal chemistry, "
+            "activities > 10 µM are considered non-specific or inactive; asserting targeted inhibition is refused."
+        )
+        remedies.append("Abstain from targeted therapeutic claims; rule out colloidal aggregation or PAINS properties.")
+
+    if not has_dose_response:
+        warnings.append(
+            f"{metric} reported from single-concentration screening without full concentration-response curve. "
+            "Artifacts from compound insolubility or assay interference cannot be ruled out."
+        )
+        remedies.append("Perform multi-point serial dilution titration to determine robust Hill slope and true IC50/Kd.")
+
+    return BioactivityAssessment(
+        regime=regime,
+        metric_name=metric,
+        value_nm=val,
+        has_dose_response=has_dose_response,
+        sufficient_for_lead_claim=sufficient_for_lead_claim,
+        warnings=warnings,
+        remedies=remedies,
+        rule_basis=rule_basis,
+    )

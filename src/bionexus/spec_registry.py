@@ -18,9 +18,19 @@ def validate_spec_registry(spec_dir: Path) -> list[str]:
     if not registry_path.is_file():
         return ["spec/registry.yaml is missing"]
     raw: Mapping[str, Any] = yaml.safe_load(registry_path.read_text(encoding="utf-8")) or {}
+    freeze = raw.get("numbering_freeze")
+    freeze_n: int | None = None
+    if not isinstance(freeze, dict) or not freeze.get("max_id"):
+        errors.append("registry numbering_freeze.max_id is required")
+    else:
+        freeze_match = _ID_PATTERN.fullmatch(str(freeze.get("max_id", "")))
+        if freeze_match is None:
+            errors.append(f"invalid numbering_freeze.max_id: {freeze.get('max_id')!r}")
+        else:
+            freeze_n = int(freeze_match.group(1))
     documents = raw.get("documents", [])
     if not isinstance(documents, list):
-        return ["registry documents must be a list"]
+        return errors + ["registry documents must be a list"]
 
     ids: list[str] = []
     files: list[str] = []
@@ -57,10 +67,30 @@ def validate_spec_registry(spec_dir: Path) -> list[str]:
         errors.append("duplicate specification filename")
     if numbers and sorted(numbers) != list(range(min(numbers), max(numbers) + 1)):
         errors.append("specification numbering contains a gap")
+    if freeze_n is not None and numbers and max(numbers) > freeze_n:
+        errors.append(
+            f"specification freeze at BNS-{freeze_n:03d}; "
+            f"BNS-{max(numbers):03d} exceeds the freeze"
+        )
     actual = {path.name for path in spec_dir.glob("BNS-*.md")}
     registered = set(files)
     for filename in sorted(actual - registered):
         errors.append(f"unregistered specification file: {filename}")
     for filename in sorted(registered - actual):
         errors.append(f"registered specification file is absent: {filename}")
+    index_path = spec_dir / "README.md"
+    if not index_path.is_file():
+        errors.append("spec/README.md document index is missing")
+    else:
+        entries = re.findall(
+            r"^\|\s*\[(BNS-\d{3})\]\(([^)]+)\)",
+            index_path.read_text(encoding="utf-8"), re.MULTILINE,
+        )
+        for spec_id, filename in zip(ids, files):
+            matches = [target for index_id, target in entries if index_id == spec_id]
+            if matches != [filename]:
+                errors.append(f"{spec_id} index must link exactly once to {filename}")
+        for spec_id, _ in entries:
+            if spec_id not in ids:
+                errors.append(f"unregistered specification in document index: {spec_id}")
     return errors

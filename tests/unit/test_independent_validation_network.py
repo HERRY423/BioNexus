@@ -211,7 +211,10 @@ def test_seed_registry_network_is_incomplete_and_honest():
     assert network["network_status"] == "INCOMPLETE"
 
     pseudobulk = network["capabilities"]["scrna.pseudobulk_de"]
-    assert len(pseudobulk["counted_datasets"]) == 3  # frozen negative results count as executed evidence
+    assert pseudobulk["counted_datasets"] == ["BN-PB-IV-002"]
+    # Executed author-associated studies remain preserved but cannot count as independent.
+    assert {item["dataset_id"] for item in pseudobulk["excluded_datasets"]} == {"BN-PB-IV-004", "BN-PB-IV-005"}
+    assert all("author_associated" in item["reason"] for item in pseudobulk["excluded_datasets"])
     assert pseudobulk["counted_lab_studies"] == []
     assert pseudobulk["counted_reviews"] == []
 
@@ -237,10 +240,12 @@ def test_seed_open_questions_blockers_all_still_open():
 
 
 def test_certification_output_unchanged_while_ivn_quotas_unmet():
+    for capability_id in certification.FLAGSHIP_CAPABILITIES:
+        record = certification.certify_capability(capability_id)
+        assert record.criteria["cross_host_test"].satisfied is False, capability_id
+        assert record.criteria["external_reviewer"].satisfied is False, capability_id
     record = certification.certify_capability("scrna.pseudobulk_de")
     assert record.tier.value == "VALIDATED"
-    assert record.criteria["cross_host_test"].satisfied is False
-    assert record.criteria["external_reviewer"].satisfied is False
 
 
 # ------------------------------------------------------------------------------

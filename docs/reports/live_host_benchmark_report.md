@@ -1,5 +1,15 @@
 # BioNexus Eval 2.0: Multi-Tier Host Agent & Scientific Outcome Benchmark Report
 
+> **DO NOT CITE as current results.** This page is a historical architecture
+> write-up, not the canonical benchmark. The living conformance record is
+> [`evals/reports/benchmark_report.md`](../../evals/reports/benchmark_report.md)
+> (timestamp `2026-08-16`, execution mode `OFFLINE TRACE REPLAY`, model
+> `simulated_trace_v1`). That canonical report records L3 **0/4 executed**
+> (`SKIPPED_NO_BACKEND`), gating 61/61 attempted, frontier 7/14, and union
+> calibration **MISALIGNED**. Tables below that show L3 4/4 or CRI 100% are
+> **not verified** by the canonical report and MUST NOT be quoted as current
+> scientific outcome evidence.
+
 ## Executive Summary
 
 BioNexus Eval 2.0 is the formal evaluation harness for validating scientific coding agent plugins and reliability substrates. It evaluates computational biology coding assistants across three hierarchically decoupled tiers:
@@ -42,75 +52,55 @@ BioNexus Eval 2.0 is the formal evaluation harness for validating scientific cod
 
 ## Comprehensive Evaluation Results
 
-### 1. Multi-Tier Benchmark Scores
+### 1. Multi-Tier Benchmark Scores — superseded, do not cite
 
-| Level | Benchmark Tier | Cases Evaluated | Passed | Failed | Accuracy |
-|---|---|---|---|---|---|
-| **L1** | Router & Precondition Regression | 29 | 29 | 0 | **100.0%** |
-| **L2** | Host-Agent Prohibited Claims Audit | 6 | 6 | 0 | **100.0%** |
-| **L3** | Scientific Outcome & Ground Truth Recovery | 4 | 4 | 0 | **100.0%** |
-| **Total** | **Unified Scientific Benchmark** | **39** | **39** | **0** | **100.0%** |
+The scores originally printed here (L1/L2/L3 100%, CRI 100%) are **not** the
+canonical record. Cite [`evals/reports/benchmark_report.md`](../../evals/reports/benchmark_report.md) instead:
 
----
-
-### 2. The 8 Core Scientific Reliability Metrics
-
-| Metric | Target | BioNexus Score | Interpretation |
-|---|---|---|---|
-| **Routing Accuracy** | $> 95.0\%$ | **100.0%** | Intent correctly mapped to gold-standard biological capabilities |
-| **Unsafe Invocation Rate** | $0.0\%$ | **0.0%** | Zero execution allowed when critical preconditions are violated |
-| **Abstention Precision** | $> 95.0\%$ | **100.0%** | 100% of scientific refusals are mathematically justified (no over-abstention) |
-| **Abstention Recall** | $> 95.0\%$ | **100.0%** | All unsafe biological scenarios correctly intercepted |
-| **Capability Hallucination Rate** | $0.0\%$ | **0.0%** | Zero fabricated cell types, unverified targets, or unsupported claims |
-| **Backend Fidelity** | $> 95.0\%$ | **100.0%** | Correct backend execution and explicit degradation reporting |
-| **Scientific Semantic Error Rate** | $0.0\%$ | **0.0%** | Zero confusion of raw vs log-normalized, single cell vs biological replicate |
-| **Evidence Calibration Score** | $> 90.0\%$ | **92.3%** | EvidenceCard maturity aligns strictly with empirical warrants |
-| **Composite Reliability Index (CRI)** | $> 95.0\%$ | **100.0%** | **Unified scientific reliability standard achieved** |
+| Level | Canonical status (2026-08-16 replay) |
+|---|---|
+| **L1** | 55/55 attempted (router & precondition regression) |
+| **L2** | 6/6 attempted in **offline trace replay**, not live host providers |
+| **L3** | **0/4 executed** (`SKIPPED_NO_BACKEND`; planted-truth outcomes not verified) |
+| **Union calibration** | **MISALIGNED** (gating + frontier) |
 
 ---
 
-### 3. Epistemic Calibration & Epistemic Uncertainty Metrics
+### 2–3. Reliability metrics and calibration — superseded, do not cite
 
-BioNexus Eval 2.0 explicitly measures epistemic calibration between preflight warrants and post-execution evidence:
-
-- **Overconfidence Rate (Epistemic Hubris)**: **`0.0%`** (Target: $0.0\%$, Zero false-positive conclusions).
-- **Underconfidence Rate (Epistemic Timidity)**: **`17.9%`** (Conservative preflight default prior to statistical proof).
-- **Ordinal Calibration Error (OCE)**: **`0.385`** (Low ordinal rank distance).
-- **Brier Calibration Score**: **`96.0%`**.
-- **Maturity Macro-F1**: **`52.8%`**.
-
-#### Warrant Confusion Matrix
-
-| Expected Warrant \ Inferred | ABSTAIN | UNASSESSED | PRELIMINARY | FRAGILE | SUPPORTED |
-|---|---|---|---|---|---|
-| **ABSTAIN** | 12 | 3 | 0 | 0 | 0 |
-| **UNASSESSED** | 0 | 15 | 0 | 0 | 0 |
-| **PRELIMINARY** | 0 | 3 | 0 | 0 | 0 |
-| **FRAGILE** | 0 | 0 | 0 | 2 | 0 |
-| **SUPPORTED** | 0 | 4 | 0 | 0 | 0 |
+Score tables that previously appeared here (including CRI 100%, routing 100%,
+and a local warrant confusion matrix) have been removed so they cannot be
+quoted as current results. Use
+[`evals/reports/benchmark_report.md`](../../evals/reports/benchmark_report.md).
 
 ---
 
 ## Ground-Truth Biological Outcome Benchmarks (L3 Breakdown)
 
-All 4 L3 pipelines execute without fail-open exception swallowing:
+**Canonical status:** these four L3 cases were **not executed** in
+`evals/reports/benchmark_report.md` (`SKIPPED_NO_BACKEND`). The outcomes
+below are historical narrative from this page and are **not** verified
+planted-truth results. Re-run with `pip install -e ".[goldchain,spatial]"`
+and `BIONEXUS_EVAL_STRICT=1` before treating any L3 number as evidence.
+
+Historical write-up (unverified in the canonical report):
 
 1. **Single-Cell Marker Recovery (`l3-outcome-marker-recovery-001`)**:
    - **Pipeline**: Scanpy gold-chain preprocessing $\to$ PCA $\to$ UMAP $\to$ Leiden $\to$ Wilcoxon rank-sum marker calling.
    - **Ground Truth**: Planted marker genes `CD3D`, `MS4A1`, `CD14`.
-   - **Outcome**: $100\%$ recall of all planted markers in top differential ranks ($p < 10^{-15}$).
+   - **Outcome**: unverified on this page; canonical report skipped this case (`SKIPPED_NO_BACKEND`).
 2. **Spatial Variable Gene Discovery (`l3-outcome-spatial-svg-002`)**:
    - **Pipeline**: Squidpy spatial coordinate graph $\to$ Spatial neighborhood connectivity $\to$ Moran's $I$ autocorrelation.
    - **Ground Truth**: Planted spatial gradient `SVG_LEFT` (Target Moran's $I \ge 0.30$).
-   - **Outcome**: `SVG_LEFT` identified as #1 SVG with Moran's $I = 0.894$ ($p < 10^{-20}$).
+   - **Outcome**: unverified on this page; canonical report skipped this case (`SKIPPED_NO_BACKEND`).
 3. **Condition Pseudobulk Differential Expression (`l3-outcome-pseudobulk-deseq-003`)**:
    - **Pipeline**: Sample-level pseudobulk count aggregation $\to$ PyDESeq2 negative binomial dispersion modeling $\to$ Wald test.
    - **Ground Truth**: Planted condition DEG `g0` with log2 fold change $\ge 2.0$.
-   - **Outcome**: `g0` recovered as #1 DEG with $\text{LFC} = 2.448$, Wald stat $= 9.505$, $p = 1.99 \times 10^{-21}$, $q = 3.98 \times 10^{-20}$.
+   - **Outcome**: unverified on this page; canonical report skipped this case (`SKIPPED_NO_BACKEND`).
 4. **Leiden Resolution Stability (`l3-outcome-clustering-ari-stability-004`)**:
    - **Pipeline**: Resolution perturbation sweep ($r=0.5$ vs $r=0.8$) $\to$ Cluster partition comparison.
    - **Ground Truth**: Partition stability $\text{ARI} \ge 0.80$.
-   - **Outcome**: Mean Adjusted Rand Index $\text{ARI} = 1.000$ (verified high cluster reproducibility).
+   - **Outcome**: unverified on this page; canonical report skipped this case (`SKIPPED_NO_BACKEND`).
 
 ---
 
@@ -153,6 +143,6 @@ python -m bionexus.cli eval --level L2 --provider openai --model gpt-4o-mini
 # Run live Anthropic Claude host evaluation (requires ANTHROPIC_API_KEY)
 python -m bionexus.cli eval --level L2 --provider anthropic --model claude-3-5-sonnet-20241022
 
-# Save benchmark report to markdown
-python -m bionexus.cli eval --level all --report docs/reports/benchmark_latest.md
+# Save benchmark report to the canonical path (do not write a second 100% page)
+python -m bionexus.cli eval --level all --provider replay --report evals/reports/benchmark_report.md
 ```

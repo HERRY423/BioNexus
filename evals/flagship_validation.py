@@ -441,7 +441,9 @@ def _suite_annotation_distrust(case, meta: Dict[str, Any]) -> Dict[str, Any]:
 
     from evals.annotation_external_validation import run_study
 
-    report = run_study(write=True)
+    # Benchmark evaluation must never rewrite frozen canonical evidence in the
+    # source checkout. Artifact generation is an explicit release operation.
+    report = run_study(write=False)
     status = report["status"]["run_status"]
     if status not in {"positive_candidate", "endpoints_met_inconclusive"}:
         return {
@@ -484,7 +486,8 @@ def _suite_spatial_artifact_downgrade(case, meta: Dict[str, Any]) -> Dict[str, A
 
     from evals.spatial_instrument_validation import run_study
 
-    report = run_study(write=True)
+    # Keep unit/eval execution read-only with respect to the evidence ledger.
+    report = run_study(write=False)
     endpoint_name = {
         "spatial_permutation": "coordinate_permutation",
         "batch_fov_confounding": "fov_confounding",

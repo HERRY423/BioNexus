@@ -1,0 +1,480 @@
+{
+  "status": "MEETS_DECLARED_CRITERION",
+  "criterion_met": true,
+  "pairs": [
+    {
+      "left": "run-0",
+      "right": "run-1",
+      "n_shared": 30,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-0",
+      "right": "run-2",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-0",
+      "right": "run-3",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-0",
+      "right": "run-4",
+      "n_shared": 30,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-0",
+      "right": "run-5",
+      "n_shared": 30,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-0",
+      "right": "run-6",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-0",
+      "right": "run-7",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-0",
+      "right": "run-8",
+      "n_shared": 30,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-0",
+      "right": "run-9",
+      "n_shared": 30,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-0",
+      "right": "run-10",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-0",
+      "right": "run-11",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-1",
+      "right": "run-2",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-1",
+      "right": "run-3",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-1",
+      "right": "run-4",
+      "n_shared": 30,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-1",
+      "right": "run-5",
+      "n_shared": 30,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-1",
+      "right": "run-6",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-1",
+      "right": "run-7",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-1",
+      "right": "run-8",
+      "n_shared": 30,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-1",
+      "right": "run-9",
+      "n_shared": 30,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-1",
+      "right": "run-10",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-1",
+      "right": "run-11",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-2",
+      "right": "run-3",
+      "n_shared": 14,
+      "union_coverage": 0.5,
+      "ari": 1.0
+    },
+    {
+      "left": "run-2",
+      "right": "run-4",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-2",
+      "right": "run-5",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-2",
+      "right": "run-6",
+      "n_shared": 21,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-2",
+      "right": "run-7",
+      "n_shared": 14,
+      "union_coverage": 0.5,
+      "ari": 1.0
+    },
+    {
+      "left": "run-2",
+      "right": "run-8",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-2",
+      "right": "run-9",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-2",
+      "right": "run-10",
+      "n_shared": 21,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-2",
+      "right": "run-11",
+      "n_shared": 14,
+      "union_coverage": 0.5,
+      "ari": 1.0
+    },
+    {
+      "left": "run-3",
+      "right": "run-4",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-3",
+      "right": "run-5",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-3",
+      "right": "run-6",
+      "n_shared": 14,
+      "union_coverage": 0.5,
+      "ari": 1.0
+    },
+    {
+      "left": "run-3",
+      "right": "run-7",
+      "n_shared": 21,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-3",
+      "right": "run-8",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-3",
+      "right": "run-9",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-3",
+      "right": "run-10",
+      "n_shared": 14,
+      "union_coverage": 0.5,
+      "ari": 1.0
+    },
+    {
+      "left": "run-3",
+      "right": "run-11",
+      "n_shared": 21,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-4",
+      "right": "run-5",
+      "n_shared": 30,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-4",
+      "right": "run-6",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-4",
+      "right": "run-7",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-4",
+      "right": "run-8",
+      "n_shared": 30,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-4",
+      "right": "run-9",
+      "n_shared": 30,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-4",
+      "right": "run-10",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-4",
+      "right": "run-11",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-5",
+      "right": "run-6",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-5",
+      "right": "run-7",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-5",
+      "right": "run-8",
+      "n_shared": 30,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-5",
+      "right": "run-9",
+      "n_shared": 30,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-5",
+      "right": "run-10",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-5",
+      "right": "run-11",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-6",
+      "right": "run-7",
+      "n_shared": 14,
+      "union_coverage": 0.5,
+      "ari": 1.0
+    },
+    {
+      "left": "run-6",
+      "right": "run-8",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-6",
+      "right": "run-9",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-6",
+      "right": "run-10",
+      "n_shared": 21,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-6",
+      "right": "run-11",
+      "n_shared": 14,
+      "union_coverage": 0.5,
+      "ari": 1.0
+    },
+    {
+      "left": "run-7",
+      "right": "run-8",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-7",
+      "right": "run-9",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-7",
+      "right": "run-10",
+      "n_shared": 14,
+      "union_coverage": 0.5,
+      "ari": 1.0
+    },
+    {
+      "left": "run-7",
+      "right": "run-11",
+      "n_shared": 21,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-8",
+      "right": "run-9",
+      "n_shared": 30,
+      "union_coverage": 1.0,
+      "ari": 1.0
+    },
+    {
+      "left": "run-8",
+      "right": "run-10",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-8",
+      "right": "run-11",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-9",
+      "right": "run-10",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-9",
+      "right": "run-11",
+      "n_shared": 21,
+      "union_coverage": 0.7,
+      "ari": 1.0
+    },
+    {
+      "left": "run-10",
+      "right": "run-11",
+      "n_shared": 14,
+      "union_coverage": 0.5,
+      "ari": 1.0
+    }
+  ],
+  "evidence_class": "SUPPLIED_PARTITIONS_RECOMPUTED",
+  "independent_validation": "NOT_ESTABLISHED",
+  "biological_identity": "NOT_ASSESSED",
+  "limitations": [
+    "ARI describes only shared cells in the supplied perturbation grid; omitted cells/populations are not validated.",
+    "The declared criterion is not an approved empirical threshold; passing does not establish biological identity or population generalization.",
+    "Dataset hash binding and recomputation do not authenticate the supplier or independence of the runs."
+  ],
+  "n_runs": 12,
+  "mean_ari": 1.0,
+  "min_ari": 1.0,
+  "declared_min_ari": 0.8
+}

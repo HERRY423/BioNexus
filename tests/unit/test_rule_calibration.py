@@ -220,3 +220,30 @@ def test_cli_rule_subcommands(capsys):
     assert rc_chal == 0
     out_chal = capsys.readouterr().out
     assert "Scientific Challenge Network Ledger" in out_chal
+
+
+def test_create_challenge_from_connector_conflict():
+    """Verifies that connector contradictions and failures synthesize into formal BNS-018 challenges."""
+    from bionexus.rule_calibration import (
+        ChallengeType,
+        create_challenge_from_connector_conflict,
+    )
+
+    challenge = create_challenge_from_connector_conflict(
+        challenge_id="CHAL-CONN-001",
+        target_rule_id="missing_replicates",
+        challenger_identity="orcid:0000-0002-1825-0097",
+        connector_id="chembl-bioactivity-mcp",
+        conflict_description="Dose-response curve plateaus at high concentration due to compound precipitation, contradicting linear binding kinetics.",
+        empirical_evidence_refs=["doi:10.1016/j.cell.2023.01.001", "PMID:38192031"],
+        reproduction_script_sha256="d" * 64,
+        challenge_type=ChallengeType.EMPIRICAL_COUNTEREXAMPLE,
+    )
+
+    assert challenge.challenge_id == "CHAL-CONN-001"
+    assert challenge.target_rule_id == "missing_replicates"
+    assert challenge.challenge_type == ChallengeType.EMPIRICAL_COUNTEREXAMPLE
+    assert "chembl-bioactivity-mcp" in challenge.title
+    assert "precipitation" in challenge.description
+    assert len(challenge.empirical_evidence_refs) == 2
+    assert challenge.status.value == "PROPOSED"

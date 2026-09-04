@@ -148,9 +148,9 @@ def test_nextflow_receipt_is_provenance_only_and_does_not_mint_scientific_factor
     receipt = create_nextflow_tool_receipt(mock_nextflow_run, pipeline_name="nf-core/rnaseq")
     factors, notes = extract_evidence_factors_from_receipt(receipt)
     assert len(notes) > 0
-    assert "backend_fidelity" in factors
-    assert "provenance" in factors
-    assert not {"sample_design", "replication", "confound_controls", "sensitivity_analysis"} & factors
+    assert factors == set()
+    assert any("content integrity" in note.lower() for note in notes)
+    assert any("backend_fidelity=UNASSESSED" in note for note in notes)
     assert receipt["metadata"]["scientific_evidence_effect"] == "NONE"
 
 

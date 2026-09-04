@@ -17,6 +17,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin
 
+import requests
+
 from bionexus.tool_receipt import create_tool_receipt
 from bionexus.versions import VERSION
 
@@ -120,13 +122,50 @@ class BenchlingConnector:
                 "status": "CREATED",
                 "assayResultIds": [f"asyr_{plate_id}_{i}" for i in range(len(measurements))],
                 "benchlingUri": f"https://benchling.com/entity/plate/{plate_id}",
+                "is_mock": True,
             }
             success = True
             errors: List[str] = []
         else:
-            resp_data = {"status": "UNCONFIGURED_NETWORK"}
-            success = False
-            errors = ["Direct network call disabled in testing environment"]
+            if not self.config.auth_token:
+                resp_data = {"status": "AUTH_CONFIG_ERROR"}
+                success = False
+                errors = ["Missing required Benchling auth_token in LIMS configuration"]
+            else:
+                target_url = urljoin(self.config.base_url.rstrip("/") + "/", "assay-results")
+                headers = {
+                    "Authorization": f"Bearer {self.config.auth_token}",
+                    "Content-Type": "application/json",
+                    "User-Agent": f"BioNexus/{self.plugin_version}",
+                    **self.config.custom_headers,
+                }
+                try:
+                    res = requests.post(
+                        target_url,
+                        json=payload,
+                        headers=headers,
+                        timeout=self.config.timeout_seconds,
+                        verify=self.config.verify_ssl,
+                    )
+                    if 200 <= res.status_code < 300:
+                        try:
+                            resp_data = res.json()
+                        except Exception:
+                            resp_data = {"status": "SUCCESS", "raw_text": res.text}
+                        success = True
+                        errors = []
+                    else:
+                        resp_data = {
+                            "status": "HTTP_ERROR",
+                            "http_status": res.status_code,
+                            "response_snippet": res.text[:500],
+                        }
+                        success = False
+                        errors = [f"Benchling API returned HTTP {res.status_code}: {res.text[:200]}"]
+                except requests.RequestException as exc:
+                    resp_data = {"status": "NETWORK_ERROR", "exception": type(exc).__name__}
+                    success = False
+                    errors = [f"Benchling connection failed: {exc}"]
 
         receipt = create_tool_receipt(
             plugin_id=self.plugin_id,
@@ -141,7 +180,7 @@ class BenchlingConnector:
             success=success,
             connector_type=LIMSConnectorType.BENCHLING.value,
             target_entity_id=plate_id,
-            records_synced=len(measurements),
+            records_synced=len(measurements) if success else 0,
             receipt=receipt,
             metadata=resp_data,
             errors=errors,
@@ -167,13 +206,50 @@ class BenchlingConnector:
                 "entryId": entry_id,
                 "status": "UPDATED",
                 "customFieldKey": "bionexus_evidence_card",
+                "is_mock": True,
             }
             success = True
             errors: List[str] = []
         else:
-            resp_data = {}
-            success = False
-            errors = ["Live network disabled in test mode"]
+            if not self.config.auth_token:
+                resp_data = {"status": "AUTH_CONFIG_ERROR"}
+                success = False
+                errors = ["Missing required Benchling auth_token in LIMS configuration"]
+            else:
+                target_url = urljoin(self.config.base_url.rstrip("/") + "/", f"entries/{entry_id}/custom-fields")
+                headers = {
+                    "Authorization": f"Bearer {self.config.auth_token}",
+                    "Content-Type": "application/json",
+                    "User-Agent": f"BioNexus/{self.plugin_version}",
+                    **self.config.custom_headers,
+                }
+                try:
+                    res = requests.post(
+                        target_url,
+                        json=req_payload,
+                        headers=headers,
+                        timeout=self.config.timeout_seconds,
+                        verify=self.config.verify_ssl,
+                    )
+                    if 200 <= res.status_code < 300:
+                        try:
+                            resp_data = res.json()
+                        except Exception:
+                            resp_data = {"status": "SUCCESS", "raw_text": res.text}
+                        success = True
+                        errors = []
+                    else:
+                        resp_data = {
+                            "status": "HTTP_ERROR",
+                            "http_status": res.status_code,
+                            "response_snippet": res.text[:500],
+                        }
+                        success = False
+                        errors = [f"Benchling Notebook API returned HTTP {res.status_code}: {res.text[:200]}"]
+                except requests.RequestException as exc:
+                    resp_data = {"status": "NETWORK_ERROR", "exception": type(exc).__name__}
+                    success = False
+                    errors = [f"Benchling Notebook connection failed: {exc}"]
 
         receipt = create_tool_receipt(
             plugin_id=self.plugin_id,
@@ -188,7 +264,7 @@ class BenchlingConnector:
             success=success,
             connector_type=LIMSConnectorType.BENCHLING.value,
             target_entity_id=entry_id,
-            records_synced=1,
+            records_synced=1 if success else 0,
             receipt=receipt,
             metadata=resp_data,
             errors=errors,
@@ -222,13 +298,46 @@ class GenericRestLIMSConnector:
                 "status": "ACCEPTED",
                 "processed": len(samples),
                 "endpoint": target_url,
+                "is_mock": True,
             }
             success = True
             errors: List[str] = []
         else:
-            resp_data = {}
-            success = False
-            errors = ["Live network disabled"]
+            headers = {
+                "Content-Type": "application/json",
+                "User-Agent": f"BioNexus/{self.plugin_version}",
+                **self.config.custom_headers,
+            }
+            if self.config.auth_token:
+                headers["Authorization"] = f"Bearer {self.config.auth_token}"
+
+            try:
+                res = requests.post(
+                    target_url,
+                    json=payload,
+                    headers=headers,
+                    timeout=self.config.timeout_seconds,
+                    verify=self.config.verify_ssl,
+                )
+                if 200 <= res.status_code < 300:
+                    try:
+                        resp_data = res.json()
+                    except Exception:
+                        resp_data = {"status": "SUCCESS", "raw_text": res.text}
+                    success = True
+                    errors = []
+                else:
+                    resp_data = {
+                        "status": "HTTP_ERROR",
+                        "http_status": res.status_code,
+                        "response_snippet": res.text[:500],
+                    }
+                    success = False
+                    errors = [f"LIMS REST endpoint returned HTTP {res.status_code}: {res.text[:200]}"]
+            except requests.RequestException as exc:
+                resp_data = {"status": "NETWORK_ERROR", "exception": type(exc).__name__}
+                success = False
+                errors = [f"LIMS REST dispatch failed: {exc}"]
 
         receipt = create_tool_receipt(
             plugin_id=self.plugin_id,
@@ -243,7 +352,7 @@ class GenericRestLIMSConnector:
             success=success,
             connector_type=self.config.connector_type.value,
             target_entity_id=target_url,
-            records_synced=len(samples),
+            records_synced=len(samples) if success else 0,
             receipt=receipt,
             metadata=resp_data,
             errors=errors,

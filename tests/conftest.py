@@ -3,17 +3,25 @@ Pytest configuration and shared fixtures for BioNexus.
 Provides synthetic datasets, mock AnnData matrices, and temp environments.
 """
 
+import os
 import shutil
 import sys
 import tempfile
 from pathlib import Path
+
+# Numba may otherwise select a package-adjacent or system temporary cache that
+# is not writable on managed Windows hosts.  Set a repository-local test cache
+# before importing NumPy/SciPy or any optional scverse backend.
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+NUMBA_TEST_CACHE = PROJECT_ROOT / ".numba-cache"
+NUMBA_TEST_CACHE.mkdir(parents=True, exist_ok=True)
+os.environ.setdefault("NUMBA_CACHE_DIR", str(NUMBA_TEST_CACHE))
 
 import numpy as np
 import pytest
 import scipy.sparse as sp
 
 # Ensure project scripts and skill scripts are importable
-PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 sys.path.insert(0, str(PROJECT_ROOT / "scripts"))

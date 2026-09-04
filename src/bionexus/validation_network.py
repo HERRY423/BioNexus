@@ -36,6 +36,8 @@ EVENT_TYPES = {
     "NON_AUTHOR_REVIEW",
     "CROSS_HOST_COMPARISON",
     "CALIBRATION_FREEZE",
+    "CONNECTOR_CONFORMANCE_EXECUTION",
+    "CONNECTOR_BENCHMARK_EXECUTION",
     "REVOCATION",
 }
 RESULTS = {"PASS", "FAIL", "NEGATIVE", "INCONCLUSIVE", "NOT_ASSESSED"}
@@ -332,8 +334,10 @@ def compute_state(events: Sequence[Mapping[str, Any]], *, at_time: datetime | No
     datasets: set[str] = set()
     labs: set[str] = set()
     reviewers: set[str] = set()
+    connectors: set[str] = set()
     cross_host = 0
     calibration_freezes = 0
+    connector_runs = 0
     outcomes = {result: 0 for result in sorted(RESULTS)}
     for packet in active:
         result = str(packet.get("result"))
@@ -355,6 +359,10 @@ def compute_state(events: Sequence[Mapping[str, Any]], *, at_time: datetime | No
             cross_host += 1
         if event_type == "CALIBRATION_FREEZE" and result == "PASS":
             calibration_freezes += 1
+        if event_type in ("CONNECTOR_CONFORMANCE_EXECUTION", "CONNECTOR_BENCHMARK_EXECUTION") and result == "PASS":
+            connector_runs += 1
+            if evidence.get("connector_id"):
+                connectors.add(str(evidence["connector_id"]))
 
     return {
         "schema_version": "bionexus.validation-network-state.v1",
@@ -365,6 +373,8 @@ def compute_state(events: Sequence[Mapping[str, Any]], *, at_time: datetime | No
             "non_author_reviewers": len(reviewers),
             "cross_host_comparisons": cross_host,
             "calibration_freezes": calibration_freezes,
+            "connector_conformance_runs": connector_runs,
+            "validated_connectors": len(connectors),
         },
         "outcome_counts": outcomes,
         "certification_status": "NOT_ASSESSED",
