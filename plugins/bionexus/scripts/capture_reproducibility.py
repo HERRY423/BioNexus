@@ -24,11 +24,16 @@ def capture(root: Path, output: Path) -> dict:
     commit = git("rev-parse", "HEAD")
     output.mkdir(parents=True, exist_ok=False)
     archive = output / "source.zip"
-    subprocess.run(["git", "archive", "--format=zip", "-o", str(archive.resolve()), commit], cwd=root, check=True)
-    packages, non_index = {}, []
+    subprocess.run(
+        ["git", "-c", "core.autocrlf=false", "-c", "core.eol=lf", "archive", "--format=zip", "-o", str(archive.resolve()), commit],
+        cwd=root, check=True,
+    )
+    packages, non_index, normalized_versions = {}, [], []
     for dist in importlib.metadata.distributions():
         name = re.sub(r"[-_.]+", "-", dist.metadata["Name"]).lower()
-        version = dist.version
+        version = dist.version.strip()
+        if version != dist.version:
+            normalized_versions.append(name)
         if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", name) or not re.fullmatch(r"[a-zA-Z0-9.+!_-]+", version):
             raise ValueError("Unsafe package metadata in environment")
         if name in packages and packages[name] != version:
@@ -51,6 +56,7 @@ def capture(root: Path, output: Path) -> dict:
         "platform": platform.platform(),
         "packages": dict(sorted(packages.items())),
         "direct_source_packages": sorted(set(non_index)),
+        "version_metadata_whitespace_normalized": sorted(set(normalized_versions)),
         "sha256": {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in (archive, pins)},
         "independent_validation": "NOT_ESTABLISHED",
         "limitations": [
