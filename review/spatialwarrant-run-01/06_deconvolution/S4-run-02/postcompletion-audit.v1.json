@@ -1,0 +1,81 @@
+{
+  "status": "PASS_WITH_RECORDED_LIMITATIONS",
+  "created_at_utc": "2026-09-06T01:18:35.649771+00:00",
+  "predecessor_attempt": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\06_deconvolution\\S4-run-01",
+  "predecessor_status": "FAILED_PRESERVED",
+  "original_SHA256SUMS_verification": {
+    "entries": 248,
+    "mismatches": [],
+    "status": "PASS"
+  },
+  "Tangram_run_records": 54,
+  "Tangram_exact_training_gene_lists": 54,
+  "method_sensitivity_summary": {
+    "tangram_parameter_sensitivity": {
+      "mean_celltype_spearman_vs_primary_range": [
+        0.7552254257947157,
+        1.0
+      ],
+      "mean_absolute_difference_vs_primary_range": [
+        0.0,
+        0.0144671534340028
+      ],
+      "dominant_agreement_vs_primary_range": [
+        0.616,
+        1.0
+      ],
+      "by_requested_gene_count": [
+        {
+          "requested_training_genes": 500,
+          "mean_spearman": 0.8264301952956072,
+          "mean_absolute_difference": 0.01247420841727984,
+          "mean_dominant_agreement": 0.6639110242189248,
+          "actual_gene_min": 493,
+          "actual_gene_max": 500
+        },
+        {
+          "requested_training_genes": 1000,
+          "mean_spearman": 0.9137799378158005,
+          "mean_absolute_difference": 0.0028315038441566777,
+          "mean_dominant_agreement": 0.9503777448381852,
+          "actual_gene_min": 644,
+          "actual_gene_max": 655
+        },
+        {
+          "requested_training_genes": 2000,
+          "mean_spearman": 0.9137799378158005,
+          "mean_absolute_difference": 0.0028315038441566777,
+          "mean_dominant_agreement": 0.9503777448381852,
+          "actual_gene_min": 644,
+          "actual_gene_max": 655
+        }
+      ]
+    },
+    "tangram_nnls": {
+      "celltype_section_spearman_median": 0.1440500078072993,
+      "celltype_section_spearman_range": [
+        -0.0527178933982102,
+        0.8044493653701114
+      ],
+      "mean_absolute_difference_median": 0.03659736279051345,
+      "spot_dominant_agreement_overall": 0.04788154605474008,
+      "nnls_unknown_spots": 0
+    },
+    "ingest": {
+      "spots": 15601,
+      "transferred_label_vs_tangram_dominant_agreement_overall": 0.051663354913146595,
+      "output_is_composition": false
+    },
+    "interpretation": "shared-reference method sensitivity only; no independent validation or calibrated cell fraction"
+  },
+  "resource_measurement": {
+    "peak_memory_bytes": null,
+    "status": "NOT_CONTINUOUSLY_MEASURED",
+    "largest_observed_process_tree_snapshot_bytes": 3419897856,
+    "snapshot_source": "Codex read-only progress.json observation during S4 grid, completed_sections=3",
+    "maximum_individual_process_working_set_field_in_S4_result_bytes": 1990914048,
+    "clarification": "S4-result field name overstates its measurement; it is a maximum individual-process working-set value, not a continuously sampled process-tree peak"
+  },
+  "machine_verdict": "PENDING",
+  "biological_conclusion": "PENDING"
+}

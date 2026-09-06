@@ -1,0 +1,25 @@
+{
+  "mapping": {
+    "CAF": [
+      "CAFs MSC iCAF-like",
+      "CAFs myCAF-like"
+    ],
+    "CD8_T": [
+      "T cells CD8+"
+    ],
+    "macrophage": [
+      "Macrophage"
+    ],
+    "endothelial": [
+      "Endothelial ACKR1",
+      "Endothelial CXCL12",
+      "Endothelial Lymphatic LYVE1",
+      "Endothelial RGS5"
+    ]
+  },
+  "excluded_similar_labels": [
+    "Cycling T-cells",
+    "Monocyte"
+  ],
+  "forced_target_niche": false
+}

@@ -1,0 +1,33 @@
+{
+  "Tangram": {
+    "mode": "clusters",
+    "device": "cpu",
+    "cluster_label": "producer_celltype_minor",
+    "epochs": 500,
+    "requested_training_genes": [
+      500,
+      1000,
+      2000
+    ],
+    "seeds": [
+      20260904,
+      20260905,
+      20260906
+    ],
+    "primary": {
+      "requested_training_genes": 1000,
+      "seed": 20260904
+    },
+    "maximum_parallel_sections": 2
+  },
+  "marker_selection": "top 50 mean-log1p-difference markers per producer label; deterministic frequency/rank/score/symbol union; section feature intersection; no padding",
+  "NNLS": {
+    "solver": "scipy.optimize.nnls",
+    "calibrated_proportion": false
+  },
+  "ingest": {
+    "output": "transferred similarity label and ambiguity only",
+    "proportions": false
+  },
+  "patient_level_inference": "NOT_ESTABLISHED"
+}

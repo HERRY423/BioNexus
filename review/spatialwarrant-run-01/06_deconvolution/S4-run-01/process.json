@@ -1,0 +1,15 @@
+{
+  "status": "BACKGROUND_STARTED",
+  "pid": 15444,
+  "started_at_utc": "2026-09-05T16:41:16.3767534Z",
+  "script_sha256": "bcb60eac2418b31cc259d0fea7db5c7c1aa500eb12ee6a3ad864ba00f6b2a773",
+  "S2_reference_sha256": "0443b7a12dded30a692973acba9d22ad2c5cc795d48b43f799db4e87b6f3b110",
+  "python": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\environment\\s4s5-tangram-py312\\Scripts\\python.exe",
+  "stdout": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\06_deconvolution\\S4-run-01\\stdout.log",
+  "stderr": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\06_deconvolution\\S4-run-01\\stderr.log",
+  "free_C_bytes": 32792993792,
+  "available_memory_bytes": 20231237632,
+  "maximum_parallel_sections": 2,
+  "launcher_pid": 25104,
+  "pid_source": "progress.json actual interpreter PID; launcher_pid is Windows venv shim"
+}

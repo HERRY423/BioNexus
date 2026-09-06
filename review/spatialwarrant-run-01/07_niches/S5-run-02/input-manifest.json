@@ -1,0 +1,171 @@
+{
+  "files": [
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\00_plan\\analysis-plan.lock.md",
+      "bytes": 41485,
+      "sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82"
+    },
+    {
+      "path": "C:\\Users\\13264\\Downloads\\spatial-transcriptomics-task-design-revised\\WORKBENCH_EXECUTION_GUIDE.zh-CN.md",
+      "bytes": 13536,
+      "sha256": "ef0b6329017a8fbc61cb1f2a6277e2ac6536d70ac4a6caf0eead663c8b4bcd95"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\03_scrna_reference\\S2-run-01\\ref_40k.h5ad",
+      "bytes": 183051428,
+      "sha256": "0443b7a12dded30a692973acba9d22ad2c5cc795d48b43f799db4e87b6f3b110"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\03_scrna_reference\\S2-run-01\\annotation_evidence.csv",
+      "bytes": 1938,
+      "sha256": "07c86b5bb240ffe19ebf49c3c76200953b3454f4778833ab7d66018511e6c458"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\03_scrna_reference\\S2-run-01\\SHA256SUMS.txt",
+      "bytes": 2314,
+      "sha256": "4db04772f898b495ff83f1ee11ceb503f4658bb7a739640b6da1d9b37e72ba07"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\SHA256SUMS.txt",
+      "bytes": 6596,
+      "sha256": "619b680a14222ff7c745e418d631c596796ff412855d0d6a61517c01f8e9f841"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\1142243F\\1142243F.h5ad",
+      "bytes": 32531761,
+      "sha256": "939c65156ab63ad98e5bb6051f4cfd4d84e933fda62b026830ab6643d11f04a1"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\1160920F\\1160920F.h5ad",
+      "bytes": 42114681,
+      "sha256": "fed2297c5b134eea622adba0957fce8115598390cffe684a4e9981b8dd74e6fe"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID4290\\CID4290.h5ad",
+      "bytes": 18922564,
+      "sha256": "077428b60526811f2779b8a09b7bcd7b4fe80afcf7f24f7ba90f60546eb7718b"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID4465\\CID4465.h5ad",
+      "bytes": 12474189,
+      "sha256": "65049ddaaa20eef01da3e6759df826938820f712dd7c8cc1615de3c92201b097"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID44971\\CID44971.h5ad",
+      "bytes": 10628789,
+      "sha256": "a7b0e3559aad38db4879da70539f9fc4a2d7ad7369212cc020509e31773db1b1"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID4535\\CID4535.h5ad",
+      "bytes": 11999834,
+      "sha256": "baf559dee9a88a2e0b42e7c1d69b1e1c25b04f09e146d595877552ff8ba135a3"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\1142243F\\spot-QC-and-metadata.csv.gz",
+      "bytes": 166162,
+      "sha256": "d231b0af7a422ea268125a82fb15c465e42892a80a30cfb01236f09df612c654"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\1160920F\\spot-QC-and-metadata.csv.gz",
+      "bytes": 174174,
+      "sha256": "64023bf57423822037ab6257a5093ff03db2d04419d2c96c26e02d77c9b8c4b1"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID4290\\spot-QC-and-metadata.csv.gz",
+      "bytes": 81820,
+      "sha256": "d545633fe2f9ad24e4f17a7fa9e5e232dd70b03393204076bdf194ea82e5aba0"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID4465\\spot-QC-and-metadata.csv.gz",
+      "bytes": 41931,
+      "sha256": "50cc164755f99ffbde5b1b511e927b5c0ac280e0d62ba61b60b86d5e04697b75"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID44971\\spot-QC-and-metadata.csv.gz",
+      "bytes": 39840,
+      "sha256": "5c00a85477d4c0709aeee68028b26db9e46620bf4f6471235055955b2d2db810"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID4535\\spot-QC-and-metadata.csv.gz",
+      "bytes": 38790,
+      "sha256": "b2f35c1ff4e9123814dd1b813383cb420ad15e4c491930099d753d6ed0c66e02"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\1142243F\\geometry-boundary-core-masks.csv",
+      "bytes": 303682,
+      "sha256": "63eab9e4bca8417e8f26db55f3f9d063b89ee51bcfbcb459489941d568ae79b9"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\1160920F\\geometry-boundary-core-masks.csv",
+      "bytes": 298317,
+      "sha256": "e93de97ed28d487a9a6f799f3d923f15827c59b27acccbccf94477b2e2ecc064"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID4290\\geometry-boundary-core-masks.csv",
+      "bytes": 138930,
+      "sha256": "4229e685e2f73fe061ec7e1fa5e183c26e4de4ef00ee2823526b1d095c4b77f7"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID4465\\geometry-boundary-core-masks.csv",
+      "bytes": 83439,
+      "sha256": "70058c8e8d4bc3dfb8b3017fa923f3768dcba798d54424cbf57f7423f86db586"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID44971\\geometry-boundary-core-masks.csv",
+      "bytes": 59784,
+      "sha256": "0aa28acd49f9b9226c6929938aa2e4f83fc75f3a56c7c7254fa4ce47f418edc4"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID4535\\geometry-boundary-core-masks.csv",
+      "bytes": 90767,
+      "sha256": "393617426231596487b7b97d25ee770a521c65b035b176c745fe901807af2049"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\10x_blockA_section1\\V1_Breast_Cancer_Block_A_Section_1_filtered_feature_bc_matrix.h5",
+      "bytes": 28201028,
+      "sha256": "b3cbb6ead60afad848ebcc07a34835613d9d2d79e416ad8300b210d9de584b65"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\10x_blockA_section1\\V1_Breast_Cancer_Block_A_Section_1_spatial.tar.gz",
+      "bytes": 9960960,
+      "sha256": "415530a9d31172f63fd358d5d1cefb0798698ef9c0e614f52825894cd45c61bf"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\10x_blockA_section1\\V1_Breast_Cancer_Block_A_Section_1_web_summary.html",
+      "bytes": 8052254,
+      "sha256": "a11893c5b6b7227a0e941081465e5e115627a0ec031b28b1ee514bf68f417d5e"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\10x_blockA_section1\\V1_Breast_Cancer_Block_A_Section_1_spatial-extracted\\spatial\\aligned_fiducials.jpg",
+      "bytes": 1780423,
+      "sha256": "cc7cddc9269d917e9f395d06826be8cbd9cee06689c7f4209d1fe15c7a3fb490"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\10x_blockA_section1\\V1_Breast_Cancer_Block_A_Section_1_spatial-extracted\\spatial\\detected_tissue_image.jpg",
+      "bytes": 1867698,
+      "sha256": "dad113d99cb5339d75c0987a105dc095042be015ba2eb837ca3aa7b83025d27d"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\10x_blockA_section1\\V1_Breast_Cancer_Block_A_Section_1_spatial-extracted\\spatial\\scalefactors_json.json",
+      "bytes": 166,
+      "sha256": "e0c079e051357928f76f98d8de0c92e6b85e33e6b1c794f13cdee3384494bcff"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\10x_blockA_section1\\V1_Breast_Cancer_Block_A_Section_1_spatial-extracted\\spatial\\tissue_hires_image.png",
+      "bytes": 5760732,
+      "sha256": "74c2a7a2741e4d7a43811a01533d373154982f44dffc85d2027012d873429593"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\10x_blockA_section1\\V1_Breast_Cancer_Block_A_Section_1_spatial-extracted\\spatial\\tissue_lowres_image.png",
+      "bytes": 496197,
+      "sha256": "e24b3e0c823838cce2deb6933dbd2e0632de86d29b4cd6c4dc22051c71adb816"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\10x_blockA_section1\\V1_Breast_Cancer_Block_A_Section_1_spatial-extracted\\spatial\\tissue_positions_list.csv",
+      "bytes": 191224,
+      "sha256": "284f439570700a566512e469cddfb1bc59ac135b523a74c806a4fb59d41c2547"
+    }
+  ],
+  "route": "local Python/scverse execution",
+  "registered_NGS_workflow_run": "NONE"
+}

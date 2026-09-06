@@ -1,0 +1,12 @@
+{
+  "input_hashes_match_execution_and_manifest": true,
+  "all_initial_outputs_including_manifest_unchanged": true,
+  "script_hash_matches_manifest": true,
+  "source_files_changed_since_capture": [],
+  "required_deliverables_exist": true,
+  "new_analysis_runs": 1,
+  "human_scientific_acceptance": "PENDING",
+  "publication_status": "NOT_PUBLISHED",
+  "screenshots_captured": 0,
+  "screenshot_guidance_count": 4
+}

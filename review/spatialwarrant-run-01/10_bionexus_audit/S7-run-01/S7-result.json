@@ -1,0 +1,200 @@
+{
+  "stage": "S7",
+  "status": "COMPLETED_WITH_AUDIT_DEFECTS_AND_EVIDENCE_DEBT",
+  "scope": "S7 only",
+  "created_at_utc": "2026-09-06T02:30:19.542162+00:00",
+  "plan_sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82",
+  "technical_integrity": "PASS",
+  "scientific_review": {
+    "C1": "STUDY_BOUND_DESCRIPTIVE",
+    "C2": "METHOD_SENSITIVE",
+    "C3": "TARGET_NICHE_NOT_OBSERVED",
+    "C4": "SINGLE_SECTION_DESCRIPTIVE",
+    "C5": "CAUSAL_CLAIM_NOT_ESTABLISHED",
+    "C6": "CLINICAL_CLAIM_REJECTED_FOR_THIS_DATA",
+    "T1": "POPULATION_MECHANISM_CLAIM_NOT_ESTABLISHED",
+    "T2": "LOCAL_TECHNICAL_REVERIFICATION_PASS"
+  },
+  "bionexus_MCP_status": "NEEDS_DATA for 4/4 corrected calls; claim layer ABSTAIN; descriptive misclassification defect",
+  "passive_audits": [
+    {
+      "evidence_id": "SPATIALWARRANT-S7-C1",
+      "status": "VALID",
+      "integrity_verified": true,
+      "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+      "accepted_for_context": true,
+      "accepted_for_claim_support": false,
+      "conclusion_maturity": "UNASSESSED",
+      "allowed_context_use": "content-bound analysis result",
+      "missing_context": [],
+      "errors": [],
+      "warnings": [],
+      "prohibited_inferences": [
+        "Do not infer biological generalization from execution success alone.",
+        "Do not infer causality without an identified design and causal assumptions."
+      ]
+    },
+    {
+      "evidence_id": "SPATIALWARRANT-S7-C2",
+      "status": "VALID",
+      "integrity_verified": true,
+      "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+      "accepted_for_context": true,
+      "accepted_for_claim_support": false,
+      "conclusion_maturity": "UNASSESSED",
+      "allowed_context_use": "content-bound analysis result",
+      "missing_context": [],
+      "errors": [],
+      "warnings": [],
+      "prohibited_inferences": [
+        "Do not infer biological generalization from execution success alone.",
+        "Do not infer causality without an identified design and causal assumptions."
+      ]
+    },
+    {
+      "evidence_id": "SPATIALWARRANT-S7-C3",
+      "status": "VALID",
+      "integrity_verified": true,
+      "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+      "accepted_for_context": true,
+      "accepted_for_claim_support": false,
+      "conclusion_maturity": "UNASSESSED",
+      "allowed_context_use": "content-bound analysis result",
+      "missing_context": [],
+      "errors": [],
+      "warnings": [],
+      "prohibited_inferences": [
+        "Do not infer biological generalization from execution success alone.",
+        "Do not infer causality without an identified design and causal assumptions."
+      ]
+    },
+    {
+      "evidence_id": "SPATIALWARRANT-S7-C4",
+      "status": "VALID",
+      "integrity_verified": true,
+      "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+      "accepted_for_context": true,
+      "accepted_for_claim_support": false,
+      "conclusion_maturity": "UNASSESSED",
+      "allowed_context_use": "content-bound analysis result",
+      "missing_context": [],
+      "errors": [],
+      "warnings": [],
+      "prohibited_inferences": [
+        "Do not infer biological generalization from execution success alone.",
+        "Do not infer causality without an identified design and causal assumptions."
+      ]
+    },
+    {
+      "evidence_id": "SPATIALWARRANT-S7-C5",
+      "status": "VALID",
+      "integrity_verified": true,
+      "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+      "accepted_for_context": true,
+      "accepted_for_claim_support": false,
+      "conclusion_maturity": "UNASSESSED",
+      "allowed_context_use": "content-bound analysis result",
+      "missing_context": [],
+      "errors": [],
+      "warnings": [],
+      "prohibited_inferences": [
+        "Do not infer biological generalization from execution success alone.",
+        "Do not infer causality without an identified design and causal assumptions."
+      ]
+    },
+    {
+      "evidence_id": "SPATIALWARRANT-S7-C6",
+      "status": "VALID",
+      "integrity_verified": true,
+      "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+      "accepted_for_context": true,
+      "accepted_for_claim_support": false,
+      "conclusion_maturity": "UNASSESSED",
+      "allowed_context_use": "content-bound analysis result",
+      "missing_context": [],
+      "errors": [],
+      "warnings": [],
+      "prohibited_inferences": [
+        "Do not infer biological generalization from execution success alone.",
+        "Do not infer causality without an identified design and causal assumptions."
+      ]
+    },
+    {
+      "evidence_id": "SPATIALWARRANT-S7-T1",
+      "status": "VALID",
+      "integrity_verified": true,
+      "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+      "accepted_for_context": true,
+      "accepted_for_claim_support": false,
+      "conclusion_maturity": "UNASSESSED",
+      "allowed_context_use": "content-bound analysis result",
+      "missing_context": [],
+      "errors": [],
+      "warnings": [],
+      "prohibited_inferences": [
+        "Do not infer biological generalization from execution success alone.",
+        "Do not infer causality without an identified design and causal assumptions."
+      ]
+    },
+    {
+      "evidence_id": "SPATIALWARRANT-S7-T2",
+      "status": "VALID",
+      "integrity_verified": true,
+      "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+      "accepted_for_context": true,
+      "accepted_for_claim_support": false,
+      "conclusion_maturity": "UNASSESSED",
+      "allowed_context_use": "content-bound analysis result",
+      "missing_context": [],
+      "errors": [],
+      "warnings": [],
+      "prohibited_inferences": [
+        "Do not infer biological generalization from execution success alone.",
+        "Do not infer causality without an identified design and causal assumptions."
+      ]
+    }
+  ],
+  "human_scientific_adjudication": "PENDING",
+  "biological_conclusion_acceptance": "PENDING",
+  "submission_readiness": "DRAFT_WITH_DISCLOSED_LIMITS; HUMAN_DECISION_PENDING",
+  "submission_defects": [
+    "BioNexus Chinese semantic classification failed; cannot advertise successful automatic overclaim refusal",
+    "Authenticated external receipt unavailable; local VALID is internal consistency only",
+    "Target-wise primary-paper supporting/contradictory review incomplete; 17 external query failures retained",
+    "One eligible section; no population, patient-level, causal or clinical inference",
+    "No independent biological replication; 10x is technical transfer"
+  ],
+  "final_images": [
+    "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\11_figures\\S7-run-01\\01-workflow-and-roles.png",
+    "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\11_figures\\S7-run-01\\02-six-section-spatial-atlas.png",
+    "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\11_figures\\S7-run-01\\03-S6-descriptive-evidence.png",
+    "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\11_figures\\S7-run-01\\04-claims-debt-actual-audit.png"
+  ],
+  "S1_S6_rerun": false,
+  "posted": false,
+  "future_stage_started": false,
+  "literature_context_passive_audit": {
+    "evidence_id": "SPATIALWARRANT-S7-LITERATURE-COVERAGE",
+    "status": "INCOMPLETE",
+    "integrity_verified": true,
+    "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+    "accepted_for_context": false,
+    "accepted_for_claim_support": false,
+    "conclusion_maturity": "UNASSESSED",
+    "allowed_context_use": "source-specific literature report",
+    "missing_context": [
+      "publication_status",
+      "study_design"
+    ],
+    "errors": [],
+    "warnings": [],
+    "prohibited_inferences": [
+      "Do not infer consensus, replication, or absence of evidence from one search result.",
+      "Do not treat an author's mechanistic interpretation as independently validated causality."
+    ]
+  },
+  "formal_checkpoint_index": "formal-checkpoint-index.json",
+  "host_probe_observation": "CLIENT_WAIT_TERMINATED_WITHOUT_TOOL_RETURN",
+  "review_completed_at_utc": "2026-09-06T02:36:38.508169+00:00",
+  "figure_visual_review": "PASS after correcting two presentation text overlaps; no changed source values"
+}

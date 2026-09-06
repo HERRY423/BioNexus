@@ -72,13 +72,14 @@ def test_run_tangram_mapping_fallback(dummy_sc_and_spatial):
     adata_sc, adata_sp = dummy_sc_and_spatial
     cfg = TangramConfig(num_epochs=10, min_shared_genes=5)
 
-    res = run_tangram_spatial_mapping(
-        adata_sc=adata_sc,
-        adata_sp=adata_sp,
-        cell_type_col="cell_type",
-        config=cfg,
-        allow_fallback=True,
-    )
+    with patch("bionexus.tangram.check_tangram_backend", return_value=(False, "tangram not installed")):
+        res = run_tangram_spatial_mapping(
+            adata_sc=adata_sc,
+            adata_sp=adata_sp,
+            cell_type_col="cell_type",
+            config=cfg,
+            allow_fallback=True,
+        )
 
     assert res.success is True
     assert res.n_spots == 20

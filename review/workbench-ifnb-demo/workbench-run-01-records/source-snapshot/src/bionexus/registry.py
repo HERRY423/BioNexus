@@ -1,0 +1,505 @@
+"""
+BioNexus Canonical Registry & Multi-Platform Client Compiler.
+
+Provides a Single Source of Truth (SSOT) architecture for BioNexus package metadata
+and MCP server configurations, compiling canonical definitions into platform-specific
+manifests (Agent Plugins 1.0, Claude Plugin, OpenAI/Codex) and preventing configuration drift.
+"""
+
+from __future__ import annotations
+
+import json
+import re
+import urllib.error
+import urllib.parse
+import urllib.request
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+
+import yaml
+
+from bionexus.egress_guard import guarded_urlopen
+
+
+def get_default_registry_path(repo_root: Optional[Path] = None) -> Path:
+    """Resolve the default bionexus.registry.yaml path."""
+    if repo_root is not None:
+        return repo_root / "bionexus.registry.yaml"
+    # Try traversing upwards from this file
+    current = Path(__file__).resolve().parent
+    for _ in range(4):
+        candidate = current / "bionexus.registry.yaml"
+        if candidate.is_file():
+            return candidate
+        current = current.parent
+    return Path.cwd() / "bionexus.registry.yaml"
+
+
+def load_canonical_registry(path: Optional[Path | str] = None) -> Dict[str, Any]:
+    """Load and parse the canonical bionexus.registry.yaml file."""
+    reg_path = Path(path) if path else get_default_registry_path()
+    if not reg_path.is_file():
+        raise FileNotFoundError(f"Canonical registry file not found: {reg_path}")
+
+    with open(reg_path, "r", encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+
+    if not isinstance(data, dict):
+        raise ValueError(f"Invalid registry format in {reg_path}: expected YAML mapping")
+
+    errors = validate_registry_structure(data)
+    if errors:
+        raise ValueError("Registry validation failed:\n" + "\n".join(f" - {e}" for e in errors))
+
+    return data
+
+
+def validate_registry_structure(registry: Dict[str, Any]) -> List[str]:
+    """Validate structure and essential fields of the canonical registry."""
+    errors: List[str] = []
+
+    pkg = registry.get("package")
+    if not isinstance(pkg, dict):
+        errors.append("Missing or invalid 'package' block")
+    else:
+        for field in ("name", "version", "description", "author", "license", "keywords"):
+            if field not in pkg or not pkg[field]:
+                errors.append(f"Package block missing required field: '{field}'")
+
+    mcp = registry.get("mcp_servers")
+    if not isinstance(mcp, dict):
+        errors.append("Missing or invalid 'mcp_servers' block")
+    else:
+        hosted = mcp.get("hosted")
+        if not isinstance(hosted, dict):
+            errors.append("Missing or invalid 'mcp_servers.hosted' mapping")
+        else:
+            for s_id, s_conf in hosted.items():
+                if not isinstance(s_conf, dict):
+                    errors.append(f"Hosted server '{s_id}' configuration must be a mapping")
+                    continue
+                if s_conf.get("enabled", True):
+                    url = s_conf.get("url", "")
+                    if not url or not url.startswith(("http://", "https://")):
+                        errors.append(f"Enabled hosted server '{s_id}' has invalid URL: '{url}'")
+
+    return errors
+
+
+def validate_endpoints(registry: Dict[str, Any], check_live: bool = False, timeout: float = 3.0) -> Dict[str, Any]:
+    """
+    Validate all configured hosted and local endpoints.
+    Optionally checks live connectivity for enabled HTTP servers.
+    """
+    results: Dict[str, Any] = {"valid": True, "checked_count": 0, "servers": {}}
+
+    hosted = registry.get("mcp_servers", {}).get("hosted", {})
+    url_pattern = re.compile(r"^https?://[a-zA-Z0-9\-._~:/?#\[\]@!$&'()*+,;=]+$")
+
+    for s_id, s_conf in hosted.items():
+        enabled = s_conf.get("enabled", True)
+        url = s_conf.get("url", "")
+        status: Dict[str, Any] = {
+            "name": s_conf.get("name", s_id),
+            "enabled": enabled,
+            "url": url,
+            "syntax_valid": True,
+            "live_status": None,
+            "error": None,
+        }
+
+        if enabled:
+            results["checked_count"] += 1
+            if not url or not url_pattern.match(url):
+                status["syntax_valid"] = False
+                status["error"] = "Invalid URL syntax"
+                results["valid"] = False
+            elif check_live:
+                try:
+                    req = urllib.request.Request(
+                        url, headers={"User-Agent": "BioNexus-RegistryValidator/1.0"}, method="HEAD"
+                    )
+                    with guarded_urlopen(
+                        req,
+                        timeout=timeout,
+                        purpose="Canonical registry endpoint availability probe",
+                    ) as resp:
+                        status["live_status"] = resp.status
+                except urllib.error.HTTPError as e:
+                    # Many MCP endpoints require POST or Auth, so 401/403/404/405 indicates endpoint reachable
+                    status["live_status"] = e.code
+                except Exception as e:
+                    status["live_status"] = "UNREACHABLE"
+                    status["error"] = str(e)
+                    results["valid"] = False
+
+        results["servers"][s_id] = status
+
+    return results
+
+
+# --- Platform Adapters ---
+
+
+def to_agent_plugins_plugin_json(registry: Dict[str, Any]) -> Dict[str, Any]:
+    """Generate Agent Plugins 1.0 plugin.json manifest."""
+    pkg = registry["package"]
+    author_name = (
+        pkg["author"]["name"] if isinstance(pkg.get("author"), dict) else str(pkg.get("author", "BioNexus Team"))
+    )
+    return {
+        "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+        "name": pkg["name"].lower(),
+        "version": pkg["version"],
+        "description": pkg["description"],
+        "author": {"name": author_name},
+        "license": pkg.get("license", "Apache-2.0"),
+        "keywords": list(pkg.get("keywords", [])),
+        "skills": "./skills/",
+        "mcpServers": "./mcp.json",
+    }
+
+
+def to_agent_plugins_mcp_json(registry: Dict[str, Any]) -> Dict[str, Any]:
+    """Generate MCP config without bundling peer ecosystem capabilities.
+
+    Hosted servers remain in the canonical catalog for compatibility and
+    endpoint diagnostics, but ``bundle_with_plugin: false`` keeps BioNexus from
+    registering duplicate Literature, Database, visualization, or analysis
+    capabilities.
+    """
+    mcp_data = registry.get("mcp_servers", {})
+    servers: Dict[str, Any] = {}
+
+    # 1. Local stdio MCP servers
+    for s_id, s_conf in mcp_data.get("local", {}).items():
+        if s_conf.get("enabled", True):
+            servers[s_id] = {
+                "type": s_conf.get("type", "stdio"),
+                "command": s_conf.get("command", "python"),
+                "args": s_conf.get("args", []),
+                "cwd": s_conf.get("cwd", "${PLUGIN_ROOT}"),
+            }
+
+    # 2. Hosted streamable-http MCP servers
+    for s_id, s_conf in mcp_data.get("hosted", {}).items():
+        if (
+            s_conf.get("enabled", True)
+            and s_conf.get("bundle_with_plugin", True)
+            and s_conf.get("url")
+        ):
+            servers[s_id] = {"type": s_conf.get("type", "streamable-http"), "url": s_conf.get("url")}
+
+    return {"$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json", "mcpServers": servers}
+
+
+def to_claude_plugin_json(registry: Dict[str, Any]) -> Dict[str, Any]:
+    """Generate Claude Desktop / Claude Code .claude-plugin/plugin.json manifest."""
+    pkg = registry["package"]
+    author_name = (
+        pkg["author"]["name"] if isinstance(pkg.get("author"), dict) else str(pkg.get("author", "BioNexus Team"))
+    )
+    return {
+        "name": pkg["name"].lower(),
+        "version": pkg["version"],
+        "description": pkg["description"],
+        "author": {"name": author_name},
+    }
+
+
+def to_claude_mcp_json(registry: Dict[str, Any]) -> Dict[str, Any]:
+    """Generate Claude MCP manifest for enabled servers explicitly bundled by BioNexus."""
+    mcp_data = registry.get("mcp_servers", {})
+    servers: Dict[str, Any] = {}
+
+    # Hosted MCP servers (with Claude standard http type)
+    for s_id, s_conf in mcp_data.get("hosted", {}).items():
+        if (
+            s_conf.get("enabled", True)
+            and s_conf.get("bundle_with_plugin", True)
+            and s_conf.get("url")
+        ):
+            servers[s_id] = {"type": s_conf.get("claude_type", "http"), "url": s_conf.get("url")}
+
+    return {"mcpServers": servers}
+
+
+def to_codex_config(registry: Dict[str, Any]) -> Dict[str, Any]:
+    """Generate Codex / generic agent platform MCP configuration."""
+    pkg = registry["package"]
+    agent_mcp = to_agent_plugins_mcp_json(registry)
+    return {
+        "name": pkg["name"].lower(),
+        "version": pkg["version"],
+        "provider": "BioNexus",
+        "mcpServers": agent_mcp.get("mcpServers", {}),
+    }
+
+
+def to_codex_plugin_json(registry: Dict[str, Any]) -> Dict[str, Any]:
+    """Generate Codex .codex-plugin/plugin.json manifest adhering strictly to Codex spec."""
+    pkg = registry["package"]
+    author_name = (
+        pkg["author"]["name"] if isinstance(pkg.get("author"), dict) else str(pkg.get("author", "BioNexus Team"))
+    )
+    display_name = pkg.get("display_name", "BioNexus")
+    return {
+        "name": pkg["name"].lower(),
+        "version": pkg["version"],
+        "description": pkg["description"],
+        "author": {"name": author_name, "url": "https://github.com/HERRY423/BioNexus"},
+        "homepage": "https://github.com/HERRY423/BioNexus",
+        "repository": "https://github.com/HERRY423/BioNexus",
+        "license": pkg.get("license", "Apache-2.0"),
+        "keywords": list(pkg.get("keywords", [])),
+        "skills": "./skills/",
+        "interface": {
+            "displayName": display_name,
+            "shortDescription": "The Scientific Reliability Layer for Agentic Biology",
+            "longDescription": pkg["description"],
+            "developerName": author_name,
+            "category": "Science",
+            "capabilities": ["Interactive", "Read", "Write"],
+            "websiteURL": "https://github.com/HERRY423/BioNexus",
+            "defaultPrompt": [
+                "Audit evidence returned by another science plugin",
+                "Check whether this result warrants the proposed claim",
+                "Verify provenance, backend identity, and claim ceiling",
+            ],
+        },
+    }
+
+
+def _marketplace_metadata(registry: Dict[str, Any]) -> Tuple[Dict[str, Any], str]:
+    """Return shared marketplace metadata without conflating host schemas."""
+    pkg = registry["package"]
+    author_name = (
+        pkg.get("author", {}).get("name", "BioNexus Team") if isinstance(pkg.get("author"), dict) else "BioNexus Team"
+    )
+    return pkg, author_name
+
+
+def to_openai_marketplace_json(registry: Dict[str, Any]) -> Dict[str, Any]:
+    """Generate the OpenAI repo-marketplace manifest.
+
+    OpenAI repo marketplaces use a typed local source object.  The canonical
+    entry points at the self-contained plugin mirror under ``plugins/`` as
+    recommended by the public plugin packaging documentation.
+    """
+    pkg, author_name = _marketplace_metadata(registry)
+    return {
+        "name": "bionexus-marketplace",
+        "interface": {"displayName": "BioNexus Marketplace"},
+        "owner": {"name": author_name},
+        "plugins": [
+            {
+                "name": pkg["name"].lower(),
+                "description": pkg["description"],
+                "version": pkg["version"],
+                "source": {"source": "local", "path": "./plugins/bionexus"},
+                "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+                "category": "Science",
+            }
+        ],
+    }
+
+
+def to_claude_marketplace_json(registry: Dict[str, Any]) -> Dict[str, Any]:
+    """Generate the Claude Code marketplace manifest.
+
+    Claude Code uses a string for a repository-relative plugin source.  This
+    serialization must remain separate from OpenAI's typed local-source object.
+    """
+    pkg, author_name = _marketplace_metadata(registry)
+    return {
+        "name": "bionexus-marketplace",
+        "description": "BioNexus scientific reliability workflows for AI-assisted biology.",
+        "owner": {"name": author_name},
+        "plugins": [
+            {
+                "name": pkg["name"].lower(),
+                "description": pkg["description"],
+                "version": pkg["version"],
+                "source": "./",
+                "category": "Science",
+            }
+        ],
+    }
+
+
+# --- Manifest Registry Mapping & Drift Detection ---
+
+
+def get_expected_manifests(registry: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+    """Return dictionary of relative file paths to their expected dictionary representations.
+
+    `plugins/bionexus/` is a compiler-managed, self-contained plugin mirror of the
+    repository root (so it can be installed on its own): its JSON manifests are
+    generated here, and its `skills/` + `scripts/` code trees are byte-synced by
+    `sync_mirror_trees()` / verified by `check_mirror_drift()`. The former
+    `plugins/codex/` target was removed: its only manifest pointed at a
+    `./skills/` directory that never existed there.
+    """
+    codex_plugin = to_codex_plugin_json(registry)
+    openai_mkt = to_openai_marketplace_json(registry)
+    claude_mkt = to_claude_marketplace_json(registry)
+    agent_plugin = to_agent_plugins_plugin_json(registry)
+    agent_mcp = to_agent_plugins_mcp_json(registry)
+    return {
+        "plugin.json": agent_plugin,
+        "mcp.json": agent_mcp,
+        ".claude-plugin/plugin.json": to_claude_plugin_json(registry),
+        ".mcp.json": to_claude_mcp_json(registry),
+        ".codex/config.json": to_codex_config(registry),
+        ".codex-plugin/plugin.json": codex_plugin,
+        "plugins/bionexus/.codex-plugin/plugin.json": codex_plugin,
+        "plugins/bionexus/plugin.json": agent_plugin,
+        "plugins/bionexus/mcp.json": agent_mcp,
+        "plugins/bionexus/.mcp.json": to_claude_mcp_json(registry),
+        ".agents/plugins/marketplace.json": openai_mkt,
+        ".codex/marketplace.json": openai_mkt,
+        ".claude-plugin/marketplace.json": claude_mkt,
+        "marketplace.json": openai_mkt,
+    }
+
+
+def check_manifest_drift(repo_root: Path, registry: Optional[Dict[str, Any]] = None) -> Tuple[bool, List[str]]:
+    """
+    Check if on-disk manifests differ from canonical registry compilation.
+    Returns (in_sync: bool, diff_messages: List[str]).
+    """
+    if registry is None:
+        registry = load_canonical_registry(repo_root / "bionexus.registry.yaml")
+
+    expected = get_expected_manifests(registry)
+    diffs: List[str] = []
+
+    for rel_path, exp_content in expected.items():
+        file_path = repo_root / rel_path
+        if not file_path.is_file():
+            diffs.append(f"Missing file: {rel_path}")
+            continue
+
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                disk_content = json.load(f)
+        except Exception as e:
+            diffs.append(f"Unparseable file {rel_path}: {e}")
+            continue
+
+        if disk_content != exp_content:
+            diffs.append(
+                f"Configuration drift in {rel_path}:\n"
+                f"  Expected: {json.dumps(exp_content, sort_keys=True)}\n"
+                f"  On disk:  {json.dumps(disk_content, sort_keys=True)}"
+            )
+
+    return (len(diffs) == 0, diffs)
+
+
+def compile_and_write_all(repo_root: Path, registry: Optional[Dict[str, Any]] = None) -> List[str]:
+    """Compile canonical registry and write all platform manifests to disk."""
+    if registry is None:
+        registry = load_canonical_registry(repo_root / "bionexus.registry.yaml")
+
+    expected = get_expected_manifests(registry)
+    written: List[str] = []
+
+    for rel_path, content in expected.items():
+        target_path = repo_root / rel_path
+        target_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(target_path, "w", encoding="utf-8") as f:
+            json.dump(content, f, indent=2, ensure_ascii=False)
+            f.write("\n")
+        written.append(rel_path)
+
+    return written
+
+
+# --- Plugin Mirror Tree Sync & Drift Detection (single source of truth) ---
+
+# Canonical root directories that MUST be byte-identical to their mirrors under
+# plugins/bionexus/ so the nested plugin root stays independently installable.
+MIRROR_PAIRS: List[Tuple[str, str]] = [
+    ("skills", "plugins/bionexus/skills"),
+    ("scripts", "plugins/bionexus/scripts"),
+]
+
+# Build artifacts and machine-local state that never belong to either tree.
+_MIRROR_IGNORED_DIRS = {"__pycache__", ".pytest_cache", ".ruff_cache", ".mypy_cache", ".git", ".venv", "venv"}
+_MIRROR_IGNORED_FILES = {".DS_Store", ".bionexus-doctor.json", "local_mcp_server.log"}
+
+
+def _iter_tree_files(root: Path) -> Dict[str, Path]:
+    """Map of posix relative path -> file path for all sync-relevant files under root."""
+    files: Dict[str, Path] = {}
+    if not root.is_dir():
+        return files
+    for path in sorted(root.rglob("*")):
+        if path.is_dir():
+            continue
+        if path.name in _MIRROR_IGNORED_FILES:
+            continue
+        rel = path.relative_to(root)
+        if any(part in _MIRROR_IGNORED_DIRS for part in rel.parts[:-1]):
+            continue
+        files[rel.as_posix()] = path
+    return files
+
+
+def check_mirror_drift(repo_root: Path) -> Tuple[bool, List[str]]:
+    """
+    Verify the plugins/bionexus code mirror is byte-identical to the canonical trees.
+
+    The root `skills/` and `scripts/` directories are the single source of truth;
+    the copies under `plugins/bionexus/` exist only so that the nested plugin root
+    remains self-contained. Any difference (edited content, missing file, stale
+    extra file) is drift and must be resolved with `sync_mirror_trees()`.
+    Returns (in_sync: bool, diff_messages: List[str]).
+    """
+    diffs: List[str] = []
+    for canonical_rel, mirror_rel in MIRROR_PAIRS:
+        canonical_files = _iter_tree_files(repo_root / canonical_rel)
+        mirror_files = _iter_tree_files(repo_root / mirror_rel)
+
+        for rel, canonical_path in canonical_files.items():
+            mirror_path = repo_root / mirror_rel / rel
+            if rel not in mirror_files:
+                diffs.append(f"Mirror drift: missing in {mirror_rel}: {rel}")
+            elif canonical_path.read_bytes() != mirror_path.read_bytes():
+                diffs.append(f"Mirror drift: content differs at {mirror_rel}/{rel} (canonical: {canonical_rel}/{rel})")
+
+        for rel in sorted(set(mirror_files) - set(canonical_files)):
+            diffs.append(f"Mirror drift: stale file only in {mirror_rel}: {rel} (not present in {canonical_rel})")
+
+    return (len(diffs) == 0, diffs)
+
+
+def sync_mirror_trees(repo_root: Path) -> List[str]:
+    """
+    Synchronize the plugins/bionexus code mirror from the canonical root trees.
+
+    Copies every canonical file into the mirror (creating directories as
+    needed) and removes stale mirror-only files, so the mirror becomes
+    byte-identical to the source of truth. Ignored artifacts (e.g. __pycache__)
+    are left untouched. Returns the list of synchronized relative paths.
+    """
+    import shutil
+
+    synced: List[str] = []
+    for canonical_rel, mirror_rel in MIRROR_PAIRS:
+        canonical_files = _iter_tree_files(repo_root / canonical_rel)
+        mirror_files = _iter_tree_files(repo_root / mirror_rel)
+
+        for rel, canonical_path in canonical_files.items():
+            mirror_path = repo_root / mirror_rel / rel
+            if not mirror_path.is_file() or mirror_path.read_bytes() != canonical_path.read_bytes():
+                mirror_path.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(canonical_path, mirror_path)
+            synced.append(rel)
+
+        for rel in sorted(set(mirror_files) - set(canonical_files)):
+            (repo_root / mirror_rel / rel).unlink()
+            print(f" [MIRROR] removed stale {mirror_rel}/{rel}")
+
+    return synced

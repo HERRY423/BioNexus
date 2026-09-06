@@ -1,0 +1,58 @@
+{
+  "schema_version": "bionexus.external-evidence-envelope.v1",
+  "evidence_id": "SPATIALWARRANT-S7-C3",
+  "family": "analysis",
+  "producer": {
+    "plugin_id": "local-python-s7-review",
+    "capability": "completed-artifact-scientific-review",
+    "tool_name": "build_spatialwarrant_s7.py",
+    "plugin_version": "sha256:03f5335df16d144aea3cca2c9764bce573c32ed110f0ec7c7dd45b157be1994a"
+  },
+  "captured_at": "2026-09-06T02:30:14.472878+00:00",
+  "source_context": {
+    "backend_name": "local Python/scverse artifact review",
+    "backend_version": "3.13.9",
+    "input_artifact_sha256": "acf06cacb0dbf812ba71ee9f78c663101394c8afbec9afcd54f61320a833758e",
+    "parameters_sha256": "26e20c519ac38eff7f8347b55e690f5ceaca85326dc3a62a3fed46cb39dc7ba2",
+    "execution_receipt_sha256": "b6bd8e08981030d43fd0b934830611d71cf9d39dfdac570f7cba991ad3a55a93"
+  },
+  "payload": {
+    "claim_id": "C3",
+    "original_statement": "Test whether the prespecified CAF/CD8-T/macrophage/endothelial niche is enriched at the frozen pathology-geometry boundary and report every section.",
+    "artifacts": [
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\four-component-coenrichment-assessment.v1.json",
+        "sha256": "6e96f012f24b660d2dc6f1cfc682f18e5f626c3ca21ce1c3de58179d37f1a918"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\selected-k.json",
+        "sha256": "bcf8e64b803143391bd362fb07a3c94dd2599bace973f36fc33fe4bc1c8d43ad"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\boundary-niche-enrichment.csv",
+        "sha256": "4afa45b7b5e4ce097875534cb3fbdc239d57156cdaeb207fa3394ef4aabdf625"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\niche-distribution-by-section.csv",
+        "sha256": "8dfedad2f9f3df4abf034dc8c9ea42260d69a54520ec28918155d6727ad23d84"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\S5-result.json",
+        "sha256": "a9d1ae7d49f1a3437d2a701e5b197fbd8d305481eaad8dbbab6f657b5eefcbe0"
+      }
+    ],
+    "host_review_state": "TARGET_NICHE_NOT_OBSERVED",
+    "support": "k=10 selected before boundary comparison from 15 KMeans combinations; six-section spatial niches and technical transfer to 3798 10x spots completed.",
+    "counterevidence": "No niche meets all four component relative-enrichment conditions. Five boundary comparisons unavailable. This does not establish absence of a biological niche.",
+    "maximum_claim": "Observed technical niches and CID4535 niche distributions only; no asserted four-component boundary niche.",
+    "dependencies": [
+      "S4 main Tangram",
+      "S3 frozen geometry",
+      "S5 scaler and centers"
+    ]
+  },
+  "payload_sha256": "a03742393f19332b23168ff26c7fad6780b8ee94b3570a58ed27c77d4e3883fc",
+  "request_sha256": "2be1bb28ce8cf4415f0d35b1411d64883e0f6182e050786b9222fd3893acea89",
+  "semantic_envelope": null,
+  "epistemic_lineage": null
+}

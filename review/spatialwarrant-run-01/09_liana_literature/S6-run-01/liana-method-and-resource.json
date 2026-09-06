@@ -1,0 +1,17 @@
+{
+  "status": "COMPLETED",
+  "liana_version": "1.10.0",
+  "rows": 3584342,
+  "resource": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\resources\\liana-consensus-frozen.csv",
+  "resource_sha256": "68f7669e38e6062310cad380de0573f868e7f8a6ad529232cc5cd95ad9d9faf8",
+  "resource_pairs": 4620,
+  "groupby": "producer_celltype_minor",
+  "expr_prop": 0.1,
+  "min_cells": 5,
+  "n_perms": 1000,
+  "seed": 20260904,
+  "n_jobs": 1,
+  "normalization": "normalize_total target_sum=10000 then log1p",
+  "return_all_lrs": true,
+  "ranking_basis": "LIANA rank_aggregate magnitude_rank ascending, then source/target/ligand/receptor identifier"
+}

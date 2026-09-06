@@ -1,0 +1,23 @@
+# SpatialWarrant S4-S5 checkpoint
+
+- Status: COMPLETED
+- Route: local Python/scverse execution; registered NGS workflow run: NONE
+- Locked plan SHA-256: `854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82`
+- S4 output: `C:\Plugin\BioNexus\review\spatialwarrant-run-01\06_deconvolution\S4-run-02`
+- S5 output: `C:\Plugin\BioNexus\review\spatialwarrant-run-01\07_niches\S5-run-02`
+- Tangram: cluster mode CPU, 500 epochs, requested genes [500, 1000, 2000], seeds [20260904, 20260905, 20260906]; completed 54/54 combinations; failed 0.
+- Main Tangram: requested 1000 genes, seed 20260904; normalized composition weights are method estimates, not calibrated cell fractions.
+- Marker/NNLS and Scanpy ingest: completed. Ingest is categorical similarity-label transfer only.
+- Method comparison: descriptive sensitivity using the shared Wu reference; it is not independent validation.
+- S5 KMeans: all 15 k/seed combinations completed; selected k=10 using the unweighted six-section mean silhouette before boundary analysis, display seed 20260904.
+- Niche distributions: `C:\Plugin\BioNexus\review\spatialwarrant-run-01\07_niches\S5-run-02\niche-distribution-by-section.csv` (60 section-niche rows).
+- Frozen boundary: CID4535 B2 versus core was evaluated descriptively (10 niche rows). The other five sections are NOT_COMPUTED_WITH_REASON. No boundary was redefined.
+- 10x Block A Section 1: COMPLETED_TECHNICAL_TRANSFER; frozen scaler and KMeans were applied without refitting. This is technical transfer/compatibility only.
+- S4 elapsed seconds: 568.631; S5 elapsed seconds: 54.391.
+- Peak process-tree memory bytes (observed): 1990914048.
+- Start/end C free bytes: 32500264960 / 32443449344.
+- S4/S5 output bytes: 64347377 / 6346688.
+- Patient-level inference: BLOCKED / NOT_ESTABLISHED.
+- Machine verdict: PENDING.
+- Biological conclusion: PENDING.
+- Next stage: S6 was not started.

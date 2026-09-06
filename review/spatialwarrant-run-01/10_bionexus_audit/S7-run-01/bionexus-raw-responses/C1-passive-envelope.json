@@ -1,0 +1,53 @@
+{
+  "schema_version": "bionexus.external-evidence-envelope.v1",
+  "evidence_id": "SPATIALWARRANT-S7-C1",
+  "family": "analysis",
+  "producer": {
+    "plugin_id": "local-python-s7-review",
+    "capability": "completed-artifact-scientific-review",
+    "tool_name": "build_spatialwarrant_s7.py",
+    "plugin_version": "sha256:03f5335df16d144aea3cca2c9764bce573c32ed110f0ec7c7dd45b157be1994a"
+  },
+  "captured_at": "2026-09-06T02:30:14.424064+00:00",
+  "source_context": {
+    "backend_name": "local Python/scverse artifact review",
+    "backend_version": "3.13.9",
+    "input_artifact_sha256": "d6048dd378c97b90d731825d8702eee8c3fa920de84ddc2d6633f1f1d9d5a161",
+    "parameters_sha256": "0bb266a7e5086ff8209eeee5c21d020bcab2da9c6f35ede1c3d4334bfada2ae8",
+    "execution_receipt_sha256": "b6bd8e08981030d43fd0b934830611d71cf9d39dfdac570f7cba991ad3a55a93"
+  },
+  "payload": {
+    "claim_id": "C1",
+    "original_statement": "Report per-section agreement between numeric spatial domains and producer pathology, including ARI/NMI, granularity, and boundary Dice/Jaccard; no success threshold is assumed.",
+    "artifacts": [
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\section-summary.csv",
+        "sha256": "57030b443b655151e5ca4c7ccb2b3aed5bfd970edfc5b1eca8eea348de8445d1"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID4535\\domain-pathology-metrics.json",
+        "sha256": "29da272b1a43815bc8c64e30ac892e81bb1e99976de799fd9aae2138b6cc9e97"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID4535\\geometry-boundary-rule.json",
+        "sha256": "a7ea778723e8909ee3c8555f82f90dd44d518da8169d4a8d63509ae507cf8a3d"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID4535\\geometry-boundary-core-masks.csv",
+        "sha256": "393617426231596487b7b97d25ee770a521c65b035b176c745fe901807af2049"
+      }
+    ],
+    "host_review_state": "STUDY_BOUND_DESCRIPTIVE",
+    "support": "Six sections: ARI 0.00173–0.49012, NMI 0.01967–0.53850; fixed numeric resolution 0.5. CID4535 boundary Dice 0.29712, Jaccard 0.17448.",
+    "counterevidence": "Agreement varies widely; same-study producer pathology is not independent ground truth; only one separable boundary qualifies.",
+    "maximum_claim": "Per-section descriptive spatial/domain comparison; no universal accuracy claim.",
+    "dependencies": [
+      "Wu study",
+      "S3 producer labels and coordinates"
+    ]
+  },
+  "payload_sha256": "3f4fda43ad85cd94d81de10eb15d6b0eeaa4f1cd52f24b942d970786cdfd6069",
+  "request_sha256": "2be1bb28ce8cf4415f0d35b1411d64883e0f6182e050786b9222fd3893acea89",
+  "semantic_envelope": null,
+  "epistemic_lineage": null
+}

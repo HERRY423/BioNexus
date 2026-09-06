@@ -1,0 +1,22 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 19,
+    "name": "NRSN2-AS1"
+  },
+  "source": "string",
+  "returncode": 1,
+  "elapsed_seconds": 2.3114125999854878,
+  "completed_at_utc": "2026-09-06T02:01:12.203046+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\string\\gene-19-NRSN2-AS1.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\string\\gene-19-NRSN2-AS1.raw",
+  "wrapper": {
+    "ok": false,
+    "error": {
+      "code": "network_error",
+      "message": "Request failed for string-skill: HTTPError"
+    },
+    "warnings": []
+  },
+  "stderr": ""
+}

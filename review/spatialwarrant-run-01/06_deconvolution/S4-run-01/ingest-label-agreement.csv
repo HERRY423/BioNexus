@@ -1,0 +1,1058 @@
+section,transferred_label,tangram_dominant,spots
+1142243F,B cells Memory,CAFs myCAF-like,1
+1142243F,CAFs MSC iCAF-like,B cells Memory,8
+1142243F,CAFs MSC iCAF-like,B cells Naive,9
+1142243F,CAFs MSC iCAF-like,CAFs MSC iCAF-like,1
+1142243F,CAFs MSC iCAF-like,CAFs myCAF-like,1
+1142243F,CAFs MSC iCAF-like,Cancer Basal SC,1
+1142243F,CAFs MSC iCAF-like,Cancer Cycling,1
+1142243F,CAFs MSC iCAF-like,Cancer Her2 SC,1
+1142243F,CAFs MSC iCAF-like,Cancer LumB SC,1
+1142243F,CAFs MSC iCAF-like,Cycling PVL,5
+1142243F,CAFs MSC iCAF-like,Cycling T-cells,20
+1142243F,CAFs MSC iCAF-like,Cycling_Myeloid,5
+1142243F,CAFs MSC iCAF-like,DCs,11
+1142243F,CAFs MSC iCAF-like,Endothelial ACKR1,3
+1142243F,CAFs MSC iCAF-like,Endothelial CXCL12,1
+1142243F,CAFs MSC iCAF-like,Endothelial Lymphatic LYVE1,17
+1142243F,CAFs MSC iCAF-like,Endothelial RGS5,4
+1142243F,CAFs MSC iCAF-like,Luminal Progenitors,1
+1142243F,CAFs MSC iCAF-like,Macrophage,2
+1142243F,CAFs MSC iCAF-like,Mature Luminal,2
+1142243F,CAFs MSC iCAF-like,Monocyte,10
+1142243F,CAFs MSC iCAF-like,Myoepithelial,4
+1142243F,CAFs MSC iCAF-like,NK cells,14
+1142243F,CAFs MSC iCAF-like,NKT cells,4
+1142243F,CAFs MSC iCAF-like,PVL Differentiated,2
+1142243F,CAFs MSC iCAF-like,PVL Immature,4
+1142243F,CAFs MSC iCAF-like,Plasmablasts,11
+1142243F,CAFs MSC iCAF-like,T cells CD4+,4
+1142243F,CAFs MSC iCAF-like,T cells CD8+,3
+1142243F,CAFs myCAF-like,B cells Memory,73
+1142243F,CAFs myCAF-like,B cells Naive,59
+1142243F,CAFs myCAF-like,CAFs MSC iCAF-like,35
+1142243F,CAFs myCAF-like,CAFs myCAF-like,16
+1142243F,CAFs myCAF-like,Cancer Basal SC,15
+1142243F,CAFs myCAF-like,Cancer Cycling,4
+1142243F,CAFs myCAF-like,Cancer Her2 SC,23
+1142243F,CAFs myCAF-like,Cancer LumA SC,4
+1142243F,CAFs myCAF-like,Cancer LumB SC,12
+1142243F,CAFs myCAF-like,Cycling PVL,58
+1142243F,CAFs myCAF-like,Cycling T-cells,88
+1142243F,CAFs myCAF-like,Cycling_Myeloid,112
+1142243F,CAFs myCAF-like,DCs,89
+1142243F,CAFs myCAF-like,Endothelial ACKR1,12
+1142243F,CAFs myCAF-like,Endothelial CXCL12,54
+1142243F,CAFs myCAF-like,Endothelial Lymphatic LYVE1,82
+1142243F,CAFs myCAF-like,Endothelial RGS5,83
+1142243F,CAFs myCAF-like,Luminal Progenitors,7
+1142243F,CAFs myCAF-like,Macrophage,12
+1142243F,CAFs myCAF-like,Mature Luminal,52
+1142243F,CAFs myCAF-like,Monocyte,64
+1142243F,CAFs myCAF-like,Myoepithelial,36
+1142243F,CAFs myCAF-like,NK cells,104
+1142243F,CAFs myCAF-like,NKT cells,54
+1142243F,CAFs myCAF-like,PVL Differentiated,18
+1142243F,CAFs myCAF-like,PVL Immature,68
+1142243F,CAFs myCAF-like,Plasmablasts,36
+1142243F,CAFs myCAF-like,T cells CD4+,11
+1142243F,CAFs myCAF-like,T cells CD8+,23
+1142243F,Cancer Basal SC,B cells Memory,90
+1142243F,Cancer Basal SC,B cells Naive,91
+1142243F,Cancer Basal SC,CAFs MSC iCAF-like,24
+1142243F,Cancer Basal SC,CAFs myCAF-like,1
+1142243F,Cancer Basal SC,Cancer Basal SC,69
+1142243F,Cancer Basal SC,Cancer Cycling,34
+1142243F,Cancer Basal SC,Cancer Her2 SC,112
+1142243F,Cancer Basal SC,Cancer LumA SC,46
+1142243F,Cancer Basal SC,Cancer LumB SC,23
+1142243F,Cancer Basal SC,Cycling PVL,29
+1142243F,Cancer Basal SC,Cycling T-cells,55
+1142243F,Cancer Basal SC,Cycling_Myeloid,128
+1142243F,Cancer Basal SC,DCs,88
+1142243F,Cancer Basal SC,Endothelial ACKR1,19
+1142243F,Cancer Basal SC,Endothelial CXCL12,71
+1142243F,Cancer Basal SC,Endothelial Lymphatic LYVE1,90
+1142243F,Cancer Basal SC,Endothelial RGS5,46
+1142243F,Cancer Basal SC,Luminal Progenitors,55
+1142243F,Cancer Basal SC,Macrophage,2
+1142243F,Cancer Basal SC,Mature Luminal,167
+1142243F,Cancer Basal SC,Monocyte,88
+1142243F,Cancer Basal SC,Myoepithelial,92
+1142243F,Cancer Basal SC,NK cells,88
+1142243F,Cancer Basal SC,NKT cells,189
+1142243F,Cancer Basal SC,PVL Differentiated,48
+1142243F,Cancer Basal SC,PVL Immature,76
+1142243F,Cancer Basal SC,Plasmablasts,13
+1142243F,Cancer Basal SC,T cells CD4+,22
+1142243F,Cancer Basal SC,T cells CD8+,27
+1142243F,Cancer Cycling,B cells Memory,31
+1142243F,Cancer Cycling,B cells Naive,53
+1142243F,Cancer Cycling,CAFs MSC iCAF-like,12
+1142243F,Cancer Cycling,CAFs myCAF-like,1
+1142243F,Cancer Cycling,Cancer Basal SC,7
+1142243F,Cancer Cycling,Cancer Cycling,26
+1142243F,Cancer Cycling,Cancer Her2 SC,28
+1142243F,Cancer Cycling,Cancer LumA SC,14
+1142243F,Cancer Cycling,Cancer LumB SC,16
+1142243F,Cancer Cycling,Cycling PVL,12
+1142243F,Cancer Cycling,Cycling T-cells,49
+1142243F,Cancer Cycling,Cycling_Myeloid,41
+1142243F,Cancer Cycling,DCs,38
+1142243F,Cancer Cycling,Endothelial ACKR1,11
+1142243F,Cancer Cycling,Endothelial CXCL12,49
+1142243F,Cancer Cycling,Endothelial Lymphatic LYVE1,34
+1142243F,Cancer Cycling,Endothelial RGS5,14
+1142243F,Cancer Cycling,Luminal Progenitors,20
+1142243F,Cancer Cycling,Macrophage,2
+1142243F,Cancer Cycling,Mature Luminal,43
+1142243F,Cancer Cycling,Monocyte,31
+1142243F,Cancer Cycling,Myoepithelial,17
+1142243F,Cancer Cycling,NK cells,46
+1142243F,Cancer Cycling,NKT cells,54
+1142243F,Cancer Cycling,PVL Differentiated,19
+1142243F,Cancer Cycling,PVL Immature,34
+1142243F,Cancer Cycling,Plasmablasts,13
+1142243F,Cancer Cycling,T cells CD4+,8
+1142243F,Cancer Cycling,T cells CD8+,18
+1142243F,Cancer Her2 SC,Cancer LumB SC,1
+1142243F,Cancer Her2 SC,Mature Luminal,1
+1142243F,Cycling_Myeloid,B cells Memory,1
+1142243F,Cycling_Myeloid,Endothelial Lymphatic LYVE1,1
+1142243F,Cycling_Myeloid,NK cells,1
+1142243F,Cycling_Myeloid,Plasmablasts,1
+1142243F,Endothelial ACKR1,Cancer Her2 SC,1
+1142243F,Endothelial ACKR1,DCs,1
+1142243F,Endothelial ACKR1,Endothelial Lymphatic LYVE1,1
+1142243F,Endothelial ACKR1,NK cells,1
+1142243F,Endothelial ACKR1,Plasmablasts,1
+1142243F,Endothelial Lymphatic LYVE1,B cells Memory,2
+1142243F,Endothelial Lymphatic LYVE1,B cells Naive,1
+1142243F,Endothelial Lymphatic LYVE1,CAFs MSC iCAF-like,2
+1142243F,Endothelial Lymphatic LYVE1,Cancer Basal SC,1
+1142243F,Endothelial Lymphatic LYVE1,Cancer Her2 SC,4
+1142243F,Endothelial Lymphatic LYVE1,Cancer LumB SC,1
+1142243F,Endothelial Lymphatic LYVE1,Cycling PVL,8
+1142243F,Endothelial Lymphatic LYVE1,Cycling T-cells,5
+1142243F,Endothelial Lymphatic LYVE1,Cycling_Myeloid,7
+1142243F,Endothelial Lymphatic LYVE1,DCs,7
+1142243F,Endothelial Lymphatic LYVE1,Endothelial ACKR1,4
+1142243F,Endothelial Lymphatic LYVE1,Endothelial CXCL12,7
+1142243F,Endothelial Lymphatic LYVE1,Endothelial Lymphatic LYVE1,7
+1142243F,Endothelial Lymphatic LYVE1,Endothelial RGS5,12
+1142243F,Endothelial Lymphatic LYVE1,Macrophage,2
+1142243F,Endothelial Lymphatic LYVE1,Mature Luminal,6
+1142243F,Endothelial Lymphatic LYVE1,Monocyte,7
+1142243F,Endothelial Lymphatic LYVE1,Myoepithelial,2
+1142243F,Endothelial Lymphatic LYVE1,NK cells,6
+1142243F,Endothelial Lymphatic LYVE1,NKT cells,5
+1142243F,Endothelial Lymphatic LYVE1,PVL Immature,6
+1142243F,Endothelial Lymphatic LYVE1,Plasmablasts,2
+1142243F,Endothelial Lymphatic LYVE1,T cells CD8+,1
+1142243F,Endothelial RGS5,Cycling PVL,1
+1142243F,Endothelial RGS5,Endothelial CXCL12,2
+1142243F,Endothelial RGS5,Endothelial RGS5,6
+1142243F,Endothelial RGS5,NK cells,1
+1142243F,Luminal Progenitors,B cells Memory,6
+1142243F,Luminal Progenitors,B cells Naive,7
+1142243F,Luminal Progenitors,CAFs MSC iCAF-like,2
+1142243F,Luminal Progenitors,Cancer Basal SC,9
+1142243F,Luminal Progenitors,Cancer Cycling,1
+1142243F,Luminal Progenitors,Cancer Her2 SC,17
+1142243F,Luminal Progenitors,Cancer LumA SC,3
+1142243F,Luminal Progenitors,Cycling PVL,3
+1142243F,Luminal Progenitors,Cycling T-cells,3
+1142243F,Luminal Progenitors,Cycling_Myeloid,8
+1142243F,Luminal Progenitors,DCs,11
+1142243F,Luminal Progenitors,Endothelial ACKR1,1
+1142243F,Luminal Progenitors,Endothelial CXCL12,7
+1142243F,Luminal Progenitors,Endothelial Lymphatic LYVE1,6
+1142243F,Luminal Progenitors,Endothelial RGS5,2
+1142243F,Luminal Progenitors,Luminal Progenitors,9
+1142243F,Luminal Progenitors,Mature Luminal,21
+1142243F,Luminal Progenitors,Monocyte,10
+1142243F,Luminal Progenitors,Myoepithelial,18
+1142243F,Luminal Progenitors,NK cells,10
+1142243F,Luminal Progenitors,NKT cells,21
+1142243F,Luminal Progenitors,PVL Differentiated,4
+1142243F,Luminal Progenitors,PVL Immature,3
+1142243F,Luminal Progenitors,Plasmablasts,1
+1142243F,Luminal Progenitors,T cells CD8+,2
+1142243F,Macrophage,B cells Memory,5
+1142243F,Macrophage,B cells Naive,4
+1142243F,Macrophage,CAFs MSC iCAF-like,2
+1142243F,Macrophage,Cycling T-cells,11
+1142243F,Macrophage,Cycling_Myeloid,2
+1142243F,Macrophage,DCs,8
+1142243F,Macrophage,Endothelial ACKR1,1
+1142243F,Macrophage,Endothelial CXCL12,1
+1142243F,Macrophage,Endothelial RGS5,1
+1142243F,Macrophage,Luminal Progenitors,1
+1142243F,Macrophage,Macrophage,6
+1142243F,Macrophage,Mature Luminal,1
+1142243F,Macrophage,Monocyte,2
+1142243F,Macrophage,NK cells,6
+1142243F,Macrophage,Plasmablasts,2
+1142243F,Macrophage,T cells CD8+,1
+1142243F,Myoepithelial,B cells Memory,17
+1142243F,Myoepithelial,B cells Naive,14
+1142243F,Myoepithelial,CAFs MSC iCAF-like,7
+1142243F,Myoepithelial,Cancer Basal SC,9
+1142243F,Myoepithelial,Cancer Cycling,6
+1142243F,Myoepithelial,Cancer Her2 SC,12
+1142243F,Myoepithelial,Cancer LumA SC,2
+1142243F,Myoepithelial,Cycling PVL,4
+1142243F,Myoepithelial,Cycling T-cells,5
+1142243F,Myoepithelial,Cycling_Myeloid,26
+1142243F,Myoepithelial,DCs,16
+1142243F,Myoepithelial,Endothelial ACKR1,4
+1142243F,Myoepithelial,Endothelial CXCL12,13
+1142243F,Myoepithelial,Endothelial Lymphatic LYVE1,17
+1142243F,Myoepithelial,Endothelial RGS5,9
+1142243F,Myoepithelial,Luminal Progenitors,6
+1142243F,Myoepithelial,Macrophage,1
+1142243F,Myoepithelial,Mature Luminal,20
+1142243F,Myoepithelial,Monocyte,9
+1142243F,Myoepithelial,Myoepithelial,20
+1142243F,Myoepithelial,NK cells,12
+1142243F,Myoepithelial,NKT cells,14
+1142243F,Myoepithelial,PVL Differentiated,7
+1142243F,Myoepithelial,PVL Immature,11
+1142243F,Myoepithelial,Plasmablasts,3
+1142243F,Myoepithelial,T cells CD4+,2
+1142243F,Myoepithelial,T cells CD8+,9
+1142243F,PVL Differentiated,PVL Differentiated,1
+1142243F,PVL Immature,Cycling PVL,3
+1142243F,PVL Immature,DCs,1
+1142243F,PVL Immature,Endothelial CXCL12,1
+1142243F,PVL Immature,Endothelial RGS5,8
+1142243F,PVL Immature,NKT cells,1
+1142243F,PVL Immature,PVL Immature,2
+1142243F,Plasmablasts,B cells Memory,1
+1142243F,Plasmablasts,CAFs MSC iCAF-like,3
+1142243F,Plasmablasts,CAFs myCAF-like,4
+1142243F,Plasmablasts,Cancer Cycling,1
+1142243F,Plasmablasts,Cancer LumB SC,1
+1142243F,Plasmablasts,Cycling T-cells,2
+1142243F,Plasmablasts,DCs,2
+1142243F,Plasmablasts,Endothelial ACKR1,5
+1142243F,Plasmablasts,Endothelial RGS5,1
+1142243F,Plasmablasts,Luminal Progenitors,2
+1142243F,Plasmablasts,Macrophage,6
+1142243F,Plasmablasts,Myoepithelial,1
+1142243F,Plasmablasts,NK cells,2
+1142243F,Plasmablasts,NKT cells,1
+1142243F,Plasmablasts,PVL Immature,1
+1142243F,Plasmablasts,Plasmablasts,12
+1142243F,Plasmablasts,T cells CD4+,1
+1142243F,Plasmablasts,T cells CD8+,2
+1160920F,B cells Memory,B cells Memory,13
+1160920F,B cells Memory,B cells Naive,1
+1160920F,B cells Memory,Cycling T-cells,6
+1160920F,B cells Memory,Endothelial ACKR1,1
+1160920F,CAFs MSC iCAF-like,B cells Memory,18
+1160920F,CAFs MSC iCAF-like,B cells Naive,23
+1160920F,CAFs MSC iCAF-like,CAFs MSC iCAF-like,17
+1160920F,CAFs MSC iCAF-like,CAFs myCAF-like,9
+1160920F,CAFs MSC iCAF-like,Cancer Her2 SC,1
+1160920F,CAFs MSC iCAF-like,Cancer LumB SC,1
+1160920F,CAFs MSC iCAF-like,Cycling PVL,24
+1160920F,CAFs MSC iCAF-like,Cycling T-cells,25
+1160920F,CAFs MSC iCAF-like,Cycling_Myeloid,9
+1160920F,CAFs MSC iCAF-like,DCs,44
+1160920F,CAFs MSC iCAF-like,Endothelial ACKR1,17
+1160920F,CAFs MSC iCAF-like,Endothelial CXCL12,19
+1160920F,CAFs MSC iCAF-like,Endothelial Lymphatic LYVE1,40
+1160920F,CAFs MSC iCAF-like,Endothelial RGS5,18
+1160920F,CAFs MSC iCAF-like,Macrophage,2
+1160920F,CAFs MSC iCAF-like,Mature Luminal,13
+1160920F,CAFs MSC iCAF-like,Monocyte,14
+1160920F,CAFs MSC iCAF-like,Myoepithelial,14
+1160920F,CAFs MSC iCAF-like,NK cells,24
+1160920F,CAFs MSC iCAF-like,NKT cells,12
+1160920F,CAFs MSC iCAF-like,PVL Differentiated,18
+1160920F,CAFs MSC iCAF-like,PVL Immature,23
+1160920F,CAFs MSC iCAF-like,Plasmablasts,6
+1160920F,CAFs MSC iCAF-like,T cells CD8+,3
+1160920F,CAFs myCAF-like,CAFs MSC iCAF-like,1
+1160920F,CAFs myCAF-like,CAFs myCAF-like,3
+1160920F,CAFs myCAF-like,Cycling PVL,6
+1160920F,CAFs myCAF-like,Cycling T-cells,1
+1160920F,CAFs myCAF-like,DCs,1
+1160920F,CAFs myCAF-like,Endothelial ACKR1,1
+1160920F,CAFs myCAF-like,Endothelial CXCL12,2
+1160920F,CAFs myCAF-like,Endothelial Lymphatic LYVE1,8
+1160920F,CAFs myCAF-like,Endothelial RGS5,4
+1160920F,CAFs myCAF-like,Mature Luminal,1
+1160920F,CAFs myCAF-like,Myoepithelial,3
+1160920F,CAFs myCAF-like,NK cells,1
+1160920F,CAFs myCAF-like,NKT cells,1
+1160920F,CAFs myCAF-like,PVL Differentiated,5
+1160920F,CAFs myCAF-like,PVL Immature,2
+1160920F,CAFs myCAF-like,Plasmablasts,3
+1160920F,Cancer Basal SC,B cells Memory,56
+1160920F,Cancer Basal SC,B cells Naive,124
+1160920F,Cancer Basal SC,CAFs MSC iCAF-like,24
+1160920F,Cancer Basal SC,CAFs myCAF-like,17
+1160920F,Cancer Basal SC,Cancer Basal SC,193
+1160920F,Cancer Basal SC,Cancer Cycling,89
+1160920F,Cancer Basal SC,Cancer Her2 SC,178
+1160920F,Cancer Basal SC,Cancer LumA SC,37
+1160920F,Cancer Basal SC,Cancer LumB SC,27
+1160920F,Cancer Basal SC,Cycling PVL,40
+1160920F,Cancer Basal SC,Cycling T-cells,58
+1160920F,Cancer Basal SC,Cycling_Myeloid,301
+1160920F,Cancer Basal SC,DCs,41
+1160920F,Cancer Basal SC,Endothelial ACKR1,35
+1160920F,Cancer Basal SC,Endothelial CXCL12,108
+1160920F,Cancer Basal SC,Endothelial Lymphatic LYVE1,67
+1160920F,Cancer Basal SC,Endothelial RGS5,128
+1160920F,Cancer Basal SC,Luminal Progenitors,96
+1160920F,Cancer Basal SC,Macrophage,15
+1160920F,Cancer Basal SC,Mature Luminal,255
+1160920F,Cancer Basal SC,Monocyte,177
+1160920F,Cancer Basal SC,Myoepithelial,163
+1160920F,Cancer Basal SC,NK cells,131
+1160920F,Cancer Basal SC,NKT cells,97
+1160920F,Cancer Basal SC,PVL Differentiated,43
+1160920F,Cancer Basal SC,PVL Immature,112
+1160920F,Cancer Basal SC,Plasmablasts,26
+1160920F,Cancer Basal SC,T cells CD4+,15
+1160920F,Cancer Basal SC,T cells CD8+,54
+1160920F,Cancer Cycling,B cells Memory,23
+1160920F,Cancer Cycling,B cells Naive,60
+1160920F,Cancer Cycling,CAFs MSC iCAF-like,17
+1160920F,Cancer Cycling,CAFs myCAF-like,9
+1160920F,Cancer Cycling,Cancer Basal SC,19
+1160920F,Cancer Cycling,Cancer Cycling,42
+1160920F,Cancer Cycling,Cancer Her2 SC,30
+1160920F,Cancer Cycling,Cancer LumA SC,4
+1160920F,Cancer Cycling,Cancer LumB SC,5
+1160920F,Cancer Cycling,Cycling PVL,7
+1160920F,Cancer Cycling,Cycling T-cells,17
+1160920F,Cancer Cycling,Cycling_Myeloid,72
+1160920F,Cancer Cycling,DCs,8
+1160920F,Cancer Cycling,Endothelial ACKR1,10
+1160920F,Cancer Cycling,Endothelial CXCL12,33
+1160920F,Cancer Cycling,Endothelial Lymphatic LYVE1,32
+1160920F,Cancer Cycling,Endothelial RGS5,24
+1160920F,Cancer Cycling,Luminal Progenitors,15
+1160920F,Cancer Cycling,Macrophage,3
+1160920F,Cancer Cycling,Mature Luminal,41
+1160920F,Cancer Cycling,Monocyte,42
+1160920F,Cancer Cycling,Myoepithelial,31
+1160920F,Cancer Cycling,NK cells,43
+1160920F,Cancer Cycling,NKT cells,39
+1160920F,Cancer Cycling,PVL Differentiated,16
+1160920F,Cancer Cycling,PVL Immature,31
+1160920F,Cancer Cycling,Plasmablasts,47
+1160920F,Cancer Cycling,T cells CD4+,10
+1160920F,Cancer Cycling,T cells CD8+,17
+1160920F,Cancer Her2 SC,B cells Naive,1
+1160920F,Cancer LumB SC,B cells Memory,11
+1160920F,Cancer LumB SC,B cells Naive,6
+1160920F,Cancer LumB SC,CAFs MSC iCAF-like,6
+1160920F,Cancer LumB SC,CAFs myCAF-like,1
+1160920F,Cancer LumB SC,Cancer Her2 SC,1
+1160920F,Cancer LumB SC,Cycling PVL,1
+1160920F,Cancer LumB SC,Cycling_Myeloid,4
+1160920F,Cancer LumB SC,DCs,3
+1160920F,Cancer LumB SC,Endothelial ACKR1,5
+1160920F,Cancer LumB SC,Endothelial CXCL12,5
+1160920F,Cancer LumB SC,Endothelial Lymphatic LYVE1,9
+1160920F,Cancer LumB SC,Endothelial RGS5,3
+1160920F,Cancer LumB SC,Macrophage,1
+1160920F,Cancer LumB SC,Mature Luminal,3
+1160920F,Cancer LumB SC,Monocyte,6
+1160920F,Cancer LumB SC,Myoepithelial,7
+1160920F,Cancer LumB SC,NK cells,10
+1160920F,Cancer LumB SC,NKT cells,9
+1160920F,Cancer LumB SC,PVL Differentiated,9
+1160920F,Cancer LumB SC,PVL Immature,7
+1160920F,Cancer LumB SC,Plasmablasts,9
+1160920F,Cancer LumB SC,T cells CD8+,1
+1160920F,Cycling PVL,PVL Differentiated,1
+1160920F,Cycling T-cells,Cycling T-cells,1
+1160920F,Cycling_Myeloid,Cycling T-cells,1
+1160920F,Cycling_Myeloid,DCs,1
+1160920F,DCs,B cells Memory,21
+1160920F,DCs,B cells Naive,18
+1160920F,DCs,CAFs MSC iCAF-like,1
+1160920F,DCs,Cycling PVL,1
+1160920F,DCs,Cycling T-cells,27
+1160920F,DCs,DCs,46
+1160920F,DCs,Endothelial Lymphatic LYVE1,8
+1160920F,DCs,Monocyte,2
+1160920F,DCs,NK cells,5
+1160920F,DCs,NKT cells,3
+1160920F,DCs,Plasmablasts,2
+1160920F,Endothelial ACKR1,B cells Memory,1
+1160920F,Endothelial ACKR1,B cells Naive,2
+1160920F,Endothelial ACKR1,CAFs myCAF-like,1
+1160920F,Endothelial ACKR1,Cycling PVL,1
+1160920F,Endothelial ACKR1,DCs,2
+1160920F,Endothelial ACKR1,Endothelial ACKR1,11
+1160920F,Endothelial ACKR1,Endothelial CXCL12,3
+1160920F,Endothelial ACKR1,Endothelial Lymphatic LYVE1,6
+1160920F,Endothelial ACKR1,Endothelial RGS5,4
+1160920F,Endothelial ACKR1,NK cells,2
+1160920F,Endothelial ACKR1,NKT cells,3
+1160920F,Endothelial ACKR1,PVL Differentiated,3
+1160920F,Endothelial ACKR1,PVL Immature,3
+1160920F,Endothelial ACKR1,Plasmablasts,2
+1160920F,Endothelial Lymphatic LYVE1,B cells Memory,2
+1160920F,Endothelial Lymphatic LYVE1,B cells Naive,2
+1160920F,Endothelial Lymphatic LYVE1,CAFs MSC iCAF-like,2
+1160920F,Endothelial Lymphatic LYVE1,Cancer Her2 SC,2
+1160920F,Endothelial Lymphatic LYVE1,Cycling PVL,4
+1160920F,Endothelial Lymphatic LYVE1,Cycling T-cells,3
+1160920F,Endothelial Lymphatic LYVE1,Cycling_Myeloid,1
+1160920F,Endothelial Lymphatic LYVE1,DCs,8
+1160920F,Endothelial Lymphatic LYVE1,Endothelial ACKR1,10
+1160920F,Endothelial Lymphatic LYVE1,Endothelial CXCL12,8
+1160920F,Endothelial Lymphatic LYVE1,Endothelial Lymphatic LYVE1,6
+1160920F,Endothelial Lymphatic LYVE1,Endothelial RGS5,11
+1160920F,Endothelial Lymphatic LYVE1,Luminal Progenitors,1
+1160920F,Endothelial Lymphatic LYVE1,Monocyte,2
+1160920F,Endothelial Lymphatic LYVE1,Myoepithelial,7
+1160920F,Endothelial Lymphatic LYVE1,NKT cells,3
+1160920F,Endothelial Lymphatic LYVE1,PVL Differentiated,1
+1160920F,Endothelial Lymphatic LYVE1,PVL Immature,2
+1160920F,Endothelial Lymphatic LYVE1,Plasmablasts,1
+1160920F,Endothelial RGS5,Endothelial CXCL12,1
+1160920F,Endothelial RGS5,Endothelial Lymphatic LYVE1,1
+1160920F,Luminal Progenitors,B cells Naive,1
+1160920F,Luminal Progenitors,CAFs MSC iCAF-like,1
+1160920F,Luminal Progenitors,Cancer Basal SC,3
+1160920F,Luminal Progenitors,Cancer Cycling,2
+1160920F,Luminal Progenitors,Cancer Her2 SC,3
+1160920F,Luminal Progenitors,Cycling PVL,1
+1160920F,Luminal Progenitors,Cycling_Myeloid,2
+1160920F,Luminal Progenitors,Endothelial Lymphatic LYVE1,1
+1160920F,Luminal Progenitors,Luminal Progenitors,1
+1160920F,Luminal Progenitors,Mature Luminal,8
+1160920F,Luminal Progenitors,Myoepithelial,4
+1160920F,Luminal Progenitors,PVL Differentiated,1
+1160920F,Macrophage,B cells Memory,15
+1160920F,Macrophage,B cells Naive,9
+1160920F,Macrophage,CAFs MSC iCAF-like,3
+1160920F,Macrophage,CAFs myCAF-like,3
+1160920F,Macrophage,Cancer Cycling,1
+1160920F,Macrophage,Cycling PVL,11
+1160920F,Macrophage,Cycling T-cells,24
+1160920F,Macrophage,Cycling_Myeloid,19
+1160920F,Macrophage,DCs,35
+1160920F,Macrophage,Endothelial ACKR1,3
+1160920F,Macrophage,Endothelial CXCL12,4
+1160920F,Macrophage,Endothelial Lymphatic LYVE1,24
+1160920F,Macrophage,Endothelial RGS5,11
+1160920F,Macrophage,Macrophage,15
+1160920F,Macrophage,Mature Luminal,5
+1160920F,Macrophage,Monocyte,19
+1160920F,Macrophage,Myoepithelial,4
+1160920F,Macrophage,NK cells,21
+1160920F,Macrophage,NKT cells,19
+1160920F,Macrophage,PVL Differentiated,2
+1160920F,Macrophage,PVL Immature,6
+1160920F,Macrophage,Plasmablasts,14
+1160920F,Macrophage,T cells CD8+,4
+1160920F,Mature Luminal,Mature Luminal,5
+1160920F,Myoepithelial,Cycling PVL,1
+1160920F,Myoepithelial,Endothelial CXCL12,1
+1160920F,Myoepithelial,Mature Luminal,7
+1160920F,Myoepithelial,Myoepithelial,6
+1160920F,Myoepithelial,PVL Differentiated,1
+1160920F,PVL Differentiated,B cells Memory,2
+1160920F,PVL Differentiated,B cells Naive,5
+1160920F,PVL Differentiated,Cycling PVL,8
+1160920F,PVL Differentiated,Cycling T-cells,8
+1160920F,PVL Differentiated,Cycling_Myeloid,1
+1160920F,PVL Differentiated,DCs,10
+1160920F,PVL Differentiated,Endothelial ACKR1,1
+1160920F,PVL Differentiated,Endothelial CXCL12,3
+1160920F,PVL Differentiated,Endothelial Lymphatic LYVE1,3
+1160920F,PVL Differentiated,Endothelial RGS5,5
+1160920F,PVL Differentiated,NK cells,3
+1160920F,PVL Differentiated,NKT cells,2
+1160920F,PVL Differentiated,PVL Differentiated,11
+1160920F,PVL Differentiated,PVL Immature,3
+1160920F,PVL Differentiated,Plasmablasts,1
+1160920F,PVL Differentiated,T cells CD8+,1
+1160920F,PVL Immature,B cells Memory,1
+1160920F,PVL Immature,CAFs myCAF-like,1
+1160920F,PVL Immature,Cycling PVL,1
+1160920F,PVL Immature,Endothelial ACKR1,2
+1160920F,PVL Immature,Endothelial CXCL12,5
+1160920F,PVL Immature,Endothelial Lymphatic LYVE1,1
+1160920F,PVL Immature,Endothelial RGS5,1
+1160920F,PVL Immature,Myoepithelial,1
+1160920F,PVL Immature,NK cells,1
+1160920F,PVL Immature,PVL Differentiated,6
+1160920F,PVL Immature,PVL Immature,3
+1160920F,PVL Immature,Plasmablasts,1
+1160920F,Plasmablasts,B cells Memory,15
+1160920F,Plasmablasts,B cells Naive,19
+1160920F,Plasmablasts,CAFs MSC iCAF-like,5
+1160920F,Plasmablasts,CAFs myCAF-like,3
+1160920F,Plasmablasts,Cancer LumA SC,1
+1160920F,Plasmablasts,Cancer LumB SC,1
+1160920F,Plasmablasts,Cycling PVL,1
+1160920F,Plasmablasts,Cycling_Myeloid,1
+1160920F,Plasmablasts,DCs,9
+1160920F,Plasmablasts,Endothelial ACKR1,6
+1160920F,Plasmablasts,Endothelial CXCL12,6
+1160920F,Plasmablasts,Endothelial Lymphatic LYVE1,12
+1160920F,Plasmablasts,Endothelial RGS5,2
+1160920F,Plasmablasts,Luminal Progenitors,2
+1160920F,Plasmablasts,Macrophage,2
+1160920F,Plasmablasts,Monocyte,6
+1160920F,Plasmablasts,Myoepithelial,1
+1160920F,Plasmablasts,NK cells,17
+1160920F,Plasmablasts,NKT cells,11
+1160920F,Plasmablasts,PVL Differentiated,6
+1160920F,Plasmablasts,PVL Immature,7
+1160920F,Plasmablasts,Plasmablasts,35
+1160920F,Plasmablasts,T cells CD4+,4
+1160920F,Plasmablasts,T cells CD8+,6
+1160920F,T cells CD4+,B cells Naive,4
+1160920F,T cells CD4+,CAFs MSC iCAF-like,1
+1160920F,T cells CD4+,Cycling T-cells,3
+1160920F,T cells CD4+,DCs,2
+1160920F,T cells CD4+,Endothelial Lymphatic LYVE1,1
+1160920F,T cells CD4+,T cells CD4+,1
+1160920F,T cells CD8+,B cells Memory,1
+1160920F,T cells CD8+,Cycling T-cells,1
+1160920F,T cells CD8+,DCs,2
+CID4290,CAFs MSC iCAF-like,CAFs MSC iCAF-like,4
+CID4290,CAFs MSC iCAF-like,Cancer Basal SC,1
+CID4290,CAFs MSC iCAF-like,Cycling T-cells,1
+CID4290,CAFs MSC iCAF-like,Cycling_Myeloid,2
+CID4290,CAFs MSC iCAF-like,Endothelial ACKR1,1
+CID4290,CAFs MSC iCAF-like,Endothelial Lymphatic LYVE1,2
+CID4290,CAFs MSC iCAF-like,Endothelial RGS5,3
+CID4290,CAFs MSC iCAF-like,Mature Luminal,1
+CID4290,CAFs MSC iCAF-like,Monocyte,1
+CID4290,CAFs MSC iCAF-like,Myoepithelial,2
+CID4290,CAFs MSC iCAF-like,PVL Immature,1
+CID4290,CAFs MSC iCAF-like,Plasmablasts,2
+CID4290,CAFs myCAF-like,B cells Memory,5
+CID4290,CAFs myCAF-like,B cells Naive,7
+CID4290,CAFs myCAF-like,CAFs MSC iCAF-like,5
+CID4290,CAFs myCAF-like,CAFs myCAF-like,7
+CID4290,CAFs myCAF-like,Cancer Basal SC,2
+CID4290,CAFs myCAF-like,Cancer Cycling,3
+CID4290,CAFs myCAF-like,Cycling PVL,17
+CID4290,CAFs myCAF-like,Cycling T-cells,23
+CID4290,CAFs myCAF-like,Cycling_Myeloid,14
+CID4290,CAFs myCAF-like,DCs,26
+CID4290,CAFs myCAF-like,Endothelial ACKR1,3
+CID4290,CAFs myCAF-like,Endothelial CXCL12,8
+CID4290,CAFs myCAF-like,Endothelial Lymphatic LYVE1,18
+CID4290,CAFs myCAF-like,Endothelial RGS5,25
+CID4290,CAFs myCAF-like,Luminal Progenitors,6
+CID4290,CAFs myCAF-like,Macrophage,3
+CID4290,CAFs myCAF-like,Mature Luminal,6
+CID4290,CAFs myCAF-like,Monocyte,11
+CID4290,CAFs myCAF-like,Myoepithelial,9
+CID4290,CAFs myCAF-like,NK cells,18
+CID4290,CAFs myCAF-like,NKT cells,3
+CID4290,CAFs myCAF-like,PVL Differentiated,5
+CID4290,CAFs myCAF-like,PVL Immature,15
+CID4290,CAFs myCAF-like,Plasmablasts,10
+CID4290,CAFs myCAF-like,T cells CD4+,2
+CID4290,Cancer Basal SC,Cycling_Myeloid,1
+CID4290,Cancer Basal SC,Macrophage,1
+CID4290,Cancer Her2 SC,Endothelial ACKR1,1
+CID4290,Cancer Her2 SC,Myoepithelial,1
+CID4290,Cancer Her2 SC,PVL Differentiated,1
+CID4290,Cancer LumA SC,B cells Memory,91
+CID4290,Cancer LumA SC,B cells Naive,113
+CID4290,Cancer LumA SC,CAFs MSC iCAF-like,22
+CID4290,Cancer LumA SC,CAFs myCAF-like,6
+CID4290,Cancer LumA SC,Cancer Basal SC,46
+CID4290,Cancer LumA SC,Cancer Cycling,36
+CID4290,Cancer LumA SC,Cancer Her2 SC,92
+CID4290,Cancer LumA SC,Cancer LumA SC,1
+CID4290,Cancer LumA SC,Cancer LumB SC,9
+CID4290,Cancer LumA SC,Cycling PVL,14
+CID4290,Cancer LumA SC,Cycling T-cells,107
+CID4290,Cancer LumA SC,Cycling_Myeloid,118
+CID4290,Cancer LumA SC,DCs,109
+CID4290,Cancer LumA SC,Endothelial ACKR1,56
+CID4290,Cancer LumA SC,Endothelial CXCL12,99
+CID4290,Cancer LumA SC,Endothelial Lymphatic LYVE1,103
+CID4290,Cancer LumA SC,Endothelial RGS5,60
+CID4290,Cancer LumA SC,Luminal Progenitors,121
+CID4290,Cancer LumA SC,Macrophage,11
+CID4290,Cancer LumA SC,Mature Luminal,122
+CID4290,Cancer LumA SC,Monocyte,88
+CID4290,Cancer LumA SC,Myoepithelial,130
+CID4290,Cancer LumA SC,NK cells,102
+CID4290,Cancer LumA SC,NKT cells,102
+CID4290,Cancer LumA SC,PVL Differentiated,88
+CID4290,Cancer LumA SC,PVL Immature,95
+CID4290,Cancer LumA SC,Plasmablasts,77
+CID4290,Cancer LumA SC,T cells CD4+,57
+CID4290,Cancer LumA SC,T cells CD8+,56
+CID4290,Endothelial ACKR1,DCs,1
+CID4290,Endothelial Lymphatic LYVE1,Cycling PVL,2
+CID4290,Endothelial Lymphatic LYVE1,Endothelial Lymphatic LYVE1,1
+CID4290,Endothelial Lymphatic LYVE1,Endothelial RGS5,4
+CID4290,Endothelial RGS5,Endothelial CXCL12,3
+CID4290,Endothelial RGS5,Endothelial RGS5,1
+CID4290,Macrophage,Cycling T-cells,1
+CID4290,PVL Differentiated,DCs,1
+CID4290,PVL Differentiated,Myoepithelial,1
+CID4290,PVL Differentiated,PVL Differentiated,1
+CID4290,PVL Immature,Cycling PVL,1
+CID4290,PVL Immature,PVL Differentiated,1
+CID4465,CAFs MSC iCAF-like,B cells Memory,7
+CID4465,CAFs MSC iCAF-like,B cells Naive,7
+CID4465,CAFs MSC iCAF-like,CAFs MSC iCAF-like,13
+CID4465,CAFs MSC iCAF-like,Cancer Cycling,1
+CID4465,CAFs MSC iCAF-like,Cancer LumB SC,1
+CID4465,CAFs MSC iCAF-like,Cycling T-cells,6
+CID4465,CAFs MSC iCAF-like,Cycling_Myeloid,5
+CID4465,CAFs MSC iCAF-like,DCs,9
+CID4465,CAFs MSC iCAF-like,Endothelial ACKR1,2
+CID4465,CAFs MSC iCAF-like,Endothelial Lymphatic LYVE1,5
+CID4465,CAFs MSC iCAF-like,Endothelial RGS5,6
+CID4465,CAFs MSC iCAF-like,Luminal Progenitors,1
+CID4465,CAFs MSC iCAF-like,Mature Luminal,2
+CID4465,CAFs MSC iCAF-like,Monocyte,4
+CID4465,CAFs MSC iCAF-like,Myoepithelial,2
+CID4465,CAFs MSC iCAF-like,NK cells,6
+CID4465,CAFs MSC iCAF-like,NKT cells,4
+CID4465,CAFs MSC iCAF-like,PVL Immature,2
+CID4465,CAFs MSC iCAF-like,Plasmablasts,1
+CID4465,CAFs MSC iCAF-like,T cells CD4+,1
+CID4465,CAFs myCAF-like,B cells Memory,35
+CID4465,CAFs myCAF-like,B cells Naive,56
+CID4465,CAFs myCAF-like,CAFs MSC iCAF-like,51
+CID4465,CAFs myCAF-like,CAFs myCAF-like,10
+CID4465,CAFs myCAF-like,Cancer Basal SC,12
+CID4465,CAFs myCAF-like,Cancer Cycling,30
+CID4465,CAFs myCAF-like,Cancer Her2 SC,41
+CID4465,CAFs myCAF-like,Cancer LumA SC,17
+CID4465,CAFs myCAF-like,Cancer LumB SC,17
+CID4465,CAFs myCAF-like,Cycling PVL,9
+CID4465,CAFs myCAF-like,Cycling T-cells,28
+CID4465,CAFs myCAF-like,Cycling_Myeloid,68
+CID4465,CAFs myCAF-like,DCs,30
+CID4465,CAFs myCAF-like,Endothelial ACKR1,15
+CID4465,CAFs myCAF-like,Endothelial CXCL12,30
+CID4465,CAFs myCAF-like,Endothelial Lymphatic LYVE1,44
+CID4465,CAFs myCAF-like,Endothelial RGS5,37
+CID4465,CAFs myCAF-like,Luminal Progenitors,41
+CID4465,CAFs myCAF-like,Macrophage,7
+CID4465,CAFs myCAF-like,Mature Luminal,66
+CID4465,CAFs myCAF-like,Monocyte,50
+CID4465,CAFs myCAF-like,Myoepithelial,80
+CID4465,CAFs myCAF-like,NK cells,52
+CID4465,CAFs myCAF-like,NKT cells,48
+CID4465,CAFs myCAF-like,PVL Differentiated,26
+CID4465,CAFs myCAF-like,PVL Immature,37
+CID4465,CAFs myCAF-like,Plasmablasts,42
+CID4465,CAFs myCAF-like,T cells CD4+,2
+CID4465,CAFs myCAF-like,T cells CD8+,21
+CID4465,Cancer Basal SC,B cells Naive,1
+CID4465,Cancer Basal SC,Cancer Cycling,4
+CID4465,Cancer Basal SC,Cycling T-cells,1
+CID4465,Cancer Basal SC,Luminal Progenitors,4
+CID4465,Cancer Basal SC,Mature Luminal,1
+CID4465,Cancer Basal SC,Monocyte,1
+CID4465,Cancer Basal SC,Myoepithelial,2
+CID4465,Cancer Cycling,Cancer Basal SC,1
+CID4465,Cancer Cycling,Cancer Cycling,3
+CID4465,Cancer Cycling,Cancer Her2 SC,1
+CID4465,Cancer Cycling,Endothelial Lymphatic LYVE1,1
+CID4465,Cancer Cycling,Luminal Progenitors,1
+CID4465,Cancer Cycling,Mature Luminal,1
+CID4465,Cancer Cycling,NKT cells,2
+CID4465,DCs,Endothelial Lymphatic LYVE1,1
+CID4465,DCs,NKT cells,1
+CID4465,Endothelial ACKR1,Endothelial Lymphatic LYVE1,1
+CID4465,Endothelial ACKR1,NK cells,1
+CID4465,Endothelial Lymphatic LYVE1,B cells Naive,1
+CID4465,Endothelial Lymphatic LYVE1,CAFs myCAF-like,1
+CID4465,Endothelial RGS5,Cycling PVL,7
+CID4465,Endothelial RGS5,Endothelial RGS5,3
+CID4465,Macrophage,B cells Memory,2
+CID4465,Macrophage,CAFs MSC iCAF-like,1
+CID4465,Macrophage,Cycling T-cells,12
+CID4465,Macrophage,Cycling_Myeloid,1
+CID4465,Macrophage,DCs,3
+CID4465,Macrophage,Endothelial Lymphatic LYVE1,2
+CID4465,Macrophage,Macrophage,1
+CID4465,Macrophage,Monocyte,2
+CID4465,Macrophage,NKT cells,3
+CID4465,Macrophage,Plasmablasts,2
+CID4465,Myoepithelial,B cells Memory,3
+CID4465,Myoepithelial,B cells Naive,2
+CID4465,Myoepithelial,CAFs MSC iCAF-like,2
+CID4465,Myoepithelial,CAFs myCAF-like,1
+CID4465,Myoepithelial,Cancer Basal SC,1
+CID4465,Myoepithelial,Cancer Cycling,3
+CID4465,Myoepithelial,Cancer Her2 SC,1
+CID4465,Myoepithelial,Cycling_Myeloid,3
+CID4465,Myoepithelial,DCs,1
+CID4465,Myoepithelial,Endothelial ACKR1,1
+CID4465,Myoepithelial,Endothelial Lymphatic LYVE1,2
+CID4465,Myoepithelial,Luminal Progenitors,2
+CID4465,Myoepithelial,Mature Luminal,6
+CID4465,Myoepithelial,Monocyte,2
+CID4465,Myoepithelial,Myoepithelial,5
+CID4465,Myoepithelial,NK cells,1
+CID4465,Myoepithelial,PVL Differentiated,1
+CID4465,Myoepithelial,PVL Immature,1
+CID4465,PVL Immature,Cycling PVL,2
+CID4465,PVL Immature,Cycling_Myeloid,1
+CID4465,PVL Immature,Endothelial CXCL12,1
+CID4465,PVL Immature,Endothelial RGS5,3
+CID4465,PVL Immature,NK cells,1
+CID4465,PVL Immature,PVL Immature,4
+CID4465,Plasmablasts,Plasmablasts,3
+CID4465,Plasmablasts,T cells CD4+,1
+CID4465,T cells CD8+,DCs,1
+CID44971,B cells Memory,Endothelial ACKR1,1
+CID44971,CAFs MSC iCAF-like,B cells Memory,12
+CID44971,CAFs MSC iCAF-like,B cells Naive,17
+CID44971,CAFs MSC iCAF-like,CAFs MSC iCAF-like,15
+CID44971,CAFs MSC iCAF-like,CAFs myCAF-like,12
+CID44971,CAFs MSC iCAF-like,Cancer Basal SC,1
+CID44971,CAFs MSC iCAF-like,Cancer Her2 SC,2
+CID44971,CAFs MSC iCAF-like,Cancer LumA SC,5
+CID44971,CAFs MSC iCAF-like,Cancer LumB SC,3
+CID44971,CAFs MSC iCAF-like,Cycling PVL,4
+CID44971,CAFs MSC iCAF-like,Cycling T-cells,14
+CID44971,CAFs MSC iCAF-like,Cycling_Myeloid,12
+CID44971,CAFs MSC iCAF-like,DCs,13
+CID44971,CAFs MSC iCAF-like,Endothelial ACKR1,16
+CID44971,CAFs MSC iCAF-like,Endothelial CXCL12,8
+CID44971,CAFs MSC iCAF-like,Endothelial Lymphatic LYVE1,17
+CID44971,CAFs MSC iCAF-like,Endothelial RGS5,15
+CID44971,CAFs MSC iCAF-like,Luminal Progenitors,2
+CID44971,CAFs MSC iCAF-like,Macrophage,7
+CID44971,CAFs MSC iCAF-like,Monocyte,10
+CID44971,CAFs MSC iCAF-like,NK cells,12
+CID44971,CAFs MSC iCAF-like,NKT cells,13
+CID44971,CAFs MSC iCAF-like,PVL Differentiated,2
+CID44971,CAFs MSC iCAF-like,PVL Immature,7
+CID44971,CAFs MSC iCAF-like,Plasmablasts,20
+CID44971,CAFs MSC iCAF-like,T cells CD4+,1
+CID44971,CAFs MSC iCAF-like,T cells CD8+,4
+CID44971,CAFs myCAF-like,B cells Memory,5
+CID44971,CAFs myCAF-like,B cells Naive,4
+CID44971,CAFs myCAF-like,CAFs MSC iCAF-like,3
+CID44971,CAFs myCAF-like,CAFs myCAF-like,23
+CID44971,CAFs myCAF-like,Cancer Basal SC,2
+CID44971,CAFs myCAF-like,Cancer Cycling,1
+CID44971,CAFs myCAF-like,Cancer Her2 SC,2
+CID44971,CAFs myCAF-like,Cancer LumA SC,1
+CID44971,CAFs myCAF-like,Cancer LumB SC,4
+CID44971,CAFs myCAF-like,Cycling PVL,10
+CID44971,CAFs myCAF-like,Cycling T-cells,7
+CID44971,CAFs myCAF-like,Cycling_Myeloid,1
+CID44971,CAFs myCAF-like,DCs,6
+CID44971,CAFs myCAF-like,Endothelial ACKR1,6
+CID44971,CAFs myCAF-like,Endothelial CXCL12,5
+CID44971,CAFs myCAF-like,Endothelial Lymphatic LYVE1,9
+CID44971,CAFs myCAF-like,Endothelial RGS5,10
+CID44971,CAFs myCAF-like,Macrophage,4
+CID44971,CAFs myCAF-like,Monocyte,7
+CID44971,CAFs myCAF-like,Myoepithelial,3
+CID44971,CAFs myCAF-like,NK cells,17
+CID44971,CAFs myCAF-like,NKT cells,8
+CID44971,CAFs myCAF-like,PVL Differentiated,2
+CID44971,CAFs myCAF-like,PVL Immature,5
+CID44971,CAFs myCAF-like,Plasmablasts,13
+CID44971,CAFs myCAF-like,T cells CD8+,3
+CID44971,Cancer Basal SC,B cells Memory,11
+CID44971,Cancer Basal SC,B cells Naive,6
+CID44971,Cancer Basal SC,CAFs MSC iCAF-like,1
+CID44971,Cancer Basal SC,Cancer Basal SC,8
+CID44971,Cancer Basal SC,Cancer Cycling,20
+CID44971,Cancer Basal SC,Cancer Her2 SC,21
+CID44971,Cancer Basal SC,Cancer LumA SC,1
+CID44971,Cancer Basal SC,Cancer LumB SC,2
+CID44971,Cancer Basal SC,Cycling PVL,3
+CID44971,Cancer Basal SC,Cycling T-cells,3
+CID44971,Cancer Basal SC,Cycling_Myeloid,24
+CID44971,Cancer Basal SC,DCs,9
+CID44971,Cancer Basal SC,Endothelial ACKR1,3
+CID44971,Cancer Basal SC,Endothelial CXCL12,4
+CID44971,Cancer Basal SC,Endothelial Lymphatic LYVE1,4
+CID44971,Cancer Basal SC,Endothelial RGS5,7
+CID44971,Cancer Basal SC,Luminal Progenitors,9
+CID44971,Cancer Basal SC,Macrophage,1
+CID44971,Cancer Basal SC,Mature Luminal,3
+CID44971,Cancer Basal SC,Monocyte,6
+CID44971,Cancer Basal SC,Myoepithelial,8
+CID44971,Cancer Basal SC,NK cells,9
+CID44971,Cancer Basal SC,NKT cells,18
+CID44971,Cancer Basal SC,PVL Differentiated,2
+CID44971,Cancer Basal SC,PVL Immature,4
+CID44971,Cancer Basal SC,Plasmablasts,1
+CID44971,Cancer Basal SC,T cells CD4+,1
+CID44971,Cancer Basal SC,T cells CD8+,7
+CID44971,Cancer Cycling,B cells Memory,2
+CID44971,Cancer Cycling,B cells Naive,5
+CID44971,Cancer Cycling,Cancer Cycling,8
+CID44971,Cancer Cycling,Cancer Her2 SC,7
+CID44971,Cancer Cycling,Cancer LumA SC,1
+CID44971,Cancer Cycling,Cancer LumB SC,1
+CID44971,Cancer Cycling,Cycling PVL,2
+CID44971,Cancer Cycling,Cycling_Myeloid,5
+CID44971,Cancer Cycling,DCs,1
+CID44971,Cancer Cycling,Endothelial ACKR1,3
+CID44971,Cancer Cycling,Endothelial Lymphatic LYVE1,1
+CID44971,Cancer Cycling,Endothelial RGS5,1
+CID44971,Cancer Cycling,Monocyte,1
+CID44971,Cancer Cycling,NK cells,1
+CID44971,Cancer Cycling,NKT cells,3
+CID44971,Cancer Cycling,PVL Immature,2
+CID44971,Cancer Cycling,T cells CD8+,4
+CID44971,Cancer LumB SC,CAFs myCAF-like,1
+CID44971,Cancer LumB SC,Endothelial ACKR1,1
+CID44971,Cancer LumB SC,Plasmablasts,1
+CID44971,DCs,Monocyte,1
+CID44971,Endothelial ACKR1,CAFs myCAF-like,1
+CID44971,Endothelial ACKR1,Cycling_Myeloid,1
+CID44971,Endothelial ACKR1,Endothelial ACKR1,3
+CID44971,Endothelial ACKR1,Endothelial Lymphatic LYVE1,1
+CID44971,Endothelial Lymphatic LYVE1,Cancer Her2 SC,1
+CID44971,Endothelial Lymphatic LYVE1,Cancer LumA SC,1
+CID44971,Endothelial Lymphatic LYVE1,Cycling PVL,5
+CID44971,Endothelial Lymphatic LYVE1,Cycling_Myeloid,1
+CID44971,Endothelial Lymphatic LYVE1,Endothelial ACKR1,11
+CID44971,Endothelial Lymphatic LYVE1,Endothelial CXCL12,1
+CID44971,Endothelial Lymphatic LYVE1,Endothelial Lymphatic LYVE1,1
+CID44971,Endothelial Lymphatic LYVE1,Endothelial RGS5,5
+CID44971,Endothelial Lymphatic LYVE1,NK cells,2
+CID44971,Endothelial Lymphatic LYVE1,PVL Immature,5
+CID44971,Endothelial Lymphatic LYVE1,Plasmablasts,2
+CID44971,Endothelial RGS5,Endothelial CXCL12,1
+CID44971,Luminal Progenitors,B cells Memory,2
+CID44971,Luminal Progenitors,B cells Naive,3
+CID44971,Luminal Progenitors,CAFs MSC iCAF-like,1
+CID44971,Luminal Progenitors,Cancer Basal SC,2
+CID44971,Luminal Progenitors,Cancer Cycling,2
+CID44971,Luminal Progenitors,Cancer Her2 SC,9
+CID44971,Luminal Progenitors,Cancer LumA SC,1
+CID44971,Luminal Progenitors,Cancer LumB SC,1
+CID44971,Luminal Progenitors,Cycling PVL,1
+CID44971,Luminal Progenitors,Cycling_Myeloid,1
+CID44971,Luminal Progenitors,DCs,2
+CID44971,Luminal Progenitors,Endothelial ACKR1,2
+CID44971,Luminal Progenitors,Endothelial CXCL12,4
+CID44971,Luminal Progenitors,Luminal Progenitors,8
+CID44971,Luminal Progenitors,Mature Luminal,1
+CID44971,Luminal Progenitors,Monocyte,1
+CID44971,Luminal Progenitors,NK cells,2
+CID44971,Luminal Progenitors,NKT cells,1
+CID44971,Luminal Progenitors,PVL Immature,2
+CID44971,Luminal Progenitors,T cells CD8+,1
+CID44971,Macrophage,B cells Memory,3
+CID44971,Macrophage,Cancer Basal SC,1
+CID44971,Macrophage,Cycling T-cells,8
+CID44971,Macrophage,Cycling_Myeloid,3
+CID44971,Macrophage,DCs,6
+CID44971,Macrophage,Endothelial Lymphatic LYVE1,3
+CID44971,Macrophage,Monocyte,4
+CID44971,Macrophage,NK cells,2
+CID44971,Macrophage,Plasmablasts,2
+CID44971,Mature Luminal,Cancer LumA SC,1
+CID44971,Mature Luminal,Endothelial ACKR1,1
+CID44971,Mature Luminal,Endothelial RGS5,1
+CID44971,Mature Luminal,Mature Luminal,2
+CID44971,Myoepithelial,B cells Memory,6
+CID44971,Myoepithelial,B cells Naive,9
+CID44971,Myoepithelial,CAFs MSC iCAF-like,9
+CID44971,Myoepithelial,CAFs myCAF-like,2
+CID44971,Myoepithelial,Cancer Basal SC,7
+CID44971,Myoepithelial,Cancer Cycling,15
+CID44971,Myoepithelial,Cancer Her2 SC,14
+CID44971,Myoepithelial,Cancer LumA SC,9
+CID44971,Myoepithelial,Cancer LumB SC,4
+CID44971,Myoepithelial,Cycling PVL,2
+CID44971,Myoepithelial,Cycling T-cells,2
+CID44971,Myoepithelial,Cycling_Myeloid,35
+CID44971,Myoepithelial,DCs,8
+CID44971,Myoepithelial,Endothelial ACKR1,6
+CID44971,Myoepithelial,Endothelial CXCL12,9
+CID44971,Myoepithelial,Endothelial Lymphatic LYVE1,13
+CID44971,Myoepithelial,Endothelial RGS5,13
+CID44971,Myoepithelial,Luminal Progenitors,41
+CID44971,Myoepithelial,Macrophage,2
+CID44971,Myoepithelial,Mature Luminal,46
+CID44971,Myoepithelial,Monocyte,10
+CID44971,Myoepithelial,Myoepithelial,35
+CID44971,Myoepithelial,NK cells,16
+CID44971,Myoepithelial,NKT cells,11
+CID44971,Myoepithelial,PVL Differentiated,7
+CID44971,Myoepithelial,PVL Immature,5
+CID44971,Myoepithelial,Plasmablasts,2
+CID44971,Myoepithelial,T cells CD4+,2
+CID44971,Myoepithelial,T cells CD8+,2
+CID44971,PVL Differentiated,B cells Memory,1
+CID44971,PVL Differentiated,Cycling T-cells,1
+CID44971,PVL Differentiated,DCs,1
+CID44971,PVL Differentiated,Endothelial ACKR1,1
+CID44971,PVL Immature,Cycling PVL,1
+CID44971,PVL Immature,Endothelial ACKR1,2
+CID44971,PVL Immature,Endothelial CXCL12,2
+CID44971,PVL Immature,Endothelial Lymphatic LYVE1,3
+CID44971,PVL Immature,Monocyte,1
+CID44971,PVL Immature,PVL Differentiated,1
+CID44971,PVL Immature,PVL Immature,2
+CID44971,PVL Immature,Plasmablasts,1
+CID44971,Plasmablasts,Cancer LumB SC,1
+CID44971,Plasmablasts,Endothelial ACKR1,1
+CID44971,Plasmablasts,Plasmablasts,1
+CID44971,T cells CD4+,B cells Memory,1
+CID44971,T cells CD4+,B cells Naive,1
+CID44971,T cells CD4+,Cycling T-cells,9
+CID44971,T cells CD4+,DCs,3
+CID44971,T cells CD4+,Endothelial Lymphatic LYVE1,1
+CID44971,T cells CD4+,NK cells,2
+CID44971,T cells CD8+,Cycling T-cells,1
+CID4535,B cells Memory,B cells Memory,2
+CID4535,B cells Memory,B cells Naive,1
+CID4535,CAFs MSC iCAF-like,B cells Memory,2
+CID4535,CAFs MSC iCAF-like,B cells Naive,8
+CID4535,CAFs MSC iCAF-like,CAFs MSC iCAF-like,4
+CID4535,CAFs MSC iCAF-like,CAFs myCAF-like,3
+CID4535,CAFs MSC iCAF-like,Cancer Basal SC,1
+CID4535,CAFs MSC iCAF-like,Cycling PVL,2
+CID4535,CAFs MSC iCAF-like,Cycling T-cells,5
+CID4535,CAFs MSC iCAF-like,Cycling_Myeloid,1
+CID4535,CAFs MSC iCAF-like,DCs,8
+CID4535,CAFs MSC iCAF-like,Endothelial ACKR1,3
+CID4535,CAFs MSC iCAF-like,Endothelial CXCL12,1
+CID4535,CAFs MSC iCAF-like,Endothelial Lymphatic LYVE1,4
+CID4535,CAFs MSC iCAF-like,Endothelial RGS5,5
+CID4535,CAFs MSC iCAF-like,Luminal Progenitors,1
+CID4535,CAFs MSC iCAF-like,Monocyte,2
+CID4535,CAFs MSC iCAF-like,Myoepithelial,3
+CID4535,CAFs MSC iCAF-like,NK cells,2
+CID4535,CAFs MSC iCAF-like,NKT cells,2
+CID4535,CAFs MSC iCAF-like,PVL Differentiated,3
+CID4535,CAFs MSC iCAF-like,PVL Immature,6
+CID4535,CAFs MSC iCAF-like,Plasmablasts,4
+CID4535,CAFs myCAF-like,B cells Memory,3
+CID4535,CAFs myCAF-like,B cells Naive,3
+CID4535,CAFs myCAF-like,CAFs MSC iCAF-like,3
+CID4535,CAFs myCAF-like,CAFs myCAF-like,20
+CID4535,CAFs myCAF-like,Cancer Basal SC,1
+CID4535,CAFs myCAF-like,Cancer LumA SC,1
+CID4535,CAFs myCAF-like,Cycling PVL,7
+CID4535,CAFs myCAF-like,Cycling T-cells,6
+CID4535,CAFs myCAF-like,Cycling_Myeloid,11
+CID4535,CAFs myCAF-like,DCs,7
+CID4535,CAFs myCAF-like,Endothelial ACKR1,4
+CID4535,CAFs myCAF-like,Endothelial CXCL12,4
+CID4535,CAFs myCAF-like,Endothelial Lymphatic LYVE1,8
+CID4535,CAFs myCAF-like,Endothelial RGS5,5
+CID4535,CAFs myCAF-like,Luminal Progenitors,1
+CID4535,CAFs myCAF-like,Monocyte,2
+CID4535,CAFs myCAF-like,Myoepithelial,20
+CID4535,CAFs myCAF-like,NK cells,4
+CID4535,CAFs myCAF-like,NKT cells,3
+CID4535,CAFs myCAF-like,PVL Differentiated,5
+CID4535,CAFs myCAF-like,PVL Immature,8
+CID4535,CAFs myCAF-like,Plasmablasts,5
+CID4535,CAFs myCAF-like,T cells CD8+,1
+CID4535,Cancer Basal SC,Myoepithelial,1
+CID4535,Cancer Her2 SC,B cells Naive,2
+CID4535,Cancer Her2 SC,Cancer Cycling,1
+CID4535,Cancer Her2 SC,Cancer Her2 SC,4
+CID4535,Cancer Her2 SC,Cancer LumA SC,1
+CID4535,Cancer Her2 SC,Cycling_Myeloid,3
+CID4535,Cancer Her2 SC,DCs,1
+CID4535,Cancer Her2 SC,Endothelial CXCL12,1
+CID4535,Cancer Her2 SC,Endothelial Lymphatic LYVE1,1
+CID4535,Cancer Her2 SC,Luminal Progenitors,3
+CID4535,Cancer Her2 SC,Mature Luminal,5
+CID4535,Cancer Her2 SC,Monocyte,1
+CID4535,Cancer Her2 SC,Myoepithelial,2
+CID4535,Cancer Her2 SC,NK cells,1
+CID4535,Cancer Her2 SC,NKT cells,2
+CID4535,Cancer LumB SC,B cells Memory,36
+CID4535,Cancer LumB SC,B cells Naive,42
+CID4535,Cancer LumB SC,CAFs MSC iCAF-like,6
+CID4535,Cancer LumB SC,CAFs myCAF-like,5
+CID4535,Cancer LumB SC,Cancer Basal SC,16
+CID4535,Cancer LumB SC,Cancer Cycling,23
+CID4535,Cancer LumB SC,Cancer Her2 SC,70
+CID4535,Cancer LumB SC,Cancer LumA SC,20
+CID4535,Cancer LumB SC,Cancer LumB SC,16
+CID4535,Cancer LumB SC,Cycling PVL,5
+CID4535,Cancer LumB SC,Cycling T-cells,13
+CID4535,Cancer LumB SC,Cycling_Myeloid,63
+CID4535,Cancer LumB SC,DCs,11
+CID4535,Cancer LumB SC,Endothelial ACKR1,12
+CID4535,Cancer LumB SC,Endothelial CXCL12,34
+CID4535,Cancer LumB SC,Endothelial Lymphatic LYVE1,23
+CID4535,Cancer LumB SC,Endothelial RGS5,27
+CID4535,Cancer LumB SC,Luminal Progenitors,45
+CID4535,Cancer LumB SC,Macrophage,1
+CID4535,Cancer LumB SC,Mature Luminal,88
+CID4535,Cancer LumB SC,Monocyte,33
+CID4535,Cancer LumB SC,Myoepithelial,22
+CID4535,Cancer LumB SC,NK cells,44
+CID4535,Cancer LumB SC,NKT cells,29
+CID4535,Cancer LumB SC,PVL Differentiated,12
+CID4535,Cancer LumB SC,PVL Immature,39
+CID4535,Cancer LumB SC,Plasmablasts,13
+CID4535,Cancer LumB SC,T cells CD4+,10
+CID4535,Cancer LumB SC,T cells CD8+,14
+CID4535,DCs,B cells Memory,3
+CID4535,DCs,B cells Naive,2
+CID4535,DCs,Cycling T-cells,5
+CID4535,DCs,DCs,3
+CID4535,DCs,Endothelial RGS5,1
+CID4535,DCs,NK cells,1
+CID4535,DCs,Plasmablasts,1
+CID4535,Endothelial ACKR1,Cycling PVL,1
+CID4535,Endothelial ACKR1,Cycling T-cells,1
+CID4535,Endothelial ACKR1,Endothelial ACKR1,1
+CID4535,Endothelial Lymphatic LYVE1,Cycling T-cells,1
+CID4535,Endothelial Lymphatic LYVE1,Endothelial ACKR1,3
+CID4535,Endothelial Lymphatic LYVE1,Endothelial CXCL12,2
+CID4535,Endothelial Lymphatic LYVE1,Endothelial RGS5,9
+CID4535,Endothelial Lymphatic LYVE1,PVL Differentiated,2
+CID4535,Endothelial RGS5,Endothelial CXCL12,1
+CID4535,Endothelial RGS5,Endothelial RGS5,1
+CID4535,Endothelial RGS5,PVL Immature,1
+CID4535,Macrophage,B cells Memory,1
+CID4535,Macrophage,B cells Naive,6
+CID4535,Macrophage,CAFs MSC iCAF-like,1
+CID4535,Macrophage,CAFs myCAF-like,1
+CID4535,Macrophage,Cancer Basal SC,1
+CID4535,Macrophage,Cancer Cycling,1
+CID4535,Macrophage,Cycling PVL,2
+CID4535,Macrophage,Cycling T-cells,14
+CID4535,Macrophage,Cycling_Myeloid,3
+CID4535,Macrophage,DCs,8
+CID4535,Macrophage,Endothelial Lymphatic LYVE1,1
+CID4535,Macrophage,Endothelial RGS5,2
+CID4535,Macrophage,Macrophage,2
+CID4535,Macrophage,Mature Luminal,1
+CID4535,Macrophage,Monocyte,2
+CID4535,Macrophage,NK cells,4
+CID4535,Macrophage,NKT cells,4
+CID4535,Macrophage,PVL Immature,2
+CID4535,Macrophage,T cells CD8+,1
+CID4535,Myoepithelial,Myoepithelial,2
+CID4535,PVL Immature,Cycling PVL,2
+CID4535,Plasmablasts,B cells Naive,1
+CID4535,Plasmablasts,Luminal Progenitors,2
+CID4535,Plasmablasts,NKT cells,1
+CID4535,Plasmablasts,Plasmablasts,4
+CID4535,T cells CD4+,B cells Naive,4
+CID4535,T cells CD4+,CAFs myCAF-like,2
+CID4535,T cells CD4+,DCs,1
+CID4535,T cells CD4+,Endothelial Lymphatic LYVE1,1
+CID4535,T cells CD4+,Myoepithelial,1
+CID4535,T cells CD4+,PVL Differentiated,1
+CID4535,T cells CD4+,T cells CD8+,1

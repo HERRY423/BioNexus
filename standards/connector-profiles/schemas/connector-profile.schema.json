@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bionexus:connector-profile:0.1.0",
+  "title": "BioNexus Scientific Connector Profile Contract",
+  "description": "Scientific output contract defining evidence roles, required context, forbidden claims, and semantic profiles for connector tools.",
+  "type": "object",
+  "required": [
+    "connector",
+    "tool",
+    "production_mode",
+    "domain",
+    "required_context",
+    "default_evidence_role",
+    "maximum_default_claim",
+    "forbidden_claims",
+    "semantic_profile"
+  ],
+  "properties": {
+    "connector": {
+      "type": "string",
+      "pattern": "^[a-z0-9_-]+$",
+      "description": "Unique identifier of the upstream connector (e.g., enrichr, pubmed, chembl)"
+    },
+    "tool": {
+      "type": "string",
+      "pattern": "^[a-z0-9_.-]+$",
+      "description": "Tool or endpoint name within the connector"
+    },
+    "production_mode": {
+      "type": "string",
+      "enum": [
+        "computational_inference",
+        "curated_database",
+        "literature_retrieval",
+        "experimental_assay",
+        "deep_learning_prediction",
+        "meta_synthesis",
+        "retrieval",
+        "observation",
+        "experiment",
+        "statistical_analysis",
+        "model_prediction",
+        "generative_model",
+        "workflow_execution",
+        "human_annotation",
+        "synthesis"
+      ],
+      "description": "Epistemic method of data generation"
+    },
+    "domain": {
+      "type": "string",
+      "description": "Scientific domain (e.g., functional_genomics, cheminformatics, clinical_oncology)"
+    },
+    "required_context": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true,
+      "description": "Context fields that must be present in source_context for valid intake"
+    },
+    "default_evidence_role": {
+      "type": "string",
+      "enum": [
+        "supporting",
+        "context_only",
+        "reference_ground_truth",
+        "external_validation"
+      ],
+      "description": "Default evidence role for intake into ClaimLedger"
+    },
+    "maximum_default_claim": {
+      "type": "string",
+      "description": "Ceiling on the scientific proposition class this output can support without independent review"
+    },
+    "forbidden_claims": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true,
+      "description": "Proposition types that MUST NOT be inferred or claimed solely from this connector output"
+    },
+    "independence": {
+      "type": ["string", "object"],
+      "description": "Declarative scientific independence constraints or rules"
+    },
+    "semantic_profile": {
+      "type": "object",
+      "description": "BNS-019 scientific semantic convention attributes",
+      "required": ["claim.type", "evidence.type"],
+      "properties": {
+        "claim.type": {"type": "string"},
+        "evidence.type": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "biological.unit": {"type": "string"},
+        "matrix.state": {"type": "string"},
+        "warrant.level": {"type": "string"},
+        "warrant.status": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "epistemic_lineage_mapping": {
+      "type": "object",
+      "description": "Mapping from envelope/context fields to EpistemicLineage fields",
+      "properties": {
+        "origin_id_field": {"type": "string"},
+        "origin_type": {"type": "string"},
+        "dataset_identity_field": {"type": "string"},
+        "assay_identity_field": {"type": "string"},
+        "model_identity_field": {"type": "string"}
+      }
+    }
+  },
+  "additionalProperties": true
+}

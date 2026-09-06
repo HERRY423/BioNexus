@@ -1,0 +1,10 @@
+{
+  "pid": 24148,
+  "started_at_utc": "2026-09-05T18:38:55.2216016-07:00",
+  "python": "C:\\Users\\13264\\anaconda3\\python.exe",
+  "script": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\run_spatialwarrant_s6.py",
+  "script_sha256": "2346bb637436ed84f69333fc49f18d36753ad9987fb2d1b4885a7d2c159408e2",
+  "PYTHONPATH": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\environment\\s6-packages",
+  "external_query_pid": 20960,
+  "external_query_script_sha256": "a0e826c711c2b8b8c7c067c17662427e6c665a1b5f6fe644220d9c6becdf30d3"
+}

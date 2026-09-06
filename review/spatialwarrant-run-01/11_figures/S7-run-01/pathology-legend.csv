@@ -1,0 +1,19 @@
+raw_pathology_label,plot_color
+Adipose tissue,#1f77b4
+Artefact,#aec7e8
+Cancer trapped in lymphocyte aggregation,#ff7f0e
+DCIS,#ffbb78
+Invasive cancer,#2ca02c
+Invasive cancer + adipose tissue + lymphocytes,#98df8a
+Invasive cancer + lymphocytes,#d62728
+Invasive cancer + stroma,#ff9896
+Invasive cancer + stroma + lymphocytes,#9467bd
+Lymphocytes,#c5b0d5
+Necrosis,#8c564b
+Normal + stroma + lymphocytes,#c49c94
+Normal duct,#e377c2
+Normal glands + lymphocytes,#f7b6d2
+Stroma,#7f7f7f
+Stroma + adipose tissue,#c7c7c7
+TLS,#bcbd22
+Uncertain,#dbdb8d

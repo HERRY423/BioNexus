@@ -1,0 +1,47 @@
+{
+  "status": "COMPLETED_WITH_PRESERVED_FAILURES",
+  "started_at_utc": "2026-09-06T01:46:08.094834+00:00",
+  "ended_at_utc": "2026-09-06T01:46:38.902503+00:00",
+  "elapsed_seconds": 30.807674999989104,
+  "requests": 180,
+  "successes": 103,
+  "failures": 77,
+  "sources": [
+    {
+      "source": "opentargets",
+      "count": 36,
+      "sum": 36
+    },
+    {
+      "source": "pubmed",
+      "count": 36,
+      "sum": 36
+    },
+    {
+      "source": "reactome",
+      "count": 36,
+      "sum": 31
+    },
+    {
+      "source": "string",
+      "count": 36,
+      "sum": 0
+    },
+    {
+      "source": "uniprot",
+      "count": 36,
+      "sum": 0
+    }
+  ],
+  "selection_rule": "genes: absolute descriptive B2-core difference descending then gene_id; interactions: LIANA magnitude_rank ascending then identifiers",
+  "raw_return_policy": "Every request, wrapper return, raw payload path, timestamp, source URL, and failure retained.",
+  "evidence_adjudication": "UNASSESSED: returned database/literature context is not automatically labeled support or contradiction.",
+  "contradictory_evidence": "NOT_HUMAN_ADJUDICATED",
+  "not_verifiable_from_current_data": [
+    "causal direction",
+    "patient-level consistency",
+    "clinical prediction",
+    "independent cohort replication",
+    "cell-type-resolved boundary sender/receiver expression"
+  ]
+}

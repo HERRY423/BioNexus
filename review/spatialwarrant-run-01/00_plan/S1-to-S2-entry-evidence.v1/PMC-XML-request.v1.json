@@ -1,0 +1,10 @@
+{
+  "method": "GET",
+  "url": "https://pmc-oa-opendata.s3.amazonaws.com/PMC9044823.1/PMC9044823.1.xml?md5=6cdde527c739412fb46613d67dc27e15",
+  "timeout_seconds": 30,
+  "headers": {
+    "User-Agent": "SpatialWarrant-S1-entry-review/1.0"
+  },
+  "purpose": "Identity and supplementary-source provenance only; no biological analysis",
+  "created": "2026-09-05T10:27:44.556636+00:00"
+}

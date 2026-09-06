@@ -1,0 +1,112 @@
+{
+  "set": "HALLMARK_INTERFERON_GAMMA_RESPONSE",
+  "systematic_id": "M5913",
+  "species": "Homo sapiens",
+  "release": "2024.1.Hs",
+  "source_url": "https://data.broadinstitute.org/gsea-msigdb/msigdb/release/2024.1.Hs/h.all.v2024.1.Hs.symbols.gmt",
+  "source_gmt_sha256": "ee2463540042078bfa3f67828e1e223bb354446d9fbb4d22845866835ba5c772",
+  "full_membership_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\02_identity\\primary-program-2024.1.Hs.genes.txt",
+  "full_membership_sha256": "7bf4561b52d21652bc6f6cd1215117a9bd1698c613d072179a366dfdff83bab5",
+  "full_member_count": 200,
+  "common_identifiable_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\02_identity\\primary-program-common-identifiable.genes.txt",
+  "common_identifiable_sha256": "d2e81853429ba447350ff4c3f3149f79fc1c99b2adae8356b5ac9dfd248b49c7",
+  "common_identifiable_count": 196,
+  "coverage": [
+    {
+      "section_id": "1142243F",
+      "source_feature_sha256": "9c2061dd4be86a2d36e3cdd38ea439faeafefabfbeaa793a3323acb50dacfc74",
+      "set_size": 200,
+      "unambiguous_identifiable": 196,
+      "fraction": 0.98,
+      "missing": [
+        "MARCHF1",
+        "RIGI",
+        "TMT1B",
+        "WARS1"
+      ],
+      "ambiguous": [],
+      "minimum_90_percent_gate": true
+    },
+    {
+      "section_id": "1160920F",
+      "source_feature_sha256": "63a4b7f33d80944cc8f11cc761b4aad7f3af801957fbb0eee88d24588fd59f6c",
+      "set_size": 200,
+      "unambiguous_identifiable": 196,
+      "fraction": 0.98,
+      "missing": [
+        "MARCHF1",
+        "RIGI",
+        "TMT1B",
+        "WARS1"
+      ],
+      "ambiguous": [],
+      "minimum_90_percent_gate": true
+    },
+    {
+      "section_id": "CID4290",
+      "source_feature_sha256": "0a6e9f09c1343264d465b73d0e3b93efa9ccb3d7643cccf0600d81f5b20478d7",
+      "set_size": 200,
+      "unambiguous_identifiable": 196,
+      "fraction": 0.98,
+      "missing": [
+        "MARCHF1",
+        "RIGI",
+        "TMT1B",
+        "WARS1"
+      ],
+      "ambiguous": [],
+      "minimum_90_percent_gate": true
+    },
+    {
+      "section_id": "CID4465",
+      "source_feature_sha256": "0a6e9f09c1343264d465b73d0e3b93efa9ccb3d7643cccf0600d81f5b20478d7",
+      "set_size": 200,
+      "unambiguous_identifiable": 196,
+      "fraction": 0.98,
+      "missing": [
+        "MARCHF1",
+        "RIGI",
+        "TMT1B",
+        "WARS1"
+      ],
+      "ambiguous": [],
+      "minimum_90_percent_gate": true
+    },
+    {
+      "section_id": "CID44971",
+      "source_feature_sha256": "0a6e9f09c1343264d465b73d0e3b93efa9ccb3d7643cccf0600d81f5b20478d7",
+      "set_size": 200,
+      "unambiguous_identifiable": 196,
+      "fraction": 0.98,
+      "missing": [
+        "MARCHF1",
+        "RIGI",
+        "TMT1B",
+        "WARS1"
+      ],
+      "ambiguous": [],
+      "minimum_90_percent_gate": true
+    },
+    {
+      "section_id": "CID4535",
+      "source_feature_sha256": "0a6e9f09c1343264d465b73d0e3b93efa9ccb3d7643cccf0600d81f5b20478d7",
+      "set_size": 200,
+      "unambiguous_identifiable": 196,
+      "fraction": 0.98,
+      "missing": [
+        "MARCHF1",
+        "RIGI",
+        "TMT1B",
+        "WARS1"
+      ],
+      "ambiguous": [],
+      "minimum_90_percent_gate": true
+    }
+  ],
+  "membership_status": "SOURCE_MEMBERSHIP_AND_FEATURE_INTERSECTION_FROZEN",
+  "created": "2026-09-05T06:56:14.082220+00:00",
+  "expression_values_used": false,
+  "primary_endpoint_computation": "NOT_RUN",
+  "gene_alias_substitution": "NONE",
+  "rule": "Exact symbol match to unique Ensembl ID in each publisher raw feature table; no expression-based selection."
+}

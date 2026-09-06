@@ -1,0 +1,60 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 10,
+    "name": "MYO10"
+  },
+  "source": "pubmed",
+  "returncode": 0,
+  "elapsed_seconds": 3.425225600018166,
+  "completed_at_utc": "2026-09-06T01:46:18.986012+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\pubmed\\gene-10-MYO10.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\pubmed\\gene-10-MYO10.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "ncbi-entrez",
+    "endpoint": "esearch",
+    "database": "pubmed",
+    "record_path": "esearchresult.idlist",
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\pubmed\\gene-10-MYO10.raw",
+    "warnings": [],
+    "record_count_returned": 10,
+    "record_count_available": 10,
+    "truncated": false,
+    "records": [
+      "36283390",
+      "34524844",
+      "26573744",
+      "31598400",
+      "42677351",
+      "33539530",
+      "24487586",
+      "24921915",
+      "40050821",
+      "41543608"
+    ],
+    "sources": [
+      {
+        "name": "NCBI Entrez",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=REDACTED&retmode=json&retmax=10&sort=relevance",
+        "retrieved_at": "2026-09-06T01:46:18.936482+00:00",
+        "supports_claim": true,
+        "kind": "evidence",
+        "request_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=REDACTED&retmode=json&retmax=10&sort=relevance",
+        "canonical_urls": [
+          "https://pubmed.ncbi.nlm.nih.gov/36283390/",
+          "https://pubmed.ncbi.nlm.nih.gov/34524844/",
+          "https://pubmed.ncbi.nlm.nih.gov/26573744/",
+          "https://pubmed.ncbi.nlm.nih.gov/31598400/",
+          "https://pubmed.ncbi.nlm.nih.gov/42677351/",
+          "https://pubmed.ncbi.nlm.nih.gov/33539530/",
+          "https://pubmed.ncbi.nlm.nih.gov/24487586/",
+          "https://pubmed.ncbi.nlm.nih.gov/24921915/",
+          "https://pubmed.ncbi.nlm.nih.gov/40050821/",
+          "https://pubmed.ncbi.nlm.nih.gov/41543608/"
+        ]
+      }
+    ]
+  },
+  "stderr": ""
+}

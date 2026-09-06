@@ -788,8 +788,71 @@ def handle_registry(args: argparse.Namespace) -> int:
     return exit_code
 
 
+def handle_audit_de(args: argparse.Namespace) -> int:
+    """Audit multi-donor single-cell differential expression before lab meetings, submission, or sharing."""
+    from bionexus.de_audit import audit_differential_expression
+
+    adata_path = getattr(args, "h5ad", None)
+    pos_path = getattr(args, "path", None)
+    if pos_path:
+        p = Path(pos_path)
+        if p.suffix.lower() == ".h5ad":
+            adata_path = pos_path
+        elif p.suffix.lower() in (".csv", ".tsv", ".txt") and not getattr(args, "de_table", None):
+            args.de_table = pos_path
+        elif p.suffix.lower() in (".ipynb", ".py", ".r", ".rmd") and not getattr(args, "script", None):
+            args.script = pos_path
+
+    de_table = getattr(args, "de_table", None) or getattr(args, "results", None)
+    sample_sheet = getattr(args, "sample_sheet", None) or getattr(args, "design", None)
+    code_path = getattr(args, "script", None) or getattr(args, "notebook", None)
+    claim_text = getattr(args, "claim", None) or getattr(args, "statement", None)
+
+    donor_col = getattr(args, "donor_col", None)
+    condition_col = getattr(args, "condition_col", None)
+    cell_type_col = getattr(args, "cell_type_col", None)
+    batch_col = getattr(args, "batch_col", None)
+
+    out_path = getattr(args, "out", None) or getattr(args, "output", None)
+    as_json = getattr(args, "json", False)
+
+    try:
+        result = audit_differential_expression(
+            adata_path=adata_path,
+            de_table=de_table,
+            sample_metadata=sample_sheet,
+            code_path=code_path,
+            claim_text=claim_text,
+            donor_col=donor_col,
+            condition_col=condition_col,
+            cell_type_col=cell_type_col,
+            batch_col=batch_col,
+        )
+    except Exception as e:
+        print(f"[ERROR] Differential expression evidence audit failed: {e}", file=sys.stderr)
+        return 1
+
+    if as_json:
+        print(json.dumps(result.to_dict(), indent=2, ensure_ascii=False))
+    else:
+        print(result.summary_text(use_color=True))
+
+    if out_path:
+        out_p = Path(out_path)
+        if out_p.suffix.lower() == ".json":
+            out_p.write_text(json.dumps(result.to_dict(), indent=2, ensure_ascii=False), encoding="utf-8")
+        else:
+            out_p.write_text(result.to_markdown(), encoding="utf-8")
+        print(f"[OK] Audit report saved to {out_p}")
+
+    return 0 if result.passed else 1
+
+
 def handle_audit(args: argparse.Namespace) -> int:
     """Audit data semantics OR static scientific analysis flaws (BNS-013)."""
+    if getattr(args, "de", False):
+        return handle_audit_de(args)
+
     from bionexus.analysis_audit import audit_analysis, render_analysis_audit
 
     path = Path(args.path)
@@ -1251,7 +1314,7 @@ def handle_abi(args: argparse.Namespace) -> int:
             if args.json:
                 print(json.dumps(audit.to_dict(), indent=2))
                 return 0 if audit.passed else 1
-            verdict = "CONFORMANT" if audit.passed else "VIOLATIONS DETECTED"
+            verdict = "CLAIM_SEMANTICS_CONFORMANT (no forbidden claim terms; biological claim unverified)" if audit.passed else "VIOLATIONS DETECTED"
             print(f"\n=== ABI Claim Audit: `{args.id}` -> {verdict} ===")
             for v in audit.violations:
                 print(f"  - [FORBIDDEN] `{v['claim_id']}` matched: \"{v['matched_text']}\"")
@@ -1266,7 +1329,7 @@ def handle_abi(args: argparse.Namespace) -> int:
         summary = abi_conformance_summary()
         if args.json:
             print(json.dumps(summary, indent=2))
-        verdict = "CONFORMANT" if summary["conformant"] else "NON-CONFORMANT"
+        verdict = "ABI_SPEC_CONFORMANT (all declared capabilities structurally defined)" if summary["conformant"] else "NON-CONFORMANT"
         print(f"\n=== Biological Capability ABI v{summary['abi_version']} Structural Conformance: {verdict} ===")
         for cid, checks in summary["capabilities"].items():
             status = "[OK]" if checks["ok"] else "[FAIL]"
@@ -1294,9 +1357,10 @@ def handle_certification(args: argparse.Namespace) -> int:
     tiers = report["tier_distribution"]
     print("\n=== BioNexus Capability Certification (BNS-010) ===")
     print(
-        f"**CERTIFIED**: {len(tiers['CERTIFIED'])} | **VALIDATED**: {len(tiers['VALIDATED'])} | "
+        f"**CERTIFIED**: {len(tiers['CERTIFIED'])} | **SPEC_VALIDATED**: {len(tiers['VALIDATED'])} | "
         f"**EXPERIMENTAL**: {len(tiers['EXPERIMENTAL'])} | **CONNECTOR-ONLY**: {len(tiers['CONNECTOR-ONLY'])}"
     )
+    print("  (Note: SPEC_VALIDATED indicates internal software contract and test suites passed; external biological truth is NOT established.)")
     print(f"M4 target: {report['m4_target_certified']} CERTIFIED -> honest gap: {report['m4_gap']}\n")
 
     print("| Capability | Tier | Criteria | Blocking CERTIFIED |")
@@ -3375,7 +3439,27 @@ def main(argv: Optional[list[str]] = None) -> int:
         help="Path to notebook (.ipynb), script (.py/.R/.Rmd/.qmd), or data file (.h5ad/csv)",
     )
     p_audit.add_argument("--expected-type", choices=["counts", "normalized"], default="counts")
+    p_audit.add_argument("--de", action="store_true", help="Perform comprehensive multi-donor single-cell differential expression audit")
     p_audit.add_argument("--json", action="store_true", help="Output audit result as JSON")
+
+    # 5.1 audit-de (Multi-donor single-cell DE evidence audit for lab meeting / submission / sharing)
+    p_audit_de = subparsers.add_parser(
+        "audit-de",
+        aliases=["de-audit"],
+        help="Evidence audit for multi-donor single-cell differential expression before lab meetings, submission, or sharing",
+    )
+    p_audit_de.add_argument("path", nargs="?", default=None, help="Path to .h5ad, DE table (.csv), or analysis script")
+    p_audit_de.add_argument("--h5ad", "--data", dest="h5ad", default=None, help="Path to AnnData (.h5ad) file")
+    p_audit_de.add_argument("--de-table", "--results", dest="de_table", default=None, help="Path to DEG results table (CSV/TSV)")
+    p_audit_de.add_argument("--sample-sheet", "--design", dest="sample_sheet", default=None, help="Path to sample/donor metadata CSV/TSV")
+    p_audit_de.add_argument("--script", "--notebook", dest="script", default=None, help="Path to analysis script (.py/.R) or notebook (.ipynb)")
+    p_audit_de.add_argument("--claim", "--statement", dest="claim", default=None, help="Free-text scientific claim statement to verify")
+    p_audit_de.add_argument("--donor-col", dest="donor_col", default=None, help="Column name for biological donors (auto-detected if omitted)")
+    p_audit_de.add_argument("--condition-col", dest="condition_col", default=None, help="Column name for experimental conditions (auto-detected if omitted)")
+    p_audit_de.add_argument("--cell-type-col", dest="cell_type_col", default=None, help="Column name for cell types/clusters (auto-detected if omitted)")
+    p_audit_de.add_argument("--batch-col", dest="batch_col", default=None, help="Column name for technical batches (auto-detected if omitted)")
+    p_audit_de.add_argument("-o", "--out", "--output", dest="out", default=None, help="Export audit report to Markdown (.md) or JSON (.json)")
+    p_audit_de.add_argument("--json", action="store_true", help="Output audit result as JSON")
 
     # 5.5 preflight (Scientific Assertion Firewall entry 1, BNS-013)
     p_preflight = subparsers.add_parser(
@@ -4263,6 +4347,8 @@ def main(argv: Optional[list[str]] = None) -> int:
         return handle_registry(args)
     elif args.command == "audit":
         return handle_audit(args)
+    elif args.command in ("audit-de", "de-audit"):
+        return handle_audit_de(args)
     elif args.command == "preflight":
         if not (getattr(args, "intent", None) or getattr(args, "query", None)):
             p_preflight.print_help()

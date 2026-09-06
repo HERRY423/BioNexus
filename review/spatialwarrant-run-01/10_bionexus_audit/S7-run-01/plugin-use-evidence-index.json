@@ -1,0 +1,65 @@
+{
+  "roles": [
+    {
+      "name": "NGS Analysis Workbench",
+      "manifest_version": "0.2.16",
+      "observed": "READ_ONLY_CALLS_SUCCEEDED",
+      "role": "StartingPointAssessment and AnalysisPlan; live catalog/runtime inspection. The two scientific design capabilities are skills, not separate MCP endpoints or registered workflow execution.",
+      "calls": [
+        "list_workflows(include_archived=true)",
+        "list_compute_targets",
+        "get_runtime_environment(target_id=local)",
+        "list_workflow_versions(scrnaseq)",
+        "list_workflow_versions(oai_scrnaseq_fastq_to_count)"
+      ],
+      "compatible_registered_workflow_found": false
+    },
+    {
+      "name": "BioNexus",
+      "manifest_version": "1.0.0-rc.4",
+      "observed": "MCP_RESPONDED_EMPTY_GEO_LOOKUP",
+      "role": "Passive provenance, receipt-bound EvidenceCard/Claim-Evidence Ledger/Evidence Debt and later overclaim audit; no autonomous selection, no label invention, no independent scientific validation"
+    },
+    {
+      "name": "Life Sciences Literature",
+      "manifest_version": "0.1.5",
+      "observed": "PUBMED_METADATA_RETRY_SUCCEEDED",
+      "role": "Later Wu paper identity/design verification and consistent/contradictory/no-report literature table; not independent replication"
+    },
+    {
+      "name": "Life Sciences Databases",
+      "manifest_version": "0.1.5",
+      "observed": "REACTOME_METADATA_PROBE_FAILED",
+      "role": "Later Reactome, STRING, Open Targets and UniProt source-specific context queries; no causal validation"
+    },
+    {
+      "name": "Other installed/recommended plugins",
+      "observed": "NOT_IN_PROJECT_EXECUTION_PATH",
+      "role": "No planned role for BioNeMo, viewers, generic connectors or uninstalled recommended plugins; not counted as project usage."
+    }
+  ],
+  "current_S7": "BioNexus real MCP calls and local passive shared-kernel audit; remaining plugin activity is preserved S0–S6 evidence, not new S7 calls",
+  "evidence": [
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\00_plan\\plugin-capability-check.json",
+      "sha256": "15f9863ab4df0c2deb4bed64d726e6e400be28f10f7ad3307826877404a47785"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\external-query-log.final.csv",
+      "sha256": "95852dfd9b08b12f60e999fdb0e1494ec84fb5a8974f0cabb865d5610504fa2f"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\external-evidence-summary.final.json",
+      "sha256": "204232f87171eb8f293a2a0f678084733b590c0a6185cd0ebe4a64b7844441b6"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\bionexus-external-evidence-audit.json",
+      "sha256": "2413291b47df65c3239608f6dd40a9ac50f4b35e6ec2d715f3ba49dc1c0c4304"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\10_bionexus_audit\\S7-run-01\\bionexus-mcp-raw-all-attempts.json",
+      "sha256": "e75696790f06b77472d02016644aca11730c2d73019206e8fb12198c25d22621"
+    }
+  ],
+  "execution": "local Python/scverse; not registered NGS workflow run"
+}

@@ -83,8 +83,8 @@
     {
       "standard_id": "cross_host_test",
       "satisfied": false,
-      "evidence": "cross-host/COMPARISON.json (framework created, 0 traps compared)",
-      "notes": "Cross-host framework exists but no L2 claim audit executed for annotation capability. Blocked on 2nd host provider."
+      "evidence": "cross-host/COMPARISON.json (hosts: claude-code + antigravity; 6 traps compared, all ABSTAIN, agreement_rate 1.0)",
+      "notes": "Headless COMPARISON.json cannot satisfy BNS-HC-007. Cross-host remains unsatisfied until the IVN external-lab quota is met with hash-verified studies on >= 2 distinct hosts."
     },
     {
       "standard_id": "external_reviewer",

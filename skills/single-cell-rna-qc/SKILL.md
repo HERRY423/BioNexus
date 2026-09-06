@@ -42,6 +42,9 @@ python skills/single-cell-rna-qc/scripts/scrna_deseq.py pb.csv --design pb_desig
 
 # 6. Generate standardized exploratory figures
 python skills/single-cell-rna-qc/scripts/scrna_plot.py clustered.h5ad -o figures/ --color leiden
+
+# 7. Multi-donor DE Evidence Audit (before lab meetings, manuscript submission, or sharing)
+bionexus audit-de clustered.h5ad --de-table de.csv -o audit_report.md
 ```
 
 ---

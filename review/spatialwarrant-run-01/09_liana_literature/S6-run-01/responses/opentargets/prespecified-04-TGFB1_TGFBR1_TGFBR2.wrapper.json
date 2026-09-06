@@ -1,0 +1,50 @@
+{
+  "target": {
+    "kind": "prespecified",
+    "rank": 4,
+    "name": "TGFB1 TGFBR1 TGFBR2"
+  },
+  "source": "opentargets",
+  "returncode": 0,
+  "elapsed_seconds": 2.32512150000548,
+  "completed_at_utc": "2026-09-06T01:46:37.408306+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\prespecified-04-TGFB1_TGFBR1_TGFBR2.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\prespecified-04-TGFB1_TGFBR1_TGFBR2.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "opentargets-graphql",
+    "top_keys": [
+      "search"
+    ],
+    "summary": {
+      "search": {
+        "total": 10,
+        "hits": [
+          "...",
+          "...",
+          "...",
+          "...",
+          "...",
+          "...",
+          "...",
+          "...",
+          "...",
+          "..."
+        ]
+      }
+    },
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\prespecified-04-TGFB1_TGFBR1_TGFBR2.raw",
+    "warnings": [],
+    "sources": [
+      {
+        "name": "Open Targets Platform",
+        "url": "https://api.platform.opentargets.org/api/v4/graphql",
+        "retrieved_at": "2026-09-06T01:46:37.386984+00:00",
+        "supports_claim": true,
+        "kind": "evidence",
+        "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+      }
+    ]
+  },
+  "stderr": ""
+}

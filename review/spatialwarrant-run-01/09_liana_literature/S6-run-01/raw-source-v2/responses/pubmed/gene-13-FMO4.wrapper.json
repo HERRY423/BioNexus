@@ -1,0 +1,60 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 13,
+    "name": "FMO4"
+  },
+  "source": "pubmed",
+  "returncode": 0,
+  "elapsed_seconds": 2.1340588000020944,
+  "completed_at_utc": "2026-09-06T02:01:05.293832+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\pubmed\\gene-13-FMO4.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\pubmed\\gene-13-FMO4.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "ncbi-entrez",
+    "endpoint": "esearch",
+    "database": "pubmed",
+    "record_path": "esearchresult.idlist",
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\pubmed\\gene-13-FMO4.raw",
+    "warnings": [],
+    "record_count_returned": 10,
+    "record_count_available": 10,
+    "truncated": false,
+    "records": [
+      "41053533",
+      "37963835",
+      "36114029",
+      "29959872",
+      "31368236",
+      "25630629",
+      "30757917",
+      "37274237",
+      "11489435",
+      "15987777"
+    ],
+    "sources": [
+      {
+        "name": "NCBI Entrez",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=REDACTED&retmode=json&retmax=10&sort=relevance",
+        "retrieved_at": "2026-09-06T02:01:05.270116+00:00",
+        "supports_claim": true,
+        "kind": "evidence",
+        "request_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=REDACTED&retmode=json&retmax=10&sort=relevance",
+        "canonical_urls": [
+          "https://pubmed.ncbi.nlm.nih.gov/41053533/",
+          "https://pubmed.ncbi.nlm.nih.gov/37963835/",
+          "https://pubmed.ncbi.nlm.nih.gov/36114029/",
+          "https://pubmed.ncbi.nlm.nih.gov/29959872/",
+          "https://pubmed.ncbi.nlm.nih.gov/31368236/",
+          "https://pubmed.ncbi.nlm.nih.gov/25630629/",
+          "https://pubmed.ncbi.nlm.nih.gov/30757917/",
+          "https://pubmed.ncbi.nlm.nih.gov/37274237/",
+          "https://pubmed.ncbi.nlm.nih.gov/11489435/",
+          "https://pubmed.ncbi.nlm.nih.gov/15987777/"
+        ]
+      }
+    ]
+  },
+  "stderr": ""
+}

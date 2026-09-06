@@ -1,0 +1,89 @@
+{
+  "scope": "Direct Python API probes; not full tests, live-host tests, or biological validation",
+  "executed_at": "2026-09-06T07:06:54.626394+00:00",
+  "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]",
+  "git_head": "cfb0691713cd1d43a5c2b68c9de3903d750fcbed",
+  "source_sha256": {
+    "src/bionexus/pseudobulk_warrant.py": "7ed9edc17996a4f76d2a9e99b6c46b50aa679bfbe8c48cfff9e7a9c7445fc972",
+    "src/bionexus/evidence_model.py": "25424d52c3b0cb2c03e1d142da26fa143ed94164844e7c3932267a1c44094b03",
+    "src/bionexus/analysis_audit.py": "2e20cb3b975d9728156e73b7ce0957376b8f3a1d881200a209acd456459fd5cd",
+    "src/bionexus/lims_hub.py": "d15bfde901e12ea5bdd2f3239ff5861396f7b88529a1414aa431e92e63f4f6e3",
+    "src/bionexus/debt.py": "ea86a7260d1d302879a55495c98641cdada3e18044959c18e6308b428147acf8",
+    "src/bionexus/claim_semantics.py": "645ae9cec13f9f3fef0b9f152575dab3280e51723469aef4f39f6497b4cfad4d",
+    "src/bionexus/tool_receipt.py": "43f62ff2cba902db862460518332848e4c4301eb1eb637531a2926aa744d57d8"
+  },
+  "public_pseudobulk_api": {
+    "regime": "POPULATION_INFERENCE",
+    "maturity_ceiling": "ROBUST",
+    "permitted": true,
+    "population_claims_allowed": true,
+    "causal_claims_allowed": true,
+    "reasons": [
+      "Sufficient biological replicates (min N=3 >= 3) and raw integer counts. Negative binomial GLM with Wald tests warrants population-level differential expression inference."
+    ],
+    "warnings": [],
+    "remedy": null,
+    "metrics": {
+      "min_donors_per_group": 3,
+      "donors_by_group": {
+        "min_group": 3
+      },
+      "min_cells_per_sample": 20,
+      "is_raw_counts": true,
+      "is_confounded": false,
+      "has_donor_metadata": true,
+      "is_interventional": true,
+      "nominal_fdr": 0.05
+    }
+  },
+  "declared_metadata_assessment": {
+    "evidence_maturity": "SUPPORTED",
+    "satisfied_factors": [
+      "confound_controls",
+      "effect_stability",
+      "replication",
+      "sample_design",
+      "sensitivity_analysis"
+    ],
+    "caps_applied": [],
+    "rationale": "Evidence maturity SUPPORTED derived from declared factors ['confound_controls', 'effect_stability', 'replication', 'sample_design', 'sensitivity_analysis']; purpose and policy play no role in this assessment."
+  },
+  "static_audit": {
+    "plain": {
+      "passed": false,
+      "rules": [
+        "BFA-001",
+        "BFA-003"
+      ]
+    },
+    "comment_added": {
+      "passed": true,
+      "rules": [
+        "BFA-003"
+      ]
+    }
+  },
+  "lims_empty_measurement": {
+    "schemaId": "schema-test",
+    "projectId": "prj_default",
+    "plateId": "plate-test",
+    "fields": {},
+    "results": [
+      {
+        "well": "A1",
+        "value": 0.0,
+        "unit": "RFU",
+        "sample_id": "SMP-plate-test-A1"
+      }
+    ],
+    "generated_by": "BioNexus/1.0.0-rc.4",
+    "timestamp": "2026-09-06T07:06:54.675517+00:00"
+  },
+  "lims_transport_boundary": {
+    "requests_post_reached": true,
+    "result_success": true,
+    "real_network_calls": 0,
+    "scope": "Direct connector API; network function replaced with an in-memory mock"
+  },
+  "source_stable_during_probe": true
+}

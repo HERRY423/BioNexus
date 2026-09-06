@@ -1,0 +1,23 @@
+{
+  "attempts": [
+    {
+      "attempt": 1,
+      "status": "FAILED",
+      "request": {
+        "host_name": "Codex desktop local"
+      },
+      "return": "Error executing tool bionexus_host_probe: host_name must be a lowercase host identifier"
+    },
+    {
+      "attempt": 2,
+      "status": "TIMED_OUT_AFTER_180_SECONDS",
+      "request": {
+        "host_name": "codex-desktop-local",
+        "challenge_local_result_sha256": "df855eff07a586f78484618ced195c964ac32b14554d2fda76e235cff2799e2e"
+      },
+      "return": null
+    }
+  ],
+  "post_correction_local_result_sha256": "3fde40339554fdd433642f34bbb773f1dc9b2c09fc5b87557ba81c24840dd4e8",
+  "interpretation": "MCP receipt was not obtained. Attempt 2 bound the preserved filtered-matrix attempt before raw-source correction and is not valid for the final result. Local BioNexus sidecar and passive intake audits bind the final outputs; no successful host-probe claim is made."
+}

@@ -1,0 +1,45 @@
+{
+  "observed_at_utc": "2026-09-05T11:43:33.527993+00:00",
+  "skills_applied": [
+    "understand-ngs-data",
+    "run-ngs-analysis"
+  ],
+  "starting_point": "GSE176078 published processed integer UMI MatrixMarket matrix plus producer metadata",
+  "endpoint": "S2A cell-level and source-sample-level technical QC metrics only",
+  "list_compute_targets": {
+    "status": "SUCCESS",
+    "count": 1,
+    "target_id": "local",
+    "title": "This computer",
+    "executor": "local_process"
+  },
+  "list_workflows": {
+    "status": "SUCCESS",
+    "count": 12,
+    "processed_matrix_to_S2A_compatible_registered_workflow": false,
+    "scRNA_entries": [
+      {
+        "workflow_id": "oai_scrnaseq_fastq_to_count",
+        "revision": "source_sha256:6f7aa0dcf4ed6fdb6e187ff0f8d1128b6ffa93504bc688aee341fe250a893510",
+        "reason_not_selected": "FASTQ-to-count, not processed-matrix S2A metrics"
+      },
+      {
+        "workflow_id": "scrnaseq",
+        "revision": "nf-core/scrnaseq 4.2.0",
+        "reason_not_selected": "FASTQ-to-count, not processed-matrix S2A metrics"
+      }
+    ]
+  },
+  "get_runtime_environment": {
+    "status": "NO_RETURN_WITHIN_APPROXIMATELY_60_SECONDS",
+    "action": "Waiting stopped; no runtime snapshot invented"
+  },
+  "selected_route": "local Python execution",
+  "execution_plan_id": null,
+  "registry_run_id": null,
+  "registered_NGS_workflow_run": "NONE",
+  "retry_lineage": {
+    "failed_script_sha256": "3539e9de7865a7e5f01f8135ccee8dfb516dd0eae9815e0f7ed9b02591999e20",
+    "failure_record_sha256": "8613e81eaf5a8ecf97953f0eb2b5477dd5823717cbf06112a9c4f488ec576767"
+  }
+}

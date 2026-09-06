@@ -1,0 +1,19 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 17,
+    "name": "DENND4C"
+  },
+  "source": "opentargets",
+  "script": "C:\\Users\\13264\\.codex\\plugins\\cache\\openai-curated-remote\\life-sciences-databases\\0.1.5\\skills\\opentargets-skill\\scripts\\opentargets_graphql.py",
+  "requested_at_utc": "2026-09-06T01:46:21.709609+00:00",
+  "payload": {
+    "query": "query searchAny($q: String!) { search(queryString: $q) { total hits { entity score object { ... on Target { id approvedSymbol approvedName } ... on Disease { id name } ... on Drug { id name } } } } }",
+    "variables": {
+      "q": "DENND4C"
+    },
+    "max_items": 10,
+    "save_raw": true,
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\gene-17-DENND4C.raw"
+  }
+}

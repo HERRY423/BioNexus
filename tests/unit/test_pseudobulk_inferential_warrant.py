@@ -96,3 +96,25 @@ def test_causal_language_interception():
     compliant = "Pseudobulk DE identified differential expression associated with interferon stimulation (padj < 0.01)."
     audit_ok = audit_prohibited_claims(compliant)
     assert audit_ok.passed is True
+
+
+def test_interventional_causal_requires_verified_conditions():
+    """Declaring is_interventional=True without verified identification does not grant ROBUST causal warrant."""
+    verdict_default = evaluate_pseudobulk_inferential_warrant(
+        n_donors_per_group=3,
+        is_interventional=True,
+    )
+    assert verdict_default.regime == InferentialRegime.POPULATION_INFERENCE
+    assert verdict_default.population_claims_allowed is True
+    assert verdict_default.causal_claims_allowed is False
+    assert verdict_default.maturity_ceiling == ConclusionMaturity.SUPPORTED
+    assert any("causal identification conditions" in w.lower() for w in verdict_default.warnings)
+
+    verdict_verified = evaluate_pseudobulk_inferential_warrant(
+        n_donors_per_group=3,
+        is_interventional=True,
+        intervention_identified=True,
+        dispersion_verified=True,
+    )
+    assert verdict_verified.causal_claims_allowed is True
+    assert verdict_verified.maturity_ceiling == ConclusionMaturity.ROBUST

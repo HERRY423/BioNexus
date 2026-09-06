@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "at_utc": "2026-09-06T02:36:39.004188+00:00",
+  "claim_count": 8,
+  "four_selected_PNGs": 4,
+  "four_selected_PDFs": 4,
+  "human_decision": "PENDING",
+  "locked_plan_unchanged": true,
+  "claim_evidence_hashes_match": true,
+  "all_JSON_readable": true,
+  "all_short_thread_posts_within_280": true,
+  "visual_review": "four figures inspected; two layout overlaps corrected",
+  "S7_payload_bytes_before_final_manifests": 8937354,
+  "S7_build_elapsed_seconds": 8.047809800016694,
+  "S7_build_peak_process_working_set_bytes": 548257792,
+  "S7_build_start_free_C_bytes": 32272859136,
+  "free_C_bytes_at_seal": 32190836736,
+  "note": "Build resource figures exclude external tool waiting, initial inspection, and later rendering/sealing; no unmeasured full-session peak or runtime asserted."
+}

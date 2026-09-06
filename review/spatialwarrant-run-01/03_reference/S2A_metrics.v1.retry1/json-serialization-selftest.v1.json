@@ -1,0 +1,57 @@
+{
+  "status": "PASS",
+  "scope": "Engineering serialization only; not scientific validation",
+  "covered": [
+    "nested dict/list",
+    "numpy.int64 -> int",
+    "numpy.float64 finite -> float",
+    "numpy.float64 nonfinite -> null with separate missing flags",
+    "numpy.bool_ -> bool",
+    "numpy.ndarray -> recursively converted list",
+    "ordinary Python JSON types unchanged"
+  ],
+  "strict_allow_nan": false,
+  "forbidden_nonfinite_literals_absent": true,
+  "converted_value": {
+    "nested": {
+      "integer": 7,
+      "floating": 2.5,
+      "boolean": true,
+      "array": [
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ]
+      ],
+      "missing": null,
+      "missing_flag": true,
+      "positive_infinity": null,
+      "positive_infinity_missing": true,
+      "negative_infinity": null,
+      "negative_infinity_missing": true
+    },
+    "list": [
+      9,
+      1.25,
+      false,
+      [
+        5,
+        6
+      ]
+    ],
+    "python_types": {
+      "integer": 11,
+      "floating": 3.75,
+      "boolean": false,
+      "none": null,
+      "text": "ok"
+    }
+  },
+  "expected_value_match": true,
+  "completed_at_utc": "2026-09-05T11:43:35.671601+00:00",
+  "completed_before_full_matrix_scan": true
+}

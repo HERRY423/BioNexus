@@ -507,6 +507,20 @@ class TestEvidenceFactorExtraction:
         assert "confound_controls" in factors
         assert "sensitivity_analysis" in factors
 
+    def test_batch_corrected_and_parameter_sweep_not_overclaimed(self):
+        """Declaring batch_corrected=True and parameter_sweep=True does not grant confound_controls or effect_stability."""
+        meta = {
+            "min_replicates_per_condition": 3,
+            "batch_corrected": True,
+            "parameter_sweep": True,
+        }
+        factors = extract_evidence_factors(meta)
+        assert "sample_design" in factors
+        assert "replication" in factors
+        assert "sensitivity_analysis" in factors
+        assert "confound_controls" not in factors
+        assert "effect_stability" not in factors
+
 
 # ── M1 CONFLICTED Signal Preservation Tests (P7 Probe) ────────────────────────
 

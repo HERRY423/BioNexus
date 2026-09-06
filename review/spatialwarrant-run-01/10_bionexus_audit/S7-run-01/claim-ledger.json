@@ -1,0 +1,1025 @@
+{
+  "schema": "SpatialWarrant.S7.claim-ledger.v1",
+  "created_at_utc": "2026-09-06T02:30:14.592767+00:00",
+  "locked_plan_sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82",
+  "claim_source": {
+    "source": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-revised-design\\CLAIMS_PREREGISTERED.csv",
+    "source_sha256": "552fa77e9ba76fd83e6b000677cd322f4b64ea4c6c4ab46e45ea97e81f0736e3",
+    "locked_copy": "CSV appendix in analysis-plan.lock.md",
+    "semantic_equal": true,
+    "rows": [
+      {
+        "claim_id": "C1",
+        "stage": "S3",
+        "claim_class": "descriptive",
+        "preregistered_statement": "Report per-section agreement between numeric spatial domains and producer pathology, including ARI/NMI, granularity, and boundary Dice/Jaccard; no success threshold is assumed.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "STUDY_BOUND",
+        "blocking_evidence_gap": "same-study producer annotation is not independent truth"
+      },
+      {
+        "claim_id": "C2",
+        "stage": "S4",
+        "claim_class": "descriptive",
+        "preregistered_statement": "Report Tangram versus marker/NNLS composition sensitivity and scanpy-ingest label-transfer agreement without a prespecified success result.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "STUDY_BOUND",
+        "blocking_evidence_gap": "shared scRNA reference; methods are not independent biological evidence"
+      },
+      {
+        "claim_id": "C3",
+        "stage": "S5",
+        "claim_class": "association",
+        "preregistered_statement": "Test whether the prespecified CAF/CD8-T/macrophage/endothelial niche is enriched at the frozen pathology-geometry boundary and report every section.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "TO_BE_COMPUTED",
+        "blocking_evidence_gap": "niche result and cross-section stability not observed"
+      },
+      {
+        "claim_id": "C4",
+        "stage": "S6",
+        "claim_class": "population_effect",
+        "preregistered_statement": "Test the frozen immune/IFN program for a paired boundary-versus-core effect and report effect size, uncertainty, direction count, and leave-one-section-out sensitivity.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "TO_BE_COMPUTED",
+        "blocking_evidence_gap": "independent-unit identity and results not observed"
+      },
+      {
+        "claim_id": "C5",
+        "stage": "S6",
+        "claim_class": "causal",
+        "preregistered_statement": "CXCL9/10-CXCR3 drives T-cell recruitment to the boundary.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "ABSTAIN",
+        "blocking_evidence_gap": "no perturbation, temporal ordering, or independent causal validation"
+      },
+      {
+        "claim_id": "C6",
+        "stage": "S7",
+        "claim_class": "clinical",
+        "preregistered_statement": "The boundary signature predicts immunotherapy response.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "REFUSED",
+        "blocking_evidence_gap": "no treatment outcome, independent test cohort, calibration, or clinical validation"
+      },
+      {
+        "claim_id": "T1",
+        "stage": "S7",
+        "claim_class": "population_effect",
+        "preregistered_statement": "One section establishes a population-wide TNBC immune-exclusion mechanism.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "ABSTAIN",
+        "blocking_evidence_gap": "one section cannot support population or mechanistic inference"
+      },
+      {
+        "claim_id": "T2",
+        "stage": "S7",
+        "claim_class": "technical",
+        "preregistered_statement": "Input hashes, barcode joins, coordinate completeness, and output hashes can be independently recomputed.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "TECHNICAL_ONLY",
+        "blocking_evidence_gap": "technical integrity cannot elevate biological claims"
+      }
+    ],
+    "standalone_locked_copy_found": false
+  },
+  "scope": "Six-section spatial workflow; one preregistered boundary-eligible section",
+  "execution_route": "Local Python/scverse execution; no registered NGS workflow run",
+  "governing_machine_review": "COMPLETED_WITH_AUDIT_DEFECTS_AND_EVIDENCE_DEBT",
+  "human_scientific_adjudication": "PENDING",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "original_statement": "Report per-section agreement between numeric spatial domains and producer pathology, including ARI/NMI, granularity, and boundary Dice/Jaccard; no success threshold is assumed.",
+      "artifacts": [
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\section-summary.csv",
+          "sha256": "57030b443b655151e5ca4c7ccb2b3aed5bfd970edfc5b1eca8eea348de8445d1"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID4535\\domain-pathology-metrics.json",
+          "sha256": "29da272b1a43815bc8c64e30ac892e81bb1e99976de799fd9aae2138b6cc9e97"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID4535\\geometry-boundary-rule.json",
+          "sha256": "a7ea778723e8909ee3c8555f82f90dd44d518da8169d4a8d63509ae507cf8a3d"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID4535\\geometry-boundary-core-masks.csv",
+          "sha256": "393617426231596487b7b97d25ee770a521c65b035b176c745fe901807af2049"
+        }
+      ],
+      "host_review_state": "STUDY_BOUND_DESCRIPTIVE",
+      "support": "Six sections: ARI 0.00173–0.49012, NMI 0.01967–0.53850; fixed numeric resolution 0.5. CID4535 boundary Dice 0.29712, Jaccard 0.17448.",
+      "counterevidence": "Agreement varies widely; same-study producer pathology is not independent ground truth; only one separable boundary qualifies.",
+      "maximum_claim": "Per-section descriptive spatial/domain comparison; no universal accuracy claim.",
+      "dependencies": [
+        "Wu study",
+        "S3 producer labels and coordinates"
+      ],
+      "preregistered_record": {
+        "claim_id": "C1",
+        "stage": "S3",
+        "claim_class": "descriptive",
+        "preregistered_statement": "Report per-section agreement between numeric spatial domains and producer pathology, including ARI/NMI, granularity, and boundary Dice/Jaccard; no success threshold is assumed.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "STUDY_BOUND",
+        "blocking_evidence_gap": "same-study producer annotation is not independent truth"
+      },
+      "BioNexus_actual_passive_audit": {
+        "evidence_id": "SPATIALWARRANT-S7-C1",
+        "status": "VALID",
+        "integrity_verified": true,
+        "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+        "accepted_for_context": true,
+        "accepted_for_claim_support": false,
+        "conclusion_maturity": "UNASSESSED",
+        "allowed_context_use": "content-bound analysis result",
+        "missing_context": [],
+        "errors": [],
+        "warnings": [],
+        "prohibited_inferences": [
+          "Do not infer biological generalization from execution success alone.",
+          "Do not infer causality without an identified design and causal assumptions."
+        ]
+      },
+      "BioNexus_MCP_overclaim_test": null,
+      "evidence_debt": "Independent pathology adjudication and external sections",
+      "human_scientific_adjudication_required": true,
+      "human_decision": "PENDING",
+      "scientific_acceptance": "PENDING",
+      "independent_evidence_groups": [
+        "Wu study"
+      ],
+      "literature_role": "Context only, search-selected and not a replication; supporting/contradictory primary-paper assessment incomplete"
+    },
+    {
+      "claim_id": "C2",
+      "original_statement": "Report Tangram versus marker/NNLS composition sensitivity and scanpy-ingest label-transfer agreement without a prespecified success result.",
+      "artifacts": [
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\06_deconvolution\\S4-run-02\\postcompletion-audit.v1.json",
+          "sha256": "02e84cd69b263eb099c7234f609ff9379170b45064cae8faffff9e457a1db011"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\06_deconvolution\\S4-run-02\\tangram-nnls-concordance.csv",
+          "sha256": "d47f8fbd642da3b28fb301a0e075290274a342c57d42d5e2018812c1738d52bd"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\06_deconvolution\\S4-run-02\\ingest-label-agreement.csv",
+          "sha256": "8ad5801d911883b051ae3c97ea7a9e2707033138dbf7ac9090d187ff0020185a"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\06_deconvolution\\S4-run-02\\tangram-parameter-sensitivity.csv",
+          "sha256": "21d04fcaa1979d8a6f01e262bc2721a2b0c52f9d396618078802957650d898c4"
+        }
+      ],
+      "host_review_state": "METHOD_SENSITIVE",
+      "support": "54 Tangram parameter runs completed; Tangram–NNLS dominant agreement 4.788%; ingest–Tangram dominant-label agreement 5.166%; NNLS unknown 0.",
+      "counterevidence": "Cross-method agreement is very low. Requested 1000/2000 gene runs both use capped 644–655 genes; 500-gene sensitivity has lower agreement.",
+      "maximum_claim": "Shared-reference method sensitivity, with ingest as transferred similarity labels only; no calibrated proportions.",
+      "dependencies": [
+        "Wu scRNA",
+        "S2 reference",
+        "S3 spots",
+        "S4"
+      ],
+      "preregistered_record": {
+        "claim_id": "C2",
+        "stage": "S4",
+        "claim_class": "descriptive",
+        "preregistered_statement": "Report Tangram versus marker/NNLS composition sensitivity and scanpy-ingest label-transfer agreement without a prespecified success result.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "STUDY_BOUND",
+        "blocking_evidence_gap": "shared scRNA reference; methods are not independent biological evidence"
+      },
+      "BioNexus_actual_passive_audit": {
+        "evidence_id": "SPATIALWARRANT-S7-C2",
+        "status": "VALID",
+        "integrity_verified": true,
+        "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+        "accepted_for_context": true,
+        "accepted_for_claim_support": false,
+        "conclusion_maturity": "UNASSESSED",
+        "allowed_context_use": "content-bound analysis result",
+        "missing_context": [],
+        "errors": [],
+        "warnings": [],
+        "prohibited_inferences": [
+          "Do not infer biological generalization from execution success alone.",
+          "Do not infer causality without an identified design and causal assumptions."
+        ]
+      },
+      "BioNexus_MCP_overclaim_test": null,
+      "evidence_debt": "Independent reference and orthogonal composition validation; full 2000-gene perturbation absent",
+      "human_scientific_adjudication_required": true,
+      "human_decision": "PENDING",
+      "scientific_acceptance": "PENDING",
+      "independent_evidence_groups": [
+        "Wu study"
+      ],
+      "literature_role": "Context only, search-selected and not a replication; supporting/contradictory primary-paper assessment incomplete"
+    },
+    {
+      "claim_id": "C3",
+      "original_statement": "Test whether the prespecified CAF/CD8-T/macrophage/endothelial niche is enriched at the frozen pathology-geometry boundary and report every section.",
+      "artifacts": [
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\four-component-coenrichment-assessment.v1.json",
+          "sha256": "6e96f012f24b660d2dc6f1cfc682f18e5f626c3ca21ce1c3de58179d37f1a918"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\selected-k.json",
+          "sha256": "bcf8e64b803143391bd362fb07a3c94dd2599bace973f36fc33fe4bc1c8d43ad"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\boundary-niche-enrichment.csv",
+          "sha256": "4afa45b7b5e4ce097875534cb3fbdc239d57156cdaeb207fa3394ef4aabdf625"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\niche-distribution-by-section.csv",
+          "sha256": "8dfedad2f9f3df4abf034dc8c9ea42260d69a54520ec28918155d6727ad23d84"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\S5-result.json",
+          "sha256": "a9d1ae7d49f1a3437d2a701e5b197fbd8d305481eaad8dbbab6f657b5eefcbe0"
+        }
+      ],
+      "host_review_state": "TARGET_NICHE_NOT_OBSERVED",
+      "support": "k=10 selected before boundary comparison from 15 KMeans combinations; six-section spatial niches and technical transfer to 3798 10x spots completed.",
+      "counterevidence": "No niche meets all four component relative-enrichment conditions. Five boundary comparisons unavailable. This does not establish absence of a biological niche.",
+      "maximum_claim": "Observed technical niches and CID4535 niche distributions only; no asserted four-component boundary niche.",
+      "dependencies": [
+        "S4 main Tangram",
+        "S3 frozen geometry",
+        "S5 scaler and centers"
+      ],
+      "preregistered_record": {
+        "claim_id": "C3",
+        "stage": "S5",
+        "claim_class": "association",
+        "preregistered_statement": "Test whether the prespecified CAF/CD8-T/macrophage/endothelial niche is enriched at the frozen pathology-geometry boundary and report every section.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "TO_BE_COMPUTED",
+        "blocking_evidence_gap": "niche result and cross-section stability not observed"
+      },
+      "BioNexus_actual_passive_audit": {
+        "evidence_id": "SPATIALWARRANT-S7-C3",
+        "status": "VALID",
+        "integrity_verified": true,
+        "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+        "accepted_for_context": true,
+        "accepted_for_claim_support": false,
+        "conclusion_maturity": "UNASSESSED",
+        "allowed_context_use": "content-bound analysis result",
+        "missing_context": [],
+        "errors": [],
+        "warnings": [],
+        "prohibited_inferences": [
+          "Do not infer biological generalization from execution success alone.",
+          "Do not infer causality without an identified design and causal assumptions."
+        ]
+      },
+      "BioNexus_MCP_overclaim_test": null,
+      "evidence_debt": "Independent spatial validation; composition uncertainty; one eligible boundary",
+      "human_scientific_adjudication_required": true,
+      "human_decision": "PENDING",
+      "scientific_acceptance": "PENDING",
+      "independent_evidence_groups": [
+        "Wu study"
+      ],
+      "literature_role": "Context only, search-selected and not a replication; supporting/contradictory primary-paper assessment incomplete"
+    },
+    {
+      "claim_id": "C4",
+      "original_statement": "Test the frozen immune/IFN program for a paired boundary-versus-core effect and report effect size, uncertainty, direction count, and leave-one-section-out sensitivity.",
+      "artifacts": [
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\primary-program-B1-B2-B3-sensitivity.csv",
+          "sha256": "e855c17352827915422922fb5973b3ebe960ed443e4492a53f741cc664329079"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\primary-program-gene-coverage.json",
+          "sha256": "adb9072a6cc65ee361e75ed898394f8822706f18595385721a1568c6e0887c6c"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\prespecified-six-genes.csv",
+          "sha256": "aa61b8f27ea0ff1fe6f0bc48d35212e02f7c6557cd8d1168279ee217a583809b"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\pseudobulk-design-status.csv",
+          "sha256": "45012090911fc760e876c23db3d015840947e907eeec584ef2aa328baaf15889"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\raw-count-source-correction.v2.json",
+          "sha256": "2c59d57a8086c6379fc4bd825837a26a2467332a13f51105c5bd67cd131a16a8"
+        }
+      ],
+      "host_review_state": "SINGLE_SECTION_DESCRIPTIVE",
+      "support": "Frozen IFN program matches 196/200; B2−core +0.051510938742152845, B1 +0.03490665160847417, B3 +0.02216377668145686.",
+      "counterevidence": "Small effect, one eligible section; CXCL11 −0.15958494 and STAT1 −0.00413840 do not follow uniform enhancement. No replication for inference.",
+      "maximum_claim": "Preregistered CID4535 descriptive endpoint; no population CI, p value, sign test or leave-one-section-out inference.",
+      "dependencies": [
+        "Wu CID4535 raw counts",
+        "S3 frozen geometry",
+        "frozen Hallmark 2024.1"
+      ],
+      "preregistered_record": {
+        "claim_id": "C4",
+        "stage": "S6",
+        "claim_class": "population_effect",
+        "preregistered_statement": "Test the frozen immune/IFN program for a paired boundary-versus-core effect and report effect size, uncertainty, direction count, and leave-one-section-out sensitivity.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "TO_BE_COMPUTED",
+        "blocking_evidence_gap": "independent-unit identity and results not observed"
+      },
+      "BioNexus_actual_passive_audit": {
+        "evidence_id": "SPATIALWARRANT-S7-C4",
+        "status": "VALID",
+        "integrity_verified": true,
+        "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+        "accepted_for_context": true,
+        "accepted_for_claim_support": false,
+        "conclusion_maturity": "UNASSESSED",
+        "allowed_context_use": "content-bound analysis result",
+        "missing_context": [],
+        "errors": [],
+        "warnings": [],
+        "prohibited_inferences": [
+          "Do not infer biological generalization from execution success alone.",
+          "Do not infer causality without an identified design and causal assumptions."
+        ]
+      },
+      "BioNexus_MCP_overclaim_test": null,
+      "evidence_debt": "Additional verified independent boundary-eligible sections; inferential DE not run",
+      "human_scientific_adjudication_required": true,
+      "human_decision": "PENDING",
+      "scientific_acceptance": "PENDING",
+      "independent_evidence_groups": [
+        "Wu study"
+      ],
+      "literature_role": "Context only, search-selected and not a replication; supporting/contradictory primary-paper assessment incomplete"
+    },
+    {
+      "claim_id": "C5",
+      "original_statement": "CXCL9/10-CXCR3 drives T-cell recruitment to the boundary.",
+      "artifacts": [
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\liana-method-and-resource.json",
+          "sha256": "9f235fc148256f1c6f922c3c342bbbef381f185afd5b5045bf64ed68152cb80a"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\liana-prespecified-interactions.csv",
+          "sha256": "17b2dcbf5a8cc0a9df8f99aab7680bb8613486d09b20d99c79271fadb1846cdb"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\boundary-celltype-specific-liana-status.json",
+          "sha256": "16f7930d41bfa7d37c1ea015065c9803a67344a414cd1cd36f328b448e39d4f3"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\liana-spatial-niche-context.csv",
+          "sha256": "1a7aec911c650be04aaf87d4546cde78977a06cf052e0957d6be57790e0e450c"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\external-query-log.final.csv",
+          "sha256": "95852dfd9b08b12f60e999fdb0e1494ec84fb5a8974f0cabb865d5610504fa2f"
+        }
+      ],
+      "host_review_state": "CAUSAL_CLAIM_NOT_ESTABLISHED",
+      "support": "LIANA reference-wide rank_aggregate and prespecified CXCL9/10–CXCR3 records available; spatial composition/niche context is descriptive.",
+      "counterevidence": "Reference expression cannot identify boundary cell-type-specific communication; no perturbation, temporal ordering or directional recruitment evidence. Resource/output presence is not significant interaction evidence.",
+      "maximum_claim": "Communication feasibility and follow-up hypotheses only.",
+      "dependencies": [
+        "Wu scRNA",
+        "S2 reference",
+        "S4/S5 shared-reference derivatives",
+        "result-selected external queries"
+      ],
+      "preregistered_record": {
+        "claim_id": "C5",
+        "stage": "S6",
+        "claim_class": "causal",
+        "preregistered_statement": "CXCL9/10-CXCR3 drives T-cell recruitment to the boundary.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "ABSTAIN",
+        "blocking_evidence_gap": "no perturbation, temporal ordering, or independent causal validation"
+      },
+      "BioNexus_actual_passive_audit": {
+        "evidence_id": "SPATIALWARRANT-S7-C5",
+        "status": "VALID",
+        "integrity_verified": true,
+        "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+        "accepted_for_context": true,
+        "accepted_for_claim_support": false,
+        "conclusion_maturity": "UNASSESSED",
+        "allowed_context_use": "content-bound analysis result",
+        "missing_context": [],
+        "errors": [],
+        "warnings": [],
+        "prohibited_inferences": [
+          "Do not infer biological generalization from execution success alone.",
+          "Do not infer causality without an identified design and causal assumptions."
+        ]
+      },
+      "BioNexus_MCP_overclaim_test": {
+        "test_id": "C5",
+        "exact_claim": "CXCL9/10–CXCR3 因果驱动 T 细胞向肿瘤边界募集。",
+        "request": {
+          "query": "CXCL9/10–CXCR3 因果驱动 T 细胞向肿瘤边界募集。",
+          "research_purpose": "causal",
+          "data_metadata": {
+            "scRNA_method": "LIANA rank_aggregate",
+            "spatial_expression": "mixed Visium spots",
+            "perturbation": false,
+            "temporal_ordering": false,
+            "independent_validation": false,
+            "boundary_celltype_specific_expression": "NOT_IDENTIFIABLE",
+            "claim_class": "causal"
+          },
+          "intent_keywords": [
+            "causal",
+            "T_cell_recruitment",
+            "CXCL9",
+            "CXCL10",
+            "CXCR3"
+          ]
+        },
+        "actual_top_status": "NEEDS_DATA",
+        "actual_claim_layer": {
+          "claim_id": "CLAIM-334648",
+          "is_fully_warranted": false,
+          "requested_claim_class": "descriptive",
+          "warranted_claim_class": "descriptive",
+          "evidence_ceiling": "ABSTAIN",
+          "tier_verdicts": {
+            "association_claim": {
+              "tier_name": "association_claim",
+              "status": "NOT_WARRANTED",
+              "is_warranted": false,
+              "rationale": "Correlational/associational relationship is supported by observational or spatial data.",
+              "missing_evidence": [
+                "observational_data"
+              ]
+            },
+            "population_claim": {
+              "tier_name": "population_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "Population-level generalization was not requested by this claim.",
+              "missing_evidence": []
+            },
+            "mechanistic_claim": {
+              "tier_name": "mechanistic_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A mechanistic claim was not requested.",
+              "missing_evidence": []
+            },
+            "causal_claim": {
+              "tier_name": "causal_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A causal claim was not requested.",
+              "missing_evidence": []
+            },
+            "cell_identity_claim": {
+              "tier_name": "cell_identity_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A cell-identity claim was not requested.",
+              "missing_evidence": []
+            },
+            "clinical_claim": {
+              "tier_name": "clinical_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A clinical actionability claim was not requested.",
+              "missing_evidence": []
+            },
+            "structural_conformation_claim": {
+              "tier_name": "structural_conformation_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A structural conformation claim was not requested.",
+              "missing_evidence": []
+            },
+            "bioactive_binding_claim": {
+              "tier_name": "bioactive_binding_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A bioactive target binding claim was not requested.",
+              "missing_evidence": []
+            }
+          },
+          "evidence_gaps": [
+            "governing_status_needs_data"
+          ],
+          "remedies": [],
+          "rule_violations": [],
+          "epistemic_summary": "Claim 'CLAIM-334648' is not scientifically authorized: governing status NEEDS_DATA. Positive tier verdicts were replaced with NOT_ASSESSED; existing negative and not-applicable verdicts remain visible.",
+          "governing_status": "NEEDS_DATA"
+        },
+        "matched_capability_id": null,
+        "raw_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\10_bionexus_audit\\S7-run-01\\bionexus-raw-responses\\C5-corrected_purpose_attempts.json",
+        "started_at_utc": "2026-09-06T02:15:53.592Z",
+        "ended_at_utc": "2026-09-06T02:15:58.562Z",
+        "scientific_interpretation": "NOT A SUCCESSFUL SEMANTIC REJECTION: intended population/causal/clinical/technical class resolved as descriptive; no granted warrant."
+      },
+      "evidence_debt": "Perturbation, spatial cell-resolved ligand/receptor measurements, temporal ordering, independent confirmation",
+      "human_scientific_adjudication_required": true,
+      "human_decision": "PENDING",
+      "scientific_acceptance": "PENDING",
+      "independent_evidence_groups": [
+        "Wu study"
+      ],
+      "literature_role": "Context only, search-selected and not a replication; supporting/contradictory primary-paper assessment incomplete"
+    },
+    {
+      "claim_id": "C6",
+      "original_statement": "The boundary signature predicts immunotherapy response.",
+      "artifacts": [
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\00_plan\\analysis-plan.lock.md",
+          "sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\S6-checkpoint.md",
+          "sha256": "be73e50a5910647d9b002072972f052b9b453df10eee3983e94af4c3e92ad813"
+        }
+      ],
+      "host_review_state": "CLINICAL_CLAIM_REJECTED_FOR_THIS_DATA",
+      "support": "Workflow provides technical and descriptive features only; no outcome evidence supports prediction.",
+      "counterevidence": "No immunotherapy response labels, independent held-out cohort, calibration or clinical validation.",
+      "maximum_claim": "No treatment-response prediction claim.",
+      "dependencies": [
+        "Same observational study; no treatment outcome dataset"
+      ],
+      "preregistered_record": {
+        "claim_id": "C6",
+        "stage": "S7",
+        "claim_class": "clinical",
+        "preregistered_statement": "The boundary signature predicts immunotherapy response.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "REFUSED",
+        "blocking_evidence_gap": "no treatment outcome, independent test cohort, calibration, or clinical validation"
+      },
+      "BioNexus_actual_passive_audit": {
+        "evidence_id": "SPATIALWARRANT-S7-C6",
+        "status": "VALID",
+        "integrity_verified": true,
+        "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+        "accepted_for_context": true,
+        "accepted_for_claim_support": false,
+        "conclusion_maturity": "UNASSESSED",
+        "allowed_context_use": "content-bound analysis result",
+        "missing_context": [],
+        "errors": [],
+        "warnings": [],
+        "prohibited_inferences": [
+          "Do not infer biological generalization from execution success alone.",
+          "Do not infer causality without an identified design and causal assumptions."
+        ]
+      },
+      "BioNexus_MCP_overclaim_test": {
+        "test_id": "C6",
+        "exact_claim": "该边界特征能够预测免疫治疗反应。",
+        "request": {
+          "query": "该边界特征能够预测免疫治疗反应。",
+          "research_purpose": "clinical",
+          "data_metadata": {
+            "treatment_outcomes_available": false,
+            "independent_test_cohort": false,
+            "calibration": false,
+            "clinical_validation": false,
+            "claim_class": "clinical"
+          },
+          "intent_keywords": [
+            "clinical",
+            "immunotherapy",
+            "predict_response"
+          ]
+        },
+        "actual_top_status": "NEEDS_DATA",
+        "actual_claim_layer": {
+          "claim_id": "CLAIM-972730",
+          "is_fully_warranted": false,
+          "requested_claim_class": "descriptive",
+          "warranted_claim_class": "descriptive",
+          "evidence_ceiling": "ABSTAIN",
+          "tier_verdicts": {
+            "association_claim": {
+              "tier_name": "association_claim",
+              "status": "NOT_WARRANTED",
+              "is_warranted": false,
+              "rationale": "Correlational/associational relationship is supported by observational or spatial data.",
+              "missing_evidence": [
+                "observational_data"
+              ]
+            },
+            "population_claim": {
+              "tier_name": "population_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "Population-level generalization was not requested by this claim.",
+              "missing_evidence": []
+            },
+            "mechanistic_claim": {
+              "tier_name": "mechanistic_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A mechanistic claim was not requested.",
+              "missing_evidence": []
+            },
+            "causal_claim": {
+              "tier_name": "causal_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A causal claim was not requested.",
+              "missing_evidence": []
+            },
+            "cell_identity_claim": {
+              "tier_name": "cell_identity_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A cell-identity claim was not requested.",
+              "missing_evidence": []
+            },
+            "clinical_claim": {
+              "tier_name": "clinical_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A clinical actionability claim was not requested.",
+              "missing_evidence": []
+            },
+            "structural_conformation_claim": {
+              "tier_name": "structural_conformation_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A structural conformation claim was not requested.",
+              "missing_evidence": []
+            },
+            "bioactive_binding_claim": {
+              "tier_name": "bioactive_binding_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A bioactive target binding claim was not requested.",
+              "missing_evidence": []
+            }
+          },
+          "evidence_gaps": [
+            "governing_status_needs_data"
+          ],
+          "remedies": [],
+          "rule_violations": [],
+          "epistemic_summary": "Claim 'CLAIM-972730' is not scientifically authorized: governing status NEEDS_DATA. Positive tier verdicts were replaced with NOT_ASSESSED; existing negative and not-applicable verdicts remain visible.",
+          "governing_status": "NEEDS_DATA"
+        },
+        "matched_capability_id": null,
+        "raw_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\10_bionexus_audit\\S7-run-01\\bionexus-raw-responses\\C6-corrected_purpose_attempts.json",
+        "started_at_utc": "2026-09-06T02:15:58.562Z",
+        "ended_at_utc": "2026-09-06T02:16:02.457Z",
+        "scientific_interpretation": "NOT A SUCCESSFUL SEMANTIC REJECTION: intended population/causal/clinical/technical class resolved as descriptive; no granted warrant."
+      },
+      "evidence_debt": "Outcome-linked independent validation and clinically appropriate study",
+      "human_scientific_adjudication_required": true,
+      "human_decision": "PENDING",
+      "scientific_acceptance": "PENDING",
+      "independent_evidence_groups": [
+        "Wu study"
+      ],
+      "literature_role": "Context only, search-selected and not a replication; supporting/contradictory primary-paper assessment incomplete"
+    },
+    {
+      "claim_id": "T1",
+      "original_statement": "One section establishes a population-wide TNBC immune-exclusion mechanism.",
+      "artifacts": [
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\00_plan\\analysis-plan.lock.md",
+          "sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\primary-program-B1-B2-B3-sensitivity.csv",
+          "sha256": "e855c17352827915422922fb5973b3ebe960ed443e4492a53f741cc664329079"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\02_identity\\scRNA-identity-resolution.v1.json",
+          "sha256": "9aa98d57bd4317e9e185ce094bdd67d737c467b13410448535ec0d7665d12a44"
+        }
+      ],
+      "host_review_state": "POPULATION_MECHANISM_CLAIM_NOT_ESTABLISHED",
+      "support": "One preregistered eligible section within six-section technical/spatial workflow.",
+      "counterevidence": "One section is not independent population replication; source_sample_id is not patient_id; no mechanistic intervention.",
+      "maximum_claim": "Single-section descriptive result; neither population mechanism nor patient-level inference.",
+      "dependencies": [
+        "C4",
+        "Wu dataset",
+        "identity evidence"
+      ],
+      "preregistered_record": {
+        "claim_id": "T1",
+        "stage": "S7",
+        "claim_class": "population_effect",
+        "preregistered_statement": "One section establishes a population-wide TNBC immune-exclusion mechanism.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "ABSTAIN",
+        "blocking_evidence_gap": "one section cannot support population or mechanistic inference"
+      },
+      "BioNexus_actual_passive_audit": {
+        "evidence_id": "SPATIALWARRANT-S7-T1",
+        "status": "VALID",
+        "integrity_verified": true,
+        "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+        "accepted_for_context": true,
+        "accepted_for_claim_support": false,
+        "conclusion_maturity": "UNASSESSED",
+        "allowed_context_use": "content-bound analysis result",
+        "missing_context": [],
+        "errors": [],
+        "warnings": [],
+        "prohibited_inferences": [
+          "Do not infer biological generalization from execution success alone.",
+          "Do not infer causality without an identified design and causal assumptions."
+        ]
+      },
+      "BioNexus_MCP_overclaim_test": {
+        "test_id": "T1",
+        "exact_claim": "CID4535 证明了 TNBC 患者普遍存在 IFN 边界机制。",
+        "request": {
+          "query": "CID4535 证明了 TNBC 患者普遍存在 IFN 边界机制。",
+          "research_purpose": "confirmatory",
+          "data_metadata": {
+            "eligible_sections": 1,
+            "spatial_workflow_sections": 6,
+            "independent_patients_verified": false,
+            "effect_B2_minus_core": 0.051510939,
+            "population_CI": null,
+            "population_p_value": null,
+            "study": "Wu breast cancer scRNA and Visium; single eligible CID4535",
+            "claim_class": "population_effect"
+          },
+          "intent_keywords": [
+            "population_effect",
+            "single_section",
+            "TNBC",
+            "mechanism"
+          ]
+        },
+        "actual_top_status": "NEEDS_DATA",
+        "actual_claim_layer": {
+          "claim_id": "CLAIM-629013",
+          "is_fully_warranted": false,
+          "requested_claim_class": "descriptive",
+          "warranted_claim_class": "descriptive",
+          "evidence_ceiling": "ABSTAIN",
+          "tier_verdicts": {
+            "association_claim": {
+              "tier_name": "association_claim",
+              "status": "NOT_WARRANTED",
+              "is_warranted": false,
+              "rationale": "Correlational/associational relationship is supported by observational or spatial data.",
+              "missing_evidence": [
+                "observational_data"
+              ]
+            },
+            "population_claim": {
+              "tier_name": "population_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "Population-level generalization was not requested by this claim.",
+              "missing_evidence": []
+            },
+            "mechanistic_claim": {
+              "tier_name": "mechanistic_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A mechanistic claim was not requested.",
+              "missing_evidence": []
+            },
+            "causal_claim": {
+              "tier_name": "causal_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A causal claim was not requested.",
+              "missing_evidence": []
+            },
+            "cell_identity_claim": {
+              "tier_name": "cell_identity_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A cell-identity claim was not requested.",
+              "missing_evidence": []
+            },
+            "clinical_claim": {
+              "tier_name": "clinical_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A clinical actionability claim was not requested.",
+              "missing_evidence": []
+            },
+            "structural_conformation_claim": {
+              "tier_name": "structural_conformation_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A structural conformation claim was not requested.",
+              "missing_evidence": []
+            },
+            "bioactive_binding_claim": {
+              "tier_name": "bioactive_binding_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A bioactive target binding claim was not requested.",
+              "missing_evidence": []
+            }
+          },
+          "evidence_gaps": [
+            "governing_status_needs_data"
+          ],
+          "remedies": [],
+          "rule_violations": [],
+          "epistemic_summary": "Claim 'CLAIM-629013' is not scientifically authorized: governing status NEEDS_DATA. Positive tier verdicts were replaced with NOT_ASSESSED; existing negative and not-applicable verdicts remain visible.",
+          "governing_status": "NEEDS_DATA"
+        },
+        "matched_capability_id": null,
+        "raw_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\10_bionexus_audit\\S7-run-01\\bionexus-raw-responses\\T1-corrected_purpose_attempts.json",
+        "started_at_utc": "2026-09-06T02:15:49.365Z",
+        "ended_at_utc": "2026-09-06T02:15:53.591Z",
+        "scientific_interpretation": "NOT A SUCCESSFUL SEMANTIC REJECTION: intended population/causal/clinical/technical class resolved as descriptive; no granted warrant."
+      },
+      "evidence_debt": "Verified independent subjects, replicated effects and mechanistic evidence",
+      "human_scientific_adjudication_required": true,
+      "human_decision": "PENDING",
+      "scientific_acceptance": "PENDING",
+      "independent_evidence_groups": [
+        "Wu study"
+      ],
+      "literature_role": "Context only, search-selected and not a replication; supporting/contradictory primary-paper assessment incomplete"
+    },
+    {
+      "claim_id": "T2",
+      "original_statement": "Input hashes, barcode joins, coordinate completeness, and output hashes can be independently recomputed.",
+      "artifacts": [
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\10_bionexus_audit\\S7-run-01\\technical-reverification.json",
+          "sha256": "b6bd8e08981030d43fd0b934830611d71cf9d39dfdac570f7cba991ad3a55a93"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\00_plan\\analysis-plan.lock.md",
+          "sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\SHA256SUMS.txt",
+          "sha256": "3e1355cbf5b9ceef8eb80bd524d9469e08f13b097548029661fa26ebeb72ed51"
+        },
+        {
+          "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\SHA256SUMS.txt",
+          "sha256": "a2f4f8b43f2abbd51fb633d7fc37bcf37f0f01e948926971e15fc35d5e142944"
+        }
+      ],
+      "host_review_state": "LOCAL_TECHNICAL_REVERIFICATION_PASS",
+      "support": "Declared input/output SHA-256 lists match; unique barcode sets match across S3/S4/S5; all 15601 coordinate rows finite.",
+      "counterevidence": "Same-host verification is not independent external execution or authenticated receipt; hash consistency does not validate biology.",
+      "maximum_claim": "Observed same-host technical hash/connection/coordinate recomputation only.",
+      "dependencies": [
+        "Immutable files",
+        "S7 read-only inspection implementation"
+      ],
+      "preregistered_record": {
+        "claim_id": "T2",
+        "stage": "S7",
+        "claim_class": "technical",
+        "preregistered_statement": "Input hashes, barcode joins, coordinate completeness, and output hashes can be independently recomputed.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "TECHNICAL_ONLY",
+        "blocking_evidence_gap": "technical integrity cannot elevate biological claims"
+      },
+      "BioNexus_actual_passive_audit": {
+        "evidence_id": "SPATIALWARRANT-S7-T2",
+        "status": "VALID",
+        "integrity_verified": true,
+        "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+        "accepted_for_context": true,
+        "accepted_for_claim_support": false,
+        "conclusion_maturity": "UNASSESSED",
+        "allowed_context_use": "content-bound analysis result",
+        "missing_context": [],
+        "errors": [],
+        "warnings": [],
+        "prohibited_inferences": [
+          "Do not infer biological generalization from execution success alone.",
+          "Do not infer causality without an identified design and causal assumptions."
+        ]
+      },
+      "BioNexus_MCP_overclaim_test": {
+        "test_id": "T2",
+        "exact_claim": "输入哈希、坐标连接和输出哈希能够被重新核验。",
+        "request": {
+          "query": "输入哈希、坐标连接和输出哈希能够被重新核验。",
+          "research_purpose": "exploratory",
+          "data_metadata": {
+            "input_sha256_manifests": true,
+            "output_sha256_manifests": true,
+            "barcode_keys": true,
+            "coordinates_available": true,
+            "biological_validation_claimed": false,
+            "claim_class": "technical"
+          },
+          "intent_keywords": [
+            "technical",
+            "hash",
+            "barcode_join",
+            "coordinate_completeness"
+          ]
+        },
+        "actual_top_status": "NEEDS_DATA",
+        "actual_claim_layer": {
+          "claim_id": "CLAIM-584773",
+          "is_fully_warranted": false,
+          "requested_claim_class": "descriptive",
+          "warranted_claim_class": "descriptive",
+          "evidence_ceiling": "ABSTAIN",
+          "tier_verdicts": {
+            "association_claim": {
+              "tier_name": "association_claim",
+              "status": "NOT_WARRANTED",
+              "is_warranted": false,
+              "rationale": "Correlational/associational relationship is supported by observational or spatial data.",
+              "missing_evidence": [
+                "observational_data"
+              ]
+            },
+            "population_claim": {
+              "tier_name": "population_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "Population-level generalization was not requested by this claim.",
+              "missing_evidence": []
+            },
+            "mechanistic_claim": {
+              "tier_name": "mechanistic_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A mechanistic claim was not requested.",
+              "missing_evidence": []
+            },
+            "causal_claim": {
+              "tier_name": "causal_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A causal claim was not requested.",
+              "missing_evidence": []
+            },
+            "cell_identity_claim": {
+              "tier_name": "cell_identity_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A cell-identity claim was not requested.",
+              "missing_evidence": []
+            },
+            "clinical_claim": {
+              "tier_name": "clinical_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A clinical actionability claim was not requested.",
+              "missing_evidence": []
+            },
+            "structural_conformation_claim": {
+              "tier_name": "structural_conformation_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A structural conformation claim was not requested.",
+              "missing_evidence": []
+            },
+            "bioactive_binding_claim": {
+              "tier_name": "bioactive_binding_claim",
+              "status": "NOT_APPLICABLE",
+              "is_warranted": false,
+              "rationale": "A bioactive target binding claim was not requested.",
+              "missing_evidence": []
+            }
+          },
+          "evidence_gaps": [
+            "governing_status_needs_data"
+          ],
+          "remedies": [],
+          "rule_violations": [],
+          "epistemic_summary": "Claim 'CLAIM-584773' is not scientifically authorized: governing status NEEDS_DATA. Positive tier verdicts were replaced with NOT_ASSESSED; existing negative and not-applicable verdicts remain visible.",
+          "governing_status": "NEEDS_DATA"
+        },
+        "matched_capability_id": null,
+        "raw_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\10_bionexus_audit\\S7-run-01\\bionexus-raw-responses\\T2-corrected_purpose_attempts.json",
+        "started_at_utc": "2026-09-06T02:16:02.458Z",
+        "ended_at_utc": "2026-09-06T02:16:05.419Z",
+        "scientific_interpretation": "NOT A SUCCESSFUL SEMANTIC REJECTION: intended population/causal/clinical/technical class resolved as descriptive; no granted warrant."
+      },
+      "evidence_debt": "Independent implementation/rerun and authenticated external receipt",
+      "human_scientific_adjudication_required": true,
+      "human_decision": "PENDING",
+      "scientific_acceptance": "PENDING",
+      "independent_evidence_groups": [
+        "same-host local verification"
+      ],
+      "literature_role": "Context only, search-selected and not a replication; supporting/contradictory primary-paper assessment incomplete"
+    }
+  ],
+  "no_independent_evidence_double_counting": true
+}

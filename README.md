@@ -3,10 +3,10 @@
 
 <div align="center">
 
-[![Release](https://img.shields.io/badge/Release-v1.0.0--rc.4-blue.svg?style=flat-square)](https://github.com/HERRY423/BioNexus/releases/tag/v1.0.0-rc.4)
+[![Release](https://img.shields.io/badge/Release-v1.0.0--rc.5-blue.svg?style=flat-square)](https://github.com/HERRY423/BioNexus/releases/tag/v1.0.0-rc.5)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg?style=flat-square)](https://www.python.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
-[![CI/CD](https://img.shields.io/badge/CI%2FCD-Passing-success.svg?style=flat-square)](https://github.com/HERRY423/BioNexus/actions)
+[![CI](https://github.com/HERRY423/BioNexus/actions/workflows/ci.yml/badge.svg)](https://github.com/HERRY423/BioNexus/actions/workflows/ci.yml)
 [![Status: RUO](https://img.shields.io/badge/Status-Research%20Use%20Only-yellow.svg?style=flat-square)](#-regulatory-notice--compliance)
 
 </div>
@@ -17,6 +17,10 @@ BioNexus is a warrant-first scientific reliability layer for AI-assisted bioinfo
 
 **Not another AI scientist or workflow platform.**
 BioNexus sits between AI-generated analyses and scientific claims.
+
+**First use:** [audit one analysis in shadow mode](docs/quickstart-shadow-audit.md).
+The walkthrough explains the returned findings and evidence limits, with a separate
+command for reproducible backend checks.
 
 ---
 
@@ -119,7 +123,7 @@ BioNexus was upgraded from *"when not to compute"* to *"what the evidence warran
 | **3. Rule Provenance** | Every rule carries evidence-backed provenance (DOIs/URLs), a consensus level, and known exceptions — loaded from an auditable registry, not hardcoded opinion. | `RuleProvenance`, `load_rule_registry` |
 | **4. Researcher Override** | Professionals may proceed past a soft warrant block, but must record *why*, what limits remain, and which claims still cannot be made. Hard invariants are never overridable. | `create_override_record`, `OverrideRecord` |
 | **5. BCTK Diagnostic Kit** | Target-bound development diagnostics for third-party agents, plugins, workflows, and packages. Certification and badge issuance are suspended pending independent evidence. | `bctk test`, `bionexus conformance test`, `BNS-020` |
-| **6. Evidence Debt Ledger** | Traces scientific shortcuts, uncalibrated thresholds, and domain mismatches across the claim DAG with optimal repayment scheduling. | `bionexus debt audit`, `bionexus debt payoff`, `BNS-021` |
+| **6. Evidence Debt Ledger** | Traces scientific shortcuts, uncalibrated thresholds, and domain mismatches across the claim DAG with heuristic debt remediation priority ranking. | `bionexus debt audit`, `bionexus debt payoff`, `BNS-021` |
 
 The old binary `PERMITTED / REFUSED` is now a spectrum: `PERMITTED` · `PERMITTED_WITH_LIMITS` (soft blocks overridden) · `REFUSED` (hard invariant violated).
 
@@ -158,14 +162,16 @@ TRANSFORM-ANNOTATION-X (Heuristic gating on tumor infiltrate)
 Atlas Reference Domain Mismatch (PBMC reference)
 ```
 
-### Optimal Repayment Schedule & Epistemic Keystones:
-Fixing `TRANSFORM-ANNOTATION-X` yields a **70.0x Payoff Multiplier**, simultaneously amortizing Evidence Debt for **7 downstream claims** and upgrading the project maturity floor from `FRAGILE` to `SUPPORTED`!
+### Remediation Priority Schedule & Epistemic Keystones:
+Targeting `TRANSFORM-ANNOTATION-X` resolves a foundational keystone bottleneck affecting **7 downstream claims** (heuristic priority score: **70.0** = 7 claims × 10.0 critical severity weight), pinpointing high-leverage targets where targeted empirical validation will provide the broadest clarity across the claim DAG.
+
+> **Transparency Note**: The priority score is an analytical triage heuristic (`|claims| × w_severity`) to prioritize verification order. It is **not** an empirical risk reduction measurement, does not model wet-lab experimental costs or success probabilities, and resolving an upstream dependency does not automatically upgrade downstream claim maturity without independent empirical evidence.
 
 ```bash
 # Audit project evidence debt
 bionexus debt audit .
 
-# Compute optimal repayment schedule ranked by scientific leverage
+# Compute heuristic remediation priority schedule ranked by claim impact × severity
 bionexus debt payoff .
 
 # Visual Mermaid dependency DAG
@@ -436,11 +442,7 @@ Institutional pipelines (Galaxy, DNAnexus, Seven Bridges, WorkflowHub) can inges
 
 **Scientific meaning exchange** ([BNS-019](spec/BNS-019-scientific-semantic-conventions.md)) is now an independently releasable, language-neutral contract under [`standards/scientific-semantic-conventions/`](standards/scientific-semantic-conventions/). The normative registry, JSON Schemas, conformance fixtures, compatibility policy, and SHA-256 release manifest no longer live inside the Python product. Development 0.1.0 is an executable proposal, not evidence of adoption or endorsement.
 
-For workflows, the integration boundary is now explicitly zero-touch:
-Workflow Run RO-Crate records what ran; an external BNS-019 sidecar annotates
-only individually hash-bound artifacts whose semantics were explicitly
-declared. BioNexus does not require nf-core pipeline changes and does not infer
-scientific meaning from samplesheets, filenames, or successful execution.
+**Workflow integration boundary (Zero-Touch Sidecar)**: BioNexus strictly respects workflow engine boundaries. It does **not** inject processes, Python scripts, or custom inputs into Nextflow / nf-core pipelines. Nextflow and `nf-prov` handle computational orchestration and provenance. Downstream, BioNexus acts strictly as an external, post-hoc validator: it ingests the native Workflow Run RO-Crate, audits output artifacts individually by SHA-256 hash, and binds semantic evidence boundaries *without modifying a single line of pipeline code*.
 
 **Spatial Empirical Gold** is deliberately narrower: BioNexus calibrates the Alternative Explanation Battery only for Xenium, CosMx, and MERSCOPE. The [program contract](docs/governance/SPATIAL_EMPIRICAL_GOLD_STANDARD.md) forbids platform pooling, synthetic production evidence, donor/FOV leakage, universal fallback thresholds, and automatic approval. The current registry contains zero real studies and zero approved profiles; all 36 platform × metric cells remain `incomplete_not_claim_ready`.
 
@@ -832,7 +834,7 @@ BioNexus is governed by a normative, machine-enforced scientific contract publis
 
 | [BNS-014](spec/BNS-014-biofailurebench.md) | **BioFailureBench**: the scientific trap corpus (BF-nnn) |
 
-| [BNS-015](spec/BNS-015-flagship-certification.md) | **Flagship certification**: 3 externally-validated CERTIFIED capabilities |
+| [BNS-015](spec/BNS-015-flagship-certification.md) | **Flagship verification**: evidence criteria and fail-closed audit requirements |
 
 | [BNS-016](spec/BNS-016-standards-interop.md) | **Standards interoperability**: RO-Crate / Workflow Run Crate / IEEE 2791 BCO; product scope boundary |
 
@@ -840,9 +842,9 @@ BioNexus is governed by a normative, machine-enforced scientific contract publis
 
 **Fail-closed philosophy** (`bionexus prevent "<query>"`): *knowing what the evidence warrants is a scientific capability.* Fail-closed now means two things: hard execution invariants (missing evidence → ABSTAIN, identifier corruption → REFUSE, model masquerade → BLOCK) still gate the compute, while soft warrant constraints (weak statistics, thin replication, unvalidated assumptions) permit the compute but cap the claim — `violated assumption → CAP CLAIM MATURITY`, `absent external validation → CAP EVIDENCE LEVEL`, `unspecified purpose → sufficiency undecided for any intended use`. The scarcest BioNexus API is not `run()` — it is the honest warrant.
 
-**Capability certification** (`bionexus certification`): skills deepen through evidence tiers — CERTIFIED (all 14 criteria: backend, input contract, invariants, failure modes, positive/negative/adversarial tests, public reference dataset, independent ground truth, parameter perturbation, degradation test, provenance test, cross-host test, external reviewer), VALIDATED, EXPERIMENTAL, CONNECTOR-ONLY. Tiers are **computed from recorded evidence, never asserted**; the blocking-criteria list per capability is the published roadmap to 10 CERTIFIED.
+**Capability verification** (`bionexus certification`): capabilities deepen through evidence tiers — CERTIFIED (all 14 criteria: backend, input contract, invariants, failure modes, positive/negative/adversarial tests, public reference dataset, independent ground truth, parameter perturbation, degradation test, provenance test, cross-host test, external reviewer), VALIDATED, EXPERIMENTAL, CONNECTOR-ONLY. Tiers are **computed from recorded evidence, never self-asserted**. **Currently, 0 capabilities hold CERTIFIED status (`CERTIFIED: 0`)**, because external non-author review and live cross-host benchmarks remain fail-closed and unfulfilled.
 
-**Flagship certification track (BNS-015)**: *three CERTIFIED capabilities with independent external validation outweigh ten self-tested certifications.* The flagship set concentrates effort on the three highest-frequency failure surfaces — `scrna.pseudobulk_de` (cell ≠ biological replicate), `scrna.annotation_evidence` (how much evidence backs a cell-type label), and `spatial.inference_validity` (can a spatial conclusion survive its alternative explanations). The four external criteria (public dataset, independent ground truth, cross-host test, external reviewer) cannot be satisfied by the implementer alone — that is the point.
+**Flagship verification track (BNS-015)**: the flagship set concentrates effort on the three highest-frequency failure surfaces — `scrna.pseudobulk_de` (cell ≠ biological replicate), `scrna.annotation_evidence` (how much evidence backs a cell-type label), and `spatial.inference_validity` (can a spatial conclusion survive its alternative explanations). The external criteria (public dataset, independent ground truth, cross-host test, non-author reviewer) cannot be satisfied by the implementer alone — without independent external sign-off, CERTIFIED remains strictly 0.
 
 **Independent Validation Network (BNS-023)**: the flagship external-validation quota — **≥ 3 independent datasets × ≥ 2 external labs × ≥ 1 non-author reviewer per capability** — is computed from hash-verified artifacts via `bionexus ivn status` and published as an **open, append-only, signed public ledger portal (`docs/ivn/index.html` on GitHub Pages)**. Publishing an honest, unfilled ledger with standardized submission templates is our active external recruitment engine ("空账本 + 明确的填法，本身就是对外招募工具") and the only scientific moat that automatically deepens over time. Annotation evidence must span cross-disease / cross-tissue / cross-technology contexts; spatial evidence must carry independent pathology or segmentation truth; threshold/calibration profiles authorize a positive warrant only when frozen on held-out contexts (`bionexus ivn freeze-profile` / `authorize`). Every gate fails closed: author-associated datasets, registered-but-unverified frameworks and reviewer slots, tampered artifacts, and unfrozen profiles never count. Protocol, public ledger, and RFV recruitment guides: [`docs/independent-validation-network.md`](docs/independent-validation-network.md).
 
@@ -850,9 +852,9 @@ BioNexus is governed by a normative, machine-enforced scientific contract publis
 
 **Claim–Evidence Ledger** (`bionexus ledger`): claims as auditable dependency graphs (`supported_by` / `contradicted_by` / `depends_on` → fail-closed status resolution), persisted as JSON and projectable to PROV-O JSON-LD. Deliberately a data structure, not a graph platform. `bionexus verify` is its productized form.
 
-**BioFailureBench** (`bionexus bench validate` / `bionexus eval --suite biofailurebench`, [BNS-014](spec/BNS-014-biofailurebench.md)): a scientific trap corpus that does not test "can the AI answer biology questions" — it tests **whether the AI realizes a conclusion does not stand on its evidence — or that an analysis should not have been run at all**. Every trap carries eight fields (data, intended analysis, hidden flaw, expected detection, allowed computation, forbidden claim, remediation, reference), links into the BN-Fxxx taxonomy, and runs identically on any host (Claude, Codex, Cursor, Biomni, future agents). Software, skills, and prompts are easy to copy; an expert-maintained trap corpus with ground truth is not. Current state: **26 traps (23 gating, all passing deterministically; 3 frontier known limitations), covering all 12 taxonomy modes** including a positive control so the bench cannot degrade into an all-refusal benchmark.
+**BioFailureBench** (`bionexus bench validate` / `bionexus eval --suite biofailurebench`, [BNS-014](spec/BNS-014-biofailurebench.md)): a scientific trap corpus that does not test "can the AI answer biology questions" — it tests **whether the AI realizes a conclusion does not stand on its evidence — or that an analysis should not have been run at all**. Every trap carries eight fields (data, intended analysis, hidden flaw, expected detection, allowed computation, forbidden claim, remediation, reference), links into the BN-Fxxx taxonomy, and runs identically on any host (Claude, Codex, Cursor, Biomni, future agents). Software, skills, and prompts are easy to copy; an expert-maintained trap corpus with ground truth is not. Current corpus: **38 traps (35 gating; 3 frontier cases), covering all 12 taxonomy modes** including a positive control so the bench cannot degrade into an all-refusal benchmark.
 
-**Honest calibration (BNS-LC-004..006)**: the benchmark separates the *gating track* (guaranteed behavior, drives CRI) from the *frontier track* (`known_limitation` probes, reported with honest pass/fail). A gating-only 100% is explicitly not a calibration claim; calibration spans the union. Current honest state: **gating 61/61 attempted (65 total, 4 L3 skipped no-backend) · frontier 7/14 · union 90.7% · union macro-F1 90.1%** — see [`evals/reports/benchmark_report.md`](evals/reports/benchmark_report.md).
+**Honest calibration (BNS-LC-004..006)**: the benchmark separates the *gating track* (guaranteed behavior, drives CRI) from the *frontier track* (`known_limitation` probes, reported with honest pass/fail). A gating-only 100% is explicitly not a calibration claim; calibration spans the union. The [2026-08-16 historical replay](evals/reports/benchmark_report.md) recorded gating 61/61 attempted (65 total, 4 L3 skipped), frontier 7/14, and union calibration MISALIGNED. See the [2026-09-04 scoped reruns and assessment response](review/deep-analysis-2026-09-04/RESPONSE.md) for newer local evidence and its limitations. Synthetic backend checks and replay agreement do not establish approved empirical calibration.
 
 ---
 

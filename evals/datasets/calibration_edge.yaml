@@ -96,7 +96,7 @@
   known_limitation: true
   category: scientific_semantics
   prompt: "Leiden clustering complete on a single run; host asserts ROBUST maturity"
-  expected_status: PERMITTED
+  expected_status: DEGRADED_ADVISORY
   expected_capability: scrna.exploratory_clustering
   expected_maturity: PRELIMINARY
   data_metadata:

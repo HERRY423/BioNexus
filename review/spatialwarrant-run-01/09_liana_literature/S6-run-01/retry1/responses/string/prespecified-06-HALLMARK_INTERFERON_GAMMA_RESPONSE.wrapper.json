@@ -1,0 +1,22 @@
+{
+  "target": {
+    "kind": "prespecified",
+    "rank": 6,
+    "name": "HALLMARK_INTERFERON_GAMMA_RESPONSE"
+  },
+  "source": "string",
+  "returncode": 1,
+  "elapsed_seconds": 2.279483499994967,
+  "completed_at_utc": "2026-09-06T01:48:00.178486+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\requests\\string\\prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\raw\\string\\prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.raw",
+  "wrapper": {
+    "ok": false,
+    "error": {
+      "code": "network_error",
+      "message": "Request failed for string-skill: HTTPError"
+    },
+    "warnings": []
+  },
+  "stderr": ""
+}

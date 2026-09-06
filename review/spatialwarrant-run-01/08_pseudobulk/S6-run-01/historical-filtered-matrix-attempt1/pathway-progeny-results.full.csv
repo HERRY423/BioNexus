@@ -1,0 +1,15 @@
+resource,pathway,boundary_activity,core_activity,boundary_minus_core,matched_targets,method
+PROGENy OmniPath frozen snapshot,Androgen,-1.0060583728202654,-1.0162718506314596,0.010213477811194194,8721,decoupler ULM; descriptive
+PROGENy OmniPath frozen snapshot,EGFR,-13.146834322089612,-13.741765345807472,0.5949310237178604,14938,decoupler ULM; descriptive
+PROGENy OmniPath frozen snapshot,Estrogen,-5.905195632994194,-5.863413160569059,-0.041782472425135,8721,decoupler ULM; descriptive
+PROGENy OmniPath frozen snapshot,Hypoxia,-10.371261260093092,-10.690303486131446,0.31904222603835386,14938,decoupler ULM; descriptive
+PROGENy OmniPath frozen snapshot,JAK-STAT,5.0411769407210345,4.79406163877821,0.2471153019428245,14938,decoupler ULM; descriptive
+PROGENy OmniPath frozen snapshot,MAPK,-5.401084232179594,-5.664677715719913,0.2635934835403191,14938,decoupler ULM; descriptive
+PROGENy OmniPath frozen snapshot,NFkB,-9.663005443196615,-10.582369176816048,0.9193637336194325,14938,decoupler ULM; descriptive
+PROGENy OmniPath frozen snapshot,PI3K,1.5147565461770498,1.173679034513872,0.3410775116631779,14851,decoupler ULM; descriptive
+PROGENy OmniPath frozen snapshot,TGFb,3.3770340783472608,2.961548794790282,0.41548528355697867,14934,decoupler ULM; descriptive
+PROGENy OmniPath frozen snapshot,TNFa,-4.520835426797033,-5.438847448246776,0.9180120214497425,14938,decoupler ULM; descriptive
+PROGENy OmniPath frozen snapshot,Trail,-12.923649702218182,-13.37477657127805,0.451126869059868,14580,decoupler ULM; descriptive
+PROGENy OmniPath frozen snapshot,VEGF,8.152333556475345,8.10474856082402,0.04758499565132368,14935,decoupler ULM; descriptive
+PROGENy OmniPath frozen snapshot,WNT,-4.364318915556545,-4.682824835188833,0.3185059196322877,8721,decoupler ULM; descriptive
+PROGENy OmniPath frozen snapshot,p53,-15.498994813414717,-16.04294213678629,0.5439473233715741,14938,decoupler ULM; descriptive

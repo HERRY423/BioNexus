@@ -1,0 +1,22 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 15,
+    "name": "LINC01489"
+  },
+  "source": "reactome",
+  "returncode": 1,
+  "elapsed_seconds": 1.4284655000083148,
+  "completed_at_utc": "2026-09-06T01:46:21.037907+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\reactome\\gene-15-LINC01489.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\gene-15-LINC01489.raw",
+  "wrapper": {
+    "ok": false,
+    "error": {
+      "code": "network_error",
+      "message": "Request failed for reactome-skill: HTTPError"
+    },
+    "warnings": []
+  },
+  "stderr": ""
+}

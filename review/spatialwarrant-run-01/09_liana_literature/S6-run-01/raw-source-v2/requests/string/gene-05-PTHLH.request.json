@@ -1,0 +1,24 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 5,
+    "name": "PTHLH"
+  },
+  "source": "string",
+  "script": "C:\\Users\\13264\\.codex\\plugins\\cache\\openai-curated-remote\\life-sciences-databases\\0.1.5\\skills\\string-skill\\scripts\\rest_request.py",
+  "requested_at_utc": "2026-09-06T02:00:51.959110+00:00",
+  "payload": {
+    "base_url": "https://string-db.org/api/json",
+    "path": "network",
+    "method": "POST",
+    "form_body": {
+      "identifiers": "PTHLH",
+      "species": 9606,
+      "caller_identity": "spatialwarrant-s6",
+      "limit": 10
+    },
+    "max_items": 10,
+    "save_raw": true,
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\string\\gene-05-PTHLH.raw"
+  }
+}

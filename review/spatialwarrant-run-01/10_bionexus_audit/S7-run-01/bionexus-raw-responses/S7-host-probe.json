@@ -1,0 +1,21 @@
+{
+  "tool": "mcp__bionexus_local_mcp__bionexus_host_probe",
+  "request": {
+    "challenge": "SpatialWarrant S7 completed-artifact audit; locked plan SHA-256 854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82; integration receipt only, not scientific acceptance",
+    "host_name": "codex-desktop-local",
+    "host_version": "not_exposed",
+    "human_approved": true,
+    "model": "not_exposed",
+    "session_id": "01a0701e-b1cf-70c1-b22e-d940e66d5a98"
+  },
+  "status": "CLIENT_WAIT_TERMINATED_WITHOUT_TOOL_RETURN",
+  "tool_response": null,
+  "receipt_obtained": false,
+  "recorded_at_utc": "2026-09-06T02:36:38.490576+00:00",
+  "execution_cell": "148",
+  "actual_stop_tool_return": {
+    "result": "Script terminated",
+    "wall_time_seconds": 0.0
+  },
+  "interpretation": "Real request issued in this S7 turn; no raw tool return or receipt observed before stopping the outstanding client wait. This is not a fabricated server failure response or proof that the server did not run. human_approved denotes user-authorized integration logging, not Human Scientific Adjudication."
+}

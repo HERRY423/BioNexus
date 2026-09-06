@@ -1,0 +1,314 @@
+{
+  "status": "COMPLETED_WITH_PRESERVED_EXTERNAL_QUERY_FAILURES",
+  "started_at_utc": "2026-09-06T01:38:59.996561+00:00",
+  "ended_at_utc": "2026-09-06T02:03:24.802948+00:00",
+  "local_compute_elapsed_seconds": 253.02122549997875,
+  "external_query_elapsed_seconds": 26.774260700010927,
+  "total_measured_runtime_seconds": 332.8625816999993,
+  "peak_process_memory_bytes": 9827737600,
+  "start_free_C_bytes": 32392167424,
+  "end_free_C_bytes": 32322793472,
+  "output_bytes": 35028870,
+  "primary_endpoint": {
+    "section": "CID4535",
+    "eligible_sections": 1,
+    "matched_program_genes": 196,
+    "full_program_genes": 200,
+    "missing_genes": [
+      "MARCHF1",
+      "RIGI",
+      "TMT1B",
+      "WARS1"
+    ],
+    "scores": {
+      "B1_boundary_D_le_1": 5.186703467857241,
+      "B2_boundary_D_le_2": 5.203307754990919,
+      "B3_boundary_D_le_3": 5.173960592930223,
+      "core_D_gt_3": 5.151796816248766
+    },
+    "differences": {
+      "B1_boundary_minus_core": 0.03490665160847417,
+      "B2_boundary_minus_core_primary": 0.051510938742152845,
+      "B3_boundary_minus_core": 0.02216377668145686
+    },
+    "interpretation": "single-section descriptive effect only"
+  },
+  "six_genes": [
+    {
+      "gene": "CXCL9",
+      "matched": true,
+      "B2_boundary_minus_core": 0.3555274262044783
+    },
+    {
+      "gene": "CXCL10",
+      "matched": true,
+      "B2_boundary_minus_core": 0.2054320690128905
+    },
+    {
+      "gene": "CXCL11",
+      "matched": true,
+      "B2_boundary_minus_core": -0.1595849386006382
+    },
+    {
+      "gene": "IDO1",
+      "matched": true,
+      "B2_boundary_minus_core": 1.302246492757313
+    },
+    {
+      "gene": "STAT1",
+      "matched": true,
+      "B2_boundary_minus_core": -0.0041384017495218
+    },
+    {
+      "gene": "IRF1",
+      "matched": true,
+      "B2_boundary_minus_core": 0.0841675746593342
+    }
+  ],
+  "pseudobulk_inferential_DE": "NOT_RUN_INSUFFICIENT_REPLICATION",
+  "liana": {
+    "status": "COMPLETED",
+    "liana_version": "1.10.0",
+    "rows": 3584342,
+    "resource": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\resources\\liana-consensus-frozen.csv",
+    "resource_sha256": "68f7669e38e6062310cad380de0573f868e7f8a6ad529232cc5cd95ad9d9faf8",
+    "resource_pairs": 4620,
+    "groupby": "producer_celltype_minor",
+    "expr_prop": 0.1,
+    "min_cells": 5,
+    "n_perms": 1000,
+    "seed": 20260904,
+    "n_jobs": 1,
+    "normalization": "normalize_total target_sum=10000 then log1p",
+    "return_all_lrs": true,
+    "ranking_basis": "LIANA rank_aggregate magnitude_rank ascending, then source/target/ligand/receptor identifier"
+  },
+  "decoupler": {
+    "status": "COMPLETED",
+    "resource_sha256": "a1a0f938211def2b846cfde7e7dd56d83240d1bb9bc0ac423682b071761bc821",
+    "network_edges": 224107,
+    "decoupler_version": "2.2.0",
+    "pathways": 14
+  },
+  "top10_liana_interactions": [
+    {
+      "source": "Cancer Her2 SC",
+      "target": "DCs",
+      "ligand_complex": "MIF",
+      "receptor_complex": "CD74_CXCR4",
+      "lr_means": 4.089836,
+      "cellphone_pvals": 0.0,
+      "expr_prod": 15.176398,
+      "scaled_weight": 1.4376520257093317,
+      "lr_logfc": 2.0900553980920096,
+      "spec_weight": 0.005143796,
+      "lrscore": 0.979866,
+      "specificity_rank": 3.3608178276640387e-06,
+      "magnitude_rank": 2.560077002908324e-12
+    },
+    {
+      "source": "Cancer LumA SC",
+      "target": "DCs",
+      "ligand_complex": "MIF",
+      "receptor_complex": "CD74_CXCR4",
+      "lr_means": 4.010898,
+      "cellphone_pvals": 0.0,
+      "expr_prod": 14.334137,
+      "scaled_weight": 1.371380261959012,
+      "lr_logfc": 2.1496132041823928,
+      "spec_weight": 0.0048583252,
+      "lrscore": 0.979295,
+      "specificity_rank": 3.446079873914949e-06,
+      "magnitude_rank": 1.024030437057819e-11
+    },
+    {
+      "source": "Cancer Her2 SC",
+      "target": "Macrophage",
+      "ligand_complex": "MIF",
+      "receptor_complex": "CD74_CXCR4",
+      "lr_means": 3.9211054,
+      "cellphone_pvals": 0.0,
+      "expr_prod": 14.216421,
+      "scaled_weight": 1.3470416851249167,
+      "lr_logfc": 2.1160799468076004,
+      "spec_weight": 0.0048184274,
+      "lrscore": 0.9792113,
+      "specificity_rank": 3.5345137099509167e-06,
+      "magnitude_rank": 2.3040676641426948e-11
+    },
+    {
+      "source": "Cancer Her2 SC",
+      "target": "B cells Naive",
+      "ligand_complex": "MIF",
+      "receptor_complex": "CD74_CXCR4",
+      "lr_means": 3.9044294,
+      "cellphone_pvals": 0.0,
+      "expr_prod": 14.121547,
+      "scaled_weight": 1.3380875685729707,
+      "lr_logfc": 1.7961927504837365,
+      "spec_weight": 0.004786271,
+      "lrscore": 0.97914296,
+      "specificity_rank": 3.617876568043868e-06,
+      "magnitude_rank": 4.0961188353871925e-11
+    },
+    {
+      "source": "Cancer LumA SC",
+      "target": "Macrophage",
+      "ligand_complex": "MIF",
+      "receptor_complex": "CD74_CXCR4",
+      "lr_means": 3.8421674,
+      "cellphone_pvals": 0.0,
+      "expr_prod": 13.427437,
+      "scaled_weight": 1.280769921374597,
+      "lr_logfc": 2.175637752897984,
+      "spec_weight": 0.004551014,
+      "lrscore": 0.9786221,
+      "specificity_rank": 4.26094380761799e-06,
+      "magnitude_rank": 1.2544349788511454e-10
+    },
+    {
+      "source": "Cancer Her2 SC",
+      "target": "B cells Memory",
+      "ligand_complex": "MIF",
+      "receptor_complex": "CD74_CXCR4",
+      "lr_means": 3.8306265,
+      "cellphone_pvals": 0.0,
+      "expr_prod": 13.701652,
+      "scaled_weight": 1.2984536421594657,
+      "lr_logfc": 1.7340297758535612,
+      "spec_weight": 0.004643955,
+      "lrscore": 0.97883254,
+      "specificity_rank": 3.987384567102919e-06,
+      "magnitude_rank": 1.6384452038796094e-10
+    },
+    {
+      "source": "Cancer LumA SC",
+      "target": "B cells Naive",
+      "ligand_complex": "MIF",
+      "receptor_complex": "CD74_CXCR4",
+      "lr_means": 3.825492,
+      "cellphone_pvals": 0.0,
+      "expr_prod": 13.337828,
+      "scaled_weight": 1.271815804822651,
+      "lr_logfc": 1.8557505565741192,
+      "spec_weight": 0.004520642,
+      "lrscore": 0.9785519,
+      "specificity_rank": 4.350487230869095e-06,
+      "magnitude_rank": 2.0736563756200218e-10
+    },
+    {
+      "source": "Mature Luminal",
+      "target": "DCs",
+      "ligand_complex": "MIF",
+      "receptor_complex": "CD74_CXCR4",
+      "lr_means": 3.8947582,
+      "cellphone_pvals": 0.0,
+      "expr_prod": 13.094931,
+      "scaled_weight": 1.2738787053451714,
+      "lr_logfc": 1.80290366865116,
+      "spec_weight": 0.004438316,
+      "lrscore": 0.9783582,
+      "specificity_rank": 4.621281471738892e-06,
+      "magnitude_rank": 2.0736563756200218e-10
+    },
+    {
+      "source": "Cancer Her2 SC",
+      "target": "Cycling_Myeloid",
+      "ligand_complex": "MIF",
+      "receptor_complex": "CD74_CXCR4",
+      "lr_means": 3.7728662,
+      "cellphone_pvals": 0.0,
+      "expr_prod": 13.373031,
+      "scaled_weight": 1.267436440425342,
+      "lr_logfc": 1.6848012324469297,
+      "spec_weight": 0.0045325733,
+      "lrscore": 0.9785796,
+      "specificity_rank": 4.310676257870323e-06,
+      "magnitude_rank": 2.5600685922534567e-10
+    },
+    {
+      "source": "Cancer LumA SC",
+      "target": "B cells Memory",
+      "ligand_complex": "MIF",
+      "receptor_complex": "CD74_CXCR4",
+      "lr_means": 3.751689,
+      "cellphone_pvals": 0.0,
+      "expr_prod": 12.9412365,
+      "scaled_weight": 1.2321818784091458,
+      "lr_logfc": 1.7935875819439442,
+      "spec_weight": 0.004386224,
+      "lrscore": 0.97823286,
+      "specificity_rank": 4.800344530008469e-06,
+      "magnitude_rank": 3.097682279381804e-10
+    }
+  ],
+  "external_queries": {
+    "status": "COMPLETED_WITH_PRESERVED_FAILURES",
+    "correction": "Final gene target set derives from publisher raw_feature_bc_matrix. Earlier filtered-matrix query returns remain preserved but are not the final top20 set.",
+    "raw_top20_requests": 100,
+    "raw_top20_successes": 85,
+    "raw_top20_failures": 15,
+    "final_requests": 180,
+    "final_successes": 163,
+    "final_failures": 17,
+    "sources": [
+      {
+        "source": "opentargets",
+        "count": 36,
+        "sum": 36
+      },
+      {
+        "source": "pubmed",
+        "count": 36,
+        "sum": 36
+      },
+      {
+        "source": "reactome",
+        "count": 36,
+        "sum": 28
+      },
+      {
+        "source": "string",
+        "count": 36,
+        "sum": 27
+      },
+      {
+        "source": "uniprot",
+        "count": 36,
+        "sum": 36
+      }
+    ],
+    "elapsed_seconds": 26.774260700010927,
+    "completed_at_utc": "2026-09-06T02:01:14.285804+00:00",
+    "evidence_adjudication": "UNASSESSED; no automatic support or contradiction label"
+  },
+  "bionexus": {
+    "provenance_sidecar": "COMPLETED",
+    "external_envelope_audits": [
+      "VALID",
+      "VALID",
+      "VALID",
+      "VALID",
+      "VALID",
+      "VALID"
+    ],
+    "mcp_host_probe": "FAILED_THEN_TIMED_OUT",
+    "machine_verdict": "PENDING"
+  },
+  "failed_modules": [
+    {
+      "module": "BioNexus MCP host probe",
+      "status": "FAILED_THEN_TIMED_OUT",
+      "impact": "No MCP receipt; local sidecar and intake audits completed"
+    },
+    {
+      "module": "external individual lookups",
+      "status": "17_OF_180_FAILED",
+      "impact": "Failures retained; no failed lookup interpreted as absence"
+    }
+  ],
+  "patient_level_inference": "BLOCKED",
+  "machine_verdict": "PENDING",
+  "biological_conclusion": "PENDING",
+  "S7": "NOT_STARTED"
+}

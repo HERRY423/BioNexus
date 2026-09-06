@@ -34,6 +34,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+environment/
+**/environment/
 
 # Environment variables & secrets
 *.env
@@ -99,6 +101,7 @@ work/
 .pytest-tmp-*
 .pytest_tmp_run/
 .pytest_tmp_host_live_*/
+.numba-cache/
 .bionexus-doctor.json
 .codex*
 .agents/mcp_config.json
@@ -107,6 +110,11 @@ plugins/**/.agents/
 logs/
 .bionexus-audit/
 review-capsules/
+review/**/01_inputs/
+review/**/03_scrna_reference/
+review/**/04_visium_qc/
+review/**/inputs/
+review/**/logs/
 
 
 # Machine-local remote-columnar runtime and verified download parts.

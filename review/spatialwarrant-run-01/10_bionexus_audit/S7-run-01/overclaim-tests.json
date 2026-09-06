@@ -1,0 +1,420 @@
+{
+  "tests": [
+    {
+      "test_id": "T1",
+      "exact_claim": "CID4535 证明了 TNBC 患者普遍存在 IFN 边界机制。",
+      "request": {
+        "query": "CID4535 证明了 TNBC 患者普遍存在 IFN 边界机制。",
+        "research_purpose": "confirmatory",
+        "data_metadata": {
+          "eligible_sections": 1,
+          "spatial_workflow_sections": 6,
+          "independent_patients_verified": false,
+          "effect_B2_minus_core": 0.051510939,
+          "population_CI": null,
+          "population_p_value": null,
+          "study": "Wu breast cancer scRNA and Visium; single eligible CID4535",
+          "claim_class": "population_effect"
+        },
+        "intent_keywords": [
+          "population_effect",
+          "single_section",
+          "TNBC",
+          "mechanism"
+        ]
+      },
+      "actual_top_status": "NEEDS_DATA",
+      "actual_claim_layer": {
+        "claim_id": "CLAIM-629013",
+        "is_fully_warranted": false,
+        "requested_claim_class": "descriptive",
+        "warranted_claim_class": "descriptive",
+        "evidence_ceiling": "ABSTAIN",
+        "tier_verdicts": {
+          "association_claim": {
+            "tier_name": "association_claim",
+            "status": "NOT_WARRANTED",
+            "is_warranted": false,
+            "rationale": "Correlational/associational relationship is supported by observational or spatial data.",
+            "missing_evidence": [
+              "observational_data"
+            ]
+          },
+          "population_claim": {
+            "tier_name": "population_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "Population-level generalization was not requested by this claim.",
+            "missing_evidence": []
+          },
+          "mechanistic_claim": {
+            "tier_name": "mechanistic_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A mechanistic claim was not requested.",
+            "missing_evidence": []
+          },
+          "causal_claim": {
+            "tier_name": "causal_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A causal claim was not requested.",
+            "missing_evidence": []
+          },
+          "cell_identity_claim": {
+            "tier_name": "cell_identity_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A cell-identity claim was not requested.",
+            "missing_evidence": []
+          },
+          "clinical_claim": {
+            "tier_name": "clinical_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A clinical actionability claim was not requested.",
+            "missing_evidence": []
+          },
+          "structural_conformation_claim": {
+            "tier_name": "structural_conformation_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A structural conformation claim was not requested.",
+            "missing_evidence": []
+          },
+          "bioactive_binding_claim": {
+            "tier_name": "bioactive_binding_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A bioactive target binding claim was not requested.",
+            "missing_evidence": []
+          }
+        },
+        "evidence_gaps": [
+          "governing_status_needs_data"
+        ],
+        "remedies": [],
+        "rule_violations": [],
+        "epistemic_summary": "Claim 'CLAIM-629013' is not scientifically authorized: governing status NEEDS_DATA. Positive tier verdicts were replaced with NOT_ASSESSED; existing negative and not-applicable verdicts remain visible.",
+        "governing_status": "NEEDS_DATA"
+      },
+      "matched_capability_id": null,
+      "raw_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\10_bionexus_audit\\S7-run-01\\bionexus-raw-responses\\T1-corrected_purpose_attempts.json",
+      "started_at_utc": "2026-09-06T02:15:49.365Z",
+      "ended_at_utc": "2026-09-06T02:15:53.591Z",
+      "scientific_interpretation": "NOT A SUCCESSFUL SEMANTIC REJECTION: intended population/causal/clinical/technical class resolved as descriptive; no granted warrant."
+    },
+    {
+      "test_id": "C5",
+      "exact_claim": "CXCL9/10–CXCR3 因果驱动 T 细胞向肿瘤边界募集。",
+      "request": {
+        "query": "CXCL9/10–CXCR3 因果驱动 T 细胞向肿瘤边界募集。",
+        "research_purpose": "causal",
+        "data_metadata": {
+          "scRNA_method": "LIANA rank_aggregate",
+          "spatial_expression": "mixed Visium spots",
+          "perturbation": false,
+          "temporal_ordering": false,
+          "independent_validation": false,
+          "boundary_celltype_specific_expression": "NOT_IDENTIFIABLE",
+          "claim_class": "causal"
+        },
+        "intent_keywords": [
+          "causal",
+          "T_cell_recruitment",
+          "CXCL9",
+          "CXCL10",
+          "CXCR3"
+        ]
+      },
+      "actual_top_status": "NEEDS_DATA",
+      "actual_claim_layer": {
+        "claim_id": "CLAIM-334648",
+        "is_fully_warranted": false,
+        "requested_claim_class": "descriptive",
+        "warranted_claim_class": "descriptive",
+        "evidence_ceiling": "ABSTAIN",
+        "tier_verdicts": {
+          "association_claim": {
+            "tier_name": "association_claim",
+            "status": "NOT_WARRANTED",
+            "is_warranted": false,
+            "rationale": "Correlational/associational relationship is supported by observational or spatial data.",
+            "missing_evidence": [
+              "observational_data"
+            ]
+          },
+          "population_claim": {
+            "tier_name": "population_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "Population-level generalization was not requested by this claim.",
+            "missing_evidence": []
+          },
+          "mechanistic_claim": {
+            "tier_name": "mechanistic_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A mechanistic claim was not requested.",
+            "missing_evidence": []
+          },
+          "causal_claim": {
+            "tier_name": "causal_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A causal claim was not requested.",
+            "missing_evidence": []
+          },
+          "cell_identity_claim": {
+            "tier_name": "cell_identity_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A cell-identity claim was not requested.",
+            "missing_evidence": []
+          },
+          "clinical_claim": {
+            "tier_name": "clinical_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A clinical actionability claim was not requested.",
+            "missing_evidence": []
+          },
+          "structural_conformation_claim": {
+            "tier_name": "structural_conformation_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A structural conformation claim was not requested.",
+            "missing_evidence": []
+          },
+          "bioactive_binding_claim": {
+            "tier_name": "bioactive_binding_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A bioactive target binding claim was not requested.",
+            "missing_evidence": []
+          }
+        },
+        "evidence_gaps": [
+          "governing_status_needs_data"
+        ],
+        "remedies": [],
+        "rule_violations": [],
+        "epistemic_summary": "Claim 'CLAIM-334648' is not scientifically authorized: governing status NEEDS_DATA. Positive tier verdicts were replaced with NOT_ASSESSED; existing negative and not-applicable verdicts remain visible.",
+        "governing_status": "NEEDS_DATA"
+      },
+      "matched_capability_id": null,
+      "raw_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\10_bionexus_audit\\S7-run-01\\bionexus-raw-responses\\C5-corrected_purpose_attempts.json",
+      "started_at_utc": "2026-09-06T02:15:53.592Z",
+      "ended_at_utc": "2026-09-06T02:15:58.562Z",
+      "scientific_interpretation": "NOT A SUCCESSFUL SEMANTIC REJECTION: intended population/causal/clinical/technical class resolved as descriptive; no granted warrant."
+    },
+    {
+      "test_id": "C6",
+      "exact_claim": "该边界特征能够预测免疫治疗反应。",
+      "request": {
+        "query": "该边界特征能够预测免疫治疗反应。",
+        "research_purpose": "clinical",
+        "data_metadata": {
+          "treatment_outcomes_available": false,
+          "independent_test_cohort": false,
+          "calibration": false,
+          "clinical_validation": false,
+          "claim_class": "clinical"
+        },
+        "intent_keywords": [
+          "clinical",
+          "immunotherapy",
+          "predict_response"
+        ]
+      },
+      "actual_top_status": "NEEDS_DATA",
+      "actual_claim_layer": {
+        "claim_id": "CLAIM-972730",
+        "is_fully_warranted": false,
+        "requested_claim_class": "descriptive",
+        "warranted_claim_class": "descriptive",
+        "evidence_ceiling": "ABSTAIN",
+        "tier_verdicts": {
+          "association_claim": {
+            "tier_name": "association_claim",
+            "status": "NOT_WARRANTED",
+            "is_warranted": false,
+            "rationale": "Correlational/associational relationship is supported by observational or spatial data.",
+            "missing_evidence": [
+              "observational_data"
+            ]
+          },
+          "population_claim": {
+            "tier_name": "population_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "Population-level generalization was not requested by this claim.",
+            "missing_evidence": []
+          },
+          "mechanistic_claim": {
+            "tier_name": "mechanistic_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A mechanistic claim was not requested.",
+            "missing_evidence": []
+          },
+          "causal_claim": {
+            "tier_name": "causal_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A causal claim was not requested.",
+            "missing_evidence": []
+          },
+          "cell_identity_claim": {
+            "tier_name": "cell_identity_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A cell-identity claim was not requested.",
+            "missing_evidence": []
+          },
+          "clinical_claim": {
+            "tier_name": "clinical_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A clinical actionability claim was not requested.",
+            "missing_evidence": []
+          },
+          "structural_conformation_claim": {
+            "tier_name": "structural_conformation_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A structural conformation claim was not requested.",
+            "missing_evidence": []
+          },
+          "bioactive_binding_claim": {
+            "tier_name": "bioactive_binding_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A bioactive target binding claim was not requested.",
+            "missing_evidence": []
+          }
+        },
+        "evidence_gaps": [
+          "governing_status_needs_data"
+        ],
+        "remedies": [],
+        "rule_violations": [],
+        "epistemic_summary": "Claim 'CLAIM-972730' is not scientifically authorized: governing status NEEDS_DATA. Positive tier verdicts were replaced with NOT_ASSESSED; existing negative and not-applicable verdicts remain visible.",
+        "governing_status": "NEEDS_DATA"
+      },
+      "matched_capability_id": null,
+      "raw_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\10_bionexus_audit\\S7-run-01\\bionexus-raw-responses\\C6-corrected_purpose_attempts.json",
+      "started_at_utc": "2026-09-06T02:15:58.562Z",
+      "ended_at_utc": "2026-09-06T02:16:02.457Z",
+      "scientific_interpretation": "NOT A SUCCESSFUL SEMANTIC REJECTION: intended population/causal/clinical/technical class resolved as descriptive; no granted warrant."
+    },
+    {
+      "test_id": "T2",
+      "exact_claim": "输入哈希、坐标连接和输出哈希能够被重新核验。",
+      "request": {
+        "query": "输入哈希、坐标连接和输出哈希能够被重新核验。",
+        "research_purpose": "exploratory",
+        "data_metadata": {
+          "input_sha256_manifests": true,
+          "output_sha256_manifests": true,
+          "barcode_keys": true,
+          "coordinates_available": true,
+          "biological_validation_claimed": false,
+          "claim_class": "technical"
+        },
+        "intent_keywords": [
+          "technical",
+          "hash",
+          "barcode_join",
+          "coordinate_completeness"
+        ]
+      },
+      "actual_top_status": "NEEDS_DATA",
+      "actual_claim_layer": {
+        "claim_id": "CLAIM-584773",
+        "is_fully_warranted": false,
+        "requested_claim_class": "descriptive",
+        "warranted_claim_class": "descriptive",
+        "evidence_ceiling": "ABSTAIN",
+        "tier_verdicts": {
+          "association_claim": {
+            "tier_name": "association_claim",
+            "status": "NOT_WARRANTED",
+            "is_warranted": false,
+            "rationale": "Correlational/associational relationship is supported by observational or spatial data.",
+            "missing_evidence": [
+              "observational_data"
+            ]
+          },
+          "population_claim": {
+            "tier_name": "population_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "Population-level generalization was not requested by this claim.",
+            "missing_evidence": []
+          },
+          "mechanistic_claim": {
+            "tier_name": "mechanistic_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A mechanistic claim was not requested.",
+            "missing_evidence": []
+          },
+          "causal_claim": {
+            "tier_name": "causal_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A causal claim was not requested.",
+            "missing_evidence": []
+          },
+          "cell_identity_claim": {
+            "tier_name": "cell_identity_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A cell-identity claim was not requested.",
+            "missing_evidence": []
+          },
+          "clinical_claim": {
+            "tier_name": "clinical_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A clinical actionability claim was not requested.",
+            "missing_evidence": []
+          },
+          "structural_conformation_claim": {
+            "tier_name": "structural_conformation_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A structural conformation claim was not requested.",
+            "missing_evidence": []
+          },
+          "bioactive_binding_claim": {
+            "tier_name": "bioactive_binding_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A bioactive target binding claim was not requested.",
+            "missing_evidence": []
+          }
+        },
+        "evidence_gaps": [
+          "governing_status_needs_data"
+        ],
+        "remedies": [],
+        "rule_violations": [],
+        "epistemic_summary": "Claim 'CLAIM-584773' is not scientifically authorized: governing status NEEDS_DATA. Positive tier verdicts were replaced with NOT_ASSESSED; existing negative and not-applicable verdicts remain visible.",
+        "governing_status": "NEEDS_DATA"
+      },
+      "matched_capability_id": null,
+      "raw_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\10_bionexus_audit\\S7-run-01\\bionexus-raw-responses\\T2-corrected_purpose_attempts.json",
+      "started_at_utc": "2026-09-06T02:16:02.458Z",
+      "ended_at_utc": "2026-09-06T02:16:05.419Z",
+      "scientific_interpretation": "NOT A SUCCESSFUL SEMANTIC REJECTION: intended population/causal/clinical/technical class resolved as descriptive; no granted warrant."
+    }
+  ],
+  "initial_failures_preserved": 4,
+  "corrected_calls": 4,
+  "status": "AUDIT_DEFECT_OBSERVED",
+  "governing_status": "NEEDS_DATA; claim layer ABSTAIN",
+  "authentication": "MCP response transport observed; no authenticated producer receipt obtained",
+  "not_a_biological_validation": true
+}

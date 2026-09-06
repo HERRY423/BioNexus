@@ -1,0 +1,18 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.9, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Plugin\BioNexus
+configfile: pyproject.toml
+plugins: anyio-4.14.2, fast-array-utils-1.4.1, hypothesis-6.156.6, langsmith-0.10.10, cov-7.1.0, typeguard-4.5.2, zarr-3.2.1
+collected 91 items / 2 deselected / 89 selected
+
+tests\unit\test_frontier_routing_disambiguation.py ..........            [ 11%]
+tests\unit\test_benchmark_evidence_integrity.py ........................ [ 38%]
+..                                                                       [ 40%]
+tests\unit\test_eval_harness.py ........                                 [ 49%]
+tests\unit\test_eval_receipt.py .............                            [ 64%]
+tests\unit\test_intent_router.py ......                                  [ 70%]
+tests\unit\test_router_statistical_stage.py ......                       [ 77%]
+tests\unit\test_lab_policy.py ..............                             [ 93%]
+tests\unit\test_readme_consistency.py ......                             [100%]
+
+====================== 89 passed, 2 deselected in 3.47s =======================

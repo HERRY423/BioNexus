@@ -1,0 +1,122 @@
+{
+  "created_at_utc": "2026-09-06T01:55:49.791633+00:00",
+  "root": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01",
+  "files": [
+    {
+      "path": "bionexus.provenance.sidecar.json",
+      "bytes": 10031,
+      "sha256": "429cb75d7e5504fe561242655c74cdc3090c1b1a2fff290dc14b15e9825c2651"
+    },
+    {
+      "path": "descriptive-whole-gene-table.full.csv.gz",
+      "bytes": 519699,
+      "sha256": "82ba4e4a940f44c10fafca6e256b2d91cf8fff5260da1e6ba7e183ffa7a75227"
+    },
+    {
+      "path": "execution-environment.json",
+      "bytes": 834,
+      "sha256": "ba5f23ffb74dc1d428364cf9566b196ced3b682ee6b101b967866b02763ac5d7"
+    },
+    {
+      "path": "finalize_spatialwarrant_s6.py",
+      "bytes": 16328,
+      "sha256": "b30ebc2b8452773f6c5bc63c08bd3f52cc7d5551216f00be85fda47045bb285f"
+    },
+    {
+      "path": "input-verification.json",
+      "bytes": 1617,
+      "sha256": "ee8b00f5a454c0380a4f7bf8f08965e7dee7f8e244dbcba500529e0b4bec8d4b"
+    },
+    {
+      "path": "methods-and-limitations.json",
+      "bytes": 835,
+      "sha256": "f97af10143d09fdca3ba2edf4aaecb1e354995f2abe261c6cfd2a0bff24c2732"
+    },
+    {
+      "path": "pathway-hallmark-results.full.csv",
+      "bytes": 8815,
+      "sha256": "2af1a375b014d57bb78f79861eb0c9241346027ed49f5cbd52ed04f15dc092dd"
+    },
+    {
+      "path": "pathway-progeny-results.full.csv",
+      "bytes": 1916,
+      "sha256": "5dc3edd11de578ad1b876ee6ac15e286c018be669b2fcd12a7265ebf138bf38c"
+    },
+    {
+      "path": "pathway-resource-and-coverage.json",
+      "bytes": 807,
+      "sha256": "1b086b13a70ab00454af597710bfb054eab493dc156cbb6c5027b717265dbd92"
+    },
+    {
+      "path": "prespecified-six-genes.csv",
+      "bytes": 1527,
+      "sha256": "c2ac730baec53563cd6bfcbff90aa17ab0f8f030db6eb06993b419bd7d97af0f"
+    },
+    {
+      "path": "primary-program-B1-B2-B3-sensitivity.csv",
+      "bytes": 284,
+      "sha256": "2100da7bf83faa480b1b6ac45b21d7d02cbb4061d3ba66d317e95d0ad74603e9"
+    },
+    {
+      "path": "primary-program-gene-coverage.json",
+      "bytes": 3320,
+      "sha256": "3d72be4ca68f268941fd10bbe0f0d124338142ff9d9deaea3f417ddde3a5ba68"
+    },
+    {
+      "path": "primary-program-matched-genes.csv",
+      "bytes": 1363,
+      "sha256": "ae3b57b8191f445ddba302e8faf41950cc23e0c08a1e05643096dccae2421529"
+    },
+    {
+      "path": "primary-program-missing-genes.csv",
+      "bytes": 42,
+      "sha256": "06286d57e0051a47fc16cfde0c53290016edf31077575f3595b6b53b01a5b85f"
+    },
+    {
+      "path": "primary-program-region-scores.csv",
+      "bytes": 366,
+      "sha256": "e3e2631f61bb3507f19df6ac0bf940a698113fca0ac72653c706c3bfc2acf0b2"
+    },
+    {
+      "path": "pseudobulk-design-status.csv",
+      "bytes": 281,
+      "sha256": "696092c0e9ad9f4bf957070caf9017a67329b423e33c3fa774dbe5b7a452e192"
+    },
+    {
+      "path": "region-pseudobulk-raw-counts.full.csv.gz",
+      "bytes": 157872,
+      "sha256": "e0962e2405d04e73b1b3994c800bd01a0a924674399249db24cb3889d0cdb827"
+    },
+    {
+      "path": "run_spatialwarrant_s6.py",
+      "bytes": 32900,
+      "sha256": "2346bb637436ed84f69333fc49f18d36753ad9987fb2d1b4885a7d2c159408e2"
+    },
+    {
+      "path": "S6-checkpoint.md",
+      "bytes": 2017,
+      "sha256": "ac5c9432e457ed2c33b84dffb59b964af9941dd758f1e63df77752b70fd19a03"
+    },
+    {
+      "path": "S6-integrated-figure.png",
+      "bytes": 242350,
+      "sha256": "de415157efae73feb51a5ed2a2660f196cdbd2dca01b47a23876adf16f5126be"
+    },
+    {
+      "path": "S6-local-result.json",
+      "bytes": 6010,
+      "sha256": "df855eff07a586f78484618ced195c964ac32b14554d2fda76e235cff2799e2e"
+    },
+    {
+      "path": "S6-result.json",
+      "bytes": 9749,
+      "sha256": "1034528ed3d2ade20b513841b14afa9bc6a2cbf001507240614c662ead1386dd"
+    },
+    {
+      "path": "SHA256SUMS.local.txt",
+      "bytes": 1775,
+      "sha256": "90f8bc62782b61eb3e1c2d8fe4910a295998b366890a7fbf6bf5040dc6483c55"
+    }
+  ],
+  "total_bytes_excluding_manifest": 1020738
+}

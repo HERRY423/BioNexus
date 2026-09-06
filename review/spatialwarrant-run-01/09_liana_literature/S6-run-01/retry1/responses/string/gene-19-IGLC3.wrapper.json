@@ -1,0 +1,22 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 19,
+    "name": "IGLC3"
+  },
+  "source": "string",
+  "returncode": 1,
+  "elapsed_seconds": 1.308186400012346,
+  "completed_at_utc": "2026-09-06T01:47:49.508912+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\requests\\string\\gene-19-IGLC3.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\raw\\string\\gene-19-IGLC3.raw",
+  "wrapper": {
+    "ok": false,
+    "error": {
+      "code": "network_error",
+      "message": "Request failed for string-skill: HTTPError"
+    },
+    "warnings": []
+  },
+  "stderr": ""
+}

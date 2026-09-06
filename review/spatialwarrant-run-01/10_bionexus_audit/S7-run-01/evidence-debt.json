@@ -1,0 +1,64 @@
+{
+  "debts": [
+    {
+      "id": "D1",
+      "claims": "C1/C3/C4/T1",
+      "gap": "Independent boundary-eligible sections and verified subject identity absent",
+      "impact": "Limits population inference; cannot fix by counting spots or shared derivations"
+    },
+    {
+      "id": "D2",
+      "claims": "C2/C3/C5",
+      "gap": "Reference shared across Tangram, NNLS, ingest, LIANA and niches",
+      "impact": "Limits independence and composition truth"
+    },
+    {
+      "id": "D3",
+      "claims": "C3",
+      "gap": "Four-component target niche not observed",
+      "impact": "Retain negative result; do not change k or component map"
+    },
+    {
+      "id": "D4",
+      "claims": "C5",
+      "gap": "No perturbation/temporal evidence or cell-resolved boundary expression",
+      "impact": "Blocks causal recruitment claim"
+    },
+    {
+      "id": "D5",
+      "claims": "C6",
+      "gap": "No immunotherapy outcome/test cohort/calibration",
+      "impact": "Blocks clinical prediction"
+    },
+    {
+      "id": "D6",
+      "claims": "All",
+      "gap": "PubMed searches lack target-wise primary-paper support/contradiction adjudication; 17/180 failed queries",
+      "impact": "Limits external-context synthesis; no consensus/replication claim"
+    },
+    {
+      "id": "D7",
+      "claims": "All",
+      "gap": "BioNexus Chinese claim-class parsing defect and no authenticated receipt",
+      "impact": "Blocks claims of successful automatic semantic refusal or certified external audit"
+    },
+    {
+      "id": "D8",
+      "claims": "T2",
+      "gap": "Same-host hash/join check, no independent rerun",
+      "impact": "Technical only"
+    },
+    {
+      "id": "D9",
+      "claims": "C2",
+      "gap": "1000 and 2000 feature requests share capped actual sets",
+      "impact": "Limits claimed parameter coverage"
+    },
+    {
+      "id": "D10",
+      "claims": "All",
+      "gap": "Some S6 external envelopes use query dates/targets as release/record provenance",
+      "impact": "VALID remains internal schema consistency; exact database release/returned-record mapping unresolved"
+    }
+  ]
+}

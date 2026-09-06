@@ -76,6 +76,9 @@ def evaluate_pseudobulk_inferential_warrant(
     has_donor_metadata: bool = True,
     is_interventional: bool = False,
     nominal_fdr: float = 0.05,
+    design_balanced_or_paired: bool = False,
+    dispersion_verified: bool = False,
+    intervention_identified: bool = False,
 ) -> PseudobulkWarrantVerdict:
     """
     Evaluate what inferential conclusions are scientifically warranted for a pseudobulk DE design.
@@ -89,6 +92,9 @@ def evaluate_pseudobulk_inferential_warrant(
         has_donor_metadata: Whether biological replicate/donor identifiers exist.
         is_interventional: Whether this is a controlled perturbation study (e.g. CRISPR/Perturb-seq).
         nominal_fdr: Multiple testing FDR threshold (default: 0.05).
+        design_balanced_or_paired: Whether treatment assignment is balanced or paired across donors.
+        dispersion_verified: Whether negative binomial dispersion estimation was properly modeled and converged.
+        intervention_identified: Whether exchangeability and unconfoundedness conditions are explicitly verified.
 
     Returns:
         PseudobulkWarrantVerdict detailing the justified regime, ceiling, and claim boundaries.
@@ -109,6 +115,9 @@ def evaluate_pseudobulk_inferential_warrant(
         "has_donor_metadata": has_donor_metadata,
         "is_interventional": is_interventional,
         "nominal_fdr": nominal_fdr,
+        "design_balanced_or_paired": design_balanced_or_paired,
+        "dispersion_verified": dispersion_verified,
+        "intervention_identified": intervention_identified,
     }
 
     # 1. Check Fatal Invariants: Non-integer counts / Invalid input
@@ -192,12 +201,28 @@ def evaluate_pseudobulk_inferential_warrant(
             f"Low cell count per sample ({min_cells_per_sample} < 10): pseudobulk counts for sparse cell types may have elevated variance."
         )
 
+    # Causal identification requires verified experimental design, dispersion modeling,
+    # and exchangeability, not merely an interventional flag on minimum replicates (Squair et al. 2021).
+    causal_allowed = False
+    maturity = ConclusionMaturity.SUPPORTED
+
+    if is_interventional:
+        if intervention_identified and (design_balanced_or_paired or dispersion_verified):
+            causal_allowed = True
+            maturity = ConclusionMaturity.ROBUST
+        else:
+            warnings.append(
+                "Interventional study declared, but causal identification conditions "
+                "(exchangeability, balanced/paired design matrix, dispersion modeling) "
+                "are unverified. Causal claims restricted; defaulting to population-level associational inference."
+            )
+
     return PseudobulkWarrantVerdict(
         regime=InferentialRegime.POPULATION_INFERENCE,
-        maturity_ceiling=ConclusionMaturity.SUPPORTED if not is_interventional else ConclusionMaturity.ROBUST,
+        maturity_ceiling=maturity,
         permitted=True,
         population_claims_allowed=True,
-        causal_claims_allowed=bool(is_interventional),
+        causal_claims_allowed=causal_allowed,
         reasons=[
             f"Sufficient biological replicates (min N={min_donors} >= 3) and raw integer counts. "
             "Negative binomial GLM with Wald tests warrants population-level differential expression inference."

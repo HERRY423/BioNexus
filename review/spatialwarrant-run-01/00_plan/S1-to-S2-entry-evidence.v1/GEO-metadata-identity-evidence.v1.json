@@ -1,0 +1,2841 @@
+{
+  "created": "2026-09-05T10:26:43.408318+00:00",
+  "metadata_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\GSE176078\\GSE176078_Wu_etal_2021_BRCA_scRNASeq-extracted\\Wu_etal_2021_BRCA_scRNASeq\\metadata.csv",
+  "metadata_sha256": "2de14f17546839a859464aba6f29de5575b96cb79351c4604c9286f15969e268",
+  "metadata_columns": [
+    "",
+    "orig.ident",
+    "nCount_RNA",
+    "nFeature_RNA",
+    "percent.mito",
+    "subtype",
+    "celltype_subset",
+    "celltype_minor",
+    "celltype_major"
+  ],
+  "source_sample_counts": {
+    "CID3586": 6178,
+    "CID3838": 2353,
+    "CID3921": 3024,
+    "CID3941": 631,
+    "CID3946": 774,
+    "CID3948": 2327,
+    "CID3963": 3527,
+    "CID4040": 2531,
+    "CID4066": 5309,
+    "CID4067": 3764,
+    "CID4290A": 5789,
+    "CID4398": 4451,
+    "CID44041": 2131,
+    "CID4461": 631,
+    "CID4463": 1138,
+    "CID4465": 1564,
+    "CID4471": 8609,
+    "CID4495": 7985,
+    "CID44971": 7986,
+    "CID44991": 7023,
+    "CID4513": 5619,
+    "CID4515": 4149,
+    "CID45171": 2447,
+    "CID4523": 1754,
+    "CID4530N": 4409,
+    "CID4535": 3961
+  },
+  "barcode_unique": true,
+  "barcode_order_equals_metadata": true,
+  "missing_orig_ident": 0,
+  "missing_minor_label": 0,
+  "minor_label_values": [
+    "B cells Memory",
+    "B cells Naive",
+    "CAFs MSC iCAF-like",
+    "CAFs myCAF-like",
+    "Cancer Basal SC",
+    "Cancer Cycling",
+    "Cancer Her2 SC",
+    "Cancer LumA SC",
+    "Cancer LumB SC",
+    "Cycling PVL",
+    "Cycling T-cells",
+    "Cycling_Myeloid",
+    "DCs",
+    "Endothelial ACKR1",
+    "Endothelial CXCL12",
+    "Endothelial Lymphatic LYVE1",
+    "Endothelial RGS5",
+    "Luminal Progenitors",
+    "Macrophage",
+    "Mature Luminal",
+    "Monocyte",
+    "Myoepithelial",
+    "NK cells",
+    "NKT cells",
+    "PVL Differentiated",
+    "PVL Immature",
+    "Plasmablasts",
+    "T cells CD4+",
+    "T cells CD8+"
+  ],
+  "GEO_source_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\source_metadata\\GSE176078_family.soft.gz",
+  "GEO_source_sha256": "8d1d0298a8e52c1449c3865736b1d0cf2a55a770b405e820b4eeec6cdd1621f7",
+  "GEO_samples": [
+    {
+      "geo_accession": "GSM5354513",
+      "fields": {
+        "!Sample_title": [
+          "CID3586"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354513"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: HER2+/ER+",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546317"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354513/suppl/GSM5354513_CID3586.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354514",
+      "fields": {
+        "!Sample_title": [
+          "CID3838"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354514"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: HER2+",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546316"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354514/suppl/GSM5354514_CID3838.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354515",
+      "fields": {
+        "!Sample_title": [
+          "CID3921"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354515"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: HER2+",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546315"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354515/suppl/GSM5354515_CID3921.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354516",
+      "fields": {
+        "!Sample_title": [
+          "CID3941"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354516"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: ER+",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546314"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354516/suppl/GSM5354516_CID3941.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354517",
+      "fields": {
+        "!Sample_title": [
+          "CID3946"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354517"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: TNBC",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546312"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354517/suppl/GSM5354517_CID3946.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354518",
+      "fields": {
+        "!Sample_title": [
+          "CID3948"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354518"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: ER+",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546311"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354518/suppl/GSM5354518_CID3948.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354519",
+      "fields": {
+        "!Sample_title": [
+          "CID3963"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354519"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: ER+",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546310"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354519/suppl/GSM5354519_CID3963.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354520",
+      "fields": {
+        "!Sample_title": [
+          "CID4040"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354520"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: ER+",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546309"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354520/suppl/GSM5354520_CID4040.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354521",
+      "fields": {
+        "!Sample_title": [
+          "CID4066"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354521"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: HER2+/ER+",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546508"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354521/suppl/GSM5354521_CID4066.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354522",
+      "fields": {
+        "!Sample_title": [
+          "CID4067"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354522"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: ER+",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546507"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354522/suppl/GSM5354522_CID4067.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354523",
+      "fields": {
+        "!Sample_title": [
+          "CID4290A"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354523"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: ER+",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546327"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354523/suppl/GSM5354523_CID4290A.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354524",
+      "fields": {
+        "!Sample_title": [
+          "CID4398"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354524"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: ER+",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546326"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354524/suppl/GSM5354524_CID4398.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354525",
+      "fields": {
+        "!Sample_title": [
+          "CID44041"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354525"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: TNBC",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546325"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354525/suppl/GSM5354525_CID44041.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354526",
+      "fields": {
+        "!Sample_title": [
+          "CID4461"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354526"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: ER+",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546324"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354526/suppl/GSM5354526_CID4461.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354527",
+      "fields": {
+        "!Sample_title": [
+          "CID4463"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354527"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: ER+",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546323"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354527/suppl/GSM5354527_CID4463.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354528",
+      "fields": {
+        "!Sample_title": [
+          "CID4465"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354528"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: TNBC",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546322"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354528/suppl/GSM5354528_CID4465.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354529",
+      "fields": {
+        "!Sample_title": [
+          "CID4471"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354529"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: ER+",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546321"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354529/suppl/GSM5354529_CID4471.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354530",
+      "fields": {
+        "!Sample_title": [
+          "CID4495"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354530"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: TNBC",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546320"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354530/suppl/GSM5354530_CID4495.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354531",
+      "fields": {
+        "!Sample_title": [
+          "CID44971"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354531"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: TNBC",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546319"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354531/suppl/GSM5354531_CID44971.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354532",
+      "fields": {
+        "!Sample_title": [
+          "CID44991"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354532"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: TNBC",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546318"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354532/suppl/GSM5354532_CID44991.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354533",
+      "fields": {
+        "!Sample_title": [
+          "CID4513"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354533"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: TNBC",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546506"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354533/suppl/GSM5354533_CID4513.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354534",
+      "fields": {
+        "!Sample_title": [
+          "CID4515"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354534"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: TNBC",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546505"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354534/suppl/GSM5354534_CID4515.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354535",
+      "fields": {
+        "!Sample_title": [
+          "CID45171"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354535"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: HER2+",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546504"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354535/suppl/GSM5354535_CID45171.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354536",
+      "fields": {
+        "!Sample_title": [
+          "CID4523"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354536"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: TNBC",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546503"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354536/suppl/GSM5354536_CID4523.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354537",
+      "fields": {
+        "!Sample_title": [
+          "CID4530N"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354537"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: ER+",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546502"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354537/suppl/GSM5354537_CID4530N.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    },
+    {
+      "geo_accession": "GSM5354538",
+      "fields": {
+        "!Sample_title": [
+          "CID4535"
+        ],
+        "!Sample_geo_accession": [
+          "GSM5354538"
+        ],
+        "!Sample_status": [
+          "Public on Jun 24 2021"
+        ],
+        "!Sample_submission_date": [
+          "Jun 03 2021"
+        ],
+        "!Sample_last_update_date": [
+          "Jun 26 2021"
+        ],
+        "!Sample_type": [
+          "SRA"
+        ],
+        "!Sample_channel_count": [
+          "1"
+        ],
+        "!Sample_source_name_ch1": [
+          "Mammary Tumor"
+        ],
+        "!Sample_organism_ch1": [
+          "Homo sapiens"
+        ],
+        "!Sample_taxid_ch1": [
+          "9606"
+        ],
+        "!Sample_characteristics_ch1": [
+          "clinical_subtype: ER+",
+          "gender: female",
+          "tissue: Primary Breast Tumor"
+        ],
+        "!Sample_molecule_ch1": [
+          "total RNA"
+        ],
+        "!Sample_extract_protocol_ch1": [
+          "Single-cell sequencing was performed using the Chromium Single-Cell v2 3\u2019 and 5\u2019 Chemistry Library, Gel Bead, Multiplex and Chip Kits (10X Genomics) according to the manufacturer's protocol. A total of 5,000 to 7,000 cells were targeted per well.",
+          "Libraries were sequenced on the NextSeq 500 platform (Illumina) with pair-ended sequencing and dual indexing. A total of 26, 8 and 98 cycles were run for Read 1, i7 index and Read 2, respectively."
+        ],
+        "!Sample_description": [
+          "***Raw Data Disclaimer: Raw human data files are deposited to the EGA (EGAS00001005173) to adhere to ethics.***"
+        ],
+        "!Sample_data_processing": [
+          "Raw bcl files were demultiplexed and mapped to the reference genome GRCh38 using the Cell Ranger Single Cell v2.0 software (10X Genomics). The EmptyDrops method from the DropletUtils package (v1.2.2) was applied for cell filtering with additional cutoffs for cells with a gene and unique molecular identifier (UMIs) count greater than 200 and 250, respectively, and a mitochondrial percentage less than 20%.",
+          "Genome_build: GRCh38",
+          "Supplementary_files_format_and_content: Processed data files in MM matrix format (*.mtx), genes and barcode IDs (*.tsv)"
+        ],
+        "!Sample_platform_id": [
+          "GPL18573"
+        ],
+        "!Sample_contact_name": [
+          "Alexander,,Swarbrick"
+        ],
+        "!Sample_contact_email": [
+          "a.swarbrick@garvan.org.au"
+        ],
+        "!Sample_contact_institute": [
+          "Garvan Institute of Medical Research"
+        ],
+        "!Sample_contact_address": [
+          "384 Victoria Street"
+        ],
+        "!Sample_contact_city": [
+          "Darlinghurst"
+        ],
+        "!Sample_contact_state": [
+          "NSW"
+        ],
+        "!Sample_contact_zip/postal_code": [
+          "2010"
+        ],
+        "!Sample_contact_country": [
+          "Australia"
+        ],
+        "!Sample_instrument_model": [
+          "NextSeq 500"
+        ],
+        "!Sample_library_selection": [
+          "cDNA"
+        ],
+        "!Sample_library_source": [
+          "transcriptomic"
+        ],
+        "!Sample_library_strategy": [
+          "RNA-Seq"
+        ],
+        "!Sample_relation": [
+          "BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN19546501"
+        ],
+        "!Sample_supplementary_file_1": [
+          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5354nnn/GSM5354538/suppl/GSM5354538_CID4535.tar.gz"
+        ],
+        "!Sample_series_id": [
+          "GSE176078"
+        ],
+        "!Sample_data_row_count": [
+          "0"
+        ]
+      }
+    }
+  ],
+  "metadata_orig_ident_equals_GEO_sample_titles": true,
+  "scope": "Metadata identifier/label inspection only; source nCount_RNA/nFeature_RNA/percent.mito values not used or summarized; no expression matrix parsed."
+}

@@ -1,0 +1,55 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 17,
+    "name": "DENND4C"
+  },
+  "source": "reactome",
+  "returncode": 0,
+  "elapsed_seconds": 1.3958601000194903,
+  "completed_at_utc": "2026-09-06T01:46:22.675038+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\reactome\\gene-17-DENND4C.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\gene-17-DENND4C.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "reactome-org",
+    "path": "search/query",
+    "method": "GET",
+    "status_code": 200,
+    "record_path": "results",
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\gene-17-DENND4C.raw",
+    "warnings": [],
+    "record_count_returned": 2,
+    "record_count_available": 2,
+    "truncated": false,
+    "records": [
+      {
+        "entries": [
+          "..."
+        ],
+        "typeName": "Protein",
+        "entriesCount": 1,
+        "rowCount": 1
+      },
+      {
+        "entries": [
+          "..."
+        ],
+        "typeName": "Reaction",
+        "entriesCount": 1,
+        "rowCount": 1
+      }
+    ],
+    "sources": [
+      {
+        "name": "Reactome",
+        "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+        "retrieved_at": "2026-09-06T01:46:22.649960+00:00",
+        "supports_claim": true,
+        "kind": "evidence",
+        "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+      }
+    ]
+  },
+  "stderr": ""
+}

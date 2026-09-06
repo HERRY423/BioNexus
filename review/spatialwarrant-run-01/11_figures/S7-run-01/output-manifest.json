@@ -1,0 +1,78 @@
+{
+  "schema": "SpatialWarrant.S7.output-manifest.v1",
+  "root": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\11_figures\\S7-run-01",
+  "created_at_utc": "2026-09-06T02:36:40.008433+00:00",
+  "files": [
+    {
+      "path": "01-workflow-and-roles.pdf",
+      "bytes": 33154,
+      "sha256": "f1382ab26714322a779b42a267d3cf0a5ebe899f3ddbca1e400d45e02680ee7e"
+    },
+    {
+      "path": "01-workflow-and-roles.png",
+      "bytes": 272142,
+      "sha256": "29b193fa89bc4befbbd927afedfa1ee33a31b426b20f4f649ab71d242e1d7c38"
+    },
+    {
+      "path": "02-six-section-spatial-atlas.pdf",
+      "bytes": 1897139,
+      "sha256": "87aa2dc4eb24217ad3ad2c27f58c629d749f4f9fc7799028ed226e59004c4f1d"
+    },
+    {
+      "path": "02-six-section-spatial-atlas.png",
+      "bytes": 4954124,
+      "sha256": "dfb73ec8cb47dbb896a9b8ec3ea8f14928ff0ce30c85463fab6bd0d4c24d4ddb"
+    },
+    {
+      "path": "03-S6-descriptive-evidence.pdf",
+      "bytes": 40319,
+      "sha256": "3b8f4a79fc7636707a4d997a12e3e60b514a35496fdc2c366bae45cf47c342d4"
+    },
+    {
+      "path": "03-S6-descriptive-evidence.png",
+      "bytes": 253088,
+      "sha256": "75a13286f205085c9f3ccbc9fdd01245d33e9f09c6813bad49b52cfa682a841a"
+    },
+    {
+      "path": "04-claims-debt-actual-audit.pdf",
+      "bytes": 30334,
+      "sha256": "9ed3f109ff0a847a34d2a56bb3da859ea8b0765221390b4e21398ea48f231d93"
+    },
+    {
+      "path": "04-claims-debt-actual-audit.png",
+      "bytes": 289666,
+      "sha256": "0f5ef5cf6cb0b70c64348361ea6cef86bb733c2532f6059acabc437815386cfe"
+    },
+    {
+      "path": "composition-legend.csv",
+      "bytes": 717,
+      "sha256": "a5855efc690068c3124f10ddb5350a03e2ede68460d911590dfd2ead386d845a"
+    },
+    {
+      "path": "eight-original-screenshot-concepts.json",
+      "bytes": 1029,
+      "sha256": "be9dd30b9c0817257d4a1910ccb53d3791bc29de9dd446b319761d6b0216825e"
+    },
+    {
+      "path": "figure-captions.md",
+      "bytes": 2073,
+      "sha256": "5c93e372cf16030acad5b5644497c884654a76d71a4a8f14db261fdedf8b0710"
+    },
+    {
+      "path": "figure-source-index.json",
+      "bytes": 8058,
+      "sha256": "f3bb68497cf86e91f5dd69d56de2bc87f98512a73899746051a50892e84b3c64"
+    },
+    {
+      "path": "layout-review.md",
+      "bytes": 305,
+      "sha256": "e125251197d8958502b65b88edfaf845c836a07444fb5d6dbc871dff58fe1773"
+    },
+    {
+      "path": "pathology-legend.csv",
+      "bytes": 557,
+      "sha256": "00d691815a8f5df24cb342a8f7ee55ebce235611d36f92be6c292483b9c06da6"
+    }
+  ],
+  "self_hash_policy": "Manifest excludes itself and SHA256SUMS.txt. SHA256SUMS includes the manifest and every other payload; it excludes itself."
+}

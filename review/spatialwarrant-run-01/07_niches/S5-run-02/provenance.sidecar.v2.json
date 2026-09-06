@@ -1,0 +1,274 @@
+{
+  "activity_name": "SpatialWarrant S5 technical execution provenance retry",
+  "method": "locked-plan local sparse spatial analysis",
+  "backend": "local BioNexus provenance library",
+  "parameters": {
+    "route": "local Python/scverse execution",
+    "registered_NGS_workflow_run": "NONE",
+    "scientific_parameters_changed": false,
+    "retry_reason": "isolated Tangram venv lacked jsonschema; use already-installed base Python jsonschema 4.26.0 for provenance serialization only"
+  },
+  "input_files": [
+    {
+      "file_name": "analysis-plan.lock.md",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\00_plan\\analysis-plan.lock.md",
+      "role": "input",
+      "sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82"
+    },
+    {
+      "file_name": "proportions_tangram.csv.gz",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\06_deconvolution\\S4-run-02\\proportions_tangram.csv.gz",
+      "role": "input",
+      "sha256": "1728f720f5b146234b968cf571c4911f809bf70e634f1e1e64368fa87e6f5f1c"
+    },
+    {
+      "file_name": "geometry-boundary-core-masks.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID4535\\geometry-boundary-core-masks.csv",
+      "role": "input",
+      "sha256": "595157ec56fc635e00f96cad005f4ef6eae059745de73a6733f23ea19b6bd9b9"
+    },
+    {
+      "file_name": "V1_Breast_Cancer_Block_A_Section_1_filtered_feature_bc_matrix.h5",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\10x_blockA_section1\\V1_Breast_Cancer_Block_A_Section_1_filtered_feature_bc_matrix.h5",
+      "role": "input",
+      "sha256": "b3cbb6ead60afad848ebcc07a34835613d9d2d79e416ad8300b210d9de584b65"
+    }
+  ],
+  "output_files": [
+    {
+      "file_name": "10x-transfer-composition.csv.gz",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\10x-transfer-composition.csv.gz",
+      "role": "output",
+      "sha256": "9a28ddbdaf6d8b705df29db04e882fd09ad7b1e2438b25d79585ead9e5366322"
+    },
+    {
+      "file_name": "10x-transfer-feature-overlap.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\10x-transfer-feature-overlap.json",
+      "role": "output",
+      "sha256": "080b7a78fe77689685e89577d91f7bab4f370abfcc0beb1b49837e1f6ef8a66a"
+    },
+    {
+      "file_name": "10x-transfer-labels.csv.gz",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\10x-transfer-labels.csv.gz",
+      "role": "output",
+      "sha256": "d956c8eeb151441f5c846c867ea4ef91d578291a1395408e702ac73b5afe5616"
+    },
+    {
+      "file_name": "10x-transfer-map.png",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\10x-transfer-map.png",
+      "role": "output",
+      "sha256": "309c10dee4d82162e64133ce6fd90990c266ce1ef73ff1952ee5f6a933317650"
+    },
+    {
+      "file_name": "1142243F-niche-map.png",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\1142243F-niche-map.png",
+      "role": "output",
+      "sha256": "d00e058485e6d697a3c501efa8c97aa1e6656047aaab8568d71771e76c6f917c"
+    },
+    {
+      "file_name": "1160920F-niche-map.png",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\1160920F-niche-map.png",
+      "role": "output",
+      "sha256": "ddd7d17f8730fa4bd7938e3c60a3b6dcb069f06a55562f107ebdd02c17dfb0a0"
+    },
+    {
+      "file_name": "boundary-niche-enrichment.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\boundary-niche-enrichment.csv",
+      "role": "output",
+      "sha256": "ffdd3ddd0436d5329926ab91ff517228b7ad8c1ceaec5ce942af6ffa5c5b080d"
+    },
+    {
+      "file_name": "CID4290-niche-map.png",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\CID4290-niche-map.png",
+      "role": "output",
+      "sha256": "8fbadcf4552dceb0d9e4f4088343d50071a0289097046ca0ece3eadc3d1e09ab"
+    },
+    {
+      "file_name": "CID4465-niche-map.png",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\CID4465-niche-map.png",
+      "role": "output",
+      "sha256": "ab9eeb3b946abe6c495482fd76ab32f541af4b72d96460edd9abb862cd9cdce4"
+    },
+    {
+      "file_name": "CID44971-niche-map.png",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\CID44971-niche-map.png",
+      "role": "output",
+      "sha256": "be17de7fd538621603e3d4127d61458ed3f9222b76f6e6e73c3226bf03c11fb3"
+    },
+    {
+      "file_name": "CID4535-niche-map.png",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\CID4535-niche-map.png",
+      "role": "output",
+      "sha256": "615355a3dffab8b1e73582707bf7d5099e09992ee17291fc0806789755236e21"
+    },
+    {
+      "file_name": "co-occurrence.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\co-occurrence.csv",
+      "role": "output",
+      "sha256": "81031928686454c2859412cd8895089f937118f1207a57ef6c2622ef858d5a4c"
+    },
+    {
+      "file_name": "enrichment-heatmap.png",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\enrichment-heatmap.png",
+      "role": "output",
+      "sha256": "8331a64bc84013ba4d854d9a14794354b244ddc032a39ccb5bbb3a8065f4ec7a"
+    },
+    {
+      "file_name": "execution-environment.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\execution-environment.json",
+      "role": "output",
+      "sha256": "ceeaa82d15d852e658f76b35618b7b5c63669b09fcff01cb9db1c078d620c0bc"
+    },
+    {
+      "file_name": "input-manifest.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\input-manifest.json",
+      "role": "output",
+      "sha256": "b0cdc617199f9be638183c110ba8558ed9ad3c7582632cc78127cc11c5cad87b"
+    },
+    {
+      "file_name": "kmeans-centers.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\kmeans-centers.csv",
+      "role": "output",
+      "sha256": "d72a79132b20bb2d11a0cdc9f2662a07a7cbb0ec6cc470ac01d7f9ebcd8abb0b"
+    },
+    {
+      "file_name": "kmeans-grid-labels.csv.gz",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\kmeans-grid-labels.csv.gz",
+      "role": "output",
+      "sha256": "055e6276e8ea60768c25ae380b984f0c7cab8eec66e3a4eb9c27ac54e66d6daf"
+    },
+    {
+      "file_name": "kmeans-grid.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\kmeans-grid.csv",
+      "role": "output",
+      "sha256": "a9f3f54d9f631abc084f7a4557008e5bda0f758276e9d01d43ba13c6e7db7a53"
+    },
+    {
+      "file_name": "neighborhood-enrichment.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\neighborhood-enrichment.csv",
+      "role": "output",
+      "sha256": "7c888648e521a8b572623b89ecaa2a12e100352966fe10abfd43d21ed8bc07d4"
+    },
+    {
+      "file_name": "niche-composition-centroids.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\niche-composition-centroids.csv",
+      "role": "output",
+      "sha256": "d037a4f4428e2d4bac31480637ba844df8f9117bcf954c6b6405e0fb428439b0"
+    },
+    {
+      "file_name": "niche-distribution-by-section.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\niche-distribution-by-section.csv",
+      "role": "output",
+      "sha256": "c5c8684e6bff9a6140bb49ac315ad721577abbcf558c636e74cadb105669f5d1"
+    },
+    {
+      "file_name": "niche-Moran.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\niche-Moran.csv",
+      "role": "output",
+      "sha256": "9c8632fb5aa39d453d36f0aae28bfed86c83749316cfda0e63cbbb8cc77106b9"
+    },
+    {
+      "file_name": "niche_labels.csv.gz",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\niche_labels.csv.gz",
+      "role": "output",
+      "sha256": "6ba46687ae54ed67b2438ec4a1184eebfca01741d74a6c040626d96246e7d0a8"
+    },
+    {
+      "file_name": "preflight.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\preflight.json",
+      "role": "output",
+      "sha256": "3b7887b2aa36094b52ca85d152acfa401b1054437c3f94eb888ac09fec8ce041"
+    },
+    {
+      "file_name": "prespecified-four-component-map.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\prespecified-four-component-map.json",
+      "role": "output",
+      "sha256": "30e20033f4c4f486668c2ebca9a0875cd8af0ebae9c2aa3bb65b319fd7fd7b5a"
+    },
+    {
+      "file_name": "prespecified-four-components-by-niche.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\prespecified-four-components-by-niche.csv",
+      "role": "output",
+      "sha256": "7f5f9e8934902c8e9867d8d7ecbf57f1481b59f59b7988ee2951b021c989e93f"
+    },
+    {
+      "file_name": "provenance.sidecar.failed.v1.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\provenance.sidecar.failed.v1.json",
+      "role": "output",
+      "sha256": "f5c64b9f953e0336c20be7d7322fc1a19e9a2b7acaf58ee4ca5f1aa468215672"
+    },
+    {
+      "file_name": "S5-result.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\S5-result.json",
+      "role": "output",
+      "sha256": "a9d1ae7d49f1a3437d2a701e5b197fbd8d305481eaad8dbbab6f657b5eefcbe0"
+    },
+    {
+      "file_name": "scaler.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\scaler.json",
+      "role": "output",
+      "sha256": "b9a01b0a7a6026cb29fd211bdad18cf34fa0ba750b3eb82704582a15f4121aac"
+    },
+    {
+      "file_name": "selected-k.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\selected-k.json",
+      "role": "output",
+      "sha256": "bcf8e64b803143391bd362fb07a3c94dd2599bace973f36fc33fe4bc1c8d43ad"
+    },
+    {
+      "file_name": "silhouette-by-section.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\silhouette-by-section.csv",
+      "role": "output",
+      "sha256": "e063f142b17100145530aec347ff0dd1079ebfe9dc79760dbd999e06f411c830"
+    }
+  ],
+  "environment_snapshot": {
+    "os_name": "Windows",
+    "os_release": "11",
+    "os_version": "10.0.26200",
+    "architecture": "AMD64",
+    "python_version": "3.13.9",
+    "python_executable": "C:\\Users\\13264\\anaconda3\\python.exe",
+    "packages": {
+      "numpy": "2.3.5",
+      "scipy": "1.16.3",
+      "pandas": "2.3.3",
+      "scanpy": "1.12.2",
+      "anndata": "0.13.1",
+      "torch": "2.13.0+cpu",
+      "squidpy": "1.8.3",
+      "pydeseq2": "0.5.4",
+      "scikit-learn": "1.7.2"
+    },
+    "captured_at": "2026-09-06T01:18:35.346932+00:00",
+    "cuda_available": false
+  },
+  "execution_provenance": {
+    "data_source": "unknown",
+    "download_date": "2026-09-06T01:18:35.433498+00:00",
+    "commit_sha": "unknown",
+    "git_dirty": false,
+    "environment_lockfile_hashes": {
+      "pyproject.toml": "dfe58e8d642567724533c023f0029bc2ab6cc94352fe6170c56b756b0307e166",
+      "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
+      "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
+    },
+    "command": [
+      "C:\\Users\\13264\\Downloads\\spatial-transcriptomics-task-design-revised\\post_audit_s4_s5.py"
+    ],
+    "command_str": "C:\\Users\\13264\\Downloads\\spatial-transcriptomics-task-design-revised\\post_audit_s4_s5.py",
+    "generator_version": "1.0.0-rc.4",
+    "python_version": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "timestamp": "2026-09-06T01:18:35.433498+00:00",
+    "extra_metadata": {}
+  },
+  "compliance_note": "SHA-256 + package versions for reproducibility. This is not 21 CFR Part 11, GxP, ALCOA+, or CLIA audit evidence.",
+  "status": "COMPLETED_TECHNICAL_PROVENANCE",
+  "bionexus_runtime_version": "1.0.0-rc.4",
+  "scope_boundary": "technical provenance only; no scientific Warrant or biological conclusion",
+  "predecessor_failed_sidecar": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\provenance.sidecar.failed.v1.json",
+  "predecessor_failed_sidecar_sha256": "f5c64b9f953e0336c20be7d7322fc1a19e9a2b7acaf58ee4ca5f1aa468215672",
+  "machine_verdict": "PENDING",
+  "biological_conclusion": "PENDING"
+}

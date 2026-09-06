@@ -1,0 +1,10 @@
+claim_id,stage,claim_class,preregistered_statement,initial_status,maximum_without_new_evidence,blocking_evidence_gap
+C1,S3,descriptive,"Report per-section agreement between numeric spatial domains and producer pathology, including ARI/NMI, granularity, and boundary Dice/Jaccard; no success threshold is assumed.",PENDING,STUDY_BOUND,"same-study producer annotation is not independent truth"
+C2,S4,descriptive,"Report Tangram versus marker/NNLS composition sensitivity and scanpy-ingest label-transfer agreement without a prespecified success result.",PENDING,STUDY_BOUND,"shared scRNA reference; methods are not independent biological evidence"
+C3,S5,association,"Test whether the prespecified CAF/CD8-T/macrophage/endothelial niche is enriched at the frozen pathology-geometry boundary and report every section.",PENDING,TO_BE_COMPUTED,"niche result and cross-section stability not observed"
+C4,S6,population_effect,"Test the frozen immune/IFN program for a paired boundary-versus-core effect and report effect size, uncertainty, direction count, and leave-one-section-out sensitivity.",PENDING,TO_BE_COMPUTED,"independent-unit identity and results not observed"
+C5,S6,causal,"CXCL9/10-CXCR3 drives T-cell recruitment to the boundary.",PENDING,ABSTAIN,"no perturbation, temporal ordering, or independent causal validation"
+C6,S7,clinical,"The boundary signature predicts immunotherapy response.",PENDING,REFUSED,"no treatment outcome, independent test cohort, calibration, or clinical validation"
+T1,S7,population_effect,"One section establishes a population-wide TNBC immune-exclusion mechanism.",PENDING,ABSTAIN,"one section cannot support population or mechanistic inference"
+T2,S7,technical,"Input hashes, barcode joins, coordinate completeness, and output hashes can be independently recomputed.",PENDING,TECHNICAL_ONLY,"technical integrity cannot elevate biological claims"
+

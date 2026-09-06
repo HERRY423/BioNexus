@@ -1,0 +1,396 @@
+{
+  "created": "2026-09-05T06:45:01.596453+00:00",
+  "scope": "S1 barcode/feature/header/coordinate metadata integrity; no expression matrix loaded or tested",
+  "sections": [
+    {
+      "section_id": "1142243F",
+      "metadata_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\metadata-extracted\\metadata\\1142243F_metadata.csv",
+      "metadata_sha256": "b9b02fde7b7747c16cabf3c744455e6b8be1c9d9733cd848c1829d78b6df22ad",
+      "publisher_patientid": "1142243F",
+      "publisher_subtype": "TNBC",
+      "metadata_spots": 4784,
+      "raw_barcodes": 4992,
+      "filtered_barcodes": 4784,
+      "coordinate_rows": 4992,
+      "in_tissue_count": 4784,
+      "features": 36601,
+      "unique_gene_symbols": 36591,
+      "checks": {
+        "metadata_barcodes_unique": true,
+        "raw_barcodes_unique": true,
+        "filtered_barcodes_unique": true,
+        "coordinate_barcodes_unique": true,
+        "metadata_equals_filtered_barcodes": true,
+        "metadata_subset_raw_barcodes": true,
+        "metadata_have_coordinates": true,
+        "metadata_in_tissue": true,
+        "raw_filtered_features_equal": false,
+        "position_rows_six_columns": true,
+        "coordinate_fields_numeric": true
+      },
+      "raw_matrix_header": {
+        "matrix_market_header": "%%MatrixMarket matrix coordinate integer general",
+        "shape_genes_barcodes_nnz": [
+          36601,
+          4992,
+          13653958
+        ],
+        "all_count_values_scanned": false
+      },
+      "filtered_matrix_header": {
+        "matrix_market_header": "%%MatrixMarket matrix coordinate integer general",
+        "shape_genes_barcodes_nnz": [
+          28402,
+          4784,
+          12821166
+        ],
+        "all_count_values_scanned": false
+      },
+      "pathology_labels": {
+        "Artefact": 119,
+        "Invasive cancer + stroma + lymphocytes": 3627,
+        "Necrosis": 568,
+        "Stroma": 445,
+        "Lymphocytes": 15,
+        "TLS": 10
+      },
+      "spatial_files": [
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\1142243F_spatial\\aligned_fiducials.jpg",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\1142243F_spatial\\detected_tissue_image.jpg",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\1142243F_spatial\\scalefactors_json.json",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\1142243F_spatial\\tissue_hires_image.png",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\1142243F_spatial\\tissue_lowres_image.png",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\1142243F_spatial\\tissue_positions_list.csv"
+      ],
+      "registration_visual_verification": "PENDING_S3",
+      "primary_masks": "PENDING_NOT_COMPUTED",
+      "count_eligibility": "PENDING_NOT_COMPUTED"
+    },
+    {
+      "section_id": "1160920F",
+      "metadata_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\metadata-extracted\\metadata\\1160920F_metadata.csv",
+      "metadata_sha256": "47a36ffccead4e9e872b497d6da137ebf593e65d64733465eca0599d5cdeed7b",
+      "publisher_patientid": "1160920F",
+      "publisher_subtype": "TNBC",
+      "metadata_spots": 4895,
+      "raw_barcodes": 4992,
+      "filtered_barcodes": 4895,
+      "coordinate_rows": 4992,
+      "in_tissue_count": 4895,
+      "features": 36601,
+      "unique_gene_symbols": 36591,
+      "checks": {
+        "metadata_barcodes_unique": true,
+        "raw_barcodes_unique": true,
+        "filtered_barcodes_unique": true,
+        "coordinate_barcodes_unique": true,
+        "metadata_equals_filtered_barcodes": true,
+        "metadata_subset_raw_barcodes": true,
+        "metadata_have_coordinates": true,
+        "metadata_in_tissue": true,
+        "raw_filtered_features_equal": false,
+        "position_rows_six_columns": true,
+        "coordinate_fields_numeric": true
+      },
+      "raw_matrix_header": {
+        "matrix_market_header": "%%MatrixMarket matrix coordinate integer general",
+        "shape_genes_barcodes_nnz": [
+          36601,
+          4992,
+          17423899
+        ],
+        "all_count_values_scanned": false
+      },
+      "filtered_matrix_header": {
+        "matrix_market_header": "%%MatrixMarket matrix coordinate integer general",
+        "shape_genes_barcodes_nnz": [
+          28402,
+          4895,
+          17183978
+        ],
+        "all_count_values_scanned": false
+      },
+      "pathology_labels": {
+        "Adipose tissue": 83,
+        "Stroma": 1132,
+        "Normal glands + lymphocytes": 278,
+        "Lymphocytes": 186,
+        "Cancer trapped in lymphocyte aggregation": 9,
+        "Invasive cancer + stroma + lymphocytes": 3146,
+        "Artefact": 48,
+        "": 1,
+        "DCIS": 12
+      },
+      "spatial_files": [
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\1160920F_spatial\\aligned_fiducials.jpg",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\1160920F_spatial\\detected_tissue_image.jpg",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\1160920F_spatial\\scalefactors_json.json",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\1160920F_spatial\\tissue_hires_image.png",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\1160920F_spatial\\tissue_lowres_image.png",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\1160920F_spatial\\tissue_positions_list.csv"
+      ],
+      "registration_visual_verification": "PENDING_S3",
+      "primary_masks": "PENDING_NOT_COMPUTED",
+      "count_eligibility": "PENDING_NOT_COMPUTED"
+    },
+    {
+      "section_id": "CID4290",
+      "metadata_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\metadata-extracted\\metadata\\CID4290_metadata.csv",
+      "metadata_sha256": "dee22664463eedad0884793d8db0c7e926d2d20a33354679d1ddaa32c78173ae",
+      "publisher_patientid": "CID4290",
+      "publisher_subtype": "ER",
+      "metadata_spots": 2432,
+      "raw_barcodes": 4992,
+      "filtered_barcodes": 2432,
+      "coordinate_rows": 4992,
+      "in_tissue_count": 2714,
+      "features": 36601,
+      "unique_gene_symbols": 36591,
+      "checks": {
+        "metadata_barcodes_unique": true,
+        "raw_barcodes_unique": true,
+        "filtered_barcodes_unique": true,
+        "coordinate_barcodes_unique": true,
+        "metadata_equals_filtered_barcodes": true,
+        "metadata_subset_raw_barcodes": true,
+        "metadata_have_coordinates": true,
+        "metadata_in_tissue": false,
+        "raw_filtered_features_equal": false,
+        "position_rows_six_columns": true,
+        "coordinate_fields_numeric": true
+      },
+      "raw_matrix_header": {
+        "matrix_market_header": "%%MatrixMarket matrix coordinate integer general",
+        "shape_genes_barcodes_nnz": [
+          36601,
+          4992,
+          9657384
+        ],
+        "all_count_values_scanned": false
+      },
+      "filtered_matrix_header": {
+        "matrix_market_header": "%%MatrixMarket matrix coordinate integer general",
+        "shape_genes_barcodes_nnz": [
+          19237,
+          2432,
+          7582285
+        ],
+        "all_count_values_scanned": false
+      },
+      "pathology_labels": {
+        "Stroma": 122,
+        "Invasive cancer + stroma + lymphocytes": 215,
+        "Invasive cancer + stroma": 2082,
+        "NA": 6,
+        "Artefact": 7
+      },
+      "spatial_files": [
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID4290_spatial\\aligned_fiducials.jpg",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID4290_spatial\\detected_tissue_image.jpg",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID4290_spatial\\scalefactors_json.json",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID4290_spatial\\tissue_hires_image.png",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID4290_spatial\\tissue_lowres_image.png",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID4290_spatial\\tissue_positions_list.csv"
+      ],
+      "registration_visual_verification": "PENDING_S3",
+      "primary_masks": "PENDING_NOT_COMPUTED",
+      "count_eligibility": "PENDING_NOT_COMPUTED"
+    },
+    {
+      "section_id": "CID4465",
+      "metadata_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\metadata-extracted\\metadata\\CID4465_metadata.csv",
+      "metadata_sha256": "5ab11f448ea24776dc77d1249ba2cca2a7df2c1f66d37169a1135968958014ff",
+      "publisher_patientid": "CID4465",
+      "publisher_subtype": "TNBC",
+      "metadata_spots": 1211,
+      "raw_barcodes": 4992,
+      "filtered_barcodes": 1211,
+      "coordinate_rows": 4992,
+      "in_tissue_count": 1310,
+      "features": 36601,
+      "unique_gene_symbols": 36591,
+      "checks": {
+        "metadata_barcodes_unique": true,
+        "raw_barcodes_unique": true,
+        "filtered_barcodes_unique": true,
+        "coordinate_barcodes_unique": true,
+        "metadata_equals_filtered_barcodes": true,
+        "metadata_subset_raw_barcodes": true,
+        "metadata_have_coordinates": true,
+        "metadata_in_tissue": true,
+        "raw_filtered_features_equal": false,
+        "position_rows_six_columns": true,
+        "coordinate_fields_numeric": true
+      },
+      "raw_matrix_header": {
+        "matrix_market_header": "%%MatrixMarket matrix coordinate integer general",
+        "shape_genes_barcodes_nnz": [
+          36601,
+          4992,
+          9644048
+        ],
+        "all_count_values_scanned": false
+      },
+      "filtered_matrix_header": {
+        "matrix_market_header": "%%MatrixMarket matrix coordinate integer general",
+        "shape_genes_barcodes_nnz": [
+          19237,
+          1211,
+          5066468
+        ],
+        "all_count_values_scanned": false
+      },
+      "pathology_labels": {
+        "Invasive cancer + stroma + lymphocytes": 1131,
+        "Stroma": 73,
+        "Artefact": 4,
+        "Normal duct": 3
+      },
+      "spatial_files": [
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID4465_spatial\\aligned_fiducials.jpg",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID4465_spatial\\detected_tissue_image.jpg",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID4465_spatial\\scalefactors_json.json",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID4465_spatial\\tissue_hires_image.png",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID4465_spatial\\tissue_lowres_image.png",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID4465_spatial\\tissue_positions_list.csv"
+      ],
+      "registration_visual_verification": "PENDING_S3",
+      "primary_masks": "PENDING_NOT_COMPUTED",
+      "count_eligibility": "PENDING_NOT_COMPUTED"
+    },
+    {
+      "section_id": "CID44971",
+      "metadata_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\metadata-extracted\\metadata\\CID44971_metadata.csv",
+      "metadata_sha256": "e4f6d435845d1000428755425a997a87e3a419433c2a232b32500347a5c650af",
+      "publisher_patientid": "CID44971",
+      "publisher_subtype": "TNBC",
+      "metadata_spots": 1162,
+      "raw_barcodes": 4992,
+      "filtered_barcodes": 1162,
+      "coordinate_rows": 4992,
+      "in_tissue_count": 1322,
+      "features": 36601,
+      "unique_gene_symbols": 36591,
+      "checks": {
+        "metadata_barcodes_unique": true,
+        "raw_barcodes_unique": true,
+        "filtered_barcodes_unique": true,
+        "coordinate_barcodes_unique": true,
+        "metadata_equals_filtered_barcodes": true,
+        "metadata_subset_raw_barcodes": true,
+        "metadata_have_coordinates": true,
+        "metadata_in_tissue": false,
+        "raw_filtered_features_equal": false,
+        "position_rows_six_columns": true,
+        "coordinate_fields_numeric": true
+      },
+      "raw_matrix_header": {
+        "matrix_market_header": "%%MatrixMarket matrix coordinate integer general",
+        "shape_genes_barcodes_nnz": [
+          36601,
+          4992,
+          7837340
+        ],
+        "all_count_values_scanned": false
+      },
+      "filtered_matrix_header": {
+        "matrix_market_header": "%%MatrixMarket matrix coordinate integer general",
+        "shape_genes_barcodes_nnz": [
+          19237,
+          1162,
+          4282534
+        ],
+        "all_count_values_scanned": false
+      },
+      "pathology_labels": {
+        "Normal + stroma + lymphocytes": 240,
+        "NA": 2,
+        "Stroma + adipose tissue": 114,
+        "Stroma": 134,
+        "DCIS": 273,
+        "Artefact": 1,
+        "Lymphocytes": 81,
+        "Invasive cancer + lymphocytes": 317
+      },
+      "spatial_files": [
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID44971_spatial\\aligned_fiducials.jpg",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID44971_spatial\\detected_tissue_image.jpg",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID44971_spatial\\scalefactors_json.json",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID44971_spatial\\tissue_hires_image.png",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID44971_spatial\\tissue_lowres_image.png",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID44971_spatial\\tissue_positions_list.csv"
+      ],
+      "registration_visual_verification": "PENDING_S3",
+      "primary_masks": "PENDING_NOT_COMPUTED",
+      "count_eligibility": "PENDING_NOT_COMPUTED"
+    },
+    {
+      "section_id": "CID4535",
+      "metadata_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\metadata-extracted\\metadata\\CID4535_metadata.csv",
+      "metadata_sha256": "7c002213c4261019ecae8b4c99065fc4085f5cc289dba1f54c8d2d5fcc46a246",
+      "publisher_patientid": "CID4535",
+      "publisher_subtype": "ER",
+      "metadata_spots": 1127,
+      "raw_barcodes": 4992,
+      "filtered_barcodes": 1127,
+      "coordinate_rows": 4992,
+      "in_tissue_count": 1431,
+      "features": 36601,
+      "unique_gene_symbols": 36591,
+      "checks": {
+        "metadata_barcodes_unique": true,
+        "raw_barcodes_unique": true,
+        "filtered_barcodes_unique": true,
+        "coordinate_barcodes_unique": true,
+        "metadata_equals_filtered_barcodes": true,
+        "metadata_subset_raw_barcodes": true,
+        "metadata_have_coordinates": true,
+        "metadata_in_tissue": false,
+        "raw_filtered_features_equal": false,
+        "position_rows_six_columns": true,
+        "coordinate_fields_numeric": true
+      },
+      "raw_matrix_header": {
+        "matrix_market_header": "%%MatrixMarket matrix coordinate integer general",
+        "shape_genes_barcodes_nnz": [
+          36601,
+          4992,
+          9068210
+        ],
+        "all_count_values_scanned": false
+      },
+      "filtered_matrix_header": {
+        "matrix_market_header": "%%MatrixMarket matrix coordinate integer general",
+        "shape_genes_barcodes_nnz": [
+          19237,
+          1127,
+          4914742
+        ],
+        "all_count_values_scanned": false
+      },
+      "pathology_labels": {
+        "Invasive cancer + lymphocytes": 361,
+        "Invasive cancer + adipose tissue + lymphocytes": 3,
+        "Stroma": 169,
+        "Invasive cancer": 418,
+        "Uncertain": 73,
+        "Lymphocytes": 69,
+        "Artefact": 23,
+        "NA": 2,
+        "": 1,
+        "Adipose tissue": 8
+      },
+      "spatial_files": [
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID4535_spatial\\aligned_fiducials.jpg",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID4535_spatial\\detected_tissue_image.jpg",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID4535_spatial\\scalefactors_json.json",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID4535_spatial\\tissue_hires_image.png",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID4535_spatial\\tissue_lowres_image.png",
+        "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\spatial-extracted\\spatial\\CID4535_spatial\\tissue_positions_list.csv"
+      ],
+      "registration_visual_verification": "PENDING_S3",
+      "primary_masks": "PENDING_NOT_COMPUTED",
+      "count_eligibility": "PENDING_NOT_COMPUTED"
+    }
+  ]
+}

@@ -346,7 +346,7 @@ def run_tangram_spatial_mapping(
             device=device,
             num_epochs=cfg.num_epochs,
             learning_rate=cfg.learning_rate,
-            random_seed=cfg.random_seed,
+            random_state=cfg.random_seed,
             verbose=False,
         )
 

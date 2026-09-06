@@ -1,0 +1,62 @@
+{
+  "label": "CD14+ Monocytes (source annotation)",
+  "verdict": "TENTATIVE",
+  "reasons": [
+    "Evidence sources are declared, but no positive measurements were supplied; identity remains a candidate."
+  ],
+  "missing_evidence": [
+    "ontology compatibility evaluation",
+    "reference atlas mapping",
+    "cross-method annotation agreement",
+    "positive-marker consistency measurement",
+    "negative-marker evaluation",
+    "doublet-rate estimate",
+    "calibrated independent identity source (reference mapping or cross-method agreement)"
+  ],
+  "evidence": {
+    "marker_consistency": null,
+    "negative_marker_violation": null,
+    "reference_mapping_score": null,
+    "doublet_rate": null,
+    "ontology_compatible": null,
+    "cross_method_agreement": null,
+    "orthogonal_protein_evidence": null,
+    "protein_concordant": null,
+    "open_set_detected": false,
+    "sources_declared": true,
+    "calibration_context": {
+      "tissue": null,
+      "platform": null,
+      "reference": null,
+      "task": null,
+      "evidence_sources": {},
+      "default_evidence_source": null,
+      "reference_domain_match": null,
+      "state_geometry": "discrete",
+      "population_scope": "closed_set"
+    }
+  },
+  "calibration": {
+    "registry": {
+      "registry_version": "1.0.0",
+      "registry_sha256": "65987978b0f1359ae984605fa20dac98b4352acbaca0d6daa46132c6094e135b",
+      "profile_count": 6,
+      "status_counts": {
+        "LEGACY_UNCALIBRATED": 6,
+        "CANDIDATE": 0,
+        "APPROVED": 0,
+        "RETIRED": 0
+      },
+      "invalid_profiles": {},
+      "metadata": {
+        "positive_warrant_policy": "Only valid APPROVED profiles may resolve a threshold.",
+        "fallback_policy": "No global threshold fallback; unresolved calibration cannot produce SUPPORTED or ROBUST annotation warrants.",
+        "approval_boundary": "Automated fitting creates CANDIDATE profiles only; accountable human review activates a profile.",
+        "evidence_boundary": "No packaged profile is currently represented as independently empirically validated."
+      }
+    },
+    "metric_assessments": {},
+    "fallback_used": false
+  },
+  "warrant_ceiling": "TENTATIVE"
+}

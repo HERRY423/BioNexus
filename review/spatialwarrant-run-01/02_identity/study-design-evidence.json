@@ -1,0 +1,36 @@
+{
+  "paper_pmid": "34493872",
+  "doi": "10.1038/s41588-021-00911-1",
+  "pmcid": "PMC9044823",
+  "literature_plugin_raw": "01_inputs/literature/pubmed-34493872-attempt-1.xml",
+  "fulltext_source": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\literature\\PMC9044823-BioC.xml",
+  "fulltext_sha256": "e11409f1d3565b3ee5d4ead5d5d062f0b7fc3eee9853d1c21da97f96a41232b6",
+  "evidence": [
+    {
+      "kind": "cohort_design",
+      "source_offset": "22706",
+      "text": "To gain insights into the spatial organization of cell types, we performed spatially-resolved transcriptomics (ST) on six samples (“local cohort”) comprising two ER+ (CID4535 and CID4290) and two TNBC (CID44971 and CID4465) from our scRNA-Seq cohort, and two additional TNBC (1142243F and 1160920F) processed in an independent laboratory (Fig. 6a; Extended Data Fig. 9a)."
+    },
+    {
+      "kind": "cohort_design",
+      "source_offset": "24653",
+      "text": "While several studies have shown an important role for mesenchymal cells in regulating anti-tumor immunity, interactions between stromal and immune cells have yet to be profiled in tissues. Deconvolution revealed spatially distinct subclasses of CAFs, with myCAFs (CAF s4 and s5) enriched in invasive cancer regions and iCAFs (CAF s1 and s2) dispersed across invasive cancer, stroma and TIL-aggregate regions (Extended Data Fig. 9e). We identified modest negative Pearson correlations between myCAFs and iCAFs in five of six cases (Fig. 7a–c). Similar CAF localizations were consistent in an independent spatial transcriptomics dataset of 7 HER2+ breast tumors, suggesting that this relationship is conserved across clinical subtypes (Fig. 7a). Consistent with the immunoregulatory properties of iCAFs described above, iCAFs co-localized with several lymphocyte populations across both studies, including memory/naive B-cells and CD4+/CD8+ T-cells (Fig. 7a; Fig. 7d–e). MyCAFs correlated with CD8+ T-cells in six samples (Fig. 7a), suggesting a functional relevance to invasive breast cancers with high TIL infiltration or an immune inflamed phenotype. To explore potential mediators of CAF-lymphocyte interactions at these regions, we investigated the top ligand-receptor interactions at locations most enriched for CAFs and CD4/CD8+ T-cells, and were also detected by these respective cell types by scRNA-Seq. This revealed an enrichment of immunoregulatory iCAF ligands and cognate T-cell receptors in close proximity, including chemokines (CXCL12/CXCL14-CXCR4 and CXCL10-CXCR3), complement pathway, transforming growth factor beta (TGFB1/TGFB3-TGFBR2) and lymphocyte inhibitory/activation molecules (LTB-LTBR, TNFSF14-LTBR and LTB-CD40, VTCN1/B7H4-BTLA) (Fig. 7f; Extended Data Fig. 9f). By integrating signaling predictions with cellular proximity, these data highlight relevant candidates for direct regulation of immune cells by CAFs."
+    },
+    {
+      "kind": "processing_and_pathology",
+      "source_offset": "53911",
+      "text": "Tissue samples were embedded in OCT and stored at −80°C. Tissue blocks were cut into 10 μm sections and processed using Visium Spatial Gene Expression Kit (10X Genomics) according to manufacturer’s instructions. First, breast tissue permeabilization condition was optimised using Visium Spatial Tissue Optimisation kit, which was found to be ideal at 12 minutes. Sections were H&E stained and imaged using a Leica microscope DM6000 (Leica, DE) under a 20x lens magnification, then processed for ST. The resulting cDNA library was checked for quality control, then sequenced using on an Illumina NovaSeq 6000 (illumina, US). Cycling conditions were set for 28, 98 and 8 for Read 1, Read 2, and Read 3 (i7 index) respectively. Spots were annotated by a specialist breast pathologist using the Loupe (v4.0.0) software (10X Genomics)."
+    },
+    {
+      "kind": "processing_and_pathology",
+      "source_offset": "54795",
+      "text": "Reads were demultiplexed and mapped to the reference genome GRCh38 using the Space Ranger Software v1.0.0 (10X Genomics). Count matrices were loaded into the Seurat v3.2.0 and STutility (v0.1.0) packages for all subsequent data filtering, normalisation, filtering, dimensional reduction and visualization. Data normalisation was performed on independent tissue sections using the variance stabilizing transformation method implemented in the SCTransform function in Seurat. We applied non-negative matrix factorization (NMF) to the normalised expression matrix using STutility (nfactors = 20)."
+    }
+  ],
+  "cautions": [
+    "CID4290 versus GEO CID4290A crosswalk requires source confirmation; never strip suffix automatically.",
+    "Publisher patientid is observed; specimen/capture/physical section hierarchy remains under audit.",
+    "Paper source findings are not SpatialWarrant results and cannot modify the approved boundary or endpoint.",
+    "Two additional TNBC samples were processed by an independent lab; lab group is partly confounded with clinical subtype."
+  ]
+}

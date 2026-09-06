@@ -1,0 +1,13 @@
+{
+  "execution_route": "local Python/scverse execution; not a registered NGS workflow run",
+  "primary_boundary": "S3 frozen publisher Invasive cancer/Stroma geometry only; B2 primary, B1/B3 sensitivity, core D>3",
+  "boundary_redefined_in_S6": false,
+  "independent_units": 1,
+  "inference": "single-section descriptive effects only; no population CI, p value, sign test, or patient-level inference",
+  "pydeseq2": "NOT_RUN_INSUFFICIENT_REPLICATION",
+  "communication": "LIANA on producer-labeled scRNA is interaction plausibility; mixed spots do not identify cell-type-specific boundary expression",
+  "shared_reference": "S4 composition, S5 niches, and LIANA share the Wu scRNA reference and are not independent validation",
+  "machine_verdict": "PENDING",
+  "biological_conclusion": "PENDING",
+  "S7": "NOT_STARTED"
+}

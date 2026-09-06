@@ -1,0 +1,22 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 17,
+    "name": "DENND4C"
+  },
+  "source": "string",
+  "returncode": 1,
+  "elapsed_seconds": 0.30623370001558214,
+  "completed_at_utc": "2026-09-06T01:46:21.701750+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\string\\gene-17-DENND4C.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\string\\gene-17-DENND4C.raw",
+  "wrapper": {
+    "ok": false,
+    "error": {
+      "code": "invalid_input",
+      "message": "`base_url` is not a registered HTTPS base for this skill."
+    },
+    "warnings": []
+  },
+  "stderr": ""
+}

@@ -1,0 +1,22 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 15,
+    "name": "LINC01489"
+  },
+  "source": "uniprot",
+  "returncode": 1,
+  "elapsed_seconds": 0.28130469997995533,
+  "completed_at_utc": "2026-09-06T01:46:20.441396+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\uniprot\\gene-15-LINC01489.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\uniprot\\gene-15-LINC01489.raw",
+  "wrapper": {
+    "ok": false,
+    "error": {
+      "code": "invalid_input",
+      "message": "`base_url` is not a registered HTTPS base for this skill."
+    },
+    "warnings": []
+  },
+  "stderr": ""
+}

@@ -1,0 +1,9 @@
+{
+  "params": {
+    "id": "PMC9044823"
+  },
+  "max_items": 20,
+  "timeout_sec": 30,
+  "save_raw": true,
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\00_plan\\S1-to-S2-entry-evidence.v1\\PMC-plugin-raw.v1.json"
+}

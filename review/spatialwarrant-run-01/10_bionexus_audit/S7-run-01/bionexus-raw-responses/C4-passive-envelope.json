@@ -1,0 +1,58 @@
+{
+  "schema_version": "bionexus.external-evidence-envelope.v1",
+  "evidence_id": "SPATIALWARRANT-S7-C4",
+  "family": "analysis",
+  "producer": {
+    "plugin_id": "local-python-s7-review",
+    "capability": "completed-artifact-scientific-review",
+    "tool_name": "build_spatialwarrant_s7.py",
+    "plugin_version": "sha256:03f5335df16d144aea3cca2c9764bce573c32ed110f0ec7c7dd45b157be1994a"
+  },
+  "captured_at": "2026-09-06T02:30:14.496916+00:00",
+  "source_context": {
+    "backend_name": "local Python/scverse artifact review",
+    "backend_version": "3.13.9",
+    "input_artifact_sha256": "bb6f4df05ca011f0c483c590e7a1a13dc65bd354ae971b21b328700e38251a24",
+    "parameters_sha256": "7e11b6de44357bcb78a36767703800f5c109feb0b46084b49c108ac96d539494",
+    "execution_receipt_sha256": "b6bd8e08981030d43fd0b934830611d71cf9d39dfdac570f7cba991ad3a55a93"
+  },
+  "payload": {
+    "claim_id": "C4",
+    "original_statement": "Test the frozen immune/IFN program for a paired boundary-versus-core effect and report effect size, uncertainty, direction count, and leave-one-section-out sensitivity.",
+    "artifacts": [
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\primary-program-B1-B2-B3-sensitivity.csv",
+        "sha256": "e855c17352827915422922fb5973b3ebe960ed443e4492a53f741cc664329079"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\primary-program-gene-coverage.json",
+        "sha256": "adb9072a6cc65ee361e75ed898394f8822706f18595385721a1568c6e0887c6c"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\prespecified-six-genes.csv",
+        "sha256": "aa61b8f27ea0ff1fe6f0bc48d35212e02f7c6557cd8d1168279ee217a583809b"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\pseudobulk-design-status.csv",
+        "sha256": "45012090911fc760e876c23db3d015840947e907eeec584ef2aa328baaf15889"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\raw-count-source-correction.v2.json",
+        "sha256": "2c59d57a8086c6379fc4bd825837a26a2467332a13f51105c5bd67cd131a16a8"
+      }
+    ],
+    "host_review_state": "SINGLE_SECTION_DESCRIPTIVE",
+    "support": "Frozen IFN program matches 196/200; B2−core +0.051510938742152845, B1 +0.03490665160847417, B3 +0.02216377668145686.",
+    "counterevidence": "Small effect, one eligible section; CXCL11 −0.15958494 and STAT1 −0.00413840 do not follow uniform enhancement. No replication for inference.",
+    "maximum_claim": "Preregistered CID4535 descriptive endpoint; no population CI, p value, sign test or leave-one-section-out inference.",
+    "dependencies": [
+      "Wu CID4535 raw counts",
+      "S3 frozen geometry",
+      "frozen Hallmark 2024.1"
+    ]
+  },
+  "payload_sha256": "33f3b86331c4185b2d976c9c7b55210d80f40ef54e443964fee1945a124491a2",
+  "request_sha256": "2be1bb28ce8cf4415f0d35b1411d64883e0f6182e050786b9222fd3893acea89",
+  "semantic_envelope": null,
+  "epistemic_lineage": null
+}

@@ -1,0 +1,197 @@
+{
+  "status": "COMPLETE_POSTAUDIT_INVENTORY",
+  "created_at_utc": "2026-09-06T01:18:37.453875+00:00",
+  "preserves_original_output_manifest": true,
+  "files_before_this_manifest": [
+    {
+      "file": "10x-transfer-composition.csv.gz",
+      "bytes": 1052816,
+      "sha256": "9a28ddbdaf6d8b705df29db04e882fd09ad7b1e2438b25d79585ead9e5366322"
+    },
+    {
+      "file": "10x-transfer-feature-overlap.json",
+      "bytes": 76711,
+      "sha256": "080b7a78fe77689685e89577d91f7bab4f370abfcc0beb1b49837e1f6ef8a66a"
+    },
+    {
+      "file": "10x-transfer-labels.csv.gz",
+      "bytes": 23697,
+      "sha256": "d956c8eeb151441f5c846c867ea4ef91d578291a1395408e702ac73b5afe5616"
+    },
+    {
+      "file": "10x-transfer-map.png",
+      "bytes": 608340,
+      "sha256": "309c10dee4d82162e64133ce6fd90990c266ce1ef73ff1952ee5f6a933317650"
+    },
+    {
+      "file": "1142243F-niche-map.png",
+      "bytes": 768375,
+      "sha256": "d00e058485e6d697a3c501efa8c97aa1e6656047aaab8568d71771e76c6f917c"
+    },
+    {
+      "file": "1160920F-niche-map.png",
+      "bytes": 827742,
+      "sha256": "ddd7d17f8730fa4bd7938e3c60a3b6dcb069f06a55562f107ebdd02c17dfb0a0"
+    },
+    {
+      "file": "boundary-niche-enrichment.csv",
+      "bytes": 2144,
+      "sha256": "4afa45b7b5e4ce097875534cb3fbdc239d57156cdaeb207fa3394ef4aabdf625"
+    },
+    {
+      "file": "CID4290-niche-map.png",
+      "bytes": 403956,
+      "sha256": "8fbadcf4552dceb0d9e4f4088343d50071a0289097046ca0ece3eadc3d1e09ab"
+    },
+    {
+      "file": "CID4465-niche-map.png",
+      "bytes": 213532,
+      "sha256": "ab9eeb3b946abe6c495482fd76ab32f541af4b72d96460edd9abb862cd9cdce4"
+    },
+    {
+      "file": "CID44971-niche-map.png",
+      "bytes": 206057,
+      "sha256": "be17de7fd538621603e3d4127d61458ed3f9222b76f6e6e73c3226bf03c11fb3"
+    },
+    {
+      "file": "CID4535-niche-map.png",
+      "bytes": 206271,
+      "sha256": "615355a3dffab8b1e73582707bf7d5099e09992ee17291fc0806789755236e21"
+    },
+    {
+      "file": "co-occurrence.csv",
+      "bytes": 30226,
+      "sha256": "12dba763412d3c93c29f0f6f0aca1462a57424356afda9fed228a9b9c20a2e50"
+    },
+    {
+      "file": "enrichment-heatmap.png",
+      "bytes": 82096,
+      "sha256": "8331a64bc84013ba4d854d9a14794354b244ddc032a39ccb5bbb3a8065f4ec7a"
+    },
+    {
+      "file": "execution-environment.json",
+      "bytes": 766,
+      "sha256": "ceeaa82d15d852e658f76b35618b7b5c63669b09fcff01cb9db1c078d620c0bc"
+    },
+    {
+      "file": "four-component-coenrichment-assessment.v1.json",
+      "bytes": 476,
+      "sha256": "6e96f012f24b660d2dc6f1cfc682f18e5f626c3ca21ce1c3de58179d37f1a918"
+    },
+    {
+      "file": "input-manifest.json",
+      "bytes": 8664,
+      "sha256": "b0cdc617199f9be638183c110ba8558ed9ad3c7582632cc78127cc11c5cad87b"
+    },
+    {
+      "file": "kmeans-centers.csv",
+      "bytes": 6385,
+      "sha256": "6307e02e2d72cfad267f6a4cc82acbcc8c77cfe96426a2b2768b9d3616f5612f"
+    },
+    {
+      "file": "kmeans-grid-labels.csv.gz",
+      "bytes": 1652737,
+      "sha256": "055e6276e8ea60768c25ae380b984f0c7cab8eec66e3a4eb9c27ac54e66d6daf"
+    },
+    {
+      "file": "kmeans-grid.csv",
+      "bytes": 739,
+      "sha256": "1ba2680f852f3d5fca36d2b28bf3426c91fba54d44d508952e461c98526d47a1"
+    },
+    {
+      "file": "neighborhood-enrichment.csv",
+      "bytes": 36453,
+      "sha256": "e99af194a2a7390ed852b66acc7c74d6a6d88a7e7733a7bcfdcea334b9afb7bd"
+    },
+    {
+      "file": "niche-composition-centroids.csv",
+      "bytes": 6410,
+      "sha256": "b672d1cd668860d304e5482d17db451391cda48d10d1d7d1e15bbbe7d6ca1c34"
+    },
+    {
+      "file": "niche-distribution-by-section.csv",
+      "bytes": 2177,
+      "sha256": "8dfedad2f9f3df4abf034dc8c9ea42260d69a54520ec28918155d6727ad23d84"
+    },
+    {
+      "file": "niche-Moran.csv",
+      "bytes": 2901,
+      "sha256": "2c4cf55f08d000f324166d03cfa5da674760354d8329cabde30978ac62cc41ca"
+    },
+    {
+      "file": "niche_labels.csv.gz",
+      "bytes": 107476,
+      "sha256": "6ba46687ae54ed67b2438ec4a1184eebfca01741d74a6c040626d96246e7d0a8"
+    },
+    {
+      "file": "output-manifest.json",
+      "bytes": 5359,
+      "sha256": "1f12bd65ff4ed912aad736fbea2fe8b9bab1e7f061770d6b2b05ef859b9b66ee"
+    },
+    {
+      "file": "postcompletion-audit.v1.json",
+      "bytes": 807,
+      "sha256": "5ea0e673dc1c1f36d803d3429ca87be940db5c356dcdacda142e5cb08663d452"
+    },
+    {
+      "file": "preflight.json",
+      "bytes": 2166,
+      "sha256": "3b7887b2aa36094b52ca85d152acfa401b1054437c3f94eb888ac09fec8ce041"
+    },
+    {
+      "file": "prespecified-four-component-map.json",
+      "bytes": 434,
+      "sha256": "30e20033f4c4f486668c2ebca9a0875cd8af0ebae9c2aa3bb65b319fd7fd7b5a"
+    },
+    {
+      "file": "prespecified-four-components-by-niche.csv",
+      "bytes": 886,
+      "sha256": "c40863c115d56770da35aba25aeecdd99d32bb905426b5cbd2355f0e07f6db29"
+    },
+    {
+      "file": "progress.json",
+      "bytes": 268,
+      "sha256": "a96b4c4ba054bef21e10153ea54bf76df9d3827d19cb2dc912f69aea87827489"
+    },
+    {
+      "file": "provenance.sidecar.failed.v1.json",
+      "bytes": 249,
+      "sha256": "f5c64b9f953e0336c20be7d7322fc1a19e9a2b7acaf58ee4ca5f1aa468215672"
+    },
+    {
+      "file": "provenance.sidecar.json",
+      "bytes": 249,
+      "sha256": "f5c64b9f953e0336c20be7d7322fc1a19e9a2b7acaf58ee4ca5f1aa468215672"
+    },
+    {
+      "file": "provenance.sidecar.v2.json",
+      "bytes": 12718,
+      "sha256": "8128e83317660cce50afa2074ffa3f764e2b68c21210e67250e7bb9e03d55172"
+    },
+    {
+      "file": "S5-result.json",
+      "bytes": 797,
+      "sha256": "a9d1ae7d49f1a3437d2a701e5b197fbd8d305481eaad8dbbab6f657b5eefcbe0"
+    },
+    {
+      "file": "scaler.json",
+      "bytes": 2345,
+      "sha256": "b9a01b0a7a6026cb29fd211bdad18cf34fa0ba750b3eb82704582a15f4121aac"
+    },
+    {
+      "file": "selected-k.json",
+      "bytes": 414,
+      "sha256": "bcf8e64b803143391bd362fb07a3c94dd2599bace973f36fc33fe4bc1c8d43ad"
+    },
+    {
+      "file": "SHA256SUMS.txt",
+      "bytes": 2958,
+      "sha256": "7e9c264fdc9970cf0c82edb04d7014d1a448fe4a64e5f1b4781c62a14c52a738"
+    },
+    {
+      "file": "silhouette-by-section.csv",
+      "bytes": 4141,
+      "sha256": "00d2aaeee5f1e8553cd510756ce1a502a8355b564cda053ee5d0560b1bbc1632"
+    }
+  ]
+}

@@ -1,0 +1,1267 @@
+{
+  "status": "COMPLETE_POSTAUDIT_INVENTORY",
+  "created_at_utc": "2026-09-06T01:18:36.304886+00:00",
+  "preserves_original_output_manifest": true,
+  "files_before_this_manifest": [
+    {
+      "file": "1142243F-composition.png",
+      "bytes": 2799310,
+      "sha256": "9fda835d2aae04ecdf8ea5a7cd110aed35885e8802ec7736ce622327b2a0d360"
+    },
+    {
+      "file": "1160920F-composition.png",
+      "bytes": 2868974,
+      "sha256": "310446a40d9377936bfa0854884cf82bc4c40efa0286b483f3afa662ea7188eb"
+    },
+    {
+      "file": "CID4290-composition.png",
+      "bytes": 2350269,
+      "sha256": "6fe5be492c01579379680443ef068f086fdc39b833ba50d7209d3cfc59ae0b7e"
+    },
+    {
+      "file": "CID4465-composition.png",
+      "bytes": 1427087,
+      "sha256": "3a6fab4d8d0b5354f8d3efcf802ba636271dd3c4f0dabf8047fa4929130349e8"
+    },
+    {
+      "file": "CID44971-composition.png",
+      "bytes": 1344216,
+      "sha256": "e2f2c1ccb29ff603724ce523c637fcb0b4ea70727c79f46794b51ee350508e1b"
+    },
+    {
+      "file": "CID4535-composition.png",
+      "bytes": 1309471,
+      "sha256": "6bad7e0af28d1063dfc4b727dda0a1b7493aff5b0c5bf95125031c6aa67de52a"
+    },
+    {
+      "file": "deterministic-marker-gene-union.csv",
+      "bytes": 14833,
+      "sha256": "e7078bcb06964260324930108769ecb5c398cea63f910a88d2cd0c1a70ac0bcd"
+    },
+    {
+      "file": "execution-environment.json",
+      "bytes": 766,
+      "sha256": "ceeaa82d15d852e658f76b35618b7b5c63669b09fcff01cb9db1c078d620c0bc"
+    },
+    {
+      "file": "ingest-label-agreement.csv",
+      "bytes": 45542,
+      "sha256": "8ad5801d911883b051ae3c97ea7a9e2707033138dbf7ac9090d187ff0020185a"
+    },
+    {
+      "file": "ingest_confusion_by_section.csv",
+      "bytes": 21824,
+      "sha256": "e414d41681df79f563ed8e2fe8c51097b0059ee2f32779afc585ebafbdeb13cb"
+    },
+    {
+      "file": "ingest_labels.csv.gz",
+      "bytes": 307895,
+      "sha256": "3898acfcc951d1fd5516a928a0bd2dde00585571c1971a79d57cba8b7e347abb"
+    },
+    {
+      "file": "ingest_maps.png",
+      "bytes": 2166248,
+      "sha256": "7282ab3f1ce2265d281e0a29558dd8a27f6be4060016f1657ea7978206068373"
+    },
+    {
+      "file": "input-manifest.json",
+      "bytes": 5982,
+      "sha256": "1e2595ddfa76c666588ac82beb2fac66bf2fe8d853a2eb2c709c9308088cf24b"
+    },
+    {
+      "file": "method-comparison.png",
+      "bytes": 344878,
+      "sha256": "bcbd8104152d2ba2a0b252c4f187ab3959b4845e2c136eefe39ccab3c7cc3034"
+    },
+    {
+      "file": "normalization-and-feature-map.json",
+      "bytes": 1243,
+      "sha256": "21a04883d8fed3d033da5fe5076944d24fafe9a15408d337e4dfe1ca2c2ef0a0"
+    },
+    {
+      "file": "output-manifest.json",
+      "bytes": 50010,
+      "sha256": "df0c14c46057987f2ab9185cd20e80a2275e9262763e7b4bd690c319ee6abd35"
+    },
+    {
+      "file": "postcompletion-audit.v1.json",
+      "bytes": 2980,
+      "sha256": "02e84cd69b263eb099c7234f609ff9379170b45064cae8faffff9e457a1db011"
+    },
+    {
+      "file": "preflight.json",
+      "bytes": 2166,
+      "sha256": "3b7887b2aa36094b52ca85d152acfa401b1054437c3f94eb888ac09fec8ce041"
+    },
+    {
+      "file": "process.json",
+      "bytes": 838,
+      "sha256": "31ca94e4d555079b84fe0d717af1b66ec0ddd5ebc9b2199d0b14e37dbba4a78d"
+    },
+    {
+      "file": "progress.json",
+      "bytes": 268,
+      "sha256": "f1da9756f311648bee9ed9422f70ef03a30b9d3dd1ffd5f9b9b46cd0f899f45d"
+    },
+    {
+      "file": "project-environment-install.log",
+      "bytes": 15991,
+      "sha256": "aa20640de77e788a0657f99281648f89ab577e0a7c915ee4233b4ca109f2daca"
+    },
+    {
+      "file": "proportions_marker_nnls.csv.gz",
+      "bytes": 626563,
+      "sha256": "3cbeefa2c127fff67b970a9249f8ab5991b12579c337c0e6d35001c2723af5c7"
+    },
+    {
+      "file": "proportions_tangram.csv.gz",
+      "bytes": 3926004,
+      "sha256": "1728f720f5b146234b968cf571c4911f809bf70e634f1e1e64368fa87e6f5f1c"
+    },
+    {
+      "file": "provenance.sidecar.failed.v1.json",
+      "bytes": 249,
+      "sha256": "f5c64b9f953e0336c20be7d7322fc1a19e9a2b7acaf58ee4ca5f1aa468215672"
+    },
+    {
+      "file": "provenance.sidecar.json",
+      "bytes": 249,
+      "sha256": "f5c64b9f953e0336c20be7d7322fc1a19e9a2b7acaf58ee4ca5f1aa468215672"
+    },
+    {
+      "file": "provenance.sidecar.v2.json",
+      "bytes": 86648,
+      "sha256": "0278f089c95a4217a8bb60f857958e505ed7db90a839dd50b5bd56396e4c508d"
+    },
+    {
+      "file": "reference-marker-top50-by-producer-label.csv",
+      "bytes": 135574,
+      "sha256": "00e1b7c5cdd194173e97868a1d69504dcd94273c644e1543c6c58b31217d0a9f"
+    },
+    {
+      "file": "residuals.csv",
+      "bytes": 1030204,
+      "sha256": "d92793f3c8a2e29235a24d587a890ee7719ac4bceba9284cb7432213c4ccdaee"
+    },
+    {
+      "file": "run_spatialwarrant_s4_s5.py",
+      "bytes": 47788,
+      "sha256": "334fc0e5083ebcc08d4b56933f815743de0596d825f781f310d5e3cf5eed5ac5"
+    },
+    {
+      "file": "S4-config.json",
+      "bytes": 819,
+      "sha256": "77a674b73759dda0a3d5a7f3335b84a2fa6ed34c7bd762034d9a4996cd1b4295"
+    },
+    {
+      "file": "S4-result.json",
+      "bytes": 853,
+      "sha256": "5769e9682db4e8a39308563e5d4c0f0798a44c34293bdeda7582fa431367a1c6"
+    },
+    {
+      "file": "SHA256SUMS.txt",
+      "bytes": 32148,
+      "sha256": "26ecd04bdee34ee4b6d71f8447863dda31635ef6a80b51f959852a5997e9e764"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-1000_seed-20260904\\candidate-training-genes.txt",
+      "bytes": 3976,
+      "sha256": "d5fd37de7505ef7e77606bbcc2794b1ff6c50aeb3bce9e627b74eadfef0c7998"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-1000_seed-20260904\\run.json",
+      "bytes": 67905,
+      "sha256": "db1df7bba7698cd5e3451e4bbc3f8510eb451212cbfb96e5abbcb0e7b5241170"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-1000_seed-20260904\\spot-by-celltype-composition.csv.gz",
+      "bytes": 1337606,
+      "sha256": "999ad28cbc77d90e6213ada9b3d2e3ba2a2141de3ef491a83d06932f2b8aeadb"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-1000_seed-20260904\\training-genes.txt",
+      "bytes": 3948,
+      "sha256": "95d56d48299e66debf883940948bc37cbe5c4c059bd4e996397acaed64db75e3"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-1000_seed-20260905\\candidate-training-genes.txt",
+      "bytes": 3976,
+      "sha256": "d5fd37de7505ef7e77606bbcc2794b1ff6c50aeb3bce9e627b74eadfef0c7998"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-1000_seed-20260905\\run.json",
+      "bytes": 67897,
+      "sha256": "e921d490d37eb431dcd35f30ff0c56ec1295be10bceab7b0f557ed29eb0faf76"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-1000_seed-20260905\\spot-by-celltype-composition.csv.gz",
+      "bytes": 1337657,
+      "sha256": "59e4c14e373896180798b15fb24fa1a44ce5ded133fa944e0b89b663b1ca1538"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-1000_seed-20260905\\training-genes.txt",
+      "bytes": 3948,
+      "sha256": "95d56d48299e66debf883940948bc37cbe5c4c059bd4e996397acaed64db75e3"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-1000_seed-20260906\\candidate-training-genes.txt",
+      "bytes": 3976,
+      "sha256": "d5fd37de7505ef7e77606bbcc2794b1ff6c50aeb3bce9e627b74eadfef0c7998"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-1000_seed-20260906\\run.json",
+      "bytes": 67899,
+      "sha256": "70fdc8e114d6f931f6eff897047c3d4788f0789c7cece9561b16839f4d94661f"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-1000_seed-20260906\\spot-by-celltype-composition.csv.gz",
+      "bytes": 1337380,
+      "sha256": "fc0d442e82a6b05669a199f487f8547f61d54715b41714f014682ac0ab62614c"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-1000_seed-20260906\\training-genes.txt",
+      "bytes": 3948,
+      "sha256": "95d56d48299e66debf883940948bc37cbe5c4c059bd4e996397acaed64db75e3"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-2000_seed-20260904\\candidate-training-genes.txt",
+      "bytes": 3976,
+      "sha256": "d5fd37de7505ef7e77606bbcc2794b1ff6c50aeb3bce9e627b74eadfef0c7998"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-2000_seed-20260904\\run.json",
+      "bytes": 67905,
+      "sha256": "747c4d2ffef8140ed4fd2972455e119d96351c3645f7d5062ce51deae5e966e0"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-2000_seed-20260904\\spot-by-celltype-composition.csv.gz",
+      "bytes": 1337606,
+      "sha256": "999ad28cbc77d90e6213ada9b3d2e3ba2a2141de3ef491a83d06932f2b8aeadb"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-2000_seed-20260904\\training-genes.txt",
+      "bytes": 3948,
+      "sha256": "95d56d48299e66debf883940948bc37cbe5c4c059bd4e996397acaed64db75e3"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-2000_seed-20260905\\candidate-training-genes.txt",
+      "bytes": 3976,
+      "sha256": "d5fd37de7505ef7e77606bbcc2794b1ff6c50aeb3bce9e627b74eadfef0c7998"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-2000_seed-20260905\\run.json",
+      "bytes": 67898,
+      "sha256": "58ad55b4dac74b90812d1120e0961d33aecf9ac98fec06494df8c137f9d4aefa"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-2000_seed-20260905\\spot-by-celltype-composition.csv.gz",
+      "bytes": 1337657,
+      "sha256": "59e4c14e373896180798b15fb24fa1a44ce5ded133fa944e0b89b663b1ca1538"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-2000_seed-20260905\\training-genes.txt",
+      "bytes": 3948,
+      "sha256": "95d56d48299e66debf883940948bc37cbe5c4c059bd4e996397acaed64db75e3"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-2000_seed-20260906\\candidate-training-genes.txt",
+      "bytes": 3976,
+      "sha256": "d5fd37de7505ef7e77606bbcc2794b1ff6c50aeb3bce9e627b74eadfef0c7998"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-2000_seed-20260906\\run.json",
+      "bytes": 67899,
+      "sha256": "7f502a7489dc536cd963cf3e81e90164b95e9ed66a9c1af90a3c7c6f8a442175"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-2000_seed-20260906\\spot-by-celltype-composition.csv.gz",
+      "bytes": 1337380,
+      "sha256": "fc0d442e82a6b05669a199f487f8547f61d54715b41714f014682ac0ab62614c"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-2000_seed-20260906\\training-genes.txt",
+      "bytes": 3948,
+      "sha256": "95d56d48299e66debf883940948bc37cbe5c4c059bd4e996397acaed64db75e3"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-500_seed-20260904\\candidate-training-genes.txt",
+      "bytes": 3027,
+      "sha256": "c37a88a1ff5ea2b96958267745ed474d048eb4c082b5249db2494695c000ebdb"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-500_seed-20260904\\run.json",
+      "bytes": 67885,
+      "sha256": "2bc52060525fb5f4533ce06031516698eff746521ed97baad2454ffef4ca30fa"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-500_seed-20260904\\spot-by-celltype-composition.csv.gz",
+      "bytes": 1339069,
+      "sha256": "007e31515779b74e3393f994b1f504b39176b01a7851acc4f574f176deb505dd"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-500_seed-20260904\\training-genes.txt",
+      "bytes": 2999,
+      "sha256": "094abfb4000fca85f95d83e90204756ee14dfb1c46e5fc7cbb22f2284562742b"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-500_seed-20260905\\candidate-training-genes.txt",
+      "bytes": 3027,
+      "sha256": "c37a88a1ff5ea2b96958267745ed474d048eb4c082b5249db2494695c000ebdb"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-500_seed-20260905\\run.json",
+      "bytes": 67873,
+      "sha256": "50f093787962a42f9f7e618dd379ea18e69c86ffe43b99ff775d8824d4cc41c8"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-500_seed-20260905\\spot-by-celltype-composition.csv.gz",
+      "bytes": 1339027,
+      "sha256": "bd4ac824f3081d5b8c15e7b4a51c1d3388f381439c0fdea7808ebf4ae269336b"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-500_seed-20260905\\training-genes.txt",
+      "bytes": 2999,
+      "sha256": "094abfb4000fca85f95d83e90204756ee14dfb1c46e5fc7cbb22f2284562742b"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-500_seed-20260906\\candidate-training-genes.txt",
+      "bytes": 3027,
+      "sha256": "c37a88a1ff5ea2b96958267745ed474d048eb4c082b5249db2494695c000ebdb"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-500_seed-20260906\\run.json",
+      "bytes": 67885,
+      "sha256": "a6fc43c2adbc5b3a1a7d3c517c88e4dced381f580a7f5e209b72d8dd0e26e2f0"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-500_seed-20260906\\spot-by-celltype-composition.csv.gz",
+      "bytes": 1339138,
+      "sha256": "5558110fb9e39b2b7b9bd0a66f3df6e329ff012d5d5487ad9478bbc11a4d8c27"
+    },
+    {
+      "file": "tangram-grid\\1142243F\\genes-500_seed-20260906\\training-genes.txt",
+      "bytes": 2999,
+      "sha256": "094abfb4000fca85f95d83e90204756ee14dfb1c46e5fc7cbb22f2284562742b"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-1000_seed-20260904\\candidate-training-genes.txt",
+      "bytes": 3976,
+      "sha256": "d5fd37de7505ef7e77606bbcc2794b1ff6c50aeb3bce9e627b74eadfef0c7998"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-1000_seed-20260904\\run.json",
+      "bytes": 67699,
+      "sha256": "64c47e13fe37e82696b9885d0d41e65e7df48432109aac63bf904e00b936b99f"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-1000_seed-20260904\\spot-by-celltype-composition.csv.gz",
+      "bytes": 1372790,
+      "sha256": "6b3a5873c924bef2ec13c4644265a77d1e2a089b073b436e76b70c91692a472b"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-1000_seed-20260904\\training-genes.txt",
+      "bytes": 3967,
+      "sha256": "879502b8477911f27bfc0c85628fde0cd5c5e677c32e24bf7e30a7848fb32f3e"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-1000_seed-20260905\\candidate-training-genes.txt",
+      "bytes": 3976,
+      "sha256": "d5fd37de7505ef7e77606bbcc2794b1ff6c50aeb3bce9e627b74eadfef0c7998"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-1000_seed-20260905\\run.json",
+      "bytes": 67690,
+      "sha256": "df4cccbf7ba7d8af6894c153c9abbd26cf0666b50d31f1401cbedea90a1df622"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-1000_seed-20260905\\spot-by-celltype-composition.csv.gz",
+      "bytes": 1372746,
+      "sha256": "26e9c3592431771f1895a0ede262a3a7c3ef8784762b38566e9ad2b411fe99aa"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-1000_seed-20260905\\training-genes.txt",
+      "bytes": 3967,
+      "sha256": "879502b8477911f27bfc0c85628fde0cd5c5e677c32e24bf7e30a7848fb32f3e"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-1000_seed-20260906\\candidate-training-genes.txt",
+      "bytes": 3976,
+      "sha256": "d5fd37de7505ef7e77606bbcc2794b1ff6c50aeb3bce9e627b74eadfef0c7998"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-1000_seed-20260906\\run.json",
+      "bytes": 67740,
+      "sha256": "21061bc135838dfd634c46078b62fd403636fe270b1c41571df36b95841f4f1f"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-1000_seed-20260906\\spot-by-celltype-composition.csv.gz",
+      "bytes": 1373244,
+      "sha256": "7c67f8b941f85c6697ab07f846b9abcaaf57e5322b746e3533e2196914cd865f"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-1000_seed-20260906\\training-genes.txt",
+      "bytes": 3967,
+      "sha256": "879502b8477911f27bfc0c85628fde0cd5c5e677c32e24bf7e30a7848fb32f3e"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-2000_seed-20260904\\candidate-training-genes.txt",
+      "bytes": 3976,
+      "sha256": "d5fd37de7505ef7e77606bbcc2794b1ff6c50aeb3bce9e627b74eadfef0c7998"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-2000_seed-20260904\\run.json",
+      "bytes": 67699,
+      "sha256": "f2a52482de7a59217d54886493185abf360cac281472aeba526154550d0cae3c"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-2000_seed-20260904\\spot-by-celltype-composition.csv.gz",
+      "bytes": 1372790,
+      "sha256": "6b3a5873c924bef2ec13c4644265a77d1e2a089b073b436e76b70c91692a472b"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-2000_seed-20260904\\training-genes.txt",
+      "bytes": 3967,
+      "sha256": "879502b8477911f27bfc0c85628fde0cd5c5e677c32e24bf7e30a7848fb32f3e"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-2000_seed-20260905\\candidate-training-genes.txt",
+      "bytes": 3976,
+      "sha256": "d5fd37de7505ef7e77606bbcc2794b1ff6c50aeb3bce9e627b74eadfef0c7998"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-2000_seed-20260905\\run.json",
+      "bytes": 67692,
+      "sha256": "0d7c0e8612293f65cf8262c44b688a0eb886efffd6675c8c38aff964412f9b56"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-2000_seed-20260905\\spot-by-celltype-composition.csv.gz",
+      "bytes": 1372746,
+      "sha256": "26e9c3592431771f1895a0ede262a3a7c3ef8784762b38566e9ad2b411fe99aa"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-2000_seed-20260905\\training-genes.txt",
+      "bytes": 3967,
+      "sha256": "879502b8477911f27bfc0c85628fde0cd5c5e677c32e24bf7e30a7848fb32f3e"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-2000_seed-20260906\\candidate-training-genes.txt",
+      "bytes": 3976,
+      "sha256": "d5fd37de7505ef7e77606bbcc2794b1ff6c50aeb3bce9e627b74eadfef0c7998"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-2000_seed-20260906\\run.json",
+      "bytes": 67739,
+      "sha256": "a2c174b7815991c8175c41eebfae9a395f3eaeb7d3803bc7f36ca63dbcf07ccd"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-2000_seed-20260906\\spot-by-celltype-composition.csv.gz",
+      "bytes": 1373244,
+      "sha256": "7c67f8b941f85c6697ab07f846b9abcaaf57e5322b746e3533e2196914cd865f"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-2000_seed-20260906\\training-genes.txt",
+      "bytes": 3967,
+      "sha256": "879502b8477911f27bfc0c85628fde0cd5c5e677c32e24bf7e30a7848fb32f3e"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-500_seed-20260904\\candidate-training-genes.txt",
+      "bytes": 3027,
+      "sha256": "c37a88a1ff5ea2b96958267745ed474d048eb4c082b5249db2494695c000ebdb"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-500_seed-20260904\\run.json",
+      "bytes": 67735,
+      "sha256": "c4235f0b23d810010537cf3448f44122122640903c8d6bb785ea2c42fa9d7f2f"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-500_seed-20260904\\spot-by-celltype-composition.csv.gz",
+      "bytes": 1373267,
+      "sha256": "fae0a47c24b9705e7b8212316a26f10257c609da0d531ba5dcfcf8e867442c5e"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-500_seed-20260904\\training-genes.txt",
+      "bytes": 3027,
+      "sha256": "4f376fd7680d7826c4185900aeaa62a930a59bbc925103bedb7b9e44b3265a64"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-500_seed-20260905\\candidate-training-genes.txt",
+      "bytes": 3027,
+      "sha256": "c37a88a1ff5ea2b96958267745ed474d048eb4c082b5249db2494695c000ebdb"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-500_seed-20260905\\run.json",
+      "bytes": 67686,
+      "sha256": "49d461ee66d6135127b498d9b357ab4ff2fc55fb253a08ed1c4d718aa73b8e1d"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-500_seed-20260905\\spot-by-celltype-composition.csv.gz",
+      "bytes": 1373440,
+      "sha256": "bcaaaf2af5af6d34cf01421e4fb0d81f9a5c04a768291801c5fd0ab17bdd6e0f"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-500_seed-20260905\\training-genes.txt",
+      "bytes": 3027,
+      "sha256": "4f376fd7680d7826c4185900aeaa62a930a59bbc925103bedb7b9e44b3265a64"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-500_seed-20260906\\candidate-training-genes.txt",
+      "bytes": 3027,
+      "sha256": "c37a88a1ff5ea2b96958267745ed474d048eb4c082b5249db2494695c000ebdb"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-500_seed-20260906\\run.json",
+      "bytes": 67715,
+      "sha256": "8c8cf4615183b5ffaa1cb71a795c7307b55a3d0c34a079bba7e495435075ee9e"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-500_seed-20260906\\spot-by-celltype-composition.csv.gz",
+      "bytes": 1373744,
+      "sha256": "cf41f78dbf82be58ab7ef9e0d08d8ee3033436f9b7a75c567ca764dc2ae8b101"
+    },
+    {
+      "file": "tangram-grid\\1160920F\\genes-500_seed-20260906\\training-genes.txt",
+      "bytes": 3027,
+      "sha256": "4f376fd7680d7826c4185900aeaa62a930a59bbc925103bedb7b9e44b3265a64"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-1000_seed-20260904\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-1000_seed-20260904\\run.json",
+      "bytes": 67725,
+      "sha256": "5bfaf1d7ada781282c014f9615958032a454dd6cdb033a021695faa116f26d0b"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-1000_seed-20260904\\spot-by-celltype-composition.csv.gz",
+      "bytes": 677763,
+      "sha256": "01a91997e7cb523c334a54742322e6309580bce67fd1c6e696a174b50f80b91f"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-1000_seed-20260904\\training-genes.txt",
+      "bytes": 3877,
+      "sha256": "9a7a0f259493250d850b2e633ca370ec1a5e418c74d6a72d8ff074ae9509ac62"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-1000_seed-20260905\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-1000_seed-20260905\\run.json",
+      "bytes": 67721,
+      "sha256": "a36da695307bd143174578679582ff03d0eafcd8de3d55685daa483aba4c16f5"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-1000_seed-20260905\\spot-by-celltype-composition.csv.gz",
+      "bytes": 678515,
+      "sha256": "c98e0592bd189613846820169f4d0a1a0f3a647e7d505465c4718c4e34957562"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-1000_seed-20260905\\training-genes.txt",
+      "bytes": 3877,
+      "sha256": "9a7a0f259493250d850b2e633ca370ec1a5e418c74d6a72d8ff074ae9509ac62"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-1000_seed-20260906\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-1000_seed-20260906\\run.json",
+      "bytes": 67687,
+      "sha256": "ac7bc46a65b160f515d03c3d0a64cc17c10e0ef195b93f3ba8538527d61aac71"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-1000_seed-20260906\\spot-by-celltype-composition.csv.gz",
+      "bytes": 678846,
+      "sha256": "c294dcb45fa5c9d68d3910d9abdfe9d9890304986d3c21ad194933d525809f52"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-1000_seed-20260906\\training-genes.txt",
+      "bytes": 3877,
+      "sha256": "9a7a0f259493250d850b2e633ca370ec1a5e418c74d6a72d8ff074ae9509ac62"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-2000_seed-20260904\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-2000_seed-20260904\\run.json",
+      "bytes": 67725,
+      "sha256": "a0496df805eb4e38c550ab2f42b9b6cf41dafa4c33e27e4e2f36db631b269b59"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-2000_seed-20260904\\spot-by-celltype-composition.csv.gz",
+      "bytes": 677763,
+      "sha256": "01a91997e7cb523c334a54742322e6309580bce67fd1c6e696a174b50f80b91f"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-2000_seed-20260904\\training-genes.txt",
+      "bytes": 3877,
+      "sha256": "9a7a0f259493250d850b2e633ca370ec1a5e418c74d6a72d8ff074ae9509ac62"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-2000_seed-20260905\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-2000_seed-20260905\\run.json",
+      "bytes": 67720,
+      "sha256": "18b93e491cf61846fbd8584f599b37e0bafbcf862c224426372614fa38b01bcc"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-2000_seed-20260905\\spot-by-celltype-composition.csv.gz",
+      "bytes": 678515,
+      "sha256": "c98e0592bd189613846820169f4d0a1a0f3a647e7d505465c4718c4e34957562"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-2000_seed-20260905\\training-genes.txt",
+      "bytes": 3877,
+      "sha256": "9a7a0f259493250d850b2e633ca370ec1a5e418c74d6a72d8ff074ae9509ac62"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-2000_seed-20260906\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-2000_seed-20260906\\run.json",
+      "bytes": 67686,
+      "sha256": "d48c5338d97ae7242d75004468565839bae30d4e11e6eb673c6028f8ffe14883"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-2000_seed-20260906\\spot-by-celltype-composition.csv.gz",
+      "bytes": 678846,
+      "sha256": "c294dcb45fa5c9d68d3910d9abdfe9d9890304986d3c21ad194933d525809f52"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-2000_seed-20260906\\training-genes.txt",
+      "bytes": 3877,
+      "sha256": "9a7a0f259493250d850b2e633ca370ec1a5e418c74d6a72d8ff074ae9509ac62"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-500_seed-20260904\\candidate-training-genes.txt",
+      "bytes": 3018,
+      "sha256": "2d948cdd47e7804ef63f2a5f7bb936d5f9cc2082e0ea066c303cbb35da455317"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-500_seed-20260904\\run.json",
+      "bytes": 67699,
+      "sha256": "4601d528473a2086843d40a35897e30d0b6693491112a33b6b6d860a077765c6"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-500_seed-20260904\\spot-by-celltype-composition.csv.gz",
+      "bytes": 677958,
+      "sha256": "81a18e1cf0b98f1aca0c75297c8f9c2431ccf56c479d45ece8241a047f7425d1"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-500_seed-20260904\\training-genes.txt",
+      "bytes": 2957,
+      "sha256": "992a43e12a1c893bf1b10521a448ef544c29f8aff8981ff7b6924bcd685f1699"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-500_seed-20260905\\candidate-training-genes.txt",
+      "bytes": 3018,
+      "sha256": "2d948cdd47e7804ef63f2a5f7bb936d5f9cc2082e0ea066c303cbb35da455317"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-500_seed-20260905\\run.json",
+      "bytes": 67698,
+      "sha256": "a3d11a836aa2e44e73ef79dd0846b0d26d717bd46e6179f0fbada9f8438bdd3d"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-500_seed-20260905\\spot-by-celltype-composition.csv.gz",
+      "bytes": 678754,
+      "sha256": "b7c06bd77e4ce214b830b740f8c7067d4b8d474156a181ee0ec912f184405984"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-500_seed-20260905\\training-genes.txt",
+      "bytes": 2957,
+      "sha256": "992a43e12a1c893bf1b10521a448ef544c29f8aff8981ff7b6924bcd685f1699"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-500_seed-20260906\\candidate-training-genes.txt",
+      "bytes": 3018,
+      "sha256": "2d948cdd47e7804ef63f2a5f7bb936d5f9cc2082e0ea066c303cbb35da455317"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-500_seed-20260906\\run.json",
+      "bytes": 67712,
+      "sha256": "4a6bf37f56acf95de8ac33755beffcd001de5a46b6d87a9524694ae39e201ef9"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-500_seed-20260906\\spot-by-celltype-composition.csv.gz",
+      "bytes": 679073,
+      "sha256": "64d85b162a5b2616799ba55cb8ea770b4f03258cea4adcfc9a71cb389f29e299"
+    },
+    {
+      "file": "tangram-grid\\CID4290\\genes-500_seed-20260906\\training-genes.txt",
+      "bytes": 2957,
+      "sha256": "992a43e12a1c893bf1b10521a448ef544c29f8aff8981ff7b6924bcd685f1699"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-1000_seed-20260904\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-1000_seed-20260904\\run.json",
+      "bytes": 67820,
+      "sha256": "cefb28544e22ea7101451b6c2d09305f90313effda7119c4d2b4c6e4b8611bfc"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-1000_seed-20260904\\spot-by-celltype-composition.csv.gz",
+      "bytes": 339660,
+      "sha256": "4effe2502d2361e33ba6b45a5c3db4cb8e401fdd68bae73b1e359785d49ff29b"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-1000_seed-20260904\\training-genes.txt",
+      "bytes": 3973,
+      "sha256": "28b3411e540162566891dd632bc4f30623df79821b73c7facb99f3f64827948e"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-1000_seed-20260905\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-1000_seed-20260905\\run.json",
+      "bytes": 67833,
+      "sha256": "6fbb8ecbd9328afab0d37b33eaff3cac0e76f604016369b5f83df4c1522a4f9b"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-1000_seed-20260905\\spot-by-celltype-composition.csv.gz",
+      "bytes": 339726,
+      "sha256": "d1b20a04e9dc01a7cfabb2d110215fbdff442c3cb9dee7f2a9030e25ad3efe57"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-1000_seed-20260905\\training-genes.txt",
+      "bytes": 3973,
+      "sha256": "28b3411e540162566891dd632bc4f30623df79821b73c7facb99f3f64827948e"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-1000_seed-20260906\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-1000_seed-20260906\\run.json",
+      "bytes": 67811,
+      "sha256": "a813f93ac525347023b4b5f650f1278b63a7d1c19e01a3c141150ae726ef87f0"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-1000_seed-20260906\\spot-by-celltype-composition.csv.gz",
+      "bytes": 339828,
+      "sha256": "9de9ab6b37f473414b6296626a0371dba0a85a76c8d9637adb07891173b0df35"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-1000_seed-20260906\\training-genes.txt",
+      "bytes": 3973,
+      "sha256": "28b3411e540162566891dd632bc4f30623df79821b73c7facb99f3f64827948e"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-2000_seed-20260904\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-2000_seed-20260904\\run.json",
+      "bytes": 67819,
+      "sha256": "a998f4cb71af2ae24d9387964b59e1a44cb605c1a38bbe6ee1b9ea36e1869a40"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-2000_seed-20260904\\spot-by-celltype-composition.csv.gz",
+      "bytes": 339660,
+      "sha256": "4effe2502d2361e33ba6b45a5c3db4cb8e401fdd68bae73b1e359785d49ff29b"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-2000_seed-20260904\\training-genes.txt",
+      "bytes": 3973,
+      "sha256": "28b3411e540162566891dd632bc4f30623df79821b73c7facb99f3f64827948e"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-2000_seed-20260905\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-2000_seed-20260905\\run.json",
+      "bytes": 67833,
+      "sha256": "d2310beef7e055d6eb0a131b1fd48096e6097ddc0a5d8868993140fd88bd29e7"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-2000_seed-20260905\\spot-by-celltype-composition.csv.gz",
+      "bytes": 339726,
+      "sha256": "d1b20a04e9dc01a7cfabb2d110215fbdff442c3cb9dee7f2a9030e25ad3efe57"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-2000_seed-20260905\\training-genes.txt",
+      "bytes": 3973,
+      "sha256": "28b3411e540162566891dd632bc4f30623df79821b73c7facb99f3f64827948e"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-2000_seed-20260906\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-2000_seed-20260906\\run.json",
+      "bytes": 67811,
+      "sha256": "e21a23b39c073434ca9e98e26a998e86d8916c2af4121b2cf05ba50b2549da10"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-2000_seed-20260906\\spot-by-celltype-composition.csv.gz",
+      "bytes": 339828,
+      "sha256": "9de9ab6b37f473414b6296626a0371dba0a85a76c8d9637adb07891173b0df35"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-2000_seed-20260906\\training-genes.txt",
+      "bytes": 3973,
+      "sha256": "28b3411e540162566891dd632bc4f30623df79821b73c7facb99f3f64827948e"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-500_seed-20260904\\candidate-training-genes.txt",
+      "bytes": 3018,
+      "sha256": "2d948cdd47e7804ef63f2a5f7bb936d5f9cc2082e0ea066c303cbb35da455317"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-500_seed-20260904\\run.json",
+      "bytes": 67800,
+      "sha256": "fd23fc8a6aa3ccdc419a5ac867e17afc9bc8e77c6a171091a160e80ef28d8f29"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-500_seed-20260904\\spot-by-celltype-composition.csv.gz",
+      "bytes": 340091,
+      "sha256": "e378a98cc8ad842da7b55cebc3b804e70a09d47f448bdbb84bc5c49baadf646c"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-500_seed-20260904\\training-genes.txt",
+      "bytes": 3018,
+      "sha256": "5e6aaea20038689e6c72ddded356485ec94d8b57bc9bd4c60e87ea8b1f791ed1"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-500_seed-20260905\\candidate-training-genes.txt",
+      "bytes": 3018,
+      "sha256": "2d948cdd47e7804ef63f2a5f7bb936d5f9cc2082e0ea066c303cbb35da455317"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-500_seed-20260905\\run.json",
+      "bytes": 67809,
+      "sha256": "ba5ede51eef5b0077318975639a71ecf792a298ee22626980e9d6252378a3788"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-500_seed-20260905\\spot-by-celltype-composition.csv.gz",
+      "bytes": 339834,
+      "sha256": "caa33e25d56cece5ae82d9577f95875101604294276d818e4673baa3d00318dc"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-500_seed-20260905\\training-genes.txt",
+      "bytes": 3018,
+      "sha256": "5e6aaea20038689e6c72ddded356485ec94d8b57bc9bd4c60e87ea8b1f791ed1"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-500_seed-20260906\\candidate-training-genes.txt",
+      "bytes": 3018,
+      "sha256": "2d948cdd47e7804ef63f2a5f7bb936d5f9cc2082e0ea066c303cbb35da455317"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-500_seed-20260906\\run.json",
+      "bytes": 67804,
+      "sha256": "ff13d18cdabd5020e1c47379f5b9332922612d9d7feb83372e1325f4e6481854"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-500_seed-20260906\\spot-by-celltype-composition.csv.gz",
+      "bytes": 340071,
+      "sha256": "2defca4c564ade2b95e5a5fdbb877785fa26ef95d8eaf6029baa25e1222f3ab3"
+    },
+    {
+      "file": "tangram-grid\\CID4465\\genes-500_seed-20260906\\training-genes.txt",
+      "bytes": 3018,
+      "sha256": "5e6aaea20038689e6c72ddded356485ec94d8b57bc9bd4c60e87ea8b1f791ed1"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-1000_seed-20260904\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-1000_seed-20260904\\run.json",
+      "bytes": 67826,
+      "sha256": "b13302c25a4a79c907b8fe363066a3732e896d1d2afc24e70a33095d6cccc774"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-1000_seed-20260904\\spot-by-celltype-composition.csv.gz",
+      "bytes": 326781,
+      "sha256": "c19be4dea213ea5546f8c5a3456b05d7312ba13b7358d88a4da831fcbc38ab0e"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-1000_seed-20260904\\training-genes.txt",
+      "bytes": 3929,
+      "sha256": "ce4712a9b066f5222574cfa92947dd3bc9eae3de013ebfd4e34ba149af952be9"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-1000_seed-20260905\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-1000_seed-20260905\\run.json",
+      "bytes": 67836,
+      "sha256": "3e540e9e8410e2148ef47a9f607efc2a12def5a1a0eea8ba4df09fe2e06999d3"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-1000_seed-20260905\\spot-by-celltype-composition.csv.gz",
+      "bytes": 326821,
+      "sha256": "444a1f64222edc9b9ea4e745029ea319a70a3991d4a6beb18d1e3fc9e3ac1901"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-1000_seed-20260905\\training-genes.txt",
+      "bytes": 3929,
+      "sha256": "ce4712a9b066f5222574cfa92947dd3bc9eae3de013ebfd4e34ba149af952be9"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-1000_seed-20260906\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-1000_seed-20260906\\run.json",
+      "bytes": 67833,
+      "sha256": "9e4e0bb3752c2bd0849782485c66a8631323a0200f8afb556176174c4e9ccca7"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-1000_seed-20260906\\spot-by-celltype-composition.csv.gz",
+      "bytes": 327064,
+      "sha256": "6f04d68f3f12c9a9cb65d5760a27f5b69bf363156ff059d767a19e4cf48e1a5a"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-1000_seed-20260906\\training-genes.txt",
+      "bytes": 3929,
+      "sha256": "ce4712a9b066f5222574cfa92947dd3bc9eae3de013ebfd4e34ba149af952be9"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-2000_seed-20260904\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-2000_seed-20260904\\run.json",
+      "bytes": 67826,
+      "sha256": "29079f9213c0f786d485c320a1ae2deecef4c05c65b3f7ecb0c45f9f6c0b50b0"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-2000_seed-20260904\\spot-by-celltype-composition.csv.gz",
+      "bytes": 326781,
+      "sha256": "c19be4dea213ea5546f8c5a3456b05d7312ba13b7358d88a4da831fcbc38ab0e"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-2000_seed-20260904\\training-genes.txt",
+      "bytes": 3929,
+      "sha256": "ce4712a9b066f5222574cfa92947dd3bc9eae3de013ebfd4e34ba149af952be9"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-2000_seed-20260905\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-2000_seed-20260905\\run.json",
+      "bytes": 67836,
+      "sha256": "c87b328e3b1b840118073b20a12194ed716dfb3d934f14ae8dc00c112fb8ab3e"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-2000_seed-20260905\\spot-by-celltype-composition.csv.gz",
+      "bytes": 326821,
+      "sha256": "444a1f64222edc9b9ea4e745029ea319a70a3991d4a6beb18d1e3fc9e3ac1901"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-2000_seed-20260905\\training-genes.txt",
+      "bytes": 3929,
+      "sha256": "ce4712a9b066f5222574cfa92947dd3bc9eae3de013ebfd4e34ba149af952be9"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-2000_seed-20260906\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-2000_seed-20260906\\run.json",
+      "bytes": 67832,
+      "sha256": "a05faffaec93a86a7f497beabe43438ce2e44ffdc0791328348be52988207255"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-2000_seed-20260906\\spot-by-celltype-composition.csv.gz",
+      "bytes": 327064,
+      "sha256": "6f04d68f3f12c9a9cb65d5760a27f5b69bf363156ff059d767a19e4cf48e1a5a"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-2000_seed-20260906\\training-genes.txt",
+      "bytes": 3929,
+      "sha256": "ce4712a9b066f5222574cfa92947dd3bc9eae3de013ebfd4e34ba149af952be9"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-500_seed-20260904\\candidate-training-genes.txt",
+      "bytes": 3018,
+      "sha256": "2d948cdd47e7804ef63f2a5f7bb936d5f9cc2082e0ea066c303cbb35da455317"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-500_seed-20260904\\run.json",
+      "bytes": 67837,
+      "sha256": "5dae2b010e0098fe734bf600c315cf92721b80e0b18366315b663273293ee0ea"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-500_seed-20260904\\spot-by-celltype-composition.csv.gz",
+      "bytes": 327032,
+      "sha256": "0ab07412ca1d1caed87340a199c67b629419966d2172e303300c2a73cf84cd22"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-500_seed-20260904\\training-genes.txt",
+      "bytes": 3000,
+      "sha256": "3b589fb736bf65633c021b2006b7fb348e70b4a874e694545b99210b9431027e"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-500_seed-20260905\\candidate-training-genes.txt",
+      "bytes": 3018,
+      "sha256": "2d948cdd47e7804ef63f2a5f7bb936d5f9cc2082e0ea066c303cbb35da455317"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-500_seed-20260905\\run.json",
+      "bytes": 67806,
+      "sha256": "0705bfd04f5a3e4e9c859dc3d2b40edd62a1683b7938e8914f5c43aebdb360f9"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-500_seed-20260905\\spot-by-celltype-composition.csv.gz",
+      "bytes": 326925,
+      "sha256": "9ec90196ad40516a076113bd276e715ecfdace84473627f5440d9ce792308f09"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-500_seed-20260905\\training-genes.txt",
+      "bytes": 3000,
+      "sha256": "3b589fb736bf65633c021b2006b7fb348e70b4a874e694545b99210b9431027e"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-500_seed-20260906\\candidate-training-genes.txt",
+      "bytes": 3018,
+      "sha256": "2d948cdd47e7804ef63f2a5f7bb936d5f9cc2082e0ea066c303cbb35da455317"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-500_seed-20260906\\run.json",
+      "bytes": 67834,
+      "sha256": "cd9af5e12728327007a9247b20144571b1dc87738ccbd5e13d838c0dbc6a580f"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-500_seed-20260906\\spot-by-celltype-composition.csv.gz",
+      "bytes": 327023,
+      "sha256": "899f6e9b9ad47d5e90f6b4e90a4a87cdf0a563932d68004aff8a2bd678f73ec2"
+    },
+    {
+      "file": "tangram-grid\\CID44971\\genes-500_seed-20260906\\training-genes.txt",
+      "bytes": 3000,
+      "sha256": "3b589fb736bf65633c021b2006b7fb348e70b4a874e694545b99210b9431027e"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-1000_seed-20260904\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-1000_seed-20260904\\run.json",
+      "bytes": 67712,
+      "sha256": "90727ecee9d1e9b8ea1ecbfffab0c05a1034c7a1660fca31671f1d96885b396d"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-1000_seed-20260904\\spot-by-celltype-composition.csv.gz",
+      "bytes": 316215,
+      "sha256": "cb57ace8bf91ef51a77d31418a8e3853dc44534509b7db927c0d99df440b4bb1"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-1000_seed-20260904\\training-genes.txt",
+      "bytes": 3965,
+      "sha256": "374518231c7d2e4ab6be732fb0006ab57420e8ea9eebf3fc24802e85a9150661"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-1000_seed-20260905\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-1000_seed-20260905\\run.json",
+      "bytes": 67726,
+      "sha256": "d115d82ec69233fd41ec5a33ee08b39ac20554a83569baf8de71eaba2ba3033e"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-1000_seed-20260905\\spot-by-celltype-composition.csv.gz",
+      "bytes": 316147,
+      "sha256": "7b5f48898bf5c824a5bf9f1dbb153c0f697cc367f06ce968cd1b9d50db350cde"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-1000_seed-20260905\\training-genes.txt",
+      "bytes": 3965,
+      "sha256": "374518231c7d2e4ab6be732fb0006ab57420e8ea9eebf3fc24802e85a9150661"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-1000_seed-20260906\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-1000_seed-20260906\\run.json",
+      "bytes": 67731,
+      "sha256": "af3e5d76ebe08724a26995cd25c0198a596094c7b49d3964067f29d1a6dcfbaa"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-1000_seed-20260906\\spot-by-celltype-composition.csv.gz",
+      "bytes": 316232,
+      "sha256": "5ca5cd35f72922d6f30947d13c57a9dfe72db0c6c48009e961643441012bf4d0"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-1000_seed-20260906\\training-genes.txt",
+      "bytes": 3965,
+      "sha256": "374518231c7d2e4ab6be732fb0006ab57420e8ea9eebf3fc24802e85a9150661"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-2000_seed-20260904\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-2000_seed-20260904\\run.json",
+      "bytes": 67712,
+      "sha256": "bcccfe3660b717922178c92c6ee87c63fab5bba19e7ceaa5f53d815f66e31483"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-2000_seed-20260904\\spot-by-celltype-composition.csv.gz",
+      "bytes": 316215,
+      "sha256": "cb57ace8bf91ef51a77d31418a8e3853dc44534509b7db927c0d99df440b4bb1"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-2000_seed-20260904\\training-genes.txt",
+      "bytes": 3965,
+      "sha256": "374518231c7d2e4ab6be732fb0006ab57420e8ea9eebf3fc24802e85a9150661"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-2000_seed-20260905\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-2000_seed-20260905\\run.json",
+      "bytes": 67726,
+      "sha256": "e10baf7208ba0a9461f98236e75554c347519294f59aa21ae01d486d9d8c28c0"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-2000_seed-20260905\\spot-by-celltype-composition.csv.gz",
+      "bytes": 316147,
+      "sha256": "7b5f48898bf5c824a5bf9f1dbb153c0f697cc367f06ce968cd1b9d50db350cde"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-2000_seed-20260905\\training-genes.txt",
+      "bytes": 3965,
+      "sha256": "374518231c7d2e4ab6be732fb0006ab57420e8ea9eebf3fc24802e85a9150661"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-2000_seed-20260906\\candidate-training-genes.txt",
+      "bytes": 3973,
+      "sha256": "7d3990513c596fdd2a5928fc06699ba2e34ed8c6786f908433212c0ee7be8fa3"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-2000_seed-20260906\\run.json",
+      "bytes": 67731,
+      "sha256": "35409bf4ec7f77e1afbd4f1302b848a82ba7581eaa59fc3faddb8ab04e9e6867"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-2000_seed-20260906\\spot-by-celltype-composition.csv.gz",
+      "bytes": 316232,
+      "sha256": "5ca5cd35f72922d6f30947d13c57a9dfe72db0c6c48009e961643441012bf4d0"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-2000_seed-20260906\\training-genes.txt",
+      "bytes": 3965,
+      "sha256": "374518231c7d2e4ab6be732fb0006ab57420e8ea9eebf3fc24802e85a9150661"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-500_seed-20260904\\candidate-training-genes.txt",
+      "bytes": 3018,
+      "sha256": "2d948cdd47e7804ef63f2a5f7bb936d5f9cc2082e0ea066c303cbb35da455317"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-500_seed-20260904\\run.json",
+      "bytes": 67730,
+      "sha256": "ca4e06bd0fd77423122aa7bb13d1a2f6e6d4a36d843538be44bdd2c9501a9abb"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-500_seed-20260904\\spot-by-celltype-composition.csv.gz",
+      "bytes": 316386,
+      "sha256": "688592d70314b48cff45b5e3592c21a0a4874851d44ebd630f61ae49c641482b"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-500_seed-20260904\\training-genes.txt",
+      "bytes": 3010,
+      "sha256": "7b12009e6fa53763dbaf3843a999fb98654c97afff8489d6700b599ec5214f6f"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-500_seed-20260905\\candidate-training-genes.txt",
+      "bytes": 3018,
+      "sha256": "2d948cdd47e7804ef63f2a5f7bb936d5f9cc2082e0ea066c303cbb35da455317"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-500_seed-20260905\\run.json",
+      "bytes": 67703,
+      "sha256": "2afe46d87a2912b0c3f48e543dfb1d8e71402a75463f63f1a9a0951a218194dc"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-500_seed-20260905\\spot-by-celltype-composition.csv.gz",
+      "bytes": 316273,
+      "sha256": "798d95dd469e61b3bb2023da33bafef5c3d31c04cc8a9f0d0b800f7f77c16a0d"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-500_seed-20260905\\training-genes.txt",
+      "bytes": 3010,
+      "sha256": "7b12009e6fa53763dbaf3843a999fb98654c97afff8489d6700b599ec5214f6f"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-500_seed-20260906\\candidate-training-genes.txt",
+      "bytes": 3018,
+      "sha256": "2d948cdd47e7804ef63f2a5f7bb936d5f9cc2082e0ea066c303cbb35da455317"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-500_seed-20260906\\run.json",
+      "bytes": 67710,
+      "sha256": "1511fed3077e6da4e712880ac3a96a1e249e11b58c91e21d942cd102fe3d55c6"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-500_seed-20260906\\spot-by-celltype-composition.csv.gz",
+      "bytes": 316177,
+      "sha256": "a4a7d849611a1aefb7105aeb52b07984cebfe89e9a2a3c5c01c3ce6421482f9d"
+    },
+    {
+      "file": "tangram-grid\\CID4535\\genes-500_seed-20260906\\training-genes.txt",
+      "bytes": 3010,
+      "sha256": "7b12009e6fa53763dbaf3843a999fb98654c97afff8489d6700b599ec5214f6f"
+    },
+    {
+      "file": "tangram-nnls-concordance.csv",
+      "bytes": 16038,
+      "sha256": "d47f8fbd642da3b28fb301a0e075290274a342c57d42d5e2018812c1738d52bd"
+    },
+    {
+      "file": "tangram-parameter-sensitivity.csv",
+      "bytes": 5831,
+      "sha256": "21d04fcaa1979d8a6f01e262bc2721a2b0c52f9d396618078802957650d898c4"
+    },
+    {
+      "file": "tangram-sc-base-install.log",
+      "bytes": 229,
+      "sha256": "b2e469a3d82ba0dd1008ce0c24ffb557898f43fe92cb41c3c08c6c8cef323c82"
+    },
+    {
+      "file": "unknown_spots.csv",
+      "bytes": 24,
+      "sha256": "b5b40754d88110269cd39c2a3378ec74a110f31399a216d48548108e34dc7771"
+    }
+  ]
+}

@@ -1,0 +1,190 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 10,
+    "name": "MYO10"
+  },
+  "source": "uniprot",
+  "returncode": 0,
+  "elapsed_seconds": 3.979958700016141,
+  "completed_at_utc": "2026-09-06T01:47:47.411037+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\requests\\uniprot\\gene-10-MYO10.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\raw\\uniprot\\gene-10-MYO10.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "rest-uniprot-org",
+    "path": "uniprotkb/search",
+    "method": "GET",
+    "status_code": 200,
+    "record_path": "results",
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\raw\\uniprot\\gene-10-MYO10.raw",
+    "warnings": [],
+    "record_count_returned": 6,
+    "record_count_available": 6,
+    "truncated": false,
+    "records": [
+      {
+        "entryType": "UniProtKB reviewed (Swiss-Prot)",
+        "primaryAccession": "Q9HD67",
+        "uniProtkbId": "MYO10_HUMAN",
+        "proteinDescription": {
+          "recommendedName": "...",
+          "alternativeNames": "..."
+        },
+        "genes": [
+          "..."
+        ],
+        "comments": [
+          "...",
+          "..."
+        ],
+        "extraAttributes": {
+          "uniParcId": "UPI0001597062",
+          "canonical_url": "https://www.uniprot.org/uniparc/UPI0001597062/entry"
+        },
+        "canonical_url": "https://www.uniprot.org/uniprotkb/Q9HD67/entry",
+        "canonical_urls": [
+          "https://www.uniprot.org/uniprotkb/Q9HD67/entry",
+          "https://www.uniprot.org/uniparc/UPI0001597062/entry"
+        ]
+      },
+      {
+        "entryType": "UniProtKB unreviewed (TrEMBL)",
+        "primaryAccession": "A0A0A0MQX1",
+        "uniProtkbId": "A0A0A0MQX1_HUMAN",
+        "proteinDescription": {
+          "recommendedName": "...",
+          "alternativeNames": "..."
+        },
+        "genes": [
+          "..."
+        ],
+        "comments": [
+          "..."
+        ],
+        "extraAttributes": {
+          "uniParcId": "UPI0000D61603",
+          "canonical_url": "https://www.uniprot.org/uniparc/UPI0000D61603/entry"
+        },
+        "canonical_url": "https://www.uniprot.org/uniprotkb/A0A0A0MQX1/entry",
+        "canonical_urls": [
+          "https://www.uniprot.org/uniprotkb/A0A0A0MQX1/entry",
+          "https://www.uniprot.org/uniparc/UPI0000D61603/entry"
+        ]
+      },
+      {
+        "entryType": "UniProtKB unreviewed (TrEMBL)",
+        "primaryAccession": "E9PEW5",
+        "uniProtkbId": "E9PEW5_HUMAN",
+        "proteinDescription": {
+          "submissionNames": "..."
+        },
+        "genes": [
+          "..."
+        ],
+        "comments": [],
+        "extraAttributes": {
+          "uniParcId": "UPI0001D3B0E1",
+          "canonical_url": "https://www.uniprot.org/uniparc/UPI0001D3B0E1/entry"
+        },
+        "canonical_url": "https://www.uniprot.org/uniprotkb/E9PEW5/entry",
+        "canonical_urls": [
+          "https://www.uniprot.org/uniprotkb/E9PEW5/entry",
+          "https://www.uniprot.org/uniparc/UPI0001D3B0E1/entry"
+        ]
+      },
+      {
+        "entryType": "UniProtKB unreviewed (TrEMBL)",
+        "primaryAccession": "E9PCN3",
+        "uniProtkbId": "E9PCN3_HUMAN",
+        "proteinDescription": {
+          "submissionNames": "...",
+          "flag": "Fragment"
+        },
+        "genes": [
+          "..."
+        ],
+        "comments": [],
+        "extraAttributes": {
+          "uniParcId": "UPI0004620CC6",
+          "canonical_url": "https://www.uniprot.org/uniparc/UPI0004620CC6/entry"
+        },
+        "canonical_url": "https://www.uniprot.org/uniprotkb/E9PCN3/entry",
+        "canonical_urls": [
+          "https://www.uniprot.org/uniprotkb/E9PCN3/entry",
+          "https://www.uniprot.org/uniparc/UPI0004620CC6/entry"
+        ]
+      },
+      {
+        "entryType": "UniProtKB unreviewed (TrEMBL)",
+        "primaryAccession": "D6RGD1",
+        "uniProtkbId": "D6RGD1_HUMAN",
+        "proteinDescription": {
+          "submissionNames": "...",
+          "flag": "Fragment"
+        },
+        "genes": [
+          "..."
+        ],
+        "comments": [],
+        "extraAttributes": {
+          "uniParcId": "UPI0001D3B0E2",
+          "canonical_url": "https://www.uniprot.org/uniparc/UPI0001D3B0E2/entry"
+        },
+        "canonical_url": "https://www.uniprot.org/uniprotkb/D6RGD1/entry",
+        "canonical_urls": [
+          "https://www.uniprot.org/uniprotkb/D6RGD1/entry",
+          "https://www.uniprot.org/uniparc/UPI0001D3B0E2/entry"
+        ]
+      },
+      {
+        "entryType": "UniProtKB unreviewed (TrEMBL)",
+        "primaryAccession": "Q6IPD7",
+        "uniProtkbId": "Q6IPD7_HUMAN",
+        "proteinDescription": {
+          "submissionNames": "...",
+          "flag": "Fragment"
+        },
+        "genes": [
+          "..."
+        ],
+        "comments": [],
+        "extraAttributes": {
+          "uniParcId": "UPI0000378338",
+          "canonical_url": "https://www.uniprot.org/uniparc/UPI0000378338/entry"
+        },
+        "canonical_url": "https://www.uniprot.org/uniprotkb/Q6IPD7/entry",
+        "canonical_urls": [
+          "https://www.uniprot.org/uniprotkb/Q6IPD7/entry",
+          "https://www.uniprot.org/uniparc/UPI0000378338/entry"
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "name": "UniProt",
+        "url": "https://rest.uniprot.org/uniprotkb/search?query=REDACTED&fields=accession%2Cid%2Cgene_names%2Cprotein_name%2Ccc_function&size=10&format=json",
+        "retrieved_at": "2026-09-06T01:47:47.385649+00:00",
+        "supports_claim": true,
+        "kind": "evidence",
+        "request_url": "https://rest.uniprot.org/uniprotkb/search?query=REDACTED&fields=accession%2Cid%2Cgene_names%2Cprotein_name%2Ccc_function&size=10&format=json",
+        "canonical_url": "https://www.uniprot.org/uniprotkb/Q9HD67/entry",
+        "canonical_urls": [
+          "https://www.uniprot.org/uniprotkb/Q9HD67/entry",
+          "https://www.uniprot.org/uniparc/UPI0001597062/entry",
+          "https://www.uniprot.org/uniprotkb/A0A0A0MQX1/entry",
+          "https://www.uniprot.org/uniparc/UPI0000D61603/entry",
+          "https://www.uniprot.org/uniprotkb/E9PEW5/entry",
+          "https://www.uniprot.org/uniparc/UPI0001D3B0E1/entry",
+          "https://www.uniprot.org/uniprotkb/E9PCN3/entry",
+          "https://www.uniprot.org/uniparc/UPI0004620CC6/entry",
+          "https://www.uniprot.org/uniprotkb/D6RGD1/entry",
+          "https://www.uniprot.org/uniparc/UPI0001D3B0E2/entry",
+          "https://www.uniprot.org/uniprotkb/Q6IPD7/entry",
+          "https://www.uniprot.org/uniparc/UPI0000378338/entry"
+        ]
+      }
+    ]
+  },
+  "stderr": ""
+}

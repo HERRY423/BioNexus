@@ -1,0 +1,43 @@
+section_id,producer_label,spot_count,mapping_status,candidate_role,source_file,frozen_primary_role
+1142243F,Artefact,119,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\1142243F_metadata.csv,PENDING_NOT_APPROVED
+1142243F,Invasive cancer + stroma + lymphocytes,3627,COMPOSITE_PRODUCER_CLASS_REQUIRES_REVIEW,PENDING,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\1142243F_metadata.csv,PENDING_NOT_APPROVED
+1142243F,Lymphocytes,15,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\1142243F_metadata.csv,PENDING_NOT_APPROVED
+1142243F,Necrosis,568,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\1142243F_metadata.csv,PENDING_NOT_APPROVED
+1142243F,Stroma,445,EXACT_PRODUCER_CLASS,STROMA,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\1142243F_metadata.csv,PENDING_NOT_APPROVED
+1142243F,TLS,10,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\1142243F_metadata.csv,PENDING_NOT_APPROVED
+1160920F,,1,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\1160920F_metadata.csv,PENDING_NOT_APPROVED
+1160920F,Adipose tissue,83,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\1160920F_metadata.csv,PENDING_NOT_APPROVED
+1160920F,Artefact,48,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\1160920F_metadata.csv,PENDING_NOT_APPROVED
+1160920F,Cancer trapped in lymphocyte aggregation,9,COMPOSITE_PRODUCER_CLASS_REQUIRES_REVIEW,PENDING,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\1160920F_metadata.csv,PENDING_NOT_APPROVED
+1160920F,DCIS,12,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\1160920F_metadata.csv,PENDING_NOT_APPROVED
+1160920F,Invasive cancer + stroma + lymphocytes,3146,COMPOSITE_PRODUCER_CLASS_REQUIRES_REVIEW,PENDING,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\1160920F_metadata.csv,PENDING_NOT_APPROVED
+1160920F,Lymphocytes,186,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\1160920F_metadata.csv,PENDING_NOT_APPROVED
+1160920F,Normal glands + lymphocytes,278,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\1160920F_metadata.csv,PENDING_NOT_APPROVED
+1160920F,Stroma,1132,EXACT_PRODUCER_CLASS,STROMA,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\1160920F_metadata.csv,PENDING_NOT_APPROVED
+CID4290,Artefact,7,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4290_metadata.csv,PENDING_NOT_APPROVED
+CID4290,Invasive cancer + stroma,2082,COMPOSITE_PRODUCER_CLASS_REQUIRES_REVIEW,PENDING,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4290_metadata.csv,PENDING_NOT_APPROVED
+CID4290,Invasive cancer + stroma + lymphocytes,215,COMPOSITE_PRODUCER_CLASS_REQUIRES_REVIEW,PENDING,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4290_metadata.csv,PENDING_NOT_APPROVED
+CID4290,NA,6,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4290_metadata.csv,PENDING_NOT_APPROVED
+CID4290,Stroma,122,EXACT_PRODUCER_CLASS,STROMA,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4290_metadata.csv,PENDING_NOT_APPROVED
+CID4465,Artefact,4,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4465_metadata.csv,PENDING_NOT_APPROVED
+CID4465,Invasive cancer + stroma + lymphocytes,1131,COMPOSITE_PRODUCER_CLASS_REQUIRES_REVIEW,PENDING,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4465_metadata.csv,PENDING_NOT_APPROVED
+CID4465,Normal duct,3,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4465_metadata.csv,PENDING_NOT_APPROVED
+CID4465,Stroma,73,EXACT_PRODUCER_CLASS,STROMA,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4465_metadata.csv,PENDING_NOT_APPROVED
+CID44971,Artefact,1,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID44971_metadata.csv,PENDING_NOT_APPROVED
+CID44971,DCIS,273,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID44971_metadata.csv,PENDING_NOT_APPROVED
+CID44971,Invasive cancer + lymphocytes,317,COMPOSITE_PRODUCER_CLASS_REQUIRES_REVIEW,PENDING,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID44971_metadata.csv,PENDING_NOT_APPROVED
+CID44971,Lymphocytes,81,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID44971_metadata.csv,PENDING_NOT_APPROVED
+CID44971,NA,2,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID44971_metadata.csv,PENDING_NOT_APPROVED
+CID44971,Normal + stroma + lymphocytes,240,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID44971_metadata.csv,PENDING_NOT_APPROVED
+CID44971,Stroma,134,EXACT_PRODUCER_CLASS,STROMA,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID44971_metadata.csv,PENDING_NOT_APPROVED
+CID44971,Stroma + adipose tissue,114,COMPOSITE_PRODUCER_CLASS_REQUIRES_REVIEW,PENDING,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID44971_metadata.csv,PENDING_NOT_APPROVED
+CID4535,,1,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4535_metadata.csv,PENDING_NOT_APPROVED
+CID4535,Adipose tissue,8,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4535_metadata.csv,PENDING_NOT_APPROVED
+CID4535,Artefact,23,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4535_metadata.csv,PENDING_NOT_APPROVED
+CID4535,Invasive cancer,418,EXACT_PRODUCER_CLASS,INVASIVE_CANCER,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4535_metadata.csv,PENDING_NOT_APPROVED
+CID4535,Invasive cancer + adipose tissue + lymphocytes,3,COMPOSITE_PRODUCER_CLASS_REQUIRES_REVIEW,PENDING,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4535_metadata.csv,PENDING_NOT_APPROVED
+CID4535,Invasive cancer + lymphocytes,361,COMPOSITE_PRODUCER_CLASS_REQUIRES_REVIEW,PENDING,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4535_metadata.csv,PENDING_NOT_APPROVED
+CID4535,Lymphocytes,69,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4535_metadata.csv,PENDING_NOT_APPROVED
+CID4535,NA,2,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4535_metadata.csv,PENDING_NOT_APPROVED
+CID4535,Stroma,169,EXACT_PRODUCER_CLASS,STROMA,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4535_metadata.csv,PENDING_NOT_APPROVED
+CID4535,Uncertain,73,UNASSIGNED,EXCLUDE,C:\Plugin\BioNexus\review\spatialwarrant-run-01\01_inputs\zenodo4739739\metadata-extracted\metadata\CID4535_metadata.csv,PENDING_NOT_APPROVED

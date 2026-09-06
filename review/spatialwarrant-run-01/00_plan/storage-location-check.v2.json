@@ -1,0 +1,43 @@
+{
+  "schema_version": "spatialwarrant.storage-location-check.v2",
+  "observed_at_utc": "2026-09-05",
+  "control_root": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01",
+  "artifact_root": "D:\\SpatialWarrant\\spatialwarrant-run-01",
+  "target_existed_before": false,
+  "target_exists_after": false,
+  "target_conflict": false,
+  "directory_creation": "FAILED_ACCESS_DENIED",
+  "write_read_probe": "NOT_REACHED",
+  "writeability": "NOT_ESTABLISHED",
+  "probe_file_created": false,
+  "c_available_bytes": 2986307584,
+  "d_available_bytes": 340869963776,
+  "capacity_is_snapshot_not_analysis_resource_use": true,
+  "required_before_s1_bytes": 32212254720,
+  "stop_writing_below_bytes": 21474836480,
+  "stage_storage_budget": "PENDING_BEFORE_S1",
+  "s1_approval": "PENDING",
+  "scientific_results": "PENDING",
+  "analysis_execution": "PENDING",
+  "resource_usage": "PENDING",
+  "machine_verdict": "PENDING",
+  "execution_identity": "LAPTOP-N3NFDBGO\\13264",
+  "d_root_owner": "NT AUTHORITY\\SYSTEM",
+  "d_root_acl_observation": "Authenticated Users and Users allow ReadAndExecute,Synchronize (1179817); SYSTEM and Administrators allow FullControl (2032127). No ACLs changed; no UAC elevation attempted.",
+  "blocker": "Windows returned Access denied while creating D:\\SpatialWarrant\\spatialwarrant-run-01 even outside the Codex filesystem sandbox. The storage location revision does not establish writeability.",
+  "resolution_required": "An authorized Windows administrator must provision the exact target with suitable access for the intended execution identity; then repeat the non-destructive conflict and write/read check. No permission changes are authorized/performed by this revision.",
+  "raw_directory_probe": {
+    "chunk_id": "ef6270",
+    "wall_time_seconds": 0.4564952,
+    "exit_code": 1,
+    "original_token_count": 64,
+    "output": "New-Item: \r\nLine |\r\n   9 |  New-Item -ItemType Directory -Path $target -ErrorAction Stop | Out-Nu …\r\n     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n     | Access to the path 'D:\\SpatialWarrant\\spatialwarrant-run-01' is denied.\r\n"
+  },
+  "scope": "Storage-only revision; no download, installation, analysis, data migration, permission changes, or S1 approval.",
+  "v1_history": {
+    "analysis-plan.lock.md": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82",
+    "plan.sha256": "9939eaa435dcdd3a4e2a8ba77bdc88cfe65922582646fb3adc167a6a7dab8469",
+    "plugin-capability-check.json": "15f9863ab4df0c2deb4bed64d726e6e400be28f10f7ad3307826877404a47785"
+  },
+  "recorded_at_utc": "2026-09-05T06:15:21.628923+00:00"
+}

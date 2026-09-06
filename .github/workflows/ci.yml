@@ -16,8 +16,8 @@ jobs:
     name: Code Quality & Config Integrity
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
       - name: Install Lint & Package Dependencies
@@ -50,8 +50,8 @@ jobs:
         python-version: ["3.10", "3.11", "3.12"]
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
@@ -75,6 +75,17 @@ jobs:
         # L1 includes capability-readiness outcomes and therefore runs in the
         # canonical scientific and flagship jobs.  Core-only CI separately
         # proves honest missing-backend behavior in degradation-matrix.
+      - name: Freeze Core Source and Resolved Dependencies
+        if: always()
+        run: python scripts/capture_reproducibility.py --output .codex-ci-freeze
+      - name: Preserve Core Reproduction Snapshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-environment-core-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: .codex-ci-freeze/
+          include-hidden-files: true
+          if-no-files-found: error
 
   # --------------------------------------------------------------------------
   # 3. Canonical Scientific Stack Matrix: Promised Combinations (Failures Turn Red)
@@ -90,8 +101,8 @@ jobs:
         python-version: ["3.10", "3.11", "3.12"]
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
@@ -113,6 +124,17 @@ jobs:
         shell: bash
         run: |
           pytest tests/ -v -m "not flagship_data" --ignore=tests/unit/test_scvi_smoke.py
+      - name: Freeze Scientific Source and Resolved Dependencies
+        if: always()
+        run: python scripts/capture_reproducibility.py --output .codex-ci-freeze
+      - name: Preserve Scientific Reproduction Snapshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-environment-scientific-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: .codex-ci-freeze/
+          include-hidden-files: true
+          if-no-files-found: error
 
   flagship-validation:
     name: Flagship Data, Evidence & Strict Benchmark
@@ -120,8 +142,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
           cache: "pip"
@@ -130,6 +152,19 @@ jobs:
           python -m pip install --upgrade pip "setuptools<81" wheel
           pip install -r requirements-dev.txt
           pip install -e ".[dev,goldchain,spatial]"
+      - name: Execute Planted L3 Endpoints Before Public Data Acquisition
+        env:
+          BIONEXUS_EVAL_STRICT: "1"
+        run: |
+          python scripts/run_benchmark_evidence.py --suite l3_scientific_outcomes --level L3 --strict --output .artifacts/planted-l3
+      - name: Preserve Planted L3 Results and Source Hashes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: planted-l3-evidence-ubuntu-py311
+          path: .artifacts/planted-l3/
+          include-hidden-files: true
+          if-no-files-found: error
       - name: Materialize Pinned Public Flagship Data
         run: |
           python evals/datasets/download_flagship_datasets.py --only citeseq_pbmc_sorted
@@ -168,8 +203,8 @@ jobs:
         python-version: ["3.11"]
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
@@ -211,8 +246,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
           cache: "pip"
@@ -230,8 +265,8 @@ jobs:
     needs: lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
       - run: pip install -e ".[dev]"
@@ -257,8 +292,8 @@ jobs:
     needs: lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
       - run: |

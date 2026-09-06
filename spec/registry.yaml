@@ -1,6 +1,12 @@
 schema_version: bionexus.spec-registry.v1
 series: BNS
 numbering_policy: monotonically_increasing_never_reused
+# Week-0 hemostasis: no BNS-026+ until a non-author review is recorded in IVN.
+# BNS-024/025 remain registered engineering contracts; they have no certification effect.
+numbering_freeze:
+  max_id: BNS-025
+  until: first_non_author_review_signoff
+  reason: Stop spec expansion ahead of live L3, calibration, and independent review.
 documents:
   - {id: BNS-001, file: BNS-001-capability-contract.md, title: Capability Contract & Scientific ABI, status: active}
   - {id: BNS-002, file: BNS-002-input-invariants.md, title: Input Semantic Invariants, status: active}
@@ -26,3 +32,4 @@ documents:
   - {id: BNS-022, file: BNS-022-scientific-semantics-neutral-governance.md, title: Scientific Semantics Neutral Governance & Institutional Adoption, status: draft_council_forming}
   - {id: BNS-023, file: BNS-023-independent-validation-network.md, title: Independent Validation Network, status: development}
   - {id: BNS-024, file: BNS-024-validation-transparency-network.md, title: Validation Transparency Network, status: development_no_certification_effect}
+  - {id: BNS-025, file: BNS-025-external-scientific-capability-receipt-and-connector-profile.md, title: External Scientific Capability Receipt & Connector Profile, status: development_no_certification_effect}

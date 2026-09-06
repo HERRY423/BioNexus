@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "locked_plan_sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82",
+  "locked_plan_expected_sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82",
+  "user_stated_s2_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\02_reference\\S2-run-01",
+  "user_stated_s2_path_exists": false,
+  "resolved_formal_s2_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\03_scrna_reference\\S2-run-01",
+  "resolution_basis": "Formal S2 path used by S4/S5 and prior checkpoint; no alternative S2 was created.",
+  "S2": {
+    "status": "PASS",
+    "manifest": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\03_scrna_reference\\S2-run-01\\SHA256SUMS.txt",
+    "checked": 26,
+    "mismatches": []
+  },
+  "S3": {
+    "status": "PASS",
+    "manifest": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\SHA256SUMS.txt",
+    "checked": 67,
+    "mismatches": []
+  },
+  "S4": {
+    "status": "PASS",
+    "manifest": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\06_deconvolution\\S4-run-02\\SHA256SUMS.txt",
+    "checked": 248,
+    "mismatches": []
+  },
+  "S5": {
+    "status": "PASS",
+    "manifest": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\SHA256SUMS.txt",
+    "checked": 33,
+    "mismatches": []
+  },
+  "S4_S5_checkpoint_sha256": "29c548edd072b8cbe2a301c9170523d0551b3886db4e3de64bbd0934a0d95bf6",
+  "start_free_C_bytes": 32392167424,
+  "disk_stop_threshold_bytes": 21474836480,
+  "checked_at_utc": "2026-09-06T01:39:01.729928+00:00"
+}

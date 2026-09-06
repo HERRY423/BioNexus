@@ -85,3 +85,25 @@ def test_warrant_check_via_jsonrpc_tools_call():
     assert resp["id"] == 42
     content = resp["result"]["content"][0]["text"]
     assert '"status"' in content
+
+
+def test_warrant_check_preserves_explicit_claim_class_and_bounds_overclaim():
+    """Verify that bionexus_warrant_check passes explicit claim_class from metadata and does not silently downgrade to descriptive."""
+    res = _run_warrant_check(
+        query="CID4535 证明了 TNBC 患者普遍存在 IFN 边界机制。",
+        data_metadata={
+            "eligible_sections": 1,
+            "spatial_workflow_sections": 6,
+            "independent_patients_verified": False,
+            "claim_class": "population_effect",
+        },
+        research_purpose="confirmatory",
+        intent_keywords=["population_effect", "single_section", "TNBC", "mechanism"],
+    )
+    claim_eval = res.get("claim_warrant_evaluation", {})
+    assert claim_eval.get("requested_claim_class") == "population_effect"
+    pop_tier = claim_eval.get("tier_verdicts", {}).get("population_claim", {})
+    # Must NOT be NOT_APPLICABLE!
+    assert pop_tier.get("status") in ("NOT_WARRANTED", "NOT_ASSESSED")
+    assert pop_tier.get("status") != "NOT_APPLICABLE"
+

@@ -1,0 +1,22 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 13,
+    "name": "FMO4"
+  },
+  "source": "reactome",
+  "returncode": 1,
+  "elapsed_seconds": 2.320456700021168,
+  "completed_at_utc": "2026-09-06T02:01:04.996531+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-13-FMO4.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-13-FMO4.raw",
+  "wrapper": {
+    "ok": false,
+    "error": {
+      "code": "network_error",
+      "message": "Request failed for reactome-skill: HTTPError"
+    },
+    "warnings": []
+  },
+  "stderr": ""
+}

@@ -1,0 +1,169 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 5,
+    "name": "AC116913.1"
+  },
+  "source": "string",
+  "returncode": 0,
+  "elapsed_seconds": 1.7655816999904346,
+  "completed_at_utc": "2026-09-06T01:47:41.903671+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\requests\\string\\gene-05-AC116913.1.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\raw\\string\\gene-05-AC116913.1.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "string-db-org",
+    "path": "network",
+    "method": "POST",
+    "status_code": 200,
+    "record_path": "$",
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\raw\\string\\gene-05-AC116913.1.raw",
+    "warnings": [],
+    "record_count_returned": 10,
+    "record_count_available": 53,
+    "truncated": true,
+    "records": [
+      {
+        "stringId_A": "9606.ENSP00000215832",
+        "stringId_B": "9606.ENSP00000389715",
+        "preferredName_A": "MAPK1",
+        "preferredName_B": "KSR2",
+        "ncbiTaxonId": "9606",
+        "score": 0.587,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.055,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000215832",
+        "stringId_B": "9606.ENSP00000290277",
+        "preferredName_A": "MAPK1",
+        "preferredName_B": "ARAF",
+        "ncbiTaxonId": "9606",
+        "score": 0.657,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.094,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000215832",
+        "stringId_B": "9606.ENSP00000381958",
+        "preferredName_A": "MAPK1",
+        "preferredName_B": "KSR1",
+        "ncbiTaxonId": "9606",
+        "score": 0.712,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.062,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000215832",
+        "stringId_B": "9606.ENSP00000419060",
+        "preferredName_A": "MAPK1",
+        "preferredName_B": "BRAF",
+        "ncbiTaxonId": "9606",
+        "score": 0.949,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.094,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000215832",
+        "stringId_B": "9606.ENSP00000424183",
+        "preferredName_A": "MAPK1",
+        "preferredName_B": "LAMTOR3",
+        "ncbiTaxonId": "9606",
+        "score": 0.961,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.055,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000215832",
+        "stringId_B": "9606.ENSP00000401888",
+        "preferredName_A": "MAPK1",
+        "preferredName_B": "RAF1",
+        "ncbiTaxonId": "9606",
+        "score": 0.975,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.115,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000215832",
+        "stringId_B": "9606.ENSP00000256078",
+        "preferredName_A": "MAPK1",
+        "preferredName_B": "KRAS",
+        "ncbiTaxonId": "9606",
+        "score": 0.988,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.088,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000215832",
+        "stringId_B": "9606.ENSP00000263025",
+        "preferredName_A": "MAPK1",
+        "preferredName_B": "MAPK3",
+        "ncbiTaxonId": "9606",
+        "score": 0.994,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0.049,
+        "ascore": 0.118,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000215832",
+        "stringId_B": "9606.ENSP00000302486",
+        "preferredName_A": "MAPK1",
+        "preferredName_B": "MAP2K1",
+        "ncbiTaxonId": "9606",
+        "score": 0.999,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.152,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000215832",
+        "stringId_B": "9606.ENSP00000262948",
+        "preferredName_A": "MAPK1",
+        "preferredName_B": "MAP2K2",
+        "ncbiTaxonId": "9606",
+        "score": 0.999,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.111,
+        "_truncated_keys": 3
+      }
+    ],
+    "sources": [
+      {
+        "name": "STRING",
+        "url": "https://string-db.org/api/json/network",
+        "retrieved_at": "2026-09-06T01:47:41.876143+00:00",
+        "supports_claim": true,
+        "kind": "evidence",
+        "request_url": "https://string-db.org/api/json/network"
+      }
+    ]
+  },
+  "stderr": ""
+}

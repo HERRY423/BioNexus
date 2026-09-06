@@ -1,0 +1,169 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 15,
+    "name": "MIXL1"
+  },
+  "source": "string",
+  "returncode": 0,
+  "elapsed_seconds": 3.228172299975995,
+  "completed_at_utc": "2026-09-06T02:01:08.524983+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\string\\gene-15-MIXL1.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\string\\gene-15-MIXL1.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "string-db-org",
+    "path": "network",
+    "method": "POST",
+    "status_code": 200,
+    "record_path": "$",
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\string\\gene-15-MIXL1.raw",
+    "warnings": [],
+    "record_count_returned": 10,
+    "record_count_available": 51,
+    "truncated": true,
+    "records": [
+      {
+        "stringId_A": "9606.ENSP00000229307",
+        "stringId_B": "9606.ENSP00000250448",
+        "preferredName_A": "NANOG",
+        "preferredName_B": "FOXA1",
+        "ncbiTaxonId": "9606",
+        "score": 0.673,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.059,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000229307",
+        "stringId_B": "9606.ENSP00000296946",
+        "preferredName_A": "NANOG",
+        "preferredName_B": "TBXT",
+        "ncbiTaxonId": "9606",
+        "score": 0.712,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.057,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000229307",
+        "stringId_B": "9606.ENSP00000442439",
+        "preferredName_A": "NANOG",
+        "preferredName_B": "MIXL1",
+        "ncbiTaxonId": "9606",
+        "score": 0.754,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.085,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000229307",
+        "stringId_B": "9606.ENSP00000400341",
+        "preferredName_A": "NANOG",
+        "preferredName_B": "FOXA2",
+        "ncbiTaxonId": "9606",
+        "score": 0.815,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.073,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000229307",
+        "stringId_B": "9606.ENSP00000388620",
+        "preferredName_A": "NANOG",
+        "preferredName_B": "EOMES",
+        "ncbiTaxonId": "9606",
+        "score": 0.818,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.052,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000229307",
+        "stringId_B": "9606.ENSP00000262160",
+        "preferredName_A": "NANOG",
+        "preferredName_B": "SMAD2",
+        "ncbiTaxonId": "9606",
+        "score": 0.856,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.067,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000229307",
+        "stringId_B": "9606.ENSP00000297316",
+        "preferredName_A": "NANOG",
+        "preferredName_B": "SOX17",
+        "ncbiTaxonId": "9606",
+        "score": 0.871,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.049,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000229307",
+        "stringId_B": "9606.ENSP00000366534",
+        "preferredName_A": "NANOG",
+        "preferredName_B": "FOXH1",
+        "ncbiTaxonId": "9606",
+        "score": 0.873,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.085,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000229307",
+        "stringId_B": "9606.ENSP00000495360",
+        "preferredName_A": "NANOG",
+        "preferredName_B": "CTNNB1",
+        "ncbiTaxonId": "9606",
+        "score": 0.946,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000229307",
+        "stringId_B": "9606.ENSP00000259915",
+        "preferredName_A": "NANOG",
+        "preferredName_B": "POU5F1",
+        "ncbiTaxonId": "9606",
+        "score": 0.999,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.353,
+        "_truncated_keys": 3
+      }
+    ],
+    "sources": [
+      {
+        "name": "STRING",
+        "url": "https://string-db.org/api/json/network",
+        "retrieved_at": "2026-09-06T02:01:08.499462+00:00",
+        "supports_claim": true,
+        "kind": "evidence",
+        "request_url": "https://string-db.org/api/json/network"
+      }
+    ]
+  },
+  "stderr": ""
+}

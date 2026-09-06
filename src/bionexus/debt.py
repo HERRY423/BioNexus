@@ -1,7 +1,7 @@
 """
 BioNexus Evidence Debt Engine (BNS-021).
 
-Defines the formal taxonomy, dependency propagation, and repayment optimization
+Defines the formal taxonomy, dependency propagation, and remediation priority
 for Scientific Evidence Debt.
 
 Scientific projects do not have a single "reliability score" (e.g. 83%).
@@ -11,8 +11,11 @@ ceilings across the epistemic dependency DAG.
 Key concepts:
 1. EvidenceDebtItem: A concrete scientific shortcut or unverified assumption.
 2. DebtKind: Strict taxonomy of epistemic liabilities.
-3. PayoffLeverage: Number and severity of downstream claims upgraded per remediation.
-4. OptimalRepaymentSchedule: Actionable priority queue for scientific validation.
+3. HeuristicPriorityScore: Structural triage metric (|claims| * severity_weight).
+   (Note: this is a structural triage priority hint, not an empirical risk reduction
+   measurement or cost/success-probability optimal experimental design).
+4. HeuristicRemediationSchedule: Transparent priority queue highlighting upstream bottleneck nodes
+   for targeted empirical verification.
 """
 
 from __future__ import annotations
@@ -28,6 +31,7 @@ from bionexus.ledger import MATURITY_RANKS, ClaimLedger, ClaimRecord, EvidenceRe
 class DebtKind(str, Enum):
     """Taxonomy of scientific evidence debt items (BNS-021 §2)."""
 
+    # Pipeline and analytical evidence debts
     UNRESOLVED_ALTERNATIVE_EXPLANATION = "UNRESOLVED_ALTERNATIVE_EXPLANATION"
     HEURISTIC_DEPENDENCY = "HEURISTIC_DEPENDENCY"
     MISSING_INDEPENDENT_REPLICATION = "MISSING_INDEPENDENT_REPLICATION"
@@ -38,6 +42,16 @@ class DebtKind(str, Enum):
     CAUSAL_IDENTIFICATION_GAP = "CAUSAL_IDENTIFICATION_GAP"
     UNVALIDATED_BATCH_CORRECTION = "UNVALIDATED_BATCH_CORRECTION"
     AMBIENT_SIGNAL_CONTAMINATION = "AMBIENT_SIGNAL_CONTAMINATION"
+
+    # Connector & External Ecosystem Evidence Debts (BNS-021 §2)
+    UNAUTHENTICATED_PRODUCER = "UNAUTHENTICATED_PRODUCER"
+    UNKNOWN_DATABASE_RELEASE = "UNKNOWN_DATABASE_RELEASE"
+    MODEL_VERSION_MISSING = "MODEL_VERSION_MISSING"
+    SOURCE_LINEAGE_UNRESOLVED = "SOURCE_LINEAGE_UNRESOLVED"
+    NO_INDEPENDENT_VALIDATION = "NO_INDEPENDENT_VALIDATION"
+    UNCONTROLLED_CONFOUNDING = "UNCONTROLLED_CONFOUNDING"
+    DERIVED_EVIDENCE_DOUBLE_COUNT = "DERIVED_EVIDENCE_DOUBLE_COUNT"
+    CLAIM_EXCEEDS_CONNECTOR_PROFILE = "CLAIM_EXCEEDS_CONNECTOR_PROFILE"
 
 
 class DebtSeverity(str, Enum):
@@ -96,8 +110,13 @@ class EvidenceDebtItem:
 
     @property
     def leverage_score(self) -> float:
-        """Payoff leverage score = downstream_impact * severity_weight."""
+        """Heuristic priority score = downstream_impact * severity_weight."""
         return self.downstream_impact_count * self.severity_weight
+
+    @property
+    def priority_score(self) -> float:
+        """Transparent alias for leverage_score (|claims| * severity_weight)."""
+        return self.leverage_score
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -110,6 +129,8 @@ class EvidenceDebtItem:
             "affected_claim_ids": list(self.affected_claim_ids),
             "downstream_impact_count": self.downstream_impact_count,
             "leverage_score": self.leverage_score,
+            "priority_score": self.priority_score,
+            "priority_score_basis": "heuristic (downstream claims count * severity weight)",
             "remediation": self.remediation.to_dict() if self.remediation else None,
             "literature_citations": self.literature_citations,
             "metadata": self.metadata,
@@ -118,13 +139,26 @@ class EvidenceDebtItem:
 
 @dataclass
 class RemediationPriority:
-    """An item in the optimal scientific repayment schedule."""
+    """
+    An item in the heuristic debt remediation priority schedule.
+
+    NOTE: The priority score is a structural heuristic triage metric (|claims| * severity_weight).
+    It is NOT an empirical risk reduction measurement, does not model wet-lab experimental costs
+    or success probabilities, and does not guarantee downstream claim upgrade without new empirical verification.
+    """
 
     rank: int
     debt_item: EvidenceDebtItem
     claims_unblocked: List[str]
     potential_maturity_upgrade: str
     payoff_multiplier: float
+    priority_score: float = 0.0
+
+    def __post_init__(self) -> None:
+        if not self.priority_score and self.payoff_multiplier:
+            self.priority_score = self.payoff_multiplier
+        elif not self.payoff_multiplier and self.priority_score:
+            self.payoff_multiplier = self.priority_score
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -138,6 +172,8 @@ class RemediationPriority:
             "claims_unblocked_count": len(self.claims_unblocked),
             "potential_maturity_upgrade": self.potential_maturity_upgrade,
             "payoff_multiplier": self.payoff_multiplier,
+            "priority_score": self.priority_score or self.payoff_multiplier,
+            "priority_metric": "heuristic_claim_impact_x_severity",
             "remediation_action": self.debt_item.remediation.action_title if self.debt_item.remediation else "",
             "estimated_effort": self.debt_item.remediation.estimated_effort if self.debt_item.remediation else "MODERATE",
         }
@@ -171,6 +207,39 @@ class EvidenceDebtAuditReport:
             "epistemic_keystones": self.epistemic_keystones,
             "optimal_repayment_schedule": [p.to_dict() for p in self.optimal_repayment_schedule],
         }
+
+
+def _extract_atomic_citations(ref: EvidenceRef) -> Set[str]:
+    """Extract atomic primary source identifiers (PMID, DOI, raw accession) from evidence provenance."""
+    citations: Set[str] = set()
+    prov = ref.provenance or {}
+    for key in (
+        "citations",
+        "identifiers",
+        "record_ids",
+        "primary_accessions",
+        "underlying_publications",
+        "publications",
+    ):
+        val = prov.get(key)
+        if isinstance(val, (list, tuple, set)):
+            for item in val:
+                if isinstance(item, str) and item.strip():
+                    citations.add(item.strip())
+        elif isinstance(val, str) and val.strip():
+            citations.add(val.strip())
+
+    src_ctx = prov.get("source_context")
+    if isinstance(src_ctx, dict):
+        for key in ("identifiers", "record_ids", "citations", "sequence_accession"):
+            val = src_ctx.get(key)
+            if isinstance(val, (list, tuple, set)):
+                for item in val:
+                    if isinstance(item, str) and item.strip():
+                        citations.add(item.strip())
+            elif isinstance(val, str) and val.strip():
+                citations.add(val.strip())
+    return citations
 
 
 class EvidenceDebtEngine:
@@ -212,6 +281,13 @@ class EvidenceDebtEngine:
                 debt_idx += 1
                 debt_items.append(d)
 
+        # 3b. Detect connector-level and cross-evidence lineage debts (e.g. DERIVED_EVIDENCE_DOUBLE_COUNT, CLAIM_EXCEEDS_CONNECTOR_PROFILE)
+        connector_debts = cls._detect_connector_lineage_debts(ledger)
+        for d in connector_debts:
+            d.debt_id = f"DEBT-{debt_idx:03d}"
+            debt_idx += 1
+            debt_items.append(d)
+
         # 4. Aggregate counts and distributions
         debt_by_kind: Dict[str, int] = {}
         debt_by_severity: Dict[str, int] = {}
@@ -244,12 +320,16 @@ class EvidenceDebtEngine:
                 "affected_claim_ids": list(aff_claims),
             })
 
-        # 6. Generate Optimal Repayment Schedule
-        # Rank debt items by leverage score (impact * severity)
+        # 6. Generate Heuristic Remediation Priority Schedule
+        # NOTE: Ranks debt items by structural heuristic priority score (|affected_claims| * severity_weight).
+        # This is an analytical triage hint to guide verification priorities across the DAG.
+        # It is NOT an empirical risk reduction measurement, does not model wet-lab experimental costs
+        # or success probabilities, and does not guarantee downstream maturity upgrades without new empirical evidence.
         sorted_debts = sorted(debt_items, key=lambda d: d.leverage_score, reverse=True)
         repayment_schedule: List[RemediationPriority] = []
 
         for rank, d in enumerate(sorted_debts, start=1):
+            # Theoretical ceiling if remediated and independently verified (not an automatic grant)
             upgrade_target = ConclusionMaturity.ROBUST.value if d.severity in (DebtSeverity.CRITICAL, DebtSeverity.HIGH) else ConclusionMaturity.SUPPORTED.value
             repayment_schedule.append(
                 RemediationPriority(
@@ -258,6 +338,7 @@ class EvidenceDebtEngine:
                     claims_unblocked=list(d.affected_claim_ids),
                     potential_maturity_upgrade=upgrade_target,
                     payoff_multiplier=d.leverage_score,
+                    priority_score=d.leverage_score,
                 )
             )
 
@@ -386,6 +467,111 @@ class EvidenceDebtEngine:
                 )
             )
 
+        # Check 5: Unauthenticated Producer (BNS-021 / Connector)
+        if prov.get("unauthenticated_producer") or prov.get("auth_status") in ("UNAUTHENTICATED", "UNKNOWN"):
+            debts.append(
+                EvidenceDebtItem(
+                    debt_id="",
+                    debt_kind=DebtKind.UNAUTHENTICATED_PRODUCER,
+                    severity=DebtSeverity.HIGH,
+                    title=f"Unauthenticated Evidence Producer in {node_id}",
+                    description=f"Evidence node '{node_id}' originates from an unauthenticated external producer or untrusted host without signature verification.",
+                    root_node_id=node_id,
+                    affected_claim_ids=aff_list,
+                    remediation=RemediationRecipe(
+                        action_title=f"Authenticate Producer for {node_id}",
+                        description="Bind evidence envelope to cryptographic tool execution receipt with authorized trust anchor.",
+                        target_backend_or_method="bionexus.trust_evidence.verify_attestation",
+                        verification_metric="producer_attestation_verified == True",
+                        estimated_effort="LOW",
+                    ),
+                )
+            )
+
+        # Check 6: Unknown Database Release (BNS-021 / Connector)
+        if prov.get("unknown_database_release") or (ref.kind == "database" and prov.get("requires_version") and not prov.get("database_release")):
+            debts.append(
+                EvidenceDebtItem(
+                    debt_id="",
+                    debt_kind=DebtKind.UNKNOWN_DATABASE_RELEASE,
+                    severity=DebtSeverity.MEDIUM,
+                    title=f"Unknown Database Release in {node_id}",
+                    description=f"Database evidence '{node_id}' does not declare an exact release or version tag, risking silent entity drift.",
+                    root_node_id=node_id,
+                    affected_claim_ids=aff_list,
+                    remediation=RemediationRecipe(
+                        action_title=f"Lock Database Release for {node_id}",
+                        description="Record explicit database release version (e.g. Ensembl v110, ChEMBL 33) in source context.",
+                        target_backend_or_method="bionexus.ecosystem_intake.lock_release",
+                        verification_metric="database_release_declared == True",
+                        estimated_effort="LOW",
+                    ),
+                )
+            )
+
+        # Check 7: Model Version Missing (BNS-021 / Connector)
+        if prov.get("model_version_missing") or (prov.get("is_model_inference") and not prov.get("model_version")):
+            debts.append(
+                EvidenceDebtItem(
+                    debt_id="",
+                    debt_kind=DebtKind.MODEL_VERSION_MISSING,
+                    severity=DebtSeverity.HIGH,
+                    title=f"Model Version Missing in {node_id}",
+                    description=f"Predictive model inference node '{node_id}' lacks an exact model version or weights digest.",
+                    root_node_id=node_id,
+                    affected_claim_ids=aff_list,
+                    remediation=RemediationRecipe(
+                        action_title=f"Pin Model Version for {node_id}",
+                        description="Specify model checkpoint hash and version tag in execution envelope.",
+                        target_backend_or_method="bionexus.tool_receipt.pin_model_version",
+                        verification_metric="model_version_declared == True",
+                        estimated_effort="LOW",
+                    ),
+                )
+            )
+
+        # Check 8: Source Lineage Unresolved (BNS-021 / Connector)
+        if prov.get("source_lineage_unresolved") or (prov.get("requires_source_lineage") and not _extract_atomic_citations(ref)):
+            debts.append(
+                EvidenceDebtItem(
+                    debt_id="",
+                    debt_kind=DebtKind.SOURCE_LINEAGE_UNRESOLVED,
+                    severity=DebtSeverity.HIGH,
+                    title=f"Source Lineage Unresolved in {node_id}",
+                    description=f"Evidence node '{node_id}' does not resolve to primary literature DOIs, PMIDs, or raw dataset accessions.",
+                    root_node_id=node_id,
+                    affected_claim_ids=aff_list,
+                    remediation=RemediationRecipe(
+                        action_title=f"Trace Primary Source Lineage for {node_id}",
+                        description="Extract and attach primary reference citations to enable graph-level dependency and deduplication analysis.",
+                        target_backend_or_method="bionexus.ecosystem_claim.resolve_lineage",
+                        verification_metric="primary_citations_count >= 1",
+                        estimated_effort="LOW",
+                    ),
+                )
+            )
+
+        # Check 9: Uncontrolled Confounding (BNS-021 / Connector)
+        if prov.get("uncontrolled_confounding"):
+            debts.append(
+                EvidenceDebtItem(
+                    debt_id="",
+                    debt_kind=DebtKind.UNCONTROLLED_CONFOUNDING,
+                    severity=DebtSeverity.HIGH,
+                    title=f"Uncontrolled Confounding in {node_id}",
+                    description=f"External observational analysis node '{node_id}' has uncontrolled clinical or technical confounders.",
+                    root_node_id=node_id,
+                    affected_claim_ids=aff_list,
+                    remediation=RemediationRecipe(
+                        action_title=f"Adjust Confounders for {node_id}",
+                        description="Formulate regression or matching strategy to control for confounding covariates.",
+                        target_backend_or_method="bionexus.integrity.audit_alternative_explanations",
+                        verification_metric="confounders_controlled == True",
+                        estimated_effort="MODERATE",
+                    ),
+                )
+            )
+
         return debts
 
     @classmethod
@@ -480,6 +666,146 @@ class EvidenceDebtEngine:
 
         return debts
 
+    @classmethod
+    def _detect_connector_lineage_debts(cls, ledger: ClaimLedger) -> List[EvidenceDebtItem]:
+        """Detect cross-connector evidence debts, citation collapsing, and profile mismatches (BNS-021)."""
+        debts: List[EvidenceDebtItem] = []
+
+        for cid, claim in ledger.claims.items():
+            supp_refs = [
+                ledger.evidence[r]
+                for r in (claim.supported_by or [])
+                if r in ledger.evidence
+            ]
+            if not supp_refs:
+                continue
+
+            # Check 1: DERIVED_EVIDENCE_DOUBLE_COUNT (Citation Collapsing / Epistemic Echo Chamber)
+            ref_citations: Dict[str, Set[str]] = {
+                r.ref_id: _extract_atomic_citations(r) for r in supp_refs
+            }
+            all_cites: Set[str] = set().union(*ref_citations.values())
+            has_explicit_double = any(
+                (r.provenance or {}).get("derived_evidence_double_count") for r in supp_refs
+            ) or bool((claim.provenance or {}).get("derived_evidence_double_count"))
+
+            # Collapsing condition: 2+ supporting nodes, and underlying atomic citations collapse to <= 2 publications
+            nodes_with_cites = [rid for rid, c in ref_citations.items() if c]
+            is_collapsed = len(nodes_with_cites) >= 2 and len(all_cites) <= 2 and bool(all_cites)
+
+            if is_collapsed or has_explicit_double:
+                cites_str = ", ".join(sorted(all_cites)) if all_cites else "unresolved underlying citations"
+                root_id = supp_refs[0].ref_id
+                debts.append(
+                    EvidenceDebtItem(
+                        debt_id="",
+                        debt_kind=DebtKind.DERIVED_EVIDENCE_DOUBLE_COUNT,
+                        severity=DebtSeverity.CRITICAL if len(supp_refs) >= 3 else DebtSeverity.HIGH,
+                        title=f"Derived Evidence Double Counting in {cid}",
+                        description=(
+                            f"Claim '{claim.statement}' is supported by {len(supp_refs)} external sources "
+                            f"({', '.join(r.ref_id for r in supp_refs)}), but all collapse to the same underlying "
+                            f"publication(s): {cites_str}. Apparent multi-source consensus is an epistemic echo chamber."
+                        ),
+                        root_node_id=root_id,
+                        affected_claim_ids=[cid],
+                        remediation=RemediationRecipe(
+                            action_title=f"Conduct Independent In-Vivo Validation for {cid}",
+                            description=(
+                                f"Greatest epistemic keystone for '{cid}' is NOT querying another connector, "
+                                "but conducting independent in-vivo / orthogonal animal model validation."
+                            ),
+                            target_backend_or_method="in_vivo_animal_model_or_held_out_clinical_cohort",
+                            verification_metric="independent_in_vivo_replicated == True",
+                            estimated_effort="HIGH",
+                        ),
+                        literature_citations=sorted(list(all_cites)),
+                    )
+                )
+
+            # Check 2: CLAIM_EXCEEDS_CONNECTOR_PROFILE (e.g. in-vitro binding asserted for in-vivo / disease efficacy)
+            in_vivo_claim_terms = (
+                "effective in",
+                "treats",
+                "treatment",
+                "cures",
+                "remission",
+                "efficacy",
+                "patient survival",
+                "in vivo",
+                "tumor reduction",
+                "therapeutic",
+            )
+            stmt_lower = claim.statement.lower()
+            asserts_in_vivo = any(term in stmt_lower for term in in_vivo_claim_terms)
+
+            in_vitro_assays = {
+                "in_vitro",
+                "in_vitro_binding",
+                "in_vitro_cell_line",
+                "in_vitro_pathway",
+                "in_vitro_review",
+                "biochemical",
+                "cell_line",
+            }
+            all_in_vitro = all(
+                (r.provenance or {}).get("assay_type") in in_vitro_assays
+                or "in_vitro" in str((r.provenance or {}).get("assay_type", ""))
+                for r in supp_refs
+            )
+            has_explicit_exceeds = any(
+                (r.provenance or {}).get("claim_exceeds_connector_profile") for r in supp_refs
+            ) or bool((claim.provenance or {}).get("claim_exceeds_connector_profile"))
+
+            if (asserts_in_vivo and all_in_vitro) or has_explicit_exceeds:
+                debts.append(
+                    EvidenceDebtItem(
+                        debt_id="",
+                        debt_kind=DebtKind.CLAIM_EXCEEDS_CONNECTOR_PROFILE,
+                        severity=DebtSeverity.CRITICAL,
+                        title=f"Claim Exceeds Connector Profile in {cid}",
+                        description=(
+                            f"Claim asserts in-vivo therapeutic efficacy ('{claim.statement}'), but supporting evidence "
+                            f"from connectors ({', '.join(r.ref_id for r in supp_refs)}) is restricted to in-vitro/binding profiles."
+                        ),
+                        root_node_id=cid,
+                        affected_claim_ids=[cid],
+                        remediation=RemediationRecipe(
+                            action_title=f"Conduct In-Vivo Efficacy Assay for {cid}",
+                            description="Escalate from in-vitro binding assays to animal disease model efficacy testing before claiming therapeutic effect.",
+                            target_backend_or_method="in_vivo_disease_model",
+                            verification_metric="in_vivo_efficacy_p < 0.05",
+                            estimated_effort="HIGH",
+                        ),
+                    )
+                )
+
+            # Check 3: NO_INDEPENDENT_VALIDATION
+            has_explicit_no_indep = any(
+                (r.provenance or {}).get("no_independent_validation") for r in supp_refs
+            ) or bool((claim.provenance or {}).get("no_independent_validation"))
+            if has_explicit_no_indep:
+                debts.append(
+                    EvidenceDebtItem(
+                        debt_id="",
+                        debt_kind=DebtKind.NO_INDEPENDENT_VALIDATION,
+                        severity=DebtSeverity.HIGH,
+                        title=f"Missing Independent Validation for Connector Result in {cid}",
+                        description=f"Connector evidence supporting {cid} lacks independent multi-laboratory validation.",
+                        root_node_id=supp_refs[0].ref_id,
+                        affected_claim_ids=[cid],
+                        remediation=RemediationRecipe(
+                            action_title=f"Conduct Independent Multi-Lab Replication for {cid}",
+                            description="Submit candidate connector findings to independent laboratory or held-out dataset.",
+                            target_backend_or_method="independent_laboratory_replication",
+                            verification_metric="concordant_replicated == True",
+                            estimated_effort="HIGH",
+                        ),
+                    )
+                )
+
+        return debts
+
 
 # ==============================================================================
 # Rendering & Presentation
@@ -516,16 +842,20 @@ def render_terminal_debt_report(report: EvidenceDebtAuditReport, verbose: bool =
             lines.append(f"      Downstream: {', '.join(k['affected_claim_ids'][:6])}")
         lines.append("-" * w)
 
-    # Optimal Repayment Schedule
-    lines.append("OPTIMAL EVIDENCE REPAYMENT SCHEDULE (Ranked by Scientific Payoff):")
-    lines.append(f"{'RANK':<5} {'DEBT ID':<10} {'SEVERITY':<10} {'CLAIMS':<8} {'PAYOFF':<8} {'ACTION'}")
+    # Heuristic Remediation Priority Schedule
+    lines.append("HEURISTIC REMEDIATION PRIORITY SCHEDULE (Ranked by Claim Impact * Severity Weight):")
+    lines.append("[PRIORITY NOTE] Ranking is an analytical triage heuristic (|claims| * w_severity),")
+    lines.append("                not empirical risk reduction or cost-optimal design. Fixing an upstream node")
+    lines.append("                does not guarantee downstream claim upgrade without independent verification.")
+    lines.append(f"{'RANK':<5} {'DEBT ID':<10} {'SEVERITY':<10} {'CLAIMS':<8} {'PRIORITY':<10} {'ACTION'}")
     lines.append("-" * w)
 
     for p in report.optimal_repayment_schedule[:8]:
         d = p.debt_item
         act = d.remediation.action_title if d.remediation else d.title
+        score = getattr(p, "priority_score", None) or p.payoff_multiplier
         lines.append(
-            f"#{p.rank:<4} {d.debt_id:<10} {d.severity.value:<10} {len(p.claims_unblocked):>2} claims  {p.payoff_multiplier:>5.1f}x  {act[:34]}"
+            f"#{p.rank:<4} {d.debt_id:<10} {d.severity.value:<10} {len(p.claims_unblocked):>2} claims  {score:>5.1f} pts  {act[:34]}"
         )
 
     lines.append("=" * w)
@@ -574,16 +904,20 @@ def render_markdown_debt_report(report: EvidenceDebtAuditReport) -> str:
         md.append("")
     md.append("---")
     md.append("")
-    md.append("## 4. Optimal Scientific Repayment Schedule")
+    md.append("## 4. Heuristic Remediation Priority Schedule")
     md.append("")
-    md.append("| Rank | Debt ID | Severity | Claims Unblocked | Payoff Leverage | Prescribed Remediation | Effort |")
-    md.append("| :---: | :--- | :---: | :---: | :---: | :--- | :---: |")
+    md.append("> **Transparency Note**: Priority ranking is an analytical triage heuristic calculated as `Priority Score = |affected_claims| × w(severity)`. It represents downstream DAG breadth and severity weighting to guide experimental verification, **NOT** an empirical risk reduction measurement or an economic/cost-optimal experiment design. Remediating an upstream dependency does not automatically upgrade downstream claim maturity without independent empirical evidence.")
+    md.append("")
+    md.append("| Rank | Debt ID | Severity | Claims Unblocked | Priority Score (Claims × Weight) | Prescribed Remediation | Effort | Theoretical Target |")
+    md.append("| :---: | :--- | :---: | :---: | :---: | :--- | :---: | :---: |")
     for p in report.optimal_repayment_schedule:
         d = p.debt_item
         act = d.remediation.action_title if d.remediation else d.title
         eff = d.remediation.estimated_effort if d.remediation else "MODERATE"
+        score = getattr(p, "priority_score", None) or p.payoff_multiplier
+        target = p.potential_maturity_upgrade or "SUPPORTED"
         md.append(
-            f"| **#{p.rank}** | `{d.debt_id}` | `{d.severity.value}` | **{len(p.claims_unblocked)} claims** | **{p.payoff_multiplier:.1f}x** | {act} | `{eff}` |"
+            f"| **#{p.rank}** | `{d.debt_id}` | `{d.severity.value}` | **{len(p.claims_unblocked)} claims** | **{score:.1f} pts** | {act} | `{eff}` | `{target}` (if verified) |"
         )
     md.append("")
     return "\n".join(md)
@@ -613,7 +947,8 @@ def create_sample_debt_ledger() -> ClaimLedger:
     - Foundational node 'TRANSFORM-ANNOTATION-X' carries heuristic gating & domain mismatch debt.
     - 7 downstream claims (CLAIM-001, CLAIM-004, CLAIM-007, CLAIM-012, CLAIM-017, CLAIM-019, CLAIM-020)
       inherit degraded FRAGILE status from this single keystone.
-    - Amortizing TRANSFORM-ANNOTATION-X unblocks all 7 claims simultaneously with 70.0x payoff leverage!
+    - Remediation priority score for TRANSFORM-ANNOTATION-X is 70.0 (7 claims * 10.0 critical weight),
+      highlighting it as the primary upstream verification bottleneck.
     """
     ledger = ClaimLedger()
 
@@ -719,5 +1054,99 @@ def create_sample_debt_ledger() -> ClaimLedger:
                 depends_on=["EVID-DATASET-01"],
             )
         )
+
+    return ledger
+
+
+def create_sample_connector_collapsing_ledger() -> ClaimLedger:
+    """
+    Generate an exemplary ledger exhibiting Multi-Connector Citation Collapsing & Epistemic Echo Chamber (BNS-021).
+
+    Demonstrates the scenario:
+    - Claim: 'Drug X is likely effective in disease Y'
+    - Supported by 4 distinct external connectors:
+      1. ChEMBL: IC50/Ki bioactivity assay (in_vitro)
+      2. OpenTargets: target-disease association score (in_vitro)
+      3. Enrichr: pathway enrichment (in_vitro)
+      4. Consensus: literature review synthesis (in_vitro)
+    - All 4 connectors collapse to the exact same underlying publications (PMID:2981234, PMID:3198765).
+    - BioNexus Evidence Debt detects:
+      - DERIVED_EVIDENCE_DOUBLE_COUNT
+      - CLAIM_EXCEEDS_CONNECTOR_PROFILE
+    - The remediation priority schedule reveals:
+      The greatest epistemic keystone is NOT querying another connector (EuropePMC / PubChem),
+      but conducting independent in-vivo animal model or clinical cohort validation.
+    """
+    ledger = ClaimLedger()
+
+    ledger.add_evidence(
+        EvidenceRef(
+            ref_id="CONN-CHEMBL-01",
+            kind="database",
+            summary="ChEMBL IC50/Ki bioactivity assay for Drug X on target kinase",
+            maturity=ConclusionMaturity.SUPPORTED.value,
+            provenance={
+                "connector_id": "chembl",
+                "database_release": "chembl_33",
+                "citations": ["PMID:2981234"],
+                "assay_type": "in_vitro_binding",
+            },
+        )
+    )
+    ledger.add_evidence(
+        EvidenceRef(
+            ref_id="CONN-OPENTARGETS-01",
+            kind="database",
+            summary="OpenTargets target-disease association score (0.82)",
+            maturity=ConclusionMaturity.SUPPORTED.value,
+            provenance={
+                "connector_id": "opentargets",
+                "database_release": "2024.03",
+                "citations": ["PMID:2981234", "PMID:3198765"],
+                "assay_type": "in_vitro_cell_line",
+            },
+        )
+    )
+    ledger.add_evidence(
+        EvidenceRef(
+            ref_id="CONN-ENRICHR-01",
+            kind="database",
+            summary="Enrichr pathway enrichment for Drug X target response set",
+            maturity=ConclusionMaturity.SUPPORTED.value,
+            provenance={
+                "connector_id": "enrichr",
+                "citations": ["PMID:2981234"],
+                "assay_type": "in_vitro_pathway",
+            },
+        )
+    )
+    ledger.add_evidence(
+        EvidenceRef(
+            ref_id="CONN-CONSENSUS-01",
+            kind="literature",
+            summary="Consensus synthesis across literature for Drug X efficacy in Disease Y",
+            maturity=ConclusionMaturity.SUPPORTED.value,
+            provenance={
+                "connector_id": "consensus",
+                "citations": ["PMID:2981234", "PMID:3198765"],
+                "assay_type": "in_vitro_review",
+            },
+        )
+    )
+
+    ledger.add_claim(
+        ClaimRecord(
+            claim_id="CLAIM-DRUG-EFFICACY",
+            statement="Drug X is likely effective in disease Y",
+            capability_id="bioactivity.affinity_audit",
+            supported_by=[
+                "CONN-CHEMBL-01",
+                "CONN-OPENTARGETS-01",
+                "CONN-ENRICHR-01",
+                "CONN-CONSENSUS-01",
+            ],
+            depends_on=[],
+        )
+    )
 
     return ledger

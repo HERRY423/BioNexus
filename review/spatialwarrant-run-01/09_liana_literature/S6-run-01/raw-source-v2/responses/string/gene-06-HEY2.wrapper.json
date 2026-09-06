@@ -1,0 +1,169 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 6,
+    "name": "HEY2"
+  },
+  "source": "string",
+  "returncode": 0,
+  "elapsed_seconds": 2.5357334000000264,
+  "completed_at_utc": "2026-09-06T02:00:56.131509+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\string\\gene-06-HEY2.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\string\\gene-06-HEY2.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "string-db-org",
+    "path": "network",
+    "method": "POST",
+    "status_code": 200,
+    "record_path": "$",
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\string\\gene-06-HEY2.raw",
+    "warnings": [],
+    "record_count_returned": 10,
+    "record_count_available": 49,
+    "truncated": true,
+    "records": [
+      {
+        "stringId_A": "9606.ENSP00000232424",
+        "stringId_B": "9606.ENSP00000361943",
+        "preferredName_A": "HES1",
+        "preferredName_B": "HEYL",
+        "ncbiTaxonId": "9606",
+        "score": 0.583,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.063,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000232424",
+        "stringId_B": "9606.ENSP00000254958",
+        "preferredName_A": "HES1",
+        "preferredName_B": "JAG1",
+        "ncbiTaxonId": "9606",
+        "score": 0.714,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.102,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000232424",
+        "stringId_B": "9606.ENSP00000364163",
+        "preferredName_A": "HES1",
+        "preferredName_B": "NOTCH4",
+        "ncbiTaxonId": "9606",
+        "score": 0.749,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.048,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000232424",
+        "stringId_B": "9606.ENSP00000357348",
+        "preferredName_A": "HES1",
+        "preferredName_B": "HEY2",
+        "ncbiTaxonId": "9606",
+        "score": 0.805,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.066,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000232424",
+        "stringId_B": "9606.ENSP00000263388",
+        "preferredName_A": "HES1",
+        "preferredName_B": "NOTCH3",
+        "ncbiTaxonId": "9606",
+        "score": 0.806,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.08,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000232424",
+        "stringId_B": "9606.ENSP00000256646",
+        "preferredName_A": "HES1",
+        "preferredName_B": "NOTCH2",
+        "ncbiTaxonId": "9606",
+        "score": 0.812,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000232424",
+        "stringId_B": "9606.ENSP00000498587",
+        "preferredName_A": "HES1",
+        "preferredName_B": "NOTCH1",
+        "ncbiTaxonId": "9606",
+        "score": 0.897,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.044,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000232424",
+        "stringId_B": "9606.ENSP00000338272",
+        "preferredName_A": "HES1",
+        "preferredName_B": "HEY1",
+        "ncbiTaxonId": "9606",
+        "score": 0.919,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.1,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000232424",
+        "stringId_B": "9606.ENSP00000345206",
+        "preferredName_A": "HES1",
+        "preferredName_B": "RBPJ",
+        "ncbiTaxonId": "9606",
+        "score": 0.946,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000254958",
+        "stringId_B": "9606.ENSP00000435712",
+        "preferredName_A": "JAG1",
+        "preferredName_B": "GATA4",
+        "ncbiTaxonId": "9606",
+        "score": 0.657,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0,
+        "_truncated_keys": 3
+      }
+    ],
+    "sources": [
+      {
+        "name": "STRING",
+        "url": "https://string-db.org/api/json/network",
+        "retrieved_at": "2026-09-06T02:00:56.100668+00:00",
+        "supports_claim": true,
+        "kind": "evidence",
+        "request_url": "https://string-db.org/api/json/network"
+      }
+    ]
+  },
+  "stderr": ""
+}

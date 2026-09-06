@@ -1,0 +1,497 @@
+{
+  "files": [
+    {
+      "file": "01_inputs/10x_blockA_section1/V1_Breast_Cancer_Block_A_Section_1_filtered_feature_bc_matrix.h5",
+      "match": true
+    },
+    {
+      "file": "01_inputs/10x_blockA_section1/V1_Breast_Cancer_Block_A_Section_1_spatial-extracted/spatial/aligned_fiducials.jpg",
+      "match": true
+    },
+    {
+      "file": "01_inputs/10x_blockA_section1/V1_Breast_Cancer_Block_A_Section_1_spatial-extracted/spatial/detected_tissue_image.jpg",
+      "match": true
+    },
+    {
+      "file": "01_inputs/10x_blockA_section1/V1_Breast_Cancer_Block_A_Section_1_spatial-extracted/spatial/scalefactors_json.json",
+      "match": true
+    },
+    {
+      "file": "01_inputs/10x_blockA_section1/V1_Breast_Cancer_Block_A_Section_1_spatial-extracted/spatial/tissue_hires_image.png",
+      "match": true
+    },
+    {
+      "file": "01_inputs/10x_blockA_section1/V1_Breast_Cancer_Block_A_Section_1_spatial-extracted/spatial/tissue_lowres_image.png",
+      "match": true
+    },
+    {
+      "file": "01_inputs/10x_blockA_section1/V1_Breast_Cancer_Block_A_Section_1_spatial-extracted/spatial/tissue_positions_list.csv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/10x_blockA_section1/V1_Breast_Cancer_Block_A_Section_1_spatial.tar.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/10x_blockA_section1/V1_Breast_Cancer_Block_A_Section_1_web_summary.html",
+      "match": true
+    },
+    {
+      "file": "01_inputs/GSE176078/GSE176078_Wu_etal_2021_BRCA_scRNASeq-extracted/Wu_etal_2021_BRCA_scRNASeq/count_matrix_barcodes.tsv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/GSE176078/GSE176078_Wu_etal_2021_BRCA_scRNASeq-extracted/Wu_etal_2021_BRCA_scRNASeq/count_matrix_genes.tsv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/GSE176078/GSE176078_Wu_etal_2021_BRCA_scRNASeq-extracted/Wu_etal_2021_BRCA_scRNASeq/count_matrix_sparse.mtx",
+      "match": true
+    },
+    {
+      "file": "01_inputs/GSE176078/GSE176078_Wu_etal_2021_BRCA_scRNASeq-extracted/Wu_etal_2021_BRCA_scRNASeq/metadata.csv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/GSE176078/GSE176078_Wu_etal_2021_BRCA_scRNASeq.tar.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/GSE176078/GSE176078_Wu_etal_2021_BRCA_scRNASeq.tar.gz.part",
+      "match": true
+    },
+    {
+      "file": "01_inputs/GSE176078/range-resume/range-000-261095424-294649855.bin",
+      "match": true
+    },
+    {
+      "file": "01_inputs/GSE176078/range-resume/range-001-294649856-328204287.bin",
+      "match": true
+    },
+    {
+      "file": "01_inputs/GSE176078/range-resume/range-002-328204288-361758719.bin",
+      "match": true
+    },
+    {
+      "file": "01_inputs/GSE176078/range-resume/range-003-361758720-395313151.bin",
+      "match": true
+    },
+    {
+      "file": "01_inputs/GSE176078/range-resume/range-004-395313152-428867583.bin",
+      "match": true
+    },
+    {
+      "file": "01_inputs/GSE176078/range-resume/range-005-428867584-462422015.bin",
+      "match": true
+    },
+    {
+      "file": "01_inputs/GSE176078/range-resume/range-006-462422016-495976447.bin",
+      "match": true
+    },
+    {
+      "file": "01_inputs/GSE176078/range-resume/range-007-495976448-529530879.bin",
+      "match": true
+    },
+    {
+      "file": "01_inputs/GSE176078/range-resume/range-008-529530880-558829201.bin",
+      "match": true
+    },
+    {
+      "file": "01_inputs/literature/PMC9044823-BioC.xml",
+      "match": true
+    },
+    {
+      "file": "01_inputs/literature/pubmed-34493872-attempt-1.xml",
+      "match": true
+    },
+    {
+      "file": "01_inputs/literature/pubmed-call-1.json",
+      "match": true
+    },
+    {
+      "file": "01_inputs/literature/pubmed-plugin-return-1.json",
+      "match": true
+    },
+    {
+      "file": "01_inputs/literature/pubmed-request-1.json",
+      "match": true
+    },
+    {
+      "file": "01_inputs/resources/h.all.v2024.1.Hs.symbols.gmt",
+      "match": true
+    },
+    {
+      "file": "01_inputs/resources/liana-consensus-frozen.csv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/resources/liana-omni_resource.csv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/resources/liana-select_resource.py",
+      "match": true
+    },
+    {
+      "file": "01_inputs/resources/PROGENy-omnipath-snapshot.tsv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/source_metadata/GSE176078-filelist.txt",
+      "match": true
+    },
+    {
+      "file": "01_inputs/source_metadata/GSE176078-suppl.html",
+      "match": true
+    },
+    {
+      "file": "01_inputs/source_metadata/GSE176078_family.soft.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/source_metadata/liana-main-commit.json",
+      "match": true
+    },
+    {
+      "file": "01_inputs/source_metadata/msigdb-2024.1.Hs-index.html",
+      "match": true
+    },
+    {
+      "file": "01_inputs/source_metadata/zenodo-4739739.json",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/1142243F_filtered_count_matrix/barcodes.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/1142243F_filtered_count_matrix/features.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/1142243F_filtered_count_matrix/matrix.mtx.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/1160920F_filtered_count_matrix/barcodes.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/1160920F_filtered_count_matrix/features.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/1160920F_filtered_count_matrix/matrix.mtx.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID4290_filtered_count_matrix/barcodes.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID4290_filtered_count_matrix/features.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID4290_filtered_count_matrix/matrix.mtx.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID4465_filtered_count_matrix/barcodes.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID4465_filtered_count_matrix/features.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID4465_filtered_count_matrix/matrix.mtx.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID44971_filtered_count_matrix/barcodes.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID44971_filtered_count_matrix/features.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID44971_filtered_count_matrix/matrix.mtx.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID4535_filtered_count_matrix/barcodes.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID4535_filtered_count_matrix/features.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID4535_filtered_count_matrix/matrix.mtx.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices.tar.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/images.pdf",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/metadata-extracted/metadata/1142243F_metadata.csv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/metadata-extracted/metadata/1160920F_metadata.csv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/metadata-extracted/metadata/CID4290_metadata.csv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/metadata-extracted/metadata/CID4465_metadata.csv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/metadata-extracted/metadata/CID44971_metadata.csv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/metadata-extracted/metadata/CID4535_metadata.csv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/metadata.tar.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/1142243F_raw_feature_bc_matrix/barcodes.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/1142243F_raw_feature_bc_matrix/features.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/1142243F_raw_feature_bc_matrix/matrix.mtx.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/1160920F_raw_feature_bc_matrix/barcodes.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/1160920F_raw_feature_bc_matrix/features.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/1160920F_raw_feature_bc_matrix/matrix.mtx.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID4290_raw_feature_bc_matrix/barcodes.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID4290_raw_feature_bc_matrix/features.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID4290_raw_feature_bc_matrix/matrix.mtx.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID4465_raw_feature_bc_matrix/barcodes.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID4465_raw_feature_bc_matrix/features.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID4465_raw_feature_bc_matrix/matrix.mtx.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID44971_raw_feature_bc_matrix/barcodes.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID44971_raw_feature_bc_matrix/features.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID44971_raw_feature_bc_matrix/matrix.mtx.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID4535_raw_feature_bc_matrix/barcodes.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID4535_raw_feature_bc_matrix/features.tsv.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID4535_raw_feature_bc_matrix/matrix.mtx.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices.tar.gz",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1142243F_spatial/aligned_fiducials.jpg",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1142243F_spatial/detected_tissue_image.jpg",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1142243F_spatial/scalefactors_json.json",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1142243F_spatial/tissue_hires_image.png",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1142243F_spatial/tissue_lowres_image.png",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1142243F_spatial/tissue_positions_list.csv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1160920F_spatial/aligned_fiducials.jpg",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1160920F_spatial/detected_tissue_image.jpg",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1160920F_spatial/scalefactors_json.json",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1160920F_spatial/tissue_hires_image.png",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1160920F_spatial/tissue_lowres_image.png",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1160920F_spatial/tissue_positions_list.csv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4290_spatial/aligned_fiducials.jpg",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4290_spatial/detected_tissue_image.jpg",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4290_spatial/scalefactors_json.json",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4290_spatial/tissue_hires_image.png",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4290_spatial/tissue_lowres_image.png",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4290_spatial/tissue_positions_list.csv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4465_spatial/aligned_fiducials.jpg",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4465_spatial/detected_tissue_image.jpg",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4465_spatial/scalefactors_json.json",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4465_spatial/tissue_hires_image.png",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4465_spatial/tissue_lowres_image.png",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4465_spatial/tissue_positions_list.csv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID44971_spatial/aligned_fiducials.jpg",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID44971_spatial/detected_tissue_image.jpg",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID44971_spatial/scalefactors_json.json",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID44971_spatial/tissue_hires_image.png",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID44971_spatial/tissue_lowres_image.png",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID44971_spatial/tissue_positions_list.csv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4535_spatial/aligned_fiducials.jpg",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4535_spatial/detected_tissue_image.jpg",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4535_spatial/scalefactors_json.json",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4535_spatial/tissue_hires_image.png",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4535_spatial/tissue_lowres_image.png",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4535_spatial/tissue_positions_list.csv",
+      "match": true
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial.tar.gz",
+      "match": true
+    }
+  ],
+  "all_match": true
+}

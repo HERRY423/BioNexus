@@ -1,0 +1,108 @@
+{
+  "status": "COMPLETED",
+  "audits": [
+    {
+      "evidence_id": "SPATIALWARRANT-S6-LOCAL-ANALYSIS",
+      "status": "VALID",
+      "integrity_verified": true,
+      "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+      "accepted_for_context": true,
+      "accepted_for_claim_support": false,
+      "conclusion_maturity": "UNASSESSED",
+      "allowed_context_use": "content-bound analysis result",
+      "missing_context": [],
+      "errors": [],
+      "warnings": [],
+      "prohibited_inferences": [
+        "Do not infer biological generalization from execution success alone.",
+        "Do not infer causality without an identified design and causal assumptions."
+      ]
+    },
+    {
+      "evidence_id": "SPATIALWARRANT-S6-REACTOME",
+      "status": "VALID",
+      "integrity_verified": true,
+      "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+      "accepted_for_context": true,
+      "accepted_for_claim_support": false,
+      "conclusion_maturity": "UNASSESSED",
+      "allowed_context_use": "versioned database record",
+      "missing_context": [],
+      "errors": [],
+      "warnings": [],
+      "prohibited_inferences": [
+        "Do not treat database retrieval as independent experimental validation.",
+        "Do not infer causality or clinical actionability from a structured record alone."
+      ]
+    },
+    {
+      "evidence_id": "SPATIALWARRANT-S6-STRING",
+      "status": "VALID",
+      "integrity_verified": true,
+      "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+      "accepted_for_context": true,
+      "accepted_for_claim_support": false,
+      "conclusion_maturity": "UNASSESSED",
+      "allowed_context_use": "versioned database record",
+      "missing_context": [],
+      "errors": [],
+      "warnings": [],
+      "prohibited_inferences": [
+        "Do not treat database retrieval as independent experimental validation.",
+        "Do not infer causality or clinical actionability from a structured record alone."
+      ]
+    },
+    {
+      "evidence_id": "SPATIALWARRANT-S6-OPENTARGETS",
+      "status": "VALID",
+      "integrity_verified": true,
+      "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+      "accepted_for_context": true,
+      "accepted_for_claim_support": false,
+      "conclusion_maturity": "UNASSESSED",
+      "allowed_context_use": "versioned database record",
+      "missing_context": [],
+      "errors": [],
+      "warnings": [],
+      "prohibited_inferences": [
+        "Do not treat database retrieval as independent experimental validation.",
+        "Do not infer causality or clinical actionability from a structured record alone."
+      ]
+    },
+    {
+      "evidence_id": "SPATIALWARRANT-S6-UNIPROT",
+      "status": "VALID",
+      "integrity_verified": true,
+      "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+      "accepted_for_context": true,
+      "accepted_for_claim_support": false,
+      "conclusion_maturity": "UNASSESSED",
+      "allowed_context_use": "versioned database record",
+      "missing_context": [],
+      "errors": [],
+      "warnings": [],
+      "prohibited_inferences": [
+        "Do not treat database retrieval as independent experimental validation.",
+        "Do not infer causality or clinical actionability from a structured record alone."
+      ]
+    },
+    {
+      "evidence_id": "SPATIALWARRANT-S6-PUBMED",
+      "status": "VALID",
+      "integrity_verified": true,
+      "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+      "accepted_for_context": true,
+      "accepted_for_claim_support": false,
+      "conclusion_maturity": "UNASSESSED",
+      "allowed_context_use": "source-specific literature report",
+      "missing_context": [],
+      "errors": [],
+      "warnings": [],
+      "prohibited_inferences": [
+        "Do not infer consensus, replication, or absence of evidence from one search result.",
+        "Do not treat an author's mechanistic interpretation as independently validated causality."
+      ]
+    }
+  ],
+  "interpretation": "VALID means schema/hash/context consistency only; producer identity remains declared, not authenticated; no envelope is accepted as claim support without human adjudication."
+}

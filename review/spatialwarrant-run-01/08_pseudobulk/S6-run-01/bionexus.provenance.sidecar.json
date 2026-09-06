@@ -1,0 +1,236 @@
+{
+  "activity_name": "SpatialWarrant S6 descriptive boundary pseudobulk, LIANA, pathway, and external-context analysis",
+  "method": "Locked S6 local Python/scverse execution with fixed S3 geometry masks and frozen resources",
+  "backend": "local Python/scverse; LIANA 1.10.0; decoupler 2.2.0; not a registered NGS workflow run",
+  "parameters": {
+    "primary_boundary": "CID4535 B2 D<=2",
+    "sensitivities": [
+      "B1 D<=1",
+      "B3 D<=3"
+    ],
+    "core": "D>3",
+    "program": "HALLMARK_INTERFERON_GAMMA_RESPONSE M5913 2024.1.Hs",
+    "score": "mean matched-gene log2(CPM+1)",
+    "liana": {
+      "method": "rank_aggregate",
+      "groupby": "producer_celltype_minor",
+      "expr_prop": 0.1,
+      "min_cells": 5,
+      "n_perms": 1000,
+      "seed": 20260904
+    },
+    "pathway": {
+      "Hallmark": "unweighted mean log2(CPM+1)",
+      "PROGENy": "decoupler ULM"
+    }
+  },
+  "input_files": [
+    {
+      "file_name": "analysis-plan.lock.md",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\00_plan\\analysis-plan.lock.md",
+      "role": "input",
+      "sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82"
+    },
+    {
+      "file_name": "S4-S5-checkpoint.md",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\S4-S5-checkpoint.md",
+      "role": "input",
+      "sha256": "7bba2c75abb458fc68ca808ffbdac4883c6e87c601608a40b59b0b77bcb11033"
+    },
+    {
+      "file_name": "ref_40k.h5ad",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\03_scrna_reference\\S2-run-01\\ref_40k.h5ad",
+      "role": "input",
+      "sha256": "0443b7a12dded30a692973acba9d22ad2c5cc795d48b43f799db4e87b6f3b110"
+    },
+    {
+      "file_name": "annotation_evidence.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\03_scrna_reference\\S2-run-01\\annotation_evidence.csv",
+      "role": "input",
+      "sha256": "dd3d772c2a20be69c4885d8126318dd70491e66273c71d78225e4d09fcd3ddd0"
+    },
+    {
+      "file_name": "CID4535.h5ad",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID4535\\CID4535.h5ad",
+      "role": "input",
+      "sha256": "baf559dee9a88a2e0b42e7c1d69b1e1c25b04f09e146d595877552ff8ba135a3"
+    },
+    {
+      "file_name": "geometry-boundary-core-masks.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\04_visium_qc\\S3-run-03\\CID4535\\geometry-boundary-core-masks.csv",
+      "role": "input",
+      "sha256": "595157ec56fc635e00f96cad005f4ef6eae059745de73a6733f23ea19b6bd9b9"
+    },
+    {
+      "file_name": "proportions_tangram.csv.gz",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\06_deconvolution\\S4-run-02\\proportions_tangram.csv.gz",
+      "role": "input",
+      "sha256": "1728f720f5b146234b968cf571c4911f809bf70e634f1e1e64368fa87e6f5f1c"
+    },
+    {
+      "file_name": "niche_labels.csv.gz",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\niche_labels.csv.gz",
+      "role": "input",
+      "sha256": "6ba46687ae54ed67b2438ec4a1184eebfca01741d74a6c040626d96246e7d0a8"
+    },
+    {
+      "file_name": "co-occurrence.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\07_niches\\S5-run-02\\co-occurrence.csv",
+      "role": "input",
+      "sha256": "81031928686454c2859412cd8895089f937118f1207a57ef6c2622ef858d5a4c"
+    },
+    {
+      "file_name": "h.all.v2024.1.Hs.symbols.gmt",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\resources\\h.all.v2024.1.Hs.symbols.gmt",
+      "role": "input",
+      "sha256": "ee2463540042078bfa3f67828e1e223bb354446d9fbb4d22845866835ba5c772"
+    },
+    {
+      "file_name": "liana-consensus-frozen.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\resources\\liana-consensus-frozen.csv",
+      "role": "input",
+      "sha256": "d1c01782f6d640df3368fdd986a27c8dc1650136cbc5dadc9d37f52b62f75a52"
+    },
+    {
+      "file_name": "PROGENy-omnipath-snapshot.tsv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\resources\\PROGENy-omnipath-snapshot.tsv",
+      "role": "input",
+      "sha256": "a1a0f938211def2b846cfde7e7dd56d83240d1bb9bc0ac423682b071761bc821"
+    },
+    {
+      "file_name": "matrix.mtx.gz",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\raw_count_matrices-extracted\\raw_count_matrices\\CID4535_raw_feature_bc_matrix\\matrix.mtx.gz",
+      "role": "input",
+      "sha256": "c0b37824b8647b11da77054939e1215e60664d2eb480202feaeab78a1dbc2be9"
+    },
+    {
+      "file_name": "barcodes.tsv.gz",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\raw_count_matrices-extracted\\raw_count_matrices\\CID4535_raw_feature_bc_matrix\\barcodes.tsv.gz",
+      "role": "input",
+      "sha256": "856fa22b6fb346931480b232fef560dec4a42ce7ea8237ffa207d2499b8d7274"
+    },
+    {
+      "file_name": "features.tsv.gz",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\raw_count_matrices-extracted\\raw_count_matrices\\CID4535_raw_feature_bc_matrix\\features.tsv.gz",
+      "role": "input",
+      "sha256": "0a6e9f09c1343264d465b73d0e3b93efa9ccb3d7643cccf0600d81f5b20478d7"
+    }
+  ],
+  "output_files": [
+    {
+      "file_name": "primary-program-region-scores.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\primary-program-region-scores.csv",
+      "role": "output",
+      "sha256": "2f84049391bd2b70ad8bb30fd8f1687395bfaef407bbdb6cabcacb935780f500"
+    },
+    {
+      "file_name": "primary-program-B1-B2-B3-sensitivity.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\primary-program-B1-B2-B3-sensitivity.csv",
+      "role": "output",
+      "sha256": "23da3862e2a6ab833e168bce70117a160dfe4e96cfa03848082e95865fdf58fd"
+    },
+    {
+      "file_name": "prespecified-six-genes.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\prespecified-six-genes.csv",
+      "role": "output",
+      "sha256": "86e8e61fe9dd434adc4b4ac189cc40b0d549f4692c97f126a7efc5c5ecf156b4"
+    },
+    {
+      "file_name": "region-pseudobulk-raw-counts.full.csv.gz",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\region-pseudobulk-raw-counts.full.csv.gz",
+      "role": "output",
+      "sha256": "f06d36efce4b0529ee042701e4d41533ef116b66b23ed5b2feafcedfd3356bb3"
+    },
+    {
+      "file_name": "descriptive-whole-gene-table.full.csv.gz",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\descriptive-whole-gene-table.full.csv.gz",
+      "role": "output",
+      "sha256": "4dd1ee7851703335de36b5d8cefe0a3c8fe1e4130beb78e6ca93f4c24621a0c3"
+    },
+    {
+      "file_name": "pathway-hallmark-results.full.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\pathway-hallmark-results.full.csv",
+      "role": "output",
+      "sha256": "129765ea1979c340ee1e244c282f7446c13b2d1540b8d7393a566d120bca6388"
+    },
+    {
+      "file_name": "pathway-progeny-results.full.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\pathway-progeny-results.full.csv",
+      "role": "output",
+      "sha256": "09b53f9f574770b715910252a327fc3ddd29b0ff2b17fb05538ad7d79ebda9ed"
+    },
+    {
+      "file_name": "liana-rank-aggregate.full.csv.gz",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\liana-rank-aggregate.full.csv.gz",
+      "role": "output",
+      "sha256": "ca323a4185cccd247a633ed161c29fe936ab150f99139586599191152e652af5"
+    },
+    {
+      "file_name": "liana-prespecified-interactions.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\liana-prespecified-interactions.csv",
+      "role": "output",
+      "sha256": "8eaa5f40e567a7760e0633a82d590f5452e47d1c5257909117925aa7a8d9bf3b"
+    },
+    {
+      "file_name": "liana-spatial-niche-context.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\liana-spatial-niche-context.csv",
+      "role": "output",
+      "sha256": "b8833dd3314dd6cd68478300336a5b92a2ae280be08bddb1b334393125dbab42"
+    },
+    {
+      "file_name": "external-query-log.final.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\external-query-log.final.csv",
+      "role": "output",
+      "sha256": "76688359620aa253e7ff8a818a09a3b7413e18b8f12defe6c5998c5492bcf74e"
+    },
+    {
+      "file_name": "S6-integrated-figure.png",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\S6-integrated-figure.png",
+      "role": "output",
+      "sha256": "677fcf003513da777b727c553efdb5eeb71ed607e0fe998da6217b12f0c4e8eb"
+    }
+  ],
+  "environment_snapshot": {
+    "os_name": "Windows",
+    "os_release": "11",
+    "os_version": "10.0.26200",
+    "architecture": "AMD64",
+    "python_version": "3.13.9",
+    "python_executable": "C:\\Users\\13264\\anaconda3\\python.exe",
+    "packages": {
+      "numpy": "2.3.5",
+      "scipy": "1.16.3",
+      "pandas": "2.3.3",
+      "scanpy": "1.12.2",
+      "anndata": "0.13.1",
+      "torch": "2.13.0+cpu",
+      "squidpy": "1.8.3",
+      "pydeseq2": "0.5.4",
+      "scikit-learn": "1.7.2"
+    },
+    "captured_at": "2026-09-06T02:03:19.875375+00:00",
+    "cuda_available": false
+  },
+  "execution_provenance": {
+    "data_source": "unknown",
+    "download_date": "2026-09-06T02:03:21.981564+00:00",
+    "commit_sha": "unknown",
+    "git_dirty": false,
+    "environment_lockfile_hashes": {
+      "pyproject.toml": "dfe58e8d642567724533c023f0029bc2ab6cc94352fe6170c56b756b0307e166",
+      "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
+      "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
+    },
+    "command": [
+      "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\finalize_spatialwarrant_s6.py",
+      "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01"
+    ],
+    "command_str": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\finalize_spatialwarrant_s6.py C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01",
+    "generator_version": "1.0.0-rc.4",
+    "python_version": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "timestamp": "2026-09-06T02:03:21.981564+00:00",
+    "extra_metadata": {}
+  },
+  "compliance_note": "SHA-256 + package versions for reproducibility. This is not 21 CFR Part 11, GxP, ALCOA+, or CLIA audit evidence."
+}

@@ -1,0 +1,5 @@
+{
+  "type": "HTTPError",
+  "error": "HTTP Error 404: Not Found",
+  "status": 404
+}

@@ -46,15 +46,29 @@ first heading. A document is not part of the BNS series until it is registered.
 | [BNS-012](BNS-012-claim-evidence-ledger.md) | Claim–Evidence Ledger | Claim graph as a data structure (JSON / PROV-O JSON-LD) | `src/bionexus/ledger.py` |
 | [BNS-013](BNS-013-scientific-assertion-firewall.md) | Scientific Assertion Firewall | The three researcher entry points: preflight / audit / verify | `src/bionexus/preflight.py`, `analysis_audit.py`, `verification.py` |
 | [BNS-014](BNS-014-biofailurebench.md) | BioFailureBench | The scientific trap corpus with ground truth (BF-nnn) | `evals/datasets/biofailurebench.yaml`, `evals/biofailurebench.py` |
-| [BNS-015](BNS-015-flagship-certification.md) | Flagship Certification | 3 externally-validated CERTIFIED capabilities as the priority track | `src/bionexus/certification.py` (flagship program) |
+| [BNS-015](BNS-015-flagship-certification.md) | Flagship Certification | Flagship verification track; CERTIFIED remains 0 until IVN external criteria are met | `src/bionexus/certification.py` (flagship program) |
 | [BNS-016](BNS-016-standards-interop.md) | Standards Interoperability & External Scope | RO-Crate / Workflow Run Crate / IEEE 2791 BCO exports; standards engagement; product boundary | `src/bionexus/interop.py`, `src/bionexus/standards.py` |
 | [BNS-017](BNS-017-claim-semantics-ir.md) | Scientific Claim Semantics & Deterministic Warrant IR | Typed Claim IR, epistemic warrant rules, causal overclaim interception | `src/bionexus/claim_semantics.py`, `src/bionexus/claim_checker.py` |
 | [BNS-018](BNS-018-rule-calibration-and-challenge-network.md) | Scientific Rule Calibration & Challenge Network | Machine-readable rule registry, empirical sensitivity, peer challenge protocol | `src/bionexus/rule_calibration.py`, `src/bionexus/empirical_warrant.py` |
 | [BNS-019](BNS-019-scientific-semantic-conventions.md) | Scientific Semantic Conventions | Language-neutral vocabulary for biological units, claims, evidence, confounds, and warrants | `standards/scientific-semantic-conventions/` |
 | [BNS-020](BNS-020-conformance-test-kit.md) | BioNexus Conformance Test Kit (BCTK) | Target-bound development diagnostics; certification and badges suspended | `src/bionexus/bctk/`, `bctk` CLI |
-| [BNS-021](BNS-021-evidence-debt.md) | Scientific Evidence Debt & Epistemic DAG Amortization | Structured scientific debt taxonomy, keystone bottleneck analysis, optimal repayment schedule | `src/bionexus/debt.py`, `bionexus debt` |
+| [BNS-021](BNS-021-evidence-debt.md) | Scientific Evidence Debt & Epistemic DAG Amortization | Structured scientific debt taxonomy, keystone bottleneck analysis, heuristic remediation priority schedule | `src/bionexus/debt.py`, `bionexus debt` |
 | [BNS-022](BNS-022-scientific-semantics-neutral-governance.md) | Scientific Semantics Neutral Governance & Institutional Adoption | Independent Council formation, technical/commercial/certification separation, evidence-bound institutional adoption | `governance/scientific-semantics/`, `scripts/validate_semantic_governance.py` |
-| [BNS-023](BNS-023-validation-transparency-network.md) | Validation Transparency Network | Portable, dual-attested validation events and deterministic candidate-slot state | `src/bionexus/validation_network.py` |
+| [BNS-023](BNS-023-independent-validation-network.md) | Independent Validation Network | Independent dataset, laboratory and reviewer participation | `src/bionexus/ivn.py` |
+| [BNS-024](BNS-024-validation-transparency-network.md) | Validation Transparency Network | Portable, dual-attested validation events and deterministic candidate-slot state | `src/bionexus/validation_network.py` |
+| [BNS-025](BNS-025-external-scientific-capability-receipt-and-connector-profile.md) | External Scientific Capability Receipt & Connector Profile | Receipt trust boundaries, connector claim limits and declared evidence lineage | `src/bionexus/tool_receipt.py`, `src/bionexus/epistemic_lineage.py` |
+
+## Numbering freeze (Week-0 hemostasis)
+
+`spec/registry.yaml` `numbering_freeze.max_id` is **BNS-025**. CI rejects any
+`BNS-026+` file. Unfreeze is a conscious `max_id` edit plus the lock test in
+`tests/unit/test_spec_registry.py` — it is not automatic when IVN records a
+review. BNS-024 and BNS-025 are engineering contracts
+(`development_no_certification_effect`): they do not raise certification
+tiers, fill IVN quotas, or count as adoption.
+
+The living conformance record is `evals/reports/benchmark_report.md`, not a
+new specification.
 
 ## Conformance classes
 

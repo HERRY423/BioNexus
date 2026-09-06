@@ -1,0 +1,38 @@
+﻿connector: chembl
+tool: query_chembl
+
+production_mode: curated_database
+domain: cheminformatics_and_pharmacology
+
+required_context:
+  - source_name
+  - record_ids
+  - database_release
+  - identifier_namespace
+  - organism_taxon
+
+default_evidence_role:
+  supporting
+
+maximum_default_claim:
+  bioactivity_measurement
+
+forbidden_claims:
+  - in_vivo_efficacy_proven
+  - clinical_efficacy
+  - causal_therapeutic_mechanism
+
+independence:
+  same_assay_across_different_mirrors_is_not_independent_replication
+
+semantic_profile:
+  claim.type: associative
+  evidence.type:
+    - structured_database_record
+  warrant.level: preliminary
+  warrant.status: unassessed
+
+epistemic_lineage_mapping:
+  origin_id_field: record_ids
+  origin_type: primary_study
+  assay_identity_field: record_ids

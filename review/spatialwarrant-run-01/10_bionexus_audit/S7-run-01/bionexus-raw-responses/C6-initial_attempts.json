@@ -1,0 +1,30 @@
+{
+  "test_id": "C6",
+  "request": {
+    "query": "该边界特征能够预测免疫治疗反应。",
+    "research_purpose": "S7 actual overclaim test of the stated clinical prediction claim.",
+    "data_metadata": {
+      "treatment_outcomes_available": false,
+      "independent_test_cohort": false,
+      "calibration": false,
+      "clinical_validation": false,
+      "claim_class": "clinical"
+    },
+    "intent_keywords": [
+      "clinical",
+      "immunotherapy",
+      "predict_response"
+    ]
+  },
+  "started_at_utc": "2026-09-06T02:15:22.631Z",
+  "ended_at_utc": "2026-09-06T02:15:27.988Z",
+  "raw_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Error executing tool bionexus_warrant_check: Unknown research purpose 'S7 actual overclaim test of the stated clinical prediction claim.'. Valid purposes: unspecified, exploratory, screening, confirmatory, causal, clinical"
+      }
+    ],
+    "isError": true
+  }
+}

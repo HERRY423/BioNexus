@@ -1,0 +1,17 @@
+donor,condition,sample_id
+101,ctrl,101|ctrl
+101,stim,101|stim
+1015,ctrl,1015|ctrl
+1015,stim,1015|stim
+1016,ctrl,1016|ctrl
+1016,stim,1016|stim
+1039,ctrl,1039|ctrl
+1039,stim,1039|stim
+107,ctrl,107|ctrl
+107,stim,107|stim
+1244,ctrl,1244|ctrl
+1244,stim,1244|stim
+1256,ctrl,1256|ctrl
+1256,stim,1256|stim
+1488,ctrl,1488|ctrl
+1488,stim,1488|stim

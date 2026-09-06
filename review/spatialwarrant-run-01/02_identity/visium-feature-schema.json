@@ -1,0 +1,163 @@
+{
+  "input": "publisher raw feature matrices",
+  "scope": "identifier inventory only; no expression values examined",
+  "sections": [
+    {
+      "section": "1142243F",
+      "source_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\raw_count_matrices-extracted\\raw_count_matrices\\1142243F_raw_feature_bc_matrix\\features.tsv.gz",
+      "source_sha256": "9c2061dd4be86a2d36e3cdd38ea439faeafefabfbeaa793a3323acb50dacfc74",
+      "feature_count": 36601,
+      "id_column": 0,
+      "symbol_column": 1,
+      "modality_column": 2,
+      "modalities": {
+        "Gene Expression": 36601
+      },
+      "duplicate_ensembl_ids": {},
+      "duplicate_gene_symbols": {
+        "TBCE": 2,
+        "LINC01238": 2,
+        "CYB561D2": 2,
+        "MATR3": 2,
+        "LINC01505": 2,
+        "HSPA14": 2,
+        "GOLGA8M": 2,
+        "GGT1": 2,
+        "ARMCX5-GPRASP2": 2,
+        "TMSB15B": 2
+      },
+      "first_count_matrix_comment": null
+    },
+    {
+      "section": "1160920F",
+      "source_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\raw_count_matrices-extracted\\raw_count_matrices\\1160920F_raw_feature_bc_matrix\\features.tsv.gz",
+      "source_sha256": "63a4b7f33d80944cc8f11cc761b4aad7f3af801957fbb0eee88d24588fd59f6c",
+      "feature_count": 36601,
+      "id_column": 0,
+      "symbol_column": 1,
+      "modality_column": 2,
+      "modalities": {
+        "Gene Expression": 36601
+      },
+      "duplicate_ensembl_ids": {},
+      "duplicate_gene_symbols": {
+        "TBCE": 2,
+        "LINC01238": 2,
+        "CYB561D2": 2,
+        "MATR3": 2,
+        "LINC01505": 2,
+        "HSPA14": 2,
+        "GOLGA8M": 2,
+        "GGT1": 2,
+        "ARMCX5-GPRASP2": 2,
+        "TMSB15B": 2
+      },
+      "first_count_matrix_comment": null
+    },
+    {
+      "section": "CID4290",
+      "source_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\raw_count_matrices-extracted\\raw_count_matrices\\CID4290_raw_feature_bc_matrix\\features.tsv.gz",
+      "source_sha256": "0a6e9f09c1343264d465b73d0e3b93efa9ccb3d7643cccf0600d81f5b20478d7",
+      "feature_count": 36601,
+      "id_column": 0,
+      "symbol_column": 1,
+      "modality_column": 2,
+      "modalities": {
+        "Gene Expression": 36601
+      },
+      "duplicate_ensembl_ids": {},
+      "duplicate_gene_symbols": {
+        "TBCE": 2,
+        "LINC01238": 2,
+        "CYB561D2": 2,
+        "MATR3": 2,
+        "LINC01505": 2,
+        "HSPA14": 2,
+        "GOLGA8M": 2,
+        "GGT1": 2,
+        "ARMCX5-GPRASP2": 2,
+        "TMSB15B": 2
+      },
+      "first_count_matrix_comment": null
+    },
+    {
+      "section": "CID4465",
+      "source_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\raw_count_matrices-extracted\\raw_count_matrices\\CID4465_raw_feature_bc_matrix\\features.tsv.gz",
+      "source_sha256": "0a6e9f09c1343264d465b73d0e3b93efa9ccb3d7643cccf0600d81f5b20478d7",
+      "feature_count": 36601,
+      "id_column": 0,
+      "symbol_column": 1,
+      "modality_column": 2,
+      "modalities": {
+        "Gene Expression": 36601
+      },
+      "duplicate_ensembl_ids": {},
+      "duplicate_gene_symbols": {
+        "TBCE": 2,
+        "LINC01238": 2,
+        "CYB561D2": 2,
+        "MATR3": 2,
+        "LINC01505": 2,
+        "HSPA14": 2,
+        "GOLGA8M": 2,
+        "GGT1": 2,
+        "ARMCX5-GPRASP2": 2,
+        "TMSB15B": 2
+      },
+      "first_count_matrix_comment": null
+    },
+    {
+      "section": "CID44971",
+      "source_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\raw_count_matrices-extracted\\raw_count_matrices\\CID44971_raw_feature_bc_matrix\\features.tsv.gz",
+      "source_sha256": "0a6e9f09c1343264d465b73d0e3b93efa9ccb3d7643cccf0600d81f5b20478d7",
+      "feature_count": 36601,
+      "id_column": 0,
+      "symbol_column": 1,
+      "modality_column": 2,
+      "modalities": {
+        "Gene Expression": 36601
+      },
+      "duplicate_ensembl_ids": {},
+      "duplicate_gene_symbols": {
+        "TBCE": 2,
+        "LINC01238": 2,
+        "CYB561D2": 2,
+        "MATR3": 2,
+        "LINC01505": 2,
+        "HSPA14": 2,
+        "GOLGA8M": 2,
+        "GGT1": 2,
+        "ARMCX5-GPRASP2": 2,
+        "TMSB15B": 2
+      },
+      "first_count_matrix_comment": null
+    },
+    {
+      "section": "CID4535",
+      "source_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\zenodo4739739\\raw_count_matrices-extracted\\raw_count_matrices\\CID4535_raw_feature_bc_matrix\\features.tsv.gz",
+      "source_sha256": "0a6e9f09c1343264d465b73d0e3b93efa9ccb3d7643cccf0600d81f5b20478d7",
+      "feature_count": 36601,
+      "id_column": 0,
+      "symbol_column": 1,
+      "modality_column": 2,
+      "modalities": {
+        "Gene Expression": 36601
+      },
+      "duplicate_ensembl_ids": {},
+      "duplicate_gene_symbols": {
+        "TBCE": 2,
+        "LINC01238": 2,
+        "CYB561D2": 2,
+        "MATR3": 2,
+        "LINC01505": 2,
+        "HSPA14": 2,
+        "GOLGA8M": 2,
+        "GGT1": 2,
+        "ARMCX5-GPRASP2": 2,
+        "TMSB15B": 2
+      },
+      "first_count_matrix_comment": null
+    }
+  ],
+  "gene_set_coverage": "PENDING_RESOURCE_DOWNLOAD"
+}

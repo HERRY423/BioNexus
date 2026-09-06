@@ -8,6 +8,7 @@ implementation.
 |---|---|---|---|
 | Python | independent validator | unpacked BNS-019 release | standard library only |
 | R | independent validator | same unpacked release | `jsonlite` + `digest`; no Python |
+| TypeScript (`@bionexus/scientific-semconv`) | independent validator / producer | same unpacked release | standard library (`node:crypto`, `node:fs`); zero runtime deps |
 | Scanpy/AnnData | host adapter | same unpacked release | `adata.uns["bionexus"]` only |
 | Seurat | host adapter | same unpacked release | `object@misc$bionexus` only |
 | RO-Crate artifact annotator | zero-touch sidecar | same unpacked release | existing RO-Crate + explicit per-artifact declarations |

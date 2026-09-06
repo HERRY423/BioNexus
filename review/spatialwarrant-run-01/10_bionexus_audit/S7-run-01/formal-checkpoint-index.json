@@ -1,0 +1,122 @@
+{
+  "S0": "Locked plan and capability record serve as S0; no separate S0 checkpoint invented",
+  "formal_S2": "03_scrna_reference/S2-run-01",
+  "formal_S3": "04_visium_qc/S3-run-03",
+  "formal_S4": "06_deconvolution/S4-run-02",
+  "formal_S5": "07_niches/S5-run-02",
+  "checkpoints": [
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\00_plan\\analysis-plan.lock.md",
+      "sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\00_plan\\plan.sha256",
+      "sha256": "9939eaa435dcdd3a4e2a8ba77bdc88cfe65922582646fb3adc167a6a7dab8469"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\00_plan\\plugin-capability-check.json",
+      "sha256": "15f9863ab4df0c2deb4bed64d726e6e400be28f10f7ad3307826877404a47785"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\S1-checkpoint.md",
+      "sha256": "eb2451b5e16676e2d6844d862c8961f3e6f5031a712150a3fedab816265c7333"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\S2-S3-checkpoint.v3.md",
+      "sha256": "ae6e97f0db14f17adfdaa28b2fc1460d8792d781b958ca479505373e588c0553"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\S4-S5-checkpoint.md",
+      "sha256": "29c548edd072b8cbe2a301c9170523d0551b3886db4e3de64bbd0934a0d95bf6"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\S4-S5-checkpoint.postaudit.v1.md",
+      "sha256": "fdd95bc33c7b4d89ef968bd8f349062a6ea2921a9c89ebfcab7e3d860d1de30f"
+    },
+    {
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\S6-checkpoint.md",
+      "sha256": "be73e50a5910647d9b002072972f052b9b453df10eee3983e94af4c3e92ad813"
+    }
+  ],
+  "claims_original": {
+    "source": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-revised-design\\CLAIMS_PREREGISTERED.csv",
+    "source_sha256": "552fa77e9ba76fd83e6b000677cd322f4b64ea4c6c4ab46e45ea97e81f0736e3",
+    "locked_copy": "CSV appendix in analysis-plan.lock.md",
+    "semantic_equal": true,
+    "rows": [
+      {
+        "claim_id": "C1",
+        "stage": "S3",
+        "claim_class": "descriptive",
+        "preregistered_statement": "Report per-section agreement between numeric spatial domains and producer pathology, including ARI/NMI, granularity, and boundary Dice/Jaccard; no success threshold is assumed.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "STUDY_BOUND",
+        "blocking_evidence_gap": "same-study producer annotation is not independent truth"
+      },
+      {
+        "claim_id": "C2",
+        "stage": "S4",
+        "claim_class": "descriptive",
+        "preregistered_statement": "Report Tangram versus marker/NNLS composition sensitivity and scanpy-ingest label-transfer agreement without a prespecified success result.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "STUDY_BOUND",
+        "blocking_evidence_gap": "shared scRNA reference; methods are not independent biological evidence"
+      },
+      {
+        "claim_id": "C3",
+        "stage": "S5",
+        "claim_class": "association",
+        "preregistered_statement": "Test whether the prespecified CAF/CD8-T/macrophage/endothelial niche is enriched at the frozen pathology-geometry boundary and report every section.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "TO_BE_COMPUTED",
+        "blocking_evidence_gap": "niche result and cross-section stability not observed"
+      },
+      {
+        "claim_id": "C4",
+        "stage": "S6",
+        "claim_class": "population_effect",
+        "preregistered_statement": "Test the frozen immune/IFN program for a paired boundary-versus-core effect and report effect size, uncertainty, direction count, and leave-one-section-out sensitivity.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "TO_BE_COMPUTED",
+        "blocking_evidence_gap": "independent-unit identity and results not observed"
+      },
+      {
+        "claim_id": "C5",
+        "stage": "S6",
+        "claim_class": "causal",
+        "preregistered_statement": "CXCL9/10-CXCR3 drives T-cell recruitment to the boundary.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "ABSTAIN",
+        "blocking_evidence_gap": "no perturbation, temporal ordering, or independent causal validation"
+      },
+      {
+        "claim_id": "C6",
+        "stage": "S7",
+        "claim_class": "clinical",
+        "preregistered_statement": "The boundary signature predicts immunotherapy response.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "REFUSED",
+        "blocking_evidence_gap": "no treatment outcome, independent test cohort, calibration, or clinical validation"
+      },
+      {
+        "claim_id": "T1",
+        "stage": "S7",
+        "claim_class": "population_effect",
+        "preregistered_statement": "One section establishes a population-wide TNBC immune-exclusion mechanism.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "ABSTAIN",
+        "blocking_evidence_gap": "one section cannot support population or mechanistic inference"
+      },
+      {
+        "claim_id": "T2",
+        "stage": "S7",
+        "claim_class": "technical",
+        "preregistered_statement": "Input hashes, barcode joins, coordinate completeness, and output hashes can be independently recomputed.",
+        "initial_status": "PENDING",
+        "maximum_without_new_evidence": "TECHNICAL_ONLY",
+        "blocking_evidence_gap": "technical integrity cannot elevate biological claims"
+      }
+    ],
+    "standalone_locked_copy_found": false
+  }
+}

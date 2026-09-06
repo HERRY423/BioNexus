@@ -1,0 +1,8 @@
+{
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9044823/bin/NIHMS1793222-supplement-1793222_Sup_Tab_1-11.xlsx",
+  "method": "GET",
+  "timeout_seconds": 25,
+  "created": "2026-09-05T10:28:30.442333+00:00",
+  "source": "PMC9044823.1.source.v1.xml media href; relative media resolved using PMC article bin convention",
+  "purpose": "Inspect Supplementary Table 1 identity provenance only"
+}

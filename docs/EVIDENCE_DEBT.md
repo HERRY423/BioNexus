@@ -14,11 +14,11 @@ In scientific research and computational biology, projects accumulate **Evidence
 - An observational RNA-seq study asserts **"drug X causes tumor remission"** without causal DAG backdoor closure.
 - A differential expression study relies on a **single cohort ($N=1$ donor)** without orthogonal validation.
 
-A vanity score hides these liabilities. **BioNexus Evidence Debt** exposes them as concrete, typed items with exact dependency chains and an **Optimal Repayment Schedule**.
+A vanity score hides these liabilities. **BioNexus Evidence Debt** exposes them as concrete, typed items with exact dependency chains and a **Heuristic Remediation Priority Schedule**.
 
 ---
 
-## 2. The Keystone Effect: 70x Payoff Multipliers
+## 2. Upstream Evidence Remediation: Graph Dependency Leverage
 
 Consider a research project with 20 core claims:
 ```
@@ -31,9 +31,29 @@ TRANSFORM-ANNOTATION-X (Heuristic gating on tumor infiltrate)
 Atlas Reference Domain Mismatch (PBMC reference)
 ```
 
-Because 7 claims depend on `TRANSFORM-ANNOTATION-X`, fixing this **single upstream node** amortizes the Evidence Debt for all 7 downstream claims at once:
-- **Debt Leverage Multiplier**: $7 \text{ claims} \times 10.0 \text{ (CRITICAL severity)} = \mathbf{70.0\times}$.
-- Re-annotating or validating this single step upgrades the project maturity floor from `FRAGILE` to `SUPPORTED`.
+Because 7 claims depend on `TRANSFORM-ANNOTATION-X`, this node represents a foundational epistemic bottleneck:
+- **Heuristic Priority Score**: $7 \text{ claims} \times 10.0 \text{ (CRITICAL severity)} = \mathbf{70.0}$ structural priority score.
+- **Verification Priority**: Prioritizing independent empirical validation or reference-reanchoring for this single upstream node provides the broadest clarity across the claim DAG.
+- **Important Boundary**: The score is a structural triage heuristic ($N_{\text{claims}} \times w_{\text{severity}}$), **not** an empirical measurement of risk reduction, nor does it account for experimental cost or probability of success. Furthermore, remediating an upstream node does not automatically upgrade downstream claim maturity ceilings without new, concordant empirical verification.
+
+### Connector Ecosystems & Citation Collapsing
+
+Consider an AI Agent assessing a drug candidate:
+```
+Claim: "Drug X is likely effective in disease Y"
+   ↓ depends on
+ChEMBL IC50 activity
+   ↓
+OpenTargets association
+   ↓
+Enrichr pathway enrichment
+   ↓
+Consensus literature review
+```
+BioNexus penetrates this apparent 4-way corroboration and discovers:
+- All 4 connectors collapse to the **same 2 publications and a single in-vitro cell line experiment**.
+- Generates `DERIVED_EVIDENCE_DOUBLE_COUNT` and `CLAIM_EXCEEDS_CONNECTOR_PROFILE`.
+- **Remediation Priority Verdict**: The highest epistemic keystone is **NOT** querying a 5th connector (e.g. EuropePMC/PubChem), but conducting **independent in-vivo / orthogonal animal model validation**.
 
 ---
 
@@ -51,7 +71,7 @@ bionexus debt audit . --markdown > EVIDENCE_DEBT_REPORT.md
 bionexus debt audit . --json > evidence-debt.json
 ```
 
-### Compute Optimal Repayment Schedule
+### Compute Heuristic Remediation Schedule
 ```bash
 bionexus debt payoff .
 ```
@@ -90,13 +110,16 @@ EPISTEMIC KEYSTONES (High-Leverage Verification Bottlenecks):
   [*] Node: TRANSFORM-SPATIAL-MAPPING (Spatial neighbor adjacency mapping) -> Affects 8 claims
   [*] Node: TRANSFORM-ANNOTATION-X (Heuristic marker gating on tumor infiltrate) -> Affects 7 claims
 --------------------------------------------------------------------------------
-OPTIMAL EVIDENCE REPAYMENT SCHEDULE (Ranked by Scientific Payoff):
-RANK  DEBT ID    SEVERITY   CLAIMS   PAYOFF   ACTION
+HEURISTIC REMEDIATION PRIORITY SCHEDULE (Ranked by Claim Impact × Severity Weight):
+[PRIORITY NOTE] Ranking is an analytical triage heuristic (|claims| * w_severity),
+                not empirical risk reduction or cost-optimal design. Fixing an upstream node
+                does not guarantee downstream claim upgrade without independent verification.
+RANK  DEBT ID    SEVERITY   CLAIMS   PRIORITY   ACTION
 --------------------------------------------------------------------------------
-#1    DEBT-001   CRITICAL    7 claims   70.0x  Validate TRANSFORM-ANNOTATION-X against Atlas
-#2    DEBT-002   CRITICAL    7 claims   70.0x  Execute Domain-Adapted Transfer on Annotation
-#3    DEBT-003   HIGH        8 claims   40.0x  Run Multi-Resolution Stability Audit on Spatial
-#4    DEBT-011   CRITICAL    1 claims   10.0x  Formulate Causal DAG & Sensitivity for Mechanism
+#1    DEBT-001   CRITICAL    7 claims   70.0 pts  Validate TRANSFORM-ANNOTATION-X against Atlas
+#2    DEBT-002   CRITICAL    7 claims   70.0 pts  Execute Domain-Adapted Transfer on Annotation
+#3    DEBT-003   HIGH        8 claims   40.0 pts  Run Multi-Resolution Stability Audit on Spatial
+#4    DEBT-011   CRITICAL    1 claims   10.0 pts  Formulate Causal DAG & Sensitivity for Mechanism
 ================================================================================
 ```
 
@@ -117,10 +140,10 @@ report = EvidenceDebtEngine.audit_ledger(ledger)
 print(f"Total Debt Items: {report.total_debt_items}")
 print(f"Project Maturity Floor: {report.project_maturity_floor}")
 
-# Inspect optimal repayment priorities
+# Inspect heuristic remediation priorities
 for priority in report.optimal_repayment_schedule[:3]:
     debt = priority.debt_item
-    print(f"Priority #{priority.rank}: {debt.title} (Payoff: {priority.payoff_multiplier}x)")
+    print(f"Priority #{priority.rank}: {debt.title} (Priority Score: {priority.priority_score} pts)")
     print(f"  Remediation: {debt.remediation.action_title}")
     print(f"  Unblocks Claims: {', '.join(priority.claims_unblocked)}")
 ```

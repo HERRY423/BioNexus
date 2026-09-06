@@ -1,0 +1,12 @@
+{
+  "started": "2026-09-05T10:26:43.460156+00:00",
+  "finished": "2026-09-05T10:26:45.597752+00:00",
+  "script": "C:\\Users\\13264\\.codex\\plugins\\cache\\openai-curated-remote\\life-sciences-literature\\0.1.5\\skills\\ncbi-pmc-skill\\scripts\\ncbi_pmc.py",
+  "script_sha256": "1fd4f29f45f724edb4a4abb14ab73b390d435becde011999488b095a3c0716c7",
+  "returncode": 0,
+  "request_file": "PMC-plugin-request.v1.json",
+  "stdout_file": "PMC-plugin-stdout.v1.json",
+  "stderr_file": "PMC-plugin-stderr.v1.txt",
+  "plugin": "Life Sciences Literature 0.1.5",
+  "execution": "Actual skill-local Python script; no dedicated MCP claim"
+}

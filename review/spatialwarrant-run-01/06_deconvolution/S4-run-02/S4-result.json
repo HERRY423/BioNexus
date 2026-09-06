@@ -1,0 +1,22 @@
+{
+  "status": "COMPLETED",
+  "started_at_utc": "2026-09-06T01:05:05.989975+00:00",
+  "ended_at_utc": "2026-09-06T01:14:34.620411+00:00",
+  "sections": 6,
+  "producer_labels": 29,
+  "tangram_grid_combinations": 54,
+  "tangram_completed_combinations": 54,
+  "tangram_failed_combinations": 0,
+  "failed_combinations": [],
+  "primary_requested_training_genes": 1000,
+  "primary_seed": 20260904,
+  "NNLS_unknown_spots": 0,
+  "ingest_output": "categorical transferred similarity labels only",
+  "method_interpretation": "shared-reference method sensitivity; no independent validation or calibrated cell fractions",
+  "elapsed_seconds": 568.6312756999978,
+  "peak_process_tree_memory_bytes": 1990914048,
+  "start_free_C_bytes": 32500264960,
+  "patient_level_inference": "NOT_ESTABLISHED",
+  "machine_verdict": "PENDING",
+  "biological_conclusion": "PENDING"
+}

@@ -1,0 +1,28 @@
+{
+  "source_plan_sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82",
+  "primary_distance_spacings": 2,
+  "sensitivity_spacings": [
+    1,
+    3
+  ],
+  "tumor_core_distance": "strictly > 3",
+  "minimum_spots_per_section_region": 20,
+  "minimum_raw_UMIs_per_section_region": 100000,
+  "geometry_inputs": [
+    "publisher pathology",
+    "registered coordinates",
+    "tissue membership"
+  ],
+  "prohibited_inputs": [
+    "gene expression",
+    "immune/stromal proportions",
+    "clusters",
+    "deconvolution",
+    "ingest",
+    "niche",
+    "literature"
+  ],
+  "label_code_map_status": "PENDING_REVIEW; composite producer classes preserved",
+  "geometry_algorithm_changed": false,
+  "mask_generation": "NOT_RUN_S3_NOT_AUTHORIZED"
+}

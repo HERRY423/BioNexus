@@ -1,0 +1,10 @@
+{
+  "status": "COMPLETED",
+  "stage": "S5_COMPLETE",
+  "percent": 100.0,
+  "pid": 21624,
+  "elapsed_seconds": 625.4495223000122,
+  "current_process_tree_memory_bytes": 1997369344,
+  "free_C_bytes": 32443445248,
+  "updated_at_utc": "2026-09-06T01:15:31.439316+00:00"
+}

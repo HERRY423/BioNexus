@@ -1,0 +1,24 @@
+{
+  "target": {
+    "kind": "prespecified",
+    "rank": 3,
+    "name": "CD274 PDCD1"
+  },
+  "source": "reactome",
+  "script": "C:\\Users\\13264\\.codex\\plugins\\cache\\openai-curated-remote\\life-sciences-databases\\0.1.5\\skills\\reactome-skill\\scripts\\rest_request.py",
+  "requested_at_utc": "2026-09-06T01:46:34.220519+00:00",
+  "payload": {
+    "base_url": "https://reactome.org/ContentService",
+    "path": "search/query",
+    "params": {
+      "query": "CD274 PDCD1",
+      "species": "Homo sapiens"
+    },
+    "headers": {
+      "Accept": "application/json"
+    },
+    "max_items": 10,
+    "save_raw": true,
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\prespecified-03-CD274_PDCD1.raw"
+  }
+}

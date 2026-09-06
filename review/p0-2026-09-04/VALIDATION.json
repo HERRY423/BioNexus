@@ -1,0 +1,68 @@
+{
+  "independent_validation": "NOT_ESTABLISHED",
+  "supported_python312_local": "INSTALLATION_STOPPED_AS_REDUNDANT_WITH_HOSTED_MATRIX; NOT_TESTED",
+  "hosted_ci": "PASSED",
+  "local_full_suite": {
+    "passed": 1291,
+    "command": "python scripts/run_unit_tests.py --test-path tests -- --basetemp=.pytest-tmp-full-p0-complete",
+    "note": "Python 3.13 is outside the promised CI matrix; this is supplemental local evidence.",
+    "skipped": 8,
+    "failed": 0,
+    "log": "full-tests-python313.txt",
+    "status": "PASSED_WITH_EXPLICIT_SKIPS",
+    "python": "3.13.9"
+  },
+  "bounded_benchmark": {
+    "excluded_suites": [
+      "flagship_validation"
+    ],
+    "manifest": "benchmark/manifest.json",
+    "skipped": 0,
+    "passed": 98,
+    "failed": 0
+  },
+  "frozen_commit": "cc923849783ac1d0b430f5e7ba494fa1cef1b0aa",
+  "source_archive_sha256": "811e6e87c82f64697d37552bfe398b9973569d098823ef8efaf75d4b001876c5",
+  "freeze_regression_tests": {
+    "passed": 3,
+    "failed": 0
+  },
+  "pr_url": "https://github.com/HERRY423/BioNexus/pull/35",
+  "hosted_full_benchmark": {
+    "source": "hosted-full-benchmark.md",
+    "report_sha256": "a7d05f6700b5aa51b67f1360992218a58115f88216e5cf942ffc24b7109adc15",
+    "note": "L2 replay; includes public-data technical/scientific checks, not independent validation.",
+    "excluded_suites": [],
+    "failed": 0,
+    "l3_passed": 13,
+    "run_id": 33871774845,
+    "passed": 106,
+    "skipped": 0
+  },
+  "hosted_run": {
+    "conclusion": "success",
+    "scientific_matrix_passed": 9,
+    "passed_checks": 35,
+    "core_matrix_passed": 9,
+    "head_sha": "cc923849783ac1d0b430f5e7ba494fa1cef1b0aa",
+    "id": 33871774845,
+    "skipped_checks": [
+      {
+        "name": "Deploy to GitHub Pages",
+        "link": "https://github.com/HERRY423/BioNexus/actions/runs/33871774759/job/101019384985"
+      }
+    ],
+    "url": "https://github.com/HERRY423/BioNexus/actions/runs/33871774845"
+  },
+  "hosted_reproduction_verified": {
+    "dependency_snapshot_sha256": "9e0716283d1d277de77adce0a860ccd46748c051df5238ce6c3ac4e0c9a1adfe",
+    "source_archive_sha256": "d53f15309a54e56dcc27f4e90aaa3f74eb66e4418b3ef4d337534736e670a368",
+    "note": "PR synthetic merge commit differs from branch HEAD; the tested source tree matches exactly.",
+    "scope": "CORE_WINDOWS_PYTHON312",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "git_tree": "a50de0eb1f58a47e91257ee6adefc253d2ca14fc",
+    "matches_frozen_source_tree": true,
+    "tested_pr_merge_commit": "5cb1b3132605c53f228e57274e199cb20920fba0",
+    "download_directory": "C:/Plugin/BioNexus/.codex-p0-ci-core-windows312"
+  }
+}

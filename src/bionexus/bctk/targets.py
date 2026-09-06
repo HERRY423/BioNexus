@@ -67,11 +67,10 @@ _SNAPSHOT_EXTENSIONS = {
 _SNAPSHOT_EXCLUDED_DIRS = {
     ".git", ".mypy_cache", ".pytest_cache", ".ruff_cache", "__pycache__",
     ".venv", ".vendor", "build", "dist", "logs", "node_modules", "validation", "venv",
-    "data", "interoperability", "runtime_lance", "runtime_wheels",
+    "data", "interoperability", "runtime_lance", "runtime_wheels", "review",
 }
 _SNAPSHOT_EXCLUDED_PREFIXES = (
-    ".codex_tmp",
-    ".codex_p",
+    ".codex",
     ".codex_pytest",
     ".download_parts",
     ".hypothesis",

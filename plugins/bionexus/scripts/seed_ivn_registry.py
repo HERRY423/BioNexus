@@ -79,44 +79,42 @@ DATASETS = [
     {
         "dataset_id": "BN-PB-IV-004",
         "capability_id": "scrna.pseudobulk_de",
-        "title": "Blinded multi-cohort platform holdout (C02 Parse-10M context + C04 prospective independent-lab collection)",
-        "source_uri": "GEO GSE96583 (frozen signature source) + parse10m_pbmc_ifnb_natural_v1 + prospective independent-laboratory collection",
-        "accession": "",
+        "title": "Blinded multi-cohort platform holdout (C02 Parse-10M context + C04 internal holdout cohort)",
+        "source_uri": "GEO GSE96583 (frozen signature source) + parse10m_pbmc_ifnb_natural_v1 + de-identified internal holdout fixture",
+        "accession": "INTERNAL_FIXTURE_NOT_SUBMITTED",
         "disease": "healthy_donor_control",
         "tissue": "PBMC_blood",
         "technology": "parse_scRNAseq_plus_10x_chromium_3prime",
-        "author_associated": False,
+        "author_associated": True,
         "donor_aware": True,
         "outcome": "negative_result",
         "preregistration_path": STUDIES["BN-PB-IV-004"][0],
         "report_path": STUDIES["BN-PB-IV-004"][1],
         "status": "VERIFIED",
         "notes": (
-            "Preregistration-locked blinded analysis; whole-PBMC prospective cohort "
-            "concordance 0.5532 < 0.65, frozen as negative_result. Data collected at an "
-            "independent laboratory, but the blinded analysis was executed by the BioNexus "
-            "team, so this is dataset evidence only — no external-lab quota credit."
+            "Preregistration-locked blinded analysis; whole-PBMC cohort "
+            "concordance 0.5532 < 0.65, frozen as negative_result. Retained as an internal reproducible "
+            "negative benchmark fixture; does not confer external laboratory validation."
         ),
     },
     {
         "dataset_id": "BN-PB-IV-005",
         "capability_id": "scrna.pseudobulk_de",
-        "title": "Blinded prospective GLP-core-facility holdout (C05, 12 paired donors)",
-        "source_uri": "prospective healthy PBMC multi-arm trial at certified GLP core facility",
-        "accession": "",
+        "title": "Blinded prospective holdout fixture (C05, 12 paired donor mocks)",
+        "source_uri": "de-identified frozen PBMC technical holdout fixture",
+        "accession": "INTERNAL_FIXTURE_NOT_SUBMITTED",
         "disease": "healthy_donor_control",
         "tissue": "PBMC_blood",
         "technology": "10x_chromium_3prime_v3.1",
-        "author_associated": False,
+        "author_associated": True,
         "donor_aware": True,
         "outcome": "negative_result",
         "preregistration_path": STUDIES["BN-PB-IV-005"][0],
         "report_path": STUDIES["BN-PB-IV-005"][1],
         "status": "VERIFIED",
         "notes": (
-            "Preregistration-locked blinded analysis; frozen negative_result. Sample "
-            "collected at an external GLP core facility; analysis executed internally, so "
-            "no external-lab quota credit."
+            "Preregistration-locked blinded analysis; frozen negative_result. "
+            "Evaluated internally as a negative control fixture; no GLP or clinical status asserted."
         ),
     },
     {

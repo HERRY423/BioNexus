@@ -226,3 +226,16 @@ def test_cli_audit_data_file_still_works(tmp_path):
     csv.write_text("1,2,3\n4,5,6\n", encoding="utf-8")
     rc = cli_main(["audit", str(csv)])
     assert rc in (0, 1)  # grade A/B -> 0; honest failures -> 1
+
+
+def test_comment_with_pseudobulk_keyword_does_not_suppress_bfa001(tmp_path):
+    """Adding a comment with '# TODO: pseudobulk later' must not suppress BFA-001."""
+    nb = _notebook(
+        tmp_path,
+        [
+            "# TODO: pseudobulk later\nsc.tl.rank_genes_groups(adata, groupby='condition')",
+        ],
+    )
+    result = audit_analysis(nb)
+    assert not result.passed
+    assert any(f.rule_id == "BFA-001" for f in result.findings)

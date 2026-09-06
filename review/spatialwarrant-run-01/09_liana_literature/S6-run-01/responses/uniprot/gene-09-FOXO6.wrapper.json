@@ -1,0 +1,22 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 9,
+    "name": "FOXO6"
+  },
+  "source": "uniprot",
+  "returncode": 1,
+  "elapsed_seconds": 0.3178195000218693,
+  "completed_at_utc": "2026-09-06T01:46:15.039492+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\uniprot\\gene-09-FOXO6.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\uniprot\\gene-09-FOXO6.raw",
+  "wrapper": {
+    "ok": false,
+    "error": {
+      "code": "invalid_input",
+      "message": "`base_url` is not a registered HTTPS base for this skill."
+    },
+    "warnings": []
+  },
+  "stderr": ""
+}

@@ -60,7 +60,7 @@
       "standard_id": "independent_ground_truth",
       "satisfied": false,
       "evidence": "validation/spatial/studies/BN-SP-IV-001/REPORT.json -> manufactured artifact endpoints on authentic instrument bytes",
-      "notes": "No independent pathology/segmentation ground truth was executed; one locked cell-size-bias endpoint failed"
+      "notes": "BN-SP-IV-001 passed all locked technical acceptance endpoints on authentic instrument bytes, but manufactured artifact confounders do not constitute independent experimental ground truth (no independent pathology/segmentation truth executed; vendor tiny dataset not intended for biological conclusions)"
     },
     {
       "standard_id": "parameter_perturbation",
@@ -83,8 +83,8 @@
     {
       "standard_id": "cross_host_test",
       "satisfied": false,
-      "evidence": "cross-host/COMPARISON.json (framework created, 0 traps compared)",
-      "notes": "Cross-host framework exists but no L2 claim audit executed for spatial capability. Blocked on 2nd host provider."
+      "evidence": "cross-host/COMPARISON.json (hosts: claude-code + antigravity; 6 traps compared, all ABSTAIN, agreement_rate 1.0)",
+      "notes": "Headless COMPARISON.json cannot satisfy BNS-HC-007. Cross-host remains unsatisfied until the IVN external-lab quota is met with hash-verified studies on >= 2 distinct hosts."
     },
     {
       "standard_id": "external_reviewer",
@@ -104,7 +104,7 @@
       "external_reviewer"
     ],
     "verdict": "VALIDATED",
-    "verdict_rationale": "10/14 criteria satisfied. Authentic Xenium bytes were executed and a locked negative result was retained, but the vendor-limited tiny subset does not satisfy public biological reference or independent ground truth; cross-host testing and external review remain pending."
+    "verdict_rationale": "10/14 criteria satisfied. Authentic Xenium bytes were executed with all locked technical acceptance endpoints passed, but the vendor-limited tiny subset does not satisfy public biological reference or independent ground truth; cross-host testing and external review remain pending."
   },
   "evidence_bundle": {
     "validation_report": "validation/spatial/REPORT.json",

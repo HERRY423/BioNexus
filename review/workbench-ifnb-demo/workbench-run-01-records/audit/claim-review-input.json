@@ -1,0 +1,70 @@
+{
+  "statement": "Within the GSE96583 cohort, the IFN-beta condition is associated with donor-paired expression differences in source-annotated CD14+ Monocytes.",
+  "claim_ir": {
+    "claim_id": "IFNB-RUN01-COHORT-ASSOCIATION",
+    "source_text": "Within the GSE96583 cohort, the IFN-beta condition is associated with donor-paired expression differences in source-annotated CD14+ Monocytes.",
+    "subject_entity": {
+      "name": "Within the GSE96583 cohort, the IFN-beta condition",
+      "entity_type": "biological_entity",
+      "features": [
+        "IFN-"
+      ],
+      "raw_span": "Within the GSE96583 cohort, the IFN-beta condition"
+    },
+    "object_entity": {
+      "name": "donor-paired expression differences",
+      "entity_type": "biological_entity",
+      "features": [
+        "donor-"
+      ],
+      "raw_span": "donor-paired expression differences"
+    },
+    "relationship": "correlation",
+    "direction": "undirected",
+    "comparison": null,
+    "population_scope": "source-annotated CD14",
+    "generalization_scope": "cohort_specific",
+    "association_type": "observational_correlation",
+    "causal_strength": "associational",
+    "mechanism_depth": "black_box",
+    "clinical_actionability": "none",
+    "claim_class": "association",
+    "qualifiers": [],
+    "negated": false,
+    "metadata": {}
+  },
+  "evidence_profile": {
+    "observational_data": true,
+    "spatial_colocalization": false,
+    "ligand_receptor_inference": false,
+    "perturbation": false,
+    "temporal_evidence": false,
+    "independent_validation": false,
+    "biological_replicates_count": 8,
+    "pseudobulk_aggregated": true,
+    "confound_controls": [
+      "donor"
+    ],
+    "causal_identification_status": "UNBLOCKED_BACKDOOR",
+    "reference_ground_truth": false,
+    "clinical_ground_truth": false,
+    "regulatory_certification": false,
+    "ruo_disclaimer_present": false,
+    "cross_method_concordance": false,
+    "plddt_score": null,
+    "interdomain_pae": null,
+    "bioactivity_nm": null,
+    "dose_response_curve": true
+  },
+  "basis": {
+    "analysis_manifest_sha256": "8a5893063f49391a8d0edf82092f0291749f92f67f9bb75885d8674ad22139a3",
+    "verification_sha256": "d8feb27cceb3a752173afd66742d3e2117aeaad4e93c04def1974a4a1db3909b"
+  },
+  "evidence_assignment": "Codex supplied facts from this completed run; not an independent human adjudication",
+  "mandatory_qualifications": [
+    "Condition and sequencing library are fully confounded; IFN-beta-specific causal effect is not identified.",
+    "Source labels are not independently validated.",
+    "No external replication or human scientific acceptance."
+  ],
+  "human_scientific_decision": "PENDING"
+}

@@ -1,0 +1,186 @@
+{
+  "status": "COMPLETED_LOCAL_REHEARSAL_NOT_WORKBENCH_EVIDENCE",
+  "created_at": "2026-09-04T15:54:08.614342+00:00",
+  "question": "Within source-annotated CD14+ monocytes, which genes differ after 6 h IFN-beta exposure?",
+  "input": {
+    "geo_accession": "GSE96583",
+    "cells_all_singlets": 24679,
+    "monocyte_cells": 5385,
+    "donors": 8,
+    "conditions": [
+      "ctrl",
+      "stim"
+    ],
+    "raw_tar_sha256": "e5d41a3248a813f99d68fd5c9eb9773de7f46a83680a67f4a02d683b8955fe80",
+    "metadata_sha256": "1d57e72e92ca8695250e88cc0f1c3fa8c0be1175d974f8b427c58f1274dc6c09",
+    "genes_sha256": "93aa4e9b530ef9d6411ca129b416324c5cc1cc5a01a1fa6ed4f4a845480ed3ca"
+  },
+  "method": {
+    "unit": "donor x condition pseudobulk",
+    "formula": "~ donor + condition",
+    "contrast": "stim vs ctrl",
+    "gene_filter": "count >= 10 in >= 4 of 16 pseudobulk samples",
+    "multiple_testing": "Benjamini-Hochberg as returned by PyDESeq2"
+  },
+  "results": {
+    "genes_tested": 4914,
+    "padj_lt_0.05": 2845,
+    "padj_lt_0.05_abs_lfc_ge_1": 1481,
+    "top10": [
+      {
+        "ensembl_id": "ENSG00000108700",
+        "gene_symbol": "CCL8",
+        "log2FoldChange": 9.822491290356563,
+        "padj": 5.677135692060452e-151
+      },
+      {
+        "ensembl_id": "ENSG00000172183",
+        "gene_symbol": "ISG20",
+        "log2FoldChange": 5.817667110994657,
+        "padj": 7.243311888841836e-143
+      },
+      {
+        "ensembl_id": "ENSG00000146425",
+        "gene_symbol": "DYNLT1",
+        "log2FoldChange": 2.7534658482532657,
+        "padj": 1.1144828574777204e-139
+      },
+      {
+        "ensembl_id": "ENSG00000136689",
+        "gene_symbol": "IL1RN",
+        "log2FoldChange": 6.68840421790031,
+        "padj": 4.490872519246166e-131
+      },
+      {
+        "ensembl_id": "ENSG00000138385",
+        "gene_symbol": "SSB",
+        "log2FoldChange": 3.422983989607213,
+        "padj": 1.1100917514019492e-130
+      },
+      {
+        "ensembl_id": "ENSG00000185201",
+        "gene_symbol": "IFITM2",
+        "log2FoldChange": 4.943980604208604,
+        "padj": 2.1147942403565534e-125
+      },
+      {
+        "ensembl_id": "ENSG00000034510",
+        "gene_symbol": "TMSB10",
+        "log2FoldChange": 2.2266388309739487,
+        "padj": 4.416703800154928e-120
+      },
+      {
+        "ensembl_id": "ENSG00000122643",
+        "gene_symbol": "NT5C3A",
+        "log2FoldChange": 5.8585483684385995,
+        "padj": 2.3236596763638208e-112
+      },
+      {
+        "ensembl_id": "ENSG00000101608",
+        "gene_symbol": "MYL12A",
+        "log2FoldChange": 1.971885512436033,
+        "padj": 1.4261331592301317e-111
+      },
+      {
+        "ensembl_id": "ENSG00000185507",
+        "gene_symbol": "IRF7",
+        "log2FoldChange": 3.4876172737782904,
+        "padj": 2.795519066591016e-109
+      }
+    ]
+  },
+  "bionexus_identity_audit": {
+    "label": "CD14+ Monocytes (source annotation)",
+    "verdict": "TENTATIVE",
+    "reasons": [
+      "Evidence sources are declared, but no positive measurements were supplied; identity remains a candidate."
+    ],
+    "missing_evidence": [
+      "ontology compatibility evaluation",
+      "reference atlas mapping",
+      "cross-method annotation agreement",
+      "positive-marker consistency measurement",
+      "negative-marker evaluation",
+      "doublet-rate estimate",
+      "calibrated independent identity source (reference mapping or cross-method agreement)"
+    ],
+    "evidence": {
+      "marker_consistency": null,
+      "negative_marker_violation": null,
+      "reference_mapping_score": null,
+      "doublet_rate": null,
+      "ontology_compatible": null,
+      "cross_method_agreement": null,
+      "orthogonal_protein_evidence": null,
+      "protein_concordant": null,
+      "open_set_detected": false,
+      "sources_declared": true,
+      "calibration_context": {
+        "tissue": null,
+        "platform": null,
+        "reference": null,
+        "task": null,
+        "evidence_sources": {},
+        "default_evidence_source": null,
+        "reference_domain_match": null,
+        "state_geometry": "discrete",
+        "population_scope": "closed_set"
+      }
+    },
+    "calibration": {
+      "registry": {
+        "registry_version": "1.0.0",
+        "registry_sha256": "65987978b0f1359ae984605fa20dac98b4352acbaca0d6daa46132c6094e135b",
+        "profile_count": 6,
+        "status_counts": {
+          "LEGACY_UNCALIBRATED": 6,
+          "CANDIDATE": 0,
+          "APPROVED": 0,
+          "RETIRED": 0
+        },
+        "invalid_profiles": {},
+        "metadata": {
+          "positive_warrant_policy": "Only valid APPROVED profiles may resolve a threshold.",
+          "fallback_policy": "No global threshold fallback; unresolved calibration cannot produce SUPPORTED or ROBUST annotation warrants.",
+          "approval_boundary": "Automated fitting creates CANDIDATE profiles only; accountable human review activates a profile.",
+          "evidence_boundary": "No packaged profile is currently represented as independently empirically validated."
+        }
+      },
+      "metric_assessments": {},
+      "fallback_used": false
+    },
+    "warrant_ceiling": "TENTATIVE"
+  },
+  "limitations": [
+    "Cell type is retained from the dataset authors; this run does not independently validate identity.",
+    "Control and stimulation were sequenced as separate libraries, so condition and library are confounded.",
+    "This is one SLE cohort with eight paired donors; findings are cohort-specific and require external replication.",
+    "Association under this experimental dataset is reported; this analysis alone does not establish a general causal mechanism.",
+    "No additional cell filtering beyond author singlet calls; inspect the saved per-cell QC before further use.",
+    "Zero observed mitochondrial counts in this deposited matrix do not establish healthy mitochondrial QC.",
+    "The left panel reuses author t-SNE coordinates for 12000 deterministically sampled cells; it is not a newly computed embedding."
+  ],
+  "runtime": {
+    "python": "3.13.9",
+    "pydeseq2": "0.5.4",
+    "anndata": "0.13.1",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "script_sha256": "884c7a2403693c0be3096efbe777d0fb3d40020ed2b31f89b8b5bb7d58d4e01a",
+  "qc": {
+    "policy": "retain author singlets; report library size, genes, mitochondria; no additional post hoc filter",
+    "monocyte_pct_mt_max": 0.0,
+    "monocyte_n_genes_min": 22,
+    "monocyte_pct_mt_gt_20": 0,
+    "mitochondrial_interpretation": "NOT_ASSESSED_ZERO_OBSERVED_MITO_COUNTS"
+  },
+  "output_sha256": {
+    "cell_metadata_and_qc.csv.gz": "ad4ad180b637d13943dd41fa84a7ea979ca83c853f4abe8e98e3d1c205cbfb5b",
+    "donor_cell_counts.csv": "2f971b3f9388bd5904cd116ef8a8cd2aa03e68dddf78e7f5336454c3cf487da4",
+    "paired_pseudobulk_de.csv": "8184a351ad05528667b515cf1bbd1442406667c6e5c969a45ebbcc0885b8fc1b",
+    "prespecified_genes_by_donor.csv": "4be197a8f1dbff3ce229c14e4c4485078605b399a5246bbc93fcdf571e87ea14",
+    "pseudobulk_counts.csv.gz": "631be214c38dd9a3daff5878245e59dff7839c179e9071f9e11053fbfc4ef523",
+    "pseudobulk_design.csv": "7f84bc44dd6dcbefaaf618f90bfb81f2f9e72e99c3064f3588b64f6db3f97056",
+    "showcase_figure.png": "9d8cdfc8a4ad77caad2f81e9b8a0c2a437a151486718dd6a6daed25f275367a0"
+  }
+}

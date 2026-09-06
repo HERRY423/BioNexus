@@ -1,0 +1,70 @@
+{
+  "status": "STOPPED",
+  "stage": "S2A_metrics_only_retry1",
+  "reason_code": "EXTERNAL_TURN_ABORT_INTERRUPTED_UNIFIED_EXEC_SESSION",
+  "observed_at_utc": "2026-09-05T15:23:37.711441+00:00",
+  "started_at_utc": "2026-09-05T11:43:33.527993+00:00",
+  "reason": "The Codex turn was intentionally interrupted while the authorized retry1 process was running. The unified execution session no longer existed on resumption, no retry1 Python process showed CPU activity during a 3-second sample, and target files had not advanced beyond pre-scan artifacts.",
+  "process_identity_limit": "Win32_Process command-line inspection returned Access Denied; absence was instead bounded by the lost unified session, zero CPU deltas for visible Python processes, and unchanged target artifacts.",
+  "last_observed_progress": {
+    "percent_reported": 42,
+    "matrix_coordinate_entries_reported": 75375795,
+    "declared_matrix_coordinate_entries": 177994136,
+    "complete_matrix_scan": false,
+    "progress_source": "Last output received from unified execution session 47326 before turn interruption"
+  },
+  "serialization_selftest": "PASS_AND_SAVED_BEFORE_SCAN",
+  "full_input_hash_preflight": "PASS_BEFORE_SCAN; detailed input validation was not finalized",
+  "input_validation_artifact": "NOT_CREATED",
+  "per_cell_QC": "NOT_CREATED",
+  "per_source_sample_QC": "NOT_CREATED",
+  "BioNexus_provenance_sidecar": "NOT_CREATED",
+  "completed_output_manifest": "NOT_CREATED",
+  "automatic_retry2": "NOT_CREATED_NOT_AUTHORIZED",
+  "lineage": {
+    "parent_plan_sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82",
+    "S2A_supplement_sha256": "e6084a97821bc10eecc1060afde4bd049092446a1c1ad02427bd78c6e35086af",
+    "failed_script_sha256": "3539e9de7865a7e5f01f8135ccee8dfb516dd0eae9815e0f7ed9b02591999e20",
+    "failed_failure_record_sha256": "8613e81eaf5a8ecf97953f0eb2b5477dd5823717cbf06112a9c4f488ec576767",
+    "retry1_script_sha256": "c94fd2bc5acc36330b32409fdbb79c0ef39f2c664efc52e36867462de83ab212",
+    "failed_directory_preserved": true
+  },
+  "pre_interruption_artifacts": [
+    {
+      "file": "engineering-fix.v1.diff",
+      "bytes": 12608,
+      "sha256_exact_bytes": "83a3f1f17aa16ecc3683cf67e7e8913123b9fbf6c12c6d1f7eca1a2d2b4fcc96"
+    },
+    {
+      "file": "engineering-fix.v1.md",
+      "bytes": 1249,
+      "sha256_exact_bytes": "a38e3c2f5c54ed760cab9bb35c74bac824da3f174ba75c61c4c22f2e7d62ac9e"
+    },
+    {
+      "file": "execution-start.v1.json",
+      "bytes": 1312,
+      "sha256_exact_bytes": "9060d9f4925b2e0c30d12ea42a4145a2115a13a0c04d237499385f0a7a914f9a"
+    },
+    {
+      "file": "json-serialization-selftest.v1.json",
+      "bytes": 1261,
+      "sha256_exact_bytes": "d7f55b2386a7991d09ebb4c9c94e79fe4aa4969f4efbb4ed31b73926872b514b"
+    },
+    {
+      "file": "ngs-workbench-capability-check.v1.json",
+      "bytes": 1608,
+      "sha256_exact_bytes": "201b6d8feb4687f0e4aa9f78de61d0878d72903145ab0229b95a86de0aa013d3"
+    },
+    {
+      "file": "run-s2a-metrics.v1.retry1.py",
+      "bytes": 49998,
+      "sha256_exact_bytes": "c94fd2bc5acc36330b32409fdbb79c0ef39f2c664efc52e36867462de83ab212"
+    }
+  ],
+  "free_C_bytes_at_interruption_record": 35076833280,
+  "S2B": "PENDING",
+  "S3": "BLOCKED",
+  "patient_level_inference": "BLOCKED",
+  "machine_verdict": "PENDING",
+  "biological_conclusion": "PENDING"
+}

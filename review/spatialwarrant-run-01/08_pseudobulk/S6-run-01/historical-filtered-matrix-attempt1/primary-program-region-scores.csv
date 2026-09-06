@@ -1,0 +1,5 @@
+section,region,spots,total_UMI,matched_program_genes,mean_log2_CPM_plus_1_score,single_section_descriptive
+CID4535,B1_boundary_D_le_1,49,772649,195,5.059621603681968,True
+CID4535,B2_boundary_D_le_2,94,1372908,195,5.093756546038168,True
+CID4535,B3_boundary_D_le_3,145,2117438,195,5.056480491076555,True
+CID4535,core_D_gt_3,273,4097065,195,5.030102511271631,True

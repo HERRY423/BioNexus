@@ -1,0 +1,2 @@
+section,B2_boundary_spots,core_spots,B2_boundary_total_UMI,core_total_UMI,inferential_DE_status,reason,p_value,padj
+CID4535,94,273,1654362,5002262,NOT_RUN_INSUFFICIENT_REPLICATION,one boundary/core pseudobulk pair; no biological replication and no full-rank inferential design,,

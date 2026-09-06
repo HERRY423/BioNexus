@@ -1,0 +1,13 @@
+{
+  "selected_k": 10,
+  "display_seed": 20260904,
+  "criterion": "maximum unweighted mean of six section silhouettes, averaged across three preregistered seeds; ties choose smaller k",
+  "selected_before_boundary_enrichment": true,
+  "mean_silhouette_by_k": {
+    "6": 0.07076481199241186,
+    "7": 0.0742493621738453,
+    "8": 0.07851263614526238,
+    "9": 0.0831782739950825,
+    "10": 0.09133456631248561
+  }
+}

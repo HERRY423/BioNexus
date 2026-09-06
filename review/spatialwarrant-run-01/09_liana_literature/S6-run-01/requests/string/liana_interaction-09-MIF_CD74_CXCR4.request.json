@@ -1,0 +1,24 @@
+{
+  "target": {
+    "kind": "liana_interaction",
+    "rank": 9,
+    "name": "MIF CD74_CXCR4"
+  },
+  "source": "string",
+  "script": "C:\\Users\\13264\\.codex\\plugins\\cache\\openai-curated-remote\\life-sciences-databases\\0.1.5\\skills\\reactome-skill\\scripts\\rest_request.py",
+  "requested_at_utc": "2026-09-06T01:46:30.949428+00:00",
+  "payload": {
+    "base_url": "https://string-db.org/api/json",
+    "path": "network",
+    "method": "POST",
+    "form_body": {
+      "identifiers": "MIF\rCD74\rCXCR4",
+      "species": 9606,
+      "caller_identity": "spatialwarrant-s6",
+      "limit": 10
+    },
+    "max_items": 10,
+    "save_raw": true,
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\string\\liana_interaction-09-MIF_CD74_CXCR4.raw"
+  }
+}

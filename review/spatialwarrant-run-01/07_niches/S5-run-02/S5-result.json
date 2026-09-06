@@ -1,0 +1,27 @@
+{
+  "selected_k": 10,
+  "selected_seed": 20260904,
+  "niches": 10,
+  "grid_combinations": 15,
+  "boundary_sections_computed": 1,
+  "boundary_sections_not_computed": 5,
+  "technical_transfer": {
+    "status": "COMPLETED_TECHNICAL_TRANSFER",
+    "spots": 3798,
+    "genes": 36601,
+    "actual_training_genes": 654,
+    "missing_components": [],
+    "scaler_refit": false,
+    "kmeans_refit": false
+  },
+  "elapsed_seconds": 54.391085099981865,
+  "status": "COMPLETED",
+  "started_at_utc": "2026-09-06T01:15:31.414122+00:00",
+  "ended_at_utc": "2026-09-06T01:15:31.414122+00:00",
+  "end_free_C_bytes": 32443449344,
+  "output_bytes_before_manifest": 6337336,
+  "patient_level_inference": "NOT_ESTABLISHED",
+  "machine_verdict": "PENDING",
+  "biological_conclusion": "PENDING",
+  "S6_started": false
+}

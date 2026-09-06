@@ -1,0 +1,51 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 20,
+    "name": "DMD"
+  },
+  "source": "opentargets",
+  "returncode": 0,
+  "elapsed_seconds": 2.031085800001165,
+  "completed_at_utc": "2026-09-06T01:46:25.978294+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\gene-20-DMD.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\gene-20-DMD.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "opentargets-graphql",
+    "top_keys": [
+      "search"
+    ],
+    "summary": {
+      "search": {
+        "total": 1951,
+        "hits": [
+          "...",
+          "...",
+          "...",
+          "...",
+          "...",
+          "...",
+          "...",
+          "...",
+          "...",
+          "...",
+          "... (+15 more)"
+        ]
+      }
+    },
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\gene-20-DMD.raw",
+    "warnings": [],
+    "sources": [
+      {
+        "name": "Open Targets Platform",
+        "url": "https://api.platform.opentargets.org/api/v4/graphql",
+        "retrieved_at": "2026-09-06T01:46:25.953344+00:00",
+        "supports_claim": true,
+        "kind": "evidence",
+        "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+      }
+    ]
+  },
+  "stderr": ""
+}

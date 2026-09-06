@@ -1,0 +1,19 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 7,
+    "name": "DMD"
+  },
+  "source": "opentargets",
+  "script": "C:\\Users\\13264\\.codex\\plugins\\cache\\openai-curated-remote\\life-sciences-databases\\0.1.5\\skills\\opentargets-skill\\scripts\\opentargets_graphql.py",
+  "requested_at_utc": "2026-09-06T02:00:55.049813+00:00",
+  "payload": {
+    "query": "query searchAny($q: String!) { search(queryString: $q) { total hits { entity score object { ... on Target { id approvedSymbol approvedName } ... on Disease { id name } ... on Drug { id name } } } } }",
+    "variables": {
+      "q": "DMD"
+    },
+    "max_items": 10,
+    "save_raw": true,
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-07-DMD.raw"
+  }
+}

@@ -1,0 +1,39 @@
+﻿connector: enrichr
+tool: enrich_gene_set
+
+production_mode: computational_inference
+domain: functional_genomics
+
+required_context:
+  - library
+  - library_version
+  - input_gene_set_sha256
+  - background_definition
+  - multiple_testing_method
+
+default_evidence_role:
+  supporting
+
+maximum_default_claim:
+  pathway_association
+
+forbidden_claims:
+  - causal_mechanism
+  - pathway_activation_proven
+  - clinical_actionability
+
+independence:
+  same_input_across_libraries_is_not_independent_replication
+
+semantic_profile:
+  claim.type: associative
+  evidence.type:
+    - computational_result
+  biological.unit: pathway
+  warrant.level: preliminary
+  warrant.status: unassessed
+
+epistemic_lineage_mapping:
+  origin_id_field: library
+  origin_type: computational_model
+  dataset_identity_field: input_gene_set_sha256

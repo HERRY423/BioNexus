@@ -1,0 +1,242 @@
+{
+  "artifact_type": "S1_to_S2_entry_review",
+  "version": "1",
+  "created_at_utc": "2026-09-05T10:34:48.079441+00:00",
+  "parent_plan_sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82",
+  "review_scope": "Read-only S1 evidence and entry adjudication; new versioned outputs only",
+  "S2A_supplement": {
+    "file": "00_plan/S2A-technical-QC-supplement.v1.md",
+    "sha256": "e6084a97821bc10eecc1060afde4bd049092446a1c1ad02427bd78c6e35086af",
+    "human_approval": "PENDING"
+  },
+  "identity_resolution": {
+    "file": "02_identity/scRNA-identity-resolution.v1.json",
+    "sha256": "9aa98d57bd4317e9e185ce094bdd67d737c467b13410448535ec0d7665d12a44"
+  },
+  "decisions": [
+    {
+      "gate": "S1 technical gate",
+      "status": "PASS",
+      "scope": "S1 acquisition, exact-byte integrity, source identifiers and metadata joins only",
+      "reasons": [
+        "209 historical artifacts match their S1 SHA-256 inventory; all 123 input entries match hashes/sizes; all 11 required files read in full and matched.",
+        "26 source sample IDs, 100064 barcode-aligned metadata rows and 29 exact producer minor labels observed; no missing source IDs/minor labels.",
+        "S1 count inspection was header-only. Complete count validation remains S2A work; this PASS does not clear identity, pathology or biological gates."
+      ],
+      "evidence": [
+        "S1-checkpoint.md",
+        "S1-starting-point-assessment.json",
+        "manifest/S1-source-manifest.json",
+        "manifest/S1-input-file-index.json",
+        "00_plan/S1-to-S2-entry-evidence.v1/S1-artifact-verification.v1.json",
+        "00_plan/S1-to-S2-entry-evidence.v1/input-index-crosscheck.v1.json",
+        "02_identity/scrna-input-integrity.json"
+      ]
+    },
+    {
+      "gate": "S2A metrics-only entry",
+      "status": "PERMITTED",
+      "execution_authorized": false,
+      "conditions": [
+        "Explicit human approval bound to S2A supplement SHA-256 before execution.",
+        "Fresh C start gate >=30 GiB and non-destructive write/read preflight; stop writes below20 GiB.",
+        "Only source_sample_id technical metrics, strict raw-count validation, no filtering or biological interpretation."
+      ],
+      "reasons": [
+        "Metrics need a stable source grouping, not verified independent patients. Exact orig.ident/GEO sample correspondence and barcode joins support that narrow grouping.",
+        "Patient identity, Visium pathology and physical-section gaps do not prevent independent scRNA metrics-only preparation."
+      ],
+      "evidence": [
+        "02_identity/scRNA-identity-resolution.v1.json",
+        "00_plan/S2A-technical-QC-supplement.v1.md",
+        "02_identity/scrna-input-integrity.json",
+        "00_plan/S1-to-S2-entry-evidence.v1/GEO-metadata-identity-evidence.v1.json"
+      ]
+    },
+    {
+      "gate": "S2B filtering/reference construction",
+      "status": "PENDING",
+      "execution_authorized": false,
+      "reasons": [
+        "S2A has not run; data-dependent QC thresholds have neither been produced nor human-approved.",
+        "Original verified-patient stratification cannot currently run. Source-sample x exact producer minor label technical branch is feasible as a proposed versioned supplement only; explicit branch/allocation approval is required.",
+        "No inference of patients, no alias normalization, no label merging; original cross-patient module retained pending identity evidence."
+      ],
+      "evidence": [
+        "00_plan/analysis-plan.lock.md",
+        "02_identity/scRNA-identity-resolution.v1.json",
+        "00_plan/S2A-technical-QC-supplement.v1.md"
+      ]
+    },
+    {
+      "gate": "S3 entry",
+      "status": "BLOCKED",
+      "execution_authorized": false,
+      "reasons": [
+        "Pathology label map remains PENDING_REVIEW_NOT_FROZEN; composite invasive-cancer categories have not been mapped from producer definitions.",
+        "CID4290/CID44971/CID4535 have 6/2/2 off-tissue metadata barcodes; explicit frozen exclusion and coordinate/tissue joins remain prerequisites.",
+        "Source bundle stems do not prove physical sections; CID44971 has three tissue regions in the paper. Registration and no-cross-section geometry remain unverified.",
+        "No expression, clustering, proportions, deconvolution or literature may substitute for producer pathology plus geometry. No automatic S3 clearance after S2A."
+      ],
+      "evidence": [
+        "02_identity/pathology-label-map.json",
+        "02_identity/pathology-label-inventory.csv",
+        "02_identity/visium-integrity-exceptions.json",
+        "02_identity/visium-sample-identity.csv",
+        "02_identity/identity-gate.json",
+        "00_plan/geometry-contract-S1.json",
+        "00_plan/S1-to-S2-entry-evidence.v1/PMC-XML-identity-search.v1.json"
+      ]
+    },
+    {
+      "gate": "patient-level inference",
+      "status": "BLOCKED",
+      "execution_authorized": false,
+      "reasons": [
+        "No row-level source_sample -> patient/library/capture crosswalk has been established. Generic cohort patient descriptions and a producer patientid source field do not resolve hierarchy/independence.",
+        "CID4290/CID4290A alias remains PENDING; keeping them separate does not establish different donors. 10x overlap also remains unknown.",
+        "No patient-level aggregation, cross-patient validation, population CI/p-value or independent replication claim until relevant identities are verified; original >=4 independent paired-unit gate remains binding."
+      ],
+      "evidence": [
+        "02_identity/scRNA-identity-resolution.v1.json",
+        "02_identity/identity-gate.json",
+        "02_identity/sample-identity.csv",
+        "02_identity/visium-sample-identity.csv",
+        "00_plan/analysis-plan.lock.md"
+      ]
+    }
+  ],
+  "required_files": [
+    {
+      "file": "00_plan/analysis-plan.lock.md",
+      "bytes": 41485,
+      "sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "S1-checkpoint.md",
+      "bytes": 7440,
+      "sha256": "eb2451b5e16676e2d6844d862c8961f3e6f5031a712150a3fedab816265c7333",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "S1-starting-point-assessment.json",
+      "bytes": 2883,
+      "sha256": "492cb9021a0c8917aed0354da95801e9f1350402ac2b30acbb8437862aed593e",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "02_identity/identity-gate.json",
+      "bytes": 1262,
+      "sha256": "e096971099f244cabd22ffa69982eca3746dcf6c61cf9378bb3a0aff98c2c95c",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "02_identity/sample-identity.csv",
+      "bytes": 20037,
+      "sha256": "36f30c20a711eca47191315f3df45950394067e32a7a4e3669c01d37fbe8ef29",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "02_identity/visium-sample-identity.csv",
+      "bytes": 4157,
+      "sha256": "beedbc146143eebe2501d1c677685c3547cab67accf677d164b7485867b4611a",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "02_identity/pathology-label-map.json",
+      "bytes": 507,
+      "sha256": "d8a120652315db560657b2571a8172e52122b3f78e220b20566e13d44395a15a",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "02_identity/pathology-label-inventory.csv",
+      "bytes": 8454,
+      "sha256": "65242e088f33f10fea3cd818d35df68f1adb9dac89faa3800a367dd1969687ae",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "02_identity/primary-program.lock.json",
+      "bytes": 3579,
+      "sha256": "bd512cf1d36e18e4b565fe3f041f67a780f0a7c980930ce337b4e50524b42dd4",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "manifest/S1-source-manifest.json",
+      "bytes": 43079,
+      "sha256": "2e0b80b23c330805fdd04fe8b1bd055199ab862b4f37308ecf5e298db5dbfe14",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "manifest/S1-input-file-index.json",
+      "bytes": 58645,
+      "sha256": "36fc1f54f91051c5cfb03aa5529451aa8401678817916fc77162c18c071cdcb8",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    }
+  ],
+  "storage": {
+    "observed_at_utc": "2026-09-05T10:34:48.068785+00:00",
+    "free_C_bytes": 41481740288,
+    "free_C_GiB": 38.63288116455078,
+    "start_min_bytes": 32212254720,
+    "write_stop_below_bytes": 21474836480,
+    "current_gate": "PASS",
+    "fresh_execution_preflight_required": true,
+    "new_non_destructive_write_test_this_review": "NOT_RUN_READ_ONLY_REVIEW",
+    "S2A_new_storage_budget_cap_bytes": 1073741824
+  },
+  "evidence_limits": [
+    "No count values parsed, QC metrics computed or biological analysis performed in this review. Byte hashing is integrity-only.",
+    "No dependency installation, S2/S3 execution, mask generation, label merging or lock modification.",
+    "Published scRNA raw count layer already reflects producer processing/QC; unfiltered droplets were not acquired.",
+    "Successful PMC service metadata is callability/source-location evidence; identity conclusions use GEO raw and actual article content.",
+    "Supplementary Table 1-11 retrieval failed HTTP404; unresolved is bounded to inspected evidence, not proof that no producer crosswalk exists elsewhere.",
+    "No BioNexus warrant_check invoked; technical policy decisions are not BioNexus machine verdicts."
+  ],
+  "literature": {
+    "plugin": "Life Sciences Literature 0.1.5",
+    "PMC_script_call": "SUCCESS",
+    "current_article_XML_HTTP_status": 200,
+    "article_XML_provider_MD5_verified": true,
+    "supplement_HTTP_status": 404,
+    "evidence_directory": "00_plan/S1-to-S2-entry-evidence.v1",
+    "source_urls": [
+      "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE176078",
+      "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM5354523",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC9044823/"
+    ],
+    "source_context_not_boundary_input": true
+  },
+  "historical_failures_preserved": [
+    {
+      "provider": "10x:Human_Breast_Cancer_Block_A_Section_1:1.1.0",
+      "error": "HTTP Error 429: Too Many Requests"
+    },
+    {
+      "provider": "saezlab/liana-py",
+      "error": "HTTP Error 404: Not Found"
+    }
+  ],
+  "plugin_roles": {
+    "Life Sciences Literature": "Actual PMC skill-local script for current metadata/file URLs; raw request/return retained; not identity adjudicator",
+    "NGS Analysis Workbench": "S0/S1 data-understanding/design context; no new registered run; no compatible registered downstream workflow in retained catalog snapshot",
+    "local Python": "This review: file integrity, metadata evidence and report creation only. Future S2A route: local Python execution",
+    "BioNexus": "Passive ledger/provenance/debt/overclaim work retained; historical S1 sidecar unchanged; no new scientific verdict"
+  },
+  "scientific_results": "PENDING",
+  "machine_verdict": "PENDING",
+  "analysis_resource_usage": "PENDING",
+  "biological_conclusion_acceptance": "NOT_GIVEN",
+  "stop_after_review": true
+}

@@ -1,0 +1,10 @@
+{
+  "analysis_manifest.json": "8a5893063f49391a8d0edf82092f0291749f92f67f9bb75885d8674ad22139a3",
+  "cell_metadata_and_qc.csv.gz": "732b60d449196ebb717f997f59c78f463a8ba79718633671ce4150bcac69f7c3",
+  "donor_cell_counts.csv": "2f971b3f9388bd5904cd116ef8a8cd2aa03e68dddf78e7f5336454c3cf487da4",
+  "paired_pseudobulk_de.csv": "8184a351ad05528667b515cf1bbd1442406667c6e5c969a45ebbcc0885b8fc1b",
+  "prespecified_genes_by_donor.csv": "4be197a8f1dbff3ce229c14e4c4485078605b399a5246bbc93fcdf571e87ea14",
+  "pseudobulk_counts.csv.gz": "3c7c7b365ffe7a9d8730e531218d97538039c22fb5b7882e807197ca6358be97",
+  "pseudobulk_design.csv": "7f84bc44dd6dcbefaaf618f90bfb81f2f9e72e99c3064f3588b64f6db3f97056",
+  "showcase_figure.png": "9d8cdfc8a4ad77caad2f81e9b8a0c2a437a151486718dd6a6daed25f275367a0"
+}

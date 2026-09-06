@@ -1,0 +1,14 @@
+{
+  "status": "FAILED",
+  "failed_at_utc": "2026-09-05T11:34:10.759232+00:00",
+  "error_type": "TypeError",
+  "error": "Object of type int64 is not JSON serializable",
+  "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\13264\\Downloads\\spatial-transcriptomics-task-design-revised\\run_s2a_metrics_v1.py\", line 982, in <module>\n    main()\n    ~~~~^^\n  File \"C:\\Users\\13264\\Downloads\\spatial-transcriptomics-task-design-revised\\run_s2a_metrics_v1.py\", line 575, in main\n    write_json_exclusive(\n    ~~~~~~~~~~~~~~~~~~~~^\n        \"mitochondrial-feature-mask.v1.json\",\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<12 lines>...\n        },\n        ^^\n    )\n    ^\n  File \"C:\\Users\\13264\\Downloads\\spatial-transcriptomics-task-design-revised\\run_s2a_metrics_v1.py\", line 93, in write_json_exclusive\n    data = (json.dumps(value, ensure_ascii=False, indent=2) + \"\\n\").encode(\"utf-8\")\n            ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\13264\\anaconda3\\Lib\\json\\__init__.py\", line 238, in dumps\n    **kw).encode(obj)\n          ~~~~~~^^^^^\n  File \"C:\\Users\\13264\\anaconda3\\Lib\\json\\encoder.py\", line 200, in encode\n    chunks = self.iterencode(o, _one_shot=True)\n  File \"C:\\Users\\13264\\anaconda3\\Lib\\json\\encoder.py\", line 261, in iterencode\n    return _iterencode(o, 0)\n  File \"C:\\Users\\13264\\anaconda3\\Lib\\json\\encoder.py\", line 180, in default\n    raise TypeError(f'Object of type {o.__class__.__name__} '\n                    f'is not JSON serializable')\nTypeError: Object of type int64 is not JSON serializable\n",
+  "output_dir_exists": true,
+  "free_C_bytes": 41505898496,
+  "S2B": "PENDING",
+  "S3": "BLOCKED",
+  "patient_level_inference": "BLOCKED",
+  "machine_verdict": "PENDING",
+  "biological_conclusion": "PENDING"
+}

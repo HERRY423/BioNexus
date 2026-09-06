@@ -1,0 +1,2730 @@
+{
+  "schema_version": "bionexus.external-evidence-envelope.v1",
+  "evidence_id": "SPATIALWARRANT-S6-REACTOME",
+  "family": "database",
+  "producer": {
+    "plugin_id": "life-sciences-databases",
+    "capability": "external-context-query",
+    "tool_name": "reactome-skill",
+    "plugin_version": "0.1.5"
+  },
+  "captured_at": "2026-09-06T02:03:22.856005+00:00",
+  "source_context": {
+    "source_name": "Reactome",
+    "record_ids": [
+      "AC027237.3",
+      "AC087175.1",
+      "AL355075.4",
+      "CD274 PDCD1",
+      "CPB2-AS1",
+      "CXCL10 CXCR3",
+      "CXCL9 CXCR3",
+      "DMD",
+      "FMO4",
+      "FOXO6",
+      "HALLMARK_INTERFERON_GAMMA_RESPONSE",
+      "HEY2",
+      "IGLC1",
+      "IGLC3",
+      "LINC01144",
+      "LINC01489",
+      "MIF CD74_CXCR4",
+      "MIXL1",
+      "NRSN2-AS1",
+      "PCDH18",
+      "PTHLH",
+      "RAB6C",
+      "SPP1 CD44",
+      "SYCP3",
+      "TGFB1 TGFBR1 TGFBR2",
+      "TMEM233",
+      "ZSWIM8-AS1"
+    ],
+    "database_release": "live ContentService query 2026-09-06",
+    "identifier_namespace": "Reactome stable IDs or query targets",
+    "organism_taxon": "NCBI:9606"
+  },
+  "payload": [
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 1,
+        "name": "RAB6C"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 1.9251318000024185,
+      "completed_at_utc": "2026-09-06T02:00:49.443969+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-01-RAB6C.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-01-RAB6C.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-01-RAB6C.raw",
+        "warnings": [],
+        "record_count_returned": 1,
+        "record_count_available": 1,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Interactor",
+            "entriesCount": 1,
+            "rowCount": 1
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T02:00:49.419075+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 2,
+        "name": "LINC01144"
+      },
+      "source": "reactome",
+      "returncode": 1,
+      "elapsed_seconds": 1.8072326999972574,
+      "completed_at_utc": "2026-09-06T02:00:49.328509+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-02-LINC01144.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-02-LINC01144.raw",
+      "wrapper": {
+        "ok": false,
+        "error": {
+          "code": "network_error",
+          "message": "Request failed for reactome-skill: HTTPError"
+        },
+        "warnings": []
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 3,
+        "name": "FOXO6"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 2.3950743000023067,
+      "completed_at_utc": "2026-09-06T02:00:51.725547+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-03-FOXO6.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-03-FOXO6.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-03-FOXO6.raw",
+        "warnings": [],
+        "record_count_returned": 6,
+        "record_count_available": 6,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 11,
+            "rowCount": 10
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Set",
+            "entriesCount": 4,
+            "rowCount": 4
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 4,
+            "rowCount": 4
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 3,
+            "rowCount": 3
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Icon",
+            "entriesCount": 1,
+            "rowCount": 1
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T02:00:51.699602+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 4,
+        "name": "ZSWIM8-AS1"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 3.3490362000011373,
+      "completed_at_utc": "2026-09-06T02:00:54.224130+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-04-ZSWIM8-AS1.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-04-ZSWIM8-AS1.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-04-ZSWIM8-AS1.raw",
+        "warnings": [],
+        "record_count_returned": 5,
+        "record_count_available": 5,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 9,
+            "rowCount": 9
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "RNA Sequence",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 16,
+            "rowCount": 10
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 1,
+            "rowCount": 1
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T02:00:54.198487+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 5,
+        "name": "PTHLH"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 1.6004889000032563,
+      "completed_at_utc": "2026-09-06T02:00:53.559347+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-05-PTHLH.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-05-PTHLH.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-05-PTHLH.raw",
+        "warnings": [],
+        "record_count_returned": 2,
+        "record_count_available": 2,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 1,
+            "rowCount": 1
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T02:00:53.530770+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 6,
+        "name": "HEY2"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 1.4846740999782924,
+      "completed_at_utc": "2026-09-06T02:00:55.047886+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-06-HEY2.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-06-HEY2.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-06-HEY2.raw",
+        "warnings": [],
+        "record_count_returned": 6,
+        "record_count_available": 6,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "DNA Sequence",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 11,
+            "rowCount": 10
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Set",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 5,
+            "rowCount": 5
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T02:00:55.022240+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 7,
+        "name": "DMD"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 1.7414360000111628,
+      "completed_at_utc": "2026-09-06T02:00:56.389146+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-07-DMD.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-07-DMD.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-07-DMD.raw",
+        "warnings": [],
+        "record_count_returned": 6,
+        "record_count_available": 6,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 5,
+            "rowCount": 5
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Set",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Icon",
+            "entriesCount": 1,
+            "rowCount": 1
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T02:00:56.363959+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 8,
+        "name": "IGLC3"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 1.543112100014696,
+      "completed_at_utc": "2026-09-06T02:00:57.927435+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-08-IGLC3.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-08-IGLC3.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-08-IGLC3.raw",
+        "warnings": [],
+        "record_count_returned": 1,
+        "record_count_available": 1,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 2,
+            "rowCount": 2
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T02:00:57.900232+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 9,
+        "name": "IGLC1"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 2.2477022999955807,
+      "completed_at_utc": "2026-09-06T02:01:00.077525+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-09-IGLC1.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-09-IGLC1.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-09-IGLC1.raw",
+        "warnings": [],
+        "record_count_returned": 1,
+        "record_count_available": 1,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 2,
+            "rowCount": 2
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T02:01:00.052055+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 10,
+        "name": "PCDH18"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 2.6090039999980945,
+      "completed_at_utc": "2026-09-06T02:01:01.119380+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-10-PCDH18.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-10-PCDH18.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-10-PCDH18.raw",
+        "warnings": [],
+        "record_count_returned": 1,
+        "record_count_available": 1,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Interactor",
+            "entriesCount": 1,
+            "rowCount": 1
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T02:01:01.097951+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 11,
+        "name": "AC087175.1"
+      },
+      "source": "reactome",
+      "returncode": 1,
+      "elapsed_seconds": 1.5120853999978863,
+      "completed_at_utc": "2026-09-06T02:01:01.627926+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-11-AC087175.1.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-11-AC087175.1.raw",
+      "wrapper": {
+        "ok": false,
+        "error": {
+          "code": "network_error",
+          "message": "Request failed for reactome-skill: HTTPError"
+        },
+        "warnings": []
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 12,
+        "name": "LINC01489"
+      },
+      "source": "reactome",
+      "returncode": 1,
+      "elapsed_seconds": 1.4900722000165842,
+      "completed_at_utc": "2026-09-06T02:01:03.119978+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-12-LINC01489.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-12-LINC01489.raw",
+      "wrapper": {
+        "ok": false,
+        "error": {
+          "code": "network_error",
+          "message": "Request failed for reactome-skill: HTTPError"
+        },
+        "warnings": []
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 13,
+        "name": "FMO4"
+      },
+      "source": "reactome",
+      "returncode": 1,
+      "elapsed_seconds": 2.320456700021168,
+      "completed_at_utc": "2026-09-06T02:01:04.996531+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-13-FMO4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-13-FMO4.raw",
+      "wrapper": {
+        "ok": false,
+        "error": {
+          "code": "network_error",
+          "message": "Request failed for reactome-skill: HTTPError"
+        },
+        "warnings": []
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 14,
+        "name": "AC027237.3"
+      },
+      "source": "reactome",
+      "returncode": 1,
+      "elapsed_seconds": 1.2992723999777809,
+      "completed_at_utc": "2026-09-06T02:01:04.990774+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-14-AC027237.3.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-14-AC027237.3.raw",
+      "wrapper": {
+        "ok": false,
+        "error": {
+          "code": "network_error",
+          "message": "Request failed for reactome-skill: HTTPError"
+        },
+        "warnings": []
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 15,
+        "name": "MIXL1"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 1.7977890000038315,
+      "completed_at_utc": "2026-09-06T02:01:06.796931+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-15-MIXL1.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-15-MIXL1.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-15-MIXL1.raw",
+        "warnings": [],
+        "record_count_returned": 6,
+        "record_count_available": 6,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "RNA Sequence",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "DNA Sequence",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 9,
+            "rowCount": 9
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 3,
+            "rowCount": 3
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 2,
+            "rowCount": 2
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T02:01:06.773848+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 16,
+        "name": "AL355075.4"
+      },
+      "source": "reactome",
+      "returncode": 1,
+      "elapsed_seconds": 1.6370349999924656,
+      "completed_at_utc": "2026-09-06T02:01:07.674094+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-16-AL355075.4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-16-AL355075.4.raw",
+      "wrapper": {
+        "ok": false,
+        "error": {
+          "code": "network_error",
+          "message": "Request failed for reactome-skill: HTTPError"
+        },
+        "warnings": []
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 17,
+        "name": "SYCP3"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 1.3991205999918748,
+      "completed_at_utc": "2026-09-06T02:01:08.957791+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-17-SYCP3.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-17-SYCP3.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-17-SYCP3.raw",
+        "warnings": [],
+        "record_count_returned": 2,
+        "record_count_available": 2,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 2,
+            "rowCount": 2
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T02:01:08.930473+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 18,
+        "name": "TMEM233"
+      },
+      "source": "reactome",
+      "returncode": 1,
+      "elapsed_seconds": 1.3375136000104249,
+      "completed_at_utc": "2026-09-06T02:01:09.864947+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-18-TMEM233.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-18-TMEM233.raw",
+      "wrapper": {
+        "ok": false,
+        "error": {
+          "code": "network_error",
+          "message": "Request failed for reactome-skill: HTTPError"
+        },
+        "warnings": []
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 19,
+        "name": "NRSN2-AS1"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 1.6211162999970838,
+      "completed_at_utc": "2026-09-06T02:01:11.487859+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-19-NRSN2-AS1.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-19-NRSN2-AS1.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-19-NRSN2-AS1.raw",
+        "warnings": [],
+        "record_count_returned": 4,
+        "record_count_available": 4,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Interactor",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "RNA Sequence",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 5,
+            "rowCount": 5
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 10,
+            "rowCount": 10
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T02:01:11.460349+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 20,
+        "name": "CPB2-AS1"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 2.6472262000024784,
+      "completed_at_utc": "2026-09-06T02:01:14.064092+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\reactome\\gene-20-CPB2-AS1.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-20-CPB2-AS1.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\reactome\\gene-20-CPB2-AS1.raw",
+        "warnings": [],
+        "record_count_returned": 4,
+        "record_count_available": 4,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "RNA Sequence",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 5,
+            "rowCount": 5
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 11,
+            "rowCount": 10
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T02:01:14.035537+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 1,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 2.530088600004092,
+      "completed_at_utc": "2026-09-06T01:46:26.840997+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\reactome\\liana_interaction-01-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-01-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-01-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "record_count_returned": 6,
+        "record_count_available": 6,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 4,
+            "rowCount": 4
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "DNA Sequence",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Interactor",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 1,
+            "rowCount": 1
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T01:46:26.814887+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 2,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 1.674147300014738,
+      "completed_at_utc": "2026-09-06T01:46:26.747590+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\reactome\\liana_interaction-02-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-02-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-02-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "record_count_returned": 6,
+        "record_count_available": 6,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 4,
+            "rowCount": 4
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "DNA Sequence",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Interactor",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 1,
+            "rowCount": 1
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T01:46:26.722335+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 3,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 2.37754839999252,
+      "completed_at_utc": "2026-09-06T01:46:28.358571+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\reactome\\liana_interaction-03-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-03-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-03-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "record_count_returned": 6,
+        "record_count_available": 6,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 4,
+            "rowCount": 4
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "DNA Sequence",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Interactor",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 1,
+            "rowCount": 1
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T01:46:28.336748+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 4,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 2.238032299996121,
+      "completed_at_utc": "2026-09-06T01:46:28.984339+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\reactome\\liana_interaction-04-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-04-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-04-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "record_count_returned": 6,
+        "record_count_available": 6,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 4,
+            "rowCount": 4
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "DNA Sequence",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Interactor",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 1,
+            "rowCount": 1
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T01:46:28.957606+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 5,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 1.741853399988031,
+      "completed_at_utc": "2026-09-06T01:46:29.134437+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\reactome\\liana_interaction-05-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-05-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-05-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "record_count_returned": 6,
+        "record_count_available": 6,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 4,
+            "rowCount": 4
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "DNA Sequence",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Interactor",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 1,
+            "rowCount": 1
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T01:46:29.109360+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 6,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 2.5827588999818545,
+      "completed_at_utc": "2026-09-06T01:46:30.838290+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\reactome\\liana_interaction-06-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-06-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-06-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "record_count_returned": 6,
+        "record_count_available": 6,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 4,
+            "rowCount": 4
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "DNA Sequence",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Interactor",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 1,
+            "rowCount": 1
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T01:46:30.812933+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 7,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 1.508541499992134,
+      "completed_at_utc": "2026-09-06T01:46:30.536540+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\reactome\\liana_interaction-07-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-07-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-07-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "record_count_returned": 6,
+        "record_count_available": 6,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 4,
+            "rowCount": 4
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "DNA Sequence",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Interactor",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 1,
+            "rowCount": 1
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T01:46:30.508452+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 8,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 1.4118894999846816,
+      "completed_at_utc": "2026-09-06T01:46:31.165579+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\reactome\\liana_interaction-08-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-08-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-08-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "record_count_returned": 6,
+        "record_count_available": 6,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 4,
+            "rowCount": 4
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "DNA Sequence",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Interactor",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 1,
+            "rowCount": 1
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T01:46:31.139183+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 9,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 1.7959884000010788,
+      "completed_at_utc": "2026-09-06T01:46:32.658187+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\reactome\\liana_interaction-09-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-09-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-09-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "record_count_returned": 6,
+        "record_count_available": 6,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 4,
+            "rowCount": 4
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "DNA Sequence",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Interactor",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 1,
+            "rowCount": 1
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T01:46:32.636484+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 10,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 2.141830000007758,
+      "completed_at_utc": "2026-09-06T01:46:33.750087+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\reactome\\liana_interaction-10-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-10-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\liana_interaction-10-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "record_count_returned": 6,
+        "record_count_available": 6,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 4,
+            "rowCount": 4
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "DNA Sequence",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Interactor",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 1,
+            "rowCount": 1
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T01:46:33.720670+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "prespecified",
+        "rank": 1,
+        "name": "CXCL9 CXCR3"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 1.4970971000147983,
+      "completed_at_utc": "2026-09-06T01:46:33.757703+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\reactome\\prespecified-01-CXCL9_CXCR3.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\prespecified-01-CXCL9_CXCR3.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\prespecified-01-CXCL9_CXCR3.raw",
+        "warnings": [],
+        "record_count_returned": 6,
+        "record_count_available": 6,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 3,
+            "rowCount": 3
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 4,
+            "rowCount": 4
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "DNA Sequence",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Set",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 1,
+            "rowCount": 1
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T01:46:33.731304+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "prespecified",
+        "rank": 2,
+        "name": "CXCL10 CXCR3"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 1.4952275999821723,
+      "completed_at_utc": "2026-09-06T01:46:34.571361+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\reactome\\prespecified-02-CXCL10_CXCR3.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\prespecified-02-CXCL10_CXCR3.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\prespecified-02-CXCL10_CXCR3.raw",
+        "warnings": [],
+        "record_count_returned": 6,
+        "record_count_available": 6,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 3,
+            "rowCount": 3
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "DNA Sequence",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Set",
+            "entriesCount": 5,
+            "rowCount": 5
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 7,
+            "rowCount": 7
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 2,
+            "rowCount": 2
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T01:46:34.548447+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "prespecified",
+        "rank": 3,
+        "name": "CD274 PDCD1"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 2.3667738999938592,
+      "completed_at_utc": "2026-09-06T01:46:36.587895+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\reactome\\prespecified-03-CD274_PDCD1.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\prespecified-03-CD274_PDCD1.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\prespecified-03-CD274_PDCD1.raw",
+        "warnings": [],
+        "record_count_returned": 8,
+        "record_count_available": 8,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 19,
+            "rowCount": 10
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 60,
+            "rowCount": 10
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Interactor",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "RNA Sequence",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "DNA Sequence",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 34,
+            "rowCount": 10
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 8,
+            "rowCount": 8
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Icon",
+            "entriesCount": 3,
+            "rowCount": 3
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T01:46:36.565062+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "prespecified",
+        "rank": 4,
+        "name": "TGFB1 TGFBR1 TGFBR2"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 1.9452590000000782,
+      "completed_at_utc": "2026-09-06T01:46:36.551066+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\reactome\\prespecified-04-TGFB1_TGFBR1_TGFBR2.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\prespecified-04-TGFB1_TGFBR1_TGFBR2.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\prespecified-04-TGFB1_TGFBR1_TGFBR2.raw",
+        "warnings": [],
+        "record_count_returned": 7,
+        "record_count_available": 7,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 65,
+            "rowCount": 10
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 29,
+            "rowCount": 10
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 65,
+            "rowCount": 10
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "DNA Sequence",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Set",
+            "entriesCount": 8,
+            "rowCount": 8
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 18,
+            "rowCount": 10
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Icon",
+            "entriesCount": 3,
+            "rowCount": 3
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T01:46:36.524733+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "prespecified",
+        "rank": 5,
+        "name": "SPP1 CD44"
+      },
+      "source": "reactome",
+      "returncode": 0,
+      "elapsed_seconds": 1.5687387000070885,
+      "completed_at_utc": "2026-09-06T01:46:37.107572+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\reactome\\prespecified-05-SPP1_CD44.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\prespecified-05-SPP1_CD44.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "reactome-org",
+        "path": "search/query",
+        "method": "GET",
+        "status_code": 200,
+        "record_path": "results",
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\prespecified-05-SPP1_CD44.raw",
+        "warnings": [],
+        "record_count_returned": 8,
+        "record_count_available": 8,
+        "truncated": false,
+        "records": [
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Reaction",
+            "entriesCount": 20,
+            "rowCount": 10
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Protein",
+            "entriesCount": 8,
+            "rowCount": 8
+          },
+          {
+            "entries": [
+              "..."
+            ],
+            "typeName": "Interactor",
+            "entriesCount": 1,
+            "rowCount": 1
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "RNA Sequence",
+            "entriesCount": 6,
+            "rowCount": 6
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "DNA Sequence",
+            "entriesCount": 2,
+            "rowCount": 2
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Complex",
+            "entriesCount": 8,
+            "rowCount": 8
+          },
+          {
+            "entries": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ],
+            "typeName": "Pathway",
+            "entriesCount": 6,
+            "rowCount": 6
+          },
+          {
+            "entries": [
+              "...",
+              "..."
+            ],
+            "typeName": "Icon",
+            "entriesCount": 2,
+            "rowCount": 2
+          }
+        ],
+        "sources": [
+          {
+            "name": "Reactome",
+            "url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens",
+            "retrieved_at": "2026-09-06T01:46:37.084761+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://reactome.org/ContentService/search/query?query=REDACTED&species=Homo+sapiens"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "prespecified",
+        "rank": 6,
+        "name": "HALLMARK_INTERFERON_GAMMA_RESPONSE"
+      },
+      "source": "reactome",
+      "returncode": 1,
+      "elapsed_seconds": 1.4338040000002366,
+      "completed_at_utc": "2026-09-06T01:46:38.024130+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\reactome\\prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\reactome\\prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.raw",
+      "wrapper": {
+        "ok": false,
+        "error": {
+          "code": "network_error",
+          "message": "Request failed for reactome-skill: HTTPError"
+        },
+        "warnings": []
+      },
+      "stderr": ""
+    }
+  ],
+  "payload_sha256": "951faff33dd1627f460b64182e0129cdef6cfc48f3520877b8c055ac911885b8",
+  "request_sha256": "9dabacb0b958bada47d6195e7198e85152a40837209cd47b2be0e48fd0a13e4f",
+  "semantic_envelope": null,
+  "epistemic_lineage": null
+}

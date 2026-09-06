@@ -1,0 +1,8 @@
+# Bounded dependencies for the external-review capsule only.
+# Install BioNexus itself with --no-deps first; this profile does not support
+# general scientific analysis or optional backends.
+pytest>=7.4.0,<10.0.0
+numpy>=1.23.0
+pyyaml>=6.0,<7.0
+jsonschema>=4.17.0,<6.0.0
+cryptography>=41.0.0,<50.0.0

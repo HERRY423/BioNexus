@@ -1,0 +1,39 @@
+{
+  "status": "COMPLETED_WITH_PRESERVED_FAILURES",
+  "repair_reason": "Initial STRING and UniProt calls used the Reactome skill wrapper and were rejected as invalid_input; initial records retained, retry1 uses each source-specific skill wrapper.",
+  "retry_requests": 72,
+  "retry_successes": 65,
+  "retry_failures": 7,
+  "consolidated_requests": 180,
+  "consolidated_successes": 168,
+  "consolidated_failures": 12,
+  "sources": [
+    {
+      "source": "opentargets",
+      "count": 36,
+      "sum": 36
+    },
+    {
+      "source": "pubmed",
+      "count": 36,
+      "sum": 36
+    },
+    {
+      "source": "reactome",
+      "count": 36,
+      "sum": 31
+    },
+    {
+      "source": "string",
+      "count": 36,
+      "sum": 29
+    },
+    {
+      "source": "uniprot",
+      "count": 36,
+      "sum": 36
+    }
+  ],
+  "elapsed_seconds": 22.259420500020497,
+  "completed_at_utc": "2026-09-06T01:48:00.611334+00:00"
+}

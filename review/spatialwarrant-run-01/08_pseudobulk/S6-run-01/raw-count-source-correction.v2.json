@@ -1,0 +1,23 @@
+{
+  "status": "COMPLETED",
+  "reason": "S3 h5ad contained filtered 19,237-feature matrix and yielded 195/200; the frozen feature lock and S6 raw-count requirement bind publisher raw_feature_bc_matrix with 36,601 features and 196/200 exact coverage.",
+  "historical_attempt": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\historical-filtered-matrix-attempt1",
+  "raw_input_hashes": {
+    "matrix.mtx.gz": "c0b37824b8647b11da77054939e1215e60664d2eb480202feaeab78a1dbc2be9",
+    "barcodes.tsv.gz": "856fa22b6fb346931480b232fef560dec4a42ce7ea8237ffa207d2499b8d7274",
+    "features.tsv.gz": "0a6e9f09c1343264d465b73d0e3b93efa9ccb3d7643cccf0600d81f5b20478d7"
+  },
+  "matrix_shape": [
+    36601,
+    4992
+  ],
+  "selected_mask_barcodes": 1125,
+  "matched_program_genes": 196,
+  "missing_program_genes": [
+    "MARCHF1",
+    "RIGI",
+    "TMT1B",
+    "WARS1"
+  ],
+  "completed_at_utc": "2026-09-06T01:59:35.469561+00:00"
+}

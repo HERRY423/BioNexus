@@ -1,0 +1,17 @@
+{
+  "evidence_id": "SPATIALWARRANT-S6-REACTOME",
+  "status": "VALID",
+  "integrity_verified": true,
+  "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+  "accepted_for_context": true,
+  "accepted_for_claim_support": false,
+  "conclusion_maturity": "UNASSESSED",
+  "allowed_context_use": "versioned database record",
+  "missing_context": [],
+  "errors": [],
+  "warnings": [],
+  "prohibited_inferences": [
+    "Do not treat database retrieval as independent experimental validation.",
+    "Do not infer causality or clinical actionability from a structured record alone."
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "schema": "SpatialWarrant.S6.claim-bound-audit.v1",
+  "created_at_utc": "2026-09-06T01:55:34.282688+00:00",
+  "locked_plan_sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82",
+  "claims": [
+    {
+      "claim_id": "C4",
+      "scope": "CID4535 single-section descriptive boundary effect",
+      "status": "COMPUTED_DESCRIPTIVE",
+      "effect": 0.06365403476653775,
+      "evidence_ceiling": "SINGLE_SECTION_DESCRIPTIVE",
+      "machine_verdict": "PENDING",
+      "biological_conclusion": "PENDING"
+    },
+    {
+      "claim_id": "C5",
+      "scope": "CXCL9/10-CXCR3 drives T-cell recruitment",
+      "status": "ABSTAIN_CAUSAL",
+      "reason": "no perturbation, temporal ordering, or independent causal validation"
+    },
+    {
+      "claim_id": "patient-level",
+      "status": "BLOCKED",
+      "reason": "one eligible section and no verified patient-level independent units"
+    },
+    {
+      "claim_id": "boundary-celltype-LIANA",
+      "status": "NOT_IDENTIFIABLE",
+      "reason": "mixed Visium spots do not contain cell-type-resolved boundary expression"
+    },
+    {
+      "claim_id": "clinical",
+      "status": "REFUSED",
+      "reason": "no treatment outcome, independent test cohort, calibration, or clinical validation"
+    }
+  ],
+  "external_context": "UNASSESSED_NOT_CLAIM_SUPPORT",
+  "human_scientific_adjudication": "PENDING"
+}

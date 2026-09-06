@@ -1,0 +1,17 @@
+{
+  "evidence_id": "SPATIALWARRANT-S7-C4",
+  "status": "VALID",
+  "integrity_verified": true,
+  "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+  "accepted_for_context": true,
+  "accepted_for_claim_support": false,
+  "conclusion_maturity": "UNASSESSED",
+  "allowed_context_use": "content-bound analysis result",
+  "missing_context": [],
+  "errors": [],
+  "warnings": [],
+  "prohibited_inferences": [
+    "Do not infer biological generalization from execution success alone.",
+    "Do not infer causality without an identified design and causal assumptions."
+  ]
+}

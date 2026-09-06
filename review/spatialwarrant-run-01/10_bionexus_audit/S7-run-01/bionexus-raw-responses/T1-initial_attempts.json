@@ -1,0 +1,34 @@
+{
+  "test_id": "T1",
+  "request": {
+    "query": "CID4535 证明了 TNBC 患者普遍存在 IFN 边界机制。",
+    "research_purpose": "S7 actual overclaim test of the stated claim, not a request to execute analyses.",
+    "data_metadata": {
+      "eligible_sections": 1,
+      "spatial_workflow_sections": 6,
+      "independent_patients_verified": false,
+      "effect_B2_minus_core": 0.051510939,
+      "population_CI": null,
+      "population_p_value": null,
+      "study": "Wu breast cancer scRNA and Visium; single eligible CID4535",
+      "claim_class": "population_effect"
+    },
+    "intent_keywords": [
+      "population_effect",
+      "single_section",
+      "TNBC",
+      "mechanism"
+    ]
+  },
+  "started_at_utc": "2026-09-06T02:15:12.492Z",
+  "ended_at_utc": "2026-09-06T02:15:19.725Z",
+  "raw_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Error executing tool bionexus_warrant_check: Unknown research purpose 'S7 actual overclaim test of the stated claim, not a request to execute analyses.'. Valid purposes: unspecified, exploratory, screening, confirmatory, causal, clinical"
+      }
+    ],
+    "isError": true
+  }
+}

@@ -21,7 +21,7 @@ from __future__ import annotations
 import re
 from dataclasses import asdict, dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from bionexus.contracts import ConclusionMaturity
 from bionexus.evidence_model import ClaimClass
@@ -43,6 +43,9 @@ class ClaimRelationshipType(str, Enum):
     IDENTITY_ASSERTION = "identity_assertion"  # Cell-type identity, cluster assignment
     DIAGNOSTIC_ASSERTION = "diagnostic_assertion"  # Clinical diagnosis, patient disease call
     MODEL_FIDELITY = "model_fidelity"  # Claim about computational model / algorithm backend
+    STRUCTURAL_CONFORMATION = "structural_conformation"  # 3D folding, binding pocket, conformational state
+    BIOACTIVE_BINDING = "bioactive_binding"  # Small-molecule target affinity, IC50/Kd inhibition
+
 
 
 class Directionality(str, Enum):
@@ -198,6 +201,11 @@ class EvidenceProfile:
     regulatory_certification: bool = False  # CLIA/CAP / FDA Part 11 certified
     ruo_disclaimer_present: bool = False  # Research Use Only disclaimer
     cross_method_concordance: bool = False  # Agreement across alternative tools
+    plddt_score: Optional[float] = None  # AlphaFold/ESMFold mean pLDDT confidence (0-100)
+    interdomain_pae: Optional[float] = None  # Inter-domain Predicted Aligned Error in Angstroms
+    bioactivity_nm: Optional[float] = None  # Small-molecule IC50 / Ki / Kd in nanomolar
+    dose_response_curve: bool = True  # True if measured via full concentration titration
+
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -240,6 +248,8 @@ class WarrantEvaluationResult:
     rule_violations: List[str] = field(default_factory=list)
     epistemic_summary: str = ""
     governing_status: Optional[str] = None
+    has_claim_conflict: bool = False
+    conflict_details: Optional[str] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -254,6 +264,8 @@ class WarrantEvaluationResult:
             "rule_violations": self.rule_violations,
             "epistemic_summary": self.epistemic_summary,
             "governing_status": self.governing_status,
+            "has_claim_conflict": self.has_claim_conflict,
+            "conflict_details": self.conflict_details,
         }
 
 
@@ -272,6 +284,14 @@ class DeterministicClaimParser:
 
     # Causal & Mechanistic Action Verbs (word-boundary compiled below)
     _CAUSAL_VERBS_FORWARD = [
+        r"因果驱动",
+        r"证明了",
+        r"证实了",
+        r"导致",
+        r"促使",
+        r"诱导",
+        r"引起",
+        r"驱动",
         r"\bdrives?\b",
         r"\bcauses?\b",
         r"\binduces?\b",
@@ -300,6 +320,9 @@ class DeterministicClaimParser:
     ]
 
     _CAUSAL_VERBS_PASSIVE = [
+        r"由.*?驱动",
+        r"受.*?调控",
+        r"依赖于",
         r"\b(?:is|are|was|were)\s+driven\s+by\b",
         r"\b(?:is|are|was|were)\s+caused\s+by\b",
         r"\b(?:is|are|was|were)\s+induced\s+by\b",
@@ -311,6 +334,10 @@ class DeterministicClaimParser:
 
     # Associational & Correlational Verbs
     _ASSOCIATIONAL_VERBS = [
+        r"相关",
+        r"关联",
+        r"共定位",
+        r"共表达",
         r"\bcorrelates?\s+with\b",
         r"\bassociates?\s+with\b",
         r"\bis\s+associated\s+with\b",
@@ -332,6 +359,10 @@ class DeterministicClaimParser:
 
     # Clinical / Regulatory Action Verbs
     _CLINICAL_VERBS = [
+        r"预测",
+        r"诊断",
+        r"治疗反应",
+        r"免疫治疗",
         r"\bdiagnos(?:es|ed|is|tic)\b",
         r"\btreat(?:s|ed|ment)\s+recommendation\b",
         r"\bpatient\s+(?:treatment|therapy|prescription)\b",
@@ -371,6 +402,12 @@ class DeterministicClaimParser:
 
     # Negation Markers
     _NEGATION_PATTERNS = [
+        r"不能(?:证明|推断|得出|建立)",
+        r"无法(?:证明|推断|得出|建立)",
+        r"并未(?:证明|显示|发现)",
+        r"不(?:存在|构成|具备)",
+        r"没有证据表明",
+        r"不足以(?:证明|推断|得出)",
         r"\bcannot\s+(?:prove|demonstrate|establish|confirm|conclude)\b",
         r"\bcan\s+not\s+(?:prove|demonstrate|establish|confirm|conclude)\b",
         r"\bdoes\s+not\s+(?:prove|cause|drive|induce|imply|show|affect|alter|correlate|associate|change)\b",
@@ -388,6 +425,11 @@ class DeterministicClaimParser:
 
     # Population & Context Scopes
     _POPULATION_PATTERNS = [
+        r"普遍存在",
+        r"患者普遍",
+        r"人群普遍",
+        r"总体效应",
+        r"全群",
         r"\bin\s+([A-Z0-9_-]+(?:\s+[A-Z0-9_-]+)?)\b",  # in NSCLC, in PBMC
         r"\bacross\s+([A-Z0-9_-]+(?:\s+[A-Z0-9_-]+)?)\b",
         r"\bin\s+(human|mouse|murine|patient|tumor|tme|cancer|normal|healthy)\s*([a-zA-Z0-9_-]*)",
@@ -401,7 +443,13 @@ class DeterministicClaimParser:
     }
 
     @classmethod
-    def parse(cls, text: str, claim_id: Optional[str] = None) -> ScientificClaimIR:
+    def parse(
+        cls,
+        text: str,
+        claim_id: Optional[str] = None,
+        explicit_claim_class: Optional[Union[str, ClaimClass]] = None,
+        data_metadata: Optional[Dict[str, Any]] = None,
+    ) -> ScientificClaimIR:
         """
         Parse a single natural-language claim into a structured ScientificClaimIR.
         """
@@ -421,18 +469,23 @@ class DeterministicClaimParser:
             match = re.search(pat, clean_text, re.IGNORECASE)
             if not match:
                 continue
-            candidate = re.sub(r"^(?:in|across)\s+", "", match.group(0), flags=re.IGNORECASE).strip()
+            if pat.startswith(r"\bin\s+") or pat.startswith(r"\bacross\s+"):
+                candidate = re.sub(r"^(?:in|across)\s+", "", match.group(0), flags=re.IGNORECASE).strip()
+            else:
+                candidate = match.group(0).strip()
             first_token = candidate.split()[0].lower() if candidate.split() else ""
             if candidate and first_token not in cls._POPULATION_STOPWORDS:
                 population_scope = candidate
                 break
 
         # 4. Generalization scope
-        if population_scope and any(
+        if (population_scope and any(
             p in population_scope.lower()
-            for p in ("nsclc", "human", "cancer", "tumor", "patient", "disease", "cohort")
-        ):
+            for p in ("nsclc", "human", "cancer", "tumor", "patient", "disease", "cohort", "普遍", "患者", "人群")
+        )) or any(k in clean_text for k in ("普遍存在", "患者普遍", "人群普遍", "总体效应", "全群")):
             gen_scope = GeneralizationScope.POPULATION_GENERAL
+            if not population_scope:
+                population_scope = "population"
         elif "cluster" in text_lower:
             gen_scope = GeneralizationScope.STRATUM_SPECIFIC
         elif "sample" in text_lower:
@@ -442,12 +495,12 @@ class DeterministicClaimParser:
 
         # 5. Clinical Actionability
         clinical_act = ClinicalActionability.NONE
-        if any(re.search(pat, clean_text, re.IGNORECASE) for pat in cls._CLINICAL_VERBS):
-            if "diagnos" in text_lower:
+        if any(re.search(pat, clean_text, re.IGNORECASE) for pat in cls._CLINICAL_VERBS) or any(k in clean_text for k in ("预测", "治疗反应", "用药", "预后")):
+            if "diagnos" in text_lower or "诊断" in clean_text:
                 clinical_act = ClinicalActionability.DIAGNOSTIC_ASSERTION
-            elif "treat" in text_lower or "prescrib" in text_lower:
+            elif "treat" in text_lower or "prescrib" in text_lower or "治疗" in clean_text or "用药" in clean_text:
                 clinical_act = ClinicalActionability.PRESCRIPTIVE_TREATMENT
-            elif "biomarker" in text_lower:
+            elif "biomarker" in text_lower or "预测" in clean_text or "反应" in clean_text:
                 clinical_act = ClinicalActionability.EXPLORATORY_BIOMARKER
 
         # 6. Entity & Predicate Extraction
@@ -640,6 +693,59 @@ class DeterministicClaimParser:
                 raw_span=object_name,
             )
 
+        # Explicit claim class resolution & conflict preservation
+        meta_dict = dict(data_metadata or {})
+        if explicit_claim_class is None and data_metadata:
+            explicit_claim_class = data_metadata.get("claim_class") or data_metadata.get("requested_claim_class")
+
+        has_claim_conflict = False
+        conflict_details = None
+
+        if explicit_claim_class is not None:
+            norm_explicit = explicit_claim_class
+            if isinstance(norm_explicit, str):
+                s = norm_explicit.lower().strip()
+                if s in ("population", "population_effect"):
+                    norm_explicit = ClaimClass.POPULATION_EFFECT
+                elif s == "causal":
+                    norm_explicit = ClaimClass.CAUSAL
+                elif s in ("clinical", "clinical_actionability"):
+                    norm_explicit = ClaimClass.CLINICAL_ACTIONABILITY
+                elif s == "mechanistic":
+                    norm_explicit = ClaimClass.MECHANISTIC
+                elif s in ("spatial", "spatial_dependency"):
+                    norm_explicit = ClaimClass.SPATIAL_DEPENDENCY
+                elif s == "cell_identity":
+                    norm_explicit = ClaimClass.CELL_IDENTITY
+                elif s == "association":
+                    norm_explicit = ClaimClass.ASSOCIATION
+                elif s in ("technical", "model_fidelity"):
+                    norm_explicit = ClaimClass.MODEL_FIDELITY
+                elif s == "descriptive":
+                    norm_explicit = ClaimClass.DESCRIPTIVE
+
+            if isinstance(norm_explicit, ClaimClass):
+                if norm_explicit != claim_class:
+                    has_claim_conflict = True
+                    conflict_details = (
+                        f"Explicit claim class '{norm_explicit.value}' differs from text-inferred "
+                        f"class '{claim_class.value}'. Preserving explicit '{norm_explicit.value}' without silent downgrade."
+                    )
+                # CRITICAL: Preserve explicit claim class! Never silently downgrade to descriptive!
+                claim_class = norm_explicit
+                if claim_class == ClaimClass.POPULATION_EFFECT:
+                    gen_scope = GeneralizationScope.POPULATION_GENERAL
+                elif claim_class in (ClaimClass.CAUSAL, ClaimClass.MECHANISTIC):
+                    if causal_strength in (CausalStrength.NONE, CausalStrength.ASSOCIATIONAL):
+                        causal_strength = CausalStrength.COUNTERFACTUAL_CAUSAL
+                elif claim_class == ClaimClass.CLINICAL_ACTIONABILITY:
+                    if clinical_act == ClinicalActionability.NONE:
+                        clinical_act = ClinicalActionability.EXPLORATORY_BIOMARKER
+
+        if has_claim_conflict:
+            meta_dict["has_claim_conflict"] = True
+            meta_dict["conflict_details"] = conflict_details
+
         return ScientificClaimIR(
             claim_id=cid,
             source_text=clean_text,
@@ -656,6 +762,7 @@ class DeterministicClaimParser:
             claim_class=claim_class,
             qualifiers=qualifiers,
             negated=negated,
+            metadata=meta_dict,
         )
 
 
@@ -744,6 +851,8 @@ class DeterministicWarrantEngine:
                 remedies=[],
                 rule_violations=[],
                 epistemic_summary="Claim is a scientifically honest disclaimer or negative finding.",
+                has_claim_conflict=bool(claim.metadata.get("has_claim_conflict", False)),
+                conflict_details=claim.metadata.get("conflict_details"),
             )
 
         # ----------------------------------------------------------------------
@@ -768,9 +877,13 @@ class DeterministicWarrantEngine:
         # ----------------------------------------------------------------------
         # Tier 2: Population Generalization Warrant
         # ----------------------------------------------------------------------
+        population_requested = (
+            claim.generalization_scope == GeneralizationScope.POPULATION_GENERAL
+            or claim.claim_class == ClaimClass.POPULATION_EFFECT
+        )
         pop_warranted = True
         pop_gaps = []
-        if claim.generalization_scope == GeneralizationScope.POPULATION_GENERAL:
+        if population_requested:
             if ev.biological_replicates_count < 3 or not ev.pseudobulk_aggregated:
                 pop_warranted = False
                 pop_gaps.append("biological_replicates_gte_3_with_pseudobulk")
@@ -780,7 +893,6 @@ class DeterministicWarrantEngine:
                     "replicates aggregated to sample pseudobulk before statistical testing (Love et al. 2014)."
                 )
 
-        population_requested = claim.generalization_scope == GeneralizationScope.POPULATION_GENERAL
         tier_verdicts["population_claim"] = WarrantTierVerdict(
             tier_name="population_claim",
             status=(
@@ -795,7 +907,7 @@ class DeterministicWarrantEngine:
             if population_requested and pop_warranted
             else "Population-level generalization was not requested by this claim."
             if not population_requested
-            else f"Population-level generalization across '{claim.population_scope}' lacks n>=3 biological replicates.",
+            else f"Population-level generalization across '{claim.population_scope or 'cohort'}' lacks n>=3 biological replicates.",
             missing_evidence=pop_gaps,
         )
 
@@ -936,9 +1048,12 @@ class DeterministicWarrantEngine:
         # ----------------------------------------------------------------------
         clinical_warranted = True
         clinical_gaps = []
-        clinical_requested = claim.clinical_actionability in (
-            ClinicalActionability.PRESCRIPTIVE_TREATMENT,
-            ClinicalActionability.DIAGNOSTIC_ASSERTION,
+        clinical_requested = (
+            claim.clinical_actionability in (
+                ClinicalActionability.PRESCRIPTIVE_TREATMENT,
+                ClinicalActionability.DIAGNOSTIC_ASSERTION,
+            )
+            or claim.claim_class == ClaimClass.CLINICAL_ACTIONABILITY
         )
         if clinical_requested:
             if not ev.regulatory_certification:
@@ -981,6 +1096,84 @@ class DeterministicWarrantEngine:
         )
 
         # ----------------------------------------------------------------------
+        # Tier 7: Macromolecular Structural Conformation Warrant
+        # ----------------------------------------------------------------------
+        struct_requested = claim.relationship == ClaimRelationshipType.STRUCTURAL_CONFORMATION
+        struct_warranted = True
+        struct_gaps = []
+        if struct_requested:
+            if ev.plddt_score is not None:
+                if ev.plddt_score < 50.0:
+                    struct_warranted = False
+                    struct_gaps.append("plddt_gte_70_for_rigid_pocket")
+                    rule_violations.append(
+                        f"INTRINSIC_DISORDER_VIOLATION: Asserting rigid pocket/structure on region with pLDDT {ev.plddt_score:.1f} < 50."
+                    )
+                    remedies.append(
+                        "AlphaFold/ESMFold pLDDT < 50 indicates intrinsic disorder (IDR); rigid pocket/docking claims are scientifically invalid."
+                    )
+                elif ev.plddt_score < 70.0:
+                    struct_gaps.append("plddt_gte_70_for_confident_backbone")
+                    remedies.append("pLDDT 50-70 represents low-confidence ribbon; cap claims at candidate screening (FRAGILE).")
+            if ev.interdomain_pae is not None and ev.interdomain_pae > 15.0:
+                struct_gaps.append("pae_lte_15_for_interdomain_orientation")
+                remedies.append("Inter-domain PAE > 15 Å; relative domain orientation is unconstrained.")
+
+        tier_verdicts["structural_conformation_claim"] = WarrantTierVerdict(
+            tier_name="structural_conformation_claim",
+            status=(
+                WarrantTierStatus.NOT_APPLICABLE
+                if not struct_requested
+                else WarrantTierStatus.WARRANTED
+                if struct_warranted
+                else WarrantTierStatus.NOT_WARRANTED
+            ),
+            is_warranted=struct_warranted if struct_requested else False,
+            rationale="Macromolecular structure verified with confident pLDDT metrics."
+            if struct_requested and struct_warranted
+            else "A structural conformation claim was not requested."
+            if not struct_requested
+            else "Structural conformation is unwarranted: low pLDDT indicates intrinsic disorder or unmodeled coordinates.",
+            missing_evidence=struct_gaps,
+        )
+
+        # ----------------------------------------------------------------------
+        # Tier 8: Small-Molecule Bioactivity & Target Binding Warrant
+        # ----------------------------------------------------------------------
+        bioact_requested = claim.relationship == ClaimRelationshipType.BIOACTIVE_BINDING
+        bioact_warranted = True
+        bioact_gaps = []
+        if bioact_requested:
+            if ev.bioactivity_nm is not None and ev.bioactivity_nm > 10000.0:
+                bioact_warranted = False
+                bioact_gaps.append("potency_lte_10000_nm")
+                rule_violations.append(
+                    f"NONSPECIFIC_BINDING_OVERCLAIM: Asserting targeted binding for compound with affinity {ev.bioactivity_nm:.1f} nM > 10 µM."
+                )
+                remedies.append("Binding activities > 10 µM represent weak non-specific binding; targeted claims are refused.")
+            if not ev.dose_response_curve:
+                bioact_gaps.append("concentration_response_titration")
+                remedies.append("Single-concentration screening requires full multi-point concentration-response validation.")
+
+        tier_verdicts["bioactive_binding_claim"] = WarrantTierVerdict(
+            tier_name="bioactive_binding_claim",
+            status=(
+                WarrantTierStatus.NOT_APPLICABLE
+                if not bioact_requested
+                else WarrantTierStatus.WARRANTED
+                if bioact_warranted
+                else WarrantTierStatus.NOT_WARRANTED
+            ),
+            is_warranted=bioact_warranted if bioact_requested else False,
+            rationale="Small-molecule bioactivity confirmed with potent nanomolar affinity."
+            if bioact_requested and bioact_warranted
+            else "A bioactive target binding claim was not requested."
+            if not bioact_requested
+            else "Bioactivity claim unwarranted: affinity exceeds 10 µM medicinal chemistry threshold.",
+            missing_evidence=bioact_gaps,
+        )
+
+        # ----------------------------------------------------------------------
         # Determine Maximum Warranted Claim Class & Ceiling
         # ----------------------------------------------------------------------
         applicable_tiers = [
@@ -1002,12 +1195,18 @@ class DeterministicWarrantEngine:
             warranted_class = ClaimClass.ASSOCIATION
         elif not identity_warranted:
             warranted_class = ClaimClass.DESCRIPTIVE
+        elif not struct_warranted or not bioact_warranted:
+            warranted_class = ClaimClass.DESCRIPTIVE
         else:
             warranted_class = claim.claim_class
 
         # Determine evidence ceiling
         if not assoc_warranted:
             evidence_ceiling = ConclusionMaturity.ABSTAIN.value
+        elif any("INTRINSIC_DISORDER_VIOLATION" in v or "NONSPECIFIC_BINDING_OVERCLAIM" in v for v in rule_violations):
+            evidence_ceiling = ConclusionMaturity.ABSTAIN.value
+        elif struct_requested and ev.plddt_score is not None and ev.plddt_score < 70.0:
+            evidence_ceiling = ConclusionMaturity.FRAGILE.value
         elif not all_tiers_ok:
             if len(rule_violations) > 0:
                 evidence_ceiling = ConclusionMaturity.FRAGILE.value
@@ -1055,6 +1254,8 @@ class DeterministicWarrantEngine:
             remedies=sorted(set(remedies)),
             rule_violations=rule_violations,
             epistemic_summary=summary,
+            has_claim_conflict=bool(claim.metadata.get("has_claim_conflict", False)),
+            conflict_details=claim.metadata.get("conflict_details"),
         )
 
 

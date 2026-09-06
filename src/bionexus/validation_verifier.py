@@ -22,6 +22,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from bionexus.certification import _EVIDENCE, certify_capability
 from bionexus.provenance import get_git_info, sha256_file
+from bionexus.semantic_consistency import verify_semantic_consistency
 from bionexus.versions import VERSION
 
 FLAGSHIP_CAPABILITIES = (
@@ -567,6 +568,32 @@ def verify_validation_artifacts(
             )
 
         details[cap_id] = cap_details
+
+    # Check semantic consistency across reports, comparisons, and certifications
+    semantic_errors = verify_semantic_consistency(root)
+    errors.extend(semantic_errors)
+    details["semantic_consistency_checked"] = True
+    details["semantic_errors"] = semantic_errors
+
+    # Check Evidence Index integrity (BNS-026)
+    evidence_index_path = root / "validation" / "EVIDENCE_INDEX.json"
+    if not evidence_index_path.is_file():
+        errors.append("Missing required artifact: validation/EVIDENCE_INDEX.json")
+    else:
+        try:
+            from bionexus.evidence_index import EvidenceIndex
+            idx = EvidenceIndex.load(evidence_index_path)
+            idx_res = idx.verify_index_integrity(root)
+            if not idx_res["passed"]:
+                for err in idx_res["errors"]:
+                    errors.append(f"Evidence Index integrity error: {err}")
+            try:
+                checked.append(str(evidence_index_path.relative_to(root)))
+            except ValueError:
+                checked.append(str(evidence_index_path))
+            details["evidence_index_checked"] = True
+        except Exception as exc:
+            errors.append(f"Failed loading validation/EVIDENCE_INDEX.json: {exc}")
 
     passed = len(errors) == 0
     return VerificationResult(

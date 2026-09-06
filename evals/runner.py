@@ -90,19 +90,31 @@ def load_eval_cases(
 
     excluded_stems = {Path(x).stem for x in (exclude or [])}
     cases: List[EvalCase] = []
+    seen_ids: set[str] = set()
     yaml_files = [d_dir / f"{suite}.yaml"] if suite and suite != "all" else sorted(d_dir.glob("*.yaml"))
 
     for yf in yaml_files:
         if not yf.is_file():
-            continue
+            raise FileNotFoundError(f"Benchmark suite not found: {yf}")
         if yf.stem in excluded_stems:
             continue
         with open(yf, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
             if not isinstance(data, list):
-                continue
+                raise ValueError(f"Benchmark suite must contain a list of cases: {yf}")
             for item in data:
                 try:
+                    if not isinstance(item, dict):
+                        raise ValueError("case must be a mapping")
+                    case_id = item.get("id")
+                    if not isinstance(case_id, str) or not case_id.strip() or case_id in seen_ids:
+                        raise ValueError(f"empty or duplicate case id: {case_id!r}")
+                    seen_ids.add(case_id)
+                    if not isinstance(item.get("data_metadata", {}), dict):
+                        raise ValueError("data_metadata must be a mapping")
+                    for flag in ("known_limitation", "allow_degraded", "allow_frontier"):
+                        if flag in item and not isinstance(item[flag], bool):
+                            raise ValueError(f"{flag} must be a boolean")
                     cat_val = item["category"]
                     lvl_val = item.get("level")
                     if not lvl_val:
@@ -138,8 +150,10 @@ def load_eval_cases(
                     )
                     cases.append(case)
                 except Exception as e:
-                    print(f"Warning: Skipping invalid eval case {item.get('id')}: {e}")
+                    raise ValueError(f"Invalid benchmark case in {yf}: {e}") from e
 
+    if not cases:
+        raise ValueError("No benchmark cases selected; an empty run cannot establish a passing result")
     return cases
 
 
@@ -153,7 +167,7 @@ def run_single_case(
     failure_reasons: List[str] = []
     actual_cap = None
     actual_status = "PERMITTED"
-    actual_maturity = case.expected_maturity or "UNASSESSED"
+    actual_maturity = "UNASSESSED"
     claim_violations: List[Dict[str, Any]] = []
     skipped = False
     skip_reason: Optional[str] = None
@@ -265,7 +279,9 @@ def run_single_case(
                 if markers is None or len(markers) == 0:
                     failure_reasons.append("L3 Failure: Scanpy marker calling produced empty markers dataframe.")
                 else:
-                    expected = set(case.data_metadata.get("expected_markers", ["CD3D", "MS4A1", "CD14"]))
+                    expected = set(case.data_metadata["expected_genes"])
+                    if not expected:
+                        raise ValueError("expected_genes must not be empty")
                     name_col = (
                         "names"
                         if "names" in markers.columns
@@ -316,11 +332,9 @@ def run_single_case(
                     expected = set(case.data_metadata.get("expected_genes", ["SVG_LEFT"]))
                     if not expected.issubset(top_svgs):
                         failure_reasons.append(f"L3 Failure: Expected SVGs {expected} not recovered in top 5: {top_svgs}")
-                    if "SVG_LEFT" in set(svg["gene"]):
-                        left_i = float(svg.loc[svg["gene"] == "SVG_LEFT", "morans_i"].iloc[0])
-                        min_i = case.data_metadata.get("moran_i_min", 0.30)
-                        if left_i < min_i:
-                            failure_reasons.append(f"L3 Failure: Moran's I {left_i:.3f} < threshold {min_i:.3f}")
+                    from evals.outcome_checks import check_spatial_effects
+
+                    failure_reasons.extend(check_spatial_effects(svg, case.data_metadata))
                 if len(failure_reasons) == 0:
                     actual_status = "PERMITTED"
                     actual_maturity = "SUPPORTED"
@@ -358,13 +372,9 @@ def run_single_case(
                 if table is None or len(table) == 0:
                     failure_reasons.append("L3 Failure: PyDESeq2 Wald test produced empty results table.")
                 else:
-                    top_degs = table.sort_values("pvalue").head(5)["gene"].astype(str).tolist()
-                    expected_de = case.data_metadata.get("expected_de_genes", ["g0"])
-                    for g in expected_de:
-                        if g not in top_degs:
-                            failure_reasons.append(
-                                f"L3 Failure: Planted DEG '{g}' not found in top PyDESeq2 findings: {top_degs}"
-                            )
+                    from evals.outcome_checks import check_de_recovery
+
+                    failure_reasons.extend(check_de_recovery(table, case.data_metadata))
                 if len(failure_reasons) == 0:
                     actual_status = "PERMITTED"
                     actual_maturity = "SUPPORTED"
@@ -598,7 +608,10 @@ def run_single_case(
                 has_external_validation=bool(case.data_metadata.get("external_validation", False)),
                 has_fdr_correction=case.data_metadata.get("multiple_testing_correction"),
                 min_replicates_per_condition=case.data_metadata.get("min_replicates_per_condition"),
+                annotation_metadata=case.data_metadata,
             )
+            if actual_status == "ABSTAIN":
+                clamped = "ABSTAIN"
             actual_maturity = clamped
             if case.expected_maturity and clamped.upper() != str(case.expected_maturity).upper():
                 failure_reasons.append(
@@ -715,6 +728,7 @@ def run_benchmark(
         union_total=union_total,
         union_passed=union_passed,
         union_accuracy=union_accuracy,
+        selection={"suite": suite or "all", "level": level or "all", "excluded_suites": list(exclude or [])},
     )
 
     # Tamper-evident audit receipt (BNS-006 / eval-receipt chain v1): append the
@@ -754,6 +768,17 @@ def format_benchmark_markdown(report: BenchmarkReport) -> str:
     """Format benchmark report as a structured Multi-Tier Markdown document (BioNexus Eval 2.0)."""
     lines: List[str] = []
     lines.append("# [BioNexus Eval 2.0] Multi-Tier Scientific Agent Benchmark")
+    selection = report.selection
+    lines.append(
+        f"**Selection**: suite=`{selection.get('suite', 'unspecified')}`, "
+        f"level=`{selection.get('level', 'unspecified')}`, "
+        f"excluded suites=`{selection.get('excluded_suites', [])}`. Scores cover this selection only."
+    )
+    lines.append(
+        "> **Evidence scope**: L1 checks routing contracts; replay L2 checks scripted text; "
+        "planted-signal L3 executes backends on synthetic fixtures. Passing these checks does not "
+        "establish independent scientific validation or an APPROVED empirical calibration profile.\n"
+    )
     lines.append(
         f"**Timestamp**: `{report.timestamp}` | **Gating Cases**: `{report.total_cases}` | "
         f"**Passed**: `{report.passed_cases}` | **Failed**: `{report.failed_cases}` | "

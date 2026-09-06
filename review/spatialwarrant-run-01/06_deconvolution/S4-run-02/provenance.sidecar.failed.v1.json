@@ -1,0 +1,8 @@
+{
+  "status": "PROVENANCE_LIBRARY_CALL_FAILED",
+  "error_type": "ModuleNotFoundError",
+  "error": "No module named 'jsonschema'",
+  "technical_inputs_and_hashes_retained": true,
+  "machine_verdict": "PENDING",
+  "biological_conclusion": "PENDING"
+}

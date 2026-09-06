@@ -1,0 +1,8 @@
+{
+  "status": "EXTERNAL_QUERIES_COMPLETED",
+  "stage": "external_queries_complete",
+  "percent": 95,
+  "completed": 180,
+  "total": 180,
+  "updated_at_utc": "2026-09-06T01:46:38.932260+00:00"
+}

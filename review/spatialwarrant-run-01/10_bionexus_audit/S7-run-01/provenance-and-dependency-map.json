@@ -1,0 +1,67 @@
+{
+  "nodes": [
+    "Wu study",
+    "scRNA source",
+    "six Visium sections",
+    "S2 reference",
+    "S3 frozen labels/geometry",
+    "S4 Tangram/NNLS/ingest",
+    "S5 niches",
+    "S6 pseudobulk",
+    "S6 LIANA",
+    "result-selected external searches",
+    "10x technical transfer",
+    "S7 review"
+  ],
+  "edges": [
+    [
+      "Wu study",
+      "scRNA source"
+    ],
+    [
+      "Wu study",
+      "six Visium sections"
+    ],
+    [
+      "scRNA source",
+      "S2 reference"
+    ],
+    [
+      "six Visium sections",
+      "S3 frozen labels/geometry"
+    ],
+    [
+      "S2 reference",
+      "S4 Tangram/NNLS/ingest"
+    ],
+    [
+      "S3 frozen labels/geometry",
+      "S4 Tangram/NNLS/ingest"
+    ],
+    [
+      "S4 Tangram/NNLS/ingest",
+      "S5 niches"
+    ],
+    [
+      "S3 frozen labels/geometry",
+      "S6 pseudobulk"
+    ],
+    [
+      "S2 reference",
+      "S6 LIANA"
+    ],
+    [
+      "S6 LIANA",
+      "result-selected external searches"
+    ],
+    [
+      "S6 pseudobulk",
+      "result-selected external searches"
+    ],
+    [
+      "S5 niches",
+      "10x technical transfer"
+    ]
+  ],
+  "independence_rule": "Shared study/reference, derivative analyses and result-selected literature are not separate independent confirmations."
+}

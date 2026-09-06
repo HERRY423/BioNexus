@@ -1,0 +1,169 @@
+{
+  "target": {
+    "kind": "liana_interaction",
+    "rank": 1,
+    "name": "MIF CD74_CXCR4"
+  },
+  "source": "string",
+  "returncode": 0,
+  "elapsed_seconds": 2.0705046000075527,
+  "completed_at_utc": "2026-09-06T01:47:51.107913+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\requests\\string\\liana_interaction-01-MIF_CD74_CXCR4.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\raw\\string\\liana_interaction-01-MIF_CD74_CXCR4.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "string-db-org",
+    "path": "network",
+    "method": "POST",
+    "status_code": 200,
+    "record_path": "$",
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\raw\\string\\liana_interaction-01-MIF_CD74_CXCR4.raw",
+    "warnings": [],
+    "record_count_returned": 10,
+    "record_count_available": 37,
+    "truncated": true,
+    "records": [
+      {
+        "stringId_A": "9606.ENSP00000009530",
+        "stringId_B": "9606.ENSP00000295683",
+        "preferredName_A": "CD74",
+        "preferredName_B": "CXCR1",
+        "ncbiTaxonId": "9606",
+        "score": 0.484,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.135,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000009530",
+        "stringId_B": "9606.ENSP00000333041",
+        "preferredName_A": "CD74",
+        "preferredName_B": "C14orf180",
+        "ncbiTaxonId": "9606",
+        "score": 0.487,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000009530",
+        "stringId_B": "9606.ENSP00000293778",
+        "preferredName_A": "CD74",
+        "preferredName_B": "CXCL16",
+        "ncbiTaxonId": "9606",
+        "score": 0.551,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.14,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000009530",
+        "stringId_B": "9606.ENSP00000412457",
+        "preferredName_A": "CD74",
+        "preferredName_B": "F6UB75_HUMAN",
+        "ncbiTaxonId": "9606",
+        "score": 0.668,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.193,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000009530",
+        "stringId_B": "9606.ENSP00000381386",
+        "preferredName_A": "CD74",
+        "preferredName_B": "DDT",
+        "ncbiTaxonId": "9606",
+        "score": 0.965,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.055,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000009530",
+        "stringId_B": "9606.ENSP00000386884",
+        "preferredName_A": "CD74",
+        "preferredName_B": "CXCR4",
+        "ncbiTaxonId": "9606",
+        "score": 0.994,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.147,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000009530",
+        "stringId_B": "9606.ENSP00000319635",
+        "preferredName_A": "CD74",
+        "preferredName_B": "CXCR2",
+        "ncbiTaxonId": "9606",
+        "score": 0.994,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.126,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000009530",
+        "stringId_B": "9606.ENSP00000215754",
+        "preferredName_A": "CD74",
+        "preferredName_B": "MIF",
+        "ncbiTaxonId": "9606",
+        "score": 0.999,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.079,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000215754",
+        "stringId_B": "9606.ENSP00000259631",
+        "preferredName_A": "MIF",
+        "preferredName_B": "CCL27",
+        "ncbiTaxonId": "9606",
+        "score": 0.431,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000215754",
+        "stringId_B": "9606.ENSP00000295683",
+        "preferredName_A": "MIF",
+        "preferredName_B": "CXCR1",
+        "ncbiTaxonId": "9606",
+        "score": 0.551,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0,
+        "_truncated_keys": 3
+      }
+    ],
+    "sources": [
+      {
+        "name": "STRING",
+        "url": "https://string-db.org/api/json/network",
+        "retrieved_at": "2026-09-06T01:47:51.084795+00:00",
+        "supports_claim": true,
+        "kind": "evidence",
+        "request_url": "https://string-db.org/api/json/network"
+      }
+    ]
+  },
+  "stderr": ""
+}

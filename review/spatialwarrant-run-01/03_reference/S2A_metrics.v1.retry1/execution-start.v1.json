@@ -1,0 +1,28 @@
+{
+  "status": "RUNNING",
+  "stage": "S2A_metrics_only",
+  "started_at_utc": "2026-09-05T11:43:33.527993+00:00",
+  "route": "local Python execution",
+  "registered_NGS_workflow_run": "NONE",
+  "parent_plan_sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82",
+  "S2A_supplement_sha256": "e6084a97821bc10eecc1060afde4bd049092446a1c1ad02427bd78c6e35086af",
+  "retry_lineage": {
+    "failed_output_directory": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\03_reference\\S2A_metrics.v1",
+    "failed_script_sha256": "3539e9de7865a7e5f01f8135ccee8dfb516dd0eae9815e0f7ed9b02591999e20",
+    "failure_record_sha256": "8613e81eaf5a8ecf97953f0eb2b5477dd5823717cbf06112a9c4f488ec576767",
+    "retry_script_sha256": "c94fd2bc5acc36330b32409fdbb79c0ef39f2c664efc52e36867462de83ab212",
+    "failed_directory_preserved": true
+  },
+  "free_C_bytes_before_preflight": 41477578752,
+  "free_C_bytes_after_write_check": 41477054464,
+  "write_check": {
+    "started_at_utc": "2026-09-05T11:43:35.200805+00:00",
+    "finished_at_utc": "2026-09-05T11:43:35.217973+00:00",
+    "bytes": 65,
+    "flush_and_fsync": true,
+    "readback_match": true,
+    "temporary_file_deleted": true,
+    "temporary_parent": "00_plan"
+  },
+  "scope": "Technical QC metrics only; no filtering or biological interpretation"
+}

@@ -252,6 +252,30 @@ def _finding(
     )
 
 
+def _strip_code_comments(source: str) -> str:
+    """
+    Strip comments from source code so text annotations and TODO comments
+    cannot spoof or suppress static audit findings.
+    """
+    cleaned_lines = []
+    for line in source.splitlines():
+        in_single = False
+        in_double = False
+        out_chars = []
+        for i, ch in enumerate(line):
+            if ch == "'" and not in_double:
+                if i == 0 or line[i - 1] != "\\":
+                    in_single = not in_single
+            elif ch == '"' and not in_single:
+                if i == 0 or line[i - 1] != "\\":
+                    in_double = not in_double
+            elif ch == "#" and not in_single and not in_double:
+                break
+            out_chars.append(ch)
+        cleaned_lines.append("".join(out_chars))
+    return "\n".join(cleaned_lines)
+
+
 def audit_analysis(path: str | Path) -> AnalysisAuditResult:
     """
     Run the full static scientific audit over a notebook or script.
@@ -262,6 +286,7 @@ def audit_analysis(path: str | Path) -> AnalysisAuditResult:
     doc = load_analysis_document(path)
     findings: List[AuditFinding] = []
     code = doc.code_text
+    executable_code = _strip_code_comments(code)
     cells = doc.code_cells
     prose = doc.markdown_text
 
@@ -283,7 +308,7 @@ def audit_analysis(path: str | Path) -> AnalysisAuditResult:
     de_cell = cell_of(_DE_CALL)
     if de_cell is not None:
         cond_groupby = _CONDITION_GROUPBY.search(de_cell.source)
-        if cond_groupby and not _PSEUDOBULK_MARKER.search(code):
+        if cond_groupby and not _PSEUDOBULK_MARKER.search(executable_code):
             findings.append(
                 _finding(
                     "BFA-001", "cell-level pseudoreplication", "BN-F002", "FATAL",
@@ -296,7 +321,7 @@ def audit_analysis(path: str | Path) -> AnalysisAuditResult:
                 )
             )
         # BFA-005 inappropriate statistical unit (donor column exists but unused)
-        elif _DONOR_COLUMN_REF.search(code) and cond_groupby and not _PSEUDOBULK_MARKER.search(code):
+        elif _DONOR_COLUMN_REF.search(code) and cond_groupby and not _PSEUDOBULK_MARKER.search(executable_code):
             findings.append(
                 _finding(
                     "BFA-005", "inappropriate statistical unit", "BN-F002", "FATAL",
@@ -309,7 +334,7 @@ def audit_analysis(path: str | Path) -> AnalysisAuditResult:
             )
 
     # BFA-002 raw/log matrix confusion (BN-F001)
-    if _COUNT_MODEL.search(code) and _LOG_NORM.search(code) and not _RAW_LAYER_REF.search(code):
+    if _COUNT_MODEL.search(code) and _LOG_NORM.search(code) and not _RAW_LAYER_REF.search(executable_code):
         cell = cell_of(_COUNT_MODEL) or cells[0]
         findings.append(
             _finding(
@@ -352,7 +377,7 @@ def audit_analysis(path: str | Path) -> AnalysisAuditResult:
             )
 
     # BFA-006 annotation without evidence (BN-F003)
-    if _LABEL_MAP_DEF.search(code) and _CELLTYPE_LITERAL.search(code) and not _REFERENCE_TOOL.search(code):
+    if _LABEL_MAP_DEF.search(code) and _CELLTYPE_LITERAL.search(code) and not _REFERENCE_TOOL.search(executable_code):
         cell = cell_of(_LABEL_MAP_DEF) or cells[0]
         findings.append(
             _finding(

@@ -1,0 +1,68 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 18,
+    "name": "MACC1"
+  },
+  "source": "uniprot",
+  "returncode": 0,
+  "elapsed_seconds": 5.102770100027556,
+  "completed_at_utc": "2026-09-06T01:47:52.980145+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\requests\\uniprot\\gene-18-MACC1.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\raw\\uniprot\\gene-18-MACC1.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "rest-uniprot-org",
+    "path": "uniprotkb/search",
+    "method": "GET",
+    "status_code": 200,
+    "record_path": "results",
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\raw\\uniprot\\gene-18-MACC1.raw",
+    "warnings": [],
+    "record_count_returned": 1,
+    "record_count_available": 1,
+    "truncated": false,
+    "records": [
+      {
+        "entryType": "UniProtKB reviewed (Swiss-Prot)",
+        "primaryAccession": "Q6ZN28",
+        "uniProtkbId": "MACC1_HUMAN",
+        "proteinDescription": {
+          "recommendedName": "...",
+          "alternativeNames": "..."
+        },
+        "genes": [
+          "..."
+        ],
+        "comments": [
+          "..."
+        ],
+        "extraAttributes": {
+          "uniParcId": "UPI00001B2F47",
+          "canonical_url": "https://www.uniprot.org/uniparc/UPI00001B2F47/entry"
+        },
+        "canonical_url": "https://www.uniprot.org/uniprotkb/Q6ZN28/entry",
+        "canonical_urls": [
+          "https://www.uniprot.org/uniprotkb/Q6ZN28/entry",
+          "https://www.uniprot.org/uniparc/UPI00001B2F47/entry"
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "name": "UniProt",
+        "url": "https://rest.uniprot.org/uniprotkb/search?query=REDACTED&fields=accession%2Cid%2Cgene_names%2Cprotein_name%2Ccc_function&size=10&format=json",
+        "retrieved_at": "2026-09-06T01:47:52.953593+00:00",
+        "supports_claim": true,
+        "kind": "evidence",
+        "request_url": "https://rest.uniprot.org/uniprotkb/search?query=REDACTED&fields=accession%2Cid%2Cgene_names%2Cprotein_name%2Ccc_function&size=10&format=json",
+        "canonical_url": "https://www.uniprot.org/uniprotkb/Q6ZN28/entry",
+        "canonical_urls": [
+          "https://www.uniprot.org/uniprotkb/Q6ZN28/entry",
+          "https://www.uniprot.org/uniparc/UPI00001B2F47/entry"
+        ]
+      }
+    ]
+  },
+  "stderr": ""
+}

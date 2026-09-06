@@ -1,0 +1,24 @@
+{
+  "source": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\10x_blockA_section1\\V1_Breast_Cancer_Block_A_Section_1_filtered_feature_bc_matrix.h5",
+  "sha256": "b3cbb6ead60afad848ebcc07a34835613d9d2d79e416ad8300b210d9de584b65",
+  "shape_genes_spots": [
+    36601,
+    3798
+  ],
+  "feature_count": 36601,
+  "genomes": [
+    "GRCh38"
+  ],
+  "feature_types": {
+    "Gene Expression": 36601
+  },
+  "barcode_unique": true,
+  "all_matrix_barcodes_have_coordinates": true,
+  "all_matrix_barcodes_in_tissue": true,
+  "coordinate_rows": 4992,
+  "spot_level_producer_pathology": "NOT_SUPPLIED_IN_DOWNLOADED_SPATIAL_BUNDLE",
+  "patient_key": "UNKNOWN",
+  "technical_transfer": "PENDING_NOT_RUN",
+  "counts_read": "NO; HDF5 identifier and shape datasets only",
+  "biological_validation": "NOT_ESTABLISHED"
+}

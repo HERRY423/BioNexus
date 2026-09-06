@@ -1,0 +1,5 @@
+{
+  "status": "NOT_IDENTIFIABLE",
+  "reason": "CID4535 Visium spots are mixtures and no cell-type-resolved boundary expression measurement is available; ingest/composition labels cannot create such expression.",
+  "overall_scRNA_rank_aggregate_status": "COMPLETED"
+}

@@ -1,0 +1,169 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 17,
+    "name": "SYCP3"
+  },
+  "source": "string",
+  "returncode": 0,
+  "elapsed_seconds": 2.213133499986725,
+  "completed_at_utc": "2026-09-06T02:01:09.889206+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\string\\gene-17-SYCP3.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\string\\gene-17-SYCP3.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "string-db-org",
+    "path": "network",
+    "method": "POST",
+    "status_code": 200,
+    "record_path": "$",
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\string\\gene-17-SYCP3.raw",
+    "warnings": [],
+    "record_count_returned": 10,
+    "record_count_available": 45,
+    "truncated": true,
+    "records": [
+      {
+        "stringId_A": "9606.ENSP00000263187",
+        "stringId_B": "9606.ENSP00000280358",
+        "preferredName_A": "MSH4",
+        "preferredName_B": "TEX12",
+        "ncbiTaxonId": "9606",
+        "score": 0.481,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.086,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000263187",
+        "stringId_B": "9606.ENSP00000293695",
+        "preferredName_A": "MSH4",
+        "preferredName_B": "SYCE2",
+        "ncbiTaxonId": "9606",
+        "score": 0.546,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.055,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000263187",
+        "stringId_B": "9606.ENSP00000303978",
+        "preferredName_A": "MSH4",
+        "preferredName_B": "SYCE1",
+        "ncbiTaxonId": "9606",
+        "score": 0.637,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.043,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000263187",
+        "stringId_B": "9606.ENSP00000358535",
+        "preferredName_A": "MSH4",
+        "preferredName_B": "SYCP1",
+        "ncbiTaxonId": "9606",
+        "score": 0.688,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.067,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000263187",
+        "stringId_B": "9606.ENSP00000369497",
+        "preferredName_A": "MSH4",
+        "preferredName_B": "BRCA2",
+        "ncbiTaxonId": "9606",
+        "score": 0.731,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.102,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000263187",
+        "stringId_B": "9606.ENSP00000385055",
+        "preferredName_A": "MSH4",
+        "preferredName_B": "HORMAD2",
+        "ncbiTaxonId": "9606",
+        "score": 0.936,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.143,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000263187",
+        "stringId_B": "9606.ENSP00000355167",
+        "preferredName_A": "MSH4",
+        "preferredName_B": "HORMAD1",
+        "ncbiTaxonId": "9606",
+        "score": 0.942,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.104,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000263187",
+        "stringId_B": "9606.ENSP00000376658",
+        "preferredName_A": "MSH4",
+        "preferredName_B": "SYCP3",
+        "ncbiTaxonId": "9606",
+        "score": 0.947,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.054,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000280358",
+        "stringId_B": "9606.ENSP00000385055",
+        "preferredName_A": "TEX12",
+        "preferredName_B": "HORMAD2",
+        "ncbiTaxonId": "9606",
+        "score": 0.608,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.065,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000280358",
+        "stringId_B": "9606.ENSP00000355167",
+        "preferredName_A": "TEX12",
+        "preferredName_B": "HORMAD1",
+        "ncbiTaxonId": "9606",
+        "score": 0.76,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.085,
+        "_truncated_keys": 3
+      }
+    ],
+    "sources": [
+      {
+        "name": "STRING",
+        "url": "https://string-db.org/api/json/network",
+        "retrieved_at": "2026-09-06T02:01:09.864595+00:00",
+        "supports_claim": true,
+        "kind": "evidence",
+        "request_url": "https://string-db.org/api/json/network"
+      }
+    ]
+  },
+  "stderr": ""
+}

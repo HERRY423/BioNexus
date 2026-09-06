@@ -1,0 +1,48 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 15,
+    "name": "MIXL1"
+  },
+  "source": "pubmed",
+  "returncode": 0,
+  "elapsed_seconds": 1.7195211999933235,
+  "completed_at_utc": "2026-09-06T02:01:07.549055+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\pubmed\\gene-15-MIXL1.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\pubmed\\gene-15-MIXL1.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "ncbi-entrez",
+    "endpoint": "esearch",
+    "database": "pubmed",
+    "record_path": "esearchresult.idlist",
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\pubmed\\gene-15-MIXL1.raw",
+    "warnings": [],
+    "record_count_returned": 4,
+    "record_count_available": 4,
+    "truncated": false,
+    "records": [
+      "37459556",
+      "32448362",
+      "18336814",
+      "31348575"
+    ],
+    "sources": [
+      {
+        "name": "NCBI Entrez",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=REDACTED&retmode=json&retmax=10&sort=relevance",
+        "retrieved_at": "2026-09-06T02:01:07.524052+00:00",
+        "supports_claim": true,
+        "kind": "evidence",
+        "request_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=REDACTED&retmode=json&retmax=10&sort=relevance",
+        "canonical_urls": [
+          "https://pubmed.ncbi.nlm.nih.gov/37459556/",
+          "https://pubmed.ncbi.nlm.nih.gov/32448362/",
+          "https://pubmed.ncbi.nlm.nih.gov/18336814/",
+          "https://pubmed.ncbi.nlm.nih.gov/31348575/"
+        ]
+      }
+    ]
+  },
+  "stderr": ""
+}

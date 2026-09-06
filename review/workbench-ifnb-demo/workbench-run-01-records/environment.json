@@ -1,0 +1,11 @@
+{
+  "captured_at": "2026-09-04T16:30:42.495006+00:00",
+  "host": "Codex desktop local task",
+  "host_version": null,
+  "session_id": null,
+  "python_executable": "C:\\Users\\13264\\anaconda3\\python.exe",
+  "python_version": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "working_directory": "C:\\Plugin\\BioNexus",
+  "execution_kind": "local Python subprocess, not an NGS registered workflow"
+}

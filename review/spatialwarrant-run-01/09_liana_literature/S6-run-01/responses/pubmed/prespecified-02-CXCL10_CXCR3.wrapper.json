@@ -1,0 +1,60 @@
+{
+  "target": {
+    "kind": "prespecified",
+    "rank": 2,
+    "name": "CXCL10 CXCR3"
+  },
+  "source": "pubmed",
+  "returncode": 0,
+  "elapsed_seconds": 2.0444738999940455,
+  "completed_at_utc": "2026-09-06T01:46:36.124538+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\pubmed\\prespecified-02-CXCL10_CXCR3.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\pubmed\\prespecified-02-CXCL10_CXCR3.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "ncbi-entrez",
+    "endpoint": "esearch",
+    "database": "pubmed",
+    "record_path": "esearchresult.idlist",
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\pubmed\\prespecified-02-CXCL10_CXCR3.raw",
+    "warnings": [],
+    "record_count_returned": 10,
+    "record_count_available": 10,
+    "truncated": false,
+    "records": [
+      "39636224",
+      "36092638",
+      "36180422",
+      "37352379",
+      "31636098",
+      "31097342",
+      "38518770",
+      "40447617",
+      "34171432",
+      "39965084"
+    ],
+    "sources": [
+      {
+        "name": "NCBI Entrez",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=REDACTED&retmode=json&retmax=10&sort=relevance",
+        "retrieved_at": "2026-09-06T01:46:36.098869+00:00",
+        "supports_claim": true,
+        "kind": "evidence",
+        "request_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=REDACTED&retmode=json&retmax=10&sort=relevance",
+        "canonical_urls": [
+          "https://pubmed.ncbi.nlm.nih.gov/39636224/",
+          "https://pubmed.ncbi.nlm.nih.gov/36092638/",
+          "https://pubmed.ncbi.nlm.nih.gov/36180422/",
+          "https://pubmed.ncbi.nlm.nih.gov/37352379/",
+          "https://pubmed.ncbi.nlm.nih.gov/31636098/",
+          "https://pubmed.ncbi.nlm.nih.gov/31097342/",
+          "https://pubmed.ncbi.nlm.nih.gov/38518770/",
+          "https://pubmed.ncbi.nlm.nih.gov/40447617/",
+          "https://pubmed.ncbi.nlm.nih.gov/34171432/",
+          "https://pubmed.ncbi.nlm.nih.gov/39965084/"
+        ]
+      }
+    ]
+  },
+  "stderr": ""
+}

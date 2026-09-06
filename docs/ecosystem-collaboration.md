@@ -257,3 +257,99 @@ result = adjudicate_ecosystem_claim(assessment, record)
 assert result.final_decision == "ACCEPT_FOR_EXPLORATION"
 assert result.preserved_warrant == assessment.warrant
 ```
+
+## Epistemic Lineage Graph: Preventing Double-Counting in the Connector Era
+
+In the multi-connector ecosystem, different connectors often return distinct payloads that represent the same underlying study. For example:
+- PubMed returns a journal publication (PMID:12345).
+- Consensus returns an AI summary derived from PMID:12345.
+- bioRxiv returns a preprint of the study that became PMID:12345.
+- ChEMBL returns a primary biochemical assay result.
+- Open Targets returns an evidence string mirroring the ChEMBL assay.
+
+If an agent or evaluator interprets "5 connectors agree" as 5 independent replications, this produces severe **epistemic double counting**.
+
+BioNexus introduces the **Evidence Independence Graph / Epistemic Lineage Graph** (`bionexus.epistemic_lineage`). Each evidence envelope can declare:
+- `origin_id`: Canonical stable identifier (e.g., `PMID:12345`, `doi:...`, `CHEMBL:...`).
+- `origin_type`: `primary_study`, `preprint`, `database_mirror`, `derived_synthesis`, `meta_analysis`, `computational_model`, or `assay_result`.
+- `derived_from`: Identifiers this node was computed or synthesized from.
+- `same_study_as`: Equivalence pointers to other manifestations of the same study.
+- `aggregates`: Identifiers aggregated into a multi-study synthesis.
+- `dataset_identity`: Normalized underlying raw/processed dataset ID (e.g. `GEO:GSE...`).
+- `assay_identity`: Normalized wet-lab or biochemical assay ID.
+- `primary_source_ids`: Resolved root primary source IDs.
+
+### Declared lineage diagnostics
+
+Identity and derivation are different relationships. `same_study_as`, matching
+origin IDs and identical payloads establish declared equivalence. `derived_from`,
+`aggregates` and `primary_source_ids` are directed dependencies: a synthesis of two
+studies keeps both roots and does not merge the studies. `cites` alone does not
+establish dependence. Hosts must supply consistent, namespaced source identifiers;
+BioNexus does not discover undocumented aliases or authenticate these declarations.
+
+The EvidenceCard and audit report expose:
+
+- `independent_origins`: legacy field name for the number of resolved **declared
+  source origins**, not a verified count of independent replications.
+- `primary_studies`: equivalent groups explicitly declared `primary_study` or
+  `preprint`; peer review status, database mirrors and unknown origins do not
+  create primary studies.
+- `lineage_roots`: a list of source roots per evidence object. Multi-source
+  syntheses can belong to multiple `study_clusters`.
+- `unresolved_evidence_ids`: missing origins, dangling source references and
+  cyclic derivations, including cycles that also reach a known source.
+- `independence_status`: always `NOT_ESTABLISHED` for this declaration-only graph.
+- `effective_independence_ratio`: legacy diagnostic, declared origin count divided
+  by object count; it is not a calibrated independence probability or warrant.
+
+Support selection prefers original studies over summaries, regardless of input
+order. Shared datasets, assays and model identities also limit support counting
+without asserting that the studies themselves are identical. This conservative
+selection is deterministic; it does not search for an optimal independent set.
+Excluded support remains visible under `depends_on`, and contradictions remain
+visible under `contradicted_by`.
+
+A named, receipted adjudication may still establish bounded claim support when
+lineage is unresolved. It does not establish independent replication. The graph's
+strict `get_independent_support_set()` excludes unresolved and unknown IDs; the
+claim ledger explicitly preserves adjudicated unresolved support and emits
+`SOURCE_LINEAGE_UNRESOLVED`. Final acceptance remains `PENDING_HUMAN_DECISION`.
+
+### Receipt verification boundary
+
+The receipt module validates self-consistent hash bindings. A receipt can be
+edited and rehashed, so the hash by itself authenticates neither a producer nor
+execution history. Level 1 host context and Level 2 attestation dictionaries remain
+**declarations**. The current module has no trusted observer/provider signature
+verification path: every receipt tier supplies zero scientific evidence factors,
+including when consumed through a receipt log or `extract_evidence_factors()`.
+Level 1/2 emit `ATTESTATION_NOT_VERIFIED`; backend fidelity and external validation
+remain `UNASSESSED`. A future verifier needs an external trust anchor, signature
+binding to the exact execution and scoped roles before any factor promotion.
+
+Regression coverage: `tests/unit/test_epistemic_lineage.py`,
+`tests/unit/test_ecosystem_claim.py`, and `tests/unit/test_tool_receipt.py`.
+These are maintainer-authored engineering checks, not external scientific validation.
+
+## BNS-019 as the Scientific Semantic Layer
+
+Modeled after OpenTelemetry Semantic Conventions, BNS-019 describes the meaning of scientific artifacts without executing pipelines:
+- Connectors emit standard envelopes:
+  `{"claim.type": "associative", "evidence.type": ["computational_result"], "biological.unit": "pathway", "warrant.status": "unassessed"}`
+- Connectors do not need to install the full BioNexus suite.
+- In Node/TypeScript environments, MCP tools and web platforms import the zero-dependency `@bionexus/scientific-semconv` reference package:
+  `import { createObservationEnvelope } from "@bionexus/scientific-semconv"`
+
+## Connector Profile Registry
+
+BioNexus Core knows only the protocol. To prevent BioNexus from sliding into a proprietary MCP marketplace or router, connector behaviors are declared as community-maintained scientific contracts in `standards/connector-profiles/profiles/` (e.g. `enrichr.yaml`, `pubmed.yaml`, `chembl.yaml`).
+
+Each profile specifies:
+- `production_mode`: Epistemic origin class (`computational_inference`, `curated_database`, `literature_retrieval`, etc.).
+- `required_context`: Mandatory fields for intake integrity.
+- `default_evidence_role`: Base role (`supporting`, `context_only`).
+- `maximum_default_claim`: Maximum claim level reachable without explicit review.
+- `forbidden_claims`: Prohibited inferences (e.g. Enrichr cannot claim `causal_mechanism` or `clinical_actionability`).
+- `independence`: Explicit rules defining replication boundaries.
+- `semantic_profile`: Canonical BNS-019 attributes.

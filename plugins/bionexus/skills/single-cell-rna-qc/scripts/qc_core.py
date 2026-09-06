@@ -12,9 +12,23 @@ from typing import Optional
 
 import anndata as ad
 import numpy as np
-import scanpy as sc
 import scipy.sparse as sp
 from scipy.stats import median_abs_deviation
+
+
+def _scanpy_pp():
+    """Load the optional Scanpy preprocessing surface only when it is needed.
+
+    Sparse QC metrics are implemented locally and must remain usable without
+    paying Scanpy's import cost during module import or pytest collection.
+    """
+    try:
+        from scanpy import pp
+    except ImportError as exc:  # pragma: no cover - exercised in core-only environments
+        raise RuntimeError(
+            "This QC operation requires the optional Scanpy backend; install the goldchain extra."
+        ) from exc
+    return pp
 
 
 def calculate_qc_metrics_fast(
@@ -132,7 +146,9 @@ def calculate_qc_metrics_fast(
 
     else:
         # Standard Scanpy call for dense/custom layers
-        sc.pp.calculate_qc_metrics(adata, qc_vars=["mt", "ribo", "hb"], percent_top=None, log1p=False, inplace=True)
+        _scanpy_pp().calculate_qc_metrics(
+            adata, qc_vars=["mt", "ribo", "hb"], percent_top=None, log1p=False, inplace=True
+        )
 
     if not inplace:
         return adata
@@ -266,10 +282,10 @@ def filter_genes(adata, min_cells=20, min_counts=None, inplace=True):
         adata = adata.copy()
 
     if min_cells is not None:
-        sc.pp.filter_genes(adata, min_cells=min_cells)
+        _scanpy_pp().filter_genes(adata, min_cells=min_cells)
 
     if min_counts is not None:
-        sc.pp.filter_genes(adata, min_counts=min_counts)
+        _scanpy_pp().filter_genes(adata, min_counts=min_counts)
 
     if not inplace:
         return adata

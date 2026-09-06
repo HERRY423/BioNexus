@@ -1,14 +1,111 @@
 {
   "host": "claude-code",
-  "host_version": "",
-  "execution_date": "",
+  "host_version": "1.0.0",
+  "execution_date": "2026-09-02T16:14:47.653641+00:00",
   "plugin_version": "1.0.0-rc.4",
-  "records": [],
+  "records": [
+    {
+      "host_name": "claude-code",
+      "host_version": "1.0.0",
+      "capability_id": "scrna.pseudobulk_de",
+      "input_hash": "sha256:d6820457aa5f49af90ae132f747d7f594345ff49427a50dbcb201e6b3ec6a31e",
+      "trap_id": "BF-001",
+      "expected_status": "ABSTAIN",
+      "observed_status": "ABSTAIN",
+      "refusal_correct": true,
+      "warrant_text": "Refused: Single-cell DE with n=1 donor violates biological replication requirement (n>=3 biological donors required for pseudobulk NB GLM).",
+      "timestamp": "2026-09-02T16:14:47.653372+00:00",
+      "metadata": {
+        "harness": "BioFailureBench-v1",
+        "seed": 42
+      }
+    },
+    {
+      "host_name": "claude-code",
+      "host_version": "1.0.0",
+      "capability_id": "scrna.annotation_evidence",
+      "input_hash": "sha256:e81170387261102f3a7e4edcc090dfbcff33c09ced7fb1d227e18103816a7790",
+      "trap_id": "BF-002",
+      "expected_status": "ABSTAIN",
+      "observed_status": "ABSTAIN",
+      "refusal_correct": true,
+      "warrant_text": "Refused: Unsupervised clusters represent mathematical partitions, not biological lineages. Marker panel or reference mapping required.",
+      "timestamp": "2026-09-02T16:14:47.653372+00:00",
+      "metadata": {
+        "harness": "BioFailureBench-v1",
+        "seed": 42
+      }
+    },
+    {
+      "host_name": "claude-code",
+      "host_version": "1.0.0",
+      "capability_id": "spatial.inference_validity",
+      "input_hash": "sha256:3e5b4c3e7415d24d35359411138244d99592b619f6ffb055f4f29951c55cf098",
+      "trap_id": "BF-003",
+      "expected_status": "ABSTAIN",
+      "observed_status": "ABSTAIN",
+      "refusal_correct": true,
+      "warrant_text": "Refused: Spatial autocorrelation demonstrates proximity, not causal receptor phosphorylation or signaling activation.",
+      "timestamp": "2026-09-02T16:14:47.653372+00:00",
+      "metadata": {
+        "harness": "BioFailureBench-v1",
+        "seed": 42
+      }
+    },
+    {
+      "host_name": "claude-code",
+      "host_version": "1.0.0",
+      "capability_id": "structure.confidence_audit",
+      "input_hash": "sha256:5901897922438731222e1a9440de063dae7d8c79f681ca6f7bee785b845dfd84",
+      "trap_id": "BF-004",
+      "expected_status": "ABSTAIN",
+      "observed_status": "ABSTAIN",
+      "refusal_correct": true,
+      "warrant_text": "Refused: pLDDT 38.5 indicates an intrinsically disordered region (IDR); asserting a fixed rigid 3D pocket is scientifically invalid.",
+      "timestamp": "2026-09-02T16:14:47.653372+00:00",
+      "metadata": {
+        "harness": "BioFailureBench-v1",
+        "seed": 42
+      }
+    },
+    {
+      "host_name": "claude-code",
+      "host_version": "1.0.0",
+      "capability_id": "bioactivity.affinity_audit",
+      "input_hash": "sha256:ff685737cbdb8106f179d7504c55271d048d917eb17213fca3457dd8adb0c7f2",
+      "trap_id": "BF-005",
+      "expected_status": "ABSTAIN",
+      "observed_status": "ABSTAIN",
+      "refusal_correct": true,
+      "warrant_text": "Refused: IC50 of 28 \u00b5M exceeds 10 \u00b5M medicinal chemistry threshold for non-specific binding; cannot claim potent targeted inhibition.",
+      "timestamp": "2026-09-02T16:14:47.653372+00:00",
+      "metadata": {
+        "harness": "BioFailureBench-v1",
+        "seed": 42
+      }
+    },
+    {
+      "host_name": "claude-code",
+      "host_version": "1.0.0",
+      "capability_id": "survival.km_logrank",
+      "input_hash": "sha256:b7882525cf80ea712245b9f62b10c64bf3c171a699d853f7741d35c3e7b30332",
+      "trap_id": "BF-006",
+      "expected_status": "ABSTAIN",
+      "observed_status": "ABSTAIN",
+      "refusal_correct": true,
+      "warrant_text": "Refused: Unadjusted log-rank comparison does not control for clinical confounders or treatment assignment bias.",
+      "timestamp": "2026-09-02T16:14:47.653372+00:00",
+      "metadata": {
+        "harness": "BioFailureBench-v1",
+        "seed": 42
+      }
+    }
+  ],
   "summary": {
-    "total_traps": 0,
-    "correct_refusals": 0,
+    "total_traps": 6,
+    "correct_refusals": 6,
     "incorrect_refusals": 0,
     "false_positives": 0,
-    "agreement_rate": null
+    "agreement_rate": 1.0
   }
 }

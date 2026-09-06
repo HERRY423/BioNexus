@@ -1,0 +1,48 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 8,
+    "name": "IGLC3"
+  },
+  "source": "pubmed",
+  "returncode": 0,
+  "elapsed_seconds": 1.6229346999898553,
+  "completed_at_utc": "2026-09-06T02:00:58.616489+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\pubmed\\gene-08-IGLC3.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\pubmed\\gene-08-IGLC3.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "ncbi-entrez",
+    "endpoint": "esearch",
+    "database": "pubmed",
+    "record_path": "esearchresult.idlist",
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\pubmed\\gene-08-IGLC3.raw",
+    "warnings": [],
+    "record_count_returned": 4,
+    "record_count_available": 4,
+    "truncated": false,
+    "records": [
+      "37591405",
+      "36692643",
+      "40406148",
+      "41993204"
+    ],
+    "sources": [
+      {
+        "name": "NCBI Entrez",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=REDACTED&retmode=json&retmax=10&sort=relevance",
+        "retrieved_at": "2026-09-06T02:00:58.591593+00:00",
+        "supports_claim": true,
+        "kind": "evidence",
+        "request_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=REDACTED&retmode=json&retmax=10&sort=relevance",
+        "canonical_urls": [
+          "https://pubmed.ncbi.nlm.nih.gov/37591405/",
+          "https://pubmed.ncbi.nlm.nih.gov/36692643/",
+          "https://pubmed.ncbi.nlm.nih.gov/40406148/",
+          "https://pubmed.ncbi.nlm.nih.gov/41993204/"
+        ]
+      }
+    ]
+  },
+  "stderr": ""
+}

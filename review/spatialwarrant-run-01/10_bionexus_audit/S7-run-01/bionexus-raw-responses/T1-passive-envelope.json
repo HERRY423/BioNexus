@@ -1,0 +1,50 @@
+{
+  "schema_version": "bionexus.external-evidence-envelope.v1",
+  "evidence_id": "SPATIALWARRANT-S7-T1",
+  "family": "analysis",
+  "producer": {
+    "plugin_id": "local-python-s7-review",
+    "capability": "completed-artifact-scientific-review",
+    "tool_name": "build_spatialwarrant_s7.py",
+    "plugin_version": "sha256:03f5335df16d144aea3cca2c9764bce573c32ed110f0ec7c7dd45b157be1994a"
+  },
+  "captured_at": "2026-09-06T02:30:14.568568+00:00",
+  "source_context": {
+    "backend_name": "local Python/scverse artifact review",
+    "backend_version": "3.13.9",
+    "input_artifact_sha256": "c59694f799f387391b1e75c644a7406ba28c8a340acea8d720d9285f874ebd48",
+    "parameters_sha256": "c77d4eef2e5fc4568e886ea062a45e4b2cc8a16cab88555bee143123dbb84760",
+    "execution_receipt_sha256": "b6bd8e08981030d43fd0b934830611d71cf9d39dfdac570f7cba991ad3a55a93"
+  },
+  "payload": {
+    "claim_id": "T1",
+    "original_statement": "One section establishes a population-wide TNBC immune-exclusion mechanism.",
+    "artifacts": [
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\00_plan\\analysis-plan.lock.md",
+        "sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\primary-program-B1-B2-B3-sensitivity.csv",
+        "sha256": "e855c17352827915422922fb5973b3ebe960ed443e4492a53f741cc664329079"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\02_identity\\scRNA-identity-resolution.v1.json",
+        "sha256": "9aa98d57bd4317e9e185ce094bdd67d737c467b13410448535ec0d7665d12a44"
+      }
+    ],
+    "host_review_state": "POPULATION_MECHANISM_CLAIM_NOT_ESTABLISHED",
+    "support": "One preregistered eligible section within six-section technical/spatial workflow.",
+    "counterevidence": "One section is not independent population replication; source_sample_id is not patient_id; no mechanistic intervention.",
+    "maximum_claim": "Single-section descriptive result; neither population mechanism nor patient-level inference.",
+    "dependencies": [
+      "C4",
+      "Wu dataset",
+      "identity evidence"
+    ]
+  },
+  "payload_sha256": "f0bc420f1a8fc3fa16fb613f9d6fa089bcc3d91d99dda201ff51238820b1233b",
+  "request_sha256": "2be1bb28ce8cf4415f0d35b1411d64883e0f6182e050786b9222fd3893acea89",
+  "semantic_envelope": null,
+  "epistemic_lineage": null
+}

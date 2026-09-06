@@ -1,0 +1,14 @@
+{
+  "endpoint": "efetch",
+  "params": {
+    "db": "pubmed",
+    "id": "29227470",
+    "retmode": "xml"
+  },
+  "response_format": "xml",
+  "max_items": 10,
+  "max_depth": 8,
+  "timeout_sec": 30,
+  "save_raw": true,
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\workbench-ifnb-demo\\workbench-run-01-records\\literature\\pubmed-article.raw.xml"
+}

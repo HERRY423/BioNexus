@@ -1,0 +1,235 @@
+{
+  "selection_rule": "genes: publisher raw-matrix feature effects by absolute descriptive B2-core difference descending, Ensembl gene_id tie-break; interactions unchanged",
+  "top20_genes": [
+    {
+      "deterministic_rank": 1,
+      "gene_id": "RAB6C",
+      "ensembl_gene_id": "ENSG00000222014",
+      "B2_boundary_minus_core_log2_CPM_plus_1": -2.432427740352121,
+      "absolute_descriptive_difference": 2.432427740352121
+    },
+    {
+      "deterministic_rank": 2,
+      "gene_id": "LINC01144",
+      "ensembl_gene_id": "ENSG00000281912",
+      "B2_boundary_minus_core_log2_CPM_plus_1": -2.262517845788154,
+      "absolute_descriptive_difference": 2.262517845788154
+    },
+    {
+      "deterministic_rank": 3,
+      "gene_id": "FOXO6",
+      "ensembl_gene_id": "ENSG00000204060",
+      "B2_boundary_minus_core_log2_CPM_plus_1": -2.1369993237598264,
+      "absolute_descriptive_difference": 2.1369993237598264
+    },
+    {
+      "deterministic_rank": 4,
+      "gene_id": "ZSWIM8-AS1",
+      "ensembl_gene_id": "ENSG00000272589",
+      "B2_boundary_minus_core_log2_CPM_plus_1": -2.1369993237598264,
+      "absolute_descriptive_difference": 2.1369993237598264
+    },
+    {
+      "deterministic_rank": 5,
+      "gene_id": "PTHLH",
+      "ensembl_gene_id": "ENSG00000087494",
+      "B2_boundary_minus_core_log2_CPM_plus_1": 2.1242268431944624,
+      "absolute_descriptive_difference": 2.1242268431944624
+    },
+    {
+      "deterministic_rank": 6,
+      "gene_id": "HEY2",
+      "ensembl_gene_id": "ENSG00000135547",
+      "B2_boundary_minus_core_log2_CPM_plus_1": -2.0698921907426215,
+      "absolute_descriptive_difference": 2.0698921907426215
+    },
+    {
+      "deterministic_rank": 7,
+      "gene_id": "DMD",
+      "ensembl_gene_id": "ENSG00000198947",
+      "B2_boundary_minus_core_log2_CPM_plus_1": -2.0698921907426215,
+      "absolute_descriptive_difference": 2.0698921907426215
+    },
+    {
+      "deterministic_rank": 8,
+      "gene_id": "IGLC3",
+      "ensembl_gene_id": "ENSG00000211679",
+      "B2_boundary_minus_core_log2_CPM_plus_1": 2.060244997931771,
+      "absolute_descriptive_difference": 2.060244997931771
+    },
+    {
+      "deterministic_rank": 9,
+      "gene_id": "IGLC1",
+      "ensembl_gene_id": "ENSG00000211675",
+      "B2_boundary_minus_core_log2_CPM_plus_1": 1.939662391846154,
+      "absolute_descriptive_difference": 1.939662391846154
+    },
+    {
+      "deterministic_rank": 10,
+      "gene_id": "PCDH18",
+      "ensembl_gene_id": "ENSG00000189184",
+      "B2_boundary_minus_core_log2_CPM_plus_1": -1.9255186373283069,
+      "absolute_descriptive_difference": 1.9255186373283069
+    },
+    {
+      "deterministic_rank": 11,
+      "gene_id": "AC087175.1",
+      "ensembl_gene_id": "ENSG00000286315",
+      "B2_boundary_minus_core_log2_CPM_plus_1": -1.9255186373283069,
+      "absolute_descriptive_difference": 1.9255186373283069
+    },
+    {
+      "deterministic_rank": 12,
+      "gene_id": "LINC01489",
+      "ensembl_gene_id": "ENSG00000255727",
+      "B2_boundary_minus_core_log2_CPM_plus_1": -1.9023285633792149,
+      "absolute_descriptive_difference": 1.9023285633792149
+    },
+    {
+      "deterministic_rank": 13,
+      "gene_id": "FMO4",
+      "ensembl_gene_id": "ENSG00000076258",
+      "B2_boundary_minus_core_log2_CPM_plus_1": -1.8475256661952377,
+      "absolute_descriptive_difference": 1.8475256661952377
+    },
+    {
+      "deterministic_rank": 14,
+      "gene_id": "AC027237.3",
+      "ensembl_gene_id": "ENSG00000259426",
+      "B2_boundary_minus_core_log2_CPM_plus_1": -1.8028006591648624,
+      "absolute_descriptive_difference": 1.8028006591648624
+    },
+    {
+      "deterministic_rank": 15,
+      "gene_id": "MIXL1",
+      "ensembl_gene_id": "ENSG00000185155",
+      "B2_boundary_minus_core_log2_CPM_plus_1": 1.7730892963912248,
+      "absolute_descriptive_difference": 1.7730892963912248
+    },
+    {
+      "deterministic_rank": 16,
+      "gene_id": "AL355075.4",
+      "ensembl_gene_id": "ENSG00000259001",
+      "B2_boundary_minus_core_log2_CPM_plus_1": 1.7730892963912248,
+      "absolute_descriptive_difference": 1.7730892963912248
+    },
+    {
+      "deterministic_rank": 17,
+      "gene_id": "SYCP3",
+      "ensembl_gene_id": "ENSG00000139351",
+      "B2_boundary_minus_core_log2_CPM_plus_1": -1.7650741692518852,
+      "absolute_descriptive_difference": 1.7650741692518852
+    },
+    {
+      "deterministic_rank": 18,
+      "gene_id": "TMEM233",
+      "ensembl_gene_id": "ENSG00000224982",
+      "B2_boundary_minus_core_log2_CPM_plus_1": -1.7650741692518852,
+      "absolute_descriptive_difference": 1.7650741692518852
+    },
+    {
+      "deterministic_rank": 19,
+      "gene_id": "NRSN2-AS1",
+      "ensembl_gene_id": "ENSG00000225377",
+      "B2_boundary_minus_core_log2_CPM_plus_1": -1.7650741692518852,
+      "absolute_descriptive_difference": 1.7650741692518852
+    },
+    {
+      "deterministic_rank": 20,
+      "gene_id": "CPB2-AS1",
+      "ensembl_gene_id": "ENSG00000235903",
+      "B2_boundary_minus_core_log2_CPM_plus_1": -1.7650741692518852,
+      "absolute_descriptive_difference": 1.7650741692518852
+    }
+  ],
+  "top10_liana_interactions": [
+    {
+      "rank": 1,
+      "source": "Cancer Her2 SC",
+      "target": "DCs",
+      "ligand": "MIF",
+      "receptor": "CD74_CXCR4",
+      "query": "MIF CD74_CXCR4 cancer interaction"
+    },
+    {
+      "rank": 2,
+      "source": "Cancer LumA SC",
+      "target": "DCs",
+      "ligand": "MIF",
+      "receptor": "CD74_CXCR4",
+      "query": "MIF CD74_CXCR4 cancer interaction"
+    },
+    {
+      "rank": 3,
+      "source": "Cancer Her2 SC",
+      "target": "Macrophage",
+      "ligand": "MIF",
+      "receptor": "CD74_CXCR4",
+      "query": "MIF CD74_CXCR4 cancer interaction"
+    },
+    {
+      "rank": 4,
+      "source": "Cancer Her2 SC",
+      "target": "B cells Naive",
+      "ligand": "MIF",
+      "receptor": "CD74_CXCR4",
+      "query": "MIF CD74_CXCR4 cancer interaction"
+    },
+    {
+      "rank": 5,
+      "source": "Cancer LumA SC",
+      "target": "Macrophage",
+      "ligand": "MIF",
+      "receptor": "CD74_CXCR4",
+      "query": "MIF CD74_CXCR4 cancer interaction"
+    },
+    {
+      "rank": 6,
+      "source": "Cancer Her2 SC",
+      "target": "B cells Memory",
+      "ligand": "MIF",
+      "receptor": "CD74_CXCR4",
+      "query": "MIF CD74_CXCR4 cancer interaction"
+    },
+    {
+      "rank": 7,
+      "source": "Cancer LumA SC",
+      "target": "B cells Naive",
+      "ligand": "MIF",
+      "receptor": "CD74_CXCR4",
+      "query": "MIF CD74_CXCR4 cancer interaction"
+    },
+    {
+      "rank": 8,
+      "source": "Mature Luminal",
+      "target": "DCs",
+      "ligand": "MIF",
+      "receptor": "CD74_CXCR4",
+      "query": "MIF CD74_CXCR4 cancer interaction"
+    },
+    {
+      "rank": 9,
+      "source": "Cancer Her2 SC",
+      "target": "Cycling_Myeloid",
+      "ligand": "MIF",
+      "receptor": "CD74_CXCR4",
+      "query": "MIF CD74_CXCR4 cancer interaction"
+    },
+    {
+      "rank": 10,
+      "source": "Cancer LumA SC",
+      "target": "B cells Memory",
+      "ligand": "MIF",
+      "receptor": "CD74_CXCR4",
+      "query": "MIF CD74_CXCR4 cancer interaction"
+    }
+  ],
+  "prespecified_items": [
+    "CXCL9 CXCR3",
+    "CXCL10 CXCR3",
+    "CD274 PDCD1",
+    "TGFB1 TGFBR1 TGFBR2",
+    "SPP1 CD44",
+    "HALLMARK_INTERFERON_GAMMA_RESPONSE"
+  ]
+}

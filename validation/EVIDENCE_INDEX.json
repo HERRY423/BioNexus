@@ -1,0 +1,450 @@
+{
+  "schema_version": "bionexus.evidence-index.v1",
+  "project_version": "1.0.0-rc.5",
+  "total_conclusions": 8,
+  "conclusions": {
+    "BNC-SP-001-TECH-ACCEPTANCE": {
+      "conclusion_id": "BNC-SP-001-TECH-ACCEPTANCE",
+      "capability_id": "spatial.inference_validity",
+      "statement": "BioNexus artifact diagnostics execute on authentic Xenium XOA bytes and respond in the expected direction to deterministic manufactured confounders (5/5 locked technical endpoints passed).",
+      "verdict": "TECHNICAL_ACCEPTANCE_PASS",
+      "claim_boundary": {
+        "supported": [
+          "Artifact diagnostics execute on authentic XOA bytes",
+          "Deterministic responses to manufactured confounders (segmentation leakage delta 0.307, cell size bias delta 0.201, transcript density bias delta 0.886)",
+          "5/5 locked technical endpoints passed"
+        ],
+        "not_supported": [
+          "biological validity",
+          "tissue-level generalization",
+          "segmentation accuracy against histology",
+          "approved spatial calibration profile",
+          "independent ground truth"
+        ]
+      },
+      "source_files": {
+        "evals/spatial_instrument_validation.py": "d0bf507af0a065c2e91cea701be10ddc7a69ff851aa9ac3406132e91c53fbd7a",
+        "src/bionexus/capabilities.py": "e30453b75cef23748f9da024f5c276a7e277b54a90f65d2a5dd03d84ff08c73a",
+        "src/bionexus/abi.py": "361acaa8ee1903fe0e2f41e35fed80ae6bf3a1bbceaa91fb8373a79ee5d799c6"
+      },
+      "rules": [
+        "INV-011",
+        "INV-012",
+        "INV-013",
+        "INV-017",
+        "INV-018",
+        "BNS-010"
+      ],
+      "dependencies": {
+        "squidpy": ">=1.3.0",
+        "scanpy": ">=1.10.0",
+        "python": ">=3.10"
+      },
+      "data": {
+        "dataset_name": "xenium_spatial_truth",
+        "accession": "10x Genomics official Xenium XOA v4 tiny human kidney",
+        "vendor_disclaimer": "Vendor documents tiny dataset as format-testing material not intended for biological conclusions",
+        "files": {
+          "Xenium_V1_Protein_Human_Kidney_tiny_outs.zip": "abd7e8f7fd047dcc6afdb1e9eece90d4533d3ead053c6f05c482be050bdf79d2"
+        }
+      },
+      "host": {
+        "platform": "Windows-11-10.0.26200-SP0",
+        "execution_mode": "live_instrument_script",
+        "real_host_certified": true
+      },
+      "report_version": {
+        "report_path": "validation/spatial/studies/BN-SP-IV-001/REPORT.json",
+        "schema_version": "bionexus.spatial-real-instrument-validation-report.v1",
+        "project_version": "1.0.0-rc.5"
+      },
+      "upstream_nodes": [
+        "DATA-XENIUM-TINY",
+        "SRC-SPATIAL-INSTRUMENT",
+        "RULE-INV-011"
+      ],
+      "downstream_nodes": [
+        "BNC-SPATIAL-CAPABILITY-VALIDATED"
+      ]
+    },
+    "BNC-SPATIAL-CAPABILITY-VALIDATED": {
+      "conclusion_id": "BNC-SPATIAL-CAPABILITY-VALIDATED",
+      "capability_id": "spatial.inference_validity",
+      "statement": "spatial.inference_validity satisfies 10/14 certification criteria and achieves VALIDATED tier. Biological ground truth, public reference dataset, cross-host claim audit, and external review remain unsatisfied.",
+      "verdict": "VALIDATED",
+      "claim_boundary": {
+        "supported": [
+          "6/6 core software criteria satisfied",
+          "Technical acceptance on authentic XOA bytes passed",
+          "Neighborhood radius perturbation sensitivity passed (15um-100um sweep)"
+        ],
+        "not_supported": [
+          "CERTIFIED tier (requires 14/14)",
+          "independent biological ground truth",
+          "public scientific reference dataset",
+          "real-host cross-host multi-lab execution"
+        ]
+      },
+      "source_files": {
+        "src/bionexus/certification.py": "ca935d861b11165aa9309ab89e093fad4bc5272ed2423be97f7c290518799102",
+        "src/bionexus/capabilities.py": "e30453b75cef23748f9da024f5c276a7e277b54a90f65d2a5dd03d84ff08c73a",
+        "evals/spatial_stress_test.py": "c12533a1d52a9d3dc33310af5a14b719f1f641b86b93e47ec769228f3d5615aa"
+      },
+      "rules": [
+        "BNS-010",
+        "BNS-015",
+        "BNS-HC-007",
+        "INV-011",
+        "INV-012"
+      ],
+      "dependencies": {
+        "squidpy": ">=1.3.0",
+        "python": ">=3.10"
+      },
+      "data": {
+        "study_reports": [
+          "validation/spatial/studies/BN-SP-IV-001/REPORT.json"
+        ],
+        "stress_reports": [
+          "validation/spatial/INFERENTIAL_STRESS_REPORT.json"
+        ]
+      },
+      "host": {
+        "platform": "Windows-11-10.0.26200-SP0",
+        "cross_host_status": "headless_only_6_traps_abstain_unmet_quota"
+      },
+      "report_version": {
+        "report_path": "validation/spatial/CERTIFICATION.json",
+        "schema_version": "1.0",
+        "project_version": "1.0.0-rc.5"
+      },
+      "upstream_nodes": [
+        "BNC-SP-001-TECH-ACCEPTANCE",
+        "RULE-BNS-010",
+        "RULE-BNS-HC-007"
+      ],
+      "downstream_nodes": []
+    },
+    "BNC-PSEUDOBULK-GSE96583": {
+      "conclusion_id": "BNC-PSEUDOBULK-GSE96583",
+      "capability_id": "scrna.pseudobulk_de",
+      "statement": "Kang et al. 2018 (GEO GSE96583) donor-aware pseudobulk differential expression with PyDESeq2 recovers known IFN-stimulated genes with 0.66 published-support overlap >= 0.50 threshold.",
+      "verdict": "PASS",
+      "claim_boundary": {
+        "supported": [
+          "Donor-aware pseudobulk DE on 13487 singlets / 8 donors / 2 conditions",
+          "Published-support overlap fraction 0.66 >= 0.50",
+          "Top-100 DE calls validated against independent MSigDB Hallmark IFN + QuickGO truth sets"
+        ],
+        "not_supported": [
+          "CERTIFIED tier",
+          "Cross-cohort generalization without donor replicates",
+          "Causal inference without experimental intervention controls"
+        ]
+      },
+      "source_files": {
+        "evals/flagship_validation.py": "9b928ce139e5fb78d33b56156969e906a249e56af1be347a05bd6d2cc855d5de",
+        "src/bionexus/pseudobulk_warrant.py": "9a979b69658164c8b0610a69d7f3671894109e71a944f6895a966f1a1293179d",
+        "src/bionexus/abi.py": "361acaa8ee1903fe0e2f41e35fed80ae6bf3a1bbceaa91fb8373a79ee5d799c6"
+      },
+      "rules": [
+        "INV-001",
+        "INV-003",
+        "INV-014",
+        "BNS-010"
+      ],
+      "dependencies": {
+        "pydeseq2": ">=0.4.0",
+        "python": ">=3.10"
+      },
+      "data": {
+        "dataset_name": "kang2018_pbmc_ifnb",
+        "accession": "GEO GSE96583",
+        "files": {
+          "pbmc_ifnb_counts.h5ad": "d2ef55f0ba2b1fbb6065538356c9a356aee0e5ee4b0c2db8eb0a95e7b233e72e",
+          "published_de_truth.csv": "8cb6249d9774577884d5f49ee2f153f3e26bb55274aa1cffce4e1f7c35272a52"
+        }
+      },
+      "host": {
+        "platform": "Windows-11-10.0.26200-SP0",
+        "execution_mode": "live_script_execution",
+        "real_host_certified": true
+      },
+      "report_version": {
+        "report_path": "validation/pseudobulk/REPORT.json",
+        "schema_version": "bionexus.flagship-validation-report.v1",
+        "project_version": "1.0.0-rc.5"
+      },
+      "upstream_nodes": [
+        "DATA-GSE96583",
+        "SRC-PYDESEQ2-WRAPPER",
+        "RULE-INV-001"
+      ],
+      "downstream_nodes": [
+        "BNC-PSEUDOBULK-CAPABILITY-VALIDATED"
+      ]
+    },
+    "BNC-PSEUDOBULK-INDEP-002": {
+      "conclusion_id": "BNC-PSEUDOBULK-INDEP-002",
+      "capability_id": "scrna.pseudobulk_de",
+      "statement": "BN-PB-IV-002 independent reanalysis is a preserved negative result: locked negative-control endpoint failed (p=0.05859 > 0.05); maturity remains FRAGILE and independent biological validation is not supported.",
+      "verdict": "NEGATIVE_RESULT_FREEZE",
+      "claim_boundary": {
+        "supported": [
+          "Negative result preserved without promotion",
+          "Negative-control endpoint failure accurately recorded"
+        ],
+        "not_supported": [
+          "biological validation pass",
+          "conformance promotion",
+          "ROBUST maturity"
+        ]
+      },
+      "source_files": {
+        "validation/pseudobulk/independent/REPORT.json": "2907afbf989a68ee1d2c404c4812c24745b32afab1275908a922abbde706e275"
+      },
+      "rules": [
+        "BNS-004",
+        "BNS-010"
+      ],
+      "dependencies": {
+        "pydeseq2": ">=0.4.0"
+      },
+      "data": {
+        "dataset_track": "independent_replication_attempt"
+      },
+      "host": {
+        "platform": "Windows-11-10.0.26200-SP0"
+      },
+      "report_version": {
+        "report_path": "validation/pseudobulk/independent/REPORT.json",
+        "project_version": "1.0.0-rc.5"
+      },
+      "upstream_nodes": [
+        "SRC-PYDESEQ2-WRAPPER"
+      ],
+      "downstream_nodes": [
+        "BNC-PSEUDOBULK-CAPABILITY-VALIDATED"
+      ]
+    },
+    "BNC-PSEUDOBULK-CAPABILITY-VALIDATED": {
+      "conclusion_id": "BNC-PSEUDOBULK-CAPABILITY-VALIDATED",
+      "capability_id": "scrna.pseudobulk_de",
+      "statement": "scrna.pseudobulk_de satisfies 12/14 certification criteria and achieves VALIDATED tier. Cross-host testing and external review remain unsatisfied.",
+      "verdict": "VALIDATED",
+      "claim_boundary": {
+        "supported": [
+          "All 6 core software criteria satisfied",
+          "Real-data public reference validation passed (GSE96583 overlap 0.66)",
+          "Stability (Jaccard >= 0.80) and missing-backend degradation tests passed"
+        ],
+        "not_supported": [
+          "CERTIFIED tier (requires 14/14)",
+          "real-host cross-host multi-lab execution",
+          "external domain reviewer sign-off"
+        ]
+      },
+      "source_files": {
+        "src/bionexus/certification.py": "ca935d861b11165aa9309ab89e093fad4bc5272ed2423be97f7c290518799102",
+        "evals/pseudobulk_stress_test.py": "813e3d313cc62aa8b82cc19d879a5df95024ba2cb0558ed938b6e269a49c2c05"
+      },
+      "rules": [
+        "BNS-010",
+        "BNS-015",
+        "BNS-HC-007",
+        "INV-001",
+        "INV-003"
+      ],
+      "dependencies": {
+        "pydeseq2": ">=0.4.0",
+        "python": ">=3.10"
+      },
+      "data": {
+        "validation_report": "validation/pseudobulk/REPORT.json",
+        "stress_report": "validation/pseudobulk/INFERENTIAL_STRESS_REPORT.json"
+      },
+      "host": {
+        "platform": "Windows-11-10.0.26200-SP0",
+        "cross_host_status": "headless_only_6_traps_abstain_unmet_quota"
+      },
+      "report_version": {
+        "report_path": "validation/pseudobulk/CERTIFICATION.json",
+        "schema_version": "1.0",
+        "project_version": "1.0.0-rc.5"
+      },
+      "upstream_nodes": [
+        "BNC-PSEUDOBULK-GSE96583",
+        "RULE-BNS-010",
+        "RULE-BNS-HC-007"
+      ],
+      "downstream_nodes": []
+    },
+    "BNC-ANNOTATION-AZIMUTH-003": {
+      "conclusion_id": "BNC-ANNOTATION-AZIMUTH-003",
+      "capability_id": "scrna.annotation_evidence",
+      "statement": "BN-ANN-IV-003 evaluated 148297 mapped cells against external Azimuth PBMC reference annotations; met locked endpoints but was nonblinded to label distributions (capped at CANDIDATE_EXTERNAL_REFERENCE_NONBLINDED).",
+      "verdict": "CANDIDATE_EXTERNAL_REFERENCE_NONBLINDED",
+      "claim_boundary": {
+        "supported": [
+          "148297 cells mapped against Azimuth PBMC",
+          "Locked endpoints met"
+        ],
+        "not_supported": [
+          "blinded evaluation",
+          "independent biological ground truth",
+          "approved empirical calibration profile"
+        ]
+      },
+      "source_files": {
+        "evals/annotation_external_holdout_validation.py": "4b3cb0306b634d355540bf6fdf17a0276557d224be84243b5dd99a241b5bd335",
+        "src/bionexus/annotation_evidence.py": "064648598962aee7477583dfb8fdfcc6dbcccb2b0c7b914094ea453fceda543c"
+      },
+      "rules": [
+        "INV-004",
+        "INV-005",
+        "INV-008",
+        "INV-016",
+        "BNS-010"
+      ],
+      "dependencies": {
+        "scanpy": ">=1.10.0",
+        "python": ">=3.10"
+      },
+      "data": {
+        "dataset_track": "real_public_processed_citeseq",
+        "files": {
+          "pbmc_10k_protein_v3.h5ad": "473347c617b8f972bdfa6797f1f0a1496b998cfb62a43bfa99351faef8a25cbb"
+        }
+      },
+      "host": {
+        "platform": "Windows-11-10.0.26200-SP0",
+        "execution_mode": "live_script_execution",
+        "real_host_certified": true
+      },
+      "report_version": {
+        "report_path": "validation/annotation/studies/BN-ANN-IV-003/REPORT.json",
+        "project_version": "1.0.0-rc.5"
+      },
+      "upstream_nodes": [
+        "DATA-CITESEQ-10K",
+        "SRC-ANNOTATION-EVIDENCE"
+      ],
+      "downstream_nodes": [
+        "BNC-ANNOTATION-CAPABILITY-VALIDATED"
+      ]
+    },
+    "BNC-ANNOTATION-CAPABILITY-VALIDATED": {
+      "conclusion_id": "BNC-ANNOTATION-CAPABILITY-VALIDATED",
+      "capability_id": "scrna.annotation_evidence",
+      "statement": "scrna.annotation_evidence satisfies 11/14 certification criteria and achieves VALIDATED tier. Independent biological ground truth, cross-host testing, and external review remain unsatisfied.",
+      "verdict": "VALIDATED",
+      "claim_boundary": {
+        "supported": [
+          "All 6 core software criteria satisfied",
+          "Public reference evaluation met locked endpoints",
+          "Parameter perturbation (ARI >= 0.80) & claim interception passed"
+        ],
+        "not_supported": [
+          "CERTIFIED tier (requires 14/14)",
+          "independent biological ground truth",
+          "real-host cross-host multi-lab execution",
+          "external reviewer sign-off"
+        ]
+      },
+      "source_files": {
+        "src/bionexus/certification.py": "ca935d861b11165aa9309ab89e093fad4bc5272ed2423be97f7c290518799102",
+        "evals/annotation_stress_test.py": "ee3d531282a980b95ea12d26dcf5859a611d8c9608c5c4dad031c728c33b5bdc"
+      },
+      "rules": [
+        "BNS-010",
+        "BNS-015",
+        "BNS-HC-007",
+        "INV-004"
+      ],
+      "dependencies": {
+        "scanpy": ">=1.10.0",
+        "python": ">=3.10"
+      },
+      "data": {
+        "validation_report": "validation/annotation/REPORT.json",
+        "stress_report": "validation/annotation/INFERENTIAL_STRESS_REPORT.json"
+      },
+      "host": {
+        "platform": "Windows-11-10.0.26200-SP0",
+        "cross_host_status": "headless_only_6_traps_abstain_unmet_quota"
+      },
+      "report_version": {
+        "report_path": "validation/annotation/CERTIFICATION.json",
+        "schema_version": "1.0",
+        "project_version": "1.0.0-rc.5"
+      },
+      "upstream_nodes": [
+        "BNC-ANNOTATION-AZIMUTH-003",
+        "RULE-BNS-010",
+        "RULE-BNS-HC-007"
+      ],
+      "downstream_nodes": []
+    },
+    "BNC-CROSS-HOST-CONCORDANCE": {
+      "conclusion_id": "BNC-CROSS-HOST-CONCORDANCE",
+      "capability_id": "cross-host.router_traps",
+      "statement": "Cross-host comparison records 6 router traps (BF-001..BF-006) executed on claude-code and antigravity, both yielding ABSTAIN (100% concordance, 6/6 consistent). This confirms software refusal consistency, but does not certify real-host execution or satisfy IVN multi-host quota (BNS-HC-007).",
+      "verdict": "PASS_HEADLESS_REFUSAL_CONCORDANCE",
+      "claim_boundary": {
+        "supported": [
+          "6 router traps compared on claude-code + antigravity",
+          "100% agreement on ABSTAIN refusal (agreement_rate 1.0)",
+          "Software contract conformance"
+        ],
+        "not_supported": [
+          "real-host execution certification",
+          "IVN external-lab claim audit quota",
+          "CERTIFIED tier promotion"
+        ]
+      },
+      "source_files": {
+        "cross-host/COMPARISON.json": "bf7b604afca2a3d8abad7a0422de6fd1b8c8ad665647334204c3113a6277ec94",
+        "cross-host/claude-code/REPORT.json": "a0973860ad0e0d8d296130382ce0ca2e9a54405e882ccc5b5a1fbdb4abd236e5",
+        "cross-host/antigravity/REPORT.json": "fe38409bdcccbd64056a2f3152bcf95c9f7fda5771e3bb899ad02d98ac69e738"
+      },
+      "rules": [
+        "BNS-HC-007",
+        "BNS-010"
+      ],
+      "dependencies": {
+        "python": "3.13.9"
+      },
+      "data": {
+        "traps": [
+          "BF-001",
+          "BF-002",
+          "BF-003",
+          "BF-004",
+          "BF-005",
+          "BF-006"
+        ]
+      },
+      "host": {
+        "hosts": [
+          "claude-code",
+          "antigravity"
+        ],
+        "execution_mode": "headless_trap_replay",
+        "real_host_certified": false
+      },
+      "report_version": {
+        "report_path": "cross-host/COMPARISON.json",
+        "schema_version": "1.0",
+        "project_version": "1.0.0-rc.5"
+      },
+      "upstream_nodes": [
+        "RULE-BNS-HC-007"
+      ],
+      "downstream_nodes": [
+        "BNC-SPATIAL-CAPABILITY-VALIDATED",
+        "BNC-PSEUDOBULK-CAPABILITY-VALIDATED",
+        "BNC-ANNOTATION-CAPABILITY-VALIDATED"
+      ]
+    }
+  }
+}

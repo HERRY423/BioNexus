@@ -1,0 +1,19 @@
+{
+  "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]",
+  "executable": "C:\\Users\\13264\\anaconda3\\python.exe",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "packages": {
+    "numpy": "2.3.5",
+    "pandas": "2.3.3",
+    "matplotlib": "3.10.6"
+  },
+  "command": [
+    "C:\\Users\\13264\\Downloads\\spatial-transcriptomics-task-design-revised\\build_spatialwarrant_s7.py"
+  ],
+  "new_dependencies_installed": false,
+  "resource_scope": "S7 rendering/package build only; excludes earlier read-only tool calls and hashing inspection",
+  "elapsed_seconds": 8.047809800016694,
+  "start_free_C_bytes": 32272859136,
+  "end_free_C_bytes": 32263233536,
+  "peak_process_working_set_bytes": 548257792
+}

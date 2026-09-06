@@ -1,0 +1,13 @@
+{
+  "endpoint": "esearch",
+  "params": {
+    "db": "pubmed",
+    "term": "10.1038/nbt.4042[doi]",
+    "retmode": "json",
+    "retmax": 10
+  },
+  "max_items": 10,
+  "timeout_sec": 30,
+  "save_raw": true,
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\workbench-ifnb-demo\\workbench-run-01-records\\literature\\pubmed-search.raw.json"
+}

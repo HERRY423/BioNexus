@@ -1,0 +1,275 @@
+--- S2A_metrics.v1/run-s2a-metrics.v1.py
++++ S2A_metrics.v1.retry1/run-s2a-metrics.v1.retry1.py
+@@ -2,6 +2,7 @@
+ 
+ import csv
+ import datetime as dt
++import difflib
+ import gzip
+ import hashlib
+ import importlib.metadata
+@@ -23,9 +24,12 @@
+ 
+ ROOT = pathlib.Path(r"C:\Plugin\BioNexus\review\spatialwarrant-run-01")
+ OUT_PARENT = ROOT / "03_reference"
+-OUT = OUT_PARENT / "S2A_metrics.v1"
++FAILED_OUT = OUT_PARENT / "S2A_metrics.v1"
++OUT = OUT_PARENT / "S2A_metrics.v1.retry1"
+ PLAN_SHA256 = "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82"
+ SUPPLEMENT_SHA256 = "e6084a97821bc10eecc1060afde4bd049092446a1c1ad02427bd78c6e35086af"
++FAILED_SCRIPT_SHA256 = "3539e9de7865a7e5f01f8135ccee8dfb516dd0eae9815e0f7ed9b02591999e20"
++FAILED_RECORD_SHA256 = "8613e81eaf5a8ecf97953f0eb2b5477dd5823717cbf06112a9c4f488ec576767"
+ START_MIN_BYTES = 30 * 1024**3
+ WRITE_STOP_BELOW_BYTES = 20 * 1024**3
+ OUTPUT_BUDGET_BYTES = 1024**3
+@@ -89,8 +93,90 @@
+     return path
+ 
+ 
++def json_native(value: Any) -> Any:
++    """Recursively convert NumPy values to strict JSON-native values."""
++    if isinstance(value, np.bool_):
++        return bool(value)
++    if isinstance(value, np.integer):
++        return int(value)
++    if isinstance(value, np.floating):
++        converted = float(value)
++        return converted if math.isfinite(converted) else None
++    if isinstance(value, np.ndarray):
++        return [json_native(item) for item in value.tolist()]
++    if isinstance(value, dict):
++        return {str(key): json_native(item) for key, item in value.items()}
++    if isinstance(value, (list, tuple)):
++        return [json_native(item) for item in value]
++    if isinstance(value, float) and not math.isfinite(value):
++        return None
++    return value
++
++
++def serialization_selftest() -> dict[str, Any]:
++    fixture = {
++        "nested": {
++            "integer": np.int64(7),
++            "floating": np.float64(2.5),
++            "boolean": np.bool_(True),
++            "array": np.asarray([[np.int64(1), np.int64(2)], [np.int64(3), np.int64(4)]]),
++            "missing": np.float64(np.nan),
++            "missing_flag": np.bool_(True),
++            "positive_infinity": np.float64(np.inf),
++            "positive_infinity_missing": np.bool_(True),
++            "negative_infinity": np.float64(-np.inf),
++            "negative_infinity_missing": np.bool_(True),
++        },
++        "list": [np.int64(9), np.float64(1.25), np.bool_(False), np.asarray([5, 6])],
++        "python_types": {"integer": 11, "floating": 3.75, "boolean": False, "none": None, "text": "ok"},
++    }
++    expected = {
++        "nested": {
++            "integer": 7,
++            "floating": 2.5,
++            "boolean": True,
++            "array": [[1, 2], [3, 4]],
++            "missing": None,
++            "missing_flag": True,
++            "positive_infinity": None,
++            "positive_infinity_missing": True,
++            "negative_infinity": None,
++            "negative_infinity_missing": True,
++        },
++        "list": [9, 1.25, False, [5, 6]],
++        "python_types": {"integer": 11, "floating": 3.75, "boolean": False, "none": None, "text": "ok"},
++    }
++    converted = json_native(fixture)
++    encoded = json.dumps(converted, ensure_ascii=False, allow_nan=False, sort_keys=True)
++    decoded = json.loads(encoded)
++    forbidden_literals_absent = not any(token in encoded for token in ["NaN", "Infinity", "-Infinity"])
++    passed = decoded == expected and forbidden_literals_absent
++    result = {
++        "status": "PASS" if passed else "FAIL",
++        "scope": "Engineering serialization only; not scientific validation",
++        "covered": [
++            "nested dict/list",
++            "numpy.int64 -> int",
++            "numpy.float64 finite -> float",
++            "numpy.float64 nonfinite -> null with separate missing flags",
++            "numpy.bool_ -> bool",
++            "numpy.ndarray -> recursively converted list",
++            "ordinary Python JSON types unchanged",
++        ],
++        "strict_allow_nan": False,
++        "forbidden_nonfinite_literals_absent": forbidden_literals_absent,
++        "converted_value": converted,
++        "expected_value_match": decoded == expected,
++    }
++    if not passed:
++        raise RuntimeError("JSON_SERIALIZATION_SELFTEST_FAILED")
++    return result
++
++
+ def write_json_exclusive(name: str, value: Any) -> pathlib.Path:
+-    data = (json.dumps(value, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
++    data = (
++        json.dumps(json_native(value), ensure_ascii=False, indent=2, allow_nan=False) + "\n"
++    ).encode("utf-8")
+     return write_bytes_exclusive(name, data)
+ 
+ 
+@@ -462,6 +548,14 @@
+     started_at = utc_now()
+     if OUT.exists():
+         raise RuntimeError(f"TARGET_DIRECTORY_CONFLICT: {OUT}")
++    failed_script = FAILED_OUT / "run-s2a-metrics.v1.py"
++    failed_record = FAILED_OUT / "failure.v1.json"
++    if not FAILED_OUT.is_dir():
++        raise RuntimeError(f"FAILED_LINEAGE_DIRECTORY_MISSING: {FAILED_OUT}")
++    if exact_sha256(failed_script) != FAILED_SCRIPT_SHA256:
++        raise RuntimeError("FAILED_SCRIPT_LINEAGE_HASH_MISMATCH")
++    if exact_sha256(failed_record) != FAILED_RECORD_SHA256:
++        raise RuntimeError("FAILED_RECORD_LINEAGE_HASH_MISMATCH")
+     free_before_preflight = shutil.disk_usage("C:\\").free
+     if free_before_preflight < START_MIN_BYTES:
+         raise RuntimeError(
+@@ -495,7 +589,39 @@
+ 
+     OUT_PARENT.mkdir(exist_ok=True)
+     OUT.mkdir(exist_ok=False)
+-    write_bytes_exclusive("run-s2a-metrics.v1.py", pathlib.Path(__file__).read_bytes())
++    retry_script_name = "run-s2a-metrics.v1.retry1.py"
++    retry_script_path = write_bytes_exclusive(retry_script_name, pathlib.Path(__file__).read_bytes())
++    retry_script_sha256 = exact_sha256(retry_script_path)
++    failed_text = failed_script.read_text(encoding="utf-8")
++    retry_text = pathlib.Path(__file__).read_text(encoding="utf-8")
++    engineering_diff = "".join(
++        difflib.unified_diff(
++            failed_text.splitlines(keepends=True),
++            retry_text.splitlines(keepends=True),
++            fromfile="S2A_metrics.v1/run-s2a-metrics.v1.py",
++            tofile="S2A_metrics.v1.retry1/run-s2a-metrics.v1.retry1.py",
++        )
++    )
++    write_bytes_exclusive("engineering-fix.v1.diff", engineering_diff.encode("utf-8"))
++    write_bytes_exclusive(
++        "engineering-fix.v1.md",
++        f"""# S2A retry1 minimal engineering fix
++
++- Failed script SHA-256: {FAILED_SCRIPT_SHA256}
++- Retry1 script SHA-256: {retry_script_sha256}
++- Failed record SHA-256: {FAILED_RECORD_SHA256}
++- Failed directory retained unchanged: {FAILED_OUT}
++- Retry output directory: {OUT}
++
++Authorized changes only:
++1. Changed the fixed output directory from `S2A_metrics.v1` to `S2A_metrics.v1.retry1`.
++2. Added recursive conversion of NumPy integer, floating, boolean and ndarray values to strict JSON-native values; non-finite floating values become null and fields that can be missing retain separate missing flags.
++3. Added a strict JSON serialization self-test before the complete matrix scan.
++4. Added lineage references to the failed script and `failure.v1.json`, including their exact approved hashes.
++
++Matrix parsing, formulas, identity handling, MT- prefix rule, index base, summaries, scientific scope and stop conditions are unchanged. See `engineering-fix.v1.diff` for the exact textual diff.
++""".encode("utf-8"),
++    )
+     write_json_exclusive(
+         "execution-start.v1.json",
+         {
+@@ -506,12 +632,23 @@
+             "registered_NGS_workflow_run": "NONE",
+             "parent_plan_sha256": PLAN_SHA256,
+             "S2A_supplement_sha256": SUPPLEMENT_SHA256,
++            "retry_lineage": {
++                "failed_output_directory": str(FAILED_OUT),
++                "failed_script_sha256": FAILED_SCRIPT_SHA256,
++                "failure_record_sha256": FAILED_RECORD_SHA256,
++                "retry_script_sha256": retry_script_sha256,
++                "failed_directory_preserved": True,
++            },
+             "free_C_bytes_before_preflight": free_before_preflight,
+             "free_C_bytes_after_write_check": free_after_write_check,
+             "write_check": write_check,
+             "scope": "Technical QC metrics only; no filtering or biological interpretation",
+         },
+     )
++    selftest = serialization_selftest()
++    selftest["completed_at_utc"] = utc_now()
++    selftest["completed_before_full_matrix_scan"] = True
++    write_json_exclusive("json-serialization-selftest.v1.json", selftest)
+     write_json_exclusive(
+         "ngs-workbench-capability-check.v1.json",
+         {
+@@ -551,6 +688,10 @@
+             "execution_plan_id": None,
+             "registry_run_id": None,
+             "registered_NGS_workflow_run": "NONE",
++            "retry_lineage": {
++                "failed_script_sha256": FAILED_SCRIPT_SHA256,
++                "failure_record_sha256": FAILED_RECORD_SHA256,
++            },
+         },
+     )
+ 
+@@ -581,7 +722,7 @@
+             "members_file": "mitochondrial-feature-members.v1.tsv",
+             "members_file_sha256_exact_bytes": hashlib.sha256(mt_membership).hexdigest(),
+             "members": [
+-                {"feature_index_1_based": i + 1, "gene_symbol": genes[i]}
++                {"feature_index_1_based": int(i) + 1, "gene_symbol": genes[int(i)]}
+                 for i in np.flatnonzero(mt_mask)
+             ],
+             "alias_expansion": False,
+@@ -846,6 +987,8 @@
+             "filtering": False,
+             "sampling": False,
+             "registered_NGS_workflow_run": "NONE",
++            "retry_of_failed_script_sha256": FAILED_SCRIPT_SHA256,
++            "retry_of_failure_record_sha256": FAILED_RECORD_SHA256,
+         },
+         method="Streaming full MatrixMarket count validation and metrics-only aggregation",
+         backend="local Python execution",
+@@ -855,6 +998,13 @@
+     )
+     provenance["BioNexus_machine_verdict"] = "PENDING"
+     provenance["scientific_warrant_generated"] = False
++    provenance["retry_lineage"] = {
++        "failed_output_directory": str(FAILED_OUT),
++        "failed_script_sha256": FAILED_SCRIPT_SHA256,
++        "failure_record_sha256": FAILED_RECORD_SHA256,
++        "retry_script_sha256": retry_script_sha256,
++        "failed_directory_preserved": True,
++    }
+     write_json_exclusive("provenance.sidecar.v1.json", provenance)
+ 
+     manifest_outputs = sorted(p.name for p in OUT.iterdir() if p.is_file())
+@@ -874,6 +1024,13 @@
+             "created_at_utc": utc_now(),
+             "parent_plan_sha256": PLAN_SHA256,
+             "S2A_supplement_sha256": SUPPLEMENT_SHA256,
++            "retry_lineage": {
++                "failed_output_directory": str(FAILED_OUT),
++                "failed_script_sha256": FAILED_SCRIPT_SHA256,
++                "failure_record_sha256": FAILED_RECORD_SHA256,
++                "retry_script_sha256": retry_script_sha256,
++                "failed_directory_preserved": True,
++            },
+             "input_files": input_records,
+             "outputs_created_before_this_manifest": manifest_records,
+             "self_hash": "See SHA256SUMS.v1.txt to avoid a circular self-hash",
+@@ -903,6 +1060,8 @@
+ 
+ - Approved parent plan SHA-256: {PLAN_SHA256}
+ - Approved S2A supplement SHA-256: {SUPPLEMENT_SHA256}
++- Failed script SHA-256: {FAILED_SCRIPT_SHA256}; failure.v1.json SHA-256: {FAILED_RECORD_SHA256}; failed directory retained unchanged.
++- Retry1 script SHA-256: {retry_script_sha256}; serialization self-test: PASS before the full matrix scan.
+ - Input: {len(barcodes)} cells, {len(genes)} genes, {len(source_values)} source_sample_id values, {matrix_validation['observed_coordinate_entries']} MatrixMarket coordinate entries.
+ - Full numeric scan: PASS (dimensions, indices, finite values, integer values, nonnegative counts, strict coordinate order and duplicate-coordinate check).
+ - Barcode/metadata one-to-one join: PASS; exact order and values match.
+@@ -994,6 +1153,12 @@
+             "patient_level_inference": "BLOCKED",
+             "machine_verdict": "PENDING",
+             "biological_conclusion": "PENDING",
++            "retry_lineage": {
++                "failed_output_directory": str(FAILED_OUT),
++                "failed_script_sha256": FAILED_SCRIPT_SHA256,
++                "failure_record_sha256": FAILED_RECORD_SHA256,
++                "failed_directory_preserved": True,
++            },
+         }
+         print(json.dumps(failure, ensure_ascii=True), flush=True)
+         if OUT.exists() and shutil.disk_usage("C:\\").free >= WRITE_STOP_BELOW_BYTES:

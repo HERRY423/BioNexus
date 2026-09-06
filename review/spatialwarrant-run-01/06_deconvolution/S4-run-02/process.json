@@ -1,0 +1,14 @@
+{
+  "status": "BACKGROUND_STARTED",
+  "launcher_pid": 2144,
+  "started_at_utc": "2026-09-06T01:05:02.6383683Z",
+  "script_sha256": "334fc0e5083ebcc08d4b56933f815743de0596d825f781f310d5e3cf5eed5ac5",
+  "S2_reference_sha256": "0443b7a12dded30a692973acba9d22ad2c5cc795d48b43f799db4e87b6f3b110",
+  "python": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\environment\\s4s5-tangram-py312\\Scripts\\python.exe",
+  "stdout": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\06_deconvolution\\S4-run-02\\stdout.log",
+  "stderr": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\06_deconvolution\\S4-run-02\\stderr.log",
+  "free_C_bytes": 32430239744,
+  "available_memory_bytes": 17352286208,
+  "maximum_parallel_sections": 2,
+  "predecessor": "S4-run-01 retained FAILED due spot-QC CSV index-column plotting bug"
+}

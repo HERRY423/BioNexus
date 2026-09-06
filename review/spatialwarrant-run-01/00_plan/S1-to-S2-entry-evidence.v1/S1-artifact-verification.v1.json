@@ -1,0 +1,1470 @@
+{
+  "created": "2026-09-05T10:26:43.214049+00:00",
+  "method": "Exact-byte streaming SHA-256 only; no matrix count entries parsed or analyzed",
+  "files": [
+    {
+      "file": "00_plan/analysis-plan.lock.md",
+      "expected_sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82",
+      "actual_sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82",
+      "match": true,
+      "bytes": 41485
+    },
+    {
+      "file": "00_plan/analysis-plan.lock.v2.md",
+      "expected_sha256": "5ca06b5f7c06eaa8ff9e5298d010dd76cc7e5349952669dd071d632b45dbef56",
+      "actual_sha256": "5ca06b5f7c06eaa8ff9e5298d010dd76cc7e5349952669dd071d632b45dbef56",
+      "match": true,
+      "bytes": 49286
+    },
+    {
+      "file": "00_plan/authorization-v1-S1-20260905T063511Z.json",
+      "expected_sha256": "6b0a0271896b7104c9464c93982789e9319ea3b4f478af05a5a2b4bf096be76f",
+      "actual_sha256": "6b0a0271896b7104c9464c93982789e9319ea3b4f478af05a5a2b4bf096be76f",
+      "match": true,
+      "bytes": 1802
+    },
+    {
+      "file": "00_plan/geometry-contract-S1.json",
+      "expected_sha256": "b605eb2753171be06f938b97ab9d089fa5af8e74c0ba0eab7caea273411ddac5",
+      "actual_sha256": "b605eb2753171be06f938b97ab9d089fa5af8e74c0ba0eab7caea273411ddac5",
+      "match": true,
+      "bytes": 756
+    },
+    {
+      "file": "00_plan/plan-v2.sha256",
+      "expected_sha256": "505348209f00b6f18ee3be7b33b19a44701d2567a9231491f5133e4613cf921e",
+      "actual_sha256": "505348209f00b6f18ee3be7b33b19a44701d2567a9231491f5133e4613cf921e",
+      "match": true,
+      "bytes": 188
+    },
+    {
+      "file": "00_plan/plan.sha256",
+      "expected_sha256": "9939eaa435dcdd3a4e2a8ba77bdc88cfe65922582646fb3adc167a6a7dab8469",
+      "actual_sha256": "9939eaa435dcdd3a4e2a8ba77bdc88cfe65922582646fb3adc167a6a7dab8469",
+      "match": true,
+      "bytes": 183
+    },
+    {
+      "file": "00_plan/plugin-capability-check.json",
+      "expected_sha256": "15f9863ab4df0c2deb4bed64d726e6e400be28f10f7ad3307826877404a47785",
+      "actual_sha256": "15f9863ab4df0c2deb4bed64d726e6e400be28f10f7ad3307826877404a47785",
+      "match": true,
+      "bytes": 101044
+    },
+    {
+      "file": "00_plan/storage-location-check.v2.json",
+      "expected_sha256": "0d3c99f0cb4664f08645751bbaff95a86ccbefe9b4fe6b2ca06b8e052aa1211a",
+      "actual_sha256": "0d3c99f0cb4664f08645751bbaff95a86ccbefe9b4fe6b2ca06b8e052aa1211a",
+      "match": true,
+      "bytes": 2663
+    },
+    {
+      "file": "00_plan/v2-NOT_APPROVED-20260905T063511Z.json",
+      "expected_sha256": "fb22fca9feb61d11c9102b8fdcda37a7616fae9218b8a365cf4e58df990d274c",
+      "actual_sha256": "fb22fca9feb61d11c9102b8fdcda37a7616fae9218b8a365cf4e58df990d274c",
+      "match": true,
+      "bytes": 538
+    },
+    {
+      "file": "01_inputs/10x_blockA_section1/V1_Breast_Cancer_Block_A_Section_1_filtered_feature_bc_matrix.h5",
+      "expected_sha256": "b3cbb6ead60afad848ebcc07a34835613d9d2d79e416ad8300b210d9de584b65",
+      "actual_sha256": "b3cbb6ead60afad848ebcc07a34835613d9d2d79e416ad8300b210d9de584b65",
+      "match": true,
+      "bytes": 28201028
+    },
+    {
+      "file": "01_inputs/10x_blockA_section1/V1_Breast_Cancer_Block_A_Section_1_spatial-extracted/spatial/aligned_fiducials.jpg",
+      "expected_sha256": "cc7cddc9269d917e9f395d06826be8cbd9cee06689c7f4209d1fe15c7a3fb490",
+      "actual_sha256": "cc7cddc9269d917e9f395d06826be8cbd9cee06689c7f4209d1fe15c7a3fb490",
+      "match": true,
+      "bytes": 1780423
+    },
+    {
+      "file": "01_inputs/10x_blockA_section1/V1_Breast_Cancer_Block_A_Section_1_spatial-extracted/spatial/detected_tissue_image.jpg",
+      "expected_sha256": "dad113d99cb5339d75c0987a105dc095042be015ba2eb837ca3aa7b83025d27d",
+      "actual_sha256": "dad113d99cb5339d75c0987a105dc095042be015ba2eb837ca3aa7b83025d27d",
+      "match": true,
+      "bytes": 1867698
+    },
+    {
+      "file": "01_inputs/10x_blockA_section1/V1_Breast_Cancer_Block_A_Section_1_spatial-extracted/spatial/scalefactors_json.json",
+      "expected_sha256": "e0c079e051357928f76f98d8de0c92e6b85e33e6b1c794f13cdee3384494bcff",
+      "actual_sha256": "e0c079e051357928f76f98d8de0c92e6b85e33e6b1c794f13cdee3384494bcff",
+      "match": true,
+      "bytes": 166
+    },
+    {
+      "file": "01_inputs/10x_blockA_section1/V1_Breast_Cancer_Block_A_Section_1_spatial-extracted/spatial/tissue_hires_image.png",
+      "expected_sha256": "74c2a7a2741e4d7a43811a01533d373154982f44dffc85d2027012d873429593",
+      "actual_sha256": "74c2a7a2741e4d7a43811a01533d373154982f44dffc85d2027012d873429593",
+      "match": true,
+      "bytes": 5760732
+    },
+    {
+      "file": "01_inputs/10x_blockA_section1/V1_Breast_Cancer_Block_A_Section_1_spatial-extracted/spatial/tissue_lowres_image.png",
+      "expected_sha256": "e24b3e0c823838cce2deb6933dbd2e0632de86d29b4cd6c4dc22051c71adb816",
+      "actual_sha256": "e24b3e0c823838cce2deb6933dbd2e0632de86d29b4cd6c4dc22051c71adb816",
+      "match": true,
+      "bytes": 496197
+    },
+    {
+      "file": "01_inputs/10x_blockA_section1/V1_Breast_Cancer_Block_A_Section_1_spatial-extracted/spatial/tissue_positions_list.csv",
+      "expected_sha256": "284f439570700a566512e469cddfb1bc59ac135b523a74c806a4fb59d41c2547",
+      "actual_sha256": "284f439570700a566512e469cddfb1bc59ac135b523a74c806a4fb59d41c2547",
+      "match": true,
+      "bytes": 191224
+    },
+    {
+      "file": "01_inputs/10x_blockA_section1/V1_Breast_Cancer_Block_A_Section_1_spatial.tar.gz",
+      "expected_sha256": "415530a9d31172f63fd358d5d1cefb0798698ef9c0e614f52825894cd45c61bf",
+      "actual_sha256": "415530a9d31172f63fd358d5d1cefb0798698ef9c0e614f52825894cd45c61bf",
+      "match": true,
+      "bytes": 9960960
+    },
+    {
+      "file": "01_inputs/10x_blockA_section1/V1_Breast_Cancer_Block_A_Section_1_web_summary.html",
+      "expected_sha256": "a11893c5b6b7227a0e941081465e5e115627a0ec031b28b1ee514bf68f417d5e",
+      "actual_sha256": "a11893c5b6b7227a0e941081465e5e115627a0ec031b28b1ee514bf68f417d5e",
+      "match": true,
+      "bytes": 8052254
+    },
+    {
+      "file": "01_inputs/GSE176078/GSE176078_Wu_etal_2021_BRCA_scRNASeq-extracted/Wu_etal_2021_BRCA_scRNASeq/count_matrix_barcodes.tsv",
+      "expected_sha256": "583c7d9b150b5919737a767b57cfecfd1fa6d472903ead9b4d8052aff3792241",
+      "actual_sha256": "583c7d9b150b5919737a767b57cfecfd1fa6d472903ead9b4d8052aff3792241",
+      "match": true,
+      "bytes": 2531385
+    },
+    {
+      "file": "01_inputs/GSE176078/GSE176078_Wu_etal_2021_BRCA_scRNASeq-extracted/Wu_etal_2021_BRCA_scRNASeq/count_matrix_genes.tsv",
+      "expected_sha256": "a2a40b1ea2eab43ccf784d25fa25467be6dd05897bf551f2459e172442048d88",
+      "actual_sha256": "a2a40b1ea2eab43ccf784d25fa25467be6dd05897bf551f2459e172442048d88",
+      "match": true,
+      "bytes": 258239
+    },
+    {
+      "file": "01_inputs/GSE176078/GSE176078_Wu_etal_2021_BRCA_scRNASeq-extracted/Wu_etal_2021_BRCA_scRNASeq/count_matrix_sparse.mtx",
+      "expected_sha256": "0de970612a7559e6fdbb7d66bf899275155561e5becc79d5bd0575df40b3f9a4",
+      "actual_sha256": "0de970612a7559e6fdbb7d66bf899275155561e5becc79d5bd0575df40b3f9a4",
+      "match": true,
+      "bytes": 2395390330
+    },
+    {
+      "file": "01_inputs/GSE176078/GSE176078_Wu_etal_2021_BRCA_scRNASeq-extracted/Wu_etal_2021_BRCA_scRNASeq/metadata.csv",
+      "expected_sha256": "2de14f17546839a859464aba6f29de5575b96cb79351c4604c9286f15969e268",
+      "actual_sha256": "2de14f17546839a859464aba6f29de5575b96cb79351c4604c9286f15969e268",
+      "match": true,
+      "bytes": 11004185
+    },
+    {
+      "file": "01_inputs/GSE176078/GSE176078_Wu_etal_2021_BRCA_scRNASeq.tar.gz",
+      "expected_sha256": "c64894a9d50ec8af645b97e3e2685bde9389da24ef0004e9f66f9114c6474f57",
+      "actual_sha256": "c64894a9d50ec8af645b97e3e2685bde9389da24ef0004e9f66f9114c6474f57",
+      "match": true,
+      "bytes": 558829202
+    },
+    {
+      "file": "01_inputs/GSE176078/GSE176078_Wu_etal_2021_BRCA_scRNASeq.tar.gz.part",
+      "expected_sha256": "85e24e4b66897a42dd8f92733f12ada91a98bce2cda202508f8f8a8adf56ef53",
+      "actual_sha256": "85e24e4b66897a42dd8f92733f12ada91a98bce2cda202508f8f8a8adf56ef53",
+      "match": true,
+      "bytes": 261095424
+    },
+    {
+      "file": "01_inputs/GSE176078/range-resume/range-000-261095424-294649855.bin",
+      "expected_sha256": "a53103e1342d9a0ee08410802097a6771f78f6023ed2268c539768876cd400d3",
+      "actual_sha256": "a53103e1342d9a0ee08410802097a6771f78f6023ed2268c539768876cd400d3",
+      "match": true,
+      "bytes": 33554432
+    },
+    {
+      "file": "01_inputs/GSE176078/range-resume/range-001-294649856-328204287.bin",
+      "expected_sha256": "3388003f9d729ace646453850d117869f838c76fe423f6284480f5f5c23455d1",
+      "actual_sha256": "3388003f9d729ace646453850d117869f838c76fe423f6284480f5f5c23455d1",
+      "match": true,
+      "bytes": 33554432
+    },
+    {
+      "file": "01_inputs/GSE176078/range-resume/range-002-328204288-361758719.bin",
+      "expected_sha256": "641f83fedd81510fecec96c3323530787058bb3780e14f4f8ea90bdc6bd288c7",
+      "actual_sha256": "641f83fedd81510fecec96c3323530787058bb3780e14f4f8ea90bdc6bd288c7",
+      "match": true,
+      "bytes": 33554432
+    },
+    {
+      "file": "01_inputs/GSE176078/range-resume/range-003-361758720-395313151.bin",
+      "expected_sha256": "6a93919332b67b1a95d2a48c6c4d7db74535548300c9f0d4db6862a052041e5b",
+      "actual_sha256": "6a93919332b67b1a95d2a48c6c4d7db74535548300c9f0d4db6862a052041e5b",
+      "match": true,
+      "bytes": 33554432
+    },
+    {
+      "file": "01_inputs/GSE176078/range-resume/range-004-395313152-428867583.bin",
+      "expected_sha256": "1e30b19705ac65904d3761e2d90d9ca7b500e4e755681bb6daea42fe9457fd59",
+      "actual_sha256": "1e30b19705ac65904d3761e2d90d9ca7b500e4e755681bb6daea42fe9457fd59",
+      "match": true,
+      "bytes": 33554432
+    },
+    {
+      "file": "01_inputs/GSE176078/range-resume/range-005-428867584-462422015.bin",
+      "expected_sha256": "f30b3bb75cbc04c2e03ed5518750220bb2b70fd8caff2cc59347acb4c5ac7f21",
+      "actual_sha256": "f30b3bb75cbc04c2e03ed5518750220bb2b70fd8caff2cc59347acb4c5ac7f21",
+      "match": true,
+      "bytes": 33554432
+    },
+    {
+      "file": "01_inputs/GSE176078/range-resume/range-006-462422016-495976447.bin",
+      "expected_sha256": "2ac1cc3302308278ed0150c9cd2234d0e81562b1053948cbac6d763bb60fb67a",
+      "actual_sha256": "2ac1cc3302308278ed0150c9cd2234d0e81562b1053948cbac6d763bb60fb67a",
+      "match": true,
+      "bytes": 33554432
+    },
+    {
+      "file": "01_inputs/GSE176078/range-resume/range-007-495976448-529530879.bin",
+      "expected_sha256": "c464de1f6897cc9b2d0d11d3efd697200ea8a8bdb710f63cbd4800c85885608a",
+      "actual_sha256": "c464de1f6897cc9b2d0d11d3efd697200ea8a8bdb710f63cbd4800c85885608a",
+      "match": true,
+      "bytes": 33554432
+    },
+    {
+      "file": "01_inputs/GSE176078/range-resume/range-008-529530880-558829201.bin",
+      "expected_sha256": "b5ef618edf3f4f8c4c3c67fcb005f93b78fc4b053db13701ea599225f845eca7",
+      "actual_sha256": "b5ef618edf3f4f8c4c3c67fcb005f93b78fc4b053db13701ea599225f845eca7",
+      "match": true,
+      "bytes": 29298322
+    },
+    {
+      "file": "01_inputs/literature/PMC9044823-BioC.xml",
+      "expected_sha256": "e11409f1d3565b3ee5d4ead5d5d062f0b7fc3eee9853d1c21da97f96a41232b6",
+      "actual_sha256": "e11409f1d3565b3ee5d4ead5d5d062f0b7fc3eee9853d1c21da97f96a41232b6",
+      "match": true,
+      "bytes": 145043
+    },
+    {
+      "file": "01_inputs/literature/pubmed-34493872-attempt-1.xml",
+      "expected_sha256": "11e88240a8f49a80dcd9e0f305c451f54d54423aaadca4cfce253d746592bb1d",
+      "actual_sha256": "11e88240a8f49a80dcd9e0f305c451f54d54423aaadca4cfce253d746592bb1d",
+      "match": true,
+      "bytes": 46847
+    },
+    {
+      "file": "01_inputs/literature/pubmed-call-1.json",
+      "expected_sha256": "0812e950cfa7712a8244853b3bbb66944bd7c133c1c882a62902da1a8d2a704b",
+      "actual_sha256": "0812e950cfa7712a8244853b3bbb66944bd7c133c1c882a62902da1a8d2a704b",
+      "match": true,
+      "bytes": 363
+    },
+    {
+      "file": "01_inputs/literature/pubmed-plugin-return-1.json",
+      "expected_sha256": "b474b56f439ad9b164a710e444e3d0bcccd3dabd86427f2eab03c3de92d058d7",
+      "actual_sha256": "b474b56f439ad9b164a710e444e3d0bcccd3dabd86427f2eab03c3de92d058d7",
+      "match": true,
+      "bytes": 1025
+    },
+    {
+      "file": "01_inputs/literature/pubmed-request-1.json",
+      "expected_sha256": "6e0da59aeefd37a309a2c9cd1ddf5fc4fedac38b03e5f1c486fbc5987f094dc3",
+      "actual_sha256": "6e0da59aeefd37a309a2c9cd1ddf5fc4fedac38b03e5f1c486fbc5987f094dc3",
+      "match": true,
+      "bytes": 344
+    },
+    {
+      "file": "01_inputs/resources/h.all.v2024.1.Hs.symbols.gmt",
+      "expected_sha256": "ee2463540042078bfa3f67828e1e223bb354446d9fbb4d22845866835ba5c772",
+      "actual_sha256": "ee2463540042078bfa3f67828e1e223bb354446d9fbb4d22845866835ba5c772",
+      "match": true,
+      "bytes": 48690
+    },
+    {
+      "file": "01_inputs/resources/liana-consensus-frozen.csv",
+      "expected_sha256": "68f7669e38e6062310cad380de0573f868e7f8a6ad529232cc5cd95ad9d9faf8",
+      "actual_sha256": "68f7669e38e6062310cad380de0573f868e7f8a6ad529232cc5cd95ad9d9faf8",
+      "match": true,
+      "bytes": 64578
+    },
+    {
+      "file": "01_inputs/resources/liana-omni_resource.csv",
+      "expected_sha256": "65e46a428818c0600de66c1574c94ff2f5dc80859998321c03a956d330dd67fb",
+      "actual_sha256": "65e46a428818c0600de66c1574c94ff2f5dc80859998321c03a956d330dd67fb",
+      "match": true,
+      "bytes": 2004367
+    },
+    {
+      "file": "01_inputs/resources/liana-select_resource.py",
+      "expected_sha256": "701ce40bce436c886fda201d19fba85c55f0d7c6478b872993bd3ba76a6b1454",
+      "actual_sha256": "701ce40bce436c886fda201d19fba85c55f0d7c6478b872993bd3ba76a6b1454",
+      "match": true,
+      "bytes": 3837
+    },
+    {
+      "file": "01_inputs/resources/PROGENy-omnipath-snapshot.tsv",
+      "expected_sha256": "a1a0f938211def2b846cfde7e7dd56d83240d1bb9bc0ac423682b071761bc821",
+      "actual_sha256": "a1a0f938211def2b846cfde7e7dd56d83240d1bb9bc0ac423682b071761bc821",
+      "match": true,
+      "bytes": 40878350
+    },
+    {
+      "file": "01_inputs/source_metadata/GSE176078-filelist.txt",
+      "expected_sha256": "f0ded51ff48b8c984d3b49df1ddb7673a3a50e08271167cdc5eac23a41d958a8",
+      "actual_sha256": "f0ded51ff48b8c984d3b49df1ddb7673a3a50e08271167cdc5eac23a41d958a8",
+      "match": true,
+      "bytes": 1756
+    },
+    {
+      "file": "01_inputs/source_metadata/GSE176078-suppl.html",
+      "expected_sha256": "1f43e8a78ce7f68073278d59adf89a07739dab8965bdfb2a3c9261b47186077f",
+      "actual_sha256": "1f43e8a78ce7f68073278d59adf89a07739dab8965bdfb2a3c9261b47186077f",
+      "match": true,
+      "bytes": 1027
+    },
+    {
+      "file": "01_inputs/source_metadata/GSE176078_family.soft.gz",
+      "expected_sha256": "8d1d0298a8e52c1449c3865736b1d0cf2a55a770b405e820b4eeec6cdd1621f7",
+      "actual_sha256": "8d1d0298a8e52c1449c3865736b1d0cf2a55a770b405e820b4eeec6cdd1621f7",
+      "match": true,
+      "bytes": 3756
+    },
+    {
+      "file": "01_inputs/source_metadata/liana-main-commit.json",
+      "expected_sha256": "afbe014e7210db39075d6044f025dfcdb324486ba57b8b38c7fcc21e461c5cf7",
+      "actual_sha256": "afbe014e7210db39075d6044f025dfcdb324486ba57b8b38c7fcc21e461c5cf7",
+      "match": true,
+      "bytes": 13669
+    },
+    {
+      "file": "01_inputs/source_metadata/msigdb-2024.1.Hs-index.html",
+      "expected_sha256": "c76a7818822ff4e75a291ebae977c344a7cc5262e50bb407132d85961452bb9a",
+      "actual_sha256": "c76a7818822ff4e75a291ebae977c344a7cc5262e50bb407132d85961452bb9a",
+      "match": true,
+      "bytes": 26637
+    },
+    {
+      "file": "01_inputs/source_metadata/zenodo-4739739.json",
+      "expected_sha256": "27c1d5c776bfa34dc4a3070922efb79fde9c5203d2dc384bb518cfb6180211f9",
+      "actual_sha256": "27c1d5c776bfa34dc4a3070922efb79fde9c5203d2dc384bb518cfb6180211f9",
+      "match": true,
+      "bytes": 6578
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/1142243F_filtered_count_matrix/barcodes.tsv.gz",
+      "expected_sha256": "095597335f4464e63e3879e229089840b42fb398ca375e6db18afebe378602ed",
+      "actual_sha256": "095597335f4464e63e3879e229089840b42fb398ca375e6db18afebe378602ed",
+      "match": true,
+      "bytes": 90896
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/1142243F_filtered_count_matrix/features.tsv.gz",
+      "expected_sha256": "995f7939b4c9705b73027e29803a5e7c9f4b73ee80a9c418f87875454440549f",
+      "actual_sha256": "995f7939b4c9705b73027e29803a5e7c9f4b73ee80a9c418f87875454440549f",
+      "match": true,
+      "bytes": 226334
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/1142243F_filtered_count_matrix/matrix.mtx.gz",
+      "expected_sha256": "3b1fa8e91f81f7369e95e50e8c87207b22cdbf24739318a84ef6ce6257ce0ca9",
+      "actual_sha256": "3b1fa8e91f81f7369e95e50e8c87207b22cdbf24739318a84ef6ce6257ce0ca9",
+      "match": true,
+      "bytes": 158471762
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/1160920F_filtered_count_matrix/barcodes.tsv.gz",
+      "expected_sha256": "5fd106cab714af7cd06dc19026972310784abcc5b4ae773ce0c6bc8f8fbc02f0",
+      "actual_sha256": "5fd106cab714af7cd06dc19026972310784abcc5b4ae773ce0c6bc8f8fbc02f0",
+      "match": true,
+      "bytes": 93005
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/1160920F_filtered_count_matrix/features.tsv.gz",
+      "expected_sha256": "995f7939b4c9705b73027e29803a5e7c9f4b73ee80a9c418f87875454440549f",
+      "actual_sha256": "995f7939b4c9705b73027e29803a5e7c9f4b73ee80a9c418f87875454440549f",
+      "match": true,
+      "bytes": 226334
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/1160920F_filtered_count_matrix/matrix.mtx.gz",
+      "expected_sha256": "551c58fcf6af46d05726d27b2b64b67d6acb6f76c0428962db0e9c252a64fb15",
+      "actual_sha256": "551c58fcf6af46d05726d27b2b64b67d6acb6f76c0428962db0e9c252a64fb15",
+      "match": true,
+      "bytes": 213955065
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID4290_filtered_count_matrix/barcodes.tsv.gz",
+      "expected_sha256": "0a8127a5840589ff55c152cf0a21caff35a76aec3e324cb0842c490c87eba619",
+      "actual_sha256": "0a8127a5840589ff55c152cf0a21caff35a76aec3e324cb0842c490c87eba619",
+      "match": true,
+      "bytes": 46208
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID4290_filtered_count_matrix/features.tsv.gz",
+      "expected_sha256": "c1f3374aacf0476b4ef2979dd355b13bd3bd3bd5afae5f14e13fcdabf0a1eb4b",
+      "actual_sha256": "c1f3374aacf0476b4ef2979dd355b13bd3bd3bd5afae5f14e13fcdabf0a1eb4b",
+      "match": true,
+      "bytes": 137319
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID4290_filtered_count_matrix/matrix.mtx.gz",
+      "expected_sha256": "7ffcc5d132ca205c47d3b2cd4c75d7f93f4e188dd056a08a4ed60af227c83609",
+      "actual_sha256": "7ffcc5d132ca205c47d3b2cd4c75d7f93f4e188dd056a08a4ed60af227c83609",
+      "match": true,
+      "bytes": 91162301
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID4465_filtered_count_matrix/barcodes.tsv.gz",
+      "expected_sha256": "1a34dde90c3cc7e71d3304cebaa2229b93158916448b9e85c64bb37a344fd896",
+      "actual_sha256": "1a34dde90c3cc7e71d3304cebaa2229b93158916448b9e85c64bb37a344fd896",
+      "match": true,
+      "bytes": 23009
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID4465_filtered_count_matrix/features.tsv.gz",
+      "expected_sha256": "c1f3374aacf0476b4ef2979dd355b13bd3bd3bd5afae5f14e13fcdabf0a1eb4b",
+      "actual_sha256": "c1f3374aacf0476b4ef2979dd355b13bd3bd3bd5afae5f14e13fcdabf0a1eb4b",
+      "match": true,
+      "bytes": 137319
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID4465_filtered_count_matrix/matrix.mtx.gz",
+      "expected_sha256": "4ade0dfa655de502c4330d91072ca7733ede29c14ed03222ac91fdccbb69f5a8",
+      "actual_sha256": "4ade0dfa655de502c4330d91072ca7733ede29c14ed03222ac91fdccbb69f5a8",
+      "match": true,
+      "bytes": 58675135
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID44971_filtered_count_matrix/barcodes.tsv.gz",
+      "expected_sha256": "4355cfc996e3b53ef15c45562a0756edcd73215338eda0bc3f0df85a8d4b2be3",
+      "actual_sha256": "4355cfc996e3b53ef15c45562a0756edcd73215338eda0bc3f0df85a8d4b2be3",
+      "match": true,
+      "bytes": 22078
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID44971_filtered_count_matrix/features.tsv.gz",
+      "expected_sha256": "c1f3374aacf0476b4ef2979dd355b13bd3bd3bd5afae5f14e13fcdabf0a1eb4b",
+      "actual_sha256": "c1f3374aacf0476b4ef2979dd355b13bd3bd3bd5afae5f14e13fcdabf0a1eb4b",
+      "match": true,
+      "bytes": 137319
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID44971_filtered_count_matrix/matrix.mtx.gz",
+      "expected_sha256": "2d409c81d1ac0b7be727095391149d2694fb6c5a3af285eac77d4fd34a89d155",
+      "actual_sha256": "2d409c81d1ac0b7be727095391149d2694fb6c5a3af285eac77d4fd34a89d155",
+      "match": true,
+      "bytes": 49397979
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID4535_filtered_count_matrix/barcodes.tsv.gz",
+      "expected_sha256": "610ab98315767c012faf16341261c4a9f5e8cca22c8a62311d0591ecb1d2feca",
+      "actual_sha256": "610ab98315767c012faf16341261c4a9f5e8cca22c8a62311d0591ecb1d2feca",
+      "match": true,
+      "bytes": 21413
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID4535_filtered_count_matrix/features.tsv.gz",
+      "expected_sha256": "c1f3374aacf0476b4ef2979dd355b13bd3bd3bd5afae5f14e13fcdabf0a1eb4b",
+      "actual_sha256": "c1f3374aacf0476b4ef2979dd355b13bd3bd3bd5afae5f14e13fcdabf0a1eb4b",
+      "match": true,
+      "bytes": 137319
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices-extracted/filtered_count_matrices/CID4535_filtered_count_matrix/matrix.mtx.gz",
+      "expected_sha256": "02df8aa223663419dbee285c1478eab151a8b01f0fc620e749ace0fdc661630f",
+      "actual_sha256": "02df8aa223663419dbee285c1478eab151a8b01f0fc620e749ace0fdc661630f",
+      "match": true,
+      "bytes": 56554742
+    },
+    {
+      "file": "01_inputs/zenodo4739739/filtered_count_matrices.tar.gz",
+      "expected_sha256": "57531d348b7c2ae9c5cd6b6c3bf36ce2850945565f8aa381c7edc5b7fc4e4e1e",
+      "actual_sha256": "57531d348b7c2ae9c5cd6b6c3bf36ce2850945565f8aa381c7edc5b7fc4e4e1e",
+      "match": true,
+      "bytes": 155703418
+    },
+    {
+      "file": "01_inputs/zenodo4739739/images.pdf",
+      "expected_sha256": "179eaceffb49e7bc6a9776853af1e0e076408cdc24845262a380ced636dc9466",
+      "actual_sha256": "179eaceffb49e7bc6a9776853af1e0e076408cdc24845262a380ced636dc9466",
+      "match": true,
+      "bytes": 457685417
+    },
+    {
+      "file": "01_inputs/zenodo4739739/metadata-extracted/metadata/1142243F_metadata.csv",
+      "expected_sha256": "b9b02fde7b7747c16cabf3c744455e6b8be1c9d9733cd848c1829d78b6df22ad",
+      "actual_sha256": "b9b02fde7b7747c16cabf3c744455e6b8be1c9d9733cd848c1829d78b6df22ad",
+      "match": true,
+      "bytes": 357025
+    },
+    {
+      "file": "01_inputs/zenodo4739739/metadata-extracted/metadata/1160920F_metadata.csv",
+      "expected_sha256": "47a36ffccead4e9e872b497d6da137ebf593e65d64733465eca0599d5cdeed7b",
+      "actual_sha256": "47a36ffccead4e9e872b497d6da137ebf593e65d64733465eca0599d5cdeed7b",
+      "match": true,
+      "bytes": 355969
+    },
+    {
+      "file": "01_inputs/zenodo4739739/metadata-extracted/metadata/CID4290_metadata.csv",
+      "expected_sha256": "dee22664463eedad0884793d8db0c7e926d2d20a33354679d1ddaa32c78173ae",
+      "actual_sha256": "dee22664463eedad0884793d8db0c7e926d2d20a33354679d1ddaa32c78173ae",
+      "match": true,
+      "bytes": 159536
+    },
+    {
+      "file": "01_inputs/zenodo4739739/metadata-extracted/metadata/CID4465_metadata.csv",
+      "expected_sha256": "5ab11f448ea24776dc77d1249ba2cca2a7df2c1f66d37169a1135968958014ff",
+      "actual_sha256": "5ab11f448ea24776dc77d1249ba2cca2a7df2c1f66d37169a1135968958014ff",
+      "match": true,
+      "bytes": 96298
+    },
+    {
+      "file": "01_inputs/zenodo4739739/metadata-extracted/metadata/CID44971_metadata.csv",
+      "expected_sha256": "e4f6d435845d1000428755425a997a87e3a419433c2a232b32500347a5c650af",
+      "actual_sha256": "e4f6d435845d1000428755425a997a87e3a419433c2a232b32500347a5c650af",
+      "match": true,
+      "bytes": 73234
+    },
+    {
+      "file": "01_inputs/zenodo4739739/metadata-extracted/metadata/CID4535_metadata.csv",
+      "expected_sha256": "7c002213c4261019ecae8b4c99065fc4085f5cc289dba1f54c8d2d5fcc46a246",
+      "actual_sha256": "7c002213c4261019ecae8b4c99065fc4085f5cc289dba1f54c8d2d5fcc46a246",
+      "match": true,
+      "bytes": 66588
+    },
+    {
+      "file": "01_inputs/zenodo4739739/metadata.tar.gz",
+      "expected_sha256": "beb8c05063f279fef805349ee8cc0714957576fbfb4af7c119dc46ec5cc8bea3",
+      "actual_sha256": "beb8c05063f279fef805349ee8cc0714957576fbfb4af7c119dc46ec5cc8bea3",
+      "match": true,
+      "bytes": 217533
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/1142243F_raw_feature_bc_matrix/barcodes.tsv.gz",
+      "expected_sha256": "29d35c69b78ce801845e076c35039231fd7882af864c5a552c60d5cd7102d368",
+      "actual_sha256": "29d35c69b78ce801845e076c35039231fd7882af864c5a552c60d5cd7102d368",
+      "match": true,
+      "bytes": 28316
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/1142243F_raw_feature_bc_matrix/features.tsv.gz",
+      "expected_sha256": "9c2061dd4be86a2d36e3cdd38ea439faeafefabfbeaa793a3323acb50dacfc74",
+      "actual_sha256": "9c2061dd4be86a2d36e3cdd38ea439faeafefabfbeaa793a3323acb50dacfc74",
+      "match": true,
+      "bytes": 333437
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/1142243F_raw_feature_bc_matrix/matrix.mtx.gz",
+      "expected_sha256": "47c01f04e346d26fa82bb7a7a47bea3da8bd705551d016e0f95cdf1f1868b5ff",
+      "actual_sha256": "47c01f04e346d26fa82bb7a7a47bea3da8bd705551d016e0f95cdf1f1868b5ff",
+      "match": true,
+      "bytes": 50326201
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/1160920F_raw_feature_bc_matrix/barcodes.tsv.gz",
+      "expected_sha256": "f8fc5366932047b6b52a1249e5048b125f0e7efd2a024d4e911213a1dcb2896b",
+      "actual_sha256": "f8fc5366932047b6b52a1249e5048b125f0e7efd2a024d4e911213a1dcb2896b",
+      "match": true,
+      "bytes": 28316
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/1160920F_raw_feature_bc_matrix/features.tsv.gz",
+      "expected_sha256": "63a4b7f33d80944cc8f11cc761b4aad7f3af801957fbb0eee88d24588fd59f6c",
+      "actual_sha256": "63a4b7f33d80944cc8f11cc761b4aad7f3af801957fbb0eee88d24588fd59f6c",
+      "match": true,
+      "bytes": 333437
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/1160920F_raw_feature_bc_matrix/matrix.mtx.gz",
+      "expected_sha256": "2e53f469414e17a5f284452cccce071635f6c6a3c1d616788728618740ee5e0a",
+      "actual_sha256": "2e53f469414e17a5f284452cccce071635f6c6a3c1d616788728618740ee5e0a",
+      "match": true,
+      "bytes": 63951665
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID4290_raw_feature_bc_matrix/barcodes.tsv.gz",
+      "expected_sha256": "856fa22b6fb346931480b232fef560dec4a42ce7ea8237ffa207d2499b8d7274",
+      "actual_sha256": "856fa22b6fb346931480b232fef560dec4a42ce7ea8237ffa207d2499b8d7274",
+      "match": true,
+      "bytes": 25674
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID4290_raw_feature_bc_matrix/features.tsv.gz",
+      "expected_sha256": "0a6e9f09c1343264d465b73d0e3b93efa9ccb3d7643cccf0600d81f5b20478d7",
+      "actual_sha256": "0a6e9f09c1343264d465b73d0e3b93efa9ccb3d7643cccf0600d81f5b20478d7",
+      "match": true,
+      "bytes": 294383
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID4290_raw_feature_bc_matrix/matrix.mtx.gz",
+      "expected_sha256": "b9c5272d58db847cf07371c3d03f4f2ae3567e8d9ecdc7bb5414095dc02af88e",
+      "actual_sha256": "b9c5272d58db847cf07371c3d03f4f2ae3567e8d9ecdc7bb5414095dc02af88e",
+      "match": true,
+      "bytes": 36469334
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID4465_raw_feature_bc_matrix/barcodes.tsv.gz",
+      "expected_sha256": "856fa22b6fb346931480b232fef560dec4a42ce7ea8237ffa207d2499b8d7274",
+      "actual_sha256": "856fa22b6fb346931480b232fef560dec4a42ce7ea8237ffa207d2499b8d7274",
+      "match": true,
+      "bytes": 25674
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID4465_raw_feature_bc_matrix/features.tsv.gz",
+      "expected_sha256": "0a6e9f09c1343264d465b73d0e3b93efa9ccb3d7643cccf0600d81f5b20478d7",
+      "actual_sha256": "0a6e9f09c1343264d465b73d0e3b93efa9ccb3d7643cccf0600d81f5b20478d7",
+      "match": true,
+      "bytes": 294383
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID4465_raw_feature_bc_matrix/matrix.mtx.gz",
+      "expected_sha256": "976efddd8d1c39c9df6389eda98ea04bbd373afcd78c1824d2baf594f026714a",
+      "actual_sha256": "976efddd8d1c39c9df6389eda98ea04bbd373afcd78c1824d2baf594f026714a",
+      "match": true,
+      "bytes": 36329344
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID44971_raw_feature_bc_matrix/barcodes.tsv.gz",
+      "expected_sha256": "856fa22b6fb346931480b232fef560dec4a42ce7ea8237ffa207d2499b8d7274",
+      "actual_sha256": "856fa22b6fb346931480b232fef560dec4a42ce7ea8237ffa207d2499b8d7274",
+      "match": true,
+      "bytes": 25674
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID44971_raw_feature_bc_matrix/features.tsv.gz",
+      "expected_sha256": "0a6e9f09c1343264d465b73d0e3b93efa9ccb3d7643cccf0600d81f5b20478d7",
+      "actual_sha256": "0a6e9f09c1343264d465b73d0e3b93efa9ccb3d7643cccf0600d81f5b20478d7",
+      "match": true,
+      "bytes": 294383
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID44971_raw_feature_bc_matrix/matrix.mtx.gz",
+      "expected_sha256": "f7b58f3330c8f2cf416461019afab16e94ff1fdb47ebd682cf325864288db390",
+      "actual_sha256": "f7b58f3330c8f2cf416461019afab16e94ff1fdb47ebd682cf325864288db390",
+      "match": true,
+      "bytes": 29577854
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID4535_raw_feature_bc_matrix/barcodes.tsv.gz",
+      "expected_sha256": "856fa22b6fb346931480b232fef560dec4a42ce7ea8237ffa207d2499b8d7274",
+      "actual_sha256": "856fa22b6fb346931480b232fef560dec4a42ce7ea8237ffa207d2499b8d7274",
+      "match": true,
+      "bytes": 25674
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID4535_raw_feature_bc_matrix/features.tsv.gz",
+      "expected_sha256": "0a6e9f09c1343264d465b73d0e3b93efa9ccb3d7643cccf0600d81f5b20478d7",
+      "actual_sha256": "0a6e9f09c1343264d465b73d0e3b93efa9ccb3d7643cccf0600d81f5b20478d7",
+      "match": true,
+      "bytes": 294383
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices-extracted/raw_count_matrices/CID4535_raw_feature_bc_matrix/matrix.mtx.gz",
+      "expected_sha256": "c0b37824b8647b11da77054939e1215e60664d2eb480202feaeab78a1dbc2be9",
+      "actual_sha256": "c0b37824b8647b11da77054939e1215e60664d2eb480202feaeab78a1dbc2be9",
+      "match": true,
+      "bytes": 34192999
+    },
+    {
+      "file": "01_inputs/zenodo4739739/raw_count_matrices.tar.gz",
+      "expected_sha256": "83a60ea3d2e3f0a1793d245a4f608a40d2cf07a8830dc9ffea503eb3e95ba55f",
+      "actual_sha256": "83a60ea3d2e3f0a1793d245a4f608a40d2cf07a8830dc9ffea503eb3e95ba55f",
+      "match": true,
+      "bytes": 252891138
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1142243F_spatial/aligned_fiducials.jpg",
+      "expected_sha256": "a39d43be407351591466f68f2ebba8c3401bef7863e1f5fb223d776a81ea5af4",
+      "actual_sha256": "a39d43be407351591466f68f2ebba8c3401bef7863e1f5fb223d776a81ea5af4",
+      "match": true,
+      "bytes": 867635
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1142243F_spatial/detected_tissue_image.jpg",
+      "expected_sha256": "b59eea4bb87911f45e65ab8caae7fef414e9eb87cb707d683706584392e5ae18",
+      "actual_sha256": "b59eea4bb87911f45e65ab8caae7fef414e9eb87cb707d683706584392e5ae18",
+      "match": true,
+      "bytes": 959014
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1142243F_spatial/scalefactors_json.json",
+      "expected_sha256": "f525ca95d2274fe93c02b6dc5b25d14102744eab0ea4d823c667fcef4300bab2",
+      "actual_sha256": "f525ca95d2274fe93c02b6dc5b25d14102744eab0ea4d823c667fcef4300bab2",
+      "match": true,
+      "bytes": 167
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1142243F_spatial/tissue_hires_image.png",
+      "expected_sha256": "52e3f48cb59a7f6eafe4ff1ade2de99fb1f5e729b22fdcedf60d86f271f00bd4",
+      "actual_sha256": "52e3f48cb59a7f6eafe4ff1ade2de99fb1f5e729b22fdcedf60d86f271f00bd4",
+      "match": true,
+      "bytes": 3506288
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1142243F_spatial/tissue_lowres_image.png",
+      "expected_sha256": "e2510e3b92756abc5a125ccd3eb73051085ec99085a279407dc8716cecd99c50",
+      "actual_sha256": "e2510e3b92756abc5a125ccd3eb73051085ec99085a279407dc8716cecd99c50",
+      "match": true,
+      "bytes": 327310
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1142243F_spatial/tissue_positions_list.csv",
+      "expected_sha256": "82588e031ada452f8bb7fb989278697de18791901ec34b0bdd260f506913aab0",
+      "actual_sha256": "82588e031ada452f8bb7fb989278697de18791901ec34b0bdd260f506913aab0",
+      "match": true,
+      "bytes": 193155
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1160920F_spatial/aligned_fiducials.jpg",
+      "expected_sha256": "d5898acf49d0a950b4741b050559336dea6eea11061f90d75dde83ae25da2f67",
+      "actual_sha256": "d5898acf49d0a950b4741b050559336dea6eea11061f90d75dde83ae25da2f67",
+      "match": true,
+      "bytes": 852332
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1160920F_spatial/detected_tissue_image.jpg",
+      "expected_sha256": "219c72ce602b2261bce8a87cb89db24a9c8bd2ad929ed4a65dd55e35448a0ca5",
+      "actual_sha256": "219c72ce602b2261bce8a87cb89db24a9c8bd2ad929ed4a65dd55e35448a0ca5",
+      "match": true,
+      "bytes": 971411
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1160920F_spatial/scalefactors_json.json",
+      "expected_sha256": "5f98ac7d92278e2b432e431f0b8819a09657943b40ae68a9dd1c6a6348b6d110",
+      "actual_sha256": "5f98ac7d92278e2b432e431f0b8819a09657943b40ae68a9dd1c6a6348b6d110",
+      "match": true,
+      "bytes": 149
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1160920F_spatial/tissue_hires_image.png",
+      "expected_sha256": "fbf1fc5ffbd6d54e6ea4aa4e5b4184ff944c0fe0b905dee192fdec7e1b880d59",
+      "actual_sha256": "fbf1fc5ffbd6d54e6ea4aa4e5b4184ff944c0fe0b905dee192fdec7e1b880d59",
+      "match": true,
+      "bytes": 3463338
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1160920F_spatial/tissue_lowres_image.png",
+      "expected_sha256": "f0d8a45651a2062bc4ae8599160f71e2d17104f036ee3e3bb2a282a52fda2936",
+      "actual_sha256": "f0d8a45651a2062bc4ae8599160f71e2d17104f036ee3e3bb2a282a52fda2936",
+      "match": true,
+      "bytes": 303747
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/1160920F_spatial/tissue_positions_list.csv",
+      "expected_sha256": "041e1736f7114d39be219b626097c4e32b37ed3bcf2a5402604e2e30c2cf6823",
+      "actual_sha256": "041e1736f7114d39be219b626097c4e32b37ed3bcf2a5402604e2e30c2cf6823",
+      "match": true,
+      "bytes": 193181
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4290_spatial/aligned_fiducials.jpg",
+      "expected_sha256": "52d22e5eacde4499b99ad0901545eec9e0dde1f24abe8fabf075b18d6c1277b5",
+      "actual_sha256": "52d22e5eacde4499b99ad0901545eec9e0dde1f24abe8fabf075b18d6c1277b5",
+      "match": true,
+      "bytes": 1629832
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4290_spatial/detected_tissue_image.jpg",
+      "expected_sha256": "e36719b7e1e5502c04be47d0139bae613817a65caa4645974dfe87251ef0a1f6",
+      "actual_sha256": "e36719b7e1e5502c04be47d0139bae613817a65caa4645974dfe87251ef0a1f6",
+      "match": true,
+      "bytes": 1904449
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4290_spatial/scalefactors_json.json",
+      "expected_sha256": "905a47a7e3a048547743e51aea468e1e1539dca949eb93d35f7849f88a74136a",
+      "actual_sha256": "905a47a7e3a048547743e51aea468e1e1539dca949eb93d35f7849f88a74136a",
+      "match": true,
+      "bytes": 165
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4290_spatial/tissue_hires_image.png",
+      "expected_sha256": "d3939f0c19fabd3a775b6149de8ab5bcf7f462ed5b22ecb0a44c38d1bda5373b",
+      "actual_sha256": "d3939f0c19fabd3a775b6149de8ab5bcf7f462ed5b22ecb0a44c38d1bda5373b",
+      "match": true,
+      "bytes": 7178477
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4290_spatial/tissue_lowres_image.png",
+      "expected_sha256": "8bb762979ca863ae4e9f6ded64fa14473da7668cc3c382d794f2c47c86daa7cb",
+      "actual_sha256": "8bb762979ca863ae4e9f6ded64fa14473da7668cc3c382d794f2c47c86daa7cb",
+      "match": true,
+      "bytes": 601137
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4290_spatial/tissue_positions_list.csv",
+      "expected_sha256": "e008ab738354fecce3e5be5a1ce68d4661aa22345a96b6ce72bcd6bd1ca4f3ea",
+      "actual_sha256": "e008ab738354fecce3e5be5a1ce68d4661aa22345a96b6ce72bcd6bd1ca4f3ea",
+      "match": true,
+      "bytes": 184766
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4465_spatial/aligned_fiducials.jpg",
+      "expected_sha256": "09a5611e65d4a3669b644bd77923a701d05bfd645a81966b3d663ddbb6892ed6",
+      "actual_sha256": "09a5611e65d4a3669b644bd77923a701d05bfd645a81966b3d663ddbb6892ed6",
+      "match": true,
+      "bytes": 1393931
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4465_spatial/detected_tissue_image.jpg",
+      "expected_sha256": "eeeb40bc6ad2742f49f502c14b6aadcc006eec8d78677cc16bb4831b08988c95",
+      "actual_sha256": "eeeb40bc6ad2742f49f502c14b6aadcc006eec8d78677cc16bb4831b08988c95",
+      "match": true,
+      "bytes": 1913199
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4465_spatial/scalefactors_json.json",
+      "expected_sha256": "e29ff3575af8681b26e60bb96bbc5226b494bc58bcb0729479d90472362d08ab",
+      "actual_sha256": "e29ff3575af8681b26e60bb96bbc5226b494bc58bcb0729479d90472362d08ab",
+      "match": true,
+      "bytes": 165
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4465_spatial/tissue_hires_image.png",
+      "expected_sha256": "842a5bed58167db5520643fb7c3d7c219cee9689f392364af60beba19bbd8da9",
+      "actual_sha256": "842a5bed58167db5520643fb7c3d7c219cee9689f392364af60beba19bbd8da9",
+      "match": true,
+      "bytes": 6486759
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4465_spatial/tissue_lowres_image.png",
+      "expected_sha256": "f141224a1fd5ff06e1a051898e5e9603b2d8e1472a81524d60d4c54d9656bfa9",
+      "actual_sha256": "f141224a1fd5ff06e1a051898e5e9603b2d8e1472a81524d60d4c54d9656bfa9",
+      "match": true,
+      "bytes": 514459
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4465_spatial/tissue_positions_list.csv",
+      "expected_sha256": "7d32134c4fc40040b1d093e8aa0196d15bff7ab8209e01804f858de7847512e3",
+      "actual_sha256": "7d32134c4fc40040b1d093e8aa0196d15bff7ab8209e01804f858de7847512e3",
+      "match": true,
+      "bytes": 184766
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID44971_spatial/aligned_fiducials.jpg",
+      "expected_sha256": "1fa6fdef349aa02f23291b50e59cb1cc4c02f9c42be7e6e45295a41933781a62",
+      "actual_sha256": "1fa6fdef349aa02f23291b50e59cb1cc4c02f9c42be7e6e45295a41933781a62",
+      "match": true,
+      "bytes": 1418712
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID44971_spatial/detected_tissue_image.jpg",
+      "expected_sha256": "f3e62b82e08876d0dca3d18d02c2e6b6e9f7e55eb6e5404c56fe1662c1a79745",
+      "actual_sha256": "f3e62b82e08876d0dca3d18d02c2e6b6e9f7e55eb6e5404c56fe1662c1a79745",
+      "match": true,
+      "bytes": 1966903
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID44971_spatial/scalefactors_json.json",
+      "expected_sha256": "0cfda8539351e6c6ff02ce4288b6be03bafb7a338eed663bdeda55c176ead1a3",
+      "actual_sha256": "0cfda8539351e6c6ff02ce4288b6be03bafb7a338eed663bdeda55c176ead1a3",
+      "match": true,
+      "bytes": 164
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID44971_spatial/tissue_hires_image.png",
+      "expected_sha256": "50d35ce7430eb36f5b6c33d14c40b9bbcbf8a75a530a3e249fc53cc258974954",
+      "actual_sha256": "50d35ce7430eb36f5b6c33d14c40b9bbcbf8a75a530a3e249fc53cc258974954",
+      "match": true,
+      "bytes": 6660364
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID44971_spatial/tissue_lowres_image.png",
+      "expected_sha256": "12320b431591cae64dd372bb2de06161a1ff43de00fa6e282e4a88a88649159d",
+      "actual_sha256": "12320b431591cae64dd372bb2de06161a1ff43de00fa6e282e4a88a88649159d",
+      "match": true,
+      "bytes": 540100
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID44971_spatial/tissue_positions_list.csv",
+      "expected_sha256": "cead0750892bf78dde7ece202e3559bcd9dfbbdb2131defb7947eaf1cd000dcc",
+      "actual_sha256": "cead0750892bf78dde7ece202e3559bcd9dfbbdb2131defb7947eaf1cd000dcc",
+      "match": true,
+      "bytes": 184766
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4535_spatial/aligned_fiducials.jpg",
+      "expected_sha256": "82fddf15dca239d8f983fd1c930fd7ec739a3a157539085a26e05bfd1bfdc7be",
+      "actual_sha256": "82fddf15dca239d8f983fd1c930fd7ec739a3a157539085a26e05bfd1bfdc7be",
+      "match": true,
+      "bytes": 1410465
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4535_spatial/detected_tissue_image.jpg",
+      "expected_sha256": "106ef18df1d799479b77d6ad8fc7bf7fe50c315708065ce1120725f7e6805724",
+      "actual_sha256": "106ef18df1d799479b77d6ad8fc7bf7fe50c315708065ce1120725f7e6805724",
+      "match": true,
+      "bytes": 1932082
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4535_spatial/scalefactors_json.json",
+      "expected_sha256": "3cb1a66ffddc6a023b977c725b0a3e8a82639fecd99bdd9e43881d5bc2de6b71",
+      "actual_sha256": "3cb1a66ffddc6a023b977c725b0a3e8a82639fecd99bdd9e43881d5bc2de6b71",
+      "match": true,
+      "bytes": 165
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4535_spatial/tissue_hires_image.png",
+      "expected_sha256": "902a0015a651fb70bfdfed56913c53a2a2fdc5c02f18e8616eaa53fca272213d",
+      "actual_sha256": "902a0015a651fb70bfdfed56913c53a2a2fdc5c02f18e8616eaa53fca272213d",
+      "match": true,
+      "bytes": 6688468
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4535_spatial/tissue_lowres_image.png",
+      "expected_sha256": "92ed8e343611c6e41e1040daf9962a03cb0853dc0697682c5269216ab1c092f4",
+      "actual_sha256": "92ed8e343611c6e41e1040daf9962a03cb0853dc0697682c5269216ab1c092f4",
+      "match": true,
+      "bytes": 536210
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial-extracted/spatial/CID4535_spatial/tissue_positions_list.csv",
+      "expected_sha256": "9c25e3269b868bfca4800225b097ecbbb5b6270f68a72ad3ca4f81ca843b5aef",
+      "actual_sha256": "9c25e3269b868bfca4800225b097ecbbb5b6270f68a72ad3ca4f81ca843b5aef",
+      "match": true,
+      "bytes": 184766
+    },
+    {
+      "file": "01_inputs/zenodo4739739/spatial.tar.gz",
+      "expected_sha256": "bc3168535172c0970add12a9c13ab797dc5fee79fc42c392b9bea30c8f99a20a",
+      "actual_sha256": "bc3168535172c0970add12a9c13ab797dc5fee79fc42c392b9bea30c8f99a20a",
+      "match": true,
+      "bytes": 54282871
+    },
+    {
+      "file": "02_identity/10x-input-integrity.json",
+      "expected_sha256": "02e7f31df1cdab34ca92ce77ef0910bf17de04f869a11aca1b0454c12804030b",
+      "actual_sha256": "02e7f31df1cdab34ca92ce77ef0910bf17de04f869a11aca1b0454c12804030b",
+      "match": true,
+      "bytes": 815
+    },
+    {
+      "file": "02_identity/identity-gate.json",
+      "expected_sha256": "e096971099f244cabd22ffa69982eca3746dcf6c61cf9378bb3a0aff98c2c95c",
+      "actual_sha256": "e096971099f244cabd22ffa69982eca3746dcf6c61cf9378bb3a0aff98c2c95c",
+      "match": true,
+      "bytes": 1262
+    },
+    {
+      "file": "02_identity/pathology-label-inventory.csv",
+      "expected_sha256": "65242e088f33f10fea3cd818d35df68f1adb9dac89faa3800a367dd1969687ae",
+      "actual_sha256": "65242e088f33f10fea3cd818d35df68f1adb9dac89faa3800a367dd1969687ae",
+      "match": true,
+      "bytes": 8454
+    },
+    {
+      "file": "02_identity/pathology-label-map.json",
+      "expected_sha256": "d8a120652315db560657b2571a8172e52122b3f78e220b20566e13d44395a15a",
+      "actual_sha256": "d8a120652315db560657b2571a8172e52122b3f78e220b20566e13d44395a15a",
+      "match": true,
+      "bytes": 507
+    },
+    {
+      "file": "02_identity/primary-program-2024.1.Hs.genes.txt",
+      "expected_sha256": "7bf4561b52d21652bc6f6cd1215117a9bd1698c613d072179a366dfdff83bab5",
+      "actual_sha256": "7bf4561b52d21652bc6f6cd1215117a9bd1698c613d072179a366dfdff83bab5",
+      "match": true,
+      "bytes": 1193
+    },
+    {
+      "file": "02_identity/primary-program-common-identifiable.genes.txt",
+      "expected_sha256": "d2e81853429ba447350ff4c3f3149f79fc1c99b2adae8356b5ac9dfd248b49c7",
+      "actual_sha256": "d2e81853429ba447350ff4c3f3149f79fc1c99b2adae8356b5ac9dfd248b49c7",
+      "match": true,
+      "bytes": 1168
+    },
+    {
+      "file": "02_identity/primary-program-feature-map.csv",
+      "expected_sha256": "a64715d8c429aec10d3d4594f42d51ad03b2bd38574a12255688c4d049d86c10",
+      "actual_sha256": "a64715d8c429aec10d3d4594f42d51ad03b2bd38574a12255688c4d049d86c10",
+      "match": true,
+      "bytes": 51748
+    },
+    {
+      "file": "02_identity/primary-program.lock.json",
+      "expected_sha256": "bd512cf1d36e18e4b565fe3f041f67a780f0a7c980930ce337b4e50524b42dd4",
+      "actual_sha256": "bd512cf1d36e18e4b565fe3f041f67a780f0a7c980930ce337b4e50524b42dd4",
+      "match": true,
+      "bytes": 3579
+    },
+    {
+      "file": "02_identity/sample-identity.csv",
+      "expected_sha256": "36f30c20a711eca47191315f3df45950394067e32a7a4e3669c01d37fbe8ef29",
+      "actual_sha256": "36f30c20a711eca47191315f3df45950394067e32a7a4e3669c01d37fbe8ef29",
+      "match": true,
+      "bytes": 20037
+    },
+    {
+      "file": "02_identity/scrna-input-integrity.json",
+      "expected_sha256": "d1a22264624eee8b4803a4a5a9ecf58a1ebcf43ab7022f38a452c83adcf7e704",
+      "actual_sha256": "d1a22264624eee8b4803a4a5a9ecf58a1ebcf43ab7022f38a452c83adcf7e704",
+      "match": true,
+      "bytes": 1981
+    },
+    {
+      "file": "02_identity/study-design-evidence.json",
+      "expected_sha256": "a127c7fb47f20569ade528ba8393c2be8a20cad9c29244ecee578935e78ca244",
+      "actual_sha256": "a127c7fb47f20569ade528ba8393c2be8a20cad9c29244ecee578935e78ca244",
+      "match": true,
+      "bytes": 5022
+    },
+    {
+      "file": "02_identity/visium-feature-schema.json",
+      "expected_sha256": "d78917bec4a960718e5558f56dee9410f03cce4e981106096dbd1a7f28e9000e",
+      "actual_sha256": "d78917bec4a960718e5558f56dee9410f03cce4e981106096dbd1a7f28e9000e",
+      "match": true,
+      "bytes": 5255
+    },
+    {
+      "file": "02_identity/visium-input-integrity.json",
+      "expected_sha256": "7fd43a7faba1aba6ffca5494a5033bd5096215badb62b9bdd7c664b4382d32af",
+      "actual_sha256": "7fd43a7faba1aba6ffca5494a5033bd5096215badb62b9bdd7c664b4382d32af",
+      "match": true,
+      "bytes": 18251
+    },
+    {
+      "file": "02_identity/visium-integrity-exceptions.json",
+      "expected_sha256": "76407c85e235d8d6ff2b837262e4a2db1c5e52803e21b4454f1ad3eae29562e2",
+      "actual_sha256": "76407c85e235d8d6ff2b837262e4a2db1c5e52803e21b4454f1ad3eae29562e2",
+      "match": true,
+      "bytes": 4366
+    },
+    {
+      "file": "02_identity/visium-sample-identity.csv",
+      "expected_sha256": "beedbc146143eebe2501d1c677685c3547cab67accf677d164b7485867b4611a",
+      "actual_sha256": "beedbc146143eebe2501d1c677685c3547cab67accf677d164b7485867b4611a",
+      "match": true,
+      "bytes": 4157
+    },
+    {
+      "file": "environment/S1-bionexus-doctor.json",
+      "expected_sha256": "b35daa63336c4cac2b9fdbf753be2eae564eb60b2cc63c4951bd4a40eb1ab879",
+      "actual_sha256": "b35daa63336c4cac2b9fdbf753be2eae564eb60b2cc63c4951bd4a40eb1ab879",
+      "match": true,
+      "bytes": 13758
+    },
+    {
+      "file": "environment/S1-python.json",
+      "expected_sha256": "c9af2485101c0b649142eb44cf7a7e99e657c24bd362508b3ff7e7c7ad6d2853",
+      "actual_sha256": "c9af2485101c0b649142eb44cf7a7e99e657c24bd362508b3ff7e7c7ad6d2853",
+      "match": true,
+      "bytes": 366
+    },
+    {
+      "file": "logs/S1-events.jsonl",
+      "expected_sha256": "202a93151a9c48e98673fd3238f3c0c4d37fbbd5cf23ed04e558da2f7233da97",
+      "actual_sha256": "202a93151a9c48e98673fd3238f3c0c4d37fbbd5cf23ed04e558da2f7233da97",
+      "match": true,
+      "bytes": 47102
+    },
+    {
+      "file": "logs/S1-execution-issues.json",
+      "expected_sha256": "52771975a4d44999beb0cd049d4daa1edbec81e92cd48473ff0f49c4d7324b92",
+      "actual_sha256": "52771975a4d44999beb0cd049d4daa1edbec81e92cd48473ff0f49c4d7324b92",
+      "match": true,
+      "bytes": 1469
+    },
+    {
+      "file": "manifest/downloads/10x-block-a-section-1.html.receipt.json",
+      "expected_sha256": "7be03eaaa0d6efbea42327bbab2e23f627ddf4320b3d02772d9811fb597116ea",
+      "actual_sha256": "7be03eaaa0d6efbea42327bbab2e23f627ddf4320b3d02772d9811fb597116ea",
+      "match": true,
+      "bytes": 700
+    },
+    {
+      "file": "manifest/downloads/filtered_count_matrices.tar.gz.receipt.json",
+      "expected_sha256": "c99448613f8aca74e541c73935a0d9bbabee71c4f77c5c2bd036a7da3b8f6278",
+      "actual_sha256": "c99448613f8aca74e541c73935a0d9bbabee71c4f77c5c2bd036a7da3b8f6278",
+      "match": true,
+      "bytes": 2221
+    },
+    {
+      "file": "manifest/downloads/geo-range-000-attempt1.json",
+      "expected_sha256": "d94ad1e7ea1dc3e291dcb423ffc3c9997d026894c825f52da67b60df6533ad99",
+      "actual_sha256": "d94ad1e7ea1dc3e291dcb423ffc3c9997d026894c825f52da67b60df6533ad99",
+      "match": true,
+      "bytes": 1362
+    },
+    {
+      "file": "manifest/downloads/geo-range-001-attempt1.json",
+      "expected_sha256": "2c78d054e2252e58c52e3ba9e351a409dd0a6e0f415b80cb93a576df1707024a",
+      "actual_sha256": "2c78d054e2252e58c52e3ba9e351a409dd0a6e0f415b80cb93a576df1707024a",
+      "match": true,
+      "bytes": 1362
+    },
+    {
+      "file": "manifest/downloads/geo-range-002-attempt1.json",
+      "expected_sha256": "f7188cbc9aa08b70cc189c53c5835ba2f51eab04fdd8c2688e28294812c37519",
+      "actual_sha256": "f7188cbc9aa08b70cc189c53c5835ba2f51eab04fdd8c2688e28294812c37519",
+      "match": true,
+      "bytes": 1362
+    },
+    {
+      "file": "manifest/downloads/geo-range-003-attempt1.json",
+      "expected_sha256": "dabe85d392db924d4988655e347367177dcb6c6c6d685ce5e574ebd4aebda4d8",
+      "actual_sha256": "dabe85d392db924d4988655e347367177dcb6c6c6d685ce5e574ebd4aebda4d8",
+      "match": true,
+      "bytes": 1362
+    },
+    {
+      "file": "manifest/downloads/geo-range-004-attempt1.json",
+      "expected_sha256": "9f364468a77f217652219fa03030a56e3ccafbd63062581a9822ce62fa7840c2",
+      "actual_sha256": "9f364468a77f217652219fa03030a56e3ccafbd63062581a9822ce62fa7840c2",
+      "match": true,
+      "bytes": 1362
+    },
+    {
+      "file": "manifest/downloads/geo-range-005-attempt1.json",
+      "expected_sha256": "fc3b0f4eb91fa75d98cd6482dc9f9418b06cc5b350fe5471da974c5c69c3583b",
+      "actual_sha256": "fc3b0f4eb91fa75d98cd6482dc9f9418b06cc5b350fe5471da974c5c69c3583b",
+      "match": true,
+      "bytes": 1362
+    },
+    {
+      "file": "manifest/downloads/geo-range-006-attempt1.json",
+      "expected_sha256": "10d5734f153645021cd7408d7b5ea378cc7c3ad96d45572df65caa67b4022b69",
+      "actual_sha256": "10d5734f153645021cd7408d7b5ea378cc7c3ad96d45572df65caa67b4022b69",
+      "match": true,
+      "bytes": 1362
+    },
+    {
+      "file": "manifest/downloads/geo-range-007-attempt1.json",
+      "expected_sha256": "2c1b6b988aa4aff0c411539493d08323a00e97c699dbc24f5aeabe8e232bb977",
+      "actual_sha256": "2c1b6b988aa4aff0c411539493d08323a00e97c699dbc24f5aeabe8e232bb977",
+      "match": true,
+      "bytes": 1362
+    },
+    {
+      "file": "manifest/downloads/geo-range-008-attempt1.json",
+      "expected_sha256": "b356f4bc728544025cfb850c3839d1182f795998af00dd42a8b4d9c05781ff99",
+      "actual_sha256": "b356f4bc728544025cfb850c3839d1182f795998af00dd42a8b4d9c05781ff99",
+      "match": true,
+      "bytes": 1362
+    },
+    {
+      "file": "manifest/downloads/GSE176078-attempt1-interrupted.json",
+      "expected_sha256": "3dda3a802dd9ed57555fc0631bc7674e7452210251b726fadb6e1a0e88a1e7ab",
+      "actual_sha256": "3dda3a802dd9ed57555fc0631bc7674e7452210251b726fadb6e1a0e88a1e7ab",
+      "match": true,
+      "bytes": 644
+    },
+    {
+      "file": "manifest/downloads/GSE176078-filelist.txt.receipt.json",
+      "expected_sha256": "00e4efa1b92415f455787f835a48772266f96a5132107ce26a9815861d8d7a24",
+      "actual_sha256": "00e4efa1b92415f455787f835a48772266f96a5132107ce26a9815861d8d7a24",
+      "match": true,
+      "bytes": 1606
+    },
+    {
+      "file": "manifest/downloads/GSE176078-suppl.html.receipt.json",
+      "expected_sha256": "23fe0f54e181409feddcadcfd588a3f0952426c6df51fe66a03056a9ab765e73",
+      "actual_sha256": "23fe0f54e181409feddcadcfd588a3f0952426c6df51fe66a03056a9ab765e73",
+      "match": true,
+      "bytes": 1502
+    },
+    {
+      "file": "manifest/downloads/GSE176078_family.soft.gz.receipt.json",
+      "expected_sha256": "ee5e5c3ad76aa4346f523109e9a9cac721cf0478681d1b762e9a9b782269d4bc",
+      "actual_sha256": "ee5e5c3ad76aa4346f523109e9a9cac721cf0478681d1b762e9a9b782269d4bc",
+      "match": true,
+      "bytes": 1593
+    },
+    {
+      "file": "manifest/downloads/GSE176078_Wu_etal_2021_BRCA_scRNASeq.tar.gz.receipt.json",
+      "expected_sha256": "65c3535b7944e3c63a3c7f922c2257768b6e21cd78a58a2c278242591de1f065",
+      "actual_sha256": "65c3535b7944e3c63a3c7f922c2257768b6e21cd78a58a2c278242591de1f065",
+      "match": true,
+      "bytes": 961
+    },
+    {
+      "file": "manifest/downloads/h.all.v2024.1.Hs.symbols.gmt.receipt.json",
+      "expected_sha256": "b631eda1fbc6fd79bbc81e6e397cbb0dbc7a7230513c104c9aee3d3197960e24",
+      "actual_sha256": "b631eda1fbc6fd79bbc81e6e397cbb0dbc7a7230513c104c9aee3d3197960e24",
+      "match": true,
+      "bytes": 1309
+    },
+    {
+      "file": "manifest/downloads/images.pdf.receipt.json",
+      "expected_sha256": "ad4aab1df25ad2e4def87df33f2443eee1b87eb03fe4106ae747be256360c4fa",
+      "actual_sha256": "ad4aab1df25ad2e4def87df33f2443eee1b87eb03fe4106ae747be256360c4fa",
+      "match": true,
+      "bytes": 2142
+    },
+    {
+      "file": "manifest/downloads/liana-main-commit.json.receipt.json",
+      "expected_sha256": "50dfe97d3a42840100d58330bf3aba2408bfc5af43f45b329309aa5e26f31370",
+      "actual_sha256": "50dfe97d3a42840100d58330bf3aba2408bfc5af43f45b329309aa5e26f31370",
+      "match": true,
+      "bytes": 2379
+    },
+    {
+      "file": "manifest/downloads/liana-omni_resource.csv.receipt.json",
+      "expected_sha256": "fd5a68339537cdcdb1a7033b06f03a4e018f21f832b9c96825de2a0c86e68112",
+      "actual_sha256": "fd5a68339537cdcdb1a7033b06f03a4e018f21f832b9c96825de2a0c86e68112",
+      "match": true,
+      "bytes": 2121
+    },
+    {
+      "file": "manifest/downloads/liana-resource-github.json.receipt.json",
+      "expected_sha256": "acc2e49433f78cee44bc5bc763f64a8957a32d526efd102951b4fdcdb005def6",
+      "actual_sha256": "acc2e49433f78cee44bc5bc763f64a8957a32d526efd102951b4fdcdb005def6",
+      "match": true,
+      "bytes": 639
+    },
+    {
+      "file": "manifest/downloads/liana-select_resource.py.receipt.json",
+      "expected_sha256": "4b442f35dee8d286b7a39ce093d1fdd0c2b7e6ced7b0b505abbdb4112494f79d",
+      "actual_sha256": "4b442f35dee8d286b7a39ce093d1fdd0c2b7e6ced7b0b505abbdb4112494f79d",
+      "match": true,
+      "bytes": 2118
+    },
+    {
+      "file": "manifest/downloads/metadata.tar.gz.receipt.json",
+      "expected_sha256": "29d9abb344d5ea1b58787fd490d51b563af993260da2bfea1670883f6a1089c1",
+      "actual_sha256": "29d9abb344d5ea1b58787fd490d51b563af993260da2bfea1670883f6a1089c1",
+      "match": true,
+      "bytes": 2152
+    },
+    {
+      "file": "manifest/downloads/msigdb-2024.1.Hs-index.html.receipt.json",
+      "expected_sha256": "c915022c9839f02e80e80e291b1eb9e0b027f0c19b2171f973fc988d3d1594cc",
+      "actual_sha256": "c915022c9839f02e80e80e291b1eb9e0b027f0c19b2171f973fc988d3d1594cc",
+      "match": true,
+      "bytes": 1111
+    },
+    {
+      "file": "manifest/downloads/PMC9044823-BioC.xml.receipt.json",
+      "expected_sha256": "25da1366d02cab55f8f1d7c3dfffd39e6d909455bbbc7ef675f547bf1e632bf0",
+      "actual_sha256": "25da1366d02cab55f8f1d7c3dfffd39e6d909455bbbc7ef675f547bf1e632bf0",
+      "match": true,
+      "bytes": 1714
+    },
+    {
+      "file": "manifest/downloads/PROGENy-omnipath-snapshot.tsv.receipt.json",
+      "expected_sha256": "b9cf625318173f673b8a0bfca8f0eda04e7513c6b8c536810271054ea8eec11b",
+      "actual_sha256": "b9cf625318173f673b8a0bfca8f0eda04e7513c6b8c536810271054ea8eec11b",
+      "match": true,
+      "bytes": 1191
+    },
+    {
+      "file": "manifest/downloads/raw_count_matrices.tar.gz.receipt.json",
+      "expected_sha256": "2d5a57120b30d4395f8485c2372671dd818d0fc69db14d8ad819cf47dc9de0bc",
+      "actual_sha256": "2d5a57120b30d4395f8485c2372671dd818d0fc69db14d8ad819cf47dc9de0bc",
+      "match": true,
+      "bytes": 2200
+    },
+    {
+      "file": "manifest/downloads/spatial.tar.gz.receipt.json",
+      "expected_sha256": "78035dab3db258435459053f26397902849044772a443098910c409d191e2096",
+      "actual_sha256": "78035dab3db258435459053f26397902849044772a443098910c409d191e2096",
+      "match": true,
+      "bytes": 2155
+    },
+    {
+      "file": "manifest/downloads/V1_Breast_Cancer_Block_A_Section_1_filtered_feature_bc_matrix.h5.receipt.json",
+      "expected_sha256": "7302dd322a7e9796c0f5ec46fc95544d5e656205eea13c0421fdb2baa6712bee",
+      "actual_sha256": "7302dd322a7e9796c0f5ec46fc95544d5e656205eea13c0421fdb2baa6712bee",
+      "match": true,
+      "bytes": 1899
+    },
+    {
+      "file": "manifest/downloads/V1_Breast_Cancer_Block_A_Section_1_spatial.tar.gz.receipt.json",
+      "expected_sha256": "473e96c7554f7a330f2f6eeb11abfd12ba56ed9fc847564e782e97713a857ca3",
+      "actual_sha256": "473e96c7554f7a330f2f6eeb11abfd12ba56ed9fc847564e782e97713a857ca3",
+      "match": true,
+      "bytes": 1947
+    },
+    {
+      "file": "manifest/downloads/V1_Breast_Cancer_Block_A_Section_1_web_summary.html.receipt.json",
+      "expected_sha256": "f70dc4d9b32e5f51a873cb9f3c9b3be63b80428feb679d94ca3f3824e4595b2e",
+      "actual_sha256": "f70dc4d9b32e5f51a873cb9f3c9b3be63b80428feb679d94ca3f3824e4595b2e",
+      "match": true,
+      "bytes": 1798
+    },
+    {
+      "file": "manifest/downloads/zenodo-4739739.json.receipt.json",
+      "expected_sha256": "cdeed387fb2b3450e421d373281822b7adacd513e9f9d18e76b767e6bc702449",
+      "actual_sha256": "cdeed387fb2b3450e421d373281822b7adacd513e9f9d18e76b767e6bc702449",
+      "match": true,
+      "bytes": 2006
+    },
+    {
+      "file": "manifest/extraction/filtered_count_matrices.tar.gz.json",
+      "expected_sha256": "c42fdd897e8ff04e002f71b4959c8926f47ca074aeec1198409f5cac9be788f4",
+      "actual_sha256": "c42fdd897e8ff04e002f71b4959c8926f47ca074aeec1198409f5cac9be788f4",
+      "match": true,
+      "bytes": 8080
+    },
+    {
+      "file": "manifest/extraction/GSE176078_Wu_etal_2021_BRCA_scRNASeq.tar.gz.json",
+      "expected_sha256": "2a0a3df82cb4ea8b8da6f8e2536dcbf8ca31c5b33826b86a55e1ae920e579695",
+      "actual_sha256": "2a0a3df82cb4ea8b8da6f8e2536dcbf8ca31c5b33826b86a55e1ae920e579695",
+      "match": true,
+      "bytes": 2088
+    },
+    {
+      "file": "manifest/extraction/metadata.tar.gz.json",
+      "expected_sha256": "42db5b5397b5f87ba59a4836294f2806ac03ef1ebc2427b1ee617e87cbc368e9",
+      "actual_sha256": "42db5b5397b5f87ba59a4836294f2806ac03ef1ebc2427b1ee617e87cbc368e9",
+      "match": true,
+      "bytes": 2463
+    },
+    {
+      "file": "manifest/extraction/raw_count_matrices.tar.gz.json",
+      "expected_sha256": "6ef671b3b265cdd45d8455e74dd44611ffddf9f8799950b308c7f5126100acd1",
+      "actual_sha256": "6ef671b3b265cdd45d8455e74dd44611ffddf9f8799950b308c7f5126100acd1",
+      "match": true,
+      "bytes": 7804
+    },
+    {
+      "file": "manifest/extraction/spatial.tar.gz.json",
+      "expected_sha256": "4f3c2ed1b39b8f846c33087c940cd66a49467b5432c74164977ac1c65665c91f",
+      "actual_sha256": "4f3c2ed1b39b8f846c33087c940cd66a49467b5432c74164977ac1c65665c91f",
+      "match": true,
+      "bytes": 13476
+    },
+    {
+      "file": "manifest/extraction/V1_Breast_Cancer_Block_A_Section_1_spatial.tar.gz.json",
+      "expected_sha256": "f9f073243e59ac058b72f4ad66847a6b1cf9b487388fb819a460788c533c7f22",
+      "actual_sha256": "f9f073243e59ac058b72f4ad66847a6b1cf9b487388fb819a460788c533c7f22",
+      "match": true,
+      "bytes": 2764
+    },
+    {
+      "file": "manifest/liana-resource-source.json",
+      "expected_sha256": "633f11ff685e57b674098e2a3e3cea6b89635f9c27fb6912eb4509e5500257b9",
+      "actual_sha256": "633f11ff685e57b674098e2a3e3cea6b89635f9c27fb6912eb4509e5500257b9",
+      "match": true,
+      "bytes": 270
+    },
+    {
+      "file": "manifest/resource-lock.json",
+      "expected_sha256": "45d05931d23659952f28f2d79185e35e203219c3c3be1ac3940b1bb6c2ee64e4",
+      "actual_sha256": "45d05931d23659952f28f2d79185e35e203219c3c3be1ac3940b1bb6c2ee64e4",
+      "match": true,
+      "bytes": 1835
+    },
+    {
+      "file": "manifest/S1-bionexus-provenance.sidecar.json",
+      "expected_sha256": "968aa63bd7b2853b9a335823a7448fed09db991754d302e2942b74dba65eb550",
+      "actual_sha256": "968aa63bd7b2853b9a335823a7448fed09db991754d302e2942b74dba65eb550",
+      "match": true,
+      "bytes": 9834
+    },
+    {
+      "file": "manifest/S1-input-file-index.json",
+      "expected_sha256": "36fc1f54f91051c5cfb03aa5529451aa8401678817916fc77162c18c071cdcb8",
+      "actual_sha256": "36fc1f54f91051c5cfb03aa5529451aa8401678817916fc77162c18c071cdcb8",
+      "match": true,
+      "bytes": 58645
+    },
+    {
+      "file": "manifest/S1-source-manifest.json",
+      "expected_sha256": "2e0b80b23c330805fdd04fe8b1bd055199ab862b4f37308ecf5e298db5dbfe14",
+      "actual_sha256": "2e0b80b23c330805fdd04fe8b1bd055199ab862b4f37308ecf5e298db5dbfe14",
+      "match": true,
+      "bytes": 43079
+    },
+    {
+      "file": "manifest/S1-storage-budget.json",
+      "expected_sha256": "8562cd7a79672530475133e69e5d4a5ed98c9d8095b1662aeafb19e0bda20391",
+      "actual_sha256": "8562cd7a79672530475133e69e5d4a5ed98c9d8095b1662aeafb19e0bda20391",
+      "match": true,
+      "bytes": 1301
+    },
+    {
+      "file": "manifest/scripts/s1_complete_identity.py",
+      "expected_sha256": "a985e0a94a546a27f6cd9df80fd25bbf9ee74f20bf1c8e30df21915ae9e791d7",
+      "actual_sha256": "a985e0a94a546a27f6cd9df80fd25bbf9ee74f20bf1c8e30df21915ae9e791d7",
+      "match": true,
+      "bytes": 8055
+    },
+    {
+      "file": "manifest/scripts/s1_downloads.py",
+      "expected_sha256": "13b331b44bff244a042ba6b32425a00e049d125895572017796dea7e46c846ef",
+      "actual_sha256": "13b331b44bff244a042ba6b32425a00e049d125895572017796dea7e46c846ef",
+      "match": true,
+      "bytes": 1352
+    },
+    {
+      "file": "manifest/scripts/s1_extract.py",
+      "expected_sha256": "db3fa1dbe9cfe3485177a2e33be051cab7d4273f89c8edd8d387b9f3a2f68d00",
+      "actual_sha256": "db3fa1dbe9cfe3485177a2e33be051cab7d4273f89c8edd8d387b9f3a2f68d00",
+      "match": true,
+      "bytes": 2760
+    },
+    {
+      "file": "manifest/scripts/s1_finalize.py",
+      "expected_sha256": "7e203991f9d782f65e11e632bc5dcb11648e23f1edc9f4954417d28c660575fb",
+      "actual_sha256": "7e203991f9d782f65e11e632bc5dcb11648e23f1edc9f4954417d28c660575fb",
+      "match": true,
+      "bytes": 15874
+    },
+    {
+      "file": "manifest/scripts/s1_io.py",
+      "expected_sha256": "81846004f93bef7d9853aa643e3b6e1bb89d7c000826bfe5766b11bdd616b36c",
+      "actual_sha256": "81846004f93bef7d9853aa643e3b6e1bb89d7c000826bfe5766b11bdd616b36c",
+      "match": true,
+      "bytes": 5093
+    },
+    {
+      "file": "manifest/scripts/s1_literature.py",
+      "expected_sha256": "6fb65c282e0adb901f7725bfc877949bea2242699310e31e6fcdef58dcc16620",
+      "actual_sha256": "6fb65c282e0adb901f7725bfc877949bea2242699310e31e6fcdef58dcc16620",
+      "match": true,
+      "bytes": 1236
+    },
+    {
+      "file": "manifest/scripts/s1_preflight.py",
+      "expected_sha256": "1a3ef460abfd844b167b84c7805b761d8f3b8b6d520f05dbc448bec52b9e912a",
+      "actual_sha256": "1a3ef460abfd844b167b84c7805b761d8f3b8b6d520f05dbc448bec52b9e912a",
+      "match": true,
+      "bytes": 3839
+    },
+    {
+      "file": "manifest/scripts/s1_resource_lock.py",
+      "expected_sha256": "70b762bd3cc443b3d518ebbb76fecb264b0b33ab901f1d6f4dc87e7a38cc166b",
+      "actual_sha256": "70b762bd3cc443b3d518ebbb76fecb264b0b33ab901f1d6f4dc87e7a38cc166b",
+      "match": true,
+      "bytes": 4694
+    },
+    {
+      "file": "manifest/scripts/s1_resources.py",
+      "expected_sha256": "314693d763ab977a0123be755f8a784da56000e2696ed2d6b8db5077979a071c",
+      "actual_sha256": "314693d763ab977a0123be755f8a784da56000e2696ed2d6b8db5077979a071c",
+      "match": true,
+      "bytes": 1252
+    },
+    {
+      "file": "manifest/scripts/s1_resume_geo.py",
+      "expected_sha256": "d0604e74dd0f255b130f7bafaeb8a51d36a614a31529d290dda5c25efc56fcca",
+      "actual_sha256": "d0604e74dd0f255b130f7bafaeb8a51d36a614a31529d290dda5c25efc56fcca",
+      "match": true,
+      "bytes": 4893
+    },
+    {
+      "file": "manifest/scripts/s1_visium_inventory.py",
+      "expected_sha256": "9b9d1f87fc1b17c3382bdadca47dfbd51fcbf95d01feabd0cd657e06c3140a83",
+      "actual_sha256": "9b9d1f87fc1b17c3382bdadca47dfbd51fcbf95d01feabd0cd657e06c3140a83",
+      "match": true,
+      "bytes": 5998
+    },
+    {
+      "file": "manifest/scripts/s1_visium_inventory.v2.py",
+      "expected_sha256": "0bae1c663fecaac74ad013174c4a751468887f864bf2688a02716cf035d4cd90",
+      "actual_sha256": "0bae1c663fecaac74ad013174c4a751468887f864bf2688a02716cf035d4cd90",
+      "match": true,
+      "bytes": 6090
+    },
+    {
+      "file": "S1-checkpoint.md",
+      "expected_sha256": "eb2451b5e16676e2d6844d862c8961f3e6f5031a712150a3fedab816265c7333",
+      "actual_sha256": "eb2451b5e16676e2d6844d862c8961f3e6f5031a712150a3fedab816265c7333",
+      "match": true,
+      "bytes": 7440
+    },
+    {
+      "file": "S1-starting-point-assessment.json",
+      "expected_sha256": "492cb9021a0c8917aed0354da95801e9f1350402ac2b30acbb8437862aed593e",
+      "actual_sha256": "492cb9021a0c8917aed0354da95801e9f1350402ac2b30acbb8437862aed593e",
+      "match": true,
+      "bytes": 2883
+    }
+  ],
+  "all_match": true
+}

@@ -1,0 +1,40 @@
+{
+  "target": {
+    "kind": "prespecified",
+    "rank": 6,
+    "name": "HALLMARK_INTERFERON_GAMMA_RESPONSE"
+  },
+  "source": "opentargets",
+  "returncode": 0,
+  "elapsed_seconds": 1.6134192000026815,
+  "completed_at_utc": "2026-09-06T01:46:38.536834+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "opentargets-graphql",
+    "top_keys": [
+      "search"
+    ],
+    "summary": {
+      "search": {
+        "total": 0,
+        "hits": []
+      }
+    },
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.raw",
+    "warnings": [],
+    "checked_sources": [
+      {
+        "name": "Open Targets Platform",
+        "url": "https://api.platform.opentargets.org/api/v4/graphql",
+        "retrieved_at": "2026-09-06T01:46:38.514265+00:00",
+        "supports_claim": false,
+        "kind": "checked",
+        "request_url": "https://api.platform.opentargets.org/api/v4/graphql",
+        "reason": "empty"
+      }
+    ]
+  },
+  "stderr": ""
+}

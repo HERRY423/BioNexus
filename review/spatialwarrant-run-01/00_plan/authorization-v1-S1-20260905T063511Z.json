@@ -1,0 +1,36 @@
+{
+  "recorded_at_utc": "2026-09-05T06:35:11.166439+00:00",
+  "source": "explicit user message in current task; not a digital signature",
+  "approved_plan": "analysis-plan.lock.md",
+  "approved_sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82",
+  "authorization_scope": "S1_ONLY",
+  "v2_decision": "NOT_APPROVED",
+  "v2_files_preserved": {
+    "analysis-plan.lock.v2.md": "5ca06b5f7c06eaa8ff9e5298d010dd76cc7e5349952669dd071d632b45dbef56",
+    "storage-location-check.v2.json": "0d3c99f0cb4664f08645751bbaff95a86ccbefe9b4fe6b2ca06b8e052aa1211a",
+    "plan-v2.sha256": "505348209f00b6f18ee3be7b33b19a44701d2567a9231491f5133e4613cf921e"
+  },
+  "all_artifact_root": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01",
+  "before_s1_min_free_bytes": 32212254720,
+  "runtime_stop_below_bytes": 21474836480,
+  "s2_authorized": false,
+  "s2_s6_dependency_installation_authorized": false,
+  "biological_conclusion_acceptance": "NOT_GIVEN",
+  "scientific_results": "PENDING",
+  "machine_verdict": "PENDING",
+  "storage_preflight": {
+    "observed_at_utc": "2026-09-05T06:35:11.166501+00:00",
+    "free_bytes_before_probe": 53911097344,
+    "free_bytes_after_probe": 53911097344,
+    "probe": "WRITE_FLUSH_READ_MATCHED",
+    "probe_bytes": 55,
+    "probe_removed": true
+  },
+  "historical_sha256": {
+    "analysis-plan.lock.md": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82",
+    "analysis-plan.lock.v2.md": "5ca06b5f7c06eaa8ff9e5298d010dd76cc7e5349952669dd071d632b45dbef56",
+    "storage-location-check.v2.json": "0d3c99f0cb4664f08645751bbaff95a86ccbefe9b4fe6b2ca06b8e052aa1211a",
+    "plan.sha256": "9939eaa435dcdd3a4e2a8ba77bdc88cfe65922582646fb3adc167a6a7dab8469",
+    "plan-v2.sha256": "505348209f00b6f18ee3be7b33b19a44701d2567a9231491f5133e4613cf921e"
+  }
+}

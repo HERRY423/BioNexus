@@ -1,0 +1,12 @@
+{
+  "status": "FAILED",
+  "stage": "FAILED",
+  "percent": 100.0,
+  "pid": 15444,
+  "elapsed_seconds": 585.8599498000112,
+  "current_process_tree_memory_bytes": 1874046976,
+  "free_C_bytes": 32777478144,
+  "updated_at_utc": "2026-09-05T16:51:06.170396+00:00",
+  "error_type": "ValueError",
+  "error": "Index barcode invalid"
+}

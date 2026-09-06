@@ -1,0 +1,1256 @@
+{
+  "schema_version": "spatialwarrant.plugin-capability-check.v1",
+  "project": "SpatialWarrant",
+  "run_id": "spatialwarrant-run-01",
+  "scope": "S0 read-only inspection and preregistration only",
+  "observed_at_utc": "2026-09-05T05:56:30.2581431Z",
+  "states": {
+    "plan_approval": "PENDING",
+    "analysis_execution": "PENDING",
+    "scientific_results": "PENDING",
+    "resource_usage": "PENDING",
+    "machine_verdicts": "PENDING",
+    "human_scientific_adjudication": "PENDING"
+  },
+  "prohibited_actions_performed": {
+    "dataset_download": false,
+    "package_install": false,
+    "analysis_run": false,
+    "workflow_registration": false,
+    "workflow_plan_creation": false,
+    "workflow_execution": false,
+    "bionexus_warrant_evaluation": false,
+    "dashboard_start": false,
+    "publication": false
+  },
+  "project_inventory": {
+    "observed_at_utc": "2026-09-05T05:56:30.2581431Z",
+    "source_directory": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-revised-design",
+    "source_file_count": 37,
+    "source_bytes": 111480,
+    "workspace_file_count": 37,
+    "workspace_bytes": 111480,
+    "local_matrix_files": [],
+    "target_existed_before": false,
+    "source_hashes": [
+      {
+        "Path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-revised-design\\ANALYSIS_PLAN_LOCK.md",
+        "Hash": "F8D955C041F1612DBE979B59B5BDE150EE333208D90525DA20B276299083B327"
+      },
+      {
+        "Path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-revised-design\\CLAIMS_PREREGISTERED.csv",
+        "Hash": "552FA77E9BA76FD83E6B000677CD322F4B64EA4C6C4AB46E45EA97E81F0736E3"
+      },
+      {
+        "Path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-revised-design\\WORKBENCH_EXECUTION_GUIDE.zh-CN.md",
+        "Hash": "EF0B6329017A8FBC61CB1F2A6277E2AC6536D70AC4A6CAF0EEAD663C8B4BCD95"
+      },
+      {
+        "Path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-revised-design\\src\\db\\seed-data.ts",
+        "Hash": "F9C8CF869B3729F015F6CEDDEC0EC63EAAD454FDB96FBEE995A9B46B859F05B6"
+      }
+    ],
+    "audit_environment_configured": false
+  },
+  "plugins": [
+    {
+      "name": "NGS Analysis Workbench",
+      "manifest_version": "0.2.16",
+      "surface": "journey skills plus MCP",
+      "observed": "READ_ONLY_CALLS_SUCCEEDED",
+      "skills_applied": [
+        "understand-ngs-data",
+        "design-ngs-analysis"
+      ],
+      "role": "StartingPointAssessment and AnalysisPlan; live catalog/runtime inspection. The two scientific design capabilities are skills, not separate MCP endpoints or registered workflow execution.",
+      "calls": [
+        "list_workflows(include_archived=true)",
+        "list_compute_targets",
+        "get_runtime_environment(target_id=local)",
+        "list_workflow_versions(scrnaseq)",
+        "list_workflow_versions(oai_scrnaseq_fastq_to_count)"
+      ],
+      "compatible_registered_workflow_found": false,
+      "compatibility_scope": "12 workflows returned by this host, including archived entries; both scRNA entries are FASTQ-to-count; no processed scRNA/Visium matrix to SpatialWarrant endpoints",
+      "execution_label": "local Python execution",
+      "registered_workflow_run_id": null,
+      "registered_execution_status": "PENDING"
+    },
+    {
+      "name": "BioNexus",
+      "manifest_version": "1.0.0-rc.4",
+      "surface": "bionexus-local-mcp plus local skill scripts",
+      "observed": "MCP_RESPONDED_EMPTY_GEO_LOOKUP",
+      "role": "Passive provenance, receipt-bound EvidenceCard/Claim-Evidence Ledger/Evidence Debt and later overclaim audit; no autonomous selection, no label invention, no independent scientific validation",
+      "mcp_call": {
+        "tool": "search_geo",
+        "arguments": {
+          "query": "GSE176078",
+          "max_results": 1
+        },
+        "returned_datasets": 0
+      },
+      "doctor": "Read-only run_doctor() function used because scripts/doctor.py main writes .bionexus-doctor.json; no standard doctor report written outside preregistration artifacts.",
+      "local_runtime_version": "1.0.0-rc.4",
+      "local_runtime_origin": "C:\\Plugin\\BioNexus\\src\\bionexus\\__init__.py",
+      "stale_distribution_metadata": {
+        "name": "bionexus",
+        "version": "2.7.0"
+      },
+      "server_code_identity": "PENDING",
+      "hash_bound_receipt_readiness": "PENDING",
+      "warrant_verdict": "PENDING",
+      "limits": "MCP response is callability evidence only; local shell audit environment not configured. Server-side audit configuration and host/version identity were not established. No mutating host_probe or warrant_check called."
+    },
+    {
+      "name": "Life Sciences Literature",
+      "manifest_version": "0.1.5",
+      "surface": "skill-local Python script; no dedicated MCP endpoint observed",
+      "observed": "PUBMED_METADATA_RETRY_SUCCEEDED",
+      "role": "Later Wu paper identity/design verification and consistent/contradictory/no-report literature table; not independent replication",
+      "script": "C:\\Users\\13264\\.codex\\plugins\\cache\\openai-curated-remote\\life-sciences-literature\\0.1.5\\skills\\ncbi-entrez-skill\\scripts\\ncbi_entrez.py",
+      "probe": "einfo db=pubmed; save_raw=false",
+      "attempts": [
+        "restricted-network ConnectionError",
+        "one authorized retry outside restricted network: ok=true"
+      ],
+      "paper_verification": "PENDING",
+      "limits": "Service metadata success does not prove paper retrieval, full text, citations, or end-to-end literature synthesis."
+    },
+    {
+      "name": "Life Sciences Databases",
+      "manifest_version": "0.1.5",
+      "surface": "skill-local Python scripts; no dedicated MCP endpoint observed",
+      "observed": "REACTOME_METADATA_PROBE_FAILED",
+      "role": "Later Reactome, STRING, Open Targets and UniProt source-specific context queries; no causal validation",
+      "probe": "Reactome data/database/version; save_raw=false",
+      "attempts": [
+        "restricted-network ConnectionError",
+        "one authorized retry outside restricted network: HTTPError"
+      ],
+      "other_endpoints": "PENDING",
+      "limits": "No blanket assertion that all database capabilities are callable. No substitute plugin silently used."
+    },
+    {
+      "name": "Other installed/recommended plugins",
+      "observed": "NOT_IN_PROJECT_EXECUTION_PATH",
+      "role": "No planned role for BioNeMo, viewers, generic connectors or uninstalled recommended plugins; not counted as project usage."
+    }
+  ],
+  "local_python": {
+    "role": "Custom matrix I/O, QC, numeric domains, geometry masks, Tangram/NNLS/ingest, niches, paired statistics, LIANA, figures; not a registered NGS workflow",
+    "package_metadata": {
+      "executable": "C:\\Users\\13264\\anaconda3\\python.exe",
+      "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "packages": {
+        "bionexus": "2.7.0",
+        "numpy": "2.3.5",
+        "scipy": "1.16.3",
+        "pandas": "2.3.3",
+        "anndata": "0.13.1",
+        "scanpy": "1.12.2",
+        "squidpy": "1.8.3",
+        "tangram-sc": null,
+        "torch": "2.13.0+cpu",
+        "scikit-learn": "1.7.2",
+        "liana": null,
+        "decoupler": null,
+        "pydeseq2": "0.5.4",
+        "igraph": "1.0.0",
+        "leidenalg": "0.12.0",
+        "matplotlib": "3.10.6",
+        "psutil": "7.0.0"
+      },
+      "bionexus_origin": "C:\\Plugin\\BioNexus\\src\\bionexus\\__init__.py"
+    },
+    "missing_project_packages": [
+      "tangram-sc",
+      "liana",
+      "decoupler"
+    ],
+    "import_and_end_to_end_compatibility": "PENDING",
+    "doctor_report": {
+      "runtime_origin": "C:\\Plugin\\BioNexus\\src\\bionexus\\__init__.py",
+      "runtime_version": "1.0.0-rc.4",
+      "report": {
+        "plugin_version": "1.0.0-rc.4",
+        "tier": "full",
+        "ready": {
+          "core_ready": true,
+          "scverse_ready": true,
+          "scvi_ready": false,
+          "spatial_ready": true,
+          "survival_ready": false,
+          "nextflow_ready": false
+        },
+        "flags": {
+          "sklearn": true,
+          "abnumber": false,
+          "esm": false,
+          "vina": false,
+          "core_ready": true,
+          "scverse_ready": true,
+          "scvi_ready": false,
+          "spatial_ready": true,
+          "survival_ready": false,
+          "nextflow_ready": false
+        },
+        "backends": {
+          "abnumber": {
+            "name": "abnumber",
+            "available": false,
+            "import_name": "abnumber",
+            "extra": "structure",
+            "note": "IMGT/Chothia numbering via abnumber/ANARCI (missing 'abnumber'). Install with: pip install 'bionexus[structure]'.",
+            "state": "missing",
+            "version": null,
+            "min_version": "0.3.0",
+            "diagnostics": {}
+          },
+          "esm": {
+            "name": "esm",
+            "available": false,
+            "import_name": "transformers",
+            "extra": "plm",
+            "note": "ESM weights gated by BIONEXUS_ALLOW_ESM=1; not treated as available until then.",
+            "state": "missing_model_weights",
+            "version": null,
+            "min_version": "4.36.0",
+            "diagnostics": {
+              "weights_ready": false,
+              "esm_gate": false
+            }
+          },
+          "fair_esm": {
+            "name": "fair_esm",
+            "available": false,
+            "import_name": "esm",
+            "extra": "plm",
+            "note": "ESM weights gated by BIONEXUS_ALLOW_ESM=1; not treated as available until then.",
+            "state": "missing_model_weights",
+            "version": null,
+            "min_version": "2.0.0",
+            "diagnostics": {
+              "weights_ready": false,
+              "esm_gate": false
+            }
+          },
+          "lifelines": {
+            "name": "lifelines",
+            "available": false,
+            "import_name": "lifelines",
+            "extra": "survival",
+            "note": "Kaplan-Meier and Cox PH (missing 'lifelines'). Install with: pip install 'bionexus[survival]'.",
+            "state": "missing",
+            "version": null,
+            "min_version": "0.27.0",
+            "diagnostics": {}
+          },
+          "squidpy": {
+            "name": "squidpy",
+            "available": true,
+            "import_name": "squidpy",
+            "extra": "spatial",
+            "note": "Spatial statistics and graphs (1.8.3) is ready.",
+            "state": "installed",
+            "version": "1.8.3",
+            "min_version": "1.3.0",
+            "diagnostics": {}
+          },
+          "spatialdata": {
+            "name": "spatialdata",
+            "available": true,
+            "import_name": "spatialdata",
+            "extra": "spatial",
+            "note": "SpatialData I/O (0.8.0) is ready.",
+            "state": "installed",
+            "version": "0.8.0",
+            "min_version": "0.2.0",
+            "diagnostics": {}
+          },
+          "biotite": {
+            "name": "biotite",
+            "available": false,
+            "import_name": "biotite",
+            "extra": "structure",
+            "note": "Structure I/O and geometry (missing 'biotite'). Install with: pip install 'bionexus[structure]'.",
+            "state": "missing",
+            "version": null,
+            "min_version": "0.39.0",
+            "diagnostics": {}
+          },
+          "viennarna": {
+            "name": "viennarna",
+            "available": false,
+            "import_name": "RNA",
+            "extra": "biologics",
+            "note": "ViennaRNA RNAfold MFE (missing 'RNA'). Install with: pip install 'bionexus[biologics]'.",
+            "state": "missing",
+            "version": null,
+            "min_version": "2.6.0",
+            "diagnostics": {}
+          },
+          "scanpy": {
+            "name": "scanpy",
+            "available": true,
+            "import_name": "scanpy",
+            "extra": "goldchain",
+            "note": "scverse Scanpy (1.12.2) is ready.",
+            "state": "installed",
+            "version": "1.12.2",
+            "min_version": "1.10.0",
+            "diagnostics": {}
+          },
+          "anndata": {
+            "name": "anndata",
+            "available": true,
+            "import_name": "anndata",
+            "extra": "goldchain",
+            "note": "AnnData (0.13.1) is ready.",
+            "state": "installed",
+            "version": "0.13.1",
+            "min_version": "0.9.0",
+            "diagnostics": {}
+          },
+          "scvi": {
+            "name": "scvi",
+            "available": false,
+            "import_name": "scvi",
+            "extra": "scverse",
+            "note": "scvi-tools deep generative models (missing 'scvi'). Install with: pip install 'bionexus[scverse]'.",
+            "state": "partial",
+            "version": null,
+            "min_version": "1.0.0",
+            "diagnostics": {}
+          },
+          "torch": {
+            "name": "torch",
+            "available": true,
+            "import_name": "torch",
+            "extra": "scverse",
+            "note": "PyTorch deep learning (2.13.0+cpu) is ready.",
+            "state": "installed",
+            "version": "2.13.0+cpu",
+            "min_version": "2.0.0",
+            "diagnostics": {}
+          },
+          "harmonypy": {
+            "name": "harmonypy",
+            "available": false,
+            "import_name": "harmonypy",
+            "extra": "goldchain",
+            "note": "Harmony batch integration on PCA (missing 'harmonypy'). Install with: pip install 'bionexus[goldchain]'.",
+            "state": "missing",
+            "version": null,
+            "min_version": "0.0.9",
+            "diagnostics": {}
+          },
+          "leidenalg": {
+            "name": "leidenalg",
+            "available": true,
+            "import_name": "leidenalg",
+            "extra": "goldchain",
+            "note": "Leiden clustering via python-igraph (0.12.0) is ready.",
+            "state": "installed",
+            "version": "0.12.0",
+            "min_version": "0.10.0",
+            "diagnostics": {}
+          },
+          "pydeseq2": {
+            "name": "pydeseq2",
+            "available": true,
+            "import_name": "pydeseq2",
+            "extra": "deseq",
+            "note": "PyDESeq2 Wald tests on pseudobulk counts (0.5.4) is ready.",
+            "state": "installed",
+            "version": "0.5.4",
+            "min_version": "0.4.0",
+            "diagnostics": {}
+          },
+          "sklearn": {
+            "name": "sklearn",
+            "available": true,
+            "import_name": "sklearn",
+            "extra": null,
+            "note": "scikit-learn (1.7.2) is ready.",
+            "state": "installed",
+            "version": "1.7.2",
+            "min_version": "1.2.0",
+            "diagnostics": {}
+          },
+          "allotropy": {
+            "name": "allotropy",
+            "available": false,
+            "import_name": "allotropy",
+            "extra": "allotrope",
+            "note": "Allotrope ASM converter (missing 'allotropy'). Install with: pip install 'bionexus[allotrope]'.",
+            "state": "missing",
+            "version": null,
+            "min_version": "0.1.30",
+            "diagnostics": {}
+          },
+          "vina": {
+            "name": "vina",
+            "available": false,
+            "import_name": "vina",
+            "extra": null,
+            "note": "AutoDock Vina binary (not found on PATH)",
+            "state": "missing_external_binary",
+            "version": null,
+            "min_version": null,
+            "diagnostics": {
+              "binary_path": null
+            }
+          },
+          "fpocket": {
+            "name": "fpocket",
+            "available": false,
+            "import_name": "fpocket",
+            "extra": null,
+            "note": "fpocket cavity detector (not found on PATH)",
+            "state": "missing_external_binary",
+            "version": null,
+            "min_version": null,
+            "diagnostics": {
+              "binary_path": null
+            }
+          },
+          "anarci": {
+            "name": "anarci",
+            "available": false,
+            "import_name": "anarci",
+            "extra": null,
+            "note": "ANARCI antibody numbering (not found on PATH)",
+            "state": "missing_external_binary",
+            "version": null,
+            "min_version": null,
+            "diagnostics": {
+              "binary_path": null
+            }
+          },
+          "nextflow": {
+            "name": "nextflow",
+            "available": false,
+            "import_name": "nextflow",
+            "extra": null,
+            "note": "Nextflow workflow runtime (not found on PATH)",
+            "state": "missing_external_binary",
+            "version": null,
+            "min_version": null,
+            "diagnostics": {
+              "binary_path": null
+            }
+          },
+          "samtools": {
+            "name": "samtools",
+            "available": false,
+            "import_name": "samtools",
+            "extra": null,
+            "note": "SAMtools HTSlib binary (not found on PATH)",
+            "state": "missing_external_binary",
+            "version": null,
+            "min_version": null,
+            "diagnostics": {
+              "binary_path": null
+            }
+          },
+          "bedtools": {
+            "name": "bedtools",
+            "available": false,
+            "import_name": "bedtools",
+            "extra": null,
+            "note": "bedtools genomic interval binary (not found on PATH)",
+            "state": "missing_external_binary",
+            "version": null,
+            "min_version": null,
+            "diagnostics": {
+              "binary_path": null
+            }
+          },
+          "clustalo": {
+            "name": "clustalo",
+            "available": false,
+            "import_name": "clustalo",
+            "extra": null,
+            "note": "Clustal Omega sequence alignment binary (not found on PATH)",
+            "state": "missing_external_binary",
+            "version": null,
+            "min_version": null,
+            "diagnostics": {
+              "binary_path": null
+            }
+          },
+          "pymol": {
+            "name": "pymol",
+            "available": false,
+            "import_name": "pymol",
+            "extra": null,
+            "note": "PyMOL molecular visualization binary (not found on PATH)",
+            "state": "missing_external_binary",
+            "version": null,
+            "min_version": null,
+            "diagnostics": {
+              "binary_path": null
+            }
+          }
+        },
+        "versions": [
+          {
+            "name": "scanpy",
+            "recommend": "1.10+",
+            "installed": "1.12.2",
+            "notes": "1.10 moved Scrublet to sc.pp.scrublet. 1.12 needs Python >=3.12 and deprecates per-plot save=. rank_genes_groups is exploratory; condition DE needs pseudobulk."
+          },
+          {
+            "name": "anndata",
+            "recommend": "0.10+",
+            "installed": "0.13.1",
+            "notes": "Keep raw counts in .layers['counts'] before normalize/log1p."
+          },
+          {
+            "name": "scvi-tools",
+            "recommend": "1.1+",
+            "installed": "not installed",
+            "notes": "Train only on raw counts. Do not log-transform before setup_anndata."
+          },
+          {
+            "name": "leidenalg",
+            "recommend": "0.10+",
+            "installed": "0.12.0",
+            "notes": "Required for sc.tl.leiden via python-igraph. Missing → KMeans fallback, not Leiden."
+          },
+          {
+            "name": "lifelines",
+            "recommend": "0.27+",
+            "installed": "not installed",
+            "notes": "Only backend allowed to emit hazard_ratio. Otherwise event_rate_ratio."
+          },
+          {
+            "name": "squidpy",
+            "recommend": "1.3+",
+            "installed": "1.8.3",
+            "notes": "Preferred Moran / spatial graph. Use spatial_neighbors_knn when present."
+          },
+          {
+            "name": "pydeseq2",
+            "recommend": "0.4+",
+            "installed": "0.5.4",
+            "notes": "Only backend allowed to emit Wald DE on pseudobulk counts."
+          }
+        ],
+        "core_skills": [
+          "single-cell-rna-qc",
+          "scvi-tools",
+          "nextflow-development",
+          "spatial-transcriptomics"
+        ],
+        "default_skills": [
+          "external-evidence-audit",
+          "instrument-data-to-allotrope",
+          "nextflow-development",
+          "provenance-and-audit",
+          "scientific-problem-selection",
+          "scvi-tools",
+          "single-cell-rna-qc",
+          "spatial-transcriptomics",
+          "start"
+        ],
+        "legacy_skills": [
+          "biologics-design",
+          "clinical-cohort-analysis",
+          "experiment-design-agent",
+          "knowledge-graph-augmentation",
+          "multiome-integration",
+          "protein-language-models",
+          "protein-structure-analysis",
+          "research-workflow-orchestrator",
+          "variant-interpretation"
+        ],
+        "heuristic_skills": [
+          "biologics-design",
+          "protein-language-models",
+          "clinical-cohort-analysis",
+          "variant-interpretation",
+          "protein-structure-analysis",
+          "multiome-integration"
+        ],
+        "allowed_next_actions": [
+          "read skills/start/SKILL.md",
+          "run skills/single-cell-rna-qc/scripts/scrna_pipeline.py on an .h5ad",
+          "stop at numeric clusters + markers; do not invent cell types",
+          "run skills/spatial-transcriptomics/scripts/spatial_pipeline.py on SpatialData/.h5ad"
+        ],
+        "forbidden_claims": [
+          "CLIA/CAP diagnostic interpretation",
+          "21 CFR Part 11 / GxP / ALCOA+ compliance",
+          "BLOSUM as ESM or PP3",
+          "regex CDR as IMGT unless abnumber ran",
+          "event-rate ratio as Cox PH",
+          "local Moran z as Clifford-Ord",
+          "ExtraTrees as SCENIC+/GRNBoost2",
+          "COSMIC API / full Cancer Gene Census"
+        ],
+        "pitfalls": [
+          "Do not treat rank_genes_groups p-values as sample-level differential expression.",
+          "Do not log-normalize before scVI / scANVI training.",
+          "Do not call BLOSUM or PWM scores ACMG PP3/PVS1.",
+          "Do not call kNN majority vote BayesSpace or ExtraTrees SCENIC+.",
+          "This plugin does not assign cell-type identity; clusters remain numeric.",
+          "Prefer hosted PubMed/ChEMBL/Open Targets/ClinicalTrials MCP when connected."
+        ],
+        "mcp_policy": "Local tools/list exposes the compatibility surface only. Dedicated Literature/Database peer plugins are preferred and are not bundled by BioNexus. Set BIONEXUS_LOCAL_HOSTED_FALLBACKS=1 only for disaster recovery. search_cosmic is hidden by default and is not the COSMIC API."
+      }
+    },
+    "scientific_execution": "PENDING"
+  },
+  "host_capacity_observations": {
+    "ram_total_bytes": 33752997888,
+    "ram_available_bytes": 16132886528,
+    "c_drive_free_bytes": 3080540160,
+    "meaning": "Observed host capacity, not project resource use or predicted peak",
+    "cim_probe": "Access denied; read-only psutil fallback returned RAM capacity"
+  },
+  "resource_usage": {
+    "download_bytes": "PENDING",
+    "analysis_elapsed_seconds": "PENDING",
+    "peak_rss_bytes": "PENDING",
+    "cpu_seconds": "PENDING",
+    "output_bytes": "PENDING"
+  },
+  "workflow_catalog": {
+    "count": 12,
+    "workflows": [
+      {
+        "workflow_id": "atacseq",
+        "name": "ATAC-seq",
+        "engine": "nextflow",
+        "description": "ATAC-seq alignment, QC, peak calling, consensus peaks, and signal outputs.",
+        "source": {
+          "kind": "remote",
+          "workflow": "nf-core/atacseq",
+          "revision": "2.1.2"
+        },
+        "current_version_id": "version-f92a9e6a4753d5f6b36ae4b88fde6f84",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "nf-core"
+      },
+      {
+        "workflow_id": "ampliseq",
+        "name": "Amplicon sequencing",
+        "engine": "nextflow",
+        "description": "Marker-gene amplicon denoising, taxonomy, diversity, and reporting.",
+        "source": {
+          "kind": "remote",
+          "workflow": "nf-core/ampliseq",
+          "revision": "2.18.0"
+        },
+        "current_version_id": "version-588e8b4eb2d58c4614b59d972f899142",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "nf-core"
+      },
+      {
+        "workflow_id": "rnaseq",
+        "name": "Bulk RNA-seq",
+        "engine": "nextflow",
+        "description": "Bulk RNA-seq FASTQ to QC, alignment or pseudoalignment, quantification, and MultiQC.",
+        "source": {
+          "kind": "remote",
+          "workflow": "nf-core/rnaseq",
+          "revision": "3.26.0"
+        },
+        "current_version_id": "version-56b25319c931e031bea1c3bb2cf9bd67",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "nf-core"
+      },
+      {
+        "workflow_id": "oai_fastq_qc",
+        "name": "Bundled FASTQ QC",
+        "engine": "snakemake",
+        "description": "Bundled FastQC, optional trimming, and MultiQC workflow.",
+        "source": {
+          "kind": "local",
+          "root": "workflows/fastq_qc",
+          "entrypoint": "workflow/Snakefile",
+          "source_sha256": "sha256:705bf609376de4193dafbb50a8967b75bc30ffeb5c17e1849a56cafe949db201"
+        },
+        "current_version_id": "version-8e0c15a605d394be27a4e68246a061ef",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "OpenAI"
+      },
+      {
+        "workflow_id": "oai_bulk_rnaseq_counts_qc",
+        "name": "Bundled bulk RNA-seq",
+        "engine": "snakemake",
+        "description": "Bundled FastQC, Salmon quantification, matrix aggregation, and MultiQC workflow.",
+        "source": {
+          "kind": "local",
+          "root": "workflows/bulk_rnaseq_counts_qc",
+          "entrypoint": "workflow/Snakefile",
+          "source_sha256": "sha256:eddf2cd523b62c20b3fa4496c4d441b9dfb48a303de9c5b922bad30d7e30f9cc"
+        },
+        "current_version_id": "version-a99d0908ddacd176e3b77e9ec2e482f3",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "OpenAI"
+      },
+      {
+        "workflow_id": "oai_scrnaseq_fastq_to_count",
+        "name": "Bundled single-cell RNA-seq",
+        "engine": "snakemake",
+        "description": "Bundled STARsolo FASTQ-to-count workflow.",
+        "source": {
+          "kind": "local",
+          "root": "workflows/scrnaseq_fastq_to_count",
+          "entrypoint": "workflow/Snakefile",
+          "source_sha256": "sha256:6f7aa0dcf4ed6fdb6e187ff0f8d1128b6ffa93504bc688aee341fe250a893510"
+        },
+        "current_version_id": "version-f3c773924a7ebc534c3adc131d4356ec",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "OpenAI"
+      },
+      {
+        "workflow_id": "cutandrun",
+        "name": "CUT&RUN / CUT&Tag",
+        "engine": "nextflow",
+        "description": "CUT&RUN or CUT&Tag alignment, QC, peak calling, and reporting.",
+        "source": {
+          "kind": "remote",
+          "workflow": "nf-core/cutandrun",
+          "revision": "3.2.2"
+        },
+        "current_version_id": "version-12c80630118a512a75ec8063dc7e8880",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "nf-core"
+      },
+      {
+        "workflow_id": "chipseq",
+        "name": "ChIP-seq",
+        "engine": "nextflow",
+        "description": "ChIP-seq alignment, QC, peak calling, consensus peaks, and signal outputs.",
+        "source": {
+          "kind": "remote",
+          "workflow": "nf-core/chipseq",
+          "revision": "2.1.0"
+        },
+        "current_version_id": "version-4d3c1067f971b260ceca1ede6844f26e",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "nf-core"
+      },
+      {
+        "workflow_id": "sarek",
+        "name": "DNA variant analysis",
+        "engine": "nextflow",
+        "description": "DNA germline or somatic variant analysis using nf-core/sarek.",
+        "source": {
+          "kind": "remote",
+          "workflow": "nf-core/sarek",
+          "revision": "3.10.0"
+        },
+        "current_version_id": "version-0d216fb69cac77a9898ca9b7fa4d5404",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "nf-core"
+      },
+      {
+        "workflow_id": "fastq_qc",
+        "name": "FASTQ QC",
+        "engine": "nextflow",
+        "description": "Basic FASTQ quality checks with FastQC and MultiQC, with optional SeqTK trimming.",
+        "source": {
+          "kind": "remote",
+          "workflow": "nf-core/demo",
+          "revision": "1.2.0"
+        },
+        "current_version_id": "version-f645b8d9af970b92e847e05b9509d9af",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "nf-core"
+      },
+      {
+        "workflow_id": "scrnaseq",
+        "name": "Single-cell RNA-seq",
+        "engine": "nextflow",
+        "description": "Single-cell or single-nucleus RNA-seq FASTQ to count matrices and QC outputs.",
+        "source": {
+          "kind": "remote",
+          "workflow": "nf-core/scrnaseq",
+          "revision": "4.2.0"
+        },
+        "current_version_id": "version-f7a811b05cfa887c80bbce68d90242ba",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "nf-core"
+      },
+      {
+        "workflow_id": "taxprofiler",
+        "name": "Taxonomic profiling",
+        "engine": "nextflow",
+        "description": "Shotgun metagenomics taxonomic and optional functional profiling.",
+        "source": {
+          "kind": "remote",
+          "workflow": "nf-core/taxprofiler",
+          "revision": "2.0.1"
+        },
+        "current_version_id": "version-f5757b4be50126eb5e59c68b78586d25",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "nf-core"
+      }
+    ]
+  },
+  "readiness_notes": [
+    "Missing required libraries; no installs attempted.",
+    "C drive below preregistered 10 GiB minimum free-space safety floor, which is an operational policy, not an estimate of required resources.",
+    "Python package metadata and doctor minimum checks do not establish binary imports or full-project compatibility.",
+    "Nextflow/Snakemake absent on observed Host PATH; Docker daemon unreachable; no compatible workflow so these are observations, not a reason to install a controller.",
+    "Runtime snapshot expires; refresh before future execution.",
+    "No processed matrices found in either inspected project directory; not a machine-wide file search."
+  ],
+  "evidence": {
+    "catalog_raw": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\n  \"count\": 12,\n  \"workflows\": [\n    {\n      \"workflow_id\": \"atacseq\",\n      \"name\": \"ATAC-seq\",\n      \"engine\": \"nextflow\",\n      \"description\": \"ATAC-seq alignment, QC, peak calling, consensus peaks, and signal outputs.\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/atacseq\",\n        \"revision\": \"2.1.2\"\n      },\n      \"current_version_id\": \"version-f92a9e6a4753d5f6b36ae4b88fde6f84\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"nf-core\"\n    },\n    {\n      \"workflow_id\": \"ampliseq\",\n      \"name\": \"Amplicon sequencing\",\n      \"engine\": \"nextflow\",\n      \"description\": \"Marker-gene amplicon denoising, taxonomy, diversity, and reporting.\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/ampliseq\",\n        \"revision\": \"2.18.0\"\n      },\n      \"current_version_id\": \"version-588e8b4eb2d58c4614b59d972f899142\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"nf-core\"\n    },\n    {\n      \"workflow_id\": \"rnaseq\",\n      \"name\": \"Bulk RNA-seq\",\n      \"engine\": \"nextflow\",\n      \"description\": \"Bulk RNA-seq FASTQ to QC, alignment or pseudoalignment, quantification, and MultiQC.\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/rnaseq\",\n        \"revision\": \"3.26.0\"\n      },\n      \"current_version_id\": \"version-56b25319c931e031bea1c3bb2cf9bd67\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"nf-core\"\n    },\n    {\n      \"workflow_id\": \"oai_fastq_qc\",\n      \"name\": \"Bundled FASTQ QC\",\n      \"engine\": \"snakemake\",\n      \"description\": \"Bundled FastQC, optional trimming, and MultiQC workflow.\",\n      \"source\": {\n        \"kind\": \"local\",\n        \"root\": \"workflows/fastq_qc\",\n        \"entrypoint\": \"workflow/Snakefile\",\n        \"source_sha256\": \"sha256:705bf609376de4193dafbb50a8967b75bc30ffeb5c17e1849a56cafe949db201\"\n      },\n      \"current_version_id\": \"version-8e0c15a605d394be27a4e68246a061ef\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"OpenAI\"\n    },\n    {\n      \"workflow_id\": \"oai_bulk_rnaseq_counts_qc\",\n      \"name\": \"Bundled bulk RNA-seq\",\n      \"engine\": \"snakemake\",\n      \"description\": \"Bundled FastQC, Salmon quantification, matrix aggregation, and MultiQC workflow.\",\n      \"source\": {\n        \"kind\": \"local\",\n        \"root\": \"workflows/bulk_rnaseq_counts_qc\",\n        \"entrypoint\": \"workflow/Snakefile\",\n        \"source_sha256\": \"sha256:eddf2cd523b62c20b3fa4496c4d441b9dfb48a303de9c5b922bad30d7e30f9cc\"\n      },\n      \"current_version_id\": \"version-a99d0908ddacd176e3b77e9ec2e482f3\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"OpenAI\"\n    },\n    {\n      \"workflow_id\": \"oai_scrnaseq_fastq_to_count\",\n      \"name\": \"Bundled single-cell RNA-seq\",\n      \"engine\": \"snakemake\",\n      \"description\": \"Bundled STARsolo FASTQ-to-count workflow.\",\n      \"source\": {\n        \"kind\": \"local\",\n        \"root\": \"workflows/scrnaseq_fastq_to_count\",\n        \"entrypoint\": \"workflow/Snakefile\",\n        \"source_sha256\": \"sha256:6f7aa0dcf4ed6fdb6e187ff0f8d1128b6ffa93504bc688aee341fe250a893510\"\n      },\n      \"current_version_id\": \"version-f3c773924a7ebc534c3adc131d4356ec\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"OpenAI\"\n    },\n    {\n      \"workflow_id\": \"cutandrun\",\n      \"name\": \"CUT&RUN / CUT&Tag\",\n      \"engine\": \"nextflow\",\n      \"description\": \"CUT&RUN or CUT&Tag alignment, QC, peak calling, and reporting.\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/cutandrun\",\n        \"revision\": \"3.2.2\"\n      },\n      \"current_version_id\": \"version-12c80630118a512a75ec8063dc7e8880\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"nf-core\"\n    },\n    {\n      \"workflow_id\": \"chipseq\",\n      \"name\": \"ChIP-seq\",\n      \"engine\": \"nextflow\",\n      \"description\": \"ChIP-seq alignment, QC, peak calling, consensus peaks, and signal outputs.\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/chipseq\",\n        \"revision\": \"2.1.0\"\n      },\n      \"current_version_id\": \"version-4d3c1067f971b260ceca1ede6844f26e\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"nf-core\"\n    },\n    {\n      \"workflow_id\": \"sarek\",\n      \"name\": \"DNA variant analysis\",\n      \"engine\": \"nextflow\",\n      \"description\": \"DNA germline or somatic variant analysis using nf-core/sarek.\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/sarek\",\n        \"revision\": \"3.10.0\"\n      },\n      \"current_version_id\": \"version-0d216fb69cac77a9898ca9b7fa4d5404\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"nf-core\"\n    },\n    {\n      \"workflow_id\": \"fastq_qc\",\n      \"name\": \"FASTQ QC\",\n      \"engine\": \"nextflow\",\n      \"description\": \"Basic FASTQ quality checks with FastQC and MultiQC, with optional SeqTK trimming.\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/demo\",\n        \"revision\": \"1.2.0\"\n      },\n      \"current_version_id\": \"version-f645b8d9af970b92e847e05b9509d9af\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"nf-core\"\n    },\n    {\n      \"workflow_id\": \"scrnaseq\",\n      \"name\": \"Single-cell RNA-seq\",\n      \"engine\": \"nextflow\",\n      \"description\": \"Single-cell or single-nucleus RNA-seq FASTQ to count matrices and QC outputs.\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/scrnaseq\",\n        \"revision\": \"4.2.0\"\n      },\n      \"current_version_id\": \"version-f7a811b05cfa887c80bbce68d90242ba\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"nf-core\"\n    },\n    {\n      \"workflow_id\": \"taxprofiler\",\n      \"name\": \"Taxonomic profiling\",\n      \"engine\": \"nextflow\",\n      \"description\": \"Shotgun metagenomics taxonomic and optional functional profiling.\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/taxprofiler\",\n        \"revision\": \"2.0.1\"\n      },\n      \"current_version_id\": \"version-f5757b4be50126eb5e59c68b78586d25\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"nf-core\"\n    }\n  ]\n}"
+        }
+      ],
+      "structuredContent": {
+        "count": 12,
+        "workflows": [
+          {
+            "workflow_id": "atacseq",
+            "name": "ATAC-seq",
+            "engine": "nextflow",
+            "description": "ATAC-seq alignment, QC, peak calling, consensus peaks, and signal outputs.",
+            "source": {
+              "kind": "remote",
+              "workflow": "nf-core/atacseq",
+              "revision": "2.1.2"
+            },
+            "current_version_id": "version-f92a9e6a4753d5f6b36ae4b88fde6f84",
+            "catalog": "bundled",
+            "archived": false,
+            "collection": "nf-core"
+          },
+          {
+            "workflow_id": "ampliseq",
+            "name": "Amplicon sequencing",
+            "engine": "nextflow",
+            "description": "Marker-gene amplicon denoising, taxonomy, diversity, and reporting.",
+            "source": {
+              "kind": "remote",
+              "workflow": "nf-core/ampliseq",
+              "revision": "2.18.0"
+            },
+            "current_version_id": "version-588e8b4eb2d58c4614b59d972f899142",
+            "catalog": "bundled",
+            "archived": false,
+            "collection": "nf-core"
+          },
+          {
+            "workflow_id": "rnaseq",
+            "name": "Bulk RNA-seq",
+            "engine": "nextflow",
+            "description": "Bulk RNA-seq FASTQ to QC, alignment or pseudoalignment, quantification, and MultiQC.",
+            "source": {
+              "kind": "remote",
+              "workflow": "nf-core/rnaseq",
+              "revision": "3.26.0"
+            },
+            "current_version_id": "version-56b25319c931e031bea1c3bb2cf9bd67",
+            "catalog": "bundled",
+            "archived": false,
+            "collection": "nf-core"
+          },
+          {
+            "workflow_id": "oai_fastq_qc",
+            "name": "Bundled FASTQ QC",
+            "engine": "snakemake",
+            "description": "Bundled FastQC, optional trimming, and MultiQC workflow.",
+            "source": {
+              "kind": "local",
+              "root": "workflows/fastq_qc",
+              "entrypoint": "workflow/Snakefile",
+              "source_sha256": "sha256:705bf609376de4193dafbb50a8967b75bc30ffeb5c17e1849a56cafe949db201"
+            },
+            "current_version_id": "version-8e0c15a605d394be27a4e68246a061ef",
+            "catalog": "bundled",
+            "archived": false,
+            "collection": "OpenAI"
+          },
+          {
+            "workflow_id": "oai_bulk_rnaseq_counts_qc",
+            "name": "Bundled bulk RNA-seq",
+            "engine": "snakemake",
+            "description": "Bundled FastQC, Salmon quantification, matrix aggregation, and MultiQC workflow.",
+            "source": {
+              "kind": "local",
+              "root": "workflows/bulk_rnaseq_counts_qc",
+              "entrypoint": "workflow/Snakefile",
+              "source_sha256": "sha256:eddf2cd523b62c20b3fa4496c4d441b9dfb48a303de9c5b922bad30d7e30f9cc"
+            },
+            "current_version_id": "version-a99d0908ddacd176e3b77e9ec2e482f3",
+            "catalog": "bundled",
+            "archived": false,
+            "collection": "OpenAI"
+          },
+          {
+            "workflow_id": "oai_scrnaseq_fastq_to_count",
+            "name": "Bundled single-cell RNA-seq",
+            "engine": "snakemake",
+            "description": "Bundled STARsolo FASTQ-to-count workflow.",
+            "source": {
+              "kind": "local",
+              "root": "workflows/scrnaseq_fastq_to_count",
+              "entrypoint": "workflow/Snakefile",
+              "source_sha256": "sha256:6f7aa0dcf4ed6fdb6e187ff0f8d1128b6ffa93504bc688aee341fe250a893510"
+            },
+            "current_version_id": "version-f3c773924a7ebc534c3adc131d4356ec",
+            "catalog": "bundled",
+            "archived": false,
+            "collection": "OpenAI"
+          },
+          {
+            "workflow_id": "cutandrun",
+            "name": "CUT&RUN / CUT&Tag",
+            "engine": "nextflow",
+            "description": "CUT&RUN or CUT&Tag alignment, QC, peak calling, and reporting.",
+            "source": {
+              "kind": "remote",
+              "workflow": "nf-core/cutandrun",
+              "revision": "3.2.2"
+            },
+            "current_version_id": "version-12c80630118a512a75ec8063dc7e8880",
+            "catalog": "bundled",
+            "archived": false,
+            "collection": "nf-core"
+          },
+          {
+            "workflow_id": "chipseq",
+            "name": "ChIP-seq",
+            "engine": "nextflow",
+            "description": "ChIP-seq alignment, QC, peak calling, consensus peaks, and signal outputs.",
+            "source": {
+              "kind": "remote",
+              "workflow": "nf-core/chipseq",
+              "revision": "2.1.0"
+            },
+            "current_version_id": "version-4d3c1067f971b260ceca1ede6844f26e",
+            "catalog": "bundled",
+            "archived": false,
+            "collection": "nf-core"
+          },
+          {
+            "workflow_id": "sarek",
+            "name": "DNA variant analysis",
+            "engine": "nextflow",
+            "description": "DNA germline or somatic variant analysis using nf-core/sarek.",
+            "source": {
+              "kind": "remote",
+              "workflow": "nf-core/sarek",
+              "revision": "3.10.0"
+            },
+            "current_version_id": "version-0d216fb69cac77a9898ca9b7fa4d5404",
+            "catalog": "bundled",
+            "archived": false,
+            "collection": "nf-core"
+          },
+          {
+            "workflow_id": "fastq_qc",
+            "name": "FASTQ QC",
+            "engine": "nextflow",
+            "description": "Basic FASTQ quality checks with FastQC and MultiQC, with optional SeqTK trimming.",
+            "source": {
+              "kind": "remote",
+              "workflow": "nf-core/demo",
+              "revision": "1.2.0"
+            },
+            "current_version_id": "version-f645b8d9af970b92e847e05b9509d9af",
+            "catalog": "bundled",
+            "archived": false,
+            "collection": "nf-core"
+          },
+          {
+            "workflow_id": "scrnaseq",
+            "name": "Single-cell RNA-seq",
+            "engine": "nextflow",
+            "description": "Single-cell or single-nucleus RNA-seq FASTQ to count matrices and QC outputs.",
+            "source": {
+              "kind": "remote",
+              "workflow": "nf-core/scrnaseq",
+              "revision": "4.2.0"
+            },
+            "current_version_id": "version-f7a811b05cfa887c80bbce68d90242ba",
+            "catalog": "bundled",
+            "archived": false,
+            "collection": "nf-core"
+          },
+          {
+            "workflow_id": "taxprofiler",
+            "name": "Taxonomic profiling",
+            "engine": "nextflow",
+            "description": "Shotgun metagenomics taxonomic and optional functional profiling.",
+            "source": {
+              "kind": "remote",
+              "workflow": "nf-core/taxprofiler",
+              "revision": "2.0.1"
+            },
+            "current_version_id": "version-f5757b4be50126eb5e59c68b78586d25",
+            "catalog": "bundled",
+            "archived": false,
+            "collection": "nf-core"
+          }
+        ]
+      },
+      "isError": false
+    },
+    "compute_targets_raw": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\n  \"count\": 1,\n  \"targets\": [\n    {\n      \"target_id\": \"local\",\n      \"title\": \"This computer\",\n      \"provider\": \"ngs-analysis-workbench\",\n      \"controller_transport\": \"local_process\",\n      \"executor\": \"local_process\",\n      \"workspace_access\": \"local_filesystem\",\n      \"description\": \"Run the workflow controller as a process on this computer.\"\n    }\n  ]\n}"
+        }
+      ],
+      "structuredContent": {
+        "count": 1,
+        "targets": [
+          {
+            "target_id": "local",
+            "title": "This computer",
+            "provider": "ngs-analysis-workbench",
+            "controller_transport": "local_process",
+            "executor": "local_process",
+            "workspace_access": "local_filesystem",
+            "description": "Run the workflow controller as a process on this computer."
+          }
+        ]
+      },
+      "isError": false
+    },
+    "runtime_raw": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\n  \"ok\": true,\n  \"snapshot_id\": \"runtime-3cb24b1ada8444bd9ae1b3820049961d\",\n  \"target\": {\n    \"target_id\": \"local\",\n    \"provider\": \"ngs-analysis-workbench\"\n  },\n  \"observed_at\": \"2026-09-05T05:53:27.599399Z\",\n  \"expires_at\": \"2026-09-05T05:58:27.599399Z\",\n  \"host\": {\n    \"os\": \"windows\",\n    \"arch\": \"amd64\"\n  },\n  \"commands\": [\n    {\n      \"name\": \"nextflow\",\n      \"path\": null,\n      \"state\": \"missing\",\n      \"version\": null,\n      \"message\": \"command is not available: nextflow\"\n    },\n    {\n      \"name\": \"snakemake\",\n      \"path\": null,\n      \"state\": \"missing\",\n      \"version\": null,\n      \"message\": \"command is not available: snakemake\"\n    },\n    {\n      \"name\": \"java\",\n      \"path\": \"C:\\\\Program Files\\\\Java\\\\jdk-21.0.10\\\\bin\\\\java.EXE\",\n      \"state\": \"ready\",\n      \"version\": \"java version \\\"21.0.10\\\" 2026-01-20 LTS\",\n      \"message\": null\n    },\n    {\n      \"name\": \"docker\",\n      \"path\": \"C:\\\\Program Files\\\\Docker\\\\Docker\\\\resources\\\\bin\\\\docker.EXE\",\n      \"state\": \"ready\",\n      \"version\": \"Docker version 29.6.2, build dfc4efb\",\n      \"message\": null\n    },\n    {\n      \"name\": \"conda\",\n      \"path\": \"C:\\\\Users\\\\13264\\\\anaconda3\\\\Library\\\\bin\\\\conda.BAT\",\n      \"state\": \"ready\",\n      \"version\": \"conda 25.11.1\",\n      \"message\": null\n    },\n    {\n      \"name\": \"mamba\",\n      \"path\": null,\n      \"state\": \"missing\",\n      \"version\": null,\n      \"message\": \"command is not available: mamba\"\n    },\n    {\n      \"name\": \"micromamba\",\n      \"path\": null,\n      \"state\": \"missing\",\n      \"version\": null,\n      \"message\": \"command is not available: micromamba\"\n    },\n    {\n      \"name\": \"pixi\",\n      \"path\": null,\n      \"state\": \"missing\",\n      \"version\": null,\n      \"message\": \"command is not available: pixi\"\n    },\n    {\n      \"name\": \"podman\",\n      \"path\": null,\n      \"state\": \"missing\",\n      \"version\": null,\n      \"message\": \"command is not available: podman\"\n    },\n    {\n      \"name\": \"apptainer\",\n      \"path\": null,\n      \"state\": \"missing\",\n      \"version\": null,\n      \"message\": \"command is not available: apptainer\"\n    },\n    {\n      \"name\": \"singularity\",\n      \"path\": null,\n      \"state\": \"missing\",\n      \"version\": null,\n      \"message\": \"command is not available: singularity\"\n    }\n  ],\n  \"docker\": {\n    \"path\": \"C:\\\\Program Files\\\\Docker\\\\Docker\\\\resources\\\\bin\\\\docker.EXE\",\n    \"context\": \"desktop-linux\",\n    \"endpoint\": \"npipe:////./pipe/dockerDesktopLinuxEngine\",\n    \"endpoint_is_local\": true,\n    \"daemon_reachable\": false,\n    \"server_version\": null,\n    \"server_os\": null,\n    \"server_arch\": null,\n    \"message\": \"{\\\"ID\\\":\\\"\\\",\\\"Containers\\\":0,\\\"ContainersRunning\\\":0,\\\"ContainersPaused\\\":0,\\\"ContainersStopped\\\":0,\\\"Images\\\":0,\\\"Driver\\\":\\\"\\\",\\\"DriverStatus\\\":null,\\\"Plugins\\\":{\\\"Volume\\\":null,\\\"Network\\\":null,\\\"Authorization\\\":null,\\\"Log\\\":null},\\\"MemoryLimit\\\":false,\\\"SwapLimit\\\":false,\\\"CpuCfsPeriod\\\":false,\\\"CpuCfsQuota\\\":false,\\\"CPUShares\\\":false,\\\"CPUSet\\\":false,\\\"PidsLimit\\\":false,\\\"IPv4Forwarding\\\":false,\\\"Debug\\\":false,\\\"NFd\\\":0,\\\"OomKillDisable\\\":false,\\\"NGoroutines\\\":0,\\\"SystemTime\\\":\\\"\\\",\\\"LoggingDriver\\\":\\\"\\\",\\\"CgroupDriver\\\":\\\"\\\",\\\"NEventsListener\\\":0,\\\"KernelVersion\\\":\\\"\\\",\\\"OperatingSystem\\\":\\\"\\\",\\\"OSVersion\\\":\\\"\\\",\\\"OSType\\\":\\\"\\\",\\\"Architecture\\\":\\\"\\\",\\\"IndexServerAddress\\\":\\\"\\\",\\\"RegistryConfig\\\":null,\\\"NCPU\\\":0,\\\"MemTotal\\\":0,\\\"GenericResources\\\":null,\\\"DockerRootDir\\\":\\\"\\\",\\\"HttpProxy\\\":\\\"\\\",\\\"HttpsProxy\\\":\\\"\\\",\\\"NoProxy\\\":\\\"\\\",\\\"Name\\\":\\\"\\\",\\\"Labels\\\":null,\\\"ExperimentalBuild\\\":false,\\\"ServerVersion\\\":\\\"\\\",\\\"Runtimes\\\":null,\\\"DefaultRuntime\\\":\\\"\\\",\\\"Swarm\\\":{\\\"NodeID\\\":\\\"\\\",\\\"NodeAddr\\\":\\\"\\\",\\\"LocalNodeState\\\":\\\"\\\",\\\"ControlAvailable\\\":false,\\\"Error\\\":\\\"\\\",\\\"RemoteManagers\\\":null},\\\"LiveRestoreEnabled\\\":false,\\\"Isolation\\\":\\\"\\\",\\\"InitBinary\\\":\\\"\\\",\\\"ContainerdCommit\\\":{\\\"ID\\\":\\\"\\\"},\\\"RuncCommit\\\":{\\\"ID\\\":\\\"\\\"},\\\"InitCommit\\\":{\\\"ID\\\":\\\"\\\"},\\\"SecurityOptions\\\":null,\\\"CDISpecDirs\\\":null,\\\"Warnings\\\":null,\\\"ClientInfo\\\":{\\\"Debug\\\":false,\\\"Version\\\":\\\"29.6.2\\\",\\\"DefaultAPIVersion\\\":\\\"1.55\\\",\\\"GitCommit\\\":\\\"dfc4efb\\\",\\\"GoVersion\\\":\\\"go1.26.5\\\",\\\"Os\\\":\\\"windows\\\",\\\"Arch\\\":\\\"amd64\\\",\\\"BuildTime\\\":\\\"Thu Jul 16 16:14:59 2026\\\",\\\"Context\\\":\\\"desktop-linux\\\",\\\"Plugins\\\":[{\\\"SchemaVersion\\\":\\\"0.1.0\\\",\\\"Vendor\\\":\\\"Docker Inc.\\\",\\\"Version\\\":\\\"v1.103.0\\\",\\\"ShortDescription\\\":\\\"Docker AI Agent Runner\\\",\\\"Name\\\":\\\"agent\\\",\\\"Path\\\":\\\"C:\\\\\\\\Program Files\\\\\\\\Docker\\\\\\\\cli-plugins\\\\\\\\docker-agent.exe\\\"},{\\\"SchemaVersion\\\":\\\"0.1.0\\\",\\\"Vendor\\\":\\\"Docker Inc.\\\",\\\"Version\\\":\\\"v1.27.0\\\",\\\"ShortDescription\\\":\\\"Docker AI Agent - Ask Gordon\\\",\\\"Name\\\":\\\"ai\\\",\\\"Path\\\":\\\"C:\\\\\\\\Program Files\\\\\\\\Docker\\\\\\\\cli-plugins\\\\\\\\docker-ai.exe\\\"},{\\\"SchemaVersion\\\":\\\"0.1.0\\\",\\\"Vendor\\\":\\\"Docker Inc.\\\",\\\"Version\\\":\\\"v0.35.0-desktop.2\\\",\\\"ShortDescription\\\":\\\"Docker Buildx\\\",\\\"Name\\\":\\\"buildx\\\",\\\"Path\\\":\\\"C:\\\\\\\\Program Files\\\\\\\\Docker\\\\\\\\cli-plugins\\\\\\\\docker-buildx.exe\\\"},{\\\"SchemaVersion\\\":\\\"0.1.0\\\",\\\"Vendor\\\":\\\"Docker Inc.\\\",\\\"Version\\\":\\\"v5.3.1\\\",\\\"ShortDescription\\\":\\\"Docker Compose\\\",\\\"Name\\\":\\\"compose\\\",\\\"Path\\\":\\\"C:\\\\\\\\Program Files\\\\\\\\Docker\\\\\\\\cli-plugins\\\\\\\\docker-compose.exe\\\"},{\\\"SchemaVersion\\\":\\\"0.1.0\\\",\\\"Vendor\\\":\\\"Docker Inc.\\\",\\\"Version\\\":\\\"0.0.47\\\",\\\"ShortDescription\\\":\\\"Get a shell into any image or container\\\",\\\"Name\\\":\\\"debug\\\",\\\"Path\\\":\\\"C:\\\\\\\\Program Files\\\\\\\\Docker\\\\\\\\cli-plugins\\\\\\\\docker-debug.exe\\\"},{\\\"SchemaVersion\\\":\\\"0.1.0\\\",\\\"Vendor\\\":\\\"Docker Inc.\\\",\\\"Version\\\":\\\"v0.4.2\\\",\\\"ShortDescription\\\":\\\"Docker Desktop commands\\\",\\\"Name\\\":\\\"desktop\\\",\\\"Path\\\":\\\"C:\\\\\\\\Program Files\\\\\\\\Docker\\\\\\\\cli-plugins\\\\\\\\docker-desktop.exe\\\"},{\\\"SchemaVersion\\\":\\\"0.1.0\\\",\\\"Vendor\\\":\\\"Docker Inc.\\\",\\\"Version\\\":\\\"v0.0.7\\\",\\\"ShortDescription\\\":\\\"CLI for managing Docker Hardened Images\\\",\\\"Name\\\":\\\"dhi\\\",\\\"Path\\\":\\\"C:\\\\\\\\Users\\\\\\\\13264\\\\\\\\.docker\\\\\\\\cli-plugins\\\\\\\\docker-dhi.exe\\\",\\\"ShadowedPaths\\\":[\\\"C:\\\\\\\\Program Files\\\\\\\\Docker\\\\\\\\cli-plugins\\\\\\\\docker-dhi.exe\\\"]},{\\\"SchemaVersion\\\":\\\"0.1.0\\\",\\\"Vendor\\\":\\\"Docker Inc.\\\",\\\"Version\\\":\\\"v0.2.31\\\",\\\"ShortDescription\\\":\\\"Manages Docker extensions\\\",\\\"Name\\\":\\\"extension\\\",\\\"Path\\\":\\\"C:\\\\\\\\Program Files\\\\\\\\Docker\\\\\\\\cli-plugins\\\\\\\\docker-extension.exe\\\"},{\\\"SchemaVersion\\\":\\\"0.1.0\\\",\\\"Vendor\\\":\\\"Docker Inc.\\\",\\\"Version\\\":\\\"v1.4.0\\\",\\\"ShortDescription\\\":\\\"Creates Docker-related starter files for your project\\\",\\\"Name\\\":\\\"init\\\",\\\"Path\\\":\\\"C:\\\\\\\\Program Files\\\\\\\\Docker\\\\\\\\cli-plugins\\\\\\\\docker-init.exe\\\"},{\\\"SchemaVersion\\\":\\\"0.1.0\\\",\\\"Vendor\\\":\\\"Docker Inc.\\\",\\\"Version\\\":\\\"v0.43.1\\\",\\\"ShortDescription\\\":\\\"Docker MCP Plugin\\\",\\\"Name\\\":\\\"mcp\\\",\\\"Path\\\":\\\"C:\\\\\\\\Program Files\\\\\\\\Docker\\\\\\\\cli-plugins\\\\\\\\docker-mcp.exe\\\"},{\\\"SchemaVersion\\\":\\\"0.1.0\\\",\\\"Vendor\\\":\\\"Docker Inc.\\\",\\\"Version\\\":\\\"v1.2.6\\\",\\\"ShortDescription\\\":\\\"Docker Model Runner\\\",\\\"Name\\\":\\\"model\\\",\\\"Path\\\":\\\"C:\\\\\\\\Program Files\\\\\\\\Docker\\\\\\\\cli-plugins\\\\\\\\docker-model.exe\\\"},{\\\"SchemaVersion\\\":\\\"0.1.0\\\",\\\"Vendor\\\":\\\"Docker Inc.\\\",\\\"Version\\\":\\\"v0.6.9\\\",\\\"ShortDescription\\\":\\\"Docker Offload\\\",\\\"Name\\\":\\\"offload\\\",\\\"Path\\\":\\\"C:\\\\\\\\Program Files\\\\\\\\Docker\\\\\\\\cli-plugins\\\\\\\\docker-offload.exe\\\"},{\\\"SchemaVersion\\\":\\\"0.1.0\\\",\\\"Vendor\\\":\\\"Docker Inc.\\\",\\\"Version\\\":\\\"v0.2.0\\\",\\\"ShortDescription\\\":\\\"Docker Pass Secrets Manager Plugin (beta)\\\",\\\"Name\\\":\\\"pass\\\",\\\"Path\\\":\\\"C:\\\\\\\\Program Files\\\\\\\\Docker\\\\\\\\cli-plugins\\\\\\\\docker-pass.exe\\\"},{\\\"SchemaVersion\\\":\\\"0.1.0\\\",\\\"Vendor\\\":\\\"Docker Inc.\\\",\\\"Version\\\":\\\"v0.13.0\\\",\\\"ShortDescription\\\":\\\"\\\\\\\"docker sandbox\\\\\\\" is deprecated, use Docker Sandboxes instead\\\",\\\"URL\\\":\\\"https://www.docker.com/products/docker-sandboxes\\\",\\\"Hidden\\\":true,\\\"Name\\\":\\\"sandbox\\\",\\\"Path\\\":\\\"C:\\\\\\\\Program Files\\\\\\\\Docker\\\\\\\\cli-plugins\\\\\\\\docker-sandbox.exe\\\"},{\\\"SchemaVersion\\\":\\\"0.1.0\\\",\\\"Vendor\\\":\\\"Docker Inc.\\\",\\\"Version\\\":\\\"v1.23.1\\\",\\\"ShortDescription\\\":\\\"Docker Scout\\\",\\\"Name\\\":\\\"scout\\\",\\\"Path\\\":\\\"C:\\\\\\\\Program Files\\\\\\\\Docker\\\\\\\\cli-plugins\\\\\\\\docker-scout.exe\\\"}],\\\"Warnings\\\":null}}\"\n  },\n  \"managed_environments\": {\n    \"environments_scanned\": 12,\n    \"environments\": [],\n    \"truncated\": false,\n    \"warnings\": []\n  },\n  \"controller_candidates\": [],\n  \"container_image_architecture\": \"unverified\",\n  \"warnings\": [\n    \"container image architecture is not verified until the workflow resolves concrete images\"\n  ]\n}"
+        }
+      ],
+      "structuredContent": {
+        "ok": true,
+        "snapshot_id": "runtime-3cb24b1ada8444bd9ae1b3820049961d",
+        "target": {
+          "target_id": "local",
+          "provider": "ngs-analysis-workbench"
+        },
+        "observed_at": "2026-09-05T05:53:27.599399Z",
+        "expires_at": "2026-09-05T05:58:27.599399Z",
+        "host": {
+          "os": "windows",
+          "arch": "amd64"
+        },
+        "commands": [
+          {
+            "name": "nextflow",
+            "path": null,
+            "state": "missing",
+            "version": null,
+            "message": "command is not available: nextflow"
+          },
+          {
+            "name": "snakemake",
+            "path": null,
+            "state": "missing",
+            "version": null,
+            "message": "command is not available: snakemake"
+          },
+          {
+            "name": "java",
+            "path": "C:\\Program Files\\Java\\jdk-21.0.10\\bin\\java.EXE",
+            "state": "ready",
+            "version": "java version \"21.0.10\" 2026-01-20 LTS",
+            "message": null
+          },
+          {
+            "name": "docker",
+            "path": "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.EXE",
+            "state": "ready",
+            "version": "Docker version 29.6.2, build dfc4efb",
+            "message": null
+          },
+          {
+            "name": "conda",
+            "path": "C:\\Users\\13264\\anaconda3\\Library\\bin\\conda.BAT",
+            "state": "ready",
+            "version": "conda 25.11.1",
+            "message": null
+          },
+          {
+            "name": "mamba",
+            "path": null,
+            "state": "missing",
+            "version": null,
+            "message": "command is not available: mamba"
+          },
+          {
+            "name": "micromamba",
+            "path": null,
+            "state": "missing",
+            "version": null,
+            "message": "command is not available: micromamba"
+          },
+          {
+            "name": "pixi",
+            "path": null,
+            "state": "missing",
+            "version": null,
+            "message": "command is not available: pixi"
+          },
+          {
+            "name": "podman",
+            "path": null,
+            "state": "missing",
+            "version": null,
+            "message": "command is not available: podman"
+          },
+          {
+            "name": "apptainer",
+            "path": null,
+            "state": "missing",
+            "version": null,
+            "message": "command is not available: apptainer"
+          },
+          {
+            "name": "singularity",
+            "path": null,
+            "state": "missing",
+            "version": null,
+            "message": "command is not available: singularity"
+          }
+        ],
+        "docker": {
+          "path": "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.EXE",
+          "context": "desktop-linux",
+          "endpoint": "npipe:////./pipe/dockerDesktopLinuxEngine",
+          "endpoint_is_local": true,
+          "daemon_reachable": false,
+          "server_version": null,
+          "server_os": null,
+          "server_arch": null,
+          "message": "{\"ID\":\"\",\"Containers\":0,\"ContainersRunning\":0,\"ContainersPaused\":0,\"ContainersStopped\":0,\"Images\":0,\"Driver\":\"\",\"DriverStatus\":null,\"Plugins\":{\"Volume\":null,\"Network\":null,\"Authorization\":null,\"Log\":null},\"MemoryLimit\":false,\"SwapLimit\":false,\"CpuCfsPeriod\":false,\"CpuCfsQuota\":false,\"CPUShares\":false,\"CPUSet\":false,\"PidsLimit\":false,\"IPv4Forwarding\":false,\"Debug\":false,\"NFd\":0,\"OomKillDisable\":false,\"NGoroutines\":0,\"SystemTime\":\"\",\"LoggingDriver\":\"\",\"CgroupDriver\":\"\",\"NEventsListener\":0,\"KernelVersion\":\"\",\"OperatingSystem\":\"\",\"OSVersion\":\"\",\"OSType\":\"\",\"Architecture\":\"\",\"IndexServerAddress\":\"\",\"RegistryConfig\":null,\"NCPU\":0,\"MemTotal\":0,\"GenericResources\":null,\"DockerRootDir\":\"\",\"HttpProxy\":\"\",\"HttpsProxy\":\"\",\"NoProxy\":\"\",\"Name\":\"\",\"Labels\":null,\"ExperimentalBuild\":false,\"ServerVersion\":\"\",\"Runtimes\":null,\"DefaultRuntime\":\"\",\"Swarm\":{\"NodeID\":\"\",\"NodeAddr\":\"\",\"LocalNodeState\":\"\",\"ControlAvailable\":false,\"Error\":\"\",\"RemoteManagers\":null},\"LiveRestoreEnabled\":false,\"Isolation\":\"\",\"InitBinary\":\"\",\"ContainerdCommit\":{\"ID\":\"\"},\"RuncCommit\":{\"ID\":\"\"},\"InitCommit\":{\"ID\":\"\"},\"SecurityOptions\":null,\"CDISpecDirs\":null,\"Warnings\":null,\"ClientInfo\":{\"Debug\":false,\"Version\":\"29.6.2\",\"DefaultAPIVersion\":\"1.55\",\"GitCommit\":\"dfc4efb\",\"GoVersion\":\"go1.26.5\",\"Os\":\"windows\",\"Arch\":\"amd64\",\"BuildTime\":\"Thu Jul 16 16:14:59 2026\",\"Context\":\"desktop-linux\",\"Plugins\":[{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v1.103.0\",\"ShortDescription\":\"Docker AI Agent Runner\",\"Name\":\"agent\",\"Path\":\"C:\\\\Program Files\\\\Docker\\\\cli-plugins\\\\docker-agent.exe\"},{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v1.27.0\",\"ShortDescription\":\"Docker AI Agent - Ask Gordon\",\"Name\":\"ai\",\"Path\":\"C:\\\\Program Files\\\\Docker\\\\cli-plugins\\\\docker-ai.exe\"},{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v0.35.0-desktop.2\",\"ShortDescription\":\"Docker Buildx\",\"Name\":\"buildx\",\"Path\":\"C:\\\\Program Files\\\\Docker\\\\cli-plugins\\\\docker-buildx.exe\"},{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v5.3.1\",\"ShortDescription\":\"Docker Compose\",\"Name\":\"compose\",\"Path\":\"C:\\\\Program Files\\\\Docker\\\\cli-plugins\\\\docker-compose.exe\"},{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"0.0.47\",\"ShortDescription\":\"Get a shell into any image or container\",\"Name\":\"debug\",\"Path\":\"C:\\\\Program Files\\\\Docker\\\\cli-plugins\\\\docker-debug.exe\"},{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v0.4.2\",\"ShortDescription\":\"Docker Desktop commands\",\"Name\":\"desktop\",\"Path\":\"C:\\\\Program Files\\\\Docker\\\\cli-plugins\\\\docker-desktop.exe\"},{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v0.0.7\",\"ShortDescription\":\"CLI for managing Docker Hardened Images\",\"Name\":\"dhi\",\"Path\":\"C:\\\\Users\\\\13264\\\\.docker\\\\cli-plugins\\\\docker-dhi.exe\",\"ShadowedPaths\":[\"C:\\\\Program Files\\\\Docker\\\\cli-plugins\\\\docker-dhi.exe\"]},{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v0.2.31\",\"ShortDescription\":\"Manages Docker extensions\",\"Name\":\"extension\",\"Path\":\"C:\\\\Program Files\\\\Docker\\\\cli-plugins\\\\docker-extension.exe\"},{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v1.4.0\",\"ShortDescription\":\"Creates Docker-related starter files for your project\",\"Name\":\"init\",\"Path\":\"C:\\\\Program Files\\\\Docker\\\\cli-plugins\\\\docker-init.exe\"},{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v0.43.1\",\"ShortDescription\":\"Docker MCP Plugin\",\"Name\":\"mcp\",\"Path\":\"C:\\\\Program Files\\\\Docker\\\\cli-plugins\\\\docker-mcp.exe\"},{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v1.2.6\",\"ShortDescription\":\"Docker Model Runner\",\"Name\":\"model\",\"Path\":\"C:\\\\Program Files\\\\Docker\\\\cli-plugins\\\\docker-model.exe\"},{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v0.6.9\",\"ShortDescription\":\"Docker Offload\",\"Name\":\"offload\",\"Path\":\"C:\\\\Program Files\\\\Docker\\\\cli-plugins\\\\docker-offload.exe\"},{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v0.2.0\",\"ShortDescription\":\"Docker Pass Secrets Manager Plugin (beta)\",\"Name\":\"pass\",\"Path\":\"C:\\\\Program Files\\\\Docker\\\\cli-plugins\\\\docker-pass.exe\"},{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v0.13.0\",\"ShortDescription\":\"\\\"docker sandbox\\\" is deprecated, use Docker Sandboxes instead\",\"URL\":\"https://www.docker.com/products/docker-sandboxes\",\"Hidden\":true,\"Name\":\"sandbox\",\"Path\":\"C:\\\\Program Files\\\\Docker\\\\cli-plugins\\\\docker-sandbox.exe\"},{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v1.23.1\",\"ShortDescription\":\"Docker Scout\",\"Name\":\"scout\",\"Path\":\"C:\\\\Program Files\\\\Docker\\\\cli-plugins\\\\docker-scout.exe\"}],\"Warnings\":null}}"
+        },
+        "managed_environments": {
+          "environments_scanned": 12,
+          "environments": [],
+          "truncated": false,
+          "warnings": []
+        },
+        "controller_candidates": [],
+        "container_image_architecture": "unverified",
+        "warnings": [
+          "container image architecture is not verified until the workflow resolves concrete images"
+        ]
+      },
+      "isError": false
+    },
+    "scrnaseq_version_raw": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\n  \"workflow_id\": \"scrnaseq\",\n  \"current_version_id\": \"version-f7a811b05cfa887c80bbce68d90242ba\",\n  \"versions\": [\n    {\n      \"version_id\": \"version-f7a811b05cfa887c80bbce68d90242ba\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/scrnaseq\",\n        \"revision\": \"4.2.0\"\n      },\n      \"created_at_ms\": 1787969157167,\n      \"active\": true\n    }\n  ]\n}"
+        }
+      ],
+      "structuredContent": {
+        "workflow_id": "scrnaseq",
+        "current_version_id": "version-f7a811b05cfa887c80bbce68d90242ba",
+        "versions": [
+          {
+            "version_id": "version-f7a811b05cfa887c80bbce68d90242ba",
+            "source": {
+              "kind": "remote",
+              "workflow": "nf-core/scrnaseq",
+              "revision": "4.2.0"
+            },
+            "created_at_ms": 1787969157167,
+            "active": true
+          }
+        ]
+      },
+      "isError": false
+    },
+    "starsolo_version_raw": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\n  \"workflow_id\": \"oai_scrnaseq_fastq_to_count\",\n  \"current_version_id\": \"version-f3c773924a7ebc534c3adc131d4356ec\",\n  \"versions\": [\n    {\n      \"version_id\": \"version-f3c773924a7ebc534c3adc131d4356ec\",\n      \"source\": {\n        \"kind\": \"local\",\n        \"root\": \"workflows/scrnaseq_fastq_to_count\",\n        \"entrypoint\": \"workflow/Snakefile\",\n        \"source_sha256\": \"sha256:6f7aa0dcf4ed6fdb6e187ff0f8d1128b6ffa93504bc688aee341fe250a893510\"\n      },\n      \"created_at_ms\": 1787969157167,\n      \"active\": true\n    }\n  ]\n}"
+        }
+      ],
+      "structuredContent": {
+        "workflow_id": "oai_scrnaseq_fastq_to_count",
+        "current_version_id": "version-f3c773924a7ebc534c3adc131d4356ec",
+        "versions": [
+          {
+            "version_id": "version-f3c773924a7ebc534c3adc131d4356ec",
+            "source": {
+              "kind": "local",
+              "root": "workflows/scrnaseq_fastq_to_count",
+              "entrypoint": "workflow/Snakefile",
+              "source_sha256": "sha256:6f7aa0dcf4ed6fdb6e187ff0f8d1128b6ffa93504bc688aee341fe250a893510"
+            },
+            "created_at_ms": 1787969157167,
+            "active": true
+          }
+        ]
+      },
+      "isError": false
+    },
+    "bionexus_geo_raw": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\n  \"query\": \"GSE176078\",\n  \"total_found\": 0,\n  \"datasets\": []\n}"
+        }
+      ],
+      "structuredContent": {
+        "result": "{\n  \"query\": \"GSE176078\",\n  \"total_found\": 0,\n  \"datasets\": []\n}"
+      },
+      "isError": false
+    },
+    "python_and_capacity_probe_raw": {
+      "chunk_id": "8f84ee",
+      "wall_time_seconds": 1.3572603,
+      "exit_code": 0,
+      "original_token_count": 2920,
+      "output": "{\"executable\": \"C:\\\\Users\\\\13264\\\\anaconda3\\\\python.exe\", \"python\": \"3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]\", \"platform\": \"Windows-11-10.0.26200-SP0\", \"packages\": {\"bionexus\": \"2.7.0\", \"numpy\": \"2.3.5\", \"scipy\": \"1.16.3\", \"pandas\": \"2.3.3\", \"anndata\": \"0.13.1\", \"scanpy\": \"1.12.2\", \"squidpy\": \"1.8.3\", \"tangram-sc\": null, \"torch\": \"2.13.0+cpu\", \"scikit-learn\": \"1.7.2\", \"liana\": null, \"decoupler\": null, \"pydeseq2\": \"0.5.4\", \"igraph\": \"1.0.0\", \"leidenalg\": \"0.12.0\", \"matplotlib\": \"3.10.6\", \"psutil\": \"7.0.0\"}, \"bionexus_origin\": \"C:\\\\Plugin\\\\BioNexus\\\\src\\\\bionexus\\\\__init__.py\"}\r\nGet-CimInstance: \r\nLine |\r\n   2 |  … gin if s else None}))\"; Get-CimInstance Win32_OperatingSystem | Selec …\r\n     |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n     | 拒绝访问 \r\n\r\nName         Used       Free\r\n----         ----       ----\r\nC    533791416320 3080540160\r\n  { day: \"Day 4\", focus: \"S5 + S6：niche、边界、pseudobulk DE、L–R、文献\", hours: 8 },\r\n  { day: \"Day 5\", focus: \"S7：审计、debt DAG、陷阱演示、截图、推文\", hours: 5 },\r\n];\r\n\r\nexport const SCREENSHOTS = [\r\n  \"Astra 在 Workbench 中冻结主问题、统计单位、停止条件并等待你的批准\",\r\n  \"NGS Analysis Workbench 返回实时目录能力：若无 processed matrix 工作流，明确转为本地 Python\",\r\n  \"Life Sciences Literature 的真实返回：Wu 2021 样本设计、PMID/DOI 与成功/失败记录\",\r\n  \"6 张切片：H&E + 发布者病理区域 + 纯几何 boundary/core 掩膜\",\r\n  \"Tangram vs marker/NNLS 组成敏感性；scanpy ingest 标签迁移独立成图\",\r\n  \"六个独立样本配对效应 + 火山图；显示方向、区间、FDR 与 leave-one-sample-out\",\r\n  \"只读 BioNexus EvidenceCard / Evidence Debt DAG：哈希、实际状态、限制和未满足证据\",\r\n  \"越界声明被审计拒绝 + 具名 Human Scientific Adjudication；UI 无人工改 verdict 控件\",\r\n];\r\n\r\nexport const TWEET_THREAD = [\r\n  `DRAFT — fill brackets only after the verified run. @ChrisHayduk I built SpatialWarrant in Rosalind Workbench: an evidence-audited analysis of the breast-tumor boundary across six public Visium sections. [ONE SENTENCE WITH THE OBSERVED RESULT.] 🧵`,\r\n  `Rosalind plugins actually used: NGS Analysis Workbench for data/design checks; Life Sciences Literature for source-grounded interpretation; BioNexus Reliability for hashes, provenance and claim limits. Local Python/scverse performed the custom spatial statistics.`,\r\n  `The boundary was frozen from producer-provided pathology geometry before expression testing. Spots were aggregated within section, and the verified biological samples—not thousands of spots—were the inferential units. [ADD EFFECT, INTERVAL AND DIRECTIONAL CONSISTENCY.]`,\r\n  `I also tested an overclaim: could one section support a population-level TNBC immune-exclusion mechanism? BioNexus kept the actual fail-closed verdict and recorded the missing replication and causal evidence. [ADD EXACT RETURN.]`,\r\n  `The full design stays in the project: spatial domains, Tangram, marker/NNLS sensitivity, niche analysis, LIANA and a 10x transfer check. Same-study pathology and scRNA are labeled as reference evidence, not independent validation.`,\r\n  `Reproducibility: [INPUT MANIFEST SHA-256], [CODE REVISION], [ACTUAL PEAK RAM/RUNTIME]. Astra challenged the design and final claims; Sol executed and preserved the files. Screenshots show the real Workbench/plugin calls and results.`,\r\n];\r\n# Detailed single-cell QC, annotation, and UMAP guidance\r\n\r\nUse this file when choosing dataset-specific QC thresholds, annotation strategy, or UMAP feature-selection rules for a new single-cell or single-nucleus RNA-seq dataset.\r\n\r\n## Contents\r\n\r\n- Choosing QC thresholds\r\n- Downstream doublet detection method\r\n- When to use scVI\r\n- Annotation without an appropriate Allen Brain Atlas reference\r\n- Marker-gene selection for global UMAP\r\n- Plot legibility\r\n- Large-dataset memory practices\r\n\r\n## Choosing QC Thresholds\r\n\r\nAlways choose thresholds from the observed data and expected biology. Do not copy a single min-genes or mitochondrial cutoff across tissues, species, assay types, or chemistries.\r\n\r\nInspect these plots overall and per batch:\r\n\r\n- Histogram or density of detected genes per barcode\r\n- Histogram or density of total UMIs per barcode\r\n- Scatter of total UMIs vs detected genes\r\n- Mitochondrial fraction by batch\r\n- Any tissue-specific nuisance fraction such as ribosomal, hemoglobin, chloroplast, or stress-response signal\r\n\r\nInspect the full QC panel, but by default only filter on the standard core metrics:\r\n\r\n- detected genes per cell\r\n- total counts or UMIs per cell\r\n- `percent.mt`\r\n\r\nTreat other QC metrics as review signals first, not automatic filters. Ambient RNA metrics are the main exception: they may be used for filtering when the dataset and workflow support them. If another nonstandard metric looks important enough to drive filtering for this dataset, surface that explicitly, explain the evidence, and consult the user before adding it as a hard cutoff.\r\n\r\n### Detected genes per cell\r\n\r\nUse one of these patterns:\r\n\r\n- Prefer the local minimum between low-complexity barcodes and the main cell distribution when the histogram shows a clear valley.\r\n- If there is no clear valley, define putative cells broadly, then choose a conservative lower cutoff from a robust outlier rule such as 3 MAD below the median of putative cells.\r\n- Review the cutoff against expected biology so that small but real cell types are not removed by default.\r\n\r\nStarting guesses are allowed only as a first pass:\r\n\r\n- Typical droplet scRNA-seq: often a few hundred to low thousands of genes\r\n- Single-nucleus data: often lower than whole-cell data\r\n- High-complexity tissues or deep sequencing: often higher than shallow droplet datasets\r\n\r\nAlways keep the plot that justified the final choice.\r\n\r\n### Total UMIs and upper outliers\r\n\r\nUse total UMIs and detected genes together:\r\n\r\n- Very low UMI outliers usually track low-complexity barcodes.\r\n- Very high UMI or very high gene-count outliers often indicate doublets or multiplets, but some large cell types are real.\r\n\r\nUse conservative upper-tail rules such as:\r\n\r\n- Above a very high percentile\r\n- Several MAD above the median within batch\r\n\r\nThen review whether flagged cells belong to known large-cell populations before removing them.\r\n\r\n### Mitochondrial and nuisance fractions\r\n\r\nThere is no universal mitochondrial cutoff.\r\n\r\n- In stressed whole-cell datasets, higher mitochondrial fractions can mark dying cells.\r\n- In nucleus datasets, mitochondrial fraction is often less informative.\r\n- Some tissues need additional nuisance metrics, for example hemoglobin in blood-contaminated samples or chloroplast genes in plant data.\r\n\r\nChoose the nuisance thresholds from the observed distributions and include a plot with the selected cutoff.\r\n\r\nEven when additional nuisance metrics are plotted and interpreted, default filtering should still be limited to detected genes, total counts, and `percent.mt`, with ambient RNA filtering allowed as a supported exception. Other extra filters should only be added with explicit user approval.\r\n\r\n## Downstream Doublet Detection Method\r\n\r\nUse `scDblFinder` as the preferred caller when downstream doublet detection is explicitly requested. The bundled STARsolo workflow ends at count generation; doublet detection and its R/Bioconductor dependencies are not requirements of that workflow and need a separately approved downstream analysis.\r\n\r\n- Run `scDblFinder` per batch, capture channel, or other technical partition so the caller sees realistic collision structure.\r\n- For very large partitions, split them into smaller chunks before calling `scDblFinder`, then merge the calls back onto the parent object by cell barcode.\r\n- Preserve the doublet score, class call, and the partition used for calling in the output metadata.\r\n- Do not silently replace `scDblFinder` with another method. If its separately requested downstream analysis lacks R or Bioconductor dependencies, report that step's blocker or get explicit approval before using a fallback.\r\n\r\nWhy this is the default:\r\n\r\n- It is robust for droplet-style scRNA-seq and snRNA-seq data.\r\n- It supports sample-aware calling, which matters for multiplexed or batched experiments.\r\n- It works well with a provenance-preserving workflow where cells are flagged rather than immediately removed.\r\n\r\n## When to Use scVI\r\n\r\nChoose the latent-space method based on the analytical need, not by habit.\r\n\r\nPrefer a standard PCA or Scanpy workflow when:\r\n\r\n- the dataset is relatively small\r\n- batch structure is minimal or already well controlled\r\n- the main goal is straightforward QC, clustering, or plotting within one coherent dataset\r\n- a conventional embedding is likely to answer the question without extra modeling overhead\r\n\r\nPrefer `scVI` when:\r\n\r\n- integration across batches, donors, chemistries, or studies is an explicit goal\r\n- the dataset is large enough that a learned latent space is likely to improve robustness\r\n- batch effects or technical heterogeneity clearly interfere with biological structure\r\n- downstream annotation or comparison benefits from a shared latent representation\r\n\r\nBe cautious with `scVI` when:\r\n\r\n- the dataset has only a small number of cells overall\r\n- individual batches are tiny\r\n- the model complexity is unlikely to buy much beyond PCA\r\n\r\nRecord why `scVI` was used or skipped so the choice is auditable.\r\n\r\n## Annotation When an Allen Brain Atlas Reference Is Not Appropriate\r\n\r\nChoose references in this order of preference:\r\n\r\n1. Same species\r\n2. Same tissue or organ system\r\n3. Same assay type and chemistry\r\n4. Similar biological state, development stage, or disease context\r\n\r\nIf a matched reference exists, use a compatible mapping workflow such as:\r\n\r\n- scANVI or scArches when you control or can rebuild the reference\r\n- Seurat or Azimuth-style mapping when a mature Seurat reference exists\r\n- SingleR when a suitable reference expression atlas is available\r\n- CellTypist for immune or blood-rich datasets\r\n\r\nIf no strong reference exists:\r\n\r\n- Cluster the dataset\r\n- Call coarse compartments first\r\n- Identify canonical and cluster-specific markers\r\n- Use cluster-level or pseudobulk markers to refine labels\r\n- Leave uncertain clusters as unknown, ambiguous, or mixed\r\n\r\nPrefer conservative hierarchical labels over overconfident fine labels.\r\n\r\nCross-species mapping can still help, but use it mainly for coarse lineage assignment unless conservation is known to be strong.\r\n\r\n## Marker-Gene Selection for Global UMAP\r\n\r\nFor a general-purpose global UMAP, use an informative panel rather than all genes when the dataset is large or when nuisance programs dominate the embedding.\r\n\r\nRecommended heuristic:\r\n\r\n1. Compute HVGs in a batch-aware way.\r\n2. Define coarse groups from high-confidence labels or unsupervised clusters.\r\n3. Add top marker genes per coarse group so all major compartments are represented.\r\n4. Remove nuisance-heavy genes if they dominate the panel:\r\n   - mitochondrial genes\r\n   - ribosomal genes\r\n   - hemoglobin genes\r\n   - strong cell-cycle genes when they obscure lineage structure\r\n   - stress or dissociation genes when they dominate the signal\r\n5. Keep the panel compact but diverse.\r\n\r\nReasonable panel sizes are often:\r\n\r\n- Small datasets: roughly 1k to 3k genes\r\n- Medium to large datasets: roughly 2k to 8k genes\r\n\r\nThe goal is coverage of major biological structure, not maximum panel size.\r\n\r\nIf no stable labels exist yet, use HVGs alone or use the learned latent space directly.\r\n\r\n"
+    },
+    "literature_first_attempt": {
+      "chunk_id": "0eafb2",
+      "wall_time_seconds": 0.5452563,
+      "exit_code": 1,
+      "original_token_count": 32,
+      "output": "{\"ok\": false, \"error\": {\"code\": \"network_error\", \"message\": \"NCBI Entrez request failed (ConnectionError).\"}, \"warnings\": []}"
+    },
+    "databases_first_attempt": {
+      "chunk_id": "6bd9ac",
+      "wall_time_seconds": 0.5274817,
+      "exit_code": 1,
+      "original_token_count": 33,
+      "output": "{\"ok\": false, \"error\": {\"code\": \"network_error\", \"message\": \"Request failed for reactome-skill: ConnectionError\"}, \"warnings\": []}"
+    },
+    "peer_retry_stdout": {
+      "chunk_id": "811d3d",
+      "wall_time_seconds": 3.9365674999999998,
+      "exit_code": 1,
+      "original_token_count": 174,
+      "output": "{\"ok\": true, \"source\": \"ncbi-entrez\", \"endpoint\": \"einfo\", \"database\": \"pubmed\", \"record_path\": null, \"raw_output_path\": null, \"warnings\": [], \"summary\": {\"header\": \"...\", \"_truncated_keys\": 1}, \"top_keys\": [\"header\"], \"checked_sources\": [{\"name\": \"NCBI Entrez\", \"url\": \"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/einfo.fcgi?db=pubmed&retmode=json\", \"retrieved_at\": \"2026-09-05T05:55:45.034942+00:00\", \"supports_claim\": false, \"kind\": \"checked\", \"request_url\": \"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/einfo.fcgi?db=pubmed&retmode=json\", \"reason\": \"metadata\"}]}{\"ok\": false, \"error\": {\"code\": \"network_error\", \"message\": \"Request failed for reactome-skill: HTTPError\"}, \"warnings\": []}"
+    },
+    "public_metadata_checks": "Checking your browser - reCAPTCHA (https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE176078)\nciteturn0view0 [wordlim: 200] Crawled: today; Content type: text/html; Source: open({\"ref_id\":\"https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE176078\",\"lineno\":null}); Total lines: 3\nL0: Checking your browser before accessing www.ncbi.nlm.nih.gov ...\nL1: \nL2: Click cite0†here if you are not automatically redirected after 5 seconds.\n--------------------------------------------------------------------------------\nA single-cell and spatially resolved atlas of human breast cancers | spatial transcriptomics data | Zenodo (https://zenodo.org/records/4739739)\nciteturn0view1 [wordlim: 200] Crawled: today; Content type: text/html; Source: open({\"ref_id\":\"https://zenodo.org/records/4739739\",\"lineno\":null}); Total lines: 173\nL0: Published June 5, 2021 | Version 1\nL1: \nL2: cite0†Dataset Open\nL3: \nL4: # A single-cell and spatially resolved atlas of human breast cancers | spatial transcriptomics data\nL5: \nL6: ### Authors/Creators\nL7: \nL8:   * cite1†Sunny Z Wu^{1} L9:   * cite2†Alexander Swarbrick^{1} L10: \nL11: [Button: Show affiliations ]\nL12: \nL13:   * 1. Garvan Institute of Medical Research\nL14: ## Description\nL15: \nL16: This repository contains spatial transcriptomics data related to the Wu et al. 2021 study \"A single-cell and spatially resolved atlas of human breast cancers\". Processed count matrices, brightfield HE-images (plain and annotated) and meta-data (containing clinical information and spot pathological details) for 6 primary breast cancers profiled using the Visium assay (10X Genomics). If you use this dataset in your research, please consider citing the above study.\nL17: The content of the files are:\nL18: raw_count_matrices.tar.gz - spaceranger processed raw count matrices.\nL19: \nL20: spatial.tar.gz - spaceranger processed spatial files (images, scalefactors, aligned fiducials, position lists)\nL21: \nL22: filtered_count_matrices.tar.gz - filtered count matrices.\nL23: \nL24: metadata.tar.gz - metadata for tissues and spots of filtered count matrices, including clinical subtype and pathological annotation of each spot.\nL25: \nL26: images.pdf - pdf detailing the H&E and annotation images.\nL27: ## Files\nL28: \nL29: ###\nL30: \nL31: images.pdf\nL32: \nL33: cite3†Preview L34: ###\nL35: \nL36: Files (920.8 MB)\nL37: Name  | Size  |\nL38: --- | --- | ---\nL39: cite4†filtered_count_matrices.tar.gz md5:ea1220f0606c4d4e9307468fb2d5427a  | 155.7 MB  | cite4†Download L40: cite5†images.pdf md5:7a44782b0c376e5b4cb8bb1127821e6f  | 457.7 MB  | cite3†Preview cite5†Download L41: cite6†metadata.tar.gz md5:1d0b34ead70635c094ac74ac58a88d68  | 217.5 kB  | cite6†Download L42: cite7†raw_count_matrices.tar.gz md5:f332ba383872dd74a27db67fcbfcd900  | 252.9 MB  | cite7†Download L43: cite8†spatial.tar.gz md5:29b02ae433d459d19dc52b75a529e8e9  | 54.3 MB  | cite8†Download L44: \nL45: 22K\nL46: \nL47: Views\nL48: \nL49: 31K\nL50: Downloads\nL51: \nL52: Show more details\nL53: \nL54:  | All versions  | This version\nL55: --- | --- | ---\nL56: Views  | 22,333  | 22,230\nL57: Downloads  | 31,236  | 31,060\nL58: Data volume  | 25.4 TB  | 25.3 TB\nL59: \nL60: cite9†More info on how stats are collected.... L61: ## Versions\nL62: \nL63: ## External resources\nL64: \nL65: Indexed in\nL66: \nL67:   * cite10†Image L68: \nL69: cite11†OpenAIRE†explore.openaire.eu L70: \nL71: ## Communities\nL72: \nL73: ## Keywords and subjects\nL74: \nL75:   * cite12†spatial transcriptomics L76:   * cite13†breast cancer L77:   * cite14†Visium L78: \nL79: ## Details\nL80: \nL81: DOI\nL82:     cite15†Image: Get the DOI badge! L83: \nL84: DOI Badge\nL85: \nL86: #### DOI\nL87: \nL88: ####\nL89: \nL90:     10.5281/zenodo.4739739\nL91: \nL92: ### Markdown\nL93: \nL94:     [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4739739.svg)](https://doi.org/10.5281/zenodo.4739739)\nL95: ### reStructuredText\nL96: \nL97:     .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.4739739.svg\nL98:       :target: https://doi.org/10.5281/zenodo.4739739\nL99: \nL100: ### HTML\nL101: \nL102:     <a href=\"https://doi.org/10.5281/zenodo.4739739\"><img src=\"https://zenodo.org/badge/DOI/10.5281/zenodo.4739739.svg\" alt=\"DOI\"></a>\nL103: \nL104: ### Image URL\nL105: \nL106:     https://zenodo.org/badge/DOI/10.5281/zenodo.4739739.svg\nL107: ### Target URL\nL108: \nL109:     https://doi.org/10.5281/zenodo.4739739\nL110: \nL111: Resource type\nL112:     Dataset\nL113: Publisher\nL114:     Zenodo\nL115: Published in\nL116:     Nature Genetics, 2021.\nL117: Languages\nL118:     English\nL119: \nL120: ## Rights\nL121: \nL122: License\nL123: \nL124: ## Citation\nL125: \nL126: ## Export\nL127: \nL128: ## Technical metadata\nL129: \nL130: Created\nL131:     June 4, 2021\nL132: \nL133: Modified\nL134:     July 19, 2024\nL135: \nL136: Jump up\nL137: ## About\nL138: \nL139:   * cite16†About†about.zenodo.org L140:   * cite17†Policies†about.zenodo.org L141:   * cite18†Infrastructure†about.zenodo.org L142:   * cite19†Principles†about.zenodo.org L143:   * cite20†Projects†about.zenodo.org L144:   * cite21†Roadmap†about.zenodo.org L145:   * cite22†Contact†about.zenodo.org L146: \nL147: ## Blog\nL148: \nL149:   * cite23†Blog†blog.zenodo.org L150: \nL151: ## Support\nL152: \nL153:   * cite24†Help†help.zenodo.org L154:   * cite25†FAQ†support.zenodo.org L155: \nL156: ## Developers\nL157: \nL158:   * cite26†REST API†developers.zenodo.org L159:   * cite27†OAI-PMH†developers.zenodo.org L160: ## Contribute\nL161: \nL162:   * cite28†GitHub†github.com L163:   * cite29†Donate L164: \nL165: ## Funded by\nL166: \nL167:   *   *   * Powered by cite30†CERN Data Centre†home.cern & cite31†InvenioRDM†inveniordm.docs.cern.ch L168: \nL169:   * cite32†Status†stats.uptimerobot.com L170:   * cite33†Privacy policy†about.zenodo.org L171:   * cite34†Cookie policy†about.zenodo.org L172:   * cite35†Terms of Use†about.zenodo.org --------------------------------------------------------------------------------\nHALLMARK_INTERFERON_GAMMA_RESPONSE (https://www.gsea-msigdb.org/gsea/msigdb/human/geneset/HALLMARK_INTERFERON_GAMMA_RESPONSE)\nciteturn0view2 [wordlim: 200] Crawled: yesterday; Content type: text/html; Source: open({\"ref_id\":\"https://www.gsea-msigdb.org/gsea/msigdb/human/geneset/HALLMARK_INTERFERON_GAMMA_RESPONSE\",\"lineno\":null}); Total lines: 524\nL0: cite0†login L1: cite1†register L2: \nL3:   * cite2†GSEA Home L4:   * cite3†Downloads L5:   * cite4†Molecular Signatures Database L6:   * cite5†Documentation†docs.gsea-msigdb.org L7:   * cite6†Contact†docs.gsea-msigdb.org L8:   * cite7†Team L9: \nL10:   * cite4†MSigDB Home L11: \nL12:   * Human Collections\nL13:   * cite8†About L14:   * cite9†Browse L15:   * cite10†Search L16:   * cite11†Investigate L17:   * cite12†Gene Families L18: \nL19:   * Mouse Collections\nL20:   * cite13†About L21:   * cite14†Browse L22:   * cite15†Search L23:   * cite16†Investigate L24: \nL25:   * cite17†Help L26: cite18†Image L27: cite19†Image | cite20†Image |\nL28: # Human Gene Set: HALLMARK_INTERFERON_GAMMA_RESPONSE\nL29: For the Mouse gene set with the same name, see cite21†HALLMARK_INTERFERON_GAMMA_RESPONSE L30: Standard name HALLMARK_INTERFERON_GAMMA_RESPONSE\nL31: Systematic name M5913\nL32: Brief description Genes up-regulated in response to IFNG cite22†[GeneID=3458]†www.ncbi.nlm.nih.gov .\nL33: Full description or abstract\nL34: Collection H: Hallmark\nL35: Source publication cite23†Pubmed 26771021†pubmed.ncbi.nlm.nih.gov Authors: Liberzon A,Birger C,Thorvaldsdóttir H,Ghandi M,Mesirov JP,Tamayo P\nL36: Exact source\nL37: Related gene sets (show 49 additional gene sets from the source publication)\nL38: cite24†HALLMARK_ADIPOGENESIS L39: cite25†HALLMARK_ALLOGRAFT_REJECTION L40: cite26†HALLMARK_ANDROGEN_RESPONSE L41: cite27†HALLMARK_ANGIOGENESIS L42: cite28†HALLMARK_APICAL_JUNCTION L43: cite29†HALLMARK_APICAL_SURFACE L44: cite30†HALLMARK_APOPTOSIS L45: cite31†HALLMARK_BILE_ACID_METABOLISM L46: cite32†HALLMARK_CHOLESTEROL_HOMEOSTASIS L47: cite33†HALLMARK_COAGULATION L48: cite34†HALLMARK_COMPLEMENT L49: cite35†HALLMARK_DNA_REPAIR L50: cite36†HALLMARK_E2F_TARGETS L51: cite37†HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION L52: cite38†HALLMARK_ESTROGEN_RESPONSE_EARLY L53: cite39†HALLMARK_ESTROGEN_RESPONSE_LATE L54: cite40†HALLMARK_FATTY_ACID_METABOLISM L55: cite41†HALLMARK_G2M_CHECKPOINT L56: cite42†HALLMARK_GLYCOLYSIS L57: cite43†HALLMARK_HEDGEHOG_SIGNALING L58: cite44†HALLMARK_HEME_METABOLISM L59: cite45†HALLMARK_HYPOXIA L60: cite46†HALLMARK_IL2_STAT5_SIGNALING L61: cite47†HALLMARK_IL6_JAK_STAT3_SIGNALING L62: cite48†HALLMARK_INFLAMMATORY_RESPONSE L63: cite49†HALLMARK_INTERFERON_ALPHA_RESPONSE L64: cite50†HALLMARK_KRAS_SIGNALING_DN L65: cite51†HALLMARK_KRAS_SIGNALING_UP L66: cite52†HALLMARK_MITOTIC_SPINDLE L67: cite53†HALLMARK_MTORC1_SIGNALING L68: cite54†HALLMARK_MYC_TARGETS_V1 L69: cite55†HALLMARK_MYC_TARGETS_V2 L70: cite56†HALLMARK_MYOGENESIS L71: cite57†HALLMARK_NOTCH_SIGNALING L72: cite58†HALLMARK_OXIDATIVE_PHOSPHORYLATION L73: cite59†HALLMARK_P53_PATHWAY L74: cite60†HALLMARK_PANCREAS_BETA_CELLS L75: cite61†HALLMARK_PEROXISOME L76: cite62†HALLMARK_PI3K_AKT_MTOR_SIGNALING L77: cite63†HALLMARK_PROTEIN_SECRETION L78: cite64†HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY L79: cite65†HALLMARK_SPERMATOGENESIS L80: cite66†HALLMARK_TGF_BETA_SIGNALING L81: cite67†HALLMARK_TNFA_SIGNALING_VIA_NFKB L82: cite68†HALLMARK_UNFOLDED_PROTEIN_RESPONSE L83: cite69†HALLMARK_UV_RESPONSE_DN L84: cite70†HALLMARK_UV_RESPONSE_UP L85: cite71†HALLMARK_WNT_BETA_CATENIN_SIGNALING L86: cite72†HALLMARK_XENOBIOTIC_METABOLISM L87: (show 74 gene sets from any of these authors)\nL88: cite73†ANDERSEN_CHOLANGIOCARCINOMA_CLASS1 L89: cite74†ANDERSEN_CHOLANGIOCARCINOMA_CLASS2 L90: cite75†ANDERSEN_LIVER_CANCER_KRT19_DN L91: cite76†ANDERSEN_LIVER_CANCER_KRT19_UP L92: cite77†BENITEZ_GBM_PROTEASOME_INHIBITION_RESPONSE L93: cite78†COLLER_MYC_TARGETS_DN L94: cite79†COLLER_MYC_TARGETS_UP L95: cite80†FIRESTEIN_CTNNB1_PATHWAY L96: cite81†FIRESTEIN_CTNNB1_PATHWAY_AND_PROLIFERATION L97: cite82†FIRESTEIN_PROLIFERATION L98: cite83†GOLUB_ALL_VS_AML_DN L99: cite84†GOLUB_ALL_VS_AML_UP L100: cite85†KIM_LIVER_CANCER_POOR_SURVIVAL_DN L101: cite86†KIM_LIVER_CANCER_POOR_SURVIVAL_UP L102: cite87†KRAS.300_UP.V1_DN L103: cite88†KRAS.300_UP.V1_UP L104: cite89†KRAS.50_UP.V1_DN L105: cite90†KRAS.50_UP.V1_UP L106: cite91†KRAS.600_UP.V1_DN L107: cite92†KRAS.600_UP.V1_UP L108: cite93†KRAS.AMP.LUNG_UP.V1_DN --------------------------------------------------------------------------------\nHuman Breast Cancer (Block A Section 1) | 10x Genomics (https://www.10xgenomics.com/datasets/human-breast-cancer-block-a-section-1-1-standard-1-1-0)\nciteturn0view3 [wordlim: 200] Crawled: today; Content type: text/html; Source: open({\"ref_id\":\"https://www.10xgenomics.com/datasets/human-breast-cancer-block-a-section-1-1-standard-1-1-0\",\"lineno\":null}); Total lines: 153\n",
+    "msigdb_release_check": "MSigDB 2024.1.Hs - GSEA-MSigDB Documentation (https://docs.gsea-msigdb.org/MSigDB/Release_Notes/MSigDB_2024.1.Hs/)\nciteturn1view0 [wordlim: 200] Crawled: today; Content type: text/html; Source: open({\"ref_id\":\"https://docs.gsea-msigdb.org/MSigDB/Release_Notes/MSigDB_2024.1.Hs/\",\"lineno\":null}); Total lines: 67\nL0: MSigDB v2024.1.Hs (Aug 2024)\nL1: \nL2: ## Important Noticescite0†# L3: \nL4:   * This page describes updates made to the Molecular Signatures Database Human Collections for release 2024.1 (MSigDB 2024.1.Hs).\nL5: \nL6:   * MSigDB v2024.1 is based on gene annotation data from Ensembl Release 112 (May 2024).\nL7: \nL8:   * In order to access the MSigBD mouse collections through the GSEA UI, the GSEA 4.3.0 or newer is required.\nL9: \nL10: ## Updates to Human Collections (MSigDB v2024.1.Hs)cite1†# L11: ### C1: positional gene setscite2†# L12: \nL13: Updated human gene annotations to Ensembl 112 (+1 gene set).\nL14: ### C2:CGPcite3†# L15: \nL16: 56 Gene sets have been added to C2:CGP, these gene sets consist of:\nL17:   * Sets describing tissue resident T cell signatures associated with better melanoma prognosis from cite4†Jiang et al. 2024†pubmed.ncbi.nlm.nih.gov L18:   * Sets describing the immune state in Progressive Idiopathic Pulmonary Fibrosis from cite5†Unterman et al. 2024†pubmed.ncbi.nlm.nih.gov L19:   * Sets describing the retrodifferentiation and metabolic reprogramming of human tumor hepatocytes from cite6†Fekir et al. 2019†pubmed.ncbi.nlm.nih.gov L20:   * HUANG_AML_LSC47, a set describing genes up-regulated in AML leukemia stem cells (LSC) and predictive for outcome in AML from cite7†Huang et al. 2022†pubmed.ncbi.nlm.nih.gov L21:   * BRAUNE_GEIST_20_GENE_NOTCH_SIG_BREAST_CANCER, a Notch transcriptomic signature designed to measure the level of Notch signaling in breast cancer from cite8†Braune et al. 2024†pubmed.ncbi.nlm.nih.gov L22: Corrections: - Fixed an inversion between DODD_NASOPHARYNGEAL_CARCINOMA_UP and DODD_NASOPHARYNGEAL_CARCINOMA_DN. These sets have been renamed to reflect their correct directionality.\nL23: ### C2:CP:KEGG_MEDICUScite9†# L24: \nL25:   * KEGG_Medicus sets were updated to the 2023-09-23 release of the Medicus network database file (latest as of August 2024) (+39 gene sets).\nL26: ### C2:CP:Reactomecite10†# L27: \nL28:   * Reactome gene sets have been updated to reflect the state of the Reactome pathway architecture as of Reactome v89 (+44 gene sets).\nL29:   * As previously described in the cite11†Reactome release notes for MSigDB 7.0 , in order to limit redundancy between gene sets within the Reactome subcollection we applied a filtering procedure based on Jaccard coefficients and distance from the top level of the Reactome event hierarchy.\nL30: ### C2:CP:WikiPathwayscite12†# L31: \nL32: WikiPathways gene sets have been updated to the July 10, 2024 release (+39 gene sets).\nL33: \nL34: ### C3:TFT:GTRDcite13†# L35: \nL36:   * Renamed HSD17B8_TARGET_GENES to RING2_TARGET_GENES to correct an upstream annotation error in GTRD source data\nL37:   * Renamed IGLV5_37_TARGET_GENES to SS18_SSX_TARGET_GENES to correct an upstream annotation error in GTRD source data\nL38: \nL39: ### C3:TFT:TFT_LEGACYcite14†# L40: \nL41:   * Corrected erroneous associated with the AR gene in the brief description of the set ER_Q6_01.\nL42: ### C4:3CAcite15†# L43: \nL44:   * One set from the prior release was excluded as a result of failure to pass mapping thresholds (-1 gene set)\nL45: ### C5:GO (Gene Ontology)cite16†# L46: Gene sets in these subcollections are derived from the controlled vocabulary of the Gene Ontology (GO) project: The Gene Ontology Consortium. Gene Ontology: tool for the unification of biology (cite17†Nature Genet 2000†www.geneontology.org ). The gene sets are named by GO term and contain genes annotated by that term. This collection has been updated to the most recent GO annotations as present in the GO-basic obo file released on 2024-04-24 and NCBI gene2go annotations downloaded on 2024-05-15.\nL47: This collection is divided into three subcollections:\nL48: \nL49:   * BP: GO Biological process (-39 gene sets). Gene sets derived from the Biological Process Ontology; set names are prefixed with `GOBP_`.\nL50:   * CC: GO Cellular component (+11 gene sets). Gene sets derived from the Cellular Component Ontology; set names are prefixed with `GOCC_`.\nL51:   * MF: GO Molecular function (+21 gene sets). Gene sets derived from the Molecular Function Ontology; set names are prefixed with `GOMF_`.\nL52: These updates were generated in accordance with the procedure described in the cite18†GO release notes for MSigDB 7.0. L53: ### C5:HPO (Human Phenotype Ontology)cite19†# L54: \nL55: Gene sets in this subcollection have been updated to reflect the 2024-04-26 release of the Human Phenotype Ontology database (+106 gene sets). This subcollection has been redundancy filtered through a procedure comparable to that of the GO and Reactome subcollections.\nL56: ### C8 (Cell Type Signatures)cite20†# L57: \nL58: Set additions: - Gene sets describing the cellular composition of human ovary from cite21†Jones et al. 2024†pubmed.ncbi.nlm.nih.gov (+10 gene sets)\nL59: \nL60: Corrections: - Fixed an error in the annotation of DESCARTES_FETAL_ gene sets that previously incorrectly reported their origin species as Mus musculus instead of Homo sapiens\nL61: ### CHIP file updatescite22†# L62: \nL63:   * MSigDB 2024.1.Hs gene annotations and gene mapping CHIP files have been updated to data from Ensembl 112.\nL64:   * Gene orthology annotations for mapping mouse and rat genes to their best match human orthologs have been updated to cite23†Alliance of Genome Resources†www.alliancegenome.org orthology database release 7.1 (2024-05-01)\nL65: \nL66: Documentation built with cite24†MkDocs†www.mkdocs.org using cite25†Windmill†github.com theme by Grist Labs.\n"
+  }
+}

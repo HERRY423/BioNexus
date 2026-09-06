@@ -363,14 +363,18 @@ _EXTRA_SATISFIED_BY: Dict[str, Set[EvidenceFactor]] = {
 def extract_evidence_factors(
     metadata: Optional[Dict[str, Any]] = None,
     *,
-    backend_fidelity: bool = True,
-    has_provenance: bool = True,
+    backend_fidelity: bool = False,
+    has_provenance: bool = False,
     explicit_factors: Sequence[Union[str, EvidenceFactor]] = (),
     tool_receipts: Sequence[Dict[str, Any]] = (),
     receipt_log_path: Optional[Any] = None,
 ) -> List[str]:
     """Extract and normalize satisfied evidence factor string names from metadata,
-    explicit declarations, and verified cryptographic tool execution receipts (BNS-021).
+    explicit declarations, and integrity-checked tool execution receipts (BNS-025).
+
+    Metadata and explicit factors are caller-supplied assessment inputs, not
+    authenticated evidence. Receipt integrity alone supplies no factors; the
+    receipt module has no trusted host/provider attestation verifier.
 
     Converts:
     1. Cryptographic Tool Execution Receipts (`tool_receipts`, `receipt_log_path`).
@@ -381,7 +385,7 @@ def extract_evidence_factors(
     """
     factors: Set[str] = set()
 
-    # 1. Extract from verified cryptographic tool receipts
+    # 1. Receipt factors fail closed when trusted attestation is unavailable.
     if tool_receipts:
         from bionexus.tool_receipt import extract_evidence_factors_from_receipt
 
@@ -439,14 +443,18 @@ def extract_evidence_factors(
     if reps_int >= 2 or _is_truthy("replication") or _is_truthy("replicated") or int(meta.get("independent_replications") or 0) >= 1:
         factors.add(EvidenceFactor.REPLICATION.value)
 
-    if _is_truthy("confound_controls") or _is_truthy("has_confound_controls") or _is_truthy("covariates_adjusted") or _is_truthy("batch_corrected"):
+    # Confound controls: requires verified confound controls in experimental design or model covariates.
+    # Note: Mere batch_corrected=True is an execution step declaration, not proof that confounding was controlled.
+    if _is_truthy("confound_controls") or _is_truthy("has_confound_controls") or _is_truthy("covariates_adjusted") or _is_truthy("batch_confound_controlled"):
         factors.add(EvidenceFactor.CONFOUND_CONTROLS.value)
 
-    if _is_truthy("sensitivity_analysis") or _is_truthy("has_sensitivity_analysis") or _is_truthy("parameter_sweep") or _is_truthy("stability_verified"):
+    # Sensitivity analysis: running a sensitivity analysis or parameter sweep
+    if _is_truthy("sensitivity_analysis") or _is_truthy("has_sensitivity_analysis") or _is_truthy("parameter_sweep"):
         factors.add(EvidenceFactor.SENSITIVITY_ANALYSIS.value)
-        factors.add(EvidenceFactor.EFFECT_STABILITY.value)
 
-    if _is_truthy("effect_stability"):
+    # Effect stability: requires verified effect stability across parameter sweeps / perturbations,
+    # not merely that a sweep was run (Luecken et al. 2021).
+    if _is_truthy("effect_stability") or _is_truthy("stability_verified") or _is_truthy("effect_stable"):
         factors.add(EvidenceFactor.EFFECT_STABILITY.value)
 
     if _is_truthy("external_validation") or _is_truthy("independent_validation") or _is_truthy("has_external_validation"):

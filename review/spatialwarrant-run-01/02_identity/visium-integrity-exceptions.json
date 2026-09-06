@@ -1,0 +1,107 @@
+{
+  "sections": [
+    {
+      "section_id": "1142243F",
+      "outside_tissue_mask": [],
+      "off_tissue_count": 0,
+      "raw_vs_filtered_feature_difference": "raw has Ensembl ID/symbol/modality triples; filtered has a section-filtered one-column symbol list; never join by row position",
+      "input_policy": "retain raw-count feature matrix as primary; preserve filtered source separately",
+      "suffix_issue": "filtered .gz files are plain text; sniff magic instead of suffix; original files unchanged"
+    },
+    {
+      "section_id": "1160920F",
+      "outside_tissue_mask": [],
+      "off_tissue_count": 0,
+      "raw_vs_filtered_feature_difference": "raw has Ensembl ID/symbol/modality triples; filtered has a section-filtered one-column symbol list; never join by row position",
+      "input_policy": "retain raw-count feature matrix as primary; preserve filtered source separately",
+      "suffix_issue": "filtered .gz files are plain text; sniff magic instead of suffix; original files unchanged"
+    },
+    {
+      "section_id": "CID4290",
+      "outside_tissue_mask": [
+        {
+          "barcode": "GGTGGACCACGTGTTA-1",
+          "producer_label": "NA",
+          "in_tissue": "0"
+        },
+        {
+          "barcode": "AACGTGCGAAAGTCTC-1",
+          "producer_label": "NA",
+          "in_tissue": "0"
+        },
+        {
+          "barcode": "ACATCGGTCAGCCGCG-1",
+          "producer_label": "NA",
+          "in_tissue": "0"
+        },
+        {
+          "barcode": "TTCCGGTATCTGTGTC-1",
+          "producer_label": "NA",
+          "in_tissue": "0"
+        },
+        {
+          "barcode": "AGCCCTTGGACATCCC-1",
+          "producer_label": "NA",
+          "in_tissue": "0"
+        },
+        {
+          "barcode": "TTACACGATCTGCGAC-1",
+          "producer_label": "NA",
+          "in_tissue": "0"
+        }
+      ],
+      "off_tissue_count": 6,
+      "raw_vs_filtered_feature_difference": "raw has Ensembl ID/symbol/modality triples; filtered has a section-filtered one-column symbol list; never join by row position",
+      "input_policy": "retain raw-count feature matrix as primary; preserve filtered source separately",
+      "suffix_issue": "filtered .gz files are plain text; sniff magic instead of suffix; original files unchanged"
+    },
+    {
+      "section_id": "CID4465",
+      "outside_tissue_mask": [],
+      "off_tissue_count": 0,
+      "raw_vs_filtered_feature_difference": "raw has Ensembl ID/symbol/modality triples; filtered has a section-filtered one-column symbol list; never join by row position",
+      "input_policy": "retain raw-count feature matrix as primary; preserve filtered source separately",
+      "suffix_issue": "filtered .gz files are plain text; sniff magic instead of suffix; original files unchanged"
+    },
+    {
+      "section_id": "CID44971",
+      "outside_tissue_mask": [
+        {
+          "barcode": "ATAAACCATTGGACGG-1",
+          "producer_label": "NA",
+          "in_tissue": "0"
+        },
+        {
+          "barcode": "ATCCCATCCACAGCGC-1",
+          "producer_label": "NA",
+          "in_tissue": "0"
+        }
+      ],
+      "off_tissue_count": 2,
+      "raw_vs_filtered_feature_difference": "raw has Ensembl ID/symbol/modality triples; filtered has a section-filtered one-column symbol list; never join by row position",
+      "input_policy": "retain raw-count feature matrix as primary; preserve filtered source separately",
+      "suffix_issue": "filtered .gz files are plain text; sniff magic instead of suffix; original files unchanged"
+    },
+    {
+      "section_id": "CID4535",
+      "outside_tissue_mask": [
+        {
+          "barcode": "CTAAAGGGAAATAGGA-1",
+          "producer_label": "NA",
+          "in_tissue": "0"
+        },
+        {
+          "barcode": "GTTGTAGATTTATGAG-1",
+          "producer_label": "NA",
+          "in_tissue": "0"
+        }
+      ],
+      "off_tissue_count": 2,
+      "raw_vs_filtered_feature_difference": "raw has Ensembl ID/symbol/modality triples; filtered has a section-filtered one-column symbol list; never join by row position",
+      "input_policy": "retain raw-count feature matrix as primary; preserve filtered source separately",
+      "suffix_issue": "filtered .gz files are plain text; sniff magic instead of suffix; original files unchanged"
+    }
+  ],
+  "scientific_effects": "PENDING",
+  "geometry_computation": "NOT_RUN"
+}

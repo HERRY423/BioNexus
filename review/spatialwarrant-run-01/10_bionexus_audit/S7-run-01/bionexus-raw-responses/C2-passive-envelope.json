@@ -1,0 +1,55 @@
+{
+  "schema_version": "bionexus.external-evidence-envelope.v1",
+  "evidence_id": "SPATIALWARRANT-S7-C2",
+  "family": "analysis",
+  "producer": {
+    "plugin_id": "local-python-s7-review",
+    "capability": "completed-artifact-scientific-review",
+    "tool_name": "build_spatialwarrant_s7.py",
+    "plugin_version": "sha256:03f5335df16d144aea3cca2c9764bce573c32ed110f0ec7c7dd45b157be1994a"
+  },
+  "captured_at": "2026-09-06T02:30:14.448640+00:00",
+  "source_context": {
+    "backend_name": "local Python/scverse artifact review",
+    "backend_version": "3.13.9",
+    "input_artifact_sha256": "9ae0f55351022b70eccda5a7aab81b58ea84655cd75771b38d6ff29c4f8aa157",
+    "parameters_sha256": "13139ee86d12f9d276863d4c65377de6c7f3faafccfb072ccb1a3e1907c23dec",
+    "execution_receipt_sha256": "b6bd8e08981030d43fd0b934830611d71cf9d39dfdac570f7cba991ad3a55a93"
+  },
+  "payload": {
+    "claim_id": "C2",
+    "original_statement": "Report Tangram versus marker/NNLS composition sensitivity and scanpy-ingest label-transfer agreement without a prespecified success result.",
+    "artifacts": [
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\06_deconvolution\\S4-run-02\\postcompletion-audit.v1.json",
+        "sha256": "02e84cd69b263eb099c7234f609ff9379170b45064cae8faffff9e457a1db011"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\06_deconvolution\\S4-run-02\\tangram-nnls-concordance.csv",
+        "sha256": "d47f8fbd642da3b28fb301a0e075290274a342c57d42d5e2018812c1738d52bd"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\06_deconvolution\\S4-run-02\\ingest-label-agreement.csv",
+        "sha256": "8ad5801d911883b051ae3c97ea7a9e2707033138dbf7ac9090d187ff0020185a"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\06_deconvolution\\S4-run-02\\tangram-parameter-sensitivity.csv",
+        "sha256": "21d04fcaa1979d8a6f01e262bc2721a2b0c52f9d396618078802957650d898c4"
+      }
+    ],
+    "host_review_state": "METHOD_SENSITIVE",
+    "support": "54 Tangram parameter runs completed; Tangram–NNLS dominant agreement 4.788%; ingest–Tangram dominant-label agreement 5.166%; NNLS unknown 0.",
+    "counterevidence": "Cross-method agreement is very low. Requested 1000/2000 gene runs both use capped 644–655 genes; 500-gene sensitivity has lower agreement.",
+    "maximum_claim": "Shared-reference method sensitivity, with ingest as transferred similarity labels only; no calibrated proportions.",
+    "dependencies": [
+      "Wu scRNA",
+      "S2 reference",
+      "S3 spots",
+      "S4"
+    ]
+  },
+  "payload_sha256": "fb711230975de853f88cc0042eaf612a128575c15cc1e6a26c39da7b10ec4cae",
+  "request_sha256": "2be1bb28ce8cf4415f0d35b1411d64883e0f6182e050786b9222fd3893acea89",
+  "semantic_envelope": null,
+  "epistemic_lineage": null
+}

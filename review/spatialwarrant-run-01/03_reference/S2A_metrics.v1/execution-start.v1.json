@@ -1,0 +1,21 @@
+{
+  "status": "RUNNING",
+  "stage": "S2A_metrics_only",
+  "started_at_utc": "2026-09-05T10:51:45.186960+00:00",
+  "route": "local Python execution",
+  "registered_NGS_workflow_run": "NONE",
+  "parent_plan_sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82",
+  "S2A_supplement_sha256": "e6084a97821bc10eecc1060afde4bd049092446a1c1ad02427bd78c6e35086af",
+  "free_C_bytes_before_preflight": 41489657856,
+  "free_C_bytes_after_write_check": 41489649664,
+  "write_check": {
+    "started_at_utc": "2026-09-05T10:51:46.711108+00:00",
+    "finished_at_utc": "2026-09-05T10:51:46.726956+00:00",
+    "bytes": 65,
+    "flush_and_fsync": true,
+    "readback_match": true,
+    "temporary_file_deleted": true,
+    "temporary_parent": "00_plan"
+  },
+  "scope": "Technical QC metrics only; no filtering or biological interpretation"
+}

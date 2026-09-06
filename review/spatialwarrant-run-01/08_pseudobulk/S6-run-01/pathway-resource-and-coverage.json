@@ -1,0 +1,19 @@
+{
+  "hallmark": {
+    "source": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\resources\\h.all.v2024.1.Hs.symbols.gmt",
+    "sha256": "ee2463540042078bfa3f67828e1e223bb354446d9fbb4d22845866835ba5c772",
+    "sets": 50
+  },
+  "progeny": {
+    "source": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\resources\\PROGENy-omnipath-snapshot.tsv",
+    "sha256": "a1a0f938211def2b846cfde7e7dd56d83240d1bb9bc0ac423682b071761bc821",
+    "network_edges_after_feature_intersection": 224107,
+    "status": {
+      "status": "COMPLETED",
+      "decoupler_version": "2.2.0",
+      "pathways": 14
+    }
+  },
+  "primary_set_unchanged": true,
+  "count_source": "publisher raw feature matrix"
+}

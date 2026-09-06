@@ -1,0 +1,51 @@
+{
+  "status": "PENDING_HUMAN_REVIEW",
+  "observed_visium_publisher_patient_ids": [
+    "1142243F",
+    "1160920F",
+    "CID4290",
+    "CID4465",
+    "CID44971",
+    "CID4535"
+  ],
+  "visium_sample_bundles": 6,
+  "scrna_source_sample_ids": [
+    "CID3586",
+    "CID3838",
+    "CID3921",
+    "CID3941",
+    "CID3946",
+    "CID3948",
+    "CID3963",
+    "CID4040",
+    "CID4066",
+    "CID4067",
+    "CID4290A",
+    "CID4398",
+    "CID44041",
+    "CID4461",
+    "CID4463",
+    "CID4465",
+    "CID4471",
+    "CID4495",
+    "CID44971",
+    "CID44991",
+    "CID4513",
+    "CID4515",
+    "CID45171",
+    "CID4523",
+    "CID4530N",
+    "CID4535"
+  ],
+  "scrna_sample_count": 26,
+  "separate_scrna_patient_field": false,
+  "unresolved": [
+    "Patient/sample/capture hierarchy lacks a separate scRNA patient key.",
+    "CID4290/CID4290A cross-modality alias cannot be normalized automatically.",
+    "Physical section/tissue-region relationships need source review.",
+    "10x donor overlap is unknown."
+  ],
+  "allowed_language": "six sections / six publisher-labelled sample bundles; report patientid as a source field, not a verified independent-unit result",
+  "population_inference": "NOT_AUTHORIZED_NOT_ESTABLISHED",
+  "S2": "NOT_AUTHORIZED; stop at S1 checkpoint"
+}

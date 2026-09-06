@@ -1,0 +1,328 @@
+{
+  "schema": "SpatialWarrant.S7.output-manifest.v1",
+  "root": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\10_bionexus_audit\\S7-run-01",
+  "created_at_utc": "2026-09-06T02:36:39.023579+00:00",
+  "files": [
+    {
+      "path": ".bionexus-doctor.json",
+      "bytes": 13158,
+      "sha256": "2db5c90cf7b943c0ee83ab8d5a80d72764691d8713196b1b429ebc8011998ad7"
+    },
+    {
+      "path": "adversarial-review.md",
+      "bytes": 2934,
+      "sha256": "73935c132c0acb32123ca67745941ab7647538cb5367def587397b3182302abd"
+    },
+    {
+      "path": "bionexus-mcp-raw-all-attempts.json",
+      "bytes": 55386,
+      "sha256": "e75696790f06b77472d02016644aca11730c2d73019206e8fb12198c25d22621"
+    },
+    {
+      "path": "bionexus-raw-responses/C1-passive-audit.json",
+      "bytes": 591,
+      "sha256": "4fea5f67917e24da9c8c9ae87bdde5243c6a37a4af575bfda84dd6b82461b1fa"
+    },
+    {
+      "path": "bionexus-raw-responses/C1-passive-envelope.json",
+      "bytes": 2905,
+      "sha256": "79be010fd5b35cfb95822ec6cf44865abd54cc10eeaee4043d587f1073d2c22a"
+    },
+    {
+      "path": "bionexus-raw-responses/C2-passive-audit.json",
+      "bytes": 591,
+      "sha256": "8fd00b14dd42eaa302548a0d90f143dc122e7a6e86337750b288c905a6541a75"
+    },
+    {
+      "path": "bionexus-raw-responses/C2-passive-envelope.json",
+      "bytes": 2924,
+      "sha256": "7f30c4b416e51c003c8c5b6c05658f45b3c114d9f0754cf8b4a4820a6dbcd971"
+    },
+    {
+      "path": "bionexus-raw-responses/C3-passive-audit.json",
+      "bytes": 591,
+      "sha256": "700c931885ba7914718a487711a0a7915a1c827908164df63508c340ee2e252a"
+    },
+    {
+      "path": "bionexus-raw-responses/C3-passive-envelope.json",
+      "bytes": 3165,
+      "sha256": "c436922ee4935e4a4b740ca71b1b25489def33079c6ab80173bdadade1a2c66a"
+    },
+    {
+      "path": "bionexus-raw-responses/C4-passive-audit.json",
+      "bytes": 591,
+      "sha256": "ea405d285aab801140b2c8d54a282ab31ca535017cd41dc2d7fb025357da8229"
+    },
+    {
+      "path": "bionexus-raw-responses/C4-passive-envelope.json",
+      "bytes": 3205,
+      "sha256": "a8d7f64494e6a29da8b6f697e409a38604732b05dc175ec47946d4c3f6b723ce"
+    },
+    {
+      "path": "bionexus-raw-responses/C5-corrected_purpose_attempts.json",
+      "bytes": 12575,
+      "sha256": "6e4f2328303452cdcfbd7c48591a20ebb822b87bfb081bed6124d1dda439826d"
+    },
+    {
+      "path": "bionexus-raw-responses/C5-initial_attempts.json",
+      "bytes": 1111,
+      "sha256": "25844dea2f0114eef469a2e47d729b6ee55236fe353c51e93122f51d3de3fd2d"
+    },
+    {
+      "path": "bionexus-raw-responses/C5-passive-audit.json",
+      "bytes": 591,
+      "sha256": "02078cc1adfa5f51ff3172d54f32e0e561172287c81632edb70492a183cbb9b8"
+    },
+    {
+      "path": "bionexus-raw-responses/C5-passive-envelope.json",
+      "bytes": 3199,
+      "sha256": "4d26580d2e4884786c2b2b4781d069130074951f14e53ad2c598e11b5c37657f"
+    },
+    {
+      "path": "bionexus-raw-responses/C6-corrected_purpose_attempts.json",
+      "bytes": 12346,
+      "sha256": "9d7bb10e0cf6694bdfb3676c511fb8e9b0bba9b8b46bbbe9e9edab572f1c4b42"
+    },
+    {
+      "path": "bionexus-raw-responses/C6-initial_attempts.json",
+      "bytes": 982,
+      "sha256": "dfd0b448e0d459e6d2102a2624a41463f2f260913c6ab749e4869725f91555be"
+    },
+    {
+      "path": "bionexus-raw-responses/C6-passive-audit.json",
+      "bytes": 591,
+      "sha256": "21c62d2e0a2cf150ceeeb2a9ca838a85c40252b2b0cb8af5ee885675e300c9fa"
+    },
+    {
+      "path": "bionexus-raw-responses/C6-passive-envelope.json",
+      "bytes": 2147,
+      "sha256": "087c9473f78fd32f5b7f96a5d2e671081f95465d67c089d00eb436c77622e259"
+    },
+    {
+      "path": "bionexus-raw-responses/doctor.json",
+      "bytes": 14489,
+      "sha256": "b6c140ebdec987123af5960f0a2d6c4c39c423cc9210bca831a3ae81ee114e7f"
+    },
+    {
+      "path": "bionexus-raw-responses/literature-coverage-audit.json",
+      "bytes": 698,
+      "sha256": "22bc4d6af4e3bae18bc6ff664013bc9f5ce2a834e576222726dcc61235343bf0"
+    },
+    {
+      "path": "bionexus-raw-responses/literature-coverage-envelope.json",
+      "bytes": 15888,
+      "sha256": "4e2111677b59102382af65c6c6a169a7b6d7a006b2fc51336100d1035937997e"
+    },
+    {
+      "path": "bionexus-raw-responses/S7-host-probe.json",
+      "bytes": 1114,
+      "sha256": "085d8fc84dd12552b03528d7708b18ebe9f3655a5b6eb925cc01c2d93fa42228"
+    },
+    {
+      "path": "bionexus-raw-responses/T1-corrected_purpose_attempts.json",
+      "bytes": 12611,
+      "sha256": "c07743557e4ad54bc6d98747c1cfeb664cef0daa295dc6e656b9c26e727945a5"
+    },
+    {
+      "path": "bionexus-raw-responses/T1-initial_attempts.json",
+      "bytes": 1203,
+      "sha256": "3b5ea35b6d671ed5cae00a22787e2a09ed265e2cbb47a40e5a8f98b6a44e13dc"
+    },
+    {
+      "path": "bionexus-raw-responses/T1-passive-audit.json",
+      "bytes": 591,
+      "sha256": "b03352fcdff15c90b3cafa4a0016b33639e433c343ee13f89392436b69b3985b"
+    },
+    {
+      "path": "bionexus-raw-responses/T1-passive-envelope.json",
+      "bytes": 2499,
+      "sha256": "ec08f19df4817f9d7a8dd1e0aae104e21c1e5b94f03f3199a83b61021b6c1fc9"
+    },
+    {
+      "path": "bionexus-raw-responses/T2-corrected_purpose_attempts.json",
+      "bytes": 12548,
+      "sha256": "5e50a058ba417c98288a2142856cdc2675f29f0482f9f3a373d6dc7b34d06199"
+    },
+    {
+      "path": "bionexus-raw-responses/T2-initial_attempts.json",
+      "bytes": 1117,
+      "sha256": "cb7f4ad79219e275deaf135857aa76453727336b8091c0e3ecd26aad0d21ac26"
+    },
+    {
+      "path": "bionexus-raw-responses/T2-passive-audit.json",
+      "bytes": 591,
+      "sha256": "a0ee4f9cff5fdf70a5016d394bbbb5cbbd1f4cc6f266a1c07fb6a501d56ac6b7"
+    },
+    {
+      "path": "bionexus-raw-responses/T2-passive-envelope.json",
+      "bytes": 2779,
+      "sha256": "510f2b3f5b65e754f346bed87c0ac6a38cbd96dc9129a082d1a6ce9e22516001"
+    },
+    {
+      "path": "boundary-niche-enrichment.csv",
+      "bytes": 2144,
+      "sha256": "4afa45b7b5e4ce097875534cb3fbdc239d57156cdaeb207fa3394ef4aabdf625"
+    },
+    {
+      "path": "build-session.json",
+      "bytes": 163,
+      "sha256": "573a8df0a849b5aacf084b737050bc38dac93b16d0e847256181890c57ce1cd3"
+    },
+    {
+      "path": "build_spatialwarrant_s7.py",
+      "bytes": 47458,
+      "sha256": "03f5335df16d144aea3cca2c9764bce573c32ed110f0ec7c7dd45b157be1994a"
+    },
+    {
+      "path": "claim-evidence-ledger.csv",
+      "bytes": 12949,
+      "sha256": "53a0d552b278bf4c372c467414d29ef13aab7c42214a96aaa0f20cc6520269a1"
+    },
+    {
+      "path": "claim-ledger.json",
+      "bytes": 50823,
+      "sha256": "a88a24de12cdee9aac2ded98b6a84ebe4991d626f0123dcc52ecc6815be704d1"
+    },
+    {
+      "path": "claim-ledger.jsonld",
+      "bytes": 50292,
+      "sha256": "5a2685f1e873eb2057b48e8e67fbf4c8c844cd9ff5ff99379a827edf17858581"
+    },
+    {
+      "path": "debt-graph.md",
+      "bytes": 1520,
+      "sha256": "fa6407e763fcf50238058f662556aaef33ce1a9517b43df8d80ab95ba7440f30"
+    },
+    {
+      "path": "evidence-card.md",
+      "bytes": 3911,
+      "sha256": "b60154d1ade1143467b81e40c701208aa8c7a709392c27fecdea1d922b0bb556"
+    },
+    {
+      "path": "evidence-debt.json",
+      "bytes": 2173,
+      "sha256": "95183b0356d1813de9117a067cb029db496783851e9a9bbe7cfca8360b210d68"
+    },
+    {
+      "path": "execution-environment.json",
+      "bytes": 770,
+      "sha256": "5fde5107a19300d6d3dbe6e50606dc52a0ed4e78d2e5f84645b36f7f95dc4d20"
+    },
+    {
+      "path": "external-evidence-summary.final.json",
+      "bytes": 1010,
+      "sha256": "204232f87171eb8f293a2a0f678084733b590c0a6185cd0ebe4a64b7844441b6"
+    },
+    {
+      "path": "final-package-validation.json",
+      "bytes": 830,
+      "sha256": "401a9c9e11a4be765466731a2654a93c0e996c8a1bb4188b65d2f608c73e9120"
+    },
+    {
+      "path": "finalize_spatialwarrant_s7.py",
+      "bytes": 8192,
+      "sha256": "81d7603b182c71be4d6f5ed0ed0f5c3376a86de7161624dca83cba8a588ea99e"
+    },
+    {
+      "path": "formal-checkpoint-index.json",
+      "bytes": 5891,
+      "sha256": "8497060148968e32a3c69128854b609d3c289acc02e20c8be3679d4e94df22e4"
+    },
+    {
+      "path": "human-scientific-adjudication.template.md",
+      "bytes": 1038,
+      "sha256": "859718ba17f6dbd75344ea45dd91ed42f01e7f612ad71e6100a2ca00a99d625d"
+    },
+    {
+      "path": "input-SHA256-index.csv",
+      "bytes": 302274,
+      "sha256": "5129f0c083c4a11135a47329f896e1b8299285c1099025e8f75dc2be00c496e1"
+    },
+    {
+      "path": "locked-plan-claim-appendix.extracted.csv",
+      "bytes": 1891,
+      "sha256": "aa947326595b89ebf53669beabd48ec6ded76707f4727227b9b0471ae5de16f3"
+    },
+    {
+      "path": "niche-distribution-by-section.csv",
+      "bytes": 2177,
+      "sha256": "8dfedad2f9f3df4abf034dc8c9ea42260d69a54520ec28918155d6727ad23d84"
+    },
+    {
+      "path": "original-claims.readonly-copy.csv",
+      "bytes": 1883,
+      "sha256": "552fa77e9ba76fd83e6b000677cd322f4b64ea4c6c4ab46e45ea97e81f0736e3"
+    },
+    {
+      "path": "overclaim-tests.json",
+      "bytes": 17786,
+      "sha256": "7260cafe52ba23b36b56cbb56781ec90e6a5d75503aa5533191caae041e624e4"
+    },
+    {
+      "path": "plugin-use-evidence-index.json",
+      "bytes": 3266,
+      "sha256": "ef62bc0fd4a93431eb020f7a1dfa82b84d6aa8f99f626333a2f4c8ca8a1fdbe9"
+    },
+    {
+      "path": "provenance-and-dependency-map.json",
+      "bytes": 1324,
+      "sha256": "c9eaebb920bcbd2525abadb7d6aa5962333ecfc2e7b9282b260f875973544e2e"
+    },
+    {
+      "path": "provenance-and-dependency-map.md",
+      "bytes": 627,
+      "sha256": "ad5a87a7e5560847e228fff3c357f61db09fce147713001b8d0301063057ebcc"
+    },
+    {
+      "path": "provenance.sidecar.json",
+      "bytes": 4197,
+      "sha256": "93c4345088aeff60a67e1b344013a3a1c12562325ae20047833cc1f0e2808b0c"
+    },
+    {
+      "path": "root-checkpoint-reference.json",
+      "bytes": 170,
+      "sha256": "5d46efe3b35c75440d557918dae63440f5a1858f132658b4a2cd42b43c476c85"
+    },
+    {
+      "path": "S4-S5-checkpoint.postaudit.v1.md",
+      "bytes": 866,
+      "sha256": "fdd95bc33c7b4d89ef968bd8f349062a6ea2921a9c89ebfcab7e3d860d1de30f"
+    },
+    {
+      "path": "S7-checkpoint.md",
+      "bytes": 2733,
+      "sha256": "05339a3cbef5a096a8b1681c0f3b22c9a640ee063ce2eaead8bdad680633c742"
+    },
+    {
+      "path": "S7-result.json",
+      "bytes": 8443,
+      "sha256": "212f907951cfc6f230a815e1685111601d0db44f65719fef105fc9151c48e7bd"
+    },
+    {
+      "path": "s7_inspect.py",
+      "bytes": 5203,
+      "sha256": "e59f0407db819d824a750ac33956c3fe1d049956e82ab7f7681bac53cac6a571"
+    },
+    {
+      "path": "seal_spatialwarrant_s7.py",
+      "bytes": 6221,
+      "sha256": "90a66c3d621b0cd5c8e76379e29a6901035012e6cb351bfb23bbecef178468e1"
+    },
+    {
+      "path": "section-summary.csv",
+      "bytes": 737,
+      "sha256": "57030b443b655151e5ca4c7ccb2b3aed5bfd970edfc5b1eca8eea348de8445d1"
+    },
+    {
+      "path": "source-context-audit-notes.md",
+      "bytes": 1278,
+      "sha256": "ef0f4e273ef07edec228e9fdcbbce09ba7bc4638452750eb28f5ce9a27a45ff0"
+    },
+    {
+      "path": "technical-reverification.json",
+      "bytes": 415883,
+      "sha256": "b6bd8e08981030d43fd0b934830611d71cf9d39dfdac570f7cba991ad3a55a93"
+    }
+  ],
+  "self_hash_policy": "Manifest excludes itself and SHA256SUMS.txt. SHA256SUMS includes the manifest and every other payload; it excludes itself."
+}

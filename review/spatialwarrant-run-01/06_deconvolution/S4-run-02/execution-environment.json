@@ -1,0 +1,21 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "executable": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\environment\\s4s5-tangram-py312\\Scripts\\python.exe",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "route": "local Python/scverse execution",
+  "registered_NGS_workflow_run": "NONE",
+  "dependencies": {
+    "numpy": "2.5.2",
+    "scipy": "1.18.1",
+    "pandas": "3.0.5",
+    "anndata": "0.13.3.post0",
+    "scanpy": "1.12.2",
+    "sklearn": "1.9.0",
+    "matplotlib": "3.11.1",
+    "psutil": "7.0.0",
+    "torch": "2.14.0+cpu",
+    "tangram": "1.0.4"
+  },
+  "device": "CPU",
+  "tangram_install_command": "project-local venv: python -m pip install --no-cache-dir tangram-sc==1.0.4 scanpy==1.12.2 psutil==7.0.0"
+}

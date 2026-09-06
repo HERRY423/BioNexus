@@ -1,0 +1,277 @@
+{
+  "artifact_type": "scRNA_identity_resolution",
+  "version": "1",
+  "created_at_utc": "2026-09-05T10:34:48.047469+00:00",
+  "approved_parent_plan_sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82",
+  "decision_scope": "Read-only identity evidence adjudication; not a biological verdict, not S2 execution authorization",
+  "canonical_technical_key": {
+    "name": "source_sample_id",
+    "source_field": "metadata.csv:orig.ident",
+    "rule": "Exact source string preserved in GSE176078 namespace; no suffix removal, case folding, patient field creation or source-label merging",
+    "status": "SOURCE_SAMPLE_KEY_SUPPORTED",
+    "source_sample_count": 26,
+    "separate_patient_key": "ABSENT",
+    "patient_id_assignment": "PROHIBITED_WITH_CURRENT_EVIDENCE",
+    "library_id_assignment": "NOT_ESTABLISHED",
+    "capture_batch_id_assignment": "NOT_ESTABLISHED",
+    "reason": "All 26 exact orig.ident values match 26 producer GEO Sample_title records; generic library protocols and 26-tumor cohort narrative do not supply a row-level donor/library/well crosswalk."
+  },
+  "source_evidence": {
+    "GEO_raw": "01_inputs/source_metadata/GSE176078_family.soft.gz",
+    "metadata": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\GSE176078\\GSE176078_Wu_etal_2021_BRCA_scRNASeq-extracted\\Wu_etal_2021_BRCA_scRNASeq\\metadata.csv",
+    "GEO_review": "00_plan/S1-to-S2-entry-evidence.v1/GEO-metadata-identity-evidence.v1.json",
+    "PMC_existing": "01_inputs/literature/PMC9044823-BioC.xml",
+    "PMC_current": "00_plan/S1-to-S2-entry-evidence.v1/PMC9044823.1.source.v1.xml",
+    "PMC_plugin_return": "00_plan/S1-to-S2-entry-evidence.v1/PMC-plugin-stdout.v1.json",
+    "supplement_failure": "00_plan/S1-to-S2-entry-evidence.v1/PMC-supplement-failure.v1.json"
+  },
+  "alias_review": {
+    "left": {
+      "namespace": "Zenodo4739739_Visium",
+      "source_sample_id": "CID4290"
+    },
+    "right": {
+      "namespace": "GSE176078_scRNA",
+      "source_sample_id": "CID4290A",
+      "GEO_accession": "GSM5354523",
+      "BioSample": "SAMN19546327"
+    },
+    "status": "PENDING",
+    "action": "KEEP_SEPARATE_NO_ALIAS",
+    "reason": "Paper explicitly names CID4290 in the scRNA cohort but the inspected article body never states CID4290 = CID4290A; GEO names CID4290A. No direct producer crosswalk was obtained. Supplementary Table 1-11 retrieval returned HTTP 404. Non-retrieval is not proof of absence in the unavailable supplement.",
+    "shared_patient_proven": false,
+    "distinct_patient_proven": false,
+    "name_similarity_used": false
+  },
+  "source_samples": [
+    {
+      "source_sample_id": "CID3586",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354513",
+      "GEO_sample_title": "CID3586",
+      "observed_metadata_cells": 6178,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID3838",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354514",
+      "GEO_sample_title": "CID3838",
+      "observed_metadata_cells": 2353,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID3921",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354515",
+      "GEO_sample_title": "CID3921",
+      "observed_metadata_cells": 3024,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID3941",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354516",
+      "GEO_sample_title": "CID3941",
+      "observed_metadata_cells": 631,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID3946",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354517",
+      "GEO_sample_title": "CID3946",
+      "observed_metadata_cells": 774,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID3948",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354518",
+      "GEO_sample_title": "CID3948",
+      "observed_metadata_cells": 2327,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID3963",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354519",
+      "GEO_sample_title": "CID3963",
+      "observed_metadata_cells": 3527,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID4040",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354520",
+      "GEO_sample_title": "CID4040",
+      "observed_metadata_cells": 2531,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID4066",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354521",
+      "GEO_sample_title": "CID4066",
+      "observed_metadata_cells": 5309,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID4067",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354522",
+      "GEO_sample_title": "CID4067",
+      "observed_metadata_cells": 3764,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID4290A",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354523",
+      "GEO_sample_title": "CID4290A",
+      "observed_metadata_cells": 5789,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID4398",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354524",
+      "GEO_sample_title": "CID4398",
+      "observed_metadata_cells": 4451,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID44041",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354525",
+      "GEO_sample_title": "CID44041",
+      "observed_metadata_cells": 2131,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID4461",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354526",
+      "GEO_sample_title": "CID4461",
+      "observed_metadata_cells": 631,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID4463",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354527",
+      "GEO_sample_title": "CID4463",
+      "observed_metadata_cells": 1138,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID4465",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354528",
+      "GEO_sample_title": "CID4465",
+      "observed_metadata_cells": 1564,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID4471",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354529",
+      "GEO_sample_title": "CID4471",
+      "observed_metadata_cells": 8609,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID4495",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354530",
+      "GEO_sample_title": "CID4495",
+      "observed_metadata_cells": 7985,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID44971",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354531",
+      "GEO_sample_title": "CID44971",
+      "observed_metadata_cells": 7986,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID44991",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354532",
+      "GEO_sample_title": "CID44991",
+      "observed_metadata_cells": 7023,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID4513",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354533",
+      "GEO_sample_title": "CID4513",
+      "observed_metadata_cells": 5619,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID4515",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354534",
+      "GEO_sample_title": "CID4515",
+      "observed_metadata_cells": 4149,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID45171",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354535",
+      "GEO_sample_title": "CID45171",
+      "observed_metadata_cells": 2447,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID4523",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354536",
+      "GEO_sample_title": "CID4523",
+      "observed_metadata_cells": 1754,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID4530N",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354537",
+      "GEO_sample_title": "CID4530N",
+      "observed_metadata_cells": 4409,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    },
+    {
+      "source_sample_id": "CID4535",
+      "source_field": "orig.ident",
+      "GEO_sample_accession": "GSM5354538",
+      "GEO_sample_title": "CID4535",
+      "observed_metadata_cells": 3961,
+      "identity_status": "SOURCE_SAMPLE_KEY_SUPPORTED_PATIENT_LIBRARY_CAPTURE_UNVERIFIED"
+    }
+  ],
+  "label_policy": {
+    "source": "producer metadata.celltype_minor",
+    "observed_distinct_values": 29,
+    "missing_in_current_metadata": 0,
+    "keep_exact_labels": true,
+    "merging_authorized": false,
+    "label_biological_validity": "PENDING"
+  },
+  "technical_reference_branch": {
+    "eligibility": "FEASIBLE_AS_VERSIONED_PROPOSAL_ONLY",
+    "patient_verified_branch": "verified patient x exact producer celltype_minor; original rule retained",
+    "patient_unverified_branch": "source_sample_id (exact orig.ident) x exact producer celltype_minor; balance source samples as a technical proxy only",
+    "library_balance_claim": "Do not call source groups verified libraries or captures. Sample/library balancing intent does not establish library identity.",
+    "S2A": "Metrics only, no stratified selection",
+    "S2B": "PENDING explicit approval of S2A-derived QC thresholds AND chosen stratification/allocation supplement; no reference construction now",
+    "patient_level_summaries_and_LOO": "BLOCKED until patient crosswalk verified; preserve planned module as PENDING, do not relabel source-sample summaries as cross-patient validation"
+  },
+  "patient_level_inference": "BLOCKED",
+  "biological_results": "PENDING",
+  "BioNexus_machine_verdict": "PENDING",
+  "old_identity_tables": "Preserved verbatim; source patientid strings and UNKNOWN placeholders in old audit tables are not newly verified patient fields."
+}

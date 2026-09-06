@@ -1,0 +1,31 @@
+{
+  "original_concepts": [
+    "Workbench question/units/plan/approval",
+    "Real catalog response and local Python routing",
+    "Actual Literature Wu-study return, success and failure",
+    "Six-section H&E, producer pathology and geometry-only masks",
+    "Tangram/NNLS sensitivity; ingest separately as labels",
+    "Eligible-unit effects, valid uncertainty/LOO and full DE context",
+    "Receipt-backed EvidenceCard, ledger and Evidence Debt",
+    "Actual overclaim response and named human adjudication, even if test fails"
+  ],
+  "selection": {
+    "01-workflow-and-roles.png": [
+      1,
+      2,
+      3
+    ],
+    "02-six-section-spatial-atlas.png": [
+      4,
+      5
+    ],
+    "03-S6-descriptive-evidence.png": [
+      6
+    ],
+    "04-claims-debt-actual-audit.png": [
+      7,
+      8
+    ]
+  },
+  "corrections": "Artifact-based figures, not fabricated UI screenshots. No authenticated receipt or human name is invented. No volcano/CI/LOO generated because inference unavailable."
+}

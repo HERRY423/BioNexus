@@ -1,0 +1,97 @@
+{
+  "activity_name": "SpatialWarrant S7 completed-artifact review and figure rendering",
+  "method": "Passive review of completed scientific outputs; actual MCP overclaim tests; existing-data figure rendering",
+  "backend": "local Python/scverse execution; local BioNexus shared kernel; no registered NGS workflow run",
+  "parameters": {
+    "stage": "S7 only",
+    "scientific_analyses_repeated": false
+  },
+  "input_files": [
+    {
+      "file_name": "analysis-plan.lock.md",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\00_plan\\analysis-plan.lock.md",
+      "role": "input",
+      "sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82"
+    },
+    {
+      "file_name": "S6-result.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\S6-result.json",
+      "role": "input",
+      "sha256": "f7b3be34a5c8eaa42ee8cbd6a89ac90a92ee693d55f393bc619d8d2555c76a88"
+    },
+    {
+      "file_name": "S6-result.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\S6-result.json",
+      "role": "input",
+      "sha256": "f7b3be34a5c8eaa42ee8cbd6a89ac90a92ee693d55f393bc619d8d2555c76a88"
+    },
+    {
+      "file_name": "postcompletion-audit.v1.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\06_deconvolution\\S4-run-02\\postcompletion-audit.v1.json",
+      "role": "input",
+      "sha256": "02e84cd69b263eb099c7234f609ff9379170b45064cae8faffff9e457a1db011"
+    },
+    {
+      "file_name": "technical-reverification.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\10_bionexus_audit\\S7-run-01\\technical-reverification.json",
+      "role": "input",
+      "sha256": "206bad5850d77f8e6859b39863308ff5cea4816d180947fbf55ded36e5f8b1ba"
+    }
+  ],
+  "output_files": [
+    {
+      "file_name": "claim-ledger.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\10_bionexus_audit\\S7-run-01\\claim-ledger.json",
+      "role": "output",
+      "sha256": "4fc8f1e486a744dc7154a44432003ee971ba4a3dd085fd26a94b873fc24e7c0a"
+    },
+    {
+      "file_name": "overclaim-tests.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\10_bionexus_audit\\S7-run-01\\overclaim-tests.json",
+      "role": "output",
+      "sha256": "7c36161c252177fde130631b1431ea565333de3bf413464f908643e5a8d6cb1b"
+    }
+  ],
+  "environment_snapshot": {
+    "os_name": "Windows",
+    "os_release": "11",
+    "os_version": "10.0.26200",
+    "architecture": "AMD64",
+    "python_version": "3.13.9",
+    "python_executable": "C:\\Users\\13264\\anaconda3\\python.exe",
+    "packages": {
+      "numpy": "2.3.5",
+      "scipy": "1.16.3",
+      "pandas": "2.3.3",
+      "scanpy": "1.12.2",
+      "anndata": "0.13.1",
+      "torch": "2.13.0+cpu",
+      "squidpy": "1.8.3",
+      "pydeseq2": "0.5.4",
+      "scikit-learn": "1.7.2"
+    },
+    "captured_at": "2026-09-06T02:30:19.704830+00:00",
+    "cuda_available": false
+  },
+  "execution_provenance": {
+    "data_source": "unknown",
+    "download_date": "2026-09-06T02:30:21.871409+00:00",
+    "commit_sha": "unknown",
+    "git_dirty": false,
+    "environment_lockfile_hashes": {
+      "pyproject.toml": "dfe58e8d642567724533c023f0029bc2ab6cc94352fe6170c56b756b0307e166",
+      "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
+      "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
+    },
+    "command": [
+      "C:\\Users\\13264\\Downloads\\spatial-transcriptomics-task-design-revised\\build_spatialwarrant_s7.py"
+    ],
+    "command_str": "C:\\Users\\13264\\Downloads\\spatial-transcriptomics-task-design-revised\\build_spatialwarrant_s7.py",
+    "generator_version": "1.0.0-rc.4",
+    "python_version": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "timestamp": "2026-09-06T02:30:21.871409+00:00",
+    "extra_metadata": {}
+  },
+  "compliance_note": "SHA-256 + package versions for reproducibility. This is not 21 CFR Part 11, GxP, ALCOA+, or CLIA audit evidence."
+}

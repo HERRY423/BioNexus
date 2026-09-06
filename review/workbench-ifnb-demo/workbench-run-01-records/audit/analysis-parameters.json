@@ -1,0 +1,20 @@
+{
+  "method": {
+    "unit": "donor x condition pseudobulk",
+    "formula": "~ donor + condition",
+    "contrast": "stim vs ctrl",
+    "gene_filter": "count >= 10 in >= 4 of 16 pseudobulk samples",
+    "multiple_testing": "Benjamini-Hochberg as returned by PyDESeq2"
+  },
+  "cell_policy": "retain author singlets; report library size, genes, mitochondria; no additional post hoc filter",
+  "prespecified_genes": [
+    "ISG15",
+    "IFIT1",
+    "MX1",
+    "STAT1"
+  ],
+  "refit_cooks": true,
+  "independent_filter": true,
+  "alpha": 0.05,
+  "n_cpus": 1
+}

@@ -1,0 +1,39 @@
+﻿connector: owkin
+tool: predict_histopathology_biomarker
+
+production_mode: deep_learning_prediction
+domain: computational_pathology_and_oncology
+
+required_context:
+  - image_or_dataset_sha256
+  - coordinate_system
+  - segmentation_version
+  - biological_replicate_ids
+  - field_of_view_ids
+
+default_evidence_role:
+  supporting
+
+maximum_default_claim:
+  predictive_biomarker_hypothesis
+
+forbidden_claims:
+  - diagnostic_grade_claim
+  - clia_cap_approved
+  - prognostic_ground_truth_established
+
+independence:
+  same_wsi_different_tiles_is_not_independent_patient_replication
+
+semantic_profile:
+  claim.type: predictive
+  evidence.type:
+    - computational_result
+  biological.unit: tissue_slide
+  warrant.level: fragile
+  warrant.status: assessed
+
+epistemic_lineage_mapping:
+  origin_id_field: image_or_dataset_sha256
+  origin_type: computational_model
+  dataset_identity_field: image_or_dataset_sha256

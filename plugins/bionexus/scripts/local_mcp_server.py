@@ -1251,14 +1251,25 @@ async def tool_bionexus_warrant_check(
             ligand_receptor_inference=_declared_true("ligand_receptor_inference"),
             perturbation=_declared_true("perturbation", "is_perturbation"),
             temporal_evidence=_declared_true("temporal_evidence", "time_series"),
-            biological_replicates_count=int(meta.get("num_donors") or meta.get("biological_replicates") or 0),
+            biological_replicates_count=int(
+                meta.get("num_donors")
+                or meta.get("biological_replicates")
+                or meta.get("donors_per_condition")
+                or meta.get("eligible_sections")
+                or 0
+            ),
             pseudobulk_aggregated=_declared_true("pseudobulk_aggregated", "is_pseudobulk"),
-            independent_validation=_declared_true("independent_validation"),
+            independent_validation=_declared_true("independent_validation", "independent_patients_verified"),
             reference_ground_truth=_declared_true("reference_ground_truth"),
-            clinical_ground_truth=_declared_true("clinical_ground_truth"),
+            clinical_ground_truth=_declared_true("clinical_ground_truth", "clinical_validation"),
             regulatory_certification=_declared_true("regulatory_certification"),
         )
-        claim_ir = DeterministicClaimParser.parse(query)
+        explicit_cc = meta.get("claim_class") or meta.get("requested_claim_class")
+        claim_ir = DeterministicClaimParser.parse(
+            query,
+            explicit_claim_class=explicit_cc,
+            data_metadata=meta,
+        )
         w_eval = DeterministicWarrantEngine.evaluate(claim_ir, ev_prof)
         enforce_governing_status(w_eval, decision.status.value)
         payload["scientific_claim_ir"] = claim_ir.to_dict()

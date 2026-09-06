@@ -1,0 +1,22 @@
+{
+  "target": {
+    "kind": "prespecified",
+    "rank": 3,
+    "name": "CD274 PDCD1"
+  },
+  "source": "uniprot",
+  "returncode": 1,
+  "elapsed_seconds": 0.30890410000574775,
+  "completed_at_utc": "2026-09-06T01:46:34.763048+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\uniprot\\prespecified-03-CD274_PDCD1.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\uniprot\\prespecified-03-CD274_PDCD1.raw",
+  "wrapper": {
+    "ok": false,
+    "error": {
+      "code": "invalid_input",
+      "message": "`base_url` is not a registered HTTPS base for this skill."
+    },
+    "warnings": []
+  },
+  "stderr": ""
+}

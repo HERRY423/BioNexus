@@ -83,8 +83,8 @@
     {
       "standard_id": "cross_host_test",
       "satisfied": false,
-      "evidence": "cross-host/COMPARISON.json (framework created, 0 traps compared, agreement_rate null)",
-      "notes": "Cross-host framework established (cross-host/ directory, codex + claude-code hosts, report generator). However, no L2 claim audit has been executed: traps_compared=0, conformance_verdict='not_evaluated'. Blocked in current environment: no provider API keys and no codex CLI (only claude-code installed), and consistency requires >= 2 hosts. Minimum supplement: run L2 audits on >= 2 hosts, populate COMPARISON.json with per-trap agreement data."
+      "evidence": "cross-host/COMPARISON.json (hosts: claude-code + antigravity; 6 traps compared, all ABSTAIN, agreement_rate 1.0)",
+      "notes": "Headless COMPARISON.json cannot satisfy BNS-HC-007. Cross-host remains unsatisfied until the IVN external-lab quota is met with hash-verified studies on >= 2 distinct hosts."
     },
     {
       "standard_id": "external_reviewer",

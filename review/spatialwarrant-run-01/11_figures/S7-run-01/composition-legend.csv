@@ -1,0 +1,30 @@
+producer_label,plot_color
+B cells Memory,#ff0029
+B cells Naive,#ff0700
+CAFs MSC iCAF-like,#ff3800
+CAFs myCAF-like,#ff6900
+Cancer Basal SC,#ff9900
+Cancer Cycling,#ffca00
+Cancer Her2 SC,#fffb00
+Cancer LumA SC,#cdff00
+Cancer LumB SC,#9dff00
+Cycling PVL,#6cff00
+Cycling T-cells,#3bff00
+Cycling_Myeloid,#0bff00
+DCs,#00ff26
+Endothelial ACKR1,#00ff56
+Endothelial CXCL12,#00ff8c
+Endothelial Lymphatic LYVE1,#00ffbc
+Endothelial RGS5,#00ffed
+Luminal Progenitors,#00e1ff
+Macrophage,#00b0ff
+Mature Luminal,#007fff
+Monocyte,#004eff
+Myoepithelial,#0018ff
+NK cells,#1900ff
+NKT cells,#4a00ff
+PVL Differentiated,#7b00ff
+PVL Immature,#ac00ff
+Plasmablasts,#dd00ff
+T cells CD4+,#ff00f0
+T cells CD8+,#ff00bf

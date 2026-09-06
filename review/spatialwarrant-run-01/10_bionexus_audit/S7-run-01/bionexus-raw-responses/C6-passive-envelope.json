@@ -1,0 +1,44 @@
+{
+  "schema_version": "bionexus.external-evidence-envelope.v1",
+  "evidence_id": "SPATIALWARRANT-S7-C6",
+  "family": "analysis",
+  "producer": {
+    "plugin_id": "local-python-s7-review",
+    "capability": "completed-artifact-scientific-review",
+    "tool_name": "build_spatialwarrant_s7.py",
+    "plugin_version": "sha256:03f5335df16d144aea3cca2c9764bce573c32ed110f0ec7c7dd45b157be1994a"
+  },
+  "captured_at": "2026-09-06T02:30:14.538340+00:00",
+  "source_context": {
+    "backend_name": "local Python/scverse artifact review",
+    "backend_version": "3.13.9",
+    "input_artifact_sha256": "ea3880875de6a4cf58b404fb5a18dcf10d5e93448b96aafeac7db669077bb5c3",
+    "parameters_sha256": "0e89f5679471dc415578d8103f88af896b4067f9b076287bfd88c47f720e3aee",
+    "execution_receipt_sha256": "b6bd8e08981030d43fd0b934830611d71cf9d39dfdac570f7cba991ad3a55a93"
+  },
+  "payload": {
+    "claim_id": "C6",
+    "original_statement": "The boundary signature predicts immunotherapy response.",
+    "artifacts": [
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\00_plan\\analysis-plan.lock.md",
+        "sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\S6-checkpoint.md",
+        "sha256": "be73e50a5910647d9b002072972f052b9b453df10eee3983e94af4c3e92ad813"
+      }
+    ],
+    "host_review_state": "CLINICAL_CLAIM_REJECTED_FOR_THIS_DATA",
+    "support": "Workflow provides technical and descriptive features only; no outcome evidence supports prediction.",
+    "counterevidence": "No immunotherapy response labels, independent held-out cohort, calibration or clinical validation.",
+    "maximum_claim": "No treatment-response prediction claim.",
+    "dependencies": [
+      "Same observational study; no treatment outcome dataset"
+    ]
+  },
+  "payload_sha256": "e3a1fee0eddf5ffee1b3cd1def169ab1fe6f2e9d6c3d9aa8c3da11a1fd32c3ea",
+  "request_sha256": "2be1bb28ce8cf4415f0d35b1411d64883e0f6182e050786b9222fd3893acea89",
+  "semantic_envelope": null,
+  "epistemic_lineage": null
+}

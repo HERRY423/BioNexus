@@ -1,0 +1,7 @@
+{
+  "observed_at_utc": "2026-09-05T10:26:38.103844+00:00",
+  "free_C_bytes": 41522110464,
+  "start_min_bytes": 32212254720,
+  "stop_write_below_bytes": 21474836480,
+  "S2_started": false
+}

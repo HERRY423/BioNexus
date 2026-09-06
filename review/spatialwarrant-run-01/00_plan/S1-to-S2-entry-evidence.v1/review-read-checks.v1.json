@@ -1,0 +1,89 @@
+{
+  "required_files": [
+    {
+      "file": "00_plan/analysis-plan.lock.md",
+      "bytes": 41485,
+      "sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "S1-checkpoint.md",
+      "bytes": 7440,
+      "sha256": "eb2451b5e16676e2d6844d862c8961f3e6f5031a712150a3fedab816265c7333",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "S1-starting-point-assessment.json",
+      "bytes": 2883,
+      "sha256": "492cb9021a0c8917aed0354da95801e9f1350402ac2b30acbb8437862aed593e",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "02_identity/identity-gate.json",
+      "bytes": 1262,
+      "sha256": "e096971099f244cabd22ffa69982eca3746dcf6c61cf9378bb3a0aff98c2c95c",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "02_identity/sample-identity.csv",
+      "bytes": 20037,
+      "sha256": "36f30c20a711eca47191315f3df45950394067e32a7a4e3669c01d37fbe8ef29",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "02_identity/visium-sample-identity.csv",
+      "bytes": 4157,
+      "sha256": "beedbc146143eebe2501d1c677685c3547cab67accf677d164b7485867b4611a",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "02_identity/pathology-label-map.json",
+      "bytes": 507,
+      "sha256": "d8a120652315db560657b2571a8172e52122b3f78e220b20566e13d44395a15a",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "02_identity/pathology-label-inventory.csv",
+      "bytes": 8454,
+      "sha256": "65242e088f33f10fea3cd818d35df68f1adb9dac89faa3800a367dd1969687ae",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "02_identity/primary-program.lock.json",
+      "bytes": 3579,
+      "sha256": "bd512cf1d36e18e4b565fe3f041f67a780f0a7c980930ce337b4e50524b42dd4",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "manifest/S1-source-manifest.json",
+      "bytes": 43079,
+      "sha256": "2e0b80b23c330805fdd04fe8b1bd055199ab862b4f37308ecf5e298db5dbfe14",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    },
+    {
+      "file": "manifest/S1-input-file-index.json",
+      "bytes": 58645,
+      "sha256": "36fc1f54f91051c5cfb03aa5529451aa8401678817916fc77162c18c071cdcb8",
+      "read_in_full": true,
+      "matches_S1_manifest": true
+    }
+  ],
+  "created": "2026-09-05T10:34:48.108864+00:00",
+  "review_setup_issues": [
+    {
+      "event": "Initial UTF-8 plan read attempted with Windows default GBK; UnicodeDecodeError; resolved by explicit utf-8-sig.",
+      "source_effect": "No source file changed; full read succeeded before adjudication."
+    }
+  ],
+  "historical_artifact_index_sha256": "096bcb5c5edc1185bf708592c368dce879e015ed860e5015594d757796f51737"
+}

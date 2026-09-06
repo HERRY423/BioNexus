@@ -1,0 +1,5142 @@
+{
+  "created_at_utc": "2026-09-06T02:04:53.544283+00:00",
+  "root": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01",
+  "files": [
+    {
+      "path": "__pycache__/run_s6_external_queries.cpython-313.pyc",
+      "bytes": 14606,
+      "sha256": "3b140576c2cb86afb1578ea2424f4ff6e1a659606b4b9da3a7b4f47b1522fc70"
+    },
+    {
+      "path": "bionexus-claim-bound-audit.json",
+      "bytes": 1414,
+      "sha256": "4120b86297c9a56d48c2f184314db8529717aafbac0e063203f8a86461e7f150"
+    },
+    {
+      "path": "bionexus-external-evidence-audit.json",
+      "bytes": 4298,
+      "sha256": "2413291b47df65c3239608f6dd40a9ac50f4b35e6ec2d715f3ba49dc1c0c4304"
+    },
+    {
+      "path": "bionexus-external-evidence/SPATIALWARRANT-S6-LOCAL-ANALYSIS.audit.json",
+      "bytes": 603,
+      "sha256": "11f95f8375c5da2b1298650c1be0ff39ce2da4bd42a19e065dd5dde6a496643d"
+    },
+    {
+      "path": "bionexus-external-evidence/SPATIALWARRANT-S6-LOCAL-ANALYSIS.envelope.json",
+      "bytes": 8367,
+      "sha256": "34cb6c1d9c31e5efd190ba9f26289ec4bb133eb7fbaa1fee15878b856290f23a"
+    },
+    {
+      "path": "bionexus-external-evidence/SPATIALWARRANT-S6-OPENTARGETS.audit.json",
+      "bytes": 604,
+      "sha256": "a718ca618e4fda7435b4cf27dfbf6111f9276d3aeae1ba270886c6e09a1bd8e5"
+    },
+    {
+      "path": "bionexus-external-evidence/SPATIALWARRANT-S6-OPENTARGETS.envelope.json",
+      "bytes": 61643,
+      "sha256": "e85e9780193f56a340f7b6dec66d91bd582edba1027dee233d5163a887add47f"
+    },
+    {
+      "path": "bionexus-external-evidence/SPATIALWARRANT-S6-PUBMED.audit.json",
+      "bytes": 628,
+      "sha256": "f426f0e7c588a5413283fd6b4bb0a6f01de295c976026ab92a5e36d60bf211a5"
+    },
+    {
+      "path": "bionexus-external-evidence/SPATIALWARRANT-S6-PUBMED.envelope.json",
+      "bytes": 84706,
+      "sha256": "baf9e40aa996ba43aa3526799ff12c2f8343a2e35aeb04a232e0650cac03c907"
+    },
+    {
+      "path": "bionexus-external-evidence/SPATIALWARRANT-S6-REACTOME.audit.json",
+      "bytes": 601,
+      "sha256": "1580a562f473395bd7b95b9f614dfe65c4bd5393ac479e02c15e6b1ee6231152"
+    },
+    {
+      "path": "bionexus-external-evidence/SPATIALWARRANT-S6-REACTOME.envelope.json",
+      "bytes": 86570,
+      "sha256": "847a04f972151cbcec7378b1646777ab1055983ca71cc2a8c006304142cc2e82"
+    },
+    {
+      "path": "bionexus-external-evidence/SPATIALWARRANT-S6-STRING.audit.json",
+      "bytes": 599,
+      "sha256": "4e669c9cf0de3b9086f397eb88042fd415b10ee15fc84b46d5a32a64260e854c"
+    },
+    {
+      "path": "bionexus-external-evidence/SPATIALWARRANT-S6-STRING.envelope.json",
+      "bytes": 163201,
+      "sha256": "675b0dc0ea79b470f2bb18788f067a346a95127d88f32e765e73d9a4ff89341e"
+    },
+    {
+      "path": "bionexus-external-evidence/SPATIALWARRANT-S6-UNIPROT.audit.json",
+      "bytes": 600,
+      "sha256": "45a4e3e02787d75e5ab294972238ee7057cc4f5a50f05cf90086274c189ddf60"
+    },
+    {
+      "path": "bionexus-external-evidence/SPATIALWARRANT-S6-UNIPROT.envelope.json",
+      "bytes": 251979,
+      "sha256": "df149c53b2f02446da40215a176dcc59f6211c8444b7e6092cb68d9ed4cf1662"
+    },
+    {
+      "path": "bionexus-mcp-host-probe-attempts.json",
+      "bytes": 960,
+      "sha256": "2701a5e758d405578c6241156e789a50e675a337eaf0d7ed11ebc77444d366c4"
+    },
+    {
+      "path": "bionexus.provenance.sidecar.json",
+      "bytes": 11081,
+      "sha256": "7f967136f01a75e06a163c90280761232639d900231933104555c515b708c9f7"
+    },
+    {
+      "path": "boundary-celltype-specific-liana-status.json",
+      "bytes": 272,
+      "sha256": "16f7930d41bfa7d37c1ea015065c9803a67344a414cd1cd36f328b448e39d4f3"
+    },
+    {
+      "path": "dependency-install.log",
+      "bytes": 1459,
+      "sha256": "c14dbf0fed017ae0fc822acdd9107c8c17a23f0e90b19e5628122bb0050a33ff"
+    },
+    {
+      "path": "execution-environment.json",
+      "bytes": 834,
+      "sha256": "ba5f23ffb74dc1d428364cf9566b196ced3b682ee6b101b967866b02763ac5d7"
+    },
+    {
+      "path": "external-evidence-adjudication-register.csv",
+      "bytes": 10016,
+      "sha256": "6ccda31aa21ac94b3a35869bf41d5a18a155f2e450cade9f33aa6db99929451d"
+    },
+    {
+      "path": "external-evidence-query-targets.json",
+      "bytes": 7534,
+      "sha256": "0a7d5e4ee9f6b2ce96f7290d830428daff03d47b6b6eae485c8166302d4a370f"
+    },
+    {
+      "path": "external-evidence-query-targets.raw-source-v2.json",
+      "bytes": 7534,
+      "sha256": "0a7d5e4ee9f6b2ce96f7290d830428daff03d47b6b6eae485c8166302d4a370f"
+    },
+    {
+      "path": "external-evidence-summary.final.json",
+      "bytes": 1010,
+      "sha256": "204232f87171eb8f293a2a0f678084733b590c0a6185cd0ebe4a64b7844441b6"
+    },
+    {
+      "path": "external-evidence-summary.json",
+      "bytes": 1394,
+      "sha256": "e49cce170d8cd3ee751b6f4fb225917a3a1070816020623bdae0cc32af0a953a"
+    },
+    {
+      "path": "external-evidence-summary.v2.json",
+      "bytes": 952,
+      "sha256": "33bec9c71428c008061841bd8b2f012f7c50bdad34addeeeb4ad7dc327e37b77"
+    },
+    {
+      "path": "external-queries.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "external-queries.stdout.log",
+      "bytes": 1152,
+      "sha256": "8cc74cc832a4caf225746f4ea8c4aed96ba11d46ca40322602b4adc19737a21c"
+    },
+    {
+      "path": "external-query-log.consolidated.csv",
+      "bytes": 91212,
+      "sha256": "8a52016d9bfe408740b1c31ae7c6e93b8b17845294cde38f6521648983e527f7"
+    },
+    {
+      "path": "external-query-log.csv",
+      "bytes": 87467,
+      "sha256": "b40e5653406d3a98b836df08143d534202533a05f5b166d17fc842989b9ea16e"
+    },
+    {
+      "path": "external-query-log.final.csv",
+      "bytes": 94609,
+      "sha256": "95852dfd9b08b12f60e999fdb0e1494ec84fb5a8974f0cabb865d5610504fa2f"
+    },
+    {
+      "path": "external-query-log.raw-source-v2.csv",
+      "bytes": 50683,
+      "sha256": "4a1b7d52e8f710a6ed67cf3462fe22e8ca88410dd48dda064f23f294b694e717"
+    },
+    {
+      "path": "external-query-log.retry1.csv",
+      "bytes": 35694,
+      "sha256": "370fc492d303a433c7ed4b9bd18ea3f4acac757b74b1225a7e352204ba87d47c"
+    },
+    {
+      "path": "external-query-retry1.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "external-query-retry1.stdout.log",
+      "bytes": 746,
+      "sha256": "5b7a63384bee86bf464a15257c2b0fcc0abfca200ed816ec82f851f01c49f225"
+    },
+    {
+      "path": "finalize.raw-source-v2.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "finalize.raw-source-v2.stdout.log",
+      "bytes": 7800,
+      "sha256": "c977aed8d0c0ff7d8e2ff5c7992401d11b35746237f99bba6b9ac219332737fa"
+    },
+    {
+      "path": "finalize.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "finalize.stdout.log",
+      "bytes": 7752,
+      "sha256": "629a2b33fe38e8bf14f54e1c2a619ea0ceb94fcc82397b5ec031ecb16f54191f"
+    },
+    {
+      "path": "finalize_spatialwarrant_s6.py",
+      "bytes": 17063,
+      "sha256": "24b486bed602c7384ec2b7fb2c5dd5c75cc2c3dfab0b623b97860c962c3e3d46"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/bionexus-claim-bound-audit.json",
+      "bytes": 1413,
+      "sha256": "9656befeff9ede6fd415c2e5ce8ed313da095a88371b13cf51f307c0683f82f9"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/bionexus-external-evidence-audit.json",
+      "bytes": 4298,
+      "sha256": "2413291b47df65c3239608f6dd40a9ac50f4b35e6ec2d715f3ba49dc1c0c4304"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/bionexus.provenance.sidecar.json",
+      "bytes": 10031,
+      "sha256": "19daf60539439c302b95819c5c5a1857430cda7181bcb8256b084aee6d44543f"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/S6-result.json",
+      "bytes": 9749,
+      "sha256": "1034528ed3d2ade20b513841b14afa9bc6a2cbf001507240614c662ead1386dd"
+    },
+    {
+      "path": "input-verification.json",
+      "bytes": 1617,
+      "sha256": "ee8b00f5a454c0380a4f7bf8f08965e7dee7f8e244dbcba500529e0b4bec8d4b"
+    },
+    {
+      "path": "liana-method-and-resource.json",
+      "bytes": 666,
+      "sha256": "9f235fc148256f1c6f922c3c342bbbef381f185afd5b5045bf64ed68152cb80a"
+    },
+    {
+      "path": "liana-prespecified-interactions.csv",
+      "bytes": 1462289,
+      "sha256": "17b2dcbf5a8cc0a9df8f99aab7680bb8613486d09b20d99c79271fadb1846cdb"
+    },
+    {
+      "path": "liana-rank-aggregate.full.csv.gz",
+      "bytes": 26518893,
+      "sha256": "ca323a4185cccd247a633ed161c29fe936ab150f99139586599191152e652af5"
+    },
+    {
+      "path": "liana-spatial-niche-context.csv",
+      "bytes": 3245,
+      "sha256": "1a7aec911c650be04aaf87d4546cde78977a06cf052e0957d6be57790e0e450c"
+    },
+    {
+      "path": "liana-top10-for-external-evidence.csv",
+      "bytes": 1859,
+      "sha256": "e5ffcc160d5fa6f4ca4b0004c7a6d718a94fad4cf033f902ac14dcfcc1b3824d"
+    },
+    {
+      "path": "methods-and-limitations.json",
+      "bytes": 835,
+      "sha256": "f97af10143d09fdca3ba2edf4aaecb1e354995f2abe261c6cfd2a0bff24c2732"
+    },
+    {
+      "path": "process.json",
+      "bytes": 577,
+      "sha256": "084a78695a589cb24a5eb637c4f95365754e3c5f7a9a4c01092d5129b25f41d5"
+    },
+    {
+      "path": "progress.json",
+      "bytes": 202,
+      "sha256": "081dbd2338d0f349a595ba827e0693baee1b33422eb14abb42a1b14678cade89"
+    },
+    {
+      "path": "raw-source-correction.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "raw-source-correction.stdout.log",
+      "bytes": 3076,
+      "sha256": "e266bcd8a1afcf9ef02e9a8c399562eee763c8818cf8b0edc6edf22e086cf6a0"
+    },
+    {
+      "path": "raw-source-v2-queries.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "raw-source-v2-queries.stdout.log",
+      "bytes": 801,
+      "sha256": "2f48c42d84b64014ec9b184024c94c414406685851f078ad8ebb72a1d8e8a7c8"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-01-RAB6C.raw",
+      "bytes": 1532,
+      "sha256": "316eae903ad5e3bd0a524c0c5f91a356f46554180770199bb3d3db1268571b43"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-02-LINC01144.raw",
+      "bytes": 354,
+      "sha256": "6cfe820dc277145e7c7ea915da88ffeae45248274ed5c9a4d05fdc766429e88e"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-03-FOXO6.raw",
+      "bytes": 1430,
+      "sha256": "d348cf187b0cabb1a38ad860489feafd5aaee453d23f4495eb6758b56f8fed5c"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-04-ZSWIM8-AS1.raw",
+      "bytes": 178,
+      "sha256": "58472e30c09ffd43a32f10d499913847426fc260ac417f385b7dddeed84fee26"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-05-PTHLH.raw",
+      "bytes": 2478,
+      "sha256": "c566a6640547c71087435a34780fa9d97e5f071a4680fcc4e49cd8a44780400e"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-06-HEY2.raw",
+      "bytes": 1471,
+      "sha256": "d2a7297f672f3d4e1522cf96fd3e4544b8d0b56458c7a48449969e1d352dc8c3"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-07-DMD.raw",
+      "bytes": 1449,
+      "sha256": "93306821a264532fc38b556058d6573b943fff1aedf7d418b6d690c6b9fadedc"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-08-IGLC3.raw",
+      "bytes": 1364,
+      "sha256": "bf86819b2c95cc1609eec618e052c3c7a6fbd4abecc753932c93841a49782e73"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-09-IGLC1.raw",
+      "bytes": 2220,
+      "sha256": "8ae879ebab45f829f130f7570bbc83642cb04d0d183a23ac1deb88970811caad"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-10-PCDH18.raw",
+      "bytes": 2593,
+      "sha256": "1458a41f53bf12b3bd5859684abfdd7b78ed893e12c6000b772b0c4ba06a2896"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-11-AC087175.1.raw",
+      "bytes": 41,
+      "sha256": "823de698dfb3a062b46ea759f629e004153adfc59573ff6f52808a74ba9c739e"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-12-LINC01489.raw",
+      "bytes": 403,
+      "sha256": "9789b61e91874e246c511b24a7fea490da46e67428427863ece6c1609b69c0a5"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-13-FMO4.raw",
+      "bytes": 1364,
+      "sha256": "867cbcda2c1b391e56ba2f497f78f26cccaadbca443a19470d40a3d58b427b79"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-14-AC027237.3.raw",
+      "bytes": 41,
+      "sha256": "823de698dfb3a062b46ea759f629e004153adfc59573ff6f52808a74ba9c739e"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-15-MIXL1.raw",
+      "bytes": 1053,
+      "sha256": "60a2aa76d2c56f9a667af0eac0e48f86a0613891da03060d9cd07674dcb12bea"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-16-AL355075.4.raw",
+      "bytes": 41,
+      "sha256": "823de698dfb3a062b46ea759f629e004153adfc59573ff6f52808a74ba9c739e"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-17-SYCP3.raw",
+      "bytes": 1342,
+      "sha256": "6412e6dd8d5d7aee13dcb1aae4aaa8a4a529d45992840f73ecaa49da22dc9e9f"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-18-TMEM233.raw",
+      "bytes": 1015,
+      "sha256": "1849a21f56c039dab1c37805231038a3f652465a0ab2a3ed1c3e0af3453eba78"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-19-NRSN2-AS1.raw",
+      "bytes": 180,
+      "sha256": "2902c74e039967f4d62e38ca1bd68b047d6c3701c7f4c4c2ef47bc6859c90a51"
+    },
+    {
+      "path": "raw-source-v2/raw/opentargets/gene-20-CPB2-AS1.raw",
+      "bytes": 1351,
+      "sha256": "75c8502c6d757e2c94b91dc36ae1d395d55906a2065b7d8235d13674cef7b413"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-01-RAB6C.raw",
+      "bytes": 1256,
+      "sha256": "ec103ad68fb899bd8679f6573c7c398159f06626021bb77605a09800720908eb"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-02-LINC01144.raw",
+      "bytes": 1249,
+      "sha256": "ff1c8e9e6af95af5d986ad583655afa14868ba6e6f923e3515320cc70ccf73b5"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-03-FOXO6.raw",
+      "bytes": 1243,
+      "sha256": "c95533ff1042d4ac483a02ff09c4e61af7e13635f8af1fa277b2417c1baef526"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-04-ZSWIM8-AS1.raw",
+      "bytes": 1250,
+      "sha256": "3d12fc348d9a8f8720ddc9bb8f2b839c2d1d1dcdb1ff3e3a04a699820f631466"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-05-PTHLH.raw",
+      "bytes": 1256,
+      "sha256": "961af8d55fd01eff95a25ccc11fc08a66604b3b42dae1b7d2567a933686e996f"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-06-HEY2.raw",
+      "bytes": 1255,
+      "sha256": "181d6009adb818acdd0fb9be99b5c5d858d6671e063b5e396e3f04a18bb7fe33"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-07-DMD.raw",
+      "bytes": 1254,
+      "sha256": "cf9b46cfa3c58ae521d7adf9b0e372f2707adb35186c04751a9e0674d8d913c3"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-08-IGLC3.raw",
+      "bytes": 1188,
+      "sha256": "74adabfb363f75a9e3fb2b5af94b742e74b11596374b3d07ad10d35dea3b9ef5"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-09-IGLC1.raw",
+      "bytes": 1155,
+      "sha256": "1395d62be8825a87899199291d9ac598bd124e69b45b6f33fdbed3fa48e130cf"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-10-PCDH18.raw",
+      "bytes": 1246,
+      "sha256": "a586f902e1c3d1736dffe1e60c519a207ffa62d20be7e9d781116b4964b7293a"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-11-AC087175.1.raw",
+      "bytes": 899,
+      "sha256": "122d58180bd188e59f2244404abf4ffeb60cb56c6663ffe4100a964310365f2f"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-12-LINC01489.raw",
+      "bytes": 897,
+      "sha256": "2e9633b25b5a85181731c774f4b9090f46bf31394b6ee53984c1490d7413c736"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-13-FMO4.raw",
+      "bytes": 1587,
+      "sha256": "26a768d7a10db881b8cd136bacfe82cb8a659f81b60edbfa6ca4080ff637b7dd"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-14-AC027237.3.raw",
+      "bytes": 899,
+      "sha256": "e5afabb4453de46be09592fd0622bc6c6c5746bce2af399471f9fba08933eed5"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-15-MIXL1.raw",
+      "bytes": 1188,
+      "sha256": "e4b53aae84b7ce9006c2601521a0a48e52a22d3091958a72625887af3e9c689a"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-16-AL355075.4.raw",
+      "bytes": 899,
+      "sha256": "466baab25f1b53559b0a442e10e47bf09b8d6785fe6f5e7eed292ac29fd1bc87"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-17-SYCP3.raw",
+      "bytes": 1199,
+      "sha256": "f0d6da0e9e132308dc1f9fc75edc567acd210bf2a2fa9e27db3b7fe43305bc24"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-18-TMEM233.raw",
+      "bytes": 1157,
+      "sha256": "ed92f632338f0b33027dc69f4bba5bc217a5b7fd9cbbb4c22299f3e1fc5bf5a7"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-19-NRSN2-AS1.raw",
+      "bytes": 1170,
+      "sha256": "be3a927e322c51aece84385ab84cc84cce7a64237ae079b51799d03c221ca098"
+    },
+    {
+      "path": "raw-source-v2/raw/pubmed/gene-20-CPB2-AS1.raw",
+      "bytes": 1158,
+      "sha256": "e5c0e6f970b10f8a166482a85af2b627e3eab74966d9e59b9aec831912b3c019"
+    },
+    {
+      "path": "raw-source-v2/raw/reactome/gene-01-RAB6C.raw",
+      "bytes": 398,
+      "sha256": "ce80911c2ffa53af5663fa697b2cf245ee0fbf065bfa11841cdd642ed88e8456"
+    },
+    {
+      "path": "raw-source-v2/raw/reactome/gene-03-FOXO6.raw",
+      "bytes": 26272,
+      "sha256": "c3c9356fc75d2be14e5fab4b7241900d1da405110198e08369a76a85a6a0fc8a"
+    },
+    {
+      "path": "raw-source-v2/raw/reactome/gene-04-ZSWIM8-AS1.raw",
+      "bytes": 15782,
+      "sha256": "2cc7c14a0ca9a0e4256d32251554040411c83de6aada4f6c983cd3cf633ebc82"
+    },
+    {
+      "path": "raw-source-v2/raw/reactome/gene-05-PTHLH.raw",
+      "bytes": 2442,
+      "sha256": "90449736cd40086c111b974100347bbf0d40d654cca966db463db5cb2eb85953"
+    },
+    {
+      "path": "raw-source-v2/raw/reactome/gene-06-HEY2.raw",
+      "bytes": 22864,
+      "sha256": "07403c7994375aa04507db5c51daf9db25c2e755cf6a5e2cc1cee3d8096fadb4"
+    },
+    {
+      "path": "raw-source-v2/raw/reactome/gene-07-DMD.raw",
+      "bytes": 13291,
+      "sha256": "9333cc3ad8e63fba7e615858dc34a8b6a4d454bfb051c74ff3c893e1f440e6f9"
+    },
+    {
+      "path": "raw-source-v2/raw/reactome/gene-08-IGLC3.raw",
+      "bytes": 1137,
+      "sha256": "090691ced20ee9b241bf0188964eb435e1f11ee46094db7785316e6441aba137"
+    },
+    {
+      "path": "raw-source-v2/raw/reactome/gene-09-IGLC1.raw",
+      "bytes": 1134,
+      "sha256": "30cb0169390a213df9c2a4dc34ec973f7e77bb36a0017017096339fdf1ccd02f"
+    },
+    {
+      "path": "raw-source-v2/raw/reactome/gene-10-PCDH18.raw",
+      "bytes": 388,
+      "sha256": "522f4ae34e25ddae5629e1a0e0ad94b1589e79cbd4f45fbafbe7f2eb03b2b7f5"
+    },
+    {
+      "path": "raw-source-v2/raw/reactome/gene-15-MIXL1.raw",
+      "bytes": 60988,
+      "sha256": "78c62c96107152b2764fd292b822e83e4a9be6204e00eb768c162a1c67e9c529"
+    },
+    {
+      "path": "raw-source-v2/raw/reactome/gene-17-SYCP3.raw",
+      "bytes": 2493,
+      "sha256": "8e42494491ed4d7225824d4a66db5962c253a3a648af3149fbbcdf8cdae25202"
+    },
+    {
+      "path": "raw-source-v2/raw/reactome/gene-19-NRSN2-AS1.raw",
+      "bytes": 16578,
+      "sha256": "bfe5a48c668cebfdd7e6775a61e1a4e69d2e17cc108e2f17870fece2eb7da730"
+    },
+    {
+      "path": "raw-source-v2/raw/reactome/gene-20-CPB2-AS1.raw",
+      "bytes": 15921,
+      "sha256": "cb26ea99eaa57293927fb18f7d526e25793412053408b15515c9431998323528"
+    },
+    {
+      "path": "raw-source-v2/raw/string/gene-01-RAB6C.raw",
+      "bytes": 7390,
+      "sha256": "c87f4c758a825e8ff1dbd4131efa9689c0689d250f325b083f30f861a2cc11c5"
+    },
+    {
+      "path": "raw-source-v2/raw/string/gene-03-FOXO6.raw",
+      "bytes": 12007,
+      "sha256": "d6202ecd03a71cce4526379afa3fbc5205e668fe67afc70fb61f14c8aad5e7cc"
+    },
+    {
+      "path": "raw-source-v2/raw/string/gene-05-PTHLH.raw",
+      "bytes": 9680,
+      "sha256": "763206417c6ce7f18f9424842d5049d9bfd90f734e7175ae4a8c70123c7f6172"
+    },
+    {
+      "path": "raw-source-v2/raw/string/gene-06-HEY2.raw",
+      "bytes": 13512,
+      "sha256": "140cf7a48da83b052b35408f9efdc3ae1a61e0e4f1634c756bbc5ed20b33869f"
+    },
+    {
+      "path": "raw-source-v2/raw/string/gene-07-DMD.raw",
+      "bytes": 15060,
+      "sha256": "479d60ece89de091d14978cab60bddbb2dd8bf257e1985ee4700b16473001a5f"
+    },
+    {
+      "path": "raw-source-v2/raw/string/gene-10-PCDH18.raw",
+      "bytes": 3815,
+      "sha256": "f118c5e105f70356728a8dd3c567ab141d5b15438dea5d882eb7803335e9e24d"
+    },
+    {
+      "path": "raw-source-v2/raw/string/gene-13-FMO4.raw",
+      "bytes": 6984,
+      "sha256": "da7d568f0cca1cd6dc21b01337a5433871bb44a0f3042556b67dce87b9bea73f"
+    },
+    {
+      "path": "raw-source-v2/raw/string/gene-14-AC027237.3.raw",
+      "bytes": 13690,
+      "sha256": "b760203ff752f695441fad7b1140d5da2fe9f92dac5db28ab3209a6470e0ed51"
+    },
+    {
+      "path": "raw-source-v2/raw/string/gene-15-MIXL1.raw",
+      "bytes": 14024,
+      "sha256": "f9fefa51c8cb4e3c99116cd223eb857d2bb87ed9bc9bc7074ad54d19c4fe90db"
+    },
+    {
+      "path": "raw-source-v2/raw/string/gene-16-AL355075.4.raw",
+      "bytes": 6329,
+      "sha256": "d5a95399f0154f07a623a51cca2b492dba96566e5fe201224a4767d9de8ecb76"
+    },
+    {
+      "path": "raw-source-v2/raw/string/gene-17-SYCP3.raw",
+      "bytes": 12298,
+      "sha256": "ae8081b846f13a03d3e6a14ffc87ec92b91978ae8d08a841245300d16fb552f5"
+    },
+    {
+      "path": "raw-source-v2/raw/string/gene-18-TMEM233.raw",
+      "bytes": 2999,
+      "sha256": "63ca3afe92580c5bbb36d9d64ce37df68d1641719c2652e54c6397edfbed4419"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-01-RAB6C.raw",
+      "bytes": 1417,
+      "sha256": "6786d063350e25ca4f87a62a867d5cf4a67930d4734d5de70c5940d253c33667"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-02-LINC01144.raw",
+      "bytes": 144,
+      "sha256": "6c8d91bdd9ffa45a148fbd77425d0f0412a269d28095516c0282edc287f49992"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-03-FOXO6.raw",
+      "bytes": 2325,
+      "sha256": "dfc08fabd2f6ac4a2a303f9b6c80586debeeb48f2d507a5a4bfe64e1e850408f"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-04-ZSWIM8-AS1.raw",
+      "bytes": 14,
+      "sha256": "5021e624e752b001ce3e3846e8f158ed4aeb93a4c9a72fdb35a0c5b14a0eea84"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-05-PTHLH.raw",
+      "bytes": 6900,
+      "sha256": "89fe7d21ad63ad1eb77a3d9a5bd5e0c8573b7bd36af5190b517b9310cdf67e09"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-06-HEY2.raw",
+      "bytes": 2118,
+      "sha256": "358798da754c519c7f504628b14100455e0fd060239aa649a5593fd91605d4cb"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-07-DMD.raw",
+      "bytes": 9991,
+      "sha256": "f2cee8eb60f2b6354c8b4bedc444a9f84121e2c71f7f72a52dd45fd99f90678f"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-08-IGLC3.raw",
+      "bytes": 2323,
+      "sha256": "59375f18650acec9bbe65e34c025f00ff8c8b2c314d15323e77b50a4e9aad751"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-09-IGLC1.raw",
+      "bytes": 2701,
+      "sha256": "2836a94fed89359b15a9636f2cab095f1d2f5963419db9c3bf971264c0faabff"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-10-PCDH18.raw",
+      "bytes": 2305,
+      "sha256": "494c6f0c2d0a5767ffb4717e6d06ebd4cf2db456809127ea8173b21d5994cfa4"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-11-AC087175.1.raw",
+      "bytes": 14,
+      "sha256": "5021e624e752b001ce3e3846e8f158ed4aeb93a4c9a72fdb35a0c5b14a0eea84"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-12-LINC01489.raw",
+      "bytes": 201,
+      "sha256": "182600343a1dfa1addf484c502705338634896682112abda4f637ca2d4c73710"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-13-FMO4.raw",
+      "bytes": 7344,
+      "sha256": "920e35603123f0ce5311f96ca52027912c4364c59959a4a385271bd1b0356bec"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-14-AC027237.3.raw",
+      "bytes": 14,
+      "sha256": "5021e624e752b001ce3e3846e8f158ed4aeb93a4c9a72fdb35a0c5b14a0eea84"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-15-MIXL1.raw",
+      "bytes": 1123,
+      "sha256": "d21a1bc8f18dad8f7b6de4a9ef88a0a0ab9477066adb3282bff56c6c09f4782f"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-16-AL355075.4.raw",
+      "bytes": 14,
+      "sha256": "5021e624e752b001ce3e3846e8f158ed4aeb93a4c9a72fdb35a0c5b14a0eea84"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-17-SYCP3.raw",
+      "bytes": 974,
+      "sha256": "b9edfb3f9a3a8d524f55b2bc0a4ccd4aa1009cf79011e8f14c7e6033588b90b1"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-18-TMEM233.raw",
+      "bytes": 1298,
+      "sha256": "cad1ed07429a32f31529d7de572fddc0685a45e4520a8f399fb6a258052d407d"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-19-NRSN2-AS1.raw",
+      "bytes": 14,
+      "sha256": "5021e624e752b001ce3e3846e8f158ed4aeb93a4c9a72fdb35a0c5b14a0eea84"
+    },
+    {
+      "path": "raw-source-v2/raw/uniprot/gene-20-CPB2-AS1.raw",
+      "bytes": 14,
+      "sha256": "5021e624e752b001ce3e3846e8f158ed4aeb93a4c9a72fdb35a0c5b14a0eea84"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-01-RAB6C.request.json",
+      "bytes": 837,
+      "sha256": "975735511002cb5a9786c970d104997e51bfec287b816e99dbdf992853446611"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-02-LINC01144.request.json",
+      "bytes": 849,
+      "sha256": "b9d21350c8b07112b596c4f42503fec104f4766f094e4a7e633a5f836db483dd"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-03-FOXO6.request.json",
+      "bytes": 837,
+      "sha256": "1b2f3c577391d54893a93753783d2e13d5d36689db5b489722c7d8a5cc3f4018"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-04-ZSWIM8-AS1.request.json",
+      "bytes": 852,
+      "sha256": "914b34641f61b8aeea61869eb5971fe7c2e77fef0e9f08352ad8cd2e2e7677a1"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-05-PTHLH.request.json",
+      "bytes": 837,
+      "sha256": "69c224069330d364e73daea82dbafc40d052760499406254f7f5b517a4d62d3b"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-06-HEY2.request.json",
+      "bytes": 834,
+      "sha256": "749ec65588111c35b37ad3ca56dd5b20f028691094d61cc7d19f777df16711e6"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-07-DMD.request.json",
+      "bytes": 831,
+      "sha256": "3ca8e12a3ff06ac5ccb90d61b6b724b5b25538e9f29daf202d198183651aa7b6"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-08-IGLC3.request.json",
+      "bytes": 837,
+      "sha256": "3e1e029f7da835a9d8cc7dd12a3bcfa4d9ae109ba43ff299fcba57410df39131"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-09-IGLC1.request.json",
+      "bytes": 837,
+      "sha256": "e520adf1393ff1b753629e783808392c7706ff0ee4d9d182bfb220feaae242c5"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-10-PCDH18.request.json",
+      "bytes": 841,
+      "sha256": "5c0e7fb224a6aa6d398cb6a31d2ce40dd73829d846c2bff38cf1719ee4af05f9"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-11-AC087175.1.request.json",
+      "bytes": 853,
+      "sha256": "055985aeca12f3fd4979020e45e00f246329dbb78411cd1c89622d03e76c49d2"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-12-LINC01489.request.json",
+      "bytes": 850,
+      "sha256": "0e87e9d5e35699bfc8c36e31bb279283e85caa045c05dd5c761da17e05b87c75"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-13-FMO4.request.json",
+      "bytes": 835,
+      "sha256": "40d4a860f9b309bfe468af3482b8b63249eac9dc586b72ff729a8dbc33f590af"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-14-AC027237.3.request.json",
+      "bytes": 853,
+      "sha256": "bc6d6d6917706f964021d150c2ec4d4dac51c754c820fb12bfaeedba98e46cbe"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-15-MIXL1.request.json",
+      "bytes": 838,
+      "sha256": "67dd3588fbf873ff5fdbdb53d908b7640ee860e23f35daa8c1d72e4b80fb26d1"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-16-AL355075.4.request.json",
+      "bytes": 853,
+      "sha256": "8d4fe40c78cee657757c483c631523e5744bda451a14bd89016b1b99c42e5c48"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-17-SYCP3.request.json",
+      "bytes": 838,
+      "sha256": "f8dafd58be30f61cf7ae1a96ffadfd0a756386b4d3461659d2089dd19a8a5e3e"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-18-TMEM233.request.json",
+      "bytes": 844,
+      "sha256": "f8776609384b6efc33ceb226a1a1f25de856e8c1e059b67be90fbc4665c0c0c4"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-19-NRSN2-AS1.request.json",
+      "bytes": 850,
+      "sha256": "5e112e5df6b9148097f6ad3b4e34c185b4149d5339188b9ba1a0abce81d8813e"
+    },
+    {
+      "path": "raw-source-v2/requests/opentargets/gene-20-CPB2-AS1.request.json",
+      "bytes": 847,
+      "sha256": "de18eca9c928d86d872c4ee8233c8d0b24403ab477a9719e3ad71c6b1b26660c"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-01-RAB6C.request.json",
+      "bytes": 818,
+      "sha256": "88f6ac93e6521b698ca40b5ac5a768020e63f7372f8b3b07ef6f9d10b8e893f2"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-02-LINC01144.request.json",
+      "bytes": 830,
+      "sha256": "0a57b29990a54157d4a5f3d5de44e96fadf27ae2fe9fe5cbfb88c90cf6038b21"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-03-FOXO6.request.json",
+      "bytes": 818,
+      "sha256": "c36e53010ac96e6057e4d813bce77233f9d37624cbb1325ee050020de2cdebbd"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-04-ZSWIM8-AS1.request.json",
+      "bytes": 833,
+      "sha256": "5724c95c3303afde4dd88c23c3a5a670339c820709318defba062fa16a214c09"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-05-PTHLH.request.json",
+      "bytes": 818,
+      "sha256": "153875413c6e95939344fbefe163a2c3a171632707fd42c29fc99b805a6160a8"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-06-HEY2.request.json",
+      "bytes": 815,
+      "sha256": "306ac82116bffb9878c8d356d9b778c23038e27ddc38b78046fd7d61b9f39bdc"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-07-DMD.request.json",
+      "bytes": 812,
+      "sha256": "12a6dd7821e1c706d19f857fed5c356e4d9eb83fd122bdfd64bb4aac80896283"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-08-IGLC3.request.json",
+      "bytes": 818,
+      "sha256": "837281b63e425a438b40d0a6e707958d28c1041d5f0f23a81e6b3149e36f16da"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-09-IGLC1.request.json",
+      "bytes": 818,
+      "sha256": "b8eac1aa7951f9dde31e75f8bbbb3a414abb8878043b8abcab91886280a9e996"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-10-PCDH18.request.json",
+      "bytes": 822,
+      "sha256": "c8b239f45f8ecd3dee6612de5be73ce60f89a9bd36a0547f001a607272646167"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-11-AC087175.1.request.json",
+      "bytes": 834,
+      "sha256": "e73cef72c2ed3b5e6acce8227423ea9c875809adba652c1c42bd07be86d01bd6"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-12-LINC01489.request.json",
+      "bytes": 831,
+      "sha256": "929f1e99a6173a15f73463892b3da8187a44edde2e424e7b7472a43d0d9d7a1d"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-13-FMO4.request.json",
+      "bytes": 816,
+      "sha256": "700291f5b01e3647e9fd0c91c50a7df99713271d9c7031c11a1e0d946126cba3"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-14-AC027237.3.request.json",
+      "bytes": 834,
+      "sha256": "b63bda0e8faf6382d8849aa947ac06d93ebd7d202f9f5d0f2e568f84e7f9ffa1"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-15-MIXL1.request.json",
+      "bytes": 819,
+      "sha256": "22cfdcc1feb1d5d7dbea4af62fde9e4714d33a1c1b6ccc1c5c53e32b954e003f"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-16-AL355075.4.request.json",
+      "bytes": 834,
+      "sha256": "c6e756ff3c5496a85eca6315fe7ec77df0609ad78b917aaf403aeade83fda02e"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-17-SYCP3.request.json",
+      "bytes": 819,
+      "sha256": "f47f9d4a933c8eb342f72b563b6c48d3672e2c32215f6a2b20cfe5c8ebaa5c89"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-18-TMEM233.request.json",
+      "bytes": 825,
+      "sha256": "0fd0ef79d594c4fd1bdb37db11940f720fc9ca39c093ef7b8f8cb13e36bfd071"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-19-NRSN2-AS1.request.json",
+      "bytes": 831,
+      "sha256": "c45e897003e6f0024c2cfd522ffe875924ac48a5fab5e1165c2a04861eea464b"
+    },
+    {
+      "path": "raw-source-v2/requests/pubmed/gene-20-CPB2-AS1.request.json",
+      "bytes": 828,
+      "sha256": "8f7d8e0fbd470335383add49c70d0aeb65e3baf60cd8a6ee5a46dc5cb0bc10d7"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-01-RAB6C.request.json",
+      "bytes": 786,
+      "sha256": "f398e8de44d76d37711beaa7f4f1728576b98d7b94d10d349fd29fafa5c2b349"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-02-LINC01144.request.json",
+      "bytes": 798,
+      "sha256": "0d4cc3a8ae9a613ed84483b8415c7e50823acf9ebb26e821fa265528636ee485"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-03-FOXO6.request.json",
+      "bytes": 786,
+      "sha256": "41efdbd7a0bc53c2852bef61340e526c16a1ab4d603335f051623e8faac06738"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-04-ZSWIM8-AS1.request.json",
+      "bytes": 801,
+      "sha256": "683f3b8e54ae1774f5570ba0fc3ad4f1a1a884a0dd644a3bed6e4ccf687ac85b"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-05-PTHLH.request.json",
+      "bytes": 786,
+      "sha256": "fad14da315c8be2a0966d0a014dd88729a323d2b34ae00436aedfff39d953a85"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-06-HEY2.request.json",
+      "bytes": 783,
+      "sha256": "291dba0ea8846fcbd8330d6cd8484c8849c735d0dc5ae7eba41796c8b0e2aa73"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-07-DMD.request.json",
+      "bytes": 780,
+      "sha256": "1c46f7e8e976631ea36c2211128a1957902c1ef7f2b8649a1097188d80b28e67"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-08-IGLC3.request.json",
+      "bytes": 786,
+      "sha256": "6999d2d999949066f80b8d58dc8d669a189ef6c9f0ddf9f2e0186806bc79c782"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-09-IGLC1.request.json",
+      "bytes": 786,
+      "sha256": "8d4ae2b227a325f9a2d345ece1799eedabfb1865a90080786d3c7de864d494fc"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-10-PCDH18.request.json",
+      "bytes": 790,
+      "sha256": "23166b4402e19d2e06d5ea8f3e774f7a347c260b9d4ff9c72cc07e4664b8ecd8"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-11-AC087175.1.request.json",
+      "bytes": 802,
+      "sha256": "2a2439b2fddd84d42228b2a6ce1ec677c68f5f788949b0fcc3128093c62f39a2"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-12-LINC01489.request.json",
+      "bytes": 799,
+      "sha256": "0391bb4697de0901116a96143e4ecf7b5170f96b691e639222e5f2a3f77feeb3"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-13-FMO4.request.json",
+      "bytes": 784,
+      "sha256": "5f91b1c56901ddb1d529923516e07f6aff22cf64bcf06c9b20130dbd260d301d"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-14-AC027237.3.request.json",
+      "bytes": 802,
+      "sha256": "ed7a9fccac80fb400bc5e2f4d5420c70119f1d3d3c9b1d81dc590156d5b499aa"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-15-MIXL1.request.json",
+      "bytes": 787,
+      "sha256": "05a3d885c9c832aa154bf0625a5fc91db7daa4658b052b6060fb66ae705ef9f6"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-16-AL355075.4.request.json",
+      "bytes": 802,
+      "sha256": "f7308310a33488dccad1ea4b55143753cc5ef3d72f9e650c92e3545f78ce3650"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-17-SYCP3.request.json",
+      "bytes": 787,
+      "sha256": "36758fe573301d677ebc3276e8b6a6b14aed017fea924c58b1fed102cc70dcbf"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-18-TMEM233.request.json",
+      "bytes": 793,
+      "sha256": "a75e949d07df3e174574e068c80369f73396f6e26705fb91bfb7430e7de40549"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-19-NRSN2-AS1.request.json",
+      "bytes": 799,
+      "sha256": "f2cd139ddc058863e9c9369823986b27bcde9eae6b112a0488321bfda9392642"
+    },
+    {
+      "path": "raw-source-v2/requests/reactome/gene-20-CPB2-AS1.request.json",
+      "bytes": 796,
+      "sha256": "3cc62df381db5ccdbaf8cb9f77653c9de4d9cc806290671da8de8b1a7958a900"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-01-RAB6C.request.json",
+      "bytes": 797,
+      "sha256": "57ec684d8bf4ff1600e8ac3f2c72fb51b66b6f6017d88dde9cb2f4743d4ea073"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-02-LINC01144.request.json",
+      "bytes": 809,
+      "sha256": "82739b7fb8cd879b282e088f85d6720df3bec1eda4c459df72984b1cacdeb9b1"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-03-FOXO6.request.json",
+      "bytes": 797,
+      "sha256": "40afe15ed4b0f67fb402014804e4a33ee2bdd9a46b15c9523938d74e9b8ecc22"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-04-ZSWIM8-AS1.request.json",
+      "bytes": 812,
+      "sha256": "ee0900c08d9ce81765ceaae73cf9a93ba7fc86a36c34b67e0d67cb808dbeb7e7"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-05-PTHLH.request.json",
+      "bytes": 797,
+      "sha256": "9e4fdd64c77a4d23991119da7c281d684b0ed36277cf7d818543d9d4599640b8"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-06-HEY2.request.json",
+      "bytes": 794,
+      "sha256": "fa2b2c73c2a2829e6b8d2a6067c11d24a56363a556b36fafe9ec352cc35dba8a"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-07-DMD.request.json",
+      "bytes": 791,
+      "sha256": "e745b6c2f4ca57efa544b9c4232d66742bcf89cc03c57ad0a6c5eea7dcb8d79e"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-08-IGLC3.request.json",
+      "bytes": 797,
+      "sha256": "d32bc20188b1f3201d8d40508bd33b4591ac4ab7443a1e93dbeb158b2e51158a"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-09-IGLC1.request.json",
+      "bytes": 797,
+      "sha256": "d076da5bec8c97a165511fc7005c297d8c95e8e620797f3281f024ae60aab2e7"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-10-PCDH18.request.json",
+      "bytes": 801,
+      "sha256": "15df1be1c85c41e02a66b6f9d7acd7d942613593c6a1660dff7be407977c45de"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-11-AC087175.1.request.json",
+      "bytes": 811,
+      "sha256": "83b9d0f7f6e6ea45f5328f4692412b7540ad8049b542d81cfd401895a94fc864"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-12-LINC01489.request.json",
+      "bytes": 810,
+      "sha256": "6a0cc8e5b76b0695423e782f81d7d2fa3eed495d25bacb7f4b4655bc44522c79"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-13-FMO4.request.json",
+      "bytes": 795,
+      "sha256": "2a6439a9f2095a01b4775b0fe53597e308891e2e0e1b69a65f396c2111d0fa7e"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-14-AC027237.3.request.json",
+      "bytes": 811,
+      "sha256": "5877b58c87aaa2e26722d384f6b9041fcf46ed46f74c14c063a5e7e428f47d98"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-15-MIXL1.request.json",
+      "bytes": 798,
+      "sha256": "16ad2b9012cbc87918892938e9da7fb381acf75ff85f38d29a9966cccb887d5e"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-16-AL355075.4.request.json",
+      "bytes": 811,
+      "sha256": "50c5265f7243f20533412b08630584874acef7a42f6f8f1a3f90da05704b3b35"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-17-SYCP3.request.json",
+      "bytes": 798,
+      "sha256": "669357c436e23844c9d0231f26d306922f02a9da776dc9b6e4bf0edfedaf5ac6"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-18-TMEM233.request.json",
+      "bytes": 804,
+      "sha256": "d3f9e945b607eafb91364a130a22aeb66cd945ba62d8513873776d80c85199ed"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-19-NRSN2-AS1.request.json",
+      "bytes": 810,
+      "sha256": "48e863b3559b26caaf27c1174239f921c1d299c52b5dba6a795d8247c3b96a69"
+    },
+    {
+      "path": "raw-source-v2/requests/string/gene-20-CPB2-AS1.request.json",
+      "bytes": 807,
+      "sha256": "6e76cd207da0998a8d98801f12623c4c4973c575265bf0e2ef0064c1e48a3b3b"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-01-RAB6C.request.json",
+      "bytes": 852,
+      "sha256": "af2b6bae4235cdcc55b694c8a5825cd3c30e26cd3b3a309d0a0b0858dd17776b"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-02-LINC01144.request.json",
+      "bytes": 864,
+      "sha256": "2026be6d6ca0d73ce7c78909d12befbcffd91df86c041176571d2093aec07464"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-03-FOXO6.request.json",
+      "bytes": 852,
+      "sha256": "48ca90b9b52410fdd8903a38620ad52afc832022aa90707a6e06e1a0f0838458"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-04-ZSWIM8-AS1.request.json",
+      "bytes": 867,
+      "sha256": "0cfd20a3cdbdd7e9954c7e0ec5dc50547e87032b8bf14e634d01d7a9cd7ee9b8"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-05-PTHLH.request.json",
+      "bytes": 852,
+      "sha256": "89abba5e9b9b80e40b80533b94a45f60df628457999d0f3d8ef1e6948204b0e7"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-06-HEY2.request.json",
+      "bytes": 849,
+      "sha256": "41ab4e34624e94fec283796bc412af46ab185e9b032f8dc20aae729a58cfb561"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-07-DMD.request.json",
+      "bytes": 846,
+      "sha256": "051657e41a2e54cb59c4507de215fa0898cbc37d6d1542f3e204caa42f10968a"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-08-IGLC3.request.json",
+      "bytes": 852,
+      "sha256": "c15127df1142bbf56c36a6ee63fd2241a4abdda1d32349f3f7f00d86cd903db7"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-09-IGLC1.request.json",
+      "bytes": 852,
+      "sha256": "e5810777171038ac276d287f60c636fc6d7b6ee0db286da9296b86bd7054a272"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-10-PCDH18.request.json",
+      "bytes": 856,
+      "sha256": "aae2719c51227d88a29f8787dd13c5c38da757c56f8c329187943497d07c062b"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-11-AC087175.1.request.json",
+      "bytes": 866,
+      "sha256": "3dabf43dba222505df5e0aee296979a010bad6e1eff840defe0e90fca6f7c630"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-12-LINC01489.request.json",
+      "bytes": 865,
+      "sha256": "7312839d643b1f9fb20268d41df97989089fb4e0f810e40df0b4c3d8389c84d8"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-13-FMO4.request.json",
+      "bytes": 850,
+      "sha256": "654c8740ac8bebc6cd517250e6c3326aeea51696ee1312d77a51ccbb305325d9"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-14-AC027237.3.request.json",
+      "bytes": 866,
+      "sha256": "07971a6bb9d8e91f9483c276de2bfee8b093efa3b26089fb0f22731028029557"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-15-MIXL1.request.json",
+      "bytes": 853,
+      "sha256": "3c3052065c80605d49063ee7d000cc76c043cf97e21d28d15e824d2b6c1a8096"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-16-AL355075.4.request.json",
+      "bytes": 866,
+      "sha256": "dbe1b5821d8a1aa3a48c170a31a89347f1bb5558a07719ae151341efe1e87f2b"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-17-SYCP3.request.json",
+      "bytes": 853,
+      "sha256": "2912c77afb80716d036e56ab44ee32ec85ca95cefb237946911a7a8902768dbf"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-18-TMEM233.request.json",
+      "bytes": 859,
+      "sha256": "53fda8655de070b4afb857061f48fe3f635cda09068a30d4524431bf7ee17b27"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-19-NRSN2-AS1.request.json",
+      "bytes": 865,
+      "sha256": "8a4c8e6db5aed4a151053fac7559b4fa228952f2f98931a765465e3fc96b9149"
+    },
+    {
+      "path": "raw-source-v2/requests/uniprot/gene-20-CPB2-AS1.request.json",
+      "bytes": 862,
+      "sha256": "4120f988f80a9a96899129cb3f759c4c7c2baa2546643be7d7fbca15d05ca1e9"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-01-RAB6C.wrapper.json",
+      "bytes": 1558,
+      "sha256": "d1fd3e6714120faac9b3342c0daf4a3c77e8adfae15535a0d81e27d40b067c7e"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-02-LINC01144.wrapper.json",
+      "bytes": 1435,
+      "sha256": "f7476693c88c1388afe7f841e5520413b6989759794f55c7cb0725a4def8c716"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-03-FOXO6.wrapper.json",
+      "bytes": 1558,
+      "sha256": "3428b99256108d4f04d55fbf4c8cbd3f56c7b08b53679c6ee23816cc5dcc7ea1"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-04-ZSWIM8-AS1.wrapper.json",
+      "bytes": 1386,
+      "sha256": "ee2f8652c5646d7c2dac76699242e923a036adc58c152846cb366d36d5a4d01c"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-05-PTHLH.wrapper.json",
+      "bytes": 1559,
+      "sha256": "6c1af16cdd789c6c505942a5ffe3527d173c9661de66d9dfc7f014b5308e1de3"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-06-HEY2.wrapper.json",
+      "bytes": 1555,
+      "sha256": "7b52d0be31822e8563558076ba96c01b9a86d6518019ea85cd7f82ce813bff03"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-07-DMD.wrapper.json",
+      "bytes": 1552,
+      "sha256": "f96f2b6f79985734ec47d0ecdca3d5d0d6d926c3d6086ec383ac2b09f8c08ca6"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-08-IGLC3.wrapper.json",
+      "bytes": 1557,
+      "sha256": "519189baa7e7ba719e42914b3316cc19fb9227024771c1c0e184fd0288ee4370"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-09-IGLC1.wrapper.json",
+      "bytes": 1557,
+      "sha256": "249adc81cf7d6f2fbf54fddefd1efa349ac7aa31feb19d08fdb57a44dd58a9a9"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-10-PCDH18.wrapper.json",
+      "bytes": 1562,
+      "sha256": "8e469f512f0550379587c5100af7a1218e681376771cb84ec9a1c65b715e5dfc"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-11-AC087175.1.wrapper.json",
+      "bytes": 1396,
+      "sha256": "f389a88be4e93103502b2d4caae80f1a6d05f19c90bb39b9fc02a92cf893d2bf"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-12-LINC01489.wrapper.json",
+      "bytes": 1455,
+      "sha256": "c2928847a4ac59e8aa6549f224eca7b2f0a0bca546ac73f0153920c13c31cc25"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-13-FMO4.wrapper.json",
+      "bytes": 1555,
+      "sha256": "694d7ec3d27edb0d1dc987a3734523fb97eb047f09976d0162407af236f4a7cb"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-14-AC027237.3.wrapper.json",
+      "bytes": 1395,
+      "sha256": "c804e5aa564d736ce8df25dbf824173d17c0a31c51050ae14794c93103620969"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-15-MIXL1.wrapper.json",
+      "bytes": 1558,
+      "sha256": "83b8ad79619ea666f22534cf0cf6dcce5fd5298b4639997c00fe0b1ff32b616b"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-16-AL355075.4.wrapper.json",
+      "bytes": 1396,
+      "sha256": "b8e47c7b9850b4a0f329881c774c5b2c8228dee0fec49a40664a9cb26366f834"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-17-SYCP3.wrapper.json",
+      "bytes": 1559,
+      "sha256": "57517eff656eaac83daa82888469569a98fa653d3e2f24aa5e18e2af01547157"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-18-TMEM233.wrapper.json",
+      "bytes": 1566,
+      "sha256": "5b71591b75903d683a6030dc51e190e42c5e7978053022b5b6c4b01f9f66d2b3"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-19-NRSN2-AS1.wrapper.json",
+      "bytes": 1383,
+      "sha256": "2ef3b48504dd890a78594eb3c859999a76980d368c9313f045fa7efaae859da9"
+    },
+    {
+      "path": "raw-source-v2/responses/opentargets/gene-20-CPB2-AS1.wrapper.json",
+      "bytes": 1571,
+      "sha256": "c215f666d6fe473a1715a13bd6eac2a974dc9f63cacd29e45eb2528fb0f1a6a4"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-01-RAB6C.wrapper.json",
+      "bytes": 2309,
+      "sha256": "11800ce7ad100db541af3f4b07947f790bd2b0ce8506fe9d8025c1fd58d2facd"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-02-LINC01144.wrapper.json",
+      "bytes": 1563,
+      "sha256": "c98083c3e96e117f19aa361d7b8ebd2cf5c773c6ef3c4863292c6ddb59278bc0"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-03-FOXO6.wrapper.json",
+      "bytes": 2231,
+      "sha256": "2f26995d8c99d35c99346085d1429b1ea35cfacdf1279e7009a2545bc9077401"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-04-ZSWIM8-AS1.wrapper.json",
+      "bytes": 1567,
+      "sha256": "45734d5d43f501580e341420b8204f5051b6ec88e6e58706837f5bd36719d448"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-05-PTHLH.wrapper.json",
+      "bytes": 2307,
+      "sha256": "b26897ce635777a22cc375b786585011e6572c965dd61d505873e3170d4908a2"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-06-HEY2.wrapper.json",
+      "bytes": 2304,
+      "sha256": "5e3ff5bf712a98574ccad5ff6220d174a538805e5810f5bbf996d98ab16c7020"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-07-DMD.wrapper.json",
+      "bytes": 2301,
+      "sha256": "132d96523f9548287d2aba5744dff1e9a46c11b1631d716f66cd7045d6830351"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-08-IGLC3.wrapper.json",
+      "bytes": 1857,
+      "sha256": "6d8302e129666b885a9cd72a095bb8bf1225fbb3c62599d96b9ad1b81e6552eb"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-09-IGLC1.wrapper.json",
+      "bytes": 1528,
+      "sha256": "99c78cda405de85c32c1bc401fadf2d2abc0a26f623ae011dac11a10207d7940"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-10-PCDH18.wrapper.json",
+      "bytes": 1551,
+      "sha256": "197cce013dc0a9aeb71b9f1ea0d50dbc5c6bfc49ff61ce60242b590aa79037a9"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-11-AC087175.1.wrapper.json",
+      "bytes": 1568,
+      "sha256": "92caeeb9c7a9d9e7a673dc450403ee82799ae3dfacc55c3f376a877516c4ee5c"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-12-LINC01489.wrapper.json",
+      "bytes": 1565,
+      "sha256": "3676e0d4b431d38e1bcb2a79d2d3ebfea4ef8c257d34858529f8cbf4ad0ae1d4"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-13-FMO4.wrapper.json",
+      "bytes": 2306,
+      "sha256": "2783658f8f03bb420740e79c0ea7850c030551776f6a54e68415049c949c86e1"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-14-AC027237.3.wrapper.json",
+      "bytes": 1569,
+      "sha256": "287682b3413366f9fd644ee2656838064f05f16ae8fa561cfa7e13185b33ec31"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-15-MIXL1.wrapper.json",
+      "bytes": 1858,
+      "sha256": "6465efb44cb4d57e2f428a68868b25dee09cc373f71c1fd8db53d3b62834b990"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-16-AL355075.4.wrapper.json",
+      "bytes": 1569,
+      "sha256": "b37cb0cc00cd354e75e2dcc63687b7f74880b4508ab2b5db47c751adae0066c2"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-17-SYCP3.wrapper.json",
+      "bytes": 1933,
+      "sha256": "23db075a8794b60abb3129fa3106c791da60ae53598acdaeb961644a23419f25"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-18-TMEM233.wrapper.json",
+      "bytes": 1537,
+      "sha256": "70cb0dc09faed52f2bc0cef76e6c7f0eb0bfc47ae379cd295829b731469d63ab"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-19-NRSN2-AS1.wrapper.json",
+      "bytes": 1723,
+      "sha256": "db4fa5e699d5c937cc1a4293410ac5798edd1367dd79789f815a5910e919d4ff"
+    },
+    {
+      "path": "raw-source-v2/responses/pubmed/gene-20-CPB2-AS1.wrapper.json",
+      "bytes": 1541,
+      "sha256": "4dbe76c542866a6323f35f3225594a61ca281c548e0709d033013c84fe20c5f7"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-01-RAB6C.wrapper.json",
+      "bytes": 1615,
+      "sha256": "be45d47250e3232dd9188491fc57c890a4646a392107157ef1370e1ed7861b6a"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-02-LINC01144.wrapper.json",
+      "bytes": 767,
+      "sha256": "764e29e73cb6c1b8da12b1d98e4287bc75023bb7df1a946304d2f259d95303d0"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-03-FOXO6.wrapper.json",
+      "bytes": 2697,
+      "sha256": "6d8927c3bce9c335a729a84521c8edfe1f5989fcad26da194150f2aa07c2a4b6"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-04-ZSWIM8-AS1.wrapper.json",
+      "bytes": 2558,
+      "sha256": "cff7a60dae08aa4b90c8bb4939b40cacc855c9b4fa28c5f0f885ae060974e8b4"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-05-PTHLH.wrapper.json",
+      "bytes": 1766,
+      "sha256": "3b53558de494e9d3595c7635a73d8093af7191a100c76cd9b773381419501124"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-06-HEY2.wrapper.json",
+      "bytes": 2611,
+      "sha256": "ee31ef9e7d457351820b58eb182bcb24b3a1d09bc01c2fa72f6b62519bc069ed"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-07-DMD.wrapper.json",
+      "bytes": 2435,
+      "sha256": "f21bbee909f177a014d6ae3ef017ee2036f5f1d21511d5adf3a5dba5b92e510e"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-08-IGLC3.wrapper.json",
+      "bytes": 1629,
+      "sha256": "0dacac912080978f98fd114fb0d485825692f7d491f35dfb4adc08adb08a4900"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-09-IGLC1.wrapper.json",
+      "bytes": 1630,
+      "sha256": "5f1ce7f84c2f439d24c26828b9dbaf854e15aec4e829d0aa7dcbd2d384ec944b"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-10-PCDH18.wrapper.json",
+      "bytes": 1620,
+      "sha256": "4cf9bbf4f5e9ee34dc76126812b621cbe9d06f6d9dfbf1119337c37c7647b776"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-11-AC087175.1.wrapper.json",
+      "bytes": 771,
+      "sha256": "de2d19ecabab0c125ff88bc18e4c193783a0e3dd2b3b57a59988934bb11d130a"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-12-LINC01489.wrapper.json",
+      "bytes": 768,
+      "sha256": "18bc808ac3437d7e302d299469f6d49a8c78cd625184dff0581d63ec04caecf2"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-13-FMO4.wrapper.json",
+      "bytes": 752,
+      "sha256": "773ee8fdc32e3201934bf10e9e788e1b6c42dc40086896c069e313f76dbe991a"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-14-AC027237.3.wrapper.json",
+      "bytes": 771,
+      "sha256": "dffc3393ac5d2e1bd4dff18b1c405178a9c35efabed7db748c272e0db9aaceae"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-15-MIXL1.wrapper.json",
+      "bytes": 2587,
+      "sha256": "d6c35d1bdb423285fc35966fae67bb22a7913140c74f6ea1a47326486dd9075a"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-16-AL355075.4.wrapper.json",
+      "bytes": 771,
+      "sha256": "e892275a7723676797ac4ab20d11b9f9278bbc437174da8346b33cdf5cd87eb7"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-17-SYCP3.wrapper.json",
+      "bytes": 1785,
+      "sha256": "3710cdc305571eadd2563e22f7c48faf69321758206f05abcd8971ea678cdd3f"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-18-TMEM233.wrapper.json",
+      "bytes": 762,
+      "sha256": "26b60f81b54fe02756f60963c29a82ef52a64c95f7dc8b7f1b3c23c19f37f086"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-19-NRSN2-AS1.wrapper.json",
+      "bytes": 2333,
+      "sha256": "fdefd8c2a0e727227abd583f39bf33d9996d6e89e21014d92e237dadd3e16c3e"
+    },
+    {
+      "path": "raw-source-v2/responses/reactome/gene-20-CPB2-AS1.wrapper.json",
+      "bytes": 2326,
+      "sha256": "6eb22c035c485f15302538c8f6f568eb3d3cd90f9719fc13121785d7915cf89b"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-01-RAB6C.wrapper.json",
+      "bytes": 4996,
+      "sha256": "ed6065ff90a473d803b44a9dec70a70a834e0c065d5ff308be7829ae832dc730"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-02-LINC01144.wrapper.json",
+      "bytes": 759,
+      "sha256": "a4c814de429b49d032362c8526e408715f7e53ac90e7696c42a907a6a08207f8"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-03-FOXO6.wrapper.json",
+      "bytes": 4977,
+      "sha256": "5d3586fe4f6099a0cb6e7972e750fab12dbc3376077fb693280addea3bc36aa1"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-04-ZSWIM8-AS1.wrapper.json",
+      "bytes": 762,
+      "sha256": "28ac45034c83ea88170526b2fe9f0f4da73cd6b6166ad1fe9c832156bfcdfc4f"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-05-PTHLH.wrapper.json",
+      "bytes": 4966,
+      "sha256": "9f6bedd1f649d02c9f156bc5f27aa979f4a85945c2ced0e25d4a6b244d55509f"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-06-HEY2.wrapper.json",
+      "bytes": 4979,
+      "sha256": "9d8b9052ab9348176bffb1986830981c5b40fac89c72914d15e5a96e3a6e0f46"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-07-DMD.wrapper.json",
+      "bytes": 4980,
+      "sha256": "a8d5e428c18f67fb58c8c1dbea4e1ab67c3c54a66773ce17e77a072c7bc3d4af"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-08-IGLC3.wrapper.json",
+      "bytes": 747,
+      "sha256": "e7fe6a2576751263dcdf5499f3f1e90d3370f745f1fd0d4575e7d3861d1899e3"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-09-IGLC1.wrapper.json",
+      "bytes": 747,
+      "sha256": "00d1c1cd8fb4408a3538e6669b54d17a74870ab07dcf7191e03e104390fe9304"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-10-PCDH18.wrapper.json",
+      "bytes": 5004,
+      "sha256": "60d8b54a02867882fd9a99341c8e80ab34e11918082cac081b333626a9b19c98"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-11-AC087175.1.wrapper.json",
+      "bytes": 761,
+      "sha256": "4de564f9d8b7cf911b915d263878712f88220eceb294a9cf54eaa8371f6cb22d"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-12-LINC01489.wrapper.json",
+      "bytes": 759,
+      "sha256": "7823f30a0f92fb97c1b62bfa9f97c187e788446734dd571e53369375b1dcbd58"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-13-FMO4.wrapper.json",
+      "bytes": 5046,
+      "sha256": "1d8fe45f20a94ac08632d5d12f3aa7135e94c92148c77db54867ea8323a8a28f"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-14-AC027237.3.wrapper.json",
+      "bytes": 5026,
+      "sha256": "d0382558d12116ba659deb34e6893946580ec1a6e7e5f6d9e583695df610ebdb"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-15-MIXL1.wrapper.json",
+      "bytes": 5006,
+      "sha256": "fd1bc5b2f042e38b728039865f026d0ac7e1d48f1ab84408a23939ad881fba19"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-16-AL355075.4.wrapper.json",
+      "bytes": 5036,
+      "sha256": "10ba7a87b8231adfdfb658228a11e7f26a1bb2741cc53299a82c5227ed90a4d1"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-17-SYCP3.wrapper.json",
+      "bytes": 5008,
+      "sha256": "ef37eb77f765a31deab3e482a2958e67ed22e39475189de2c95f6a8500c7f1f3"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-18-TMEM233.wrapper.json",
+      "bytes": 5011,
+      "sha256": "ad9ac36d0924f528027c585c11fb429251528d0f1973d93ee8d25a756916c938"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-19-NRSN2-AS1.wrapper.json",
+      "bytes": 760,
+      "sha256": "4a3220b9b8143a438bbec3e229cd75be184f1b0de39ef7ccb0b61176a5823658"
+    },
+    {
+      "path": "raw-source-v2/responses/string/gene-20-CPB2-AS1.wrapper.json",
+      "bytes": 756,
+      "sha256": "662cebeb9473162c38bfce78555462aea2eb887b05832404868a69a60b178cf3"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-01-RAB6C.wrapper.json",
+      "bytes": 2598,
+      "sha256": "cc5548a284e9f0038c8fc76f495b8c40c3f64ca2b73fe06fddb273666cbf9989"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-02-LINC01144.wrapper.json",
+      "bytes": 1620,
+      "sha256": "143a82ffe144b1fd6e6fd72ff52025ae56d7dbf2a3a6d0c443610ca99337c9f6"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-03-FOXO6.wrapper.json",
+      "bytes": 5942,
+      "sha256": "e63c314dc6be82380b0ee54aa2cd2bc6b923d2f16fb33abf878ce11725870b67"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-04-ZSWIM8-AS1.wrapper.json",
+      "bytes": 1624,
+      "sha256": "d5b6e060194ea9ce601258b7ec1d1e678799da139da1b52e62d44fb63b489207"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-05-PTHLH.wrapper.json",
+      "bytes": 6188,
+      "sha256": "d0adc7e607517a657c655c478ac33c701adb607d2c1659df5a24eb6f65be7373"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-06-HEY2.wrapper.json",
+      "bytes": 3435,
+      "sha256": "f764e9fd347872e00d81ceac46cff097c87cf586fa9512db03ce92cd3820a31d"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-07-DMD.wrapper.json",
+      "bytes": 10584,
+      "sha256": "2ed5bde7b77072b35688fd74f5d81c47bbcb8fb67fc802d6f506b3d9adc88f90"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-08-IGLC3.wrapper.json",
+      "bytes": 2598,
+      "sha256": "81b5795b60e4d39df9107ca4e1b46ebfd5b7ce5dfad409a5199849d83e99edf9"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-09-IGLC1.wrapper.json",
+      "bytes": 3490,
+      "sha256": "a15bfe3a2296c3df55c684fd903e30e4988c1aca8a1028a42769a70ef6f6a0d3"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-10-PCDH18.wrapper.json",
+      "bytes": 5909,
+      "sha256": "bc98b506a1445d0d29ea5cd0d1c3749612aaa39dda1a1d77dca72a8e638e93f3"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-11-AC087175.1.wrapper.json",
+      "bytes": 1625,
+      "sha256": "831d5369ae0d12dea6156fe5177747c26fa3a15329404a16220fd36bfca5d428"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-12-LINC01489.wrapper.json",
+      "bytes": 1621,
+      "sha256": "d224d248144be1e1be20f9721b351d082f0c775ad2b0da62967763c0b558899c"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-13-FMO4.wrapper.json",
+      "bytes": 9544,
+      "sha256": "7f1ae0b0dc67ef70e14a7998357fd0ddaaadb434981c15ae7c21c11b55f313a8"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-14-AC027237.3.wrapper.json",
+      "bytes": 1625,
+      "sha256": "dcd70eb3f67738f0f37a8150fb4d5fc605fe413641b9301768e254ff899f0ce9"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-15-MIXL1.wrapper.json",
+      "bytes": 2599,
+      "sha256": "87a67f7227c2b24c83f9ca9a350343855e6416eed8192416e1f135ed01bf21c5"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-16-AL355075.4.wrapper.json",
+      "bytes": 1625,
+      "sha256": "8abed26e430a8d21f5466e8f77a1c735d5200c67e2a472b29613f764948a0d7e"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-17-SYCP3.wrapper.json",
+      "bytes": 2560,
+      "sha256": "fbdb696ee711d50a622d664c4b289a229746cdc4b170988ffc89a919b16b9da9"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-18-TMEM233.wrapper.json",
+      "bytes": 3468,
+      "sha256": "adbd17cca58a55869fa4848ea5fcf3923680fb4c46ee14a1b3b60cd632845b8e"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-19-NRSN2-AS1.wrapper.json",
+      "bytes": 1621,
+      "sha256": "bde8db79faaaa481bed98d71b76df3eea762f9e096f069d4900801afe49ec214"
+    },
+    {
+      "path": "raw-source-v2/responses/uniprot/gene-20-CPB2-AS1.wrapper.json",
+      "bytes": 1617,
+      "sha256": "d6c9c867686d9fb78faef2e1845b3a52ea6d220251777f7fa7c2195fb01a27ee"
+    },
+    {
+      "path": "raw/opentargets/gene-01-IGLL5.raw",
+      "bytes": 1355,
+      "sha256": "664a2958780edcef4da08ac78149f294f6aac52f7a4e201e209a22ef9888ce4a"
+    },
+    {
+      "path": "raw/opentargets/gene-02-RAB6C.raw",
+      "bytes": 1532,
+      "sha256": "316eae903ad5e3bd0a524c0c5f91a356f46554180770199bb3d3db1268571b43"
+    },
+    {
+      "path": "raw/opentargets/gene-03-P2RY13.raw",
+      "bytes": 1803,
+      "sha256": "3f28c9854531450c05c5750f38b21da18e96a7674a042fe4700e127f54e6190c"
+    },
+    {
+      "path": "raw/opentargets/gene-04-TRG-AS1.raw",
+      "bytes": 1351,
+      "sha256": "002df688d933aca53f94278d7b34c906d3276de319ae68e917279f862bb6e610"
+    },
+    {
+      "path": "raw/opentargets/gene-05-AC116913.1.raw",
+      "bytes": 41,
+      "sha256": "823de698dfb3a062b46ea759f629e004153adfc59573ff6f52808a74ba9c739e"
+    },
+    {
+      "path": "raw/opentargets/gene-06-LINC01144.raw",
+      "bytes": 354,
+      "sha256": "6cfe820dc277145e7c7ea915da88ffeae45248274ed5c9a4d05fdc766429e88e"
+    },
+    {
+      "path": "raw/opentargets/gene-07-GRK4.raw",
+      "bytes": 1354,
+      "sha256": "a1ca39f2fef00d7c9ea034a52d5502a5700431c489c8569fd9f173d56fff7c5f"
+    },
+    {
+      "path": "raw/opentargets/gene-08-HEY2.raw",
+      "bytes": 1471,
+      "sha256": "d2a7297f672f3d4e1522cf96fd3e4544b8d0b56458c7a48449969e1d352dc8c3"
+    },
+    {
+      "path": "raw/opentargets/gene-09-FOXO6.raw",
+      "bytes": 1430,
+      "sha256": "d348cf187b0cabb1a38ad860489feafd5aaee453d23f4495eb6758b56f8fed5c"
+    },
+    {
+      "path": "raw/opentargets/gene-10-MYO10.raw",
+      "bytes": 1331,
+      "sha256": "9ec958bf2742fc7915f98deee03a2e2075f8f6deedc4fa18bc7b2012ffad3482"
+    },
+    {
+      "path": "raw/opentargets/gene-11-ZNF829.raw",
+      "bytes": 469,
+      "sha256": "d0ee596200e85e6b3ed4c27d4eb39b9cb82c2f72c4109a3dcdbe979f04a29cc4"
+    },
+    {
+      "path": "raw/opentargets/gene-12-PTHLH.raw",
+      "bytes": 2478,
+      "sha256": "c566a6640547c71087435a34780fa9d97e5f071a4680fcc4e49cd8a44780400e"
+    },
+    {
+      "path": "raw/opentargets/gene-13-AZIN1-AS1.raw",
+      "bytes": 41,
+      "sha256": "823de698dfb3a062b46ea759f629e004153adfc59573ff6f52808a74ba9c739e"
+    },
+    {
+      "path": "raw/opentargets/gene-14-LIFR-AS1.raw",
+      "bytes": 1342,
+      "sha256": "7fa3289efd50926eccacb337185efdbe4d3c89252a41ec42537a821f9f07d9d1"
+    },
+    {
+      "path": "raw/opentargets/gene-15-LINC01489.raw",
+      "bytes": 403,
+      "sha256": "9789b61e91874e246c511b24a7fea490da46e67428427863ece6c1609b69c0a5"
+    },
+    {
+      "path": "raw/opentargets/gene-16-THAP10.raw",
+      "bytes": 1159,
+      "sha256": "d3cd7bb4ae6a58bfa37cf82c70cbf48a3f5ffb15ee207dcca229a74af789fdf8"
+    },
+    {
+      "path": "raw/opentargets/gene-17-DENND4C.raw",
+      "bytes": 1341,
+      "sha256": "e899f39c146e8d6077eb8e52ef39dc4e6394a34f3e757447c0087966a3bd691b"
+    },
+    {
+      "path": "raw/opentargets/gene-18-MACC1.raw",
+      "bytes": 1715,
+      "sha256": "b8f604e0ac15d3fb7201615dd664adcd7b67c571b996401eaded72ae3491b699"
+    },
+    {
+      "path": "raw/opentargets/gene-19-IGLC3.raw",
+      "bytes": 1364,
+      "sha256": "bf86819b2c95cc1609eec618e052c3c7a6fbd4abecc753932c93841a49782e73"
+    },
+    {
+      "path": "raw/opentargets/gene-20-DMD.raw",
+      "bytes": 1449,
+      "sha256": "93306821a264532fc38b556058d6573b943fff1aedf7d418b6d690c6b9fadedc"
+    },
+    {
+      "path": "raw/opentargets/liana_interaction-01-MIF_CD74_CXCR4.raw",
+      "bytes": 41,
+      "sha256": "823de698dfb3a062b46ea759f629e004153adfc59573ff6f52808a74ba9c739e"
+    },
+    {
+      "path": "raw/opentargets/liana_interaction-02-MIF_CD74_CXCR4.raw",
+      "bytes": 41,
+      "sha256": "823de698dfb3a062b46ea759f629e004153adfc59573ff6f52808a74ba9c739e"
+    },
+    {
+      "path": "raw/opentargets/liana_interaction-03-MIF_CD74_CXCR4.raw",
+      "bytes": 41,
+      "sha256": "823de698dfb3a062b46ea759f629e004153adfc59573ff6f52808a74ba9c739e"
+    },
+    {
+      "path": "raw/opentargets/liana_interaction-04-MIF_CD74_CXCR4.raw",
+      "bytes": 41,
+      "sha256": "823de698dfb3a062b46ea759f629e004153adfc59573ff6f52808a74ba9c739e"
+    },
+    {
+      "path": "raw/opentargets/liana_interaction-05-MIF_CD74_CXCR4.raw",
+      "bytes": 41,
+      "sha256": "823de698dfb3a062b46ea759f629e004153adfc59573ff6f52808a74ba9c739e"
+    },
+    {
+      "path": "raw/opentargets/liana_interaction-06-MIF_CD74_CXCR4.raw",
+      "bytes": 41,
+      "sha256": "823de698dfb3a062b46ea759f629e004153adfc59573ff6f52808a74ba9c739e"
+    },
+    {
+      "path": "raw/opentargets/liana_interaction-07-MIF_CD74_CXCR4.raw",
+      "bytes": 41,
+      "sha256": "823de698dfb3a062b46ea759f629e004153adfc59573ff6f52808a74ba9c739e"
+    },
+    {
+      "path": "raw/opentargets/liana_interaction-08-MIF_CD74_CXCR4.raw",
+      "bytes": 41,
+      "sha256": "823de698dfb3a062b46ea759f629e004153adfc59573ff6f52808a74ba9c739e"
+    },
+    {
+      "path": "raw/opentargets/liana_interaction-09-MIF_CD74_CXCR4.raw",
+      "bytes": 41,
+      "sha256": "823de698dfb3a062b46ea759f629e004153adfc59573ff6f52808a74ba9c739e"
+    },
+    {
+      "path": "raw/opentargets/liana_interaction-10-MIF_CD74_CXCR4.raw",
+      "bytes": 41,
+      "sha256": "823de698dfb3a062b46ea759f629e004153adfc59573ff6f52808a74ba9c739e"
+    },
+    {
+      "path": "raw/opentargets/prespecified-01-CXCL9_CXCR3.raw",
+      "bytes": 1010,
+      "sha256": "7232f0c27a781d64e2a71a1b1f67e740af40d86be119fc4e48890d290197019a"
+    },
+    {
+      "path": "raw/opentargets/prespecified-02-CXCL10_CXCR3.raw",
+      "bytes": 1752,
+      "sha256": "3405bbb0e9171cfa4a4cac84f39f46b78c213a6c05c3bdbaf085c640244ba1e4"
+    },
+    {
+      "path": "raw/opentargets/prespecified-03-CD274_PDCD1.raw",
+      "bytes": 2738,
+      "sha256": "c88dc74b6173381eadf6bb4a39a6973a6248fac7f519c2d8b4e86e0336477619"
+    },
+    {
+      "path": "raw/opentargets/prespecified-04-TGFB1_TGFBR1_TGFBR2.raw",
+      "bytes": 1153,
+      "sha256": "ffb452056fbd8452a52c59b4870c6184fdb99a1b76f90847028a8c8f4b2d1901"
+    },
+    {
+      "path": "raw/opentargets/prespecified-05-SPP1_CD44.raw",
+      "bytes": 2128,
+      "sha256": "f1e39433f46136305ff823160db50b55169b1190ee9093bccd53ce5997a09aa6"
+    },
+    {
+      "path": "raw/opentargets/prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.raw",
+      "bytes": 41,
+      "sha256": "823de698dfb3a062b46ea759f629e004153adfc59573ff6f52808a74ba9c739e"
+    },
+    {
+      "path": "raw/pubmed/gene-01-IGLL5.raw",
+      "bytes": 1256,
+      "sha256": "24a8c399de92adf72f3a6ff24e7187367c755fccc37c02d23b293d8aedbf6504"
+    },
+    {
+      "path": "raw/pubmed/gene-02-RAB6C.raw",
+      "bytes": 1256,
+      "sha256": "ec103ad68fb899bd8679f6573c7c398159f06626021bb77605a09800720908eb"
+    },
+    {
+      "path": "raw/pubmed/gene-03-P2RY13.raw",
+      "bytes": 1257,
+      "sha256": "24180046e7836fa1382b58a1cf8ab69682faf2dbf01850e25c918465e7db6f35"
+    },
+    {
+      "path": "raw/pubmed/gene-04-TRG-AS1.raw",
+      "bytes": 1201,
+      "sha256": "9d1e9b7b6b92fbcc44c147e3fabc257fb4ad16f6c5f6f9b2798f65f9d84b12bd"
+    },
+    {
+      "path": "raw/pubmed/gene-05-AC116913.1.raw",
+      "bytes": 899,
+      "sha256": "dcdcd1134da6f773ed259c3d65a20167fd8e360b1f23d9d432ccf8215340007b"
+    },
+    {
+      "path": "raw/pubmed/gene-06-LINC01144.raw",
+      "bytes": 1249,
+      "sha256": "ff1c8e9e6af95af5d986ad583655afa14868ba6e6f923e3515320cc70ccf73b5"
+    },
+    {
+      "path": "raw/pubmed/gene-07-GRK4.raw",
+      "bytes": 1231,
+      "sha256": "dd35827b44623b9dfdefd92176112f8530bbc578c167eac7c1b25fd1d27223b6"
+    },
+    {
+      "path": "raw/pubmed/gene-08-HEY2.raw",
+      "bytes": 1255,
+      "sha256": "181d6009adb818acdd0fb9be99b5c5d858d6671e063b5e396e3f04a18bb7fe33"
+    },
+    {
+      "path": "raw/pubmed/gene-09-FOXO6.raw",
+      "bytes": 1243,
+      "sha256": "192d13aa9734e2afb940db411786e46f6e31e4a31c71497ad1c2b1443b94be3d"
+    },
+    {
+      "path": "raw/pubmed/gene-10-MYO10.raw",
+      "bytes": 1256,
+      "sha256": "f251b475d0c6e61f2740c33359a06905192410782e3562078d9c5162a4b527d0"
+    },
+    {
+      "path": "raw/pubmed/gene-11-ZNF829.raw",
+      "bytes": 1156,
+      "sha256": "0182a6b90d9c148c3590bc8d23167ebc00783b43451c30279e093960bc9eebb4"
+    },
+    {
+      "path": "raw/pubmed/gene-12-PTHLH.raw",
+      "bytes": 1256,
+      "sha256": "dab96a7f7d606ba5548716dd40d31cad74277b320406cdb64899e6b1ce40d137"
+    },
+    {
+      "path": "raw/pubmed/gene-13-AZIN1-AS1.raw",
+      "bytes": 1249,
+      "sha256": "106bfe3e904e52c24ce16f38fa36759657edfd031bb415ccdeb791275077c641"
+    },
+    {
+      "path": "raw/pubmed/gene-14-LIFR-AS1.raw",
+      "bytes": 1213,
+      "sha256": "1eb98c8a239ce5b7b5e9d35dcde2687cc55d1aef81933e246b647a0a8cc32e9b"
+    },
+    {
+      "path": "raw/pubmed/gene-15-LINC01489.raw",
+      "bytes": 897,
+      "sha256": "2e9633b25b5a85181731c774f4b9090f46bf31394b6ee53984c1490d7413c736"
+    },
+    {
+      "path": "raw/pubmed/gene-16-THAP10.raw",
+      "bytes": 1156,
+      "sha256": "524757b4295c3f62d482e975aefef2637455462279caa3fe0063efe724ff76a7"
+    },
+    {
+      "path": "raw/pubmed/gene-17-DENND4C.raw",
+      "bytes": 1179,
+      "sha256": "f1c05df67707f8a271b9dde0e7381b0a92ddd5332ccbd047ec1f031e92298ca3"
+    },
+    {
+      "path": "raw/pubmed/gene-18-MACC1.raw",
+      "bytes": 1484,
+      "sha256": "a793600cb657bf99b258321733852052752f5ccf07e653c350e40a7d721be0e2"
+    },
+    {
+      "path": "raw/pubmed/gene-19-IGLC3.raw",
+      "bytes": 1188,
+      "sha256": "74adabfb363f75a9e3fb2b5af94b742e74b11596374b3d07ad10d35dea3b9ef5"
+    },
+    {
+      "path": "raw/pubmed/gene-20-DMD.raw",
+      "bytes": 1254,
+      "sha256": "df41aacf5a54b2979d473e7fcf9b0f0c35c6cd4b1ea6a24248c82c7f79a81fc9"
+    },
+    {
+      "path": "raw/pubmed/liana_interaction-01-MIF_CD74_CXCR4.raw",
+      "bytes": 1285,
+      "sha256": "59b04e202e5a2ce3014b10a38b902e1941539282af77e21e820110f4c27778f8"
+    },
+    {
+      "path": "raw/pubmed/liana_interaction-02-MIF_CD74_CXCR4.raw",
+      "bytes": 1285,
+      "sha256": "927d2b11455d2d20653b8058618512be50d4ebecd515151638dbd36347d4a6c9"
+    },
+    {
+      "path": "raw/pubmed/liana_interaction-03-MIF_CD74_CXCR4.raw",
+      "bytes": 1285,
+      "sha256": "927d2b11455d2d20653b8058618512be50d4ebecd515151638dbd36347d4a6c9"
+    },
+    {
+      "path": "raw/pubmed/liana_interaction-04-MIF_CD74_CXCR4.raw",
+      "bytes": 1285,
+      "sha256": "5080202f958b473c866294c22c269415bf3f1db18909003b3149aed5c1c8d81d"
+    },
+    {
+      "path": "raw/pubmed/liana_interaction-05-MIF_CD74_CXCR4.raw",
+      "bytes": 1285,
+      "sha256": "65b4a07c197c53d4d23ca8e882468cd313e27b936cc228ce81a56bafa5eddacb"
+    },
+    {
+      "path": "raw/pubmed/liana_interaction-06-MIF_CD74_CXCR4.raw",
+      "bytes": 1285,
+      "sha256": "927d2b11455d2d20653b8058618512be50d4ebecd515151638dbd36347d4a6c9"
+    },
+    {
+      "path": "raw/pubmed/liana_interaction-07-MIF_CD74_CXCR4.raw",
+      "bytes": 1285,
+      "sha256": "59b04e202e5a2ce3014b10a38b902e1941539282af77e21e820110f4c27778f8"
+    },
+    {
+      "path": "raw/pubmed/liana_interaction-08-MIF_CD74_CXCR4.raw",
+      "bytes": 1285,
+      "sha256": "59b04e202e5a2ce3014b10a38b902e1941539282af77e21e820110f4c27778f8"
+    },
+    {
+      "path": "raw/pubmed/liana_interaction-09-MIF_CD74_CXCR4.raw",
+      "bytes": 1285,
+      "sha256": "927d2b11455d2d20653b8058618512be50d4ebecd515151638dbd36347d4a6c9"
+    },
+    {
+      "path": "raw/pubmed/liana_interaction-10-MIF_CD74_CXCR4.raw",
+      "bytes": 1285,
+      "sha256": "59b04e202e5a2ce3014b10a38b902e1941539282af77e21e820110f4c27778f8"
+    },
+    {
+      "path": "raw/pubmed/prespecified-01-CXCL9_CXCR3.raw",
+      "bytes": 1739,
+      "sha256": "9cf5bb34f1c7064fe60123210f6987458916cddd10f145fde01e17dcece328d0"
+    },
+    {
+      "path": "raw/pubmed/prespecified-02-CXCL10_CXCR3.raw",
+      "bytes": 1512,
+      "sha256": "3f388b06d4277d96cbbc718a882d6d47d187eca181bf0b71ef4655091001a8b8"
+    },
+    {
+      "path": "raw/pubmed/prespecified-03-CD274_PDCD1.raw",
+      "bytes": 1739,
+      "sha256": "1dbd1c54912017c0c0ab2e4302cfd0ba21ae470afe7292c98fa212467dd6f28c"
+    },
+    {
+      "path": "raw/pubmed/prespecified-04-TGFB1_TGFBR1_TGFBR2.raw",
+      "bytes": 3478,
+      "sha256": "b0b871870a66faab6c717a5496fc19a4f63566be6b2b091bdd1d68fe2c7e58dd"
+    },
+    {
+      "path": "raw/pubmed/prespecified-05-SPP1_CD44.raw",
+      "bytes": 2143,
+      "sha256": "847ea5ac975065cdc1f4d3bca679ccaed29bb27fc176a02a02e9a2c070a69237"
+    },
+    {
+      "path": "raw/pubmed/prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.raw",
+      "bytes": 1195,
+      "sha256": "dedd4862fe9863adb564015bcb79470cc45a8e21e8274bf91d1936b6927a8b9b"
+    },
+    {
+      "path": "raw/reactome/gene-01-IGLL5.raw",
+      "bytes": 425,
+      "sha256": "9b6f5aa741d311f6e0db9058634144be8b4e701e5025b4007459cb76b5a8358c"
+    },
+    {
+      "path": "raw/reactome/gene-02-RAB6C.raw",
+      "bytes": 398,
+      "sha256": "ce80911c2ffa53af5663fa697b2cf245ee0fbf065bfa11841cdd642ed88e8456"
+    },
+    {
+      "path": "raw/reactome/gene-03-P2RY13.raw",
+      "bytes": 1013,
+      "sha256": "6467f0c1efa8aab50e66bfa578c3e6aa06a9f9692b8042534d8b648e09da7cb3"
+    },
+    {
+      "path": "raw/reactome/gene-04-TRG-AS1.raw",
+      "bytes": 17587,
+      "sha256": "4b4ea154148c1129ef7bbc9b8a188fcdf0e01ed83087d8c4e5c63fd7339cedc6"
+    },
+    {
+      "path": "raw/reactome/gene-07-GRK4.raw",
+      "bytes": 2653,
+      "sha256": "e812e673901f760f484dbdab928127cd788554a0d8343831e0c2c73d2760928d"
+    },
+    {
+      "path": "raw/reactome/gene-08-HEY2.raw",
+      "bytes": 22864,
+      "sha256": "07403c7994375aa04507db5c51daf9db25c2e755cf6a5e2cc1cee3d8096fadb4"
+    },
+    {
+      "path": "raw/reactome/gene-09-FOXO6.raw",
+      "bytes": 26272,
+      "sha256": "c3c9356fc75d2be14e5fab4b7241900d1da405110198e08369a76a85a6a0fc8a"
+    },
+    {
+      "path": "raw/reactome/gene-10-MYO10.raw",
+      "bytes": 1007,
+      "sha256": "2160ddb3c7790ff7fbe33ac98138cac4af874f4922d1f0b36bd1efb3acd30ffe"
+    },
+    {
+      "path": "raw/reactome/gene-11-ZNF829.raw",
+      "bytes": 655,
+      "sha256": "3c0e78c9bc945f08778dcded6ff80491e999d9fcab0f719fe9e874cb6df45bae"
+    },
+    {
+      "path": "raw/reactome/gene-12-PTHLH.raw",
+      "bytes": 2442,
+      "sha256": "90449736cd40086c111b974100347bbf0d40d654cca966db463db5cb2eb85953"
+    },
+    {
+      "path": "raw/reactome/gene-13-AZIN1-AS1.raw",
+      "bytes": 14716,
+      "sha256": "e76aa5072adb85987fae69f28d400bc5cc95cddbdf0f20c6c4dd79669cf64a01"
+    },
+    {
+      "path": "raw/reactome/gene-14-LIFR-AS1.raw",
+      "bytes": 17297,
+      "sha256": "2c9d4f3935309a39edbea19f104e60b7e2ade98791876d4a9920135fff8f5129"
+    },
+    {
+      "path": "raw/reactome/gene-16-THAP10.raw",
+      "bytes": 388,
+      "sha256": "c5074d252387c1a27ed88daf1a73afb93182f08b96cf9fe1bec984a0a808a823"
+    },
+    {
+      "path": "raw/reactome/gene-17-DENND4C.raw",
+      "bytes": 2005,
+      "sha256": "20ffadbe31685042d378b5eb4bc8011e93f0fecaf2d520a695eb9514bfc60a52"
+    },
+    {
+      "path": "raw/reactome/gene-19-IGLC3.raw",
+      "bytes": 1137,
+      "sha256": "090691ced20ee9b241bf0188964eb435e1f11ee46094db7785316e6441aba137"
+    },
+    {
+      "path": "raw/reactome/gene-20-DMD.raw",
+      "bytes": 13291,
+      "sha256": "9333cc3ad8e63fba7e615858dc34a8b6a4d454bfb051c74ff3c893e1f440e6f9"
+    },
+    {
+      "path": "raw/reactome/liana_interaction-01-MIF_CD74_CXCR4.raw",
+      "bytes": 8589,
+      "sha256": "801ecca586f16df3b7f69a2c555471a8ec1f465faa61bc9bd84d78d431362475"
+    },
+    {
+      "path": "raw/reactome/liana_interaction-02-MIF_CD74_CXCR4.raw",
+      "bytes": 8589,
+      "sha256": "801ecca586f16df3b7f69a2c555471a8ec1f465faa61bc9bd84d78d431362475"
+    },
+    {
+      "path": "raw/reactome/liana_interaction-03-MIF_CD74_CXCR4.raw",
+      "bytes": 8589,
+      "sha256": "801ecca586f16df3b7f69a2c555471a8ec1f465faa61bc9bd84d78d431362475"
+    },
+    {
+      "path": "raw/reactome/liana_interaction-04-MIF_CD74_CXCR4.raw",
+      "bytes": 8589,
+      "sha256": "801ecca586f16df3b7f69a2c555471a8ec1f465faa61bc9bd84d78d431362475"
+    },
+    {
+      "path": "raw/reactome/liana_interaction-05-MIF_CD74_CXCR4.raw",
+      "bytes": 8589,
+      "sha256": "801ecca586f16df3b7f69a2c555471a8ec1f465faa61bc9bd84d78d431362475"
+    },
+    {
+      "path": "raw/reactome/liana_interaction-06-MIF_CD74_CXCR4.raw",
+      "bytes": 8589,
+      "sha256": "801ecca586f16df3b7f69a2c555471a8ec1f465faa61bc9bd84d78d431362475"
+    },
+    {
+      "path": "raw/reactome/liana_interaction-07-MIF_CD74_CXCR4.raw",
+      "bytes": 8589,
+      "sha256": "801ecca586f16df3b7f69a2c555471a8ec1f465faa61bc9bd84d78d431362475"
+    },
+    {
+      "path": "raw/reactome/liana_interaction-08-MIF_CD74_CXCR4.raw",
+      "bytes": 8589,
+      "sha256": "801ecca586f16df3b7f69a2c555471a8ec1f465faa61bc9bd84d78d431362475"
+    },
+    {
+      "path": "raw/reactome/liana_interaction-09-MIF_CD74_CXCR4.raw",
+      "bytes": 8589,
+      "sha256": "801ecca586f16df3b7f69a2c555471a8ec1f465faa61bc9bd84d78d431362475"
+    },
+    {
+      "path": "raw/reactome/liana_interaction-10-MIF_CD74_CXCR4.raw",
+      "bytes": 8589,
+      "sha256": "801ecca586f16df3b7f69a2c555471a8ec1f465faa61bc9bd84d78d431362475"
+    },
+    {
+      "path": "raw/reactome/prespecified-01-CXCL9_CXCR3.raw",
+      "bytes": 10994,
+      "sha256": "180667163e6edd8021fd0c81bf0425ccb58c74fe22aba568f6dc0f2ac309c2cb"
+    },
+    {
+      "path": "raw/reactome/prespecified-02-CXCL10_CXCR3.raw",
+      "bytes": 27383,
+      "sha256": "35a8704b3506306cb2d936a62fbac12f230c04fa44d79a73a43c346332437601"
+    },
+    {
+      "path": "raw/reactome/prespecified-03-CD274_PDCD1.raw",
+      "bytes": 36683,
+      "sha256": "8fa3555b64bdc5ecdc0b7a2e0e2513bea2f734d16ed98b55460e7029145be412"
+    },
+    {
+      "path": "raw/reactome/prespecified-04-TGFB1_TGFBR1_TGFBR2.raw",
+      "bytes": 54871,
+      "sha256": "d19d82f87c87750a2ff14452fab572f8ecc37ff33ea53072fe6398ee7ab4352b"
+    },
+    {
+      "path": "raw/reactome/prespecified-05-SPP1_CD44.raw",
+      "bytes": 43194,
+      "sha256": "16c3ae6b36abccefb9b00f9bd723cf05a220378d282db8cf7d79fc3a0cc13d11"
+    },
+    {
+      "path": "refresh_s6_manifests.py",
+      "bytes": 1126,
+      "sha256": "3f55a58729aab4e77b272f7befcd15e9c97383ae8872487f6807ce65f9725b29"
+    },
+    {
+      "path": "repair_s6_string_uniprot_queries.py",
+      "bytes": 2930,
+      "sha256": "aecc1953a2ab029d02a9e852dcd1f7269caf3c992dadf9b5d56a34d5db9bf6e5"
+    },
+    {
+      "path": "requests/opentargets/gene-01-IGLL5.request.json",
+      "bytes": 822,
+      "sha256": "501b62bdee723785a828762dcc1f3b747b8ccc0d9a982aaa8478dc86b92f2554"
+    },
+    {
+      "path": "requests/opentargets/gene-02-RAB6C.request.json",
+      "bytes": 822,
+      "sha256": "8865c5136dbfd7a945f0fd5de2c6f3081ab87bd0d228edccbe34307e86e809f7"
+    },
+    {
+      "path": "requests/opentargets/gene-03-P2RY13.request.json",
+      "bytes": 825,
+      "sha256": "922fbf2f41be920d506b01dd6d490765701c36628e72eaf83bd3ab4843595e3c"
+    },
+    {
+      "path": "requests/opentargets/gene-04-TRG-AS1.request.json",
+      "bytes": 828,
+      "sha256": "7b956b9c3ce6cbbaae3204900f45488093e0f4304875797b226ac862f87c053d"
+    },
+    {
+      "path": "requests/opentargets/gene-05-AC116913.1.request.json",
+      "bytes": 837,
+      "sha256": "073777c331f22429177672642b7f8b3cd20b17f3e01c8d34bb590e62f112f41d"
+    },
+    {
+      "path": "requests/opentargets/gene-06-LINC01144.request.json",
+      "bytes": 834,
+      "sha256": "d3cd9d65dd534ce87b0361f9b3437b29a188202741fc99ca1db9d7ef4d8c0e10"
+    },
+    {
+      "path": "requests/opentargets/gene-07-GRK4.request.json",
+      "bytes": 819,
+      "sha256": "d64ea312649e17a309176737036b7e3d9f793e0927a0607f6d4a8f5cf4ad2790"
+    },
+    {
+      "path": "requests/opentargets/gene-08-HEY2.request.json",
+      "bytes": 819,
+      "sha256": "553b8fad179d2a51a2e862f0088a133d8d224b46a962e3268fcd9461061b8034"
+    },
+    {
+      "path": "requests/opentargets/gene-09-FOXO6.request.json",
+      "bytes": 822,
+      "sha256": "931f52047c754a8cd5592a38b760144baf7c298c8ccc5c39d37df996bf4e78fa"
+    },
+    {
+      "path": "requests/opentargets/gene-10-MYO10.request.json",
+      "bytes": 823,
+      "sha256": "5527fa548956c4386cc4741d9af7eb85d7ff3bbe63e429c85f0b5a65490d1bac"
+    },
+    {
+      "path": "requests/opentargets/gene-11-ZNF829.request.json",
+      "bytes": 826,
+      "sha256": "cdf3deba6f04682c513431cec3a37b58b3685e2476dda81b302556cec0852291"
+    },
+    {
+      "path": "requests/opentargets/gene-12-PTHLH.request.json",
+      "bytes": 823,
+      "sha256": "36c221658e25cc5419b36e788780ae5592dfd1f2a8769bd616a8a9c337702fa3"
+    },
+    {
+      "path": "requests/opentargets/gene-13-AZIN1-AS1.request.json",
+      "bytes": 835,
+      "sha256": "11acd13460ac1064a7e39234df6f419a7b1f83cd0bfdccd9b6bd4293c6ff5514"
+    },
+    {
+      "path": "requests/opentargets/gene-14-LIFR-AS1.request.json",
+      "bytes": 832,
+      "sha256": "18768cb83883998e0962054c8bb6739c248a6fce33e7c6b11eff95639eb258a6"
+    },
+    {
+      "path": "requests/opentargets/gene-15-LINC01489.request.json",
+      "bytes": 835,
+      "sha256": "e708e51746d4404a4caa14b881f97e887c52bab34e0b6f99a657650a81e9b573"
+    },
+    {
+      "path": "requests/opentargets/gene-16-THAP10.request.json",
+      "bytes": 826,
+      "sha256": "a4a35214bbfa2038c7e108b1ad046391b8a857569af72b48f29d51ea41cf731f"
+    },
+    {
+      "path": "requests/opentargets/gene-17-DENND4C.request.json",
+      "bytes": 829,
+      "sha256": "2abfbc13602fc7a9b26d4c4a79b87e365dc8f83a3696536e0d5462c9db9b9839"
+    },
+    {
+      "path": "requests/opentargets/gene-18-MACC1.request.json",
+      "bytes": 823,
+      "sha256": "9ea7d5e5ed38c2f7f03b92a1bb301e76b0a94d69403e48cea48a0ead600be492"
+    },
+    {
+      "path": "requests/opentargets/gene-19-IGLC3.request.json",
+      "bytes": 823,
+      "sha256": "a4d7c82cb74422f92304829f9cc4a5eedda3c9cc36a288770d2e7d4ef6ee910a"
+    },
+    {
+      "path": "requests/opentargets/gene-20-DMD.request.json",
+      "bytes": 817,
+      "sha256": "5c63738b9c89e5ea74547e216ee0d20742b207ee7260379dc6490332140d0d1f"
+    },
+    {
+      "path": "requests/opentargets/liana_interaction-01-MIF_CD74_CXCR4.request.json",
+      "bytes": 875,
+      "sha256": "00045e0bcaa1f0b8122876033b03f6939f71667c1e59e680ebe2709942f81693"
+    },
+    {
+      "path": "requests/opentargets/liana_interaction-02-MIF_CD74_CXCR4.request.json",
+      "bytes": 875,
+      "sha256": "dbce48368f490d03f41f864ba0ce5079851d741b8d6ff8f1dfa18dc43fae39c5"
+    },
+    {
+      "path": "requests/opentargets/liana_interaction-03-MIF_CD74_CXCR4.request.json",
+      "bytes": 875,
+      "sha256": "5232a4c277f8020210969c39720f700620f5ffd134c19c4d1a68832a2f480094"
+    },
+    {
+      "path": "requests/opentargets/liana_interaction-04-MIF_CD74_CXCR4.request.json",
+      "bytes": 875,
+      "sha256": "65a5497a8b2ea96fb14eee1c0b23e808a435ee2c37530649b11aae3c278d031d"
+    },
+    {
+      "path": "requests/opentargets/liana_interaction-05-MIF_CD74_CXCR4.request.json",
+      "bytes": 875,
+      "sha256": "591f1a4d4c77d75163c72711d4e6db84f7146a29d6a4c346c30189bdea1ca9dc"
+    },
+    {
+      "path": "requests/opentargets/liana_interaction-06-MIF_CD74_CXCR4.request.json",
+      "bytes": 875,
+      "sha256": "4531a951ea56568efeb7f1b6768f07d459aaf77befcd1db4784edc7114168bda"
+    },
+    {
+      "path": "requests/opentargets/liana_interaction-07-MIF_CD74_CXCR4.request.json",
+      "bytes": 875,
+      "sha256": "813e62cfbd0fd2ae514315994dc18acae95915db2f3ecc2957fe9ff2d9d6a3ea"
+    },
+    {
+      "path": "requests/opentargets/liana_interaction-08-MIF_CD74_CXCR4.request.json",
+      "bytes": 875,
+      "sha256": "4d828e74ae39c1b82f22b0aae8cf19a5ff4188c0568a5d1f3b594b627de35bf0"
+    },
+    {
+      "path": "requests/opentargets/liana_interaction-09-MIF_CD74_CXCR4.request.json",
+      "bytes": 875,
+      "sha256": "155d1aa29397c30546ac5e56969eadbc0125740287bfb7a616172e936c43028a"
+    },
+    {
+      "path": "requests/opentargets/liana_interaction-10-MIF_CD74_CXCR4.request.json",
+      "bytes": 876,
+      "sha256": "5486cb18952ea34eac5f0720de1e9f935be0437d9f3de10f5a8e8ab2fc9ed39c"
+    },
+    {
+      "path": "requests/opentargets/prespecified-01-CXCL9_CXCR3.request.json",
+      "bytes": 856,
+      "sha256": "a09306de2048bc30e0b5f257308bf022e86822f4f7edbd48ce20b6d0f201fa0d"
+    },
+    {
+      "path": "requests/opentargets/prespecified-02-CXCL10_CXCR3.request.json",
+      "bytes": 859,
+      "sha256": "8593eaf2bead56175ea8b1a2fe49b394017779f521831ee12bcfdd6fa2505735"
+    },
+    {
+      "path": "requests/opentargets/prespecified-03-CD274_PDCD1.request.json",
+      "bytes": 856,
+      "sha256": "11a09337bbd9006bcfac5e74147eeb5fe818b39746d359b50e821bcb80cabedc"
+    },
+    {
+      "path": "requests/opentargets/prespecified-04-TGFB1_TGFBR1_TGFBR2.request.json",
+      "bytes": 880,
+      "sha256": "bfa16e92fcc3b96f83ff070df7ec4508b9580519cb6d567f791ccb2c254c0a43"
+    },
+    {
+      "path": "requests/opentargets/prespecified-05-SPP1_CD44.request.json",
+      "bytes": 850,
+      "sha256": "f7816f4d212535ba3e71aa4afa7778a17b721f5175345c1eede5bd1aa8ef95c5"
+    },
+    {
+      "path": "requests/opentargets/prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.request.json",
+      "bytes": 925,
+      "sha256": "bf6de683503e44041d97e74c16669c05c320895e3303aaf72f6a59e8a2152f78"
+    },
+    {
+      "path": "requests/pubmed/gene-01-IGLL5.request.json",
+      "bytes": 803,
+      "sha256": "4bdf99d4a9489962a1a6dbfbb391489051c4a4988d2d245d19fa9e24f241b8d8"
+    },
+    {
+      "path": "requests/pubmed/gene-02-RAB6C.request.json",
+      "bytes": 803,
+      "sha256": "2f7860544669be4e0ff7495681d9390d2d67e2c57c279653e9b8c9861e2d8f6c"
+    },
+    {
+      "path": "requests/pubmed/gene-03-P2RY13.request.json",
+      "bytes": 806,
+      "sha256": "9892ddce57443333541493b5c282db87ef7e90a91a61ecb49d273dba7291b46a"
+    },
+    {
+      "path": "requests/pubmed/gene-04-TRG-AS1.request.json",
+      "bytes": 809,
+      "sha256": "11aabde43b39a45254270db9895073b022fb8719d1505fe714a89f7ba993595e"
+    },
+    {
+      "path": "requests/pubmed/gene-05-AC116913.1.request.json",
+      "bytes": 818,
+      "sha256": "4be43a77136261c4fe797ba56331ed509c76427cee163d33946f7edf0b83908e"
+    },
+    {
+      "path": "requests/pubmed/gene-06-LINC01144.request.json",
+      "bytes": 815,
+      "sha256": "f9b91c87dab48d861ae7ea00f611432c7c15753a7c90379708f23547be3c3f49"
+    },
+    {
+      "path": "requests/pubmed/gene-07-GRK4.request.json",
+      "bytes": 800,
+      "sha256": "2d4a97c68cd6e4cb1465170f5fa363d446ad20fd472dc900666f9a77c168ceb0"
+    },
+    {
+      "path": "requests/pubmed/gene-08-HEY2.request.json",
+      "bytes": 800,
+      "sha256": "a1b4dff5c78157bdb78516fb1acc42504a151282df575639fa9c595ae4b4d502"
+    },
+    {
+      "path": "requests/pubmed/gene-09-FOXO6.request.json",
+      "bytes": 803,
+      "sha256": "852fc3e614f4cfd8f8734194dd267d20572c6e01331c979e135e7b89cc01aea8"
+    },
+    {
+      "path": "requests/pubmed/gene-10-MYO10.request.json",
+      "bytes": 804,
+      "sha256": "03d29ee3b632a563e3c661618b7a03e3d44403bc693745f7c135241e2fb4b9c8"
+    },
+    {
+      "path": "requests/pubmed/gene-11-ZNF829.request.json",
+      "bytes": 807,
+      "sha256": "66ac76b450f6c72300dcbb779a6db97277e3dab61aa2a9f5149b163d4107fc5d"
+    },
+    {
+      "path": "requests/pubmed/gene-12-PTHLH.request.json",
+      "bytes": 804,
+      "sha256": "42023e6e23f1a6b9658e8842ffef08d010fc05cb2cb46392f8748188b5cabaac"
+    },
+    {
+      "path": "requests/pubmed/gene-13-AZIN1-AS1.request.json",
+      "bytes": 816,
+      "sha256": "7de3fbd117f76b0edcc08d570a8bf8e18a310b235a4aed35da5020683b5117f0"
+    },
+    {
+      "path": "requests/pubmed/gene-14-LIFR-AS1.request.json",
+      "bytes": 813,
+      "sha256": "7aa47bed342c1700af96cda7101331a63ef73324f48cdddfba368ff2407d8ad4"
+    },
+    {
+      "path": "requests/pubmed/gene-15-LINC01489.request.json",
+      "bytes": 816,
+      "sha256": "d092296e868829eca26dca7f34da764321b89357b27514853785f40d18c178c8"
+    },
+    {
+      "path": "requests/pubmed/gene-16-THAP10.request.json",
+      "bytes": 807,
+      "sha256": "b4a0214b5190df63a97d00108e1cbd19054d359b79024970f4e3100f66f00bf3"
+    },
+    {
+      "path": "requests/pubmed/gene-17-DENND4C.request.json",
+      "bytes": 810,
+      "sha256": "abfd19e2d584824c7b0a57ca784e44924f62a0f34a6fb288f16b5148316960ed"
+    },
+    {
+      "path": "requests/pubmed/gene-18-MACC1.request.json",
+      "bytes": 804,
+      "sha256": "d6b17da98863ee8048753f82276ba3455d8ca4ef04a7294eb4a601b94e0819d7"
+    },
+    {
+      "path": "requests/pubmed/gene-19-IGLC3.request.json",
+      "bytes": 804,
+      "sha256": "065f1f61934473d85cede6e7bb6980fce52cca1fd3b9ed4d0bb108794b3152a3"
+    },
+    {
+      "path": "requests/pubmed/gene-20-DMD.request.json",
+      "bytes": 798,
+      "sha256": "647067db6dc9fada2bdc5e0b7eb9b790fc047148de1b1fa36d64bc98545418b8"
+    },
+    {
+      "path": "requests/pubmed/liana_interaction-01-MIF_CD74_CXCR4.request.json",
+      "bytes": 856,
+      "sha256": "c929049b39f46edafb05ca1988f2dc2fe5ab58254ad742e1c69ae86038fbda76"
+    },
+    {
+      "path": "requests/pubmed/liana_interaction-02-MIF_CD74_CXCR4.request.json",
+      "bytes": 856,
+      "sha256": "1021eef51aa096fba6f1cf777082f0d081c6d73e2ecc819cef04580ad9bbf7a0"
+    },
+    {
+      "path": "requests/pubmed/liana_interaction-03-MIF_CD74_CXCR4.request.json",
+      "bytes": 856,
+      "sha256": "e2cc81f3827513e5d1a07bba2179d59c48b9597247714632a7005674153fcdb1"
+    },
+    {
+      "path": "requests/pubmed/liana_interaction-04-MIF_CD74_CXCR4.request.json",
+      "bytes": 856,
+      "sha256": "1d95c27858c3b894e99db9450b62b3ea23d87ceb66e1964fe16814c6c6c43541"
+    },
+    {
+      "path": "requests/pubmed/liana_interaction-05-MIF_CD74_CXCR4.request.json",
+      "bytes": 856,
+      "sha256": "45c28b52b946e9d23ffda0878a3d0dd1a0d5d6a362349a4e0feac26df7d5b39a"
+    },
+    {
+      "path": "requests/pubmed/liana_interaction-06-MIF_CD74_CXCR4.request.json",
+      "bytes": 856,
+      "sha256": "ad6a8ee9c9384591722f6d2d5ef7e4a6aed7d4ffa663d6deea7882370ba5ec2c"
+    },
+    {
+      "path": "requests/pubmed/liana_interaction-07-MIF_CD74_CXCR4.request.json",
+      "bytes": 856,
+      "sha256": "7c49da2bae535c4bf699198b06c7792a37d4e05901cc79ae99d38485466235b8"
+    },
+    {
+      "path": "requests/pubmed/liana_interaction-08-MIF_CD74_CXCR4.request.json",
+      "bytes": 856,
+      "sha256": "a0e4ca8754a3ce7db188399efdcb3c460f922d06eb647cfd77eed7b1888ad895"
+    },
+    {
+      "path": "requests/pubmed/liana_interaction-09-MIF_CD74_CXCR4.request.json",
+      "bytes": 856,
+      "sha256": "0f5e67f3c3c04bc58976e6281d8044e9be4b04d18628fc1e79d79deaa8552751"
+    },
+    {
+      "path": "requests/pubmed/liana_interaction-10-MIF_CD74_CXCR4.request.json",
+      "bytes": 857,
+      "sha256": "70c646d54346fe6e1db5927d717fdc46bb96b0cf26f49eae5271100f78efcf27"
+    },
+    {
+      "path": "requests/pubmed/prespecified-01-CXCL9_CXCR3.request.json",
+      "bytes": 837,
+      "sha256": "ff9dba536f984578b00e4c6309dcda3214132d9f78a6abfd9363d4b26c4ebdc6"
+    },
+    {
+      "path": "requests/pubmed/prespecified-02-CXCL10_CXCR3.request.json",
+      "bytes": 840,
+      "sha256": "8ee7d46025c5677eb00df71e81b7dcb4ad4091503b5157fa0c0844f699e749a8"
+    },
+    {
+      "path": "requests/pubmed/prespecified-03-CD274_PDCD1.request.json",
+      "bytes": 837,
+      "sha256": "32f48eba105556a6f03c0df77f0076a04e70d75ec884e71dcb0bf7236dbaa555"
+    },
+    {
+      "path": "requests/pubmed/prespecified-04-TGFB1_TGFBR1_TGFBR2.request.json",
+      "bytes": 861,
+      "sha256": "01e3db7df7f155f3220729de5f70507dd5e7d11bebca2e1e511176823d1cdcbf"
+    },
+    {
+      "path": "requests/pubmed/prespecified-05-SPP1_CD44.request.json",
+      "bytes": 831,
+      "sha256": "c83a3aae26abb6b7d47888f7844fbbdd8322ec8d1a93d87f081b51b065c7d9c8"
+    },
+    {
+      "path": "requests/pubmed/prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.request.json",
+      "bytes": 906,
+      "sha256": "81e4c752ac3a75ff95291330fa65f4af9e0eff9fbf328e456d8aa5a77ecae33f"
+    },
+    {
+      "path": "requests/reactome/gene-01-IGLL5.request.json",
+      "bytes": 771,
+      "sha256": "12a799d3a4f417a069fc9791a9ac1e1ff075dac313c28d0b731f03799f051d04"
+    },
+    {
+      "path": "requests/reactome/gene-02-RAB6C.request.json",
+      "bytes": 771,
+      "sha256": "c7cdcf3de6a54446103f8b0945d5be944bef225f47a2d78543d0480028203c0a"
+    },
+    {
+      "path": "requests/reactome/gene-03-P2RY13.request.json",
+      "bytes": 774,
+      "sha256": "72fad1f01df7b340760d6865726a2aad727088fc3e87ee5c38e3c7d4b466e5d0"
+    },
+    {
+      "path": "requests/reactome/gene-04-TRG-AS1.request.json",
+      "bytes": 777,
+      "sha256": "7507209c2277a3a6f566df2769642488e2baadb31b48d01e4a7d782d4a99f901"
+    },
+    {
+      "path": "requests/reactome/gene-05-AC116913.1.request.json",
+      "bytes": 786,
+      "sha256": "037b5e69fbd73d4887ef941a7ec9984e6791d55cf86eec306a0784310cffde83"
+    },
+    {
+      "path": "requests/reactome/gene-06-LINC01144.request.json",
+      "bytes": 783,
+      "sha256": "b65c08c5ee869c74b95ec1f22b34475933b7c7b216930e54465d8e60b7625cf9"
+    },
+    {
+      "path": "requests/reactome/gene-07-GRK4.request.json",
+      "bytes": 768,
+      "sha256": "32b5fce31a310ba3a088fc7ee979c8c4e4be6d7082c8591673012ad031892ebf"
+    },
+    {
+      "path": "requests/reactome/gene-08-HEY2.request.json",
+      "bytes": 768,
+      "sha256": "b06bdcf5981be24231a41737d28ca62d8954f91f3e0fa05130797af5f677a9bd"
+    },
+    {
+      "path": "requests/reactome/gene-09-FOXO6.request.json",
+      "bytes": 771,
+      "sha256": "434ca96bfc0ccd16a164bd2d3f0a5897b0cb43fbe6b6f3b170bc588adfd22478"
+    },
+    {
+      "path": "requests/reactome/gene-10-MYO10.request.json",
+      "bytes": 772,
+      "sha256": "a299ef3e76c1b3c6063c72842c0f385b05a247c36c21a69b8abba74cbd24bc77"
+    },
+    {
+      "path": "requests/reactome/gene-11-ZNF829.request.json",
+      "bytes": 775,
+      "sha256": "dbbf3e72b3405e87e67f1d0bb48e31394c0c9eb73437c0ffa86288959ecc054d"
+    },
+    {
+      "path": "requests/reactome/gene-12-PTHLH.request.json",
+      "bytes": 772,
+      "sha256": "a5355857950287a0c7ac22f8fb3ec8f456b8a1a368ac2b55a962a765045bf42a"
+    },
+    {
+      "path": "requests/reactome/gene-13-AZIN1-AS1.request.json",
+      "bytes": 784,
+      "sha256": "cc8b226bf4524befc43fc4eb19f57f4668fe3b401493830cfdf9503b611a0f81"
+    },
+    {
+      "path": "requests/reactome/gene-14-LIFR-AS1.request.json",
+      "bytes": 781,
+      "sha256": "f51b3e43e1de9feb1a63391a9db4b1f369c2a9bbf7315901aba8ad65d14b4e29"
+    },
+    {
+      "path": "requests/reactome/gene-15-LINC01489.request.json",
+      "bytes": 784,
+      "sha256": "506c119a6825d58a42b9637737d01da492aba28e573480a510b096e610a3d98c"
+    },
+    {
+      "path": "requests/reactome/gene-16-THAP10.request.json",
+      "bytes": 775,
+      "sha256": "85e0fff356d112b9e4d9e1e922417c8f29927099ff899314d4829cbaa24fe630"
+    },
+    {
+      "path": "requests/reactome/gene-17-DENND4C.request.json",
+      "bytes": 778,
+      "sha256": "14bb46b0b29c36af0231b3a5f782caa8207d07451de8ac2a130a643f08bc7599"
+    },
+    {
+      "path": "requests/reactome/gene-18-MACC1.request.json",
+      "bytes": 772,
+      "sha256": "988d83464f551206949a09a2948ac0dcafbc861fc7480b2929af1cfc927b277d"
+    },
+    {
+      "path": "requests/reactome/gene-19-IGLC3.request.json",
+      "bytes": 772,
+      "sha256": "df16f9a66704ba7819ac1968b356453442d70a6b74b9051a9b47fa018200a134"
+    },
+    {
+      "path": "requests/reactome/gene-20-DMD.request.json",
+      "bytes": 766,
+      "sha256": "d839bae8a8b56a5a337bae4baf70fdc1f92c6905058ca3096da4c99e06e5f34f"
+    },
+    {
+      "path": "requests/reactome/liana_interaction-01-MIF_CD74_CXCR4.request.json",
+      "bytes": 824,
+      "sha256": "65a02ae5b9161b31961cc5f6226d3eaed43aab98bc2133c327bf80397a6252bb"
+    },
+    {
+      "path": "requests/reactome/liana_interaction-02-MIF_CD74_CXCR4.request.json",
+      "bytes": 824,
+      "sha256": "8209fbd60c5d32fb15313b7447d3c4ae6a9a9b8983e49c29494c6dec1c987749"
+    },
+    {
+      "path": "requests/reactome/liana_interaction-03-MIF_CD74_CXCR4.request.json",
+      "bytes": 824,
+      "sha256": "2db8bc2a3409963d60e27d3b518ede07da2a4e802e140b74b28223e588663e5a"
+    },
+    {
+      "path": "requests/reactome/liana_interaction-04-MIF_CD74_CXCR4.request.json",
+      "bytes": 824,
+      "sha256": "176e7ce471600002a3f14e0dc221467903ac7e237419dc37d438e1eeaaf1ae5d"
+    },
+    {
+      "path": "requests/reactome/liana_interaction-05-MIF_CD74_CXCR4.request.json",
+      "bytes": 824,
+      "sha256": "27fa0f58a11f291dd98624de3896968a6c9aac3d0f4c3c10c90e2c687fea997e"
+    },
+    {
+      "path": "requests/reactome/liana_interaction-06-MIF_CD74_CXCR4.request.json",
+      "bytes": 824,
+      "sha256": "5f770d810310b2a37aad646abdb5a8b50775e1bd0c861438e04f8b3e54f6c457"
+    },
+    {
+      "path": "requests/reactome/liana_interaction-07-MIF_CD74_CXCR4.request.json",
+      "bytes": 824,
+      "sha256": "fc1f9c87e7e7e0e73541a7a85a56691e27c27cbaaae69fda8281ef768bd6f9f4"
+    },
+    {
+      "path": "requests/reactome/liana_interaction-08-MIF_CD74_CXCR4.request.json",
+      "bytes": 824,
+      "sha256": "e188f93c44b17d0cc7f99271d07d92d2c0d6b326a790a559e6346703b02a09a5"
+    },
+    {
+      "path": "requests/reactome/liana_interaction-09-MIF_CD74_CXCR4.request.json",
+      "bytes": 824,
+      "sha256": "3ca9ad2fd423a228f5cc20bd79f7c6fe1d29acc975341830720be8352f143b9b"
+    },
+    {
+      "path": "requests/reactome/liana_interaction-10-MIF_CD74_CXCR4.request.json",
+      "bytes": 825,
+      "sha256": "893cc7bcd8cd46eb3f5fbfb9f9848c96dd5da8649e95f65cb0ffc4f2eb566402"
+    },
+    {
+      "path": "requests/reactome/prespecified-01-CXCL9_CXCR3.request.json",
+      "bytes": 805,
+      "sha256": "cb3936b7d7a05a67d17ae157785ba4edf7d4bd8277721e17ee8d3187a6b34a4a"
+    },
+    {
+      "path": "requests/reactome/prespecified-02-CXCL10_CXCR3.request.json",
+      "bytes": 808,
+      "sha256": "01a7c359a94777e8ae541a81e2435efff64f6bcff2dd1317e823890e94022d2d"
+    },
+    {
+      "path": "requests/reactome/prespecified-03-CD274_PDCD1.request.json",
+      "bytes": 805,
+      "sha256": "304ffbab81324bd08bd420505b21faeab0f9ecb90d9cebe7613a227f06a5bb51"
+    },
+    {
+      "path": "requests/reactome/prespecified-04-TGFB1_TGFBR1_TGFBR2.request.json",
+      "bytes": 829,
+      "sha256": "c3913b134c9cef02cd6897d68c0a1306e8ccf57449e213e47e42fd7b822b0daa"
+    },
+    {
+      "path": "requests/reactome/prespecified-05-SPP1_CD44.request.json",
+      "bytes": 799,
+      "sha256": "08f6979b02e9f6d561bbcae31dabd799d89a28a020cdc545d7c653c79f130d75"
+    },
+    {
+      "path": "requests/reactome/prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.request.json",
+      "bytes": 874,
+      "sha256": "9c42604f3f6381573e96d6e6e9ff7bc6b39af92d2fc8a1fd05ea8caf2340a1ae"
+    },
+    {
+      "path": "requests/string/gene-01-IGLL5.request.json",
+      "bytes": 784,
+      "sha256": "fd9ecff8de50b3dbd8d471e50644c351a5884778181ae22a96f6fa404edc0d65"
+    },
+    {
+      "path": "requests/string/gene-02-RAB6C.request.json",
+      "bytes": 784,
+      "sha256": "07069194e302e96d3aaf7f3ad60577dae083cc8fa7fc0e26d1b60e840c30d0a0"
+    },
+    {
+      "path": "requests/string/gene-03-P2RY13.request.json",
+      "bytes": 787,
+      "sha256": "961f8819ca2282568ebc4df313ece7102a8ad5bc63c8e6c8bb610cafa9b89766"
+    },
+    {
+      "path": "requests/string/gene-04-TRG-AS1.request.json",
+      "bytes": 790,
+      "sha256": "69a31d4edbd937cb6972d47dce35ebe53bc74267cf010d103667727720a81907"
+    },
+    {
+      "path": "requests/string/gene-05-AC116913.1.request.json",
+      "bytes": 797,
+      "sha256": "15b8f695097d28a28c802b94740cbe517d2e61690e28fa6cf40c808e01287745"
+    },
+    {
+      "path": "requests/string/gene-06-LINC01144.request.json",
+      "bytes": 796,
+      "sha256": "82a2dfc9517ae96aa85affa894183806af9038393bb43bacc3d2491b2579e3a0"
+    },
+    {
+      "path": "requests/string/gene-07-GRK4.request.json",
+      "bytes": 781,
+      "sha256": "abd724a97accdf3f2975722534b97f1c5710f1972cd63ffc47d5c89b311d1265"
+    },
+    {
+      "path": "requests/string/gene-08-HEY2.request.json",
+      "bytes": 781,
+      "sha256": "ed38f3c9c5ec68528068eba8bddf1f97e8cf628594c1f5e0630970d73074d44e"
+    },
+    {
+      "path": "requests/string/gene-09-FOXO6.request.json",
+      "bytes": 784,
+      "sha256": "14199ec7f7f5ee1b992acf7cc0eaaae3e3b52bf1d43ecc939b8f8849b8720f02"
+    },
+    {
+      "path": "requests/string/gene-10-MYO10.request.json",
+      "bytes": 785,
+      "sha256": "b706f5a7cdd045555b899daf3ec7c2fd0395abea742969f46bf941b1150bb78c"
+    },
+    {
+      "path": "requests/string/gene-11-ZNF829.request.json",
+      "bytes": 788,
+      "sha256": "3a40c84cae7b9347cc7c94f4d2964e1edf703e5b776db46f1693720b737fdbb2"
+    },
+    {
+      "path": "requests/string/gene-12-PTHLH.request.json",
+      "bytes": 785,
+      "sha256": "b489de813854746aef5a25c5a2c731e7f70b5aff1becc2676060cd6af757804e"
+    },
+    {
+      "path": "requests/string/gene-13-AZIN1-AS1.request.json",
+      "bytes": 797,
+      "sha256": "45058f6e5682e1aa4cecf7a890ce8a0246260bf1d142116de82d7ad14e047654"
+    },
+    {
+      "path": "requests/string/gene-14-LIFR-AS1.request.json",
+      "bytes": 794,
+      "sha256": "4441445f5a62ccaf5558ebec768d6de920fa48bf8cd1da62ffe286de88c98bc8"
+    },
+    {
+      "path": "requests/string/gene-15-LINC01489.request.json",
+      "bytes": 797,
+      "sha256": "763e7f68eb7843e48503a34b91261a195ac0d6c9b503816c483da88f3c1c6c6b"
+    },
+    {
+      "path": "requests/string/gene-16-THAP10.request.json",
+      "bytes": 788,
+      "sha256": "663f02cb522b33a60c6eb85b29a1fb6b27c173cfa0d0a293577adce5b492a2b2"
+    },
+    {
+      "path": "requests/string/gene-17-DENND4C.request.json",
+      "bytes": 791,
+      "sha256": "5d912eaf4889ec90e6adbf9389d8092e9fc901bb7de770487186e38592466ce0"
+    },
+    {
+      "path": "requests/string/gene-18-MACC1.request.json",
+      "bytes": 785,
+      "sha256": "eee45ead49a4d6be5ddd1fad2d5fda30b9f87a61438fc7d725659a5f10fc6b70"
+    },
+    {
+      "path": "requests/string/gene-19-IGLC3.request.json",
+      "bytes": 785,
+      "sha256": "2b4dab18ceb3a188642f0da76c5720065945f3c5dd6482ebd042d76a5c8c8289"
+    },
+    {
+      "path": "requests/string/gene-20-DMD.request.json",
+      "bytes": 779,
+      "sha256": "4f6422fcfd5224640007b9b0c9fb02adb9da88a41ff2389c5fb0f00ab9425d2b"
+    },
+    {
+      "path": "requests/string/liana_interaction-01-MIF_CD74_CXCR4.request.json",
+      "bytes": 839,
+      "sha256": "9ebf497ce80b07e211d3ae0b7a18ef450d4f8352fb88c3aaf07e444200d8aab2"
+    },
+    {
+      "path": "requests/string/liana_interaction-02-MIF_CD74_CXCR4.request.json",
+      "bytes": 839,
+      "sha256": "b80ce7ed8fa5b9b29e7bf7bcd2a90f53d132c43517542499bfe4f0527cb7d1de"
+    },
+    {
+      "path": "requests/string/liana_interaction-03-MIF_CD74_CXCR4.request.json",
+      "bytes": 839,
+      "sha256": "8a017826ba5e52e161e213535b8bd89c6412f34af8968db681bcf77538c20568"
+    },
+    {
+      "path": "requests/string/liana_interaction-04-MIF_CD74_CXCR4.request.json",
+      "bytes": 839,
+      "sha256": "ff16177b4074e8863e053de90fa1b206c1f13aa4a81a98c228b9693b206e3129"
+    },
+    {
+      "path": "requests/string/liana_interaction-05-MIF_CD74_CXCR4.request.json",
+      "bytes": 839,
+      "sha256": "15bc0edca0adc6d7532837d66829335e687535d6d306bf1bdab30aa8a252952e"
+    },
+    {
+      "path": "requests/string/liana_interaction-06-MIF_CD74_CXCR4.request.json",
+      "bytes": 839,
+      "sha256": "d3d3cdd722ea74de6d83651b13a30fc3649ae87f842562c11b60fab5558f210f"
+    },
+    {
+      "path": "requests/string/liana_interaction-07-MIF_CD74_CXCR4.request.json",
+      "bytes": 839,
+      "sha256": "b03b527f50936792b8701f1ca44659f5230cdd6ab17e73c373d4f5790615dd42"
+    },
+    {
+      "path": "requests/string/liana_interaction-08-MIF_CD74_CXCR4.request.json",
+      "bytes": 839,
+      "sha256": "5e183431d06841643e8b2050c0fbc2fac1fb1daa3cab46319447bdc203385a63"
+    },
+    {
+      "path": "requests/string/liana_interaction-09-MIF_CD74_CXCR4.request.json",
+      "bytes": 839,
+      "sha256": "d7391ffe4c3e798080793d5aeef8338aede6a0281b42a7b9fc7fe608115b3a46"
+    },
+    {
+      "path": "requests/string/liana_interaction-10-MIF_CD74_CXCR4.request.json",
+      "bytes": 840,
+      "sha256": "3993034f29cd2f1761ba85a5ba234bbffacf5ca29f4af69d752d9ffb09fd7705"
+    },
+    {
+      "path": "requests/string/prespecified-01-CXCL9_CXCR3.request.json",
+      "bytes": 819,
+      "sha256": "2f08a29e4fe87a0096caf57de304d7acf3a2a37288e9f351a85a7bc2e8a09b2f"
+    },
+    {
+      "path": "requests/string/prespecified-02-CXCL10_CXCR3.request.json",
+      "bytes": 822,
+      "sha256": "a2d800603c85e315ee35543cf7be204f922e0af0417d402eccc3b6ef79f3b7c3"
+    },
+    {
+      "path": "requests/string/prespecified-03-CD274_PDCD1.request.json",
+      "bytes": 819,
+      "sha256": "f6691cfa53705ef7aa2499702cc767336be5fcbbf9fe26ff7bb6049e87378a2c"
+    },
+    {
+      "path": "requests/string/prespecified-04-TGFB1_TGFBR1_TGFBR2.request.json",
+      "bytes": 844,
+      "sha256": "b881fa1be88065142b62cf037a4f84fbd557d552d2ed6bc96f3964aa9cc6c3a1"
+    },
+    {
+      "path": "requests/string/prespecified-05-SPP1_CD44.request.json",
+      "bytes": 813,
+      "sha256": "d6f92c87a8f3f39bfa2f4d7f0f22d9b4062c093735c7f57ad22d1ed130a4caae"
+    },
+    {
+      "path": "requests/string/prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.request.json",
+      "bytes": 887,
+      "sha256": "81f230d72229aeaea8f2d2867ac09f8472141e21bd014a44d53c353e3b0da599"
+    },
+    {
+      "path": "requests/uniprot/gene-01-IGLL5.request.json",
+      "bytes": 838,
+      "sha256": "4baa8ad9cec072d02d77f1c211dd7c85f79f3f890f576da671181bf1e846bfcf"
+    },
+    {
+      "path": "requests/uniprot/gene-02-RAB6C.request.json",
+      "bytes": 838,
+      "sha256": "17a04cffb4d4614e4d4e2b030cf435bca2a99bc8043518ed67e21dbd6936def0"
+    },
+    {
+      "path": "requests/uniprot/gene-03-P2RY13.request.json",
+      "bytes": 841,
+      "sha256": "ef623e45af3b4dea9812ad7eb15cc344c369afc89a280a99a074506f58ec42e7"
+    },
+    {
+      "path": "requests/uniprot/gene-04-TRG-AS1.request.json",
+      "bytes": 844,
+      "sha256": "fff39ffaeb173bba0a511c32aaae611b35c764244ecc06a0ac0a6aedabfb8b33"
+    },
+    {
+      "path": "requests/uniprot/gene-05-AC116913.1.request.json",
+      "bytes": 851,
+      "sha256": "2aca2c411a8ca9784b1470f7644db677ae6f79969d6a3c2308eb9dc08ffe4c59"
+    },
+    {
+      "path": "requests/uniprot/gene-06-LINC01144.request.json",
+      "bytes": 850,
+      "sha256": "e1ee16ebcb00bbe500de1415b3865c838c3d56ac6f29a6910a688850b7eca798"
+    },
+    {
+      "path": "requests/uniprot/gene-07-GRK4.request.json",
+      "bytes": 835,
+      "sha256": "20f787728899a53f7d68ba002ceb738b4b2c2578cf6c420ee77bf900eecf4a61"
+    },
+    {
+      "path": "requests/uniprot/gene-08-HEY2.request.json",
+      "bytes": 835,
+      "sha256": "477736938528673128b1963ec77cd324889083557f6abb3bac45775352b5f37a"
+    },
+    {
+      "path": "requests/uniprot/gene-09-FOXO6.request.json",
+      "bytes": 838,
+      "sha256": "bd6b4b2a86ec9d8c2c3ddfd7abff32e63ae1105bc2b5c341c91101edaa8e7f30"
+    },
+    {
+      "path": "requests/uniprot/gene-10-MYO10.request.json",
+      "bytes": 839,
+      "sha256": "6b07b42a767514bad4450fc18190eeefcd89b30ba6ecf30e0dd74682b8f83563"
+    },
+    {
+      "path": "requests/uniprot/gene-11-ZNF829.request.json",
+      "bytes": 842,
+      "sha256": "887d133a09e8c47a3c14d17e0f6f5489263476f77a1f83aa4ce18ec21d0b40d0"
+    },
+    {
+      "path": "requests/uniprot/gene-12-PTHLH.request.json",
+      "bytes": 839,
+      "sha256": "38208e0510cdb4ad480d57b1b9460613e7011256199da6bddbd10b7282c9e189"
+    },
+    {
+      "path": "requests/uniprot/gene-13-AZIN1-AS1.request.json",
+      "bytes": 851,
+      "sha256": "733c566b13ac727469705f780b74496d1912c1d1e5fdedc0666e8b52b42e1015"
+    },
+    {
+      "path": "requests/uniprot/gene-14-LIFR-AS1.request.json",
+      "bytes": 848,
+      "sha256": "1d2b39196989dbe606ebd08eda29cfc817ef1d6653746355e7eca033b2466243"
+    },
+    {
+      "path": "requests/uniprot/gene-15-LINC01489.request.json",
+      "bytes": 851,
+      "sha256": "77b40bc4f8c3dfaa270cfc9b064956762a166e1fdcc58a40b95db3fd549974c1"
+    },
+    {
+      "path": "requests/uniprot/gene-16-THAP10.request.json",
+      "bytes": 842,
+      "sha256": "190d4cd19716b0471dc5ddfe88622625099a7bafffe762160d4a827d40d2bbf8"
+    },
+    {
+      "path": "requests/uniprot/gene-17-DENND4C.request.json",
+      "bytes": 845,
+      "sha256": "6e3b9cc541db01c829ac608b8aa9eceb27762b8591c65e8037a07e6b25ca7ab4"
+    },
+    {
+      "path": "requests/uniprot/gene-18-MACC1.request.json",
+      "bytes": 839,
+      "sha256": "c7dba8e7bb160abb2538e98e24355fe63092d51cf45f430af8424da9bae0980b"
+    },
+    {
+      "path": "requests/uniprot/gene-19-IGLC3.request.json",
+      "bytes": 839,
+      "sha256": "7b3b4fea24ddc67711f0bb43278bf6074bcc8fa64d240da98265f244af4d1f4e"
+    },
+    {
+      "path": "requests/uniprot/gene-20-DMD.request.json",
+      "bytes": 833,
+      "sha256": "17f855cb631a7757e1bb97417cf54e38d711a9817e74c4c84f4d8298953b4558"
+    },
+    {
+      "path": "requests/uniprot/liana_interaction-01-MIF_CD74_CXCR4.request.json",
+      "bytes": 907,
+      "sha256": "13ff6fc23f0880cecdfffcf1d57de0bba482e89ee93332b38503d3fa89ec14cd"
+    },
+    {
+      "path": "requests/uniprot/liana_interaction-02-MIF_CD74_CXCR4.request.json",
+      "bytes": 907,
+      "sha256": "c10420fb64d086cacf4b6c56c0566d71584499982d60ecbbb4f18f855e7b8365"
+    },
+    {
+      "path": "requests/uniprot/liana_interaction-03-MIF_CD74_CXCR4.request.json",
+      "bytes": 907,
+      "sha256": "ce08bdfbbf716a3aa99c150e9ba1c8a22066100637b19d94a6fbba7205f32183"
+    },
+    {
+      "path": "requests/uniprot/liana_interaction-04-MIF_CD74_CXCR4.request.json",
+      "bytes": 907,
+      "sha256": "94355acd0322e4200aacbb044d59210183f0ef6a08ff5ca216f6939c39d623e5"
+    },
+    {
+      "path": "requests/uniprot/liana_interaction-05-MIF_CD74_CXCR4.request.json",
+      "bytes": 907,
+      "sha256": "28574d15846a47d674fe001829bd3700c2507087ca2d6746a779c3a2b7a2546f"
+    },
+    {
+      "path": "requests/uniprot/liana_interaction-06-MIF_CD74_CXCR4.request.json",
+      "bytes": 907,
+      "sha256": "fbf8be94b15248cae0aae41c3e9edaced51d9e24c20dc3d74cd152e5016c0319"
+    },
+    {
+      "path": "requests/uniprot/liana_interaction-07-MIF_CD74_CXCR4.request.json",
+      "bytes": 907,
+      "sha256": "6cc1d94b177ecf3f0a148c4c294cf737c6604e6c1c0c0816cd966946ac6e87e7"
+    },
+    {
+      "path": "requests/uniprot/liana_interaction-08-MIF_CD74_CXCR4.request.json",
+      "bytes": 907,
+      "sha256": "722e4273644581dc0392e7dbf823e0695625436cd5bc4ce12c722fedb1f83a58"
+    },
+    {
+      "path": "requests/uniprot/liana_interaction-09-MIF_CD74_CXCR4.request.json",
+      "bytes": 907,
+      "sha256": "2b65815491ac2f617d0ededa19def1bcbb98403081b5197c336f500f5e54568a"
+    },
+    {
+      "path": "requests/uniprot/liana_interaction-10-MIF_CD74_CXCR4.request.json",
+      "bytes": 908,
+      "sha256": "67cc4909d3fdbee6f0505e1f0427cc7aae1930679aa9f207a70914214f15ffc3"
+    },
+    {
+      "path": "requests/uniprot/prespecified-01-CXCL9_CXCR3.request.json",
+      "bytes": 880,
+      "sha256": "84fa04aef4a6b3c5aaf1060cfdc411a008d35b90daf3bbb32897f60825666a5e"
+    },
+    {
+      "path": "requests/uniprot/prespecified-02-CXCL10_CXCR3.request.json",
+      "bytes": 883,
+      "sha256": "c216dafa9aad12c90abd904a2418cd77b8bf6b0cadc119aca960adaf53624804"
+    },
+    {
+      "path": "requests/uniprot/prespecified-03-CD274_PDCD1.request.json",
+      "bytes": 880,
+      "sha256": "4f2ce8981747ff61a9b58bbdc137895b3f85b35c51b82872363ddeb95d85eec5"
+    },
+    {
+      "path": "requests/uniprot/prespecified-04-TGFB1_TGFBR1_TGFBR2.request.json",
+      "bytes": 912,
+      "sha256": "87cb0e9c53e2c0af6af4abb249a3d9298ea204d42e93ff937a5c264482bde28d"
+    },
+    {
+      "path": "requests/uniprot/prespecified-05-SPP1_CD44.request.json",
+      "bytes": 874,
+      "sha256": "f898fd17322b36fa2ca6f94d54d9dd506cd6d573b1c2b59bc24a530db3c661be"
+    },
+    {
+      "path": "requests/uniprot/prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.request.json",
+      "bytes": 936,
+      "sha256": "004f084ce3f7ee47230d1d512436ef975c2e373b3b76acaed2b57833be27a7c1"
+    },
+    {
+      "path": "responses/opentargets/gene-01-IGLL5.wrapper.json",
+      "bytes": 1513,
+      "sha256": "f6a1e7538788796d657792ec4ab685f0603b056ca6d86a079f6657e52cb10da4"
+    },
+    {
+      "path": "responses/opentargets/gene-02-RAB6C.wrapper.json",
+      "bytes": 1512,
+      "sha256": "b5841590eb00a3d0340f71bba794499cdc41078014cc5db1bfe0d8af3b149c99"
+    },
+    {
+      "path": "responses/opentargets/gene-03-P2RY13.wrapper.json",
+      "bytes": 1517,
+      "sha256": "57021e7a425f5be7b2467bb4546ab94935b77cc5df53d645ecfe3234ec60530f"
+    },
+    {
+      "path": "responses/opentargets/gene-04-TRG-AS1.wrapper.json",
+      "bytes": 1522,
+      "sha256": "37372a7438684dc3a1af36337ad87d2784d34da605271e9687fbc4092927f3c4"
+    },
+    {
+      "path": "responses/opentargets/gene-05-AC116913.1.wrapper.json",
+      "bytes": 1350,
+      "sha256": "256a2264ed467ac866a2feabf8eda4e25b6ba03eb6d585043c694badd143d66f"
+    },
+    {
+      "path": "responses/opentargets/gene-06-LINC01144.wrapper.json",
+      "bytes": 1391,
+      "sha256": "8bf23c456dcb94ac44b03902ff270696f96498009c278a0b532a45d234bc4f38"
+    },
+    {
+      "path": "responses/opentargets/gene-07-GRK4.wrapper.json",
+      "bytes": 1509,
+      "sha256": "6123773444368f36a80864e323b440933ef0dfdc0ade1aef017fd0031e3f34ff"
+    },
+    {
+      "path": "responses/opentargets/gene-08-HEY2.wrapper.json",
+      "bytes": 1510,
+      "sha256": "d5823e62f5b507c213702e10018551205c83d1d27bf086f9321ae6700f0c131b"
+    },
+    {
+      "path": "responses/opentargets/gene-09-FOXO6.wrapper.json",
+      "bytes": 1513,
+      "sha256": "643ac3a2c91e9750cf7ab12511b24505416bda150466198dfb11fc09e4045d4f"
+    },
+    {
+      "path": "responses/opentargets/gene-10-MYO10.wrapper.json",
+      "bytes": 1514,
+      "sha256": "151d8334e7dd60ba3ed0656fb592e972eeb0c0816f963d6bec77122821166fe5"
+    },
+    {
+      "path": "responses/opentargets/gene-11-ZNF829.wrapper.json",
+      "bytes": 1434,
+      "sha256": "c1276cc63559a36de69788c293bb3d9e4c13546038999951e2a92da6c6940343"
+    },
+    {
+      "path": "responses/opentargets/gene-12-PTHLH.wrapper.json",
+      "bytes": 1515,
+      "sha256": "9e5d29036104b9a3fc13b7fb4fef24fa2b15933fd8f1a15fa6847f86904543b5"
+    },
+    {
+      "path": "responses/opentargets/gene-13-AZIN1-AS1.wrapper.json",
+      "bytes": 1347,
+      "sha256": "6b28e88a2c395c8417a91236831618bc43208d17ab57a014b20d55350d810f07"
+    },
+    {
+      "path": "responses/opentargets/gene-14-LIFR-AS1.wrapper.json",
+      "bytes": 1526,
+      "sha256": "ac0564fa1b99e3965e0ada4e5863d0949c1ddb8eee49887c0648d7eef9c5f72c"
+    },
+    {
+      "path": "responses/opentargets/gene-15-LINC01489.wrapper.json",
+      "bytes": 1409,
+      "sha256": "f51649857fed34ea28238e1c6e1282fa773f1fa86d1204b4452ebdb6a831888e"
+    },
+    {
+      "path": "responses/opentargets/gene-16-THAP10.wrapper.json",
+      "bytes": 1517,
+      "sha256": "b153b51d9c95dca57dce2ac36f4a5c37634e220f752ec76e203385e31d371f85"
+    },
+    {
+      "path": "responses/opentargets/gene-17-DENND4C.wrapper.json",
+      "bytes": 1522,
+      "sha256": "ed57a09679b6f2b8073ffe83797dd09981d05d2dac1527060a763ebdc26273da"
+    },
+    {
+      "path": "responses/opentargets/gene-18-MACC1.wrapper.json",
+      "bytes": 1514,
+      "sha256": "2ce2b02bc2bd42536c2e51e3b526177d78c9d89dc740f7b6ba5edad1bb3b1333"
+    },
+    {
+      "path": "responses/opentargets/gene-19-IGLC3.wrapper.json",
+      "bytes": 1514,
+      "sha256": "44611711e76963a7d64344906396e6d8218b6233087d33614bfc4e5994c83cab"
+    },
+    {
+      "path": "responses/opentargets/gene-20-DMD.wrapper.json",
+      "bytes": 1507,
+      "sha256": "ba726dc0ca772ef4857068c46e1be03b3c110a0423a1a65245f113a2a4ff93a9"
+    },
+    {
+      "path": "responses/opentargets/liana_interaction-01-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 1418,
+      "sha256": "f22e61bd3267ec67db58f064cc90ce66217b45f94682d3fb912566f5d78f9e2b"
+    },
+    {
+      "path": "responses/opentargets/liana_interaction-02-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 1418,
+      "sha256": "3c7c8c69d9751eb437925f2eabe911a1ce90ae4479c55bcc5def38dea764fb56"
+    },
+    {
+      "path": "responses/opentargets/liana_interaction-03-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 1418,
+      "sha256": "333cc87fa61e097c78eb3b1327a05490a83e8e28fd2bc3f774ed2b541ef80e25"
+    },
+    {
+      "path": "responses/opentargets/liana_interaction-04-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 1418,
+      "sha256": "323319cef7bdc57a149ea9ca34f85f1d72365e37194f83a83e8a440ccfb637cf"
+    },
+    {
+      "path": "responses/opentargets/liana_interaction-05-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 1418,
+      "sha256": "fffd3210849e49f9d9a4edb9686023d07f129cf02f13ed363033ecebf749514e"
+    },
+    {
+      "path": "responses/opentargets/liana_interaction-06-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 1418,
+      "sha256": "fbd154dd0263b0e0e943d527b5da05ec3595b123404e5da5d5885ee08cd3b274"
+    },
+    {
+      "path": "responses/opentargets/liana_interaction-07-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 1418,
+      "sha256": "a03b6c7fb2bee864ddffc63c24f2eff6d2a560dd1b539160fb9bdbdc5f4046a0"
+    },
+    {
+      "path": "responses/opentargets/liana_interaction-08-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 1417,
+      "sha256": "284032f6f6f2e0de114de7ed21766f0ab24fd9da6ae9d46ecf40983734278b4e"
+    },
+    {
+      "path": "responses/opentargets/liana_interaction-09-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 1418,
+      "sha256": "57b27381999245bb9de6766a879a273be67d127b66202009652e8cac7bdffa69"
+    },
+    {
+      "path": "responses/opentargets/liana_interaction-10-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 1418,
+      "sha256": "e1d045e87e003f1ea887530e8ff1b81748c985a28ff863fd300e78255997a960"
+    },
+    {
+      "path": "responses/opentargets/prespecified-01-CXCL9_CXCR3.wrapper.json",
+      "bytes": 1521,
+      "sha256": "12a6e62945a5d642e3c74541668b6704a42f6f58467de393d662d5c257c8ed57"
+    },
+    {
+      "path": "responses/opentargets/prespecified-02-CXCL10_CXCR3.wrapper.json",
+      "bytes": 1571,
+      "sha256": "bf12939567719937bd49b0605b61b8c6f3140e317b02da987767158d3ee6079f"
+    },
+    {
+      "path": "responses/opentargets/prespecified-03-CD274_PDCD1.wrapper.json",
+      "bytes": 1570,
+      "sha256": "e999e476486977f6dc46f0ba4365bca0aff711ed1fbe9dafe742ad6779c34b15"
+    },
+    {
+      "path": "responses/opentargets/prespecified-04-TGFB1_TGFBR1_TGFBR2.wrapper.json",
+      "bytes": 1570,
+      "sha256": "2d1bf2bf7ae120de9562d01e3864c5151c131ad9c18d5e9002b63778aee22b19"
+    },
+    {
+      "path": "responses/opentargets/prespecified-05-SPP1_CD44.wrapper.json",
+      "bytes": 1561,
+      "sha256": "121603f47b10cece561ce4376e5c12356a2e6b6be98fe6514a3ef324bdd7b762"
+    },
+    {
+      "path": "responses/opentargets/prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.wrapper.json",
+      "bytes": 1478,
+      "sha256": "56f6aa7bb4dccdeefdaa4c671811b38fc17e9c7e94eb38adb489eeab11fc3976"
+    },
+    {
+      "path": "responses/pubmed/gene-01-IGLL5.wrapper.json",
+      "bytes": 2264,
+      "sha256": "dc8c5d5567966db5a8cdd29cd3cf980d280c12b353e2925bbe93e05cae99f353"
+    },
+    {
+      "path": "responses/pubmed/gene-02-RAB6C.wrapper.json",
+      "bytes": 2263,
+      "sha256": "8eb370b50cf0abe3464a80882132e74fc6592cdcd92fe41841bc271931c494b4"
+    },
+    {
+      "path": "responses/pubmed/gene-03-P2RY13.wrapper.json",
+      "bytes": 2267,
+      "sha256": "4de7cc5de1f11288d7058f4d36ac816f021846e5bee3cd01acf470fe14d33326"
+    },
+    {
+      "path": "responses/pubmed/gene-04-TRG-AS1.wrapper.json",
+      "bytes": 1894,
+      "sha256": "e2ee12a4167609fb467a7744f820a613e029a47a98f821c7bfe8cc74bab0a35b"
+    },
+    {
+      "path": "responses/pubmed/gene-05-AC116913.1.wrapper.json",
+      "bytes": 1521,
+      "sha256": "c6bbacadfb1edc5192e9748939dfb3f26bbb57f353ad476bf1936aa82bba5c9a"
+    },
+    {
+      "path": "responses/pubmed/gene-06-LINC01144.wrapper.json",
+      "bytes": 1519,
+      "sha256": "6c11f98d08356a8a8fabc03817cc9f32b55b8fa528008c48ff59e823e21ab7da"
+    },
+    {
+      "path": "responses/pubmed/gene-07-GRK4.wrapper.json",
+      "bytes": 2108,
+      "sha256": "edcaddaaaee38ae310be43396026c7554f2ce5c94a0b25a7c32a242591e2b0a7"
+    },
+    {
+      "path": "responses/pubmed/gene-08-HEY2.wrapper.json",
+      "bytes": 2260,
+      "sha256": "46f91f48210565ce63e3a47e938ff0bd5e00769e5dd54bd9e0ace5cdc47ae5bc"
+    },
+    {
+      "path": "responses/pubmed/gene-09-FOXO6.wrapper.json",
+      "bytes": 2187,
+      "sha256": "b8bb090593210a3ef0390694e432955df5a0da52b817b0b50a79c8cabde58cb1"
+    },
+    {
+      "path": "responses/pubmed/gene-10-MYO10.wrapper.json",
+      "bytes": 2264,
+      "sha256": "77795e0f32693afc5c3aed97325ffccce8ff6206ad92b5d486f790f8aa911563"
+    },
+    {
+      "path": "responses/pubmed/gene-11-ZNF829.wrapper.json",
+      "bytes": 1488,
+      "sha256": "48256f71b1e13a9d5b1a7a19ad6af1a0b465c447f7b490ab211800544b171d1f"
+    },
+    {
+      "path": "responses/pubmed/gene-12-PTHLH.wrapper.json",
+      "bytes": 2263,
+      "sha256": "c64b443d5e366d2d701a1d0459fd2d60c8a2ff95114ec18d192fe64eb3fbe7a6"
+    },
+    {
+      "path": "responses/pubmed/gene-13-AZIN1-AS1.wrapper.json",
+      "bytes": 1519,
+      "sha256": "9ee05158093b50ff516863da009e3d738e5f68cfac5cf09d6ed739b1d4aec3f4"
+    },
+    {
+      "path": "responses/pubmed/gene-14-LIFR-AS1.wrapper.json",
+      "bytes": 1974,
+      "sha256": "81d641de6eb9d57b621c34292b1372383dba0f7c7ab7846c3fb2dbf1f8585702"
+    },
+    {
+      "path": "responses/pubmed/gene-15-LINC01489.wrapper.json",
+      "bytes": 1520,
+      "sha256": "3629c9daef4a9e52c6e28834ee5c263154b4caa499ff3b2550612c35896705a6"
+    },
+    {
+      "path": "responses/pubmed/gene-16-THAP10.wrapper.json",
+      "bytes": 1487,
+      "sha256": "330e7f7f27ea62d8ae83c5b8f004c3bd032d7887e473b8eaa86002fafbeee096"
+    },
+    {
+      "path": "responses/pubmed/gene-17-DENND4C.wrapper.json",
+      "bytes": 1746,
+      "sha256": "ffa5aa4fdf90f528cf6b0734f8625510016b15009e84b1e44671073b60301a91"
+    },
+    {
+      "path": "responses/pubmed/gene-18-MACC1.wrapper.json",
+      "bytes": 2265,
+      "sha256": "488f320b7854ef0ad5b5a33008dbd277274353d731205c74f2bb502d9e3dec89"
+    },
+    {
+      "path": "responses/pubmed/gene-19-IGLC3.wrapper.json",
+      "bytes": 1810,
+      "sha256": "0e63889ba7cf5babc397fb6170e9cc3b81258e2b127cd6382d1c45e5284dd6d5"
+    },
+    {
+      "path": "responses/pubmed/gene-20-DMD.wrapper.json",
+      "bytes": 2257,
+      "sha256": "a7f511960231ae56aaf01bc8b9e5dd32fe60e601322de78d1917c7c15366252e"
+    },
+    {
+      "path": "responses/pubmed/liana_interaction-01-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2352,
+      "sha256": "7fe35d0297f5e69e334d57ba26498c570b9465fb6d83dd96c61719505ef4a0d9"
+    },
+    {
+      "path": "responses/pubmed/liana_interaction-02-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2352,
+      "sha256": "aa6836c1ed68608649098d6e458a4d88e05af03803825b9de51e1084449f1fa1"
+    },
+    {
+      "path": "responses/pubmed/liana_interaction-03-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2352,
+      "sha256": "96ba9c4b426b83d912b00760e9a070cc24fc563be7c66fadcb6c39e925833f6b"
+    },
+    {
+      "path": "responses/pubmed/liana_interaction-04-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2352,
+      "sha256": "3b865a351f8d9b12fe493933f79d536886f58771dcda7f01ddbf299189f9b11b"
+    },
+    {
+      "path": "responses/pubmed/liana_interaction-05-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2352,
+      "sha256": "86beb4bf37ef5da559bee99e45bd00153618dd3f68e383db85cbfc03769ecded"
+    },
+    {
+      "path": "responses/pubmed/liana_interaction-06-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2351,
+      "sha256": "ef5567d31dd9efd2fba8b8e061f6789d5b8c129f7cbc388d302734e5b2fcdada"
+    },
+    {
+      "path": "responses/pubmed/liana_interaction-07-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2352,
+      "sha256": "e12fc7c241bc695701b21e3e6b174109df9e256dfcfd6764ce9cbfc9702418e9"
+    },
+    {
+      "path": "responses/pubmed/liana_interaction-08-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2351,
+      "sha256": "6245242ecd3f93b8e122eba43dc9e5b0d9da4c913ba1452dde1966207e46dafe"
+    },
+    {
+      "path": "responses/pubmed/liana_interaction-09-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2352,
+      "sha256": "dc1cece949954bd45cba4cb9813affea4c7651129f220ccf5f49f2c81d758df1"
+    },
+    {
+      "path": "responses/pubmed/liana_interaction-10-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2352,
+      "sha256": "21674cdf15f326a16ce4d93c6a5d54eafff4be9b0745a2aafaac666e8dd2c4d7"
+    },
+    {
+      "path": "responses/pubmed/prespecified-01-CXCL9_CXCR3.wrapper.json",
+      "bytes": 2320,
+      "sha256": "319c6b7495bee43bd0ca17408461da95906ea721113ce40363d269056932b1ea"
+    },
+    {
+      "path": "responses/pubmed/prespecified-02-CXCL10_CXCR3.wrapper.json",
+      "bytes": 2324,
+      "sha256": "fbecb32ac4aebbf456752c4d0110e76347b950c672b1f6224187fa00232dfc95"
+    },
+    {
+      "path": "responses/pubmed/prespecified-03-CD274_PDCD1.wrapper.json",
+      "bytes": 2319,
+      "sha256": "ea1d9b9baa6d8132cf7449b6c7a93d3f624eca678534d09f6fdb0cce8e20cc66"
+    },
+    {
+      "path": "responses/pubmed/prespecified-04-TGFB1_TGFBR1_TGFBR2.wrapper.json",
+      "bytes": 2352,
+      "sha256": "8fae7a3d118b460dda5829c305efe41c1dae52154f0328cf5786dbb240ed7312"
+    },
+    {
+      "path": "responses/pubmed/prespecified-05-SPP1_CD44.wrapper.json",
+      "bytes": 2311,
+      "sha256": "9d9a3dc778615fec90e2e9728e4c3e4f16f36fdb71cdbc4e14654e92c966d835"
+    },
+    {
+      "path": "responses/pubmed/prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.wrapper.json",
+      "bytes": 1810,
+      "sha256": "dfdedf332be2be953bcd2dcec0902a26658593532a918afcbea936390c957e08"
+    },
+    {
+      "path": "responses/reactome/gene-01-IGLL5.wrapper.json",
+      "bytes": 1570,
+      "sha256": "7c0ac9f34c42c78a93cea9e6a208e840ab6cd320a7ced2f0ac480c2d4a03c245"
+    },
+    {
+      "path": "responses/reactome/gene-02-RAB6C.wrapper.json",
+      "bytes": 1570,
+      "sha256": "1c3e8892a72b9be7f6d9930f180de20d113e522ccfc4f1cff2163e740af59d1f"
+    },
+    {
+      "path": "responses/reactome/gene-03-P2RY13.wrapper.json",
+      "bytes": 1724,
+      "sha256": "9f7ce5e4d8894068aa99d967faf492627a34bcb7fec59770bdcee48251f919d1"
+    },
+    {
+      "path": "responses/reactome/gene-04-TRG-AS1.wrapper.json",
+      "bytes": 2425,
+      "sha256": "7396086703981d31045bb19ad2a3aaf04a32f306b67cf8804529c83d95671fa8"
+    },
+    {
+      "path": "responses/reactome/gene-05-AC116913.1.wrapper.json",
+      "bytes": 740,
+      "sha256": "778365edcba9e3c1f279364ebb5cee94309f60914b602e06f908de5cbbb524a2"
+    },
+    {
+      "path": "responses/reactome/gene-06-LINC01144.wrapper.json",
+      "bytes": 736,
+      "sha256": "a81ad07c916be93112000ae1964cfeac6dc7f261b72ff0e55a4bc8cc6277c6b5"
+    },
+    {
+      "path": "responses/reactome/gene-07-GRK4.wrapper.json",
+      "bytes": 1716,
+      "sha256": "f4dd44e411af98c2a740c1373293b990014e58189443f750a06fc0e65e946994"
+    },
+    {
+      "path": "responses/reactome/gene-08-HEY2.wrapper.json",
+      "bytes": 2566,
+      "sha256": "90e8cfbae9d634f3357575fca5cc8e4db14ab5c42f12be44c35ec8d1340e17c3"
+    },
+    {
+      "path": "responses/reactome/gene-09-FOXO6.wrapper.json",
+      "bytes": 2652,
+      "sha256": "9e91afe55d3674e924c345fdc3153160a1f3e013cd8269cba62133072fcfd7df"
+    },
+    {
+      "path": "responses/reactome/gene-10-MYO10.wrapper.json",
+      "bytes": 1721,
+      "sha256": "5cb5df97b2588d5983a288236a7e4fb23c7984ae00f2ce19441ef2c22392156a"
+    },
+    {
+      "path": "responses/reactome/gene-11-ZNF829.wrapper.json",
+      "bytes": 1592,
+      "sha256": "db7d4784d8732cc694f1389d0c65c4446aba3e9d32624b9b0037a6f416f3fa8a"
+    },
+    {
+      "path": "responses/reactome/gene-12-PTHLH.wrapper.json",
+      "bytes": 1721,
+      "sha256": "b2094343b566b181220d510ef99b0a5cd3603db45b595da79f6209cd960dc0fe"
+    },
+    {
+      "path": "responses/reactome/gene-13-AZIN1-AS1.wrapper.json",
+      "bytes": 2285,
+      "sha256": "6087fc4f65d0f7b22df771a55035be81970d8d57ac99f003039f81459198d4ca"
+    },
+    {
+      "path": "responses/reactome/gene-14-LIFR-AS1.wrapper.json",
+      "bytes": 2795,
+      "sha256": "e3fadfe2eb917bf734cb9a59c62c91028e112fc34799a67746e23a4609aafa6f"
+    },
+    {
+      "path": "responses/reactome/gene-15-LINC01489.wrapper.json",
+      "bytes": 738,
+      "sha256": "db3588895ea5d9cbcd2de474e30d0b91e3a28524053402ef2e5111296051086d"
+    },
+    {
+      "path": "responses/reactome/gene-16-THAP10.wrapper.json",
+      "bytes": 1575,
+      "sha256": "66a61ec7e6ff08590b54cedd2d304377dc826fe87ab95a1269b9a6ffadfbccb9"
+    },
+    {
+      "path": "responses/reactome/gene-17-DENND4C.wrapper.json",
+      "bytes": 1730,
+      "sha256": "4de2097a72ea29dc5c84a6984fa4fe3e7363b2fa30985c973df7483d07f0886e"
+    },
+    {
+      "path": "responses/reactome/gene-18-MACC1.wrapper.json",
+      "bytes": 726,
+      "sha256": "5ad2000be1b238253d1b9cc52fa70bc1b9e6161b8ffa2c302f544beee4bfec27"
+    },
+    {
+      "path": "responses/reactome/gene-19-IGLC3.wrapper.json",
+      "bytes": 1586,
+      "sha256": "37a43239dd18d5d38aa6c3661e0f292cc23b17a68699fe829318b68d3a06d43a"
+    },
+    {
+      "path": "responses/reactome/gene-20-DMD.wrapper.json",
+      "bytes": 2391,
+      "sha256": "9cfc5f56b8efc98578318029e837fa039257572c6990201bd53c63afb1fe2309"
+    },
+    {
+      "path": "responses/reactome/liana_interaction-01-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2536,
+      "sha256": "1af0da178474083faf10ad9aabe41af221370f74d54eaff5f44dde1b808cb753"
+    },
+    {
+      "path": "responses/reactome/liana_interaction-02-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2536,
+      "sha256": "abefc06c294d755e445a2252a882f5f5d01475658eb972ac48dbb3910e132b24"
+    },
+    {
+      "path": "responses/reactome/liana_interaction-03-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2535,
+      "sha256": "f87d033a17ef58a2d9c479976a4a6c6c9672d18860d5b065b6f133cbbd5891b7"
+    },
+    {
+      "path": "responses/reactome/liana_interaction-04-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2536,
+      "sha256": "d37f74af47396689a90a98c711d9d765f90640ccbbb549650b0245687cf47fa9"
+    },
+    {
+      "path": "responses/reactome/liana_interaction-05-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2536,
+      "sha256": "40f742c3b03c427113eeaaa835d125f13256858b26de0a175c05b657d7b28c64"
+    },
+    {
+      "path": "responses/reactome/liana_interaction-06-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2537,
+      "sha256": "9459dc1983b356e4c572bfd41931a64700d8c0d5f7dbf482019a949e81fa8e82"
+    },
+    {
+      "path": "responses/reactome/liana_interaction-07-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2536,
+      "sha256": "21a305ba254a16da6f12028c4d4ce715cc436dfc9d4d554f0a20e9b780df7f65"
+    },
+    {
+      "path": "responses/reactome/liana_interaction-08-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2537,
+      "sha256": "2aba8c2280ee0fcec1ad609dfb5021d1ca53c9844bc0cc77d8eea07ed7abd8e5"
+    },
+    {
+      "path": "responses/reactome/liana_interaction-09-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2537,
+      "sha256": "96d207ace6b544b17cca1950ff03a58c940c7a74018ffa5e2d92ae61b758c953"
+    },
+    {
+      "path": "responses/reactome/liana_interaction-10-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 2537,
+      "sha256": "40fc8f94f3afed33eeb71fd27e307ab24b78ff37ff8f8b85b4a21e72b57fc964"
+    },
+    {
+      "path": "responses/reactome/prespecified-01-CXCL9_CXCR3.wrapper.json",
+      "bytes": 2498,
+      "sha256": "9e3153e0444b563f572b647491dce7fbf74d81b85181ffd5c5627b95f73d0917"
+    },
+    {
+      "path": "responses/reactome/prespecified-02-CXCL10_CXCR3.wrapper.json",
+      "bytes": 2664,
+      "sha256": "0b1280d448f6226a59c18afbc04bc30ca9ecf6086d2445addb3a7f04028d8575"
+    },
+    {
+      "path": "responses/reactome/prespecified-03-CD274_PDCD1.wrapper.json",
+      "bytes": 3359,
+      "sha256": "1bc687b2316b9817d7b55d8954c95ec9d062f6f7248d6cff280a031408adf3cb"
+    },
+    {
+      "path": "responses/reactome/prespecified-04-TGFB1_TGFBR1_TGFBR2.wrapper.json",
+      "bytes": 3390,
+      "sha256": "c4762516aeccbc1b2a1501af07e3506428f7950db1ac5388872220b1abea1d90"
+    },
+    {
+      "path": "responses/reactome/prespecified-05-SPP1_CD44.wrapper.json",
+      "bytes": 3329,
+      "sha256": "c8bdecf0c603f35c2bfafd2ab9ffcea0d8f507fa1749b83168a78c80b9b5c629"
+    },
+    {
+      "path": "responses/reactome/prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.wrapper.json",
+      "bytes": 836,
+      "sha256": "dd983ba50e7f4567ecbc5d0050cba26e435c2fe9c464d82db58dde49433cba4b"
+    },
+    {
+      "path": "responses/string/gene-01-IGLL5.wrapper.json",
+      "bytes": 733,
+      "sha256": "f65aaad3a89db3fcc57f8405fc5ffb70b3550b143c90f57cb2f07ec387b13bfa"
+    },
+    {
+      "path": "responses/string/gene-02-RAB6C.wrapper.json",
+      "bytes": 733,
+      "sha256": "5c4c58ec6ded4e45823e05d68d4b401fac34c4c85fd4e5fd8aafe020a60ad0e3"
+    },
+    {
+      "path": "responses/string/gene-03-P2RY13.wrapper.json",
+      "bytes": 735,
+      "sha256": "6aff38bd59a7c0cf99ca43e9c2d408647f83b266578d1ebbf2bd08120e1b6f23"
+    },
+    {
+      "path": "responses/string/gene-04-TRG-AS1.wrapper.json",
+      "bytes": 739,
+      "sha256": "e0e604015ceb56d613393056a8d95e94579d86cae3332cda9542e17c9c9f2912"
+    },
+    {
+      "path": "responses/string/gene-05-AC116913.1.wrapper.json",
+      "bytes": 748,
+      "sha256": "2999da38a7ee093e7a8ee6a1ff2fdddc2d67fd0fb1086aeaab0fa1da20e8f709"
+    },
+    {
+      "path": "responses/string/gene-06-LINC01144.wrapper.json",
+      "bytes": 744,
+      "sha256": "a9e8b2de94846b08fc08abafff2264d583c0402cb69461a0d1914baf2005a2cc"
+    },
+    {
+      "path": "responses/string/gene-07-GRK4.wrapper.json",
+      "bytes": 729,
+      "sha256": "bf403c686805cd7af042f584178e51135c03e8bd44080259b4e7b62680490bf2"
+    },
+    {
+      "path": "responses/string/gene-08-HEY2.wrapper.json",
+      "bytes": 729,
+      "sha256": "8ee593a3aff64eb9936fa17e1c06ed0bd57668f8630c6da8be49a3d8cc0d612c"
+    },
+    {
+      "path": "responses/string/gene-09-FOXO6.wrapper.json",
+      "bytes": 732,
+      "sha256": "19293a296a30612ecb80909bb2a98732d24fc96de7726d0daf8d5cfc0d5379d5"
+    },
+    {
+      "path": "responses/string/gene-10-MYO10.wrapper.json",
+      "bytes": 733,
+      "sha256": "950e02a07283ba79220839a990ee07112ded4d05a250ebfb7273614839456ac1"
+    },
+    {
+      "path": "responses/string/gene-11-ZNF829.wrapper.json",
+      "bytes": 736,
+      "sha256": "cf2918b90f2b9c0ace4995e904ddd292677e3d35635f8e1bfa2c9b8f41f620f2"
+    },
+    {
+      "path": "responses/string/gene-12-PTHLH.wrapper.json",
+      "bytes": 734,
+      "sha256": "5133163981490dcae61612e3ede474ef48d8617a7149d3860a52519443f126d6"
+    },
+    {
+      "path": "responses/string/gene-13-AZIN1-AS1.wrapper.json",
+      "bytes": 745,
+      "sha256": "b0cccb7d565ab77dad63d981bfd6ee85bb102279618ffb910eeb12ebfba072dd"
+    },
+    {
+      "path": "responses/string/gene-14-LIFR-AS1.wrapper.json",
+      "bytes": 743,
+      "sha256": "032ac60a43457f8aebc1672c415bb4abee5996a813207709a381a07f207bfc92"
+    },
+    {
+      "path": "responses/string/gene-15-LINC01489.wrapper.json",
+      "bytes": 745,
+      "sha256": "af971528db7236e190adba7dac86eee4f1edaa84f3e2b933a5ebf4720d63196d"
+    },
+    {
+      "path": "responses/string/gene-16-THAP10.wrapper.json",
+      "bytes": 737,
+      "sha256": "5aae66e45e5c0fdcb2fe702a5e13b537044490f65823af24620708c811e938b6"
+    },
+    {
+      "path": "responses/string/gene-17-DENND4C.wrapper.json",
+      "bytes": 740,
+      "sha256": "ff85cd093a303c211251da76ef93d22ad81dc5ae3c2ce95fa120ab396563f108"
+    },
+    {
+      "path": "responses/string/gene-18-MACC1.wrapper.json",
+      "bytes": 734,
+      "sha256": "4f3cdccb9c484eb505311d03b04f6a2f5cca26f37fc5707a40265843743a0061"
+    },
+    {
+      "path": "responses/string/gene-19-IGLC3.wrapper.json",
+      "bytes": 732,
+      "sha256": "cdcc9af86a7bc08d6f7f1c97e1dc2e64450116121e995a8e6d81e62d20dd50cd"
+    },
+    {
+      "path": "responses/string/gene-20-DMD.wrapper.json",
+      "bytes": 727,
+      "sha256": "e5626fc72fd77b4b6245109ae64b36f2a707a3020c2ba2e4184699ae46323e52"
+    },
+    {
+      "path": "responses/string/liana_interaction-01-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 798,
+      "sha256": "4f732579caa133b51be3c37618e37f38e6e6e9bd38157e73101c1c31c58aebe4"
+    },
+    {
+      "path": "responses/string/liana_interaction-02-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 799,
+      "sha256": "c5384a891f5a16453c25fd064b556a1be7267f182cfe8041627a56450d79a6fb"
+    },
+    {
+      "path": "responses/string/liana_interaction-03-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 798,
+      "sha256": "13e5d1119d0805832a173deae5b938e97d85dcf5cdb2d4963a0a934ef7d4d2b4"
+    },
+    {
+      "path": "responses/string/liana_interaction-04-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 799,
+      "sha256": "e958f59072a6414d7b49c46dd80d5f68f60c7ae000fae92ac91279f203f0d43f"
+    },
+    {
+      "path": "responses/string/liana_interaction-05-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 799,
+      "sha256": "e3fe59803cfcc88c1a38ddd503245c7de66ae10585bb89b7024a18ea31fb705e"
+    },
+    {
+      "path": "responses/string/liana_interaction-06-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 799,
+      "sha256": "c6198e4e850f89123dde89fa8122825f692febf0ffc149b7ceda3b7f12db82bb"
+    },
+    {
+      "path": "responses/string/liana_interaction-07-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 799,
+      "sha256": "b19b78db4580694736cb60e740fe686a2a063f35937f27946f37d5a953a7989b"
+    },
+    {
+      "path": "responses/string/liana_interaction-08-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 799,
+      "sha256": "921356ec1ca7e7b7872d901cd7e5d0633f0014d8f118d855eef126942171520f"
+    },
+    {
+      "path": "responses/string/liana_interaction-09-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 799,
+      "sha256": "480e6b8db853db9f04f5850bc3d72a3fe8b1be5df7219c69019bd4a6e104fcab"
+    },
+    {
+      "path": "responses/string/liana_interaction-10-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 800,
+      "sha256": "30bc1a262730c873a893ebbe410400557c8b54b3a10e7474407f0d89d2ecdac7"
+    },
+    {
+      "path": "responses/string/prespecified-01-CXCL9_CXCR3.wrapper.json",
+      "bytes": 774,
+      "sha256": "486222e8bbddb9d7e631d458aa684a91fd37be34633f48c671b8102d0cc4fdc0"
+    },
+    {
+      "path": "responses/string/prespecified-02-CXCL10_CXCR3.wrapper.json",
+      "bytes": 777,
+      "sha256": "33860a5b345d74f24f95a59eb6deb4f3c84204cd607d604f64e2ce3475951f54"
+    },
+    {
+      "path": "responses/string/prespecified-03-CD274_PDCD1.wrapper.json",
+      "bytes": 775,
+      "sha256": "b7a6ee01998f434b7e329bb7c032020c900e786b2669714fdc0a8fc697e2c02f"
+    },
+    {
+      "path": "responses/string/prespecified-04-TGFB1_TGFBR1_TGFBR2.wrapper.json",
+      "bytes": 799,
+      "sha256": "f17437ee9a5ce4e738e9f63181d44dae7a16f1d193c01f2cda2bb14634c024db"
+    },
+    {
+      "path": "responses/string/prespecified-05-SPP1_CD44.wrapper.json",
+      "bytes": 769,
+      "sha256": "44512d9472f5c56a8f5327a43717a3f405f87de2465ffbe040a8ab470ed54062"
+    },
+    {
+      "path": "responses/string/prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.wrapper.json",
+      "bytes": 844,
+      "sha256": "60810e6fc814bffec6f020df5df17f7da09b4f31ea7000a586a56c6502c20dd3"
+    },
+    {
+      "path": "responses/uniprot/gene-01-IGLL5.wrapper.json",
+      "bytes": 735,
+      "sha256": "0f358cca208fcb9aa65d3a8c6dadf7d2361ceccd8532766c3ffea034af0c495a"
+    },
+    {
+      "path": "responses/uniprot/gene-02-RAB6C.wrapper.json",
+      "bytes": 735,
+      "sha256": "8197a1efc7bcbb47492c1b71e8c24077f57c3716790d37710c1fdcc6bdaa8deb"
+    },
+    {
+      "path": "responses/uniprot/gene-03-P2RY13.wrapper.json",
+      "bytes": 738,
+      "sha256": "592db162ac9d8b55b0e90cf9947294110b9bacbfce1e1f29e84ca32c953cd7fe"
+    },
+    {
+      "path": "responses/uniprot/gene-04-TRG-AS1.wrapper.json",
+      "bytes": 741,
+      "sha256": "bc9c6bfada266fe02b289e45bb022822f70f037aacf3e2c79afccb4132403e1d"
+    },
+    {
+      "path": "responses/uniprot/gene-05-AC116913.1.wrapper.json",
+      "bytes": 750,
+      "sha256": "b87863bedf82f676688a5d068e014df79a5d37ccd5adb9658d1433d03e7a56d5"
+    },
+    {
+      "path": "responses/uniprot/gene-06-LINC01144.wrapper.json",
+      "bytes": 748,
+      "sha256": "44d1efcfd759a43b753fb2ca1dbcda3dd3e1a2b3c4c17a7bd800065c15a8f695"
+    },
+    {
+      "path": "responses/uniprot/gene-07-GRK4.wrapper.json",
+      "bytes": 732,
+      "sha256": "fd0a0018fffcfe6c49b7bab7d4376a6f2a4df4fcbeff766e6c653eeccf284c78"
+    },
+    {
+      "path": "responses/uniprot/gene-08-HEY2.wrapper.json",
+      "bytes": 732,
+      "sha256": "38510c51e62dcae43ced8a9ca6b13b5b84a604268d4bf3670a2bc32e1080986f"
+    },
+    {
+      "path": "responses/uniprot/gene-09-FOXO6.wrapper.json",
+      "bytes": 735,
+      "sha256": "81ddbeff02b8be4e825ca3585772306ef2101514b98ba825b3d88a32206f286b"
+    },
+    {
+      "path": "responses/uniprot/gene-10-MYO10.wrapper.json",
+      "bytes": 736,
+      "sha256": "9912c953865917c236ecf98e6edff4a50418f5001244545aec79129dacd05751"
+    },
+    {
+      "path": "responses/uniprot/gene-11-ZNF829.wrapper.json",
+      "bytes": 739,
+      "sha256": "7351106c9442dfbf3b50aff3eed10067a526bb9a13c1aed733f15ee99c635cfe"
+    },
+    {
+      "path": "responses/uniprot/gene-12-PTHLH.wrapper.json",
+      "bytes": 736,
+      "sha256": "89cd06c0e462ace789f01cc2853999c5f1fc81bc4df89d1507bf44d3772ff49e"
+    },
+    {
+      "path": "responses/uniprot/gene-13-AZIN1-AS1.wrapper.json",
+      "bytes": 748,
+      "sha256": "407623f3c44e46ffeec94a99c75e306967d34eba32af7f692cd34c3cbc940af7"
+    },
+    {
+      "path": "responses/uniprot/gene-14-LIFR-AS1.wrapper.json",
+      "bytes": 746,
+      "sha256": "fb786a4f990f2dfe06d0eecbdb1c352f1b25e16eb99f7f1770bf1894b856cee9"
+    },
+    {
+      "path": "responses/uniprot/gene-15-LINC01489.wrapper.json",
+      "bytes": 749,
+      "sha256": "b813ff4264b3595d2225123e840a179833849b295c3242740c1282d0ddf8d158"
+    },
+    {
+      "path": "responses/uniprot/gene-16-THAP10.wrapper.json",
+      "bytes": 740,
+      "sha256": "3348bd867c96cefb7fe7e59d93baab201190a55eb628e0717fa46770f7a4cd2a"
+    },
+    {
+      "path": "responses/uniprot/gene-17-DENND4C.wrapper.json",
+      "bytes": 742,
+      "sha256": "337f5e00700d931236e1021aa15741062d3da522080bc3bd48e2c6953d44a09a"
+    },
+    {
+      "path": "responses/uniprot/gene-18-MACC1.wrapper.json",
+      "bytes": 737,
+      "sha256": "647ea5c23d31092896534cf4f2bc2ec071ee9316ffd7bbd09ceff994390f3b88"
+    },
+    {
+      "path": "responses/uniprot/gene-19-IGLC3.wrapper.json",
+      "bytes": 737,
+      "sha256": "48a7ff6d9e45c259df39cb2793912c09578fbcd7a1b80a746291da719927265f"
+    },
+    {
+      "path": "responses/uniprot/gene-20-DMD.wrapper.json",
+      "bytes": 730,
+      "sha256": "f56f73504d250276d7c8356412da0a9126388c7249e86415113f28b5803e2c13"
+    },
+    {
+      "path": "responses/uniprot/liana_interaction-01-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 801,
+      "sha256": "857160fbf3ba9d471f6c3c8baa3f62f6a5b354d4c011f2aa3c0c07653a7f1657"
+    },
+    {
+      "path": "responses/uniprot/liana_interaction-02-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 802,
+      "sha256": "72eb4c4713489e80d27585f9644d72ea43b83b1a7f2dfaec35b560e9d6cc060c"
+    },
+    {
+      "path": "responses/uniprot/liana_interaction-03-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 801,
+      "sha256": "99f9d5b1ef46c5f2fc067917ef81c7396a81998d97317c834aaf29ee8185546f"
+    },
+    {
+      "path": "responses/uniprot/liana_interaction-04-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 801,
+      "sha256": "0d6bbfe17ed4d6351fcbaeee7eb882243d49dcafcffee21ce23997e91a03415f"
+    },
+    {
+      "path": "responses/uniprot/liana_interaction-05-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 800,
+      "sha256": "c0d09fb3562a96dd26376950e9d50e240c75a310a49debe0143038f2c972d1d0"
+    },
+    {
+      "path": "responses/uniprot/liana_interaction-06-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 801,
+      "sha256": "21f8f8ef96f3508b30cc538b8dd043fcf39b5bb67a1674756510141fa0fdc376"
+    },
+    {
+      "path": "responses/uniprot/liana_interaction-07-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 802,
+      "sha256": "a79c192f29e883419185b34be623fdc1bc5ce48ec467c80802e040d6d721428c"
+    },
+    {
+      "path": "responses/uniprot/liana_interaction-08-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 802,
+      "sha256": "eddb7c1ab30c009752bb2b444c25d59a7a1bba1efef0c4e89e2444b9bf29cf4a"
+    },
+    {
+      "path": "responses/uniprot/liana_interaction-09-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 802,
+      "sha256": "131bffc399c7e6983559ee6d6f4ac7e57479848462b0847f9a6fe67c0ef0305c"
+    },
+    {
+      "path": "responses/uniprot/liana_interaction-10-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 802,
+      "sha256": "9493ef8073457fe577e8be06e5f7f7a4e04ff62be99eeff4e7ce573f5285f22a"
+    },
+    {
+      "path": "responses/uniprot/prespecified-01-CXCL9_CXCR3.wrapper.json",
+      "bytes": 777,
+      "sha256": "33ccc89caa9b83d20741bc3d02b2ab446c891329e15f1cb46b8b47ea2574c4e1"
+    },
+    {
+      "path": "responses/uniprot/prespecified-02-CXCL10_CXCR3.wrapper.json",
+      "bytes": 781,
+      "sha256": "d7fe3b1ff9b062f3503392a869b0314995d63a5dcb202778b7f1d005a831b347"
+    },
+    {
+      "path": "responses/uniprot/prespecified-03-CD274_PDCD1.wrapper.json",
+      "bytes": 778,
+      "sha256": "09aa3d079b715aa2d152706ca31e9f970aa0bd00fed22a4def75048431859729"
+    },
+    {
+      "path": "responses/uniprot/prespecified-04-TGFB1_TGFBR1_TGFBR2.wrapper.json",
+      "bytes": 802,
+      "sha256": "9f7d61ecdd0af9e3c82aedbdae9dce71f9e36f17dd5fd2cae73e2fb3d9431e62"
+    },
+    {
+      "path": "responses/uniprot/prespecified-05-SPP1_CD44.wrapper.json",
+      "bytes": 771,
+      "sha256": "42b71f58a7caf34c3bff9fb6af04c22584630e354a47ea4f78f84e8d1a3da66e"
+    },
+    {
+      "path": "responses/uniprot/prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.wrapper.json",
+      "bytes": 846,
+      "sha256": "10ff173955123716d82892d4312b6cd092442251952e7ab4e570be2fb9e9f090"
+    },
+    {
+      "path": "retry1/raw/string/gene-01-IGLL5.raw",
+      "bytes": 8063,
+      "sha256": "da382acdc8f5c272a331f60e15349a1cd9233d16751db914dec2d7b4c239d758"
+    },
+    {
+      "path": "retry1/raw/string/gene-02-RAB6C.raw",
+      "bytes": 7390,
+      "sha256": "c87f4c758a825e8ff1dbd4131efa9689c0689d250f325b083f30f861a2cc11c5"
+    },
+    {
+      "path": "retry1/raw/string/gene-03-P2RY13.raw",
+      "bytes": 11183,
+      "sha256": "3305bd2d49992a81d9b9c1b2f4a7e6ad312ff387f73c5d48da2b62ca07ff31e5"
+    },
+    {
+      "path": "retry1/raw/string/gene-05-AC116913.1.raw",
+      "bytes": 14681,
+      "sha256": "0c6df8761b5ccb176cd76e91e353013ac96dbf547be23ace29acf309fdce7867"
+    },
+    {
+      "path": "retry1/raw/string/gene-07-GRK4.raw",
+      "bytes": 8756,
+      "sha256": "144c878d5947c2fa8b86b2e52c499d0ae36a9d09f251274fbb6417bd38f4788f"
+    },
+    {
+      "path": "retry1/raw/string/gene-08-HEY2.raw",
+      "bytes": 13512,
+      "sha256": "140cf7a48da83b052b35408f9efdc3ae1a61e0e4f1634c756bbc5ed20b33869f"
+    },
+    {
+      "path": "retry1/raw/string/gene-09-FOXO6.raw",
+      "bytes": 12007,
+      "sha256": "d6202ecd03a71cce4526379afa3fbc5205e668fe67afc70fb61f14c8aad5e7cc"
+    },
+    {
+      "path": "retry1/raw/string/gene-10-MYO10.raw",
+      "bytes": 7677,
+      "sha256": "a90f0a800c6ef458b754bf35939804952ebaef3b0ff77c879930eeebf359fa4f"
+    },
+    {
+      "path": "retry1/raw/string/gene-11-ZNF829.raw",
+      "bytes": 6372,
+      "sha256": "7fbc40baa467b86444f3963b58a3bb92307e725793ea368a8ad592c7b73f131f"
+    },
+    {
+      "path": "retry1/raw/string/gene-12-PTHLH.raw",
+      "bytes": 9680,
+      "sha256": "763206417c6ce7f18f9424842d5049d9bfd90f734e7175ae4a8c70123c7f6172"
+    },
+    {
+      "path": "retry1/raw/string/gene-16-THAP10.raw",
+      "bytes": 7099,
+      "sha256": "6e00ab4fadc825ea5b631ca716ca12294e08d0db8304c239a98912dd540b724b"
+    },
+    {
+      "path": "retry1/raw/string/gene-17-DENND4C.raw",
+      "bytes": 7218,
+      "sha256": "61c140d934d277cd849d42536c0b6fdc5223388c682a58c0eb0c093f06919bba"
+    },
+    {
+      "path": "retry1/raw/string/gene-18-MACC1.raw",
+      "bytes": 3248,
+      "sha256": "66430bbd03456df6cf5cc6c1348a8c4a8b8484b82aa8ab24eb16cdf29facd3a6"
+    },
+    {
+      "path": "retry1/raw/string/gene-20-DMD.raw",
+      "bytes": 15060,
+      "sha256": "479d60ece89de091d14978cab60bddbb2dd8bf257e1985ee4700b16473001a5f"
+    },
+    {
+      "path": "retry1/raw/string/liana_interaction-01-MIF_CD74_CXCR4.raw",
+      "bytes": 10037,
+      "sha256": "dda89371bbe4edafb3d3ee26918f86326b7f5cfd8f30a69a2c5b6a18ff232504"
+    },
+    {
+      "path": "retry1/raw/string/liana_interaction-02-MIF_CD74_CXCR4.raw",
+      "bytes": 10037,
+      "sha256": "dda89371bbe4edafb3d3ee26918f86326b7f5cfd8f30a69a2c5b6a18ff232504"
+    },
+    {
+      "path": "retry1/raw/string/liana_interaction-03-MIF_CD74_CXCR4.raw",
+      "bytes": 10037,
+      "sha256": "dda89371bbe4edafb3d3ee26918f86326b7f5cfd8f30a69a2c5b6a18ff232504"
+    },
+    {
+      "path": "retry1/raw/string/liana_interaction-04-MIF_CD74_CXCR4.raw",
+      "bytes": 10037,
+      "sha256": "dda89371bbe4edafb3d3ee26918f86326b7f5cfd8f30a69a2c5b6a18ff232504"
+    },
+    {
+      "path": "retry1/raw/string/liana_interaction-05-MIF_CD74_CXCR4.raw",
+      "bytes": 10037,
+      "sha256": "dda89371bbe4edafb3d3ee26918f86326b7f5cfd8f30a69a2c5b6a18ff232504"
+    },
+    {
+      "path": "retry1/raw/string/liana_interaction-06-MIF_CD74_CXCR4.raw",
+      "bytes": 10037,
+      "sha256": "dda89371bbe4edafb3d3ee26918f86326b7f5cfd8f30a69a2c5b6a18ff232504"
+    },
+    {
+      "path": "retry1/raw/string/liana_interaction-07-MIF_CD74_CXCR4.raw",
+      "bytes": 10037,
+      "sha256": "dda89371bbe4edafb3d3ee26918f86326b7f5cfd8f30a69a2c5b6a18ff232504"
+    },
+    {
+      "path": "retry1/raw/string/liana_interaction-08-MIF_CD74_CXCR4.raw",
+      "bytes": 10037,
+      "sha256": "dda89371bbe4edafb3d3ee26918f86326b7f5cfd8f30a69a2c5b6a18ff232504"
+    },
+    {
+      "path": "retry1/raw/string/liana_interaction-09-MIF_CD74_CXCR4.raw",
+      "bytes": 10037,
+      "sha256": "dda89371bbe4edafb3d3ee26918f86326b7f5cfd8f30a69a2c5b6a18ff232504"
+    },
+    {
+      "path": "retry1/raw/string/liana_interaction-10-MIF_CD74_CXCR4.raw",
+      "bytes": 10037,
+      "sha256": "dda89371bbe4edafb3d3ee26918f86326b7f5cfd8f30a69a2c5b6a18ff232504"
+    },
+    {
+      "path": "retry1/raw/string/prespecified-01-CXCL9_CXCR3.raw",
+      "bytes": 15220,
+      "sha256": "0b3b069634279946ef2f952c86a72f9770cf4089a0dea7e9bdf5a4684a42eaa2"
+    },
+    {
+      "path": "retry1/raw/string/prespecified-02-CXCL10_CXCR3.raw",
+      "bytes": 15799,
+      "sha256": "a324e31c3029af0f0a15aae84cbd863622da799c0303c4d72c9783d8684a2ec5"
+    },
+    {
+      "path": "retry1/raw/string/prespecified-03-CD274_PDCD1.raw",
+      "bytes": 9818,
+      "sha256": "362aa7e21b57f4fad49a9107bca4a02b27de1f6a74f8666d8fe169883c9daaac"
+    },
+    {
+      "path": "retry1/raw/string/prespecified-04-TGFB1_TGFBR1_TGFBR2.raw",
+      "bytes": 11321,
+      "sha256": "835ecc7c7d2a5eca5567ffc35d76474d31aad55a95af91b8075bd6cebc98cb1b"
+    },
+    {
+      "path": "retry1/raw/string/prespecified-05-SPP1_CD44.raw",
+      "bytes": 7897,
+      "sha256": "8d25b36cd02dfe1cf2e63bd1d98a19498d1fa9a56bb5369807ffcaf85aea6d2c"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-01-IGLL5.raw",
+      "bytes": 963,
+      "sha256": "cbfb06989df7b7a876266b760807428cf795ac570912f5e9ea6d5d0b3c1bd3d8"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-02-RAB6C.raw",
+      "bytes": 1417,
+      "sha256": "6786d063350e25ca4f87a62a867d5cf4a67930d4734d5de70c5940d253c33667"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-03-P2RY13.raw",
+      "bytes": 1539,
+      "sha256": "a01ef6ed4d8b18b4a749398cd1e3f10e921a18a21a5438eafef998bfea68d398"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-04-TRG-AS1.raw",
+      "bytes": 14,
+      "sha256": "5021e624e752b001ce3e3846e8f158ed4aeb93a4c9a72fdb35a0c5b14a0eea84"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-05-AC116913.1.raw",
+      "bytes": 14,
+      "sha256": "5021e624e752b001ce3e3846e8f158ed4aeb93a4c9a72fdb35a0c5b14a0eea84"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-06-LINC01144.raw",
+      "bytes": 144,
+      "sha256": "6c8d91bdd9ffa45a148fbd77425d0f0412a269d28095516c0282edc287f49992"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-07-GRK4.raw",
+      "bytes": 4690,
+      "sha256": "60874558f0f2f0b11d656d401b9bd82bcc788ff42e8ef29edef7f4b8902cdf3f"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-08-HEY2.raw",
+      "bytes": 2118,
+      "sha256": "358798da754c519c7f504628b14100455e0fd060239aa649a5593fd91605d4cb"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-09-FOXO6.raw",
+      "bytes": 2325,
+      "sha256": "dfc08fabd2f6ac4a2a303f9b6c80586debeeb48f2d507a5a4bfe64e1e850408f"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-10-MYO10.raw",
+      "bytes": 5424,
+      "sha256": "a938f64c281e8d2c398db35636fcb6c9fc839aea69dde4bf48774d432fc48e95"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-11-ZNF829.raw",
+      "bytes": 405,
+      "sha256": "1bc55e583c65995f5568ed510536654dcd64f649e68105737816e84093aa1910"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-12-PTHLH.raw",
+      "bytes": 6900,
+      "sha256": "89fe7d21ad63ad1eb77a3d9a5bd5e0c8573b7bd36af5190b517b9310cdf67e09"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-13-AZIN1-AS1.raw",
+      "bytes": 14,
+      "sha256": "5021e624e752b001ce3e3846e8f158ed4aeb93a4c9a72fdb35a0c5b14a0eea84"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-14-LIFR-AS1.raw",
+      "bytes": 14,
+      "sha256": "5021e624e752b001ce3e3846e8f158ed4aeb93a4c9a72fdb35a0c5b14a0eea84"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-15-LINC01489.raw",
+      "bytes": 201,
+      "sha256": "182600343a1dfa1addf484c502705338634896682112abda4f637ca2d4c73710"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-16-THAP10.raw",
+      "bytes": 805,
+      "sha256": "08d3e568828257bed7544a9b197bb73ddcf9a57fc90b4b43902fb41c93aea9a0"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-17-DENND4C.raw",
+      "bytes": 4166,
+      "sha256": "07625f7da0e20776a597c602744d556270c112d86bb8719072fd1838b558294c"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-18-MACC1.raw",
+      "bytes": 771,
+      "sha256": "85064a7ca9af235d0da2aaea55ee339c83e2644e914f7f2ab6f3ddf61a6f9639"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-19-IGLC3.raw",
+      "bytes": 2323,
+      "sha256": "59375f18650acec9bbe65e34c025f00ff8c8b2c314d15323e77b50a4e9aad751"
+    },
+    {
+      "path": "retry1/raw/uniprot/gene-20-DMD.raw",
+      "bytes": 9991,
+      "sha256": "f2cee8eb60f2b6354c8b4bedc444a9f84121e2c71f7f72a52dd45fd99f90678f"
+    },
+    {
+      "path": "retry1/raw/uniprot/liana_interaction-01-MIF_CD74_CXCR4.raw",
+      "bytes": 16678,
+      "sha256": "ff2dfac988379fd309e200b052d97bfa87d78896901f6b320eb4b3e25996d33d"
+    },
+    {
+      "path": "retry1/raw/uniprot/liana_interaction-02-MIF_CD74_CXCR4.raw",
+      "bytes": 16678,
+      "sha256": "ff2dfac988379fd309e200b052d97bfa87d78896901f6b320eb4b3e25996d33d"
+    },
+    {
+      "path": "retry1/raw/uniprot/liana_interaction-03-MIF_CD74_CXCR4.raw",
+      "bytes": 16678,
+      "sha256": "ff2dfac988379fd309e200b052d97bfa87d78896901f6b320eb4b3e25996d33d"
+    },
+    {
+      "path": "retry1/raw/uniprot/liana_interaction-04-MIF_CD74_CXCR4.raw",
+      "bytes": 16678,
+      "sha256": "ff2dfac988379fd309e200b052d97bfa87d78896901f6b320eb4b3e25996d33d"
+    },
+    {
+      "path": "retry1/raw/uniprot/liana_interaction-05-MIF_CD74_CXCR4.raw",
+      "bytes": 16678,
+      "sha256": "ff2dfac988379fd309e200b052d97bfa87d78896901f6b320eb4b3e25996d33d"
+    },
+    {
+      "path": "retry1/raw/uniprot/liana_interaction-06-MIF_CD74_CXCR4.raw",
+      "bytes": 16678,
+      "sha256": "ff2dfac988379fd309e200b052d97bfa87d78896901f6b320eb4b3e25996d33d"
+    },
+    {
+      "path": "retry1/raw/uniprot/liana_interaction-07-MIF_CD74_CXCR4.raw",
+      "bytes": 16678,
+      "sha256": "ff2dfac988379fd309e200b052d97bfa87d78896901f6b320eb4b3e25996d33d"
+    },
+    {
+      "path": "retry1/raw/uniprot/liana_interaction-08-MIF_CD74_CXCR4.raw",
+      "bytes": 16678,
+      "sha256": "ff2dfac988379fd309e200b052d97bfa87d78896901f6b320eb4b3e25996d33d"
+    },
+    {
+      "path": "retry1/raw/uniprot/liana_interaction-09-MIF_CD74_CXCR4.raw",
+      "bytes": 16678,
+      "sha256": "ff2dfac988379fd309e200b052d97bfa87d78896901f6b320eb4b3e25996d33d"
+    },
+    {
+      "path": "retry1/raw/uniprot/liana_interaction-10-MIF_CD74_CXCR4.raw",
+      "bytes": 16678,
+      "sha256": "ff2dfac988379fd309e200b052d97bfa87d78896901f6b320eb4b3e25996d33d"
+    },
+    {
+      "path": "retry1/raw/uniprot/prespecified-01-CXCL9_CXCR3.raw",
+      "bytes": 4169,
+      "sha256": "cd174b7ee3674ff2ec59021d3db751e9377410ab81662a8657c5560f5021f1ee"
+    },
+    {
+      "path": "retry1/raw/uniprot/prespecified-02-CXCL10_CXCR3.raw",
+      "bytes": 5627,
+      "sha256": "f3b58447782070af344983d4bc28c6c7542993546fe5e844ac3758dba102efcb"
+    },
+    {
+      "path": "retry1/raw/uniprot/prespecified-03-CD274_PDCD1.raw",
+      "bytes": 10146,
+      "sha256": "59759b15e753c66e290afebb6e20104aaa4ea2329fa23d76b13dcee452ace963"
+    },
+    {
+      "path": "retry1/raw/uniprot/prespecified-04-TGFB1_TGFBR1_TGFBR2.raw",
+      "bytes": 22248,
+      "sha256": "c06809cec0d92bf613b9e778a5f2fcb997339a1c74a45218c751041a26c7f114"
+    },
+    {
+      "path": "retry1/raw/uniprot/prespecified-05-SPP1_CD44.raw",
+      "bytes": 17772,
+      "sha256": "df76e19dcbef8ae31ca89185aa7493c71bb47c0f2b8adc7f6caebe413886157e"
+    },
+    {
+      "path": "retry1/raw/uniprot/prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.raw",
+      "bytes": 9039,
+      "sha256": "95115b3ef672ff59c4d35f3061fd38b39b1f68910aaa3be35528e7f93b429e9b"
+    },
+    {
+      "path": "retry1/requests/string/gene-01-IGLL5.request.json",
+      "bytes": 790,
+      "sha256": "3c51b4b750c1cd104f78c8dd8a4b28f4ff94820a8fa5e9ef4f6746fd04912239"
+    },
+    {
+      "path": "retry1/requests/string/gene-02-RAB6C.request.json",
+      "bytes": 790,
+      "sha256": "632b52e7cd04688ca6311c89997902de8193da0bb5b75a6c83b790510cc373e0"
+    },
+    {
+      "path": "retry1/requests/string/gene-03-P2RY13.request.json",
+      "bytes": 793,
+      "sha256": "f85b15c34a587d46aa9c1d301e55f72760d18f3c4d5880b5ebfcf1f94b81fb57"
+    },
+    {
+      "path": "retry1/requests/string/gene-04-TRG-AS1.request.json",
+      "bytes": 796,
+      "sha256": "003c0768e734542e06d03dd1ab813e61ec29f32489b160402ee458800fbee58c"
+    },
+    {
+      "path": "retry1/requests/string/gene-05-AC116913.1.request.json",
+      "bytes": 803,
+      "sha256": "8fb8e625c7c87d4dc27dd6be42a2519c7d837a41242910beb655fa3b4b4d84de"
+    },
+    {
+      "path": "retry1/requests/string/gene-06-LINC01144.request.json",
+      "bytes": 802,
+      "sha256": "c525ce1cd0d5b91932df3817ce0e31ac0b4bfe4840382aebcd9195c21975e0cc"
+    },
+    {
+      "path": "retry1/requests/string/gene-07-GRK4.request.json",
+      "bytes": 787,
+      "sha256": "5ec6deb5b9f24dc496ee600caf2b69b68cb176f267e108339db35c5708e8e67d"
+    },
+    {
+      "path": "retry1/requests/string/gene-08-HEY2.request.json",
+      "bytes": 787,
+      "sha256": "41ea39689f25b036238128be876a32f575c26c022465e87e664db943d4d0bdd2"
+    },
+    {
+      "path": "retry1/requests/string/gene-09-FOXO6.request.json",
+      "bytes": 790,
+      "sha256": "317edfbc5e0e71683eca0abc3b9acf08842af2d6b6e57ee59c5f00a34471c214"
+    },
+    {
+      "path": "retry1/requests/string/gene-10-MYO10.request.json",
+      "bytes": 791,
+      "sha256": "f4454d0fe11793b56e5470bb8d670f77825645c72c318e505602a0d54a1061ba"
+    },
+    {
+      "path": "retry1/requests/string/gene-11-ZNF829.request.json",
+      "bytes": 794,
+      "sha256": "14f35fbb1c7fbd76e16e4d6c04c4ee2a96c3783cd0ee66407de0e88b231ee8aa"
+    },
+    {
+      "path": "retry1/requests/string/gene-12-PTHLH.request.json",
+      "bytes": 791,
+      "sha256": "8d2be098c501fbf01c58bb4b28b6feebd4de37981ca980f62150901f1fcc1eb3"
+    },
+    {
+      "path": "retry1/requests/string/gene-13-AZIN1-AS1.request.json",
+      "bytes": 803,
+      "sha256": "feffde8699ed5f95b25e1f30f7195663905a15c7dd013196724e1670bc36eb18"
+    },
+    {
+      "path": "retry1/requests/string/gene-14-LIFR-AS1.request.json",
+      "bytes": 800,
+      "sha256": "5aac054d8712994423e2fd80fb45f7670aef4718d1bbe560274ed8180fe2a7d3"
+    },
+    {
+      "path": "retry1/requests/string/gene-15-LINC01489.request.json",
+      "bytes": 803,
+      "sha256": "d7634c7e292f9de40994dd9ad26e2918b4891a93cf997fedd4a052883e5d4a6b"
+    },
+    {
+      "path": "retry1/requests/string/gene-16-THAP10.request.json",
+      "bytes": 794,
+      "sha256": "463c601bef377b38257bfbca6dc0ed2776749e286d9df011ddfe0e2f3d4bb183"
+    },
+    {
+      "path": "retry1/requests/string/gene-17-DENND4C.request.json",
+      "bytes": 797,
+      "sha256": "d4fe2b6c3d9597839664f90605109c6a1c9911fcd0c563a12d89dd2dcd8b6724"
+    },
+    {
+      "path": "retry1/requests/string/gene-18-MACC1.request.json",
+      "bytes": 791,
+      "sha256": "5cdd47710532c6c311b13b5570a9b26b94b7f29d5642377e14a889f994b47ba9"
+    },
+    {
+      "path": "retry1/requests/string/gene-19-IGLC3.request.json",
+      "bytes": 791,
+      "sha256": "3809dcb1bed1711cad0e069afde0de7902f0f712c74ce170c799e4298b8acde6"
+    },
+    {
+      "path": "retry1/requests/string/gene-20-DMD.request.json",
+      "bytes": 785,
+      "sha256": "46d093c8d6e51bef248bc5a48b5e9ce56dbb515ff742c5fbffa694985a2e0b3c"
+    },
+    {
+      "path": "retry1/requests/string/liana_interaction-01-MIF_CD74_CXCR4.request.json",
+      "bytes": 845,
+      "sha256": "6d0f09aa09f622c04329de95ea5560867c7bbb88e83dd29b2d99326afe29da7f"
+    },
+    {
+      "path": "retry1/requests/string/liana_interaction-02-MIF_CD74_CXCR4.request.json",
+      "bytes": 845,
+      "sha256": "ea11947969b6b14a2494985155f2e547f1c4a4f96599e678788e27166e5943d1"
+    },
+    {
+      "path": "retry1/requests/string/liana_interaction-03-MIF_CD74_CXCR4.request.json",
+      "bytes": 845,
+      "sha256": "03b0353824db2e1e3eb2ee39e2d845fd68b44678994dad4bfc47d8fa3528c0bb"
+    },
+    {
+      "path": "retry1/requests/string/liana_interaction-04-MIF_CD74_CXCR4.request.json",
+      "bytes": 845,
+      "sha256": "b8cedabd8f709e084899afd041dc6a21dc0b1b927387dba655b5c5f25c7e8c18"
+    },
+    {
+      "path": "retry1/requests/string/liana_interaction-05-MIF_CD74_CXCR4.request.json",
+      "bytes": 845,
+      "sha256": "1ca49ccf7396e16386a0d83deb690d773b07a4348cdcb962bb506932d8a22eeb"
+    },
+    {
+      "path": "retry1/requests/string/liana_interaction-06-MIF_CD74_CXCR4.request.json",
+      "bytes": 845,
+      "sha256": "58be3d389ef5a6ff2254ea740fd276d9cc83bde6d05c391db4411d583d33c082"
+    },
+    {
+      "path": "retry1/requests/string/liana_interaction-07-MIF_CD74_CXCR4.request.json",
+      "bytes": 845,
+      "sha256": "7f76cf3bbff90cf155cf96224d7a5dcb13f61982bb2ca4ce678251a1c5b93cd1"
+    },
+    {
+      "path": "retry1/requests/string/liana_interaction-08-MIF_CD74_CXCR4.request.json",
+      "bytes": 845,
+      "sha256": "aa4d2fb5245159ef346e856156c9b843401e644bd071ac79c09a23c8814549b7"
+    },
+    {
+      "path": "retry1/requests/string/liana_interaction-09-MIF_CD74_CXCR4.request.json",
+      "bytes": 845,
+      "sha256": "0927b4e3f6a22c59d855856207d930eec321db85490f6e81e5991fa2cb81d0b7"
+    },
+    {
+      "path": "retry1/requests/string/liana_interaction-10-MIF_CD74_CXCR4.request.json",
+      "bytes": 846,
+      "sha256": "bdd1c82d5d1a074f3278fd85efb9cb155fe339c3ec55b21a83d5a6d73f2a0e0d"
+    },
+    {
+      "path": "retry1/requests/string/prespecified-01-CXCL9_CXCR3.request.json",
+      "bytes": 825,
+      "sha256": "f5b2a85acf85e1e767710f68b236ddfc5285ef39aaee5080bda2d541f779cbe5"
+    },
+    {
+      "path": "retry1/requests/string/prespecified-02-CXCL10_CXCR3.request.json",
+      "bytes": 828,
+      "sha256": "2591b2b1744c69a5c7ade324ef5c9c158af668d596e8cf0525c38310d6e63f5f"
+    },
+    {
+      "path": "retry1/requests/string/prespecified-03-CD274_PDCD1.request.json",
+      "bytes": 825,
+      "sha256": "19318ec325f52567c46476cfe4af5c6145064a4efd4adc74cb7f8a9442b4ae8d"
+    },
+    {
+      "path": "retry1/requests/string/prespecified-04-TGFB1_TGFBR1_TGFBR2.request.json",
+      "bytes": 850,
+      "sha256": "d6cad1e595e89626d60fc600957b2ec58fdc926157e05f4e3a22e5d8add027c2"
+    },
+    {
+      "path": "retry1/requests/string/prespecified-05-SPP1_CD44.request.json",
+      "bytes": 819,
+      "sha256": "ebd7de1fe6d6c48cb11d6a24aef8973e14581d5d469cb74b2721e8d0bd28e64c"
+    },
+    {
+      "path": "retry1/requests/string/prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.request.json",
+      "bytes": 893,
+      "sha256": "0f13b8cfdc9726aae60cd8ab4a3653fdb503292bcdc6663a1045574db7dadffa"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-01-IGLL5.request.json",
+      "bytes": 845,
+      "sha256": "07ac4573036e38c981ac6532a30c18aa432924fdce7817c9f85f88031859bc89"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-02-RAB6C.request.json",
+      "bytes": 845,
+      "sha256": "7f4c4bef00811354b59cf7963c5f77ce8872a63374c6fc0953d4d9c31669b237"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-03-P2RY13.request.json",
+      "bytes": 848,
+      "sha256": "853e901ba4b6c38e7366a4679a4e3332768ca0c473b4d93e3d43459984bfcbb7"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-04-TRG-AS1.request.json",
+      "bytes": 851,
+      "sha256": "1da3e4a2d7e3524868bc8c7e687caaa9b18fb6edde8c6dcf61400e6041d86137"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-05-AC116913.1.request.json",
+      "bytes": 858,
+      "sha256": "35f854ebe17dc836b6959f80ca33d9363e7faced4e7b7aa369f0f8d58a3859d0"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-06-LINC01144.request.json",
+      "bytes": 857,
+      "sha256": "bd63283233e8ba4259dc46d785c40acf39dc6219e8c1c685fbcdf16ee6d773ad"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-07-GRK4.request.json",
+      "bytes": 842,
+      "sha256": "396ee52315935bf425803f685b8f1d6c8f2ea40b79bc17655eaedee429f6c34c"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-08-HEY2.request.json",
+      "bytes": 842,
+      "sha256": "9c8ed975c7d00187e8b77517dc4ec3277968b18cdf3e1ac416d70392f06e5a4d"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-09-FOXO6.request.json",
+      "bytes": 845,
+      "sha256": "0c5034944da9440751daf104fc1ee12c7c638d4b7d849c60d3d8096cc4b0c831"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-10-MYO10.request.json",
+      "bytes": 846,
+      "sha256": "04bf5f2e978e441de6e339798d31da035d92cf62628e8d658a7645cd65459ccc"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-11-ZNF829.request.json",
+      "bytes": 849,
+      "sha256": "21a5cfc74693fbb6f09e1f8039e915820d20df3731e07905ab40f0422a5b3d48"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-12-PTHLH.request.json",
+      "bytes": 846,
+      "sha256": "2e1ad6e9c61537a17cf6fd816ce5b0f07805f71629ba84722d2dc95bdbb98b9f"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-13-AZIN1-AS1.request.json",
+      "bytes": 858,
+      "sha256": "65e6570e0a54a7c6e284a0ae741b0b6830460f9289cab54ed79ba867139ac08f"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-14-LIFR-AS1.request.json",
+      "bytes": 855,
+      "sha256": "75b04f4a156ec60caa498adcaee2d762528b2dcbf93c33621c2dc97bd83ceaa2"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-15-LINC01489.request.json",
+      "bytes": 858,
+      "sha256": "bc3d3edbb6ff44f70c3c7471da1a48def6388d5e893cc0376d2d6261962612ba"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-16-THAP10.request.json",
+      "bytes": 849,
+      "sha256": "bead560ce0bd57bb5ae82090dd7d40c642a17823429c5f12665e677891f4dc00"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-17-DENND4C.request.json",
+      "bytes": 852,
+      "sha256": "9541615d2207d600257d8e33462f6d33d363368290f7d3f460b7c2251c54d042"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-18-MACC1.request.json",
+      "bytes": 846,
+      "sha256": "034ff5c86c944dd613b309bf309c8d848264b37c402ed74fd62d6bfaa1b3d008"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-19-IGLC3.request.json",
+      "bytes": 846,
+      "sha256": "6d4c8437831688e5d03e6c5481c8c36bed5cc1352864fb688fed58aa224b044b"
+    },
+    {
+      "path": "retry1/requests/uniprot/gene-20-DMD.request.json",
+      "bytes": 840,
+      "sha256": "d50fe9cbd73c2a53d613196ec57c6cb2d81a9dac805a41d9964bbb7488b435df"
+    },
+    {
+      "path": "retry1/requests/uniprot/liana_interaction-01-MIF_CD74_CXCR4.request.json",
+      "bytes": 914,
+      "sha256": "a62820c89227667bd6d8b5d7fc1056840aab2022fcf446baa7d376d770024c48"
+    },
+    {
+      "path": "retry1/requests/uniprot/liana_interaction-02-MIF_CD74_CXCR4.request.json",
+      "bytes": 914,
+      "sha256": "3ca1c68f56a3a49183c45dd7cb9211bb5d7fbc18645bf721175f48db1d4def01"
+    },
+    {
+      "path": "retry1/requests/uniprot/liana_interaction-03-MIF_CD74_CXCR4.request.json",
+      "bytes": 914,
+      "sha256": "958a1abcb22eecb64ebf7e3050b2ab7ea974542ceeeab4aecbb8004f51fafb92"
+    },
+    {
+      "path": "retry1/requests/uniprot/liana_interaction-04-MIF_CD74_CXCR4.request.json",
+      "bytes": 914,
+      "sha256": "a14c4741372b7606978d3e890d0039660bc188a095ff395120a23276bf06c656"
+    },
+    {
+      "path": "retry1/requests/uniprot/liana_interaction-05-MIF_CD74_CXCR4.request.json",
+      "bytes": 914,
+      "sha256": "5a50da6ca7804e2637b508181624c6147d0135fbf2a23c7b6d9d4fe4f0cbbec5"
+    },
+    {
+      "path": "retry1/requests/uniprot/liana_interaction-06-MIF_CD74_CXCR4.request.json",
+      "bytes": 914,
+      "sha256": "911265a6d578b22dbd2307d8a883cf99b8f7e4387d5e422dc9cd1cc39b2ded65"
+    },
+    {
+      "path": "retry1/requests/uniprot/liana_interaction-07-MIF_CD74_CXCR4.request.json",
+      "bytes": 914,
+      "sha256": "180c35d14635102c4cf131277ad2e43371688813411043614d9aa5628ce1f00a"
+    },
+    {
+      "path": "retry1/requests/uniprot/liana_interaction-08-MIF_CD74_CXCR4.request.json",
+      "bytes": 914,
+      "sha256": "d32b05779f6067fc98db67504f4dd5b16c78ecf3e73b30cc00fb3688b342e113"
+    },
+    {
+      "path": "retry1/requests/uniprot/liana_interaction-09-MIF_CD74_CXCR4.request.json",
+      "bytes": 914,
+      "sha256": "06f860afe5cd2984572070de1cbaefe9a68eefff7127683354ab3d9c269856d7"
+    },
+    {
+      "path": "retry1/requests/uniprot/liana_interaction-10-MIF_CD74_CXCR4.request.json",
+      "bytes": 915,
+      "sha256": "ce14e06c7bd73294c922fa5e0411645be384b8a6c1470d19242d63e3322698a7"
+    },
+    {
+      "path": "retry1/requests/uniprot/prespecified-01-CXCL9_CXCR3.request.json",
+      "bytes": 887,
+      "sha256": "289eec5b516594306a6b28ab66cf1a38a7c3873f1267ff5091ec73da6c3bb122"
+    },
+    {
+      "path": "retry1/requests/uniprot/prespecified-02-CXCL10_CXCR3.request.json",
+      "bytes": 890,
+      "sha256": "6dfbfc43ce5862936ac10817a3d0f9783d08c448a5a2e6f47090bf2a89a83f7c"
+    },
+    {
+      "path": "retry1/requests/uniprot/prespecified-03-CD274_PDCD1.request.json",
+      "bytes": 887,
+      "sha256": "887f7e6ec868d28065e17c35d1606ae8e5d94cf9b5e44dff21cad32f897018ed"
+    },
+    {
+      "path": "retry1/requests/uniprot/prespecified-04-TGFB1_TGFBR1_TGFBR2.request.json",
+      "bytes": 919,
+      "sha256": "8b8f8ceacec9e611c75603216f951289d41b980f2973398aeb8343ca90ba600d"
+    },
+    {
+      "path": "retry1/requests/uniprot/prespecified-05-SPP1_CD44.request.json",
+      "bytes": 881,
+      "sha256": "f15a3502dd6901e57554b9c0865e60a044e417bd6050d0dde98758373302478d"
+    },
+    {
+      "path": "retry1/requests/uniprot/prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.request.json",
+      "bytes": 943,
+      "sha256": "e41419b21feb15f80c58a6bda9a1e5578e702843cbdcdcde4c9afe86bb9ea000"
+    },
+    {
+      "path": "retry1/responses/string/gene-01-IGLL5.wrapper.json",
+      "bytes": 4987,
+      "sha256": "096817e861962d361bb9d3cf247d9268ba23cba104d0488b91ab771ae1a29875"
+    },
+    {
+      "path": "retry1/responses/string/gene-02-RAB6C.wrapper.json",
+      "bytes": 4976,
+      "sha256": "eecd513faf677e0361616c60eb443bf41d91a00c1d0ae019813b3872c62a5e07"
+    },
+    {
+      "path": "retry1/responses/string/gene-03-P2RY13.wrapper.json",
+      "bytes": 4995,
+      "sha256": "31f735aafae4691948cc8ee3898b9cc1cc2377654551760cfb299b8d85259952"
+    },
+    {
+      "path": "retry1/responses/string/gene-04-TRG-AS1.wrapper.json",
+      "bytes": 739,
+      "sha256": "3925232fe1ddae4c9affcdba4d2c4a59e31b5e6185f7f1e621439b41b34aad89"
+    },
+    {
+      "path": "retry1/responses/string/gene-05-AC116913.1.wrapper.json",
+      "bytes": 5010,
+      "sha256": "366d654451585e36e858f50d2880f40a55f0af25d65a655ec4e59c5722e38fc5"
+    },
+    {
+      "path": "retry1/responses/string/gene-06-LINC01144.wrapper.json",
+      "bytes": 744,
+      "sha256": "539b83f1010b55076088a846fefe14ea6d63b7b1de7b5247a5f211dcc70817dd"
+    },
+    {
+      "path": "retry1/responses/string/gene-07-GRK4.wrapper.json",
+      "bytes": 4958,
+      "sha256": "77ff61f5d92f3fb0cbc92d1b6fb26760c6f00df321efc5ff85cba85b872d701c"
+    },
+    {
+      "path": "retry1/responses/string/gene-08-HEY2.wrapper.json",
+      "bytes": 4958,
+      "sha256": "8b7b903a24c4f7d2e8be93998493ca770757f79aebd36b771e995b5cd451b86c"
+    },
+    {
+      "path": "retry1/responses/string/gene-09-FOXO6.wrapper.json",
+      "bytes": 4955,
+      "sha256": "ba956df9716ba64ad24b2da74cae34f85b415acc29f06a113954fcc34f54f45b"
+    },
+    {
+      "path": "retry1/responses/string/gene-10-MYO10.wrapper.json",
+      "bytes": 4975,
+      "sha256": "44308c21a574e612edb4d78460464e91301e3deaf8ded6410c3590ff798b71af"
+    },
+    {
+      "path": "retry1/responses/string/gene-11-ZNF829.wrapper.json",
+      "bytes": 5018,
+      "sha256": "a7dc15265da1f035c287832ffbd8412c8bbc0cdef84568b24cf3534c3e2b7086"
+    },
+    {
+      "path": "retry1/responses/string/gene-12-PTHLH.wrapper.json",
+      "bytes": 4945,
+      "sha256": "f2c02209084d548da3821a48175cf650b8cdd354896d4dd0f91d5dc1d4f60baa"
+    },
+    {
+      "path": "retry1/responses/string/gene-13-AZIN1-AS1.wrapper.json",
+      "bytes": 746,
+      "sha256": "1031fd485a16f1ab8e36b39e0d0b0316aa568dfcab2414b316a358661950a235"
+    },
+    {
+      "path": "retry1/responses/string/gene-14-LIFR-AS1.wrapper.json",
+      "bytes": 743,
+      "sha256": "00b1b0737052be52d36dc15186d086ef5af490c5c710f17ee22fcc2c32c1dfe9"
+    },
+    {
+      "path": "retry1/responses/string/gene-15-LINC01489.wrapper.json",
+      "bytes": 746,
+      "sha256": "9dda9d499c96ed9d152ba7761f591d039618ff3465979cbc4a1552d6e5ce2b4f"
+    },
+    {
+      "path": "retry1/responses/string/gene-16-THAP10.wrapper.json",
+      "bytes": 4980,
+      "sha256": "d8b9d08b3821ac54c48f207b8bcc16292ec4cf9e34bd1feb26773771770a9058"
+    },
+    {
+      "path": "retry1/responses/string/gene-17-DENND4C.wrapper.json",
+      "bytes": 5016,
+      "sha256": "4a9c59670a6ebd7a434b95cee88cd5ba72884272094a6f0f399d37b678cbedb4"
+    },
+    {
+      "path": "retry1/responses/string/gene-18-MACC1.wrapper.json",
+      "bytes": 4949,
+      "sha256": "f2f464d733c3913af75d0179ede32ec6be381267d6ccbd32a7b9f3c3d7e46e6c"
+    },
+    {
+      "path": "retry1/responses/string/gene-19-IGLC3.wrapper.json",
+      "bytes": 733,
+      "sha256": "bf4c2efbe1f4503e0d1dcef8268d2206af15dba8aac4d87830c1786899195a35"
+    },
+    {
+      "path": "retry1/responses/string/gene-20-DMD.wrapper.json",
+      "bytes": 4960,
+      "sha256": "4516c72f24631909454a30c82239cea3b8205ca4f914905ff6b9884a80d4774f"
+    },
+    {
+      "path": "retry1/responses/string/liana_interaction-01-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 5059,
+      "sha256": "718b9bd7ba25b6cb0354cfa01efa0da67fe28960098b18bf9d5bd76b16e534f6"
+    },
+    {
+      "path": "retry1/responses/string/liana_interaction-02-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 5058,
+      "sha256": "d714ef97945fa9b8003708c05a814a254b1b4d95c3d702f952ca4405d915e219"
+    },
+    {
+      "path": "retry1/responses/string/liana_interaction-03-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 5059,
+      "sha256": "5ae3084bceb37e37d6e872051ac34a3855e11ac1ecb8551188c54b9f571ef051"
+    },
+    {
+      "path": "retry1/responses/string/liana_interaction-04-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 5059,
+      "sha256": "2e5586c07f0dacb5aa9eda8bd7319a23d5ce84d1c571117468d628041d8010fd"
+    },
+    {
+      "path": "retry1/responses/string/liana_interaction-05-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 5059,
+      "sha256": "ad03d51c9610c33802a9bec395a67412688ad2d9d2103db11f67448bebd32171"
+    },
+    {
+      "path": "retry1/responses/string/liana_interaction-06-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 5059,
+      "sha256": "52f1d4e906c63a85cc5dd0fac8aded2e6401ac92d917e6d9914143f65d8bf6f8"
+    },
+    {
+      "path": "retry1/responses/string/liana_interaction-07-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 5059,
+      "sha256": "7f8147e3d5ec935bbf6626994e24708cb08e5c944b569822297c8c0a77792bca"
+    },
+    {
+      "path": "retry1/responses/string/liana_interaction-08-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 5059,
+      "sha256": "bdde0af01b6574165130915ffd7467ff32cec20fdaf59d5adced8e9ebfd613fc"
+    },
+    {
+      "path": "retry1/responses/string/liana_interaction-09-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 5059,
+      "sha256": "3922290b561b50da5f812d6be6c7e1d8dc892fcccf76b7797017ad0a0c65e246"
+    },
+    {
+      "path": "retry1/responses/string/liana_interaction-10-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 5060,
+      "sha256": "88299a4395c7bec313f325503f00e1531514ab355adba2a96466947c1c35c55c"
+    },
+    {
+      "path": "retry1/responses/string/prespecified-01-CXCL9_CXCR3.wrapper.json",
+      "bytes": 5013,
+      "sha256": "fc7e0be691400b78ac6f1042ff4ff6c782a1c614329108be07d29418d84e40eb"
+    },
+    {
+      "path": "retry1/responses/string/prespecified-02-CXCL10_CXCR3.wrapper.json",
+      "bytes": 5021,
+      "sha256": "86be2bc0a2820137cfd8e50adddac9f58bc0ebe640c8d804bff4b8041fb4915d"
+    },
+    {
+      "path": "retry1/responses/string/prespecified-03-CD274_PDCD1.wrapper.json",
+      "bytes": 5046,
+      "sha256": "371e37ef66466a9505d4d3d32a329598bc2297cd869ffbc97594a4cb8f1841b2"
+    },
+    {
+      "path": "retry1/responses/string/prespecified-04-TGFB1_TGFBR1_TGFBR2.wrapper.json",
+      "bytes": 5062,
+      "sha256": "08ba54374b03102c111ac8405aeda9c9818b6c144990bf5f5d4fbabf1110141e"
+    },
+    {
+      "path": "retry1/responses/string/prespecified-05-SPP1_CD44.wrapper.json",
+      "bytes": 5030,
+      "sha256": "609a383034862d5e3665d6bec0f073012c0638b48491656ffcfaeb0be5893160"
+    },
+    {
+      "path": "retry1/responses/string/prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.wrapper.json",
+      "bytes": 843,
+      "sha256": "d0136ceb0b87580df0234663ac3e1591526fa7d3db23629726490e0f3ed19599"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-01-IGLL5.wrapper.json",
+      "bytes": 3444,
+      "sha256": "b18b7e4f9e2b625d93faabe53d6f51b50efea9c585a076fc495724389a3e4957"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-02-RAB6C.wrapper.json",
+      "bytes": 2577,
+      "sha256": "4a2b0729f98df60d647e230ef26ddaac5bd0a437e63f7f9e0249961d145633c4"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-03-P2RY13.wrapper.json",
+      "bytes": 3422,
+      "sha256": "60ba2d4a8bfc61797fec18a159c8d89fafeac3b8f704d0b70ca3f3b84c4bedff"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-04-TRG-AS1.wrapper.json",
+      "bytes": 1590,
+      "sha256": "79f0c173c29c91d941b695c9619d32ba65d4be14e47719942a4563b8fcd3d6b7"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-05-AC116913.1.wrapper.json",
+      "bytes": 1603,
+      "sha256": "63b59ef3867d3be1f3802ab03e60228ab839186eeaa349defbd994bd51ddf832"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-06-LINC01144.wrapper.json",
+      "bytes": 1599,
+      "sha256": "4881b8c67be937eb248e48cb29c6a09131b9c2ef4573fd9e3f2037530d31eaab"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-07-GRK4.wrapper.json",
+      "bytes": 6046,
+      "sha256": "6d9071d52879db4d168d0e1e937da512e704aaf144cb3b4ec8a2acbff106c7ef"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-08-HEY2.wrapper.json",
+      "bytes": 3414,
+      "sha256": "c982d25aec2116f42347c0b04c372ecd4cbb7b72d0489b41c422e0c88e8005bb"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-09-FOXO6.wrapper.json",
+      "bytes": 5921,
+      "sha256": "67155d19f7e746c6400de70f3ac2db5a9dafb954d32e577894c19c3f07f3ae64"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-10-MYO10.wrapper.json",
+      "bytes": 6983,
+      "sha256": "deccd8c84894b38d9bae00b7b8a29e70e09ccc34971d4e1eaa5c234757cf67ef"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-11-ZNF829.wrapper.json",
+      "bytes": 2544,
+      "sha256": "8a3b2c4a3860210a89e04feb6cc5d0eb8187e0696c118a2e19667dfed6a79b97"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-12-PTHLH.wrapper.json",
+      "bytes": 6168,
+      "sha256": "f49498ec2bb97aeaf81e751f5598347c0c7c1e694152ba6f4be04cf59d46f73c"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-13-AZIN1-AS1.wrapper.json",
+      "bytes": 1600,
+      "sha256": "6dfcd5632476bb5869d12a22e7e15808567ce6ebc5ab111a42ad03362ca46829"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-14-LIFR-AS1.wrapper.json",
+      "bytes": 1596,
+      "sha256": "16a6f037cd4f7a04d56ca7b0bde58d45b2858fe28000d5dcc68d6c6b1b09306e"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-15-LINC01489.wrapper.json",
+      "bytes": 1600,
+      "sha256": "6180744ec2c0b957dd5f563cac335e6d01655cd34c64c0a05e00b417e5b61432"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-16-THAP10.wrapper.json",
+      "bytes": 3365,
+      "sha256": "a4afeb9d7e5bd2f4e0dc6a9f8bc5ea4d844563364092dfddf94bccfa66cc91f2"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-17-DENND4C.wrapper.json",
+      "bytes": 8470,
+      "sha256": "80c0af82f5be3097932b80835689e0bca0d9cc939ee266b8939d66d6913f3c08"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-18-MACC1.wrapper.json",
+      "bytes": 2577,
+      "sha256": "e2f70e7b89ee27451fc1d6494c010c2541f3493154914315cf6258b7629a8f32"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-19-IGLC3.wrapper.json",
+      "bytes": 2578,
+      "sha256": "7677d3252591e7dc8589b785b07ab4955ef7ffbcbb8322a8b8fecedf631ec60e"
+    },
+    {
+      "path": "retry1/responses/uniprot/gene-20-DMD.wrapper.json",
+      "bytes": 10564,
+      "sha256": "8568ae1a6413dadb965da6597157961075ec1c91a4b6cdaece04fb79cc037d66"
+    },
+    {
+      "path": "retry1/responses/uniprot/liana_interaction-01-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 10770,
+      "sha256": "6f8b10b476a23267ad7f62ad778a92b159a1002adb095ecb667f06eecf9042f8"
+    },
+    {
+      "path": "retry1/responses/uniprot/liana_interaction-02-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 10770,
+      "sha256": "b9b7232fa0c0999142cab956cc4f88bb823ee68f81612c83f61192cd4df6d897"
+    },
+    {
+      "path": "retry1/responses/uniprot/liana_interaction-03-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 10771,
+      "sha256": "e61dc330aab0ad84dcb5fb42d3b0343e6c976abf0e766e405b7c965ea5690932"
+    },
+    {
+      "path": "retry1/responses/uniprot/liana_interaction-04-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 10771,
+      "sha256": "973cc5ba5d95e4e6eee20691b8890f957672779126e1f35733efa112b955e3d8"
+    },
+    {
+      "path": "retry1/responses/uniprot/liana_interaction-05-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 10770,
+      "sha256": "ad90527e7914df79f9ea9707fa4d27d94df1c49cd25eceb91cca6f6f25bbdc1c"
+    },
+    {
+      "path": "retry1/responses/uniprot/liana_interaction-06-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 10771,
+      "sha256": "30d55a80c54f0847c137ff86885c7f69e931af907c9b03ddd67f70dac2e38c71"
+    },
+    {
+      "path": "retry1/responses/uniprot/liana_interaction-07-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 10770,
+      "sha256": "60f09e45ea2a5544519619f5f25e05d98b8fa0e5d2faf14eaa18ab0d926c4ab0"
+    },
+    {
+      "path": "retry1/responses/uniprot/liana_interaction-08-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 10771,
+      "sha256": "c136b67002ef5b7dc8181e566e598f5d8f83887e423abd83c44452f8b8d95dd3"
+    },
+    {
+      "path": "retry1/responses/uniprot/liana_interaction-09-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 10771,
+      "sha256": "593246f8dd2504b6d9942d0f29adf9ce34ae80a3e892b735dc4880801190f1ab"
+    },
+    {
+      "path": "retry1/responses/uniprot/liana_interaction-10-MIF_CD74_CXCR4.wrapper.json",
+      "bytes": 10771,
+      "sha256": "4a2ce19756950a8fe8c27b7e67d24d6e346e3ff0e44909ff963c00e56069d6d0"
+    },
+    {
+      "path": "retry1/responses/uniprot/prespecified-01-CXCL9_CXCR3.wrapper.json",
+      "bytes": 5468,
+      "sha256": "2c1807f5cfc9e6ebbcb5b2c7827330f638361b643cbfd03ac26b5d58d389ea72"
+    },
+    {
+      "path": "retry1/responses/uniprot/prespecified-02-CXCL10_CXCR3.wrapper.json",
+      "bytes": 5502,
+      "sha256": "399a55ec805841c8017b6509b135f78fab7137f05fc95e0d5f058bb792167efb"
+    },
+    {
+      "path": "retry1/responses/uniprot/prespecified-03-CD274_PDCD1.wrapper.json",
+      "bytes": 10447,
+      "sha256": "8254889914e29723e7ab88493986aa8ed9c480066190a9963c1c9775e5617c95"
+    },
+    {
+      "path": "retry1/responses/uniprot/prespecified-04-TGFB1_TGFBR1_TGFBR2.wrapper.json",
+      "bytes": 10590,
+      "sha256": "fd430710d9a324c708f174b80afe7a050871e8019e4a26d0fc2695d47f688beb"
+    },
+    {
+      "path": "retry1/responses/uniprot/prespecified-05-SPP1_CD44.wrapper.json",
+      "bytes": 10889,
+      "sha256": "6628f21b97d9b286da8f718d1a4bebe7e1a1d029b90328dccf744aba7bc516bb"
+    },
+    {
+      "path": "retry1/responses/uniprot/prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.wrapper.json",
+      "bytes": 3649,
+      "sha256": "8b9c1553d27cc5f929c6350513ff1b7a5598b884e3286652db8c710aaebebc63"
+    },
+    {
+      "path": "run_s6_external_queries.py",
+      "bytes": 9394,
+      "sha256": "a0e826c711c2b8b8c7c067c17662427e6c665a1b5f6fe644220d9c6becdf30d3"
+    },
+    {
+      "path": "run_s6_raw_top20_queries.py",
+      "bytes": 2821,
+      "sha256": "333ca8ebf5a2e63f277b32e0d1e76dc542b721b5c9fc5f03990993e68ccf076a"
+    },
+    {
+      "path": "run_spatialwarrant_s6.py",
+      "bytes": 32900,
+      "sha256": "2346bb637436ed84f69333fc49f18d36753ad9987fb2d1b4885a7d2c159408e2"
+    },
+    {
+      "path": "S6-checkpoint.md",
+      "bytes": 2057,
+      "sha256": "be73e50a5910647d9b002072972f052b9b453df10eee3983e94af4c3e92ad813"
+    },
+    {
+      "path": "S6-local-result.json",
+      "bytes": 6674,
+      "sha256": "3fde40339554fdd433642f34bbb773f1dc9b2c09fc5b87557ba81c24840dd4e8"
+    },
+    {
+      "path": "S6-result.json",
+      "bytes": 9795,
+      "sha256": "5014c658007e723feb6a44d632df56ab0b960357acaefe9f7abd10de472832d0"
+    },
+    {
+      "path": "SHA256SUMS.local.txt",
+      "bytes": 1706,
+      "sha256": "e003b7b1a3437b4ac9327d8ec34294ecc2b1ce194254706ca1a01fa52a4d0ba3"
+    },
+    {
+      "path": "stderr.log",
+      "bytes": 32201,
+      "sha256": "5df9b19d1fcd63e1b0889349960f7b57f2b357c061c6636061b2ef87aa3f8650"
+    },
+    {
+      "path": "stdout.log",
+      "bytes": 4510,
+      "sha256": "5436a619dd7b39c02bb5a6eabfb30267f44802a647da5b75dc7168b8b16e7a4b"
+    },
+    {
+      "path": "top20-descriptive-genes-for-external-evidence.csv",
+      "bytes": 1423,
+      "sha256": "feca74dcda144a011e67c3daae200aa605920f8c7d239879eeb6ab205a9f8981"
+    },
+    {
+      "path": "top20-descriptive-genes-for-external-evidence.raw-source-v2.csv",
+      "bytes": 1423,
+      "sha256": "feca74dcda144a011e67c3daae200aa605920f8c7d239879eeb6ab205a9f8981"
+    }
+  ],
+  "total_bytes_excluding_manifest": 31840517
+}

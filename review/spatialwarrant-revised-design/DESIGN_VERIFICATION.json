@@ -1,0 +1,61 @@
+{
+  "schema": "spatialwarrant-design-verification.v1",
+  "generated_at": "2026-09-05T05:46:43.7556992Z",
+  "preservation": {
+    "stages": 8,
+    "stage_codes": [
+      "code: \"S0\"",
+      "code: \"S1\"",
+      "code: \"S2\"",
+      "code: \"S3\"",
+      "code: \"S4\"",
+      "code: \"S5\"",
+      "code: \"S6\"",
+      "code: \"S7\""
+    ],
+    "claims": 8,
+    "claim_codes": [
+      "code: \"C1\"",
+      "code: \"C2\"",
+      "code: \"C3\"",
+      "code: \"C4\"",
+      "code: \"C5\"",
+      "code: \"C6\"",
+      "code: \"T1\"",
+      "code: \"T2\""
+    ],
+    "datasets_and_resources": 6,
+    "screenshots": 8
+  },
+  "scientific_guards": {
+    "geometry_boundary_before_expression": true,
+    "ingest_not_proportion_deconvolution": true,
+    "claims_start_pending": true,
+    "verdict_ui_read_only": true
+  },
+  "verification": {
+    "package_json_parse": "PASS",
+    "design_structure": "PASS",
+    "npm_install": "INCOMPLETE_NO_OUTPUT",
+    "typescript": "NOT_RUN_DEPENDENCIES_UNAVAILABLE",
+    "production_build": "NOT_RUN_DEPENDENCIES_UNAVAILABLE"
+  },
+  "files": [
+    {
+      "path": "ANALYSIS_PLAN_LOCK.md",
+      "sha256": "F8D955C041F1612DBE979B59B5BDE150EE333208D90525DA20B276299083B327"
+    },
+    {
+      "path": "CLAIMS_PREREGISTERED.csv",
+      "sha256": "552FA77E9BA76FD83E6B000677CD322F4B64EA4C6C4AB46E45EA97E81F0736E3"
+    },
+    {
+      "path": "WORKBENCH_EXECUTION_GUIDE.zh-CN.md",
+      "sha256": "EF0B6329017A8FBC61CB1F2A6277E2AC6536D70AC4A6CAF0EEAD663C8B4BCD95"
+    },
+    {
+      "path": "src\\db\\seed-data.ts",
+      "sha256": "F9C8CF869B3729F015F6CEDDEC0EC63EAAD454FDB96FBEE995A9B46B859F05B6"
+    }
+  ]
+}

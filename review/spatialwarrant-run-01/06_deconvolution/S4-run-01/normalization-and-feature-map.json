@@ -1,0 +1,33 @@
+{
+  "reference": "per-cell total-count normalize to 10000 then sparse log1p; mean within producer label",
+  "visium": "per-spot total-count normalize to 10000 then sparse log1p",
+  "solver": "scipy.optimize.nnls",
+  "weights": "normalized to sum 1 when positive; zero-sum is unknown",
+  "calibrated_cell_proportions": false,
+  "sections": {
+    "1142243F": {
+      "common_marker_genes": 654,
+      "feature_sha256": "ce06a6a09a082432f840b1b820269934865bbf5b0976556e1183249e00ee7413"
+    },
+    "1160920F": {
+      "common_marker_genes": 654,
+      "feature_sha256": "ce06a6a09a082432f840b1b820269934865bbf5b0976556e1183249e00ee7413"
+    },
+    "CID4290": {
+      "common_marker_genes": 655,
+      "feature_sha256": "a3e562b569c9b036c3a39a0c58c41c26cb35f2491ba714d1dae3545dadd1186e"
+    },
+    "CID4465": {
+      "common_marker_genes": 655,
+      "feature_sha256": "a3e562b569c9b036c3a39a0c58c41c26cb35f2491ba714d1dae3545dadd1186e"
+    },
+    "CID44971": {
+      "common_marker_genes": 655,
+      "feature_sha256": "a3e562b569c9b036c3a39a0c58c41c26cb35f2491ba714d1dae3545dadd1186e"
+    },
+    "CID4535": {
+      "common_marker_genes": 655,
+      "feature_sha256": "a3e562b569c9b036c3a39a0c58c41c26cb35f2491ba714d1dae3545dadd1186e"
+    }
+  }
+}

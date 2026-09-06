@@ -412,3 +412,78 @@ def test_counterfactual_warrant_advice():
     assert causal_advice is not None
     assert "perturbation" in causal_advice["missing_facts"]
     assert "CRISPR" in causal_advice["actionable_remediation"]
+
+
+def test_chinese_scientific_claim_parsing_and_warrants():
+    """Verify Chinese scientific claim parsing and warrant boundary checks without silent downgrades."""
+    # T1: Population effect claim in Chinese
+    t1_text = "CID4535 证明了 TNBC 患者普遍存在 IFN 边界机制。"
+    t1_ir = DeterministicClaimParser.parse(
+        t1_text,
+        explicit_claim_class="population_effect",
+        data_metadata={"claim_class": "population_effect", "eligible_sections": 1},
+    )
+    assert t1_ir.claim_class == ClaimClass.POPULATION_EFFECT
+    assert t1_ir.generalization_scope == GeneralizationScope.POPULATION_GENERAL
+
+    t1_profile = EvidenceProfile(
+        spatial_colocalization=True,
+        biological_replicates_count=1,
+        pseudobulk_aggregated=False,
+    )
+    t1_verdict = DeterministicWarrantEngine.evaluate(t1_ir, t1_profile)
+    # Population claim tier MUST be evaluated, NOT skipped as NOT_APPLICABLE
+    assert t1_verdict.tier_verdicts["population_claim"].status == WarrantTierStatus.NOT_WARRANTED
+    assert t1_verdict.tier_verdicts["population_claim"].is_warranted is False
+    assert "biological_replicates_gte_3_with_pseudobulk" in t1_verdict.tier_verdicts["population_claim"].missing_evidence
+
+    # C5: Causal claim in Chinese
+    c5_text = "CXCL9/10–CXCR3 因果驱动 T 细胞向肿瘤边界募集。"
+    c5_ir = DeterministicClaimParser.parse(
+        c5_text,
+        explicit_claim_class="causal",
+        data_metadata={"claim_class": "causal"},
+    )
+    assert c5_ir.claim_class in (ClaimClass.CAUSAL, ClaimClass.MECHANISTIC)
+    assert c5_ir.causal_strength in (CausalStrength.COUNTERFACTUAL_CAUSAL, CausalStrength.MECHANISTIC_DRIVER)
+
+    c5_profile = EvidenceProfile(
+        spatial_colocalization=True,
+        perturbation=False,
+    )
+    c5_verdict = DeterministicWarrantEngine.evaluate(c5_ir, c5_profile)
+    assert c5_verdict.tier_verdicts["causal_claim"].status == WarrantTierStatus.NOT_WARRANTED
+    assert c5_verdict.tier_verdicts["causal_claim"].is_warranted is False
+
+    # C6: Clinical prediction claim in Chinese
+    c6_text = "该边界特征能够预测免疫治疗反应。"
+    c6_ir = DeterministicClaimParser.parse(
+        c6_text,
+        explicit_claim_class="clinical",
+        data_metadata={"claim_class": "clinical"},
+    )
+    assert c6_ir.claim_class == ClaimClass.CLINICAL_ACTIONABILITY
+    assert c6_ir.clinical_actionability != ClinicalActionability.NONE
+
+    c6_profile = EvidenceProfile(regulatory_certification=False, clinical_ground_truth=False)
+    c6_verdict = DeterministicWarrantEngine.evaluate(c6_ir, c6_profile)
+    assert c6_verdict.tier_verdicts["clinical_claim"].status == WarrantTierStatus.NOT_WARRANTED
+    assert c6_verdict.tier_verdicts["clinical_claim"].is_warranted is False
+
+
+def test_explicit_claim_class_conflict_preservation():
+    """Verify that explicit claim class is preserved and conflicts are recorded instead of silently defaulting."""
+    # Text looks descriptive or correlational, but explicit metadata requests population_effect
+    ir = DeterministicClaimParser.parse(
+        "Observation in slice 1",
+        explicit_claim_class="population_effect",
+    )
+    assert ir.claim_class == ClaimClass.POPULATION_EFFECT
+    assert ir.metadata.get("has_claim_conflict") is True
+    assert "differs from text-inferred" in ir.metadata.get("conflict_details", "")
+
+    verdict = DeterministicWarrantEngine.evaluate(ir, EvidenceProfile())
+    assert verdict.has_claim_conflict is True
+    assert verdict.conflict_details is not None
+    assert verdict.requested_claim_class == ClaimClass.POPULATION_EFFECT.value
+

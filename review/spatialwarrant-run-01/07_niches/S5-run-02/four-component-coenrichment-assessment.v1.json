@@ -1,0 +1,12 @@
+{
+  "criterion": "descriptive: every prespecified aggregate component exceeds its unweighted mean across the selected niches; applied after k was frozen and does not alter k or labels",
+  "component_means": {
+    "CAF": 0.0708333913616219,
+    "CD8_T": 0.03346696580661751,
+    "macrophage": 0.0342471293168183,
+    "endothelial": 0.16163719971407353
+  },
+  "niches_meeting_all_four": [],
+  "observed_simultaneous_relative_enrichment": false,
+  "forced_target_niche": false
+}

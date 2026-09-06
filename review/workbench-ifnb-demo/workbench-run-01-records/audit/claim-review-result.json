@@ -1,0 +1,70 @@
+{
+  "claim_id": "IFNB-RUN01-COHORT-ASSOCIATION",
+  "is_fully_warranted": true,
+  "requested_claim_class": "association",
+  "warranted_claim_class": "association",
+  "evidence_ceiling": "SUPPORTED",
+  "tier_verdicts": {
+    "association_claim": {
+      "tier_name": "association_claim",
+      "status": "WARRANTED",
+      "is_warranted": true,
+      "rationale": "Correlational/associational relationship is supported by observational or spatial data.",
+      "missing_evidence": []
+    },
+    "population_claim": {
+      "tier_name": "population_claim",
+      "status": "NOT_APPLICABLE",
+      "is_warranted": false,
+      "rationale": "Population-level generalization was not requested by this claim.",
+      "missing_evidence": []
+    },
+    "mechanistic_claim": {
+      "tier_name": "mechanistic_claim",
+      "status": "NOT_APPLICABLE",
+      "is_warranted": false,
+      "rationale": "A mechanistic claim was not requested.",
+      "missing_evidence": []
+    },
+    "causal_claim": {
+      "tier_name": "causal_claim",
+      "status": "NOT_APPLICABLE",
+      "is_warranted": false,
+      "rationale": "A causal claim was not requested.",
+      "missing_evidence": []
+    },
+    "cell_identity_claim": {
+      "tier_name": "cell_identity_claim",
+      "status": "NOT_APPLICABLE",
+      "is_warranted": false,
+      "rationale": "A cell-identity claim was not requested.",
+      "missing_evidence": []
+    },
+    "clinical_claim": {
+      "tier_name": "clinical_claim",
+      "status": "NOT_APPLICABLE",
+      "is_warranted": false,
+      "rationale": "A clinical actionability claim was not requested.",
+      "missing_evidence": []
+    },
+    "structural_conformation_claim": {
+      "tier_name": "structural_conformation_claim",
+      "status": "NOT_APPLICABLE",
+      "is_warranted": false,
+      "rationale": "A structural conformation claim was not requested.",
+      "missing_evidence": []
+    },
+    "bioactive_binding_claim": {
+      "tier_name": "bioactive_binding_claim",
+      "status": "NOT_APPLICABLE",
+      "is_warranted": false,
+      "rationale": "A bioactive target binding claim was not requested.",
+      "missing_evidence": []
+    }
+  },
+  "evidence_gaps": [],
+  "remedies": [],
+  "rule_violations": [],
+  "epistemic_summary": "Claim 'IFNB-RUN01-COHORT-ASSOCIATION' Epistemic Evaluation: Warranted tiers: [association_claim]; Unwarranted tiers: [none]. Not requested: [population_claim, mechanistic_claim, causal_claim, cell_identity_claim, clinical_claim, structural_conformation_claim, bioactive_binding_claim]. Max warranted class: 'association', ceiling: 'SUPPORTED'.",
+  "governing_status": null
+}

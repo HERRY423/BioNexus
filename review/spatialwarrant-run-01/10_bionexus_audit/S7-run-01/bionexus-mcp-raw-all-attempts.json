@@ -1,0 +1,278 @@
+{
+  "initial_attempts": [
+    {
+      "test_id": "T1",
+      "request": {
+        "query": "CID4535 证明了 TNBC 患者普遍存在 IFN 边界机制。",
+        "research_purpose": "S7 actual overclaim test of the stated claim, not a request to execute analyses.",
+        "data_metadata": {
+          "eligible_sections": 1,
+          "spatial_workflow_sections": 6,
+          "independent_patients_verified": false,
+          "effect_B2_minus_core": 0.051510939,
+          "population_CI": null,
+          "population_p_value": null,
+          "study": "Wu breast cancer scRNA and Visium; single eligible CID4535",
+          "claim_class": "population_effect"
+        },
+        "intent_keywords": [
+          "population_effect",
+          "single_section",
+          "TNBC",
+          "mechanism"
+        ]
+      },
+      "started_at_utc": "2026-09-06T02:15:12.492Z",
+      "ended_at_utc": "2026-09-06T02:15:19.725Z",
+      "raw_response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error executing tool bionexus_warrant_check: Unknown research purpose 'S7 actual overclaim test of the stated claim, not a request to execute analyses.'. Valid purposes: unspecified, exploratory, screening, confirmatory, causal, clinical"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "test_id": "C5",
+      "request": {
+        "query": "CXCL9/10–CXCR3 因果驱动 T 细胞向肿瘤边界募集。",
+        "research_purpose": "S7 actual overclaim test of the stated causal claim.",
+        "data_metadata": {
+          "scRNA_method": "LIANA rank_aggregate",
+          "spatial_expression": "mixed Visium spots",
+          "perturbation": false,
+          "temporal_ordering": false,
+          "independent_validation": false,
+          "boundary_celltype_specific_expression": "NOT_IDENTIFIABLE",
+          "claim_class": "causal"
+        },
+        "intent_keywords": [
+          "causal",
+          "T_cell_recruitment",
+          "CXCL9",
+          "CXCL10",
+          "CXCR3"
+        ]
+      },
+      "started_at_utc": "2026-09-06T02:15:19.725Z",
+      "ended_at_utc": "2026-09-06T02:15:22.631Z",
+      "raw_response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error executing tool bionexus_warrant_check: Unknown research purpose 'S7 actual overclaim test of the stated causal claim.'. Valid purposes: unspecified, exploratory, screening, confirmatory, causal, clinical"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "test_id": "C6",
+      "request": {
+        "query": "该边界特征能够预测免疫治疗反应。",
+        "research_purpose": "S7 actual overclaim test of the stated clinical prediction claim.",
+        "data_metadata": {
+          "treatment_outcomes_available": false,
+          "independent_test_cohort": false,
+          "calibration": false,
+          "clinical_validation": false,
+          "claim_class": "clinical"
+        },
+        "intent_keywords": [
+          "clinical",
+          "immunotherapy",
+          "predict_response"
+        ]
+      },
+      "started_at_utc": "2026-09-06T02:15:22.631Z",
+      "ended_at_utc": "2026-09-06T02:15:27.988Z",
+      "raw_response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error executing tool bionexus_warrant_check: Unknown research purpose 'S7 actual overclaim test of the stated clinical prediction claim.'. Valid purposes: unspecified, exploratory, screening, confirmatory, causal, clinical"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "test_id": "T2",
+      "request": {
+        "query": "输入哈希、坐标连接和输出哈希能够被重新核验。",
+        "research_purpose": "S7 technical-only claim check; hash and coordinate verification, no new biological analysis.",
+        "data_metadata": {
+          "input_sha256_manifests": true,
+          "output_sha256_manifests": true,
+          "barcode_keys": true,
+          "coordinates_available": true,
+          "biological_validation_claimed": false,
+          "claim_class": "technical"
+        },
+        "intent_keywords": [
+          "technical",
+          "hash",
+          "barcode_join",
+          "coordinate_completeness"
+        ]
+      },
+      "started_at_utc": "2026-09-06T02:15:27.988Z",
+      "ended_at_utc": "2026-09-06T02:15:31.105Z",
+      "raw_response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error executing tool bionexus_warrant_check: Unknown research purpose 'S7 technical-only claim check; hash and coordinate verification, no new biological analysis.'. Valid purposes: unspecified, exploratory, screening, confirmatory, causal, clinical"
+          }
+        ],
+        "isError": true
+      }
+    }
+  ],
+  "corrected_purpose_attempts": [
+    {
+      "test_id": "T1",
+      "request": {
+        "query": "CID4535 证明了 TNBC 患者普遍存在 IFN 边界机制。",
+        "research_purpose": "confirmatory",
+        "data_metadata": {
+          "eligible_sections": 1,
+          "spatial_workflow_sections": 6,
+          "independent_patients_verified": false,
+          "effect_B2_minus_core": 0.051510939,
+          "population_CI": null,
+          "population_p_value": null,
+          "study": "Wu breast cancer scRNA and Visium; single eligible CID4535",
+          "claim_class": "population_effect"
+        },
+        "intent_keywords": [
+          "population_effect",
+          "single_section",
+          "TNBC",
+          "mechanism"
+        ]
+      },
+      "started_at_utc": "2026-09-06T02:15:49.365Z",
+      "ended_at_utc": "2026-09-06T02:15:53.591Z",
+      "raw_response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"status\": \"NEEDS_DATA\",\n  \"matched_capability_id\": null,\n  \"target_skill\": \"start\",\n  \"recommended_script\": null,\n  \"recommended_command\": \"bionexus doctor\",\n  \"rationale\": \"No specific scientific analytical intent could be resolved from query. Defaulting to session orientation.\",\n  \"violations\": [],\n  \"remedies\": [],\n  \"missing_data_requests\": [\n    \"Clarify specific scientific analytical intent (e.g. differential expression, clustering, survival analysis, spatial transcriptomics).\"\n  ],\n  \"evidence_card_template\": null,\n  \"routing_layer\": \"none\",\n  \"routing_audit\": {\n    \"nominated_capability\": null,\n    \"layer\": \"none\",\n    \"score\": 0.0,\n    \"runner_up\": null,\n    \"runner_up_score\": 0.0,\n    \"matched_concepts\": [],\n    \"matched_variants\": []\n  },\n  \"purpose_context\": {\n    \"purpose\": \"confirmatory\",\n    \"explicitly_declared\": true,\n    \"override_active\": false,\n    \"override_justification\": \"\",\n    \"required_evidence\": \"ROBUST\",\n    \"evidence_ceiling\": \"ROBUST\"\n  },\n  \"residual_limitations\": [],\n  \"blocked_claims\": [],\n  \"override_records\": [],\n  \"evidence_ceiling\": null,\n  \"scientific_claim_ir\": {\n    \"claim_id\": \"CLAIM-629013\",\n    \"source_text\": \"CID4535 证明了 TNBC 患者普遍存在 IFN 边界机制。\",\n    \"subject_entity\": {\n      \"name\": \"CID4535 证明了 TNBC 患者普遍存在 IFN 边界机制。\",\n      \"entity_type\": \"biological_entity\",\n      \"features\": [],\n      \"raw_span\": \"CID4535 证明了 TNBC 患者普遍存在 IFN 边界机制。\"\n    },\n    \"object_entity\": null,\n    \"relationship\": \"correlation\",\n    \"direction\": \"undirected\",\n    \"comparison\": null,\n    \"population_scope\": \"\",\n    \"generalization_scope\": \"cohort_specific\",\n    \"association_type\": \"observational_correlation\",\n    \"causal_strength\": \"associational\",\n    \"mechanism_depth\": \"black_box\",\n    \"clinical_actionability\": \"none\",\n    \"claim_class\": \"descriptive\",\n    \"qualifiers\": [],\n    \"negated\": false,\n    \"metadata\": {}\n  },\n  \"claim_warrant_evaluation\": {\n    \"claim_id\": \"CLAIM-629013\",\n    \"is_fully_warranted\": false,\n    \"requested_claim_class\": \"descriptive\",\n    \"warranted_claim_class\": \"descriptive\",\n    \"evidence_ceiling\": \"ABSTAIN\",\n    \"tier_verdicts\": {\n      \"association_claim\": {\n        \"tier_name\": \"association_claim\",\n        \"status\": \"NOT_WARRANTED\",\n        \"is_warranted\": false,\n        \"rationale\": \"Correlational/associational relationship is supported by observational or spatial data.\",\n        \"missing_evidence\": [\n          \"observational_data\"\n        ]\n      },\n      \"population_claim\": {\n        \"tier_name\": \"population_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"Population-level generalization was not requested by this claim.\",\n        \"missing_evidence\": []\n      },\n      \"mechanistic_claim\": {\n        \"tier_name\": \"mechanistic_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A mechanistic claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"causal_claim\": {\n        \"tier_name\": \"causal_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A causal claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"cell_identity_claim\": {\n        \"tier_name\": \"cell_identity_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A cell-identity claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"clinical_claim\": {\n        \"tier_name\": \"clinical_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A clinical actionability claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"structural_conformation_claim\": {\n        \"tier_name\": \"structural_conformation_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A structural conformation claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"bioactive_binding_claim\": {\n        \"tier_name\": \"bioactive_binding_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A bioactive target binding claim was not requested.\",\n        \"missing_evidence\": []\n      }\n    },\n    \"evidence_gaps\": [\n      \"governing_status_needs_data\"\n    ],\n    \"remedies\": [],\n    \"rule_violations\": [],\n    \"epistemic_summary\": \"Claim 'CLAIM-629013' is not scientifically authorized: governing status NEEDS_DATA. Positive tier verdicts were replaced with NOT_ASSESSED; existing negative and not-applicable verdicts remain visible.\",\n    \"governing_status\": \"NEEDS_DATA\"\n  },\n  \"host_integration\": {\n    \"intended_hosts\": [\n      \"biomni\",\n      \"claude_code\",\n      \"codex\",\n      \"cursor\",\n      \"any_mcp_host\"\n    ],\n    \"call_timing\": \"Invoke BEFORE executing model-generated analysis code.\",\n    \"motivation\": \"Full-privilege agent platforms (e.g. Biomni) document that they execute LLM-generated code with full system privileges; sandboxing addresses OS-level risk, not scientific validity. This gate permits the compute but caps what the run may claim.\"\n  },\n  \"boundary\": \"Scientific warrant only: this verdict is not clinical validation, regulatory clearance, or proof that the analysis executed.\"\n}"
+          }
+        ],
+        "structuredContent": {
+          "result": "{\n  \"status\": \"NEEDS_DATA\",\n  \"matched_capability_id\": null,\n  \"target_skill\": \"start\",\n  \"recommended_script\": null,\n  \"recommended_command\": \"bionexus doctor\",\n  \"rationale\": \"No specific scientific analytical intent could be resolved from query. Defaulting to session orientation.\",\n  \"violations\": [],\n  \"remedies\": [],\n  \"missing_data_requests\": [\n    \"Clarify specific scientific analytical intent (e.g. differential expression, clustering, survival analysis, spatial transcriptomics).\"\n  ],\n  \"evidence_card_template\": null,\n  \"routing_layer\": \"none\",\n  \"routing_audit\": {\n    \"nominated_capability\": null,\n    \"layer\": \"none\",\n    \"score\": 0.0,\n    \"runner_up\": null,\n    \"runner_up_score\": 0.0,\n    \"matched_concepts\": [],\n    \"matched_variants\": []\n  },\n  \"purpose_context\": {\n    \"purpose\": \"confirmatory\",\n    \"explicitly_declared\": true,\n    \"override_active\": false,\n    \"override_justification\": \"\",\n    \"required_evidence\": \"ROBUST\",\n    \"evidence_ceiling\": \"ROBUST\"\n  },\n  \"residual_limitations\": [],\n  \"blocked_claims\": [],\n  \"override_records\": [],\n  \"evidence_ceiling\": null,\n  \"scientific_claim_ir\": {\n    \"claim_id\": \"CLAIM-629013\",\n    \"source_text\": \"CID4535 证明了 TNBC 患者普遍存在 IFN 边界机制。\",\n    \"subject_entity\": {\n      \"name\": \"CID4535 证明了 TNBC 患者普遍存在 IFN 边界机制。\",\n      \"entity_type\": \"biological_entity\",\n      \"features\": [],\n      \"raw_span\": \"CID4535 证明了 TNBC 患者普遍存在 IFN 边界机制。\"\n    },\n    \"object_entity\": null,\n    \"relationship\": \"correlation\",\n    \"direction\": \"undirected\",\n    \"comparison\": null,\n    \"population_scope\": \"\",\n    \"generalization_scope\": \"cohort_specific\",\n    \"association_type\": \"observational_correlation\",\n    \"causal_strength\": \"associational\",\n    \"mechanism_depth\": \"black_box\",\n    \"clinical_actionability\": \"none\",\n    \"claim_class\": \"descriptive\",\n    \"qualifiers\": [],\n    \"negated\": false,\n    \"metadata\": {}\n  },\n  \"claim_warrant_evaluation\": {\n    \"claim_id\": \"CLAIM-629013\",\n    \"is_fully_warranted\": false,\n    \"requested_claim_class\": \"descriptive\",\n    \"warranted_claim_class\": \"descriptive\",\n    \"evidence_ceiling\": \"ABSTAIN\",\n    \"tier_verdicts\": {\n      \"association_claim\": {\n        \"tier_name\": \"association_claim\",\n        \"status\": \"NOT_WARRANTED\",\n        \"is_warranted\": false,\n        \"rationale\": \"Correlational/associational relationship is supported by observational or spatial data.\",\n        \"missing_evidence\": [\n          \"observational_data\"\n        ]\n      },\n      \"population_claim\": {\n        \"tier_name\": \"population_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"Population-level generalization was not requested by this claim.\",\n        \"missing_evidence\": []\n      },\n      \"mechanistic_claim\": {\n        \"tier_name\": \"mechanistic_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A mechanistic claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"causal_claim\": {\n        \"tier_name\": \"causal_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A causal claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"cell_identity_claim\": {\n        \"tier_name\": \"cell_identity_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A cell-identity claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"clinical_claim\": {\n        \"tier_name\": \"clinical_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A clinical actionability claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"structural_conformation_claim\": {\n        \"tier_name\": \"structural_conformation_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A structural conformation claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"bioactive_binding_claim\": {\n        \"tier_name\": \"bioactive_binding_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A bioactive target binding claim was not requested.\",\n        \"missing_evidence\": []\n      }\n    },\n    \"evidence_gaps\": [\n      \"governing_status_needs_data\"\n    ],\n    \"remedies\": [],\n    \"rule_violations\": [],\n    \"epistemic_summary\": \"Claim 'CLAIM-629013' is not scientifically authorized: governing status NEEDS_DATA. Positive tier verdicts were replaced with NOT_ASSESSED; existing negative and not-applicable verdicts remain visible.\",\n    \"governing_status\": \"NEEDS_DATA\"\n  },\n  \"host_integration\": {\n    \"intended_hosts\": [\n      \"biomni\",\n      \"claude_code\",\n      \"codex\",\n      \"cursor\",\n      \"any_mcp_host\"\n    ],\n    \"call_timing\": \"Invoke BEFORE executing model-generated analysis code.\",\n    \"motivation\": \"Full-privilege agent platforms (e.g. Biomni) document that they execute LLM-generated code with full system privileges; sandboxing addresses OS-level risk, not scientific validity. This gate permits the compute but caps what the run may claim.\"\n  },\n  \"boundary\": \"Scientific warrant only: this verdict is not clinical validation, regulatory clearance, or proof that the analysis executed.\"\n}"
+        },
+        "isError": false
+      }
+    },
+    {
+      "test_id": "C5",
+      "request": {
+        "query": "CXCL9/10–CXCR3 因果驱动 T 细胞向肿瘤边界募集。",
+        "research_purpose": "causal",
+        "data_metadata": {
+          "scRNA_method": "LIANA rank_aggregate",
+          "spatial_expression": "mixed Visium spots",
+          "perturbation": false,
+          "temporal_ordering": false,
+          "independent_validation": false,
+          "boundary_celltype_specific_expression": "NOT_IDENTIFIABLE",
+          "claim_class": "causal"
+        },
+        "intent_keywords": [
+          "causal",
+          "T_cell_recruitment",
+          "CXCL9",
+          "CXCL10",
+          "CXCR3"
+        ]
+      },
+      "started_at_utc": "2026-09-06T02:15:53.592Z",
+      "ended_at_utc": "2026-09-06T02:15:58.562Z",
+      "raw_response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"status\": \"NEEDS_DATA\",\n  \"matched_capability_id\": null,\n  \"target_skill\": \"start\",\n  \"recommended_script\": null,\n  \"recommended_command\": \"bionexus doctor\",\n  \"rationale\": \"No specific scientific analytical intent could be resolved from query. Defaulting to session orientation.\",\n  \"violations\": [],\n  \"remedies\": [],\n  \"missing_data_requests\": [\n    \"Clarify specific scientific analytical intent (e.g. differential expression, clustering, survival analysis, spatial transcriptomics).\"\n  ],\n  \"evidence_card_template\": null,\n  \"routing_layer\": \"none\",\n  \"routing_audit\": {\n    \"nominated_capability\": null,\n    \"layer\": \"none\",\n    \"score\": 0.0,\n    \"runner_up\": null,\n    \"runner_up_score\": 0.0,\n    \"matched_concepts\": [],\n    \"matched_variants\": []\n  },\n  \"purpose_context\": {\n    \"purpose\": \"causal\",\n    \"explicitly_declared\": true,\n    \"override_active\": false,\n    \"override_justification\": \"\",\n    \"required_evidence\": \"SUPPORTED\",\n    \"evidence_ceiling\": \"SUPPORTED\"\n  },\n  \"residual_limitations\": [],\n  \"blocked_claims\": [],\n  \"override_records\": [],\n  \"evidence_ceiling\": null,\n  \"scientific_claim_ir\": {\n    \"claim_id\": \"CLAIM-334648\",\n    \"source_text\": \"CXCL9/10–CXCR3 因果驱动 T 细胞向肿瘤边界募集。\",\n    \"subject_entity\": {\n      \"name\": \"CXCL9/10–CXCR3 因果驱动 T 细胞向肿瘤边界募集。\",\n      \"entity_type\": \"biological_entity\",\n      \"features\": [],\n      \"raw_span\": \"CXCL9/10–CXCR3 因果驱动 T 细胞向肿瘤边界募集。\"\n    },\n    \"object_entity\": null,\n    \"relationship\": \"correlation\",\n    \"direction\": \"undirected\",\n    \"comparison\": null,\n    \"population_scope\": \"\",\n    \"generalization_scope\": \"cohort_specific\",\n    \"association_type\": \"observational_correlation\",\n    \"causal_strength\": \"associational\",\n    \"mechanism_depth\": \"black_box\",\n    \"clinical_actionability\": \"none\",\n    \"claim_class\": \"descriptive\",\n    \"qualifiers\": [],\n    \"negated\": false,\n    \"metadata\": {}\n  },\n  \"claim_warrant_evaluation\": {\n    \"claim_id\": \"CLAIM-334648\",\n    \"is_fully_warranted\": false,\n    \"requested_claim_class\": \"descriptive\",\n    \"warranted_claim_class\": \"descriptive\",\n    \"evidence_ceiling\": \"ABSTAIN\",\n    \"tier_verdicts\": {\n      \"association_claim\": {\n        \"tier_name\": \"association_claim\",\n        \"status\": \"NOT_WARRANTED\",\n        \"is_warranted\": false,\n        \"rationale\": \"Correlational/associational relationship is supported by observational or spatial data.\",\n        \"missing_evidence\": [\n          \"observational_data\"\n        ]\n      },\n      \"population_claim\": {\n        \"tier_name\": \"population_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"Population-level generalization was not requested by this claim.\",\n        \"missing_evidence\": []\n      },\n      \"mechanistic_claim\": {\n        \"tier_name\": \"mechanistic_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A mechanistic claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"causal_claim\": {\n        \"tier_name\": \"causal_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A causal claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"cell_identity_claim\": {\n        \"tier_name\": \"cell_identity_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A cell-identity claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"clinical_claim\": {\n        \"tier_name\": \"clinical_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A clinical actionability claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"structural_conformation_claim\": {\n        \"tier_name\": \"structural_conformation_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A structural conformation claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"bioactive_binding_claim\": {\n        \"tier_name\": \"bioactive_binding_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A bioactive target binding claim was not requested.\",\n        \"missing_evidence\": []\n      }\n    },\n    \"evidence_gaps\": [\n      \"governing_status_needs_data\"\n    ],\n    \"remedies\": [],\n    \"rule_violations\": [],\n    \"epistemic_summary\": \"Claim 'CLAIM-334648' is not scientifically authorized: governing status NEEDS_DATA. Positive tier verdicts were replaced with NOT_ASSESSED; existing negative and not-applicable verdicts remain visible.\",\n    \"governing_status\": \"NEEDS_DATA\"\n  },\n  \"host_integration\": {\n    \"intended_hosts\": [\n      \"biomni\",\n      \"claude_code\",\n      \"codex\",\n      \"cursor\",\n      \"any_mcp_host\"\n    ],\n    \"call_timing\": \"Invoke BEFORE executing model-generated analysis code.\",\n    \"motivation\": \"Full-privilege agent platforms (e.g. Biomni) document that they execute LLM-generated code with full system privileges; sandboxing addresses OS-level risk, not scientific validity. This gate permits the compute but caps what the run may claim.\"\n  },\n  \"boundary\": \"Scientific warrant only: this verdict is not clinical validation, regulatory clearance, or proof that the analysis executed.\"\n}"
+          }
+        ],
+        "structuredContent": {
+          "result": "{\n  \"status\": \"NEEDS_DATA\",\n  \"matched_capability_id\": null,\n  \"target_skill\": \"start\",\n  \"recommended_script\": null,\n  \"recommended_command\": \"bionexus doctor\",\n  \"rationale\": \"No specific scientific analytical intent could be resolved from query. Defaulting to session orientation.\",\n  \"violations\": [],\n  \"remedies\": [],\n  \"missing_data_requests\": [\n    \"Clarify specific scientific analytical intent (e.g. differential expression, clustering, survival analysis, spatial transcriptomics).\"\n  ],\n  \"evidence_card_template\": null,\n  \"routing_layer\": \"none\",\n  \"routing_audit\": {\n    \"nominated_capability\": null,\n    \"layer\": \"none\",\n    \"score\": 0.0,\n    \"runner_up\": null,\n    \"runner_up_score\": 0.0,\n    \"matched_concepts\": [],\n    \"matched_variants\": []\n  },\n  \"purpose_context\": {\n    \"purpose\": \"causal\",\n    \"explicitly_declared\": true,\n    \"override_active\": false,\n    \"override_justification\": \"\",\n    \"required_evidence\": \"SUPPORTED\",\n    \"evidence_ceiling\": \"SUPPORTED\"\n  },\n  \"residual_limitations\": [],\n  \"blocked_claims\": [],\n  \"override_records\": [],\n  \"evidence_ceiling\": null,\n  \"scientific_claim_ir\": {\n    \"claim_id\": \"CLAIM-334648\",\n    \"source_text\": \"CXCL9/10–CXCR3 因果驱动 T 细胞向肿瘤边界募集。\",\n    \"subject_entity\": {\n      \"name\": \"CXCL9/10–CXCR3 因果驱动 T 细胞向肿瘤边界募集。\",\n      \"entity_type\": \"biological_entity\",\n      \"features\": [],\n      \"raw_span\": \"CXCL9/10–CXCR3 因果驱动 T 细胞向肿瘤边界募集。\"\n    },\n    \"object_entity\": null,\n    \"relationship\": \"correlation\",\n    \"direction\": \"undirected\",\n    \"comparison\": null,\n    \"population_scope\": \"\",\n    \"generalization_scope\": \"cohort_specific\",\n    \"association_type\": \"observational_correlation\",\n    \"causal_strength\": \"associational\",\n    \"mechanism_depth\": \"black_box\",\n    \"clinical_actionability\": \"none\",\n    \"claim_class\": \"descriptive\",\n    \"qualifiers\": [],\n    \"negated\": false,\n    \"metadata\": {}\n  },\n  \"claim_warrant_evaluation\": {\n    \"claim_id\": \"CLAIM-334648\",\n    \"is_fully_warranted\": false,\n    \"requested_claim_class\": \"descriptive\",\n    \"warranted_claim_class\": \"descriptive\",\n    \"evidence_ceiling\": \"ABSTAIN\",\n    \"tier_verdicts\": {\n      \"association_claim\": {\n        \"tier_name\": \"association_claim\",\n        \"status\": \"NOT_WARRANTED\",\n        \"is_warranted\": false,\n        \"rationale\": \"Correlational/associational relationship is supported by observational or spatial data.\",\n        \"missing_evidence\": [\n          \"observational_data\"\n        ]\n      },\n      \"population_claim\": {\n        \"tier_name\": \"population_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"Population-level generalization was not requested by this claim.\",\n        \"missing_evidence\": []\n      },\n      \"mechanistic_claim\": {\n        \"tier_name\": \"mechanistic_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A mechanistic claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"causal_claim\": {\n        \"tier_name\": \"causal_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A causal claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"cell_identity_claim\": {\n        \"tier_name\": \"cell_identity_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A cell-identity claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"clinical_claim\": {\n        \"tier_name\": \"clinical_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A clinical actionability claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"structural_conformation_claim\": {\n        \"tier_name\": \"structural_conformation_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A structural conformation claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"bioactive_binding_claim\": {\n        \"tier_name\": \"bioactive_binding_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A bioactive target binding claim was not requested.\",\n        \"missing_evidence\": []\n      }\n    },\n    \"evidence_gaps\": [\n      \"governing_status_needs_data\"\n    ],\n    \"remedies\": [],\n    \"rule_violations\": [],\n    \"epistemic_summary\": \"Claim 'CLAIM-334648' is not scientifically authorized: governing status NEEDS_DATA. Positive tier verdicts were replaced with NOT_ASSESSED; existing negative and not-applicable verdicts remain visible.\",\n    \"governing_status\": \"NEEDS_DATA\"\n  },\n  \"host_integration\": {\n    \"intended_hosts\": [\n      \"biomni\",\n      \"claude_code\",\n      \"codex\",\n      \"cursor\",\n      \"any_mcp_host\"\n    ],\n    \"call_timing\": \"Invoke BEFORE executing model-generated analysis code.\",\n    \"motivation\": \"Full-privilege agent platforms (e.g. Biomni) document that they execute LLM-generated code with full system privileges; sandboxing addresses OS-level risk, not scientific validity. This gate permits the compute but caps what the run may claim.\"\n  },\n  \"boundary\": \"Scientific warrant only: this verdict is not clinical validation, regulatory clearance, or proof that the analysis executed.\"\n}"
+        },
+        "isError": false
+      }
+    },
+    {
+      "test_id": "C6",
+      "request": {
+        "query": "该边界特征能够预测免疫治疗反应。",
+        "research_purpose": "clinical",
+        "data_metadata": {
+          "treatment_outcomes_available": false,
+          "independent_test_cohort": false,
+          "calibration": false,
+          "clinical_validation": false,
+          "claim_class": "clinical"
+        },
+        "intent_keywords": [
+          "clinical",
+          "immunotherapy",
+          "predict_response"
+        ]
+      },
+      "started_at_utc": "2026-09-06T02:15:58.562Z",
+      "ended_at_utc": "2026-09-06T02:16:02.457Z",
+      "raw_response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"status\": \"NEEDS_DATA\",\n  \"matched_capability_id\": null,\n  \"target_skill\": \"start\",\n  \"recommended_script\": null,\n  \"recommended_command\": \"bionexus doctor\",\n  \"rationale\": \"No specific scientific analytical intent could be resolved from query. Defaulting to session orientation.\",\n  \"violations\": [],\n  \"remedies\": [],\n  \"missing_data_requests\": [\n    \"Clarify specific scientific analytical intent (e.g. differential expression, clustering, survival analysis, spatial transcriptomics).\"\n  ],\n  \"evidence_card_template\": null,\n  \"routing_layer\": \"none\",\n  \"routing_audit\": {\n    \"nominated_capability\": null,\n    \"layer\": \"none\",\n    \"score\": 0.0,\n    \"runner_up\": null,\n    \"runner_up_score\": 0.0,\n    \"matched_concepts\": [],\n    \"matched_variants\": []\n  },\n  \"purpose_context\": {\n    \"purpose\": \"clinical\",\n    \"explicitly_declared\": true,\n    \"override_active\": false,\n    \"override_justification\": \"\",\n    \"required_evidence\": \"REPLICATED\",\n    \"evidence_ceiling\": \"REPLICATED\"\n  },\n  \"residual_limitations\": [],\n  \"blocked_claims\": [],\n  \"override_records\": [],\n  \"evidence_ceiling\": null,\n  \"scientific_claim_ir\": {\n    \"claim_id\": \"CLAIM-972730\",\n    \"source_text\": \"该边界特征能够预测免疫治疗反应。\",\n    \"subject_entity\": {\n      \"name\": \"该边界特征能够预测免疫治疗反应。\",\n      \"entity_type\": \"biological_entity\",\n      \"features\": [],\n      \"raw_span\": \"该边界特征能够预测免疫治疗反应。\"\n    },\n    \"object_entity\": null,\n    \"relationship\": \"correlation\",\n    \"direction\": \"undirected\",\n    \"comparison\": null,\n    \"population_scope\": \"\",\n    \"generalization_scope\": \"cohort_specific\",\n    \"association_type\": \"observational_correlation\",\n    \"causal_strength\": \"associational\",\n    \"mechanism_depth\": \"black_box\",\n    \"clinical_actionability\": \"none\",\n    \"claim_class\": \"descriptive\",\n    \"qualifiers\": [],\n    \"negated\": false,\n    \"metadata\": {}\n  },\n  \"claim_warrant_evaluation\": {\n    \"claim_id\": \"CLAIM-972730\",\n    \"is_fully_warranted\": false,\n    \"requested_claim_class\": \"descriptive\",\n    \"warranted_claim_class\": \"descriptive\",\n    \"evidence_ceiling\": \"ABSTAIN\",\n    \"tier_verdicts\": {\n      \"association_claim\": {\n        \"tier_name\": \"association_claim\",\n        \"status\": \"NOT_WARRANTED\",\n        \"is_warranted\": false,\n        \"rationale\": \"Correlational/associational relationship is supported by observational or spatial data.\",\n        \"missing_evidence\": [\n          \"observational_data\"\n        ]\n      },\n      \"population_claim\": {\n        \"tier_name\": \"population_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"Population-level generalization was not requested by this claim.\",\n        \"missing_evidence\": []\n      },\n      \"mechanistic_claim\": {\n        \"tier_name\": \"mechanistic_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A mechanistic claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"causal_claim\": {\n        \"tier_name\": \"causal_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A causal claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"cell_identity_claim\": {\n        \"tier_name\": \"cell_identity_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A cell-identity claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"clinical_claim\": {\n        \"tier_name\": \"clinical_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A clinical actionability claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"structural_conformation_claim\": {\n        \"tier_name\": \"structural_conformation_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A structural conformation claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"bioactive_binding_claim\": {\n        \"tier_name\": \"bioactive_binding_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A bioactive target binding claim was not requested.\",\n        \"missing_evidence\": []\n      }\n    },\n    \"evidence_gaps\": [\n      \"governing_status_needs_data\"\n    ],\n    \"remedies\": [],\n    \"rule_violations\": [],\n    \"epistemic_summary\": \"Claim 'CLAIM-972730' is not scientifically authorized: governing status NEEDS_DATA. Positive tier verdicts were replaced with NOT_ASSESSED; existing negative and not-applicable verdicts remain visible.\",\n    \"governing_status\": \"NEEDS_DATA\"\n  },\n  \"host_integration\": {\n    \"intended_hosts\": [\n      \"biomni\",\n      \"claude_code\",\n      \"codex\",\n      \"cursor\",\n      \"any_mcp_host\"\n    ],\n    \"call_timing\": \"Invoke BEFORE executing model-generated analysis code.\",\n    \"motivation\": \"Full-privilege agent platforms (e.g. Biomni) document that they execute LLM-generated code with full system privileges; sandboxing addresses OS-level risk, not scientific validity. This gate permits the compute but caps what the run may claim.\"\n  },\n  \"boundary\": \"Scientific warrant only: this verdict is not clinical validation, regulatory clearance, or proof that the analysis executed.\"\n}"
+          }
+        ],
+        "structuredContent": {
+          "result": "{\n  \"status\": \"NEEDS_DATA\",\n  \"matched_capability_id\": null,\n  \"target_skill\": \"start\",\n  \"recommended_script\": null,\n  \"recommended_command\": \"bionexus doctor\",\n  \"rationale\": \"No specific scientific analytical intent could be resolved from query. Defaulting to session orientation.\",\n  \"violations\": [],\n  \"remedies\": [],\n  \"missing_data_requests\": [\n    \"Clarify specific scientific analytical intent (e.g. differential expression, clustering, survival analysis, spatial transcriptomics).\"\n  ],\n  \"evidence_card_template\": null,\n  \"routing_layer\": \"none\",\n  \"routing_audit\": {\n    \"nominated_capability\": null,\n    \"layer\": \"none\",\n    \"score\": 0.0,\n    \"runner_up\": null,\n    \"runner_up_score\": 0.0,\n    \"matched_concepts\": [],\n    \"matched_variants\": []\n  },\n  \"purpose_context\": {\n    \"purpose\": \"clinical\",\n    \"explicitly_declared\": true,\n    \"override_active\": false,\n    \"override_justification\": \"\",\n    \"required_evidence\": \"REPLICATED\",\n    \"evidence_ceiling\": \"REPLICATED\"\n  },\n  \"residual_limitations\": [],\n  \"blocked_claims\": [],\n  \"override_records\": [],\n  \"evidence_ceiling\": null,\n  \"scientific_claim_ir\": {\n    \"claim_id\": \"CLAIM-972730\",\n    \"source_text\": \"该边界特征能够预测免疫治疗反应。\",\n    \"subject_entity\": {\n      \"name\": \"该边界特征能够预测免疫治疗反应。\",\n      \"entity_type\": \"biological_entity\",\n      \"features\": [],\n      \"raw_span\": \"该边界特征能够预测免疫治疗反应。\"\n    },\n    \"object_entity\": null,\n    \"relationship\": \"correlation\",\n    \"direction\": \"undirected\",\n    \"comparison\": null,\n    \"population_scope\": \"\",\n    \"generalization_scope\": \"cohort_specific\",\n    \"association_type\": \"observational_correlation\",\n    \"causal_strength\": \"associational\",\n    \"mechanism_depth\": \"black_box\",\n    \"clinical_actionability\": \"none\",\n    \"claim_class\": \"descriptive\",\n    \"qualifiers\": [],\n    \"negated\": false,\n    \"metadata\": {}\n  },\n  \"claim_warrant_evaluation\": {\n    \"claim_id\": \"CLAIM-972730\",\n    \"is_fully_warranted\": false,\n    \"requested_claim_class\": \"descriptive\",\n    \"warranted_claim_class\": \"descriptive\",\n    \"evidence_ceiling\": \"ABSTAIN\",\n    \"tier_verdicts\": {\n      \"association_claim\": {\n        \"tier_name\": \"association_claim\",\n        \"status\": \"NOT_WARRANTED\",\n        \"is_warranted\": false,\n        \"rationale\": \"Correlational/associational relationship is supported by observational or spatial data.\",\n        \"missing_evidence\": [\n          \"observational_data\"\n        ]\n      },\n      \"population_claim\": {\n        \"tier_name\": \"population_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"Population-level generalization was not requested by this claim.\",\n        \"missing_evidence\": []\n      },\n      \"mechanistic_claim\": {\n        \"tier_name\": \"mechanistic_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A mechanistic claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"causal_claim\": {\n        \"tier_name\": \"causal_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A causal claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"cell_identity_claim\": {\n        \"tier_name\": \"cell_identity_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A cell-identity claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"clinical_claim\": {\n        \"tier_name\": \"clinical_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A clinical actionability claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"structural_conformation_claim\": {\n        \"tier_name\": \"structural_conformation_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A structural conformation claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"bioactive_binding_claim\": {\n        \"tier_name\": \"bioactive_binding_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A bioactive target binding claim was not requested.\",\n        \"missing_evidence\": []\n      }\n    },\n    \"evidence_gaps\": [\n      \"governing_status_needs_data\"\n    ],\n    \"remedies\": [],\n    \"rule_violations\": [],\n    \"epistemic_summary\": \"Claim 'CLAIM-972730' is not scientifically authorized: governing status NEEDS_DATA. Positive tier verdicts were replaced with NOT_ASSESSED; existing negative and not-applicable verdicts remain visible.\",\n    \"governing_status\": \"NEEDS_DATA\"\n  },\n  \"host_integration\": {\n    \"intended_hosts\": [\n      \"biomni\",\n      \"claude_code\",\n      \"codex\",\n      \"cursor\",\n      \"any_mcp_host\"\n    ],\n    \"call_timing\": \"Invoke BEFORE executing model-generated analysis code.\",\n    \"motivation\": \"Full-privilege agent platforms (e.g. Biomni) document that they execute LLM-generated code with full system privileges; sandboxing addresses OS-level risk, not scientific validity. This gate permits the compute but caps what the run may claim.\"\n  },\n  \"boundary\": \"Scientific warrant only: this verdict is not clinical validation, regulatory clearance, or proof that the analysis executed.\"\n}"
+        },
+        "isError": false
+      }
+    },
+    {
+      "test_id": "T2",
+      "request": {
+        "query": "输入哈希、坐标连接和输出哈希能够被重新核验。",
+        "research_purpose": "exploratory",
+        "data_metadata": {
+          "input_sha256_manifests": true,
+          "output_sha256_manifests": true,
+          "barcode_keys": true,
+          "coordinates_available": true,
+          "biological_validation_claimed": false,
+          "claim_class": "technical"
+        },
+        "intent_keywords": [
+          "technical",
+          "hash",
+          "barcode_join",
+          "coordinate_completeness"
+        ]
+      },
+      "started_at_utc": "2026-09-06T02:16:02.458Z",
+      "ended_at_utc": "2026-09-06T02:16:05.419Z",
+      "raw_response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"status\": \"NEEDS_DATA\",\n  \"matched_capability_id\": null,\n  \"target_skill\": \"start\",\n  \"recommended_script\": null,\n  \"recommended_command\": \"bionexus doctor\",\n  \"rationale\": \"No specific scientific analytical intent could be resolved from query. Defaulting to session orientation.\",\n  \"violations\": [],\n  \"remedies\": [],\n  \"missing_data_requests\": [\n    \"Clarify specific scientific analytical intent (e.g. differential expression, clustering, survival analysis, spatial transcriptomics).\"\n  ],\n  \"evidence_card_template\": null,\n  \"routing_layer\": \"none\",\n  \"routing_audit\": {\n    \"nominated_capability\": null,\n    \"layer\": \"none\",\n    \"score\": 0.0,\n    \"runner_up\": null,\n    \"runner_up_score\": 0.0,\n    \"matched_concepts\": [],\n    \"matched_variants\": []\n  },\n  \"purpose_context\": {\n    \"purpose\": \"exploratory\",\n    \"explicitly_declared\": true,\n    \"override_active\": false,\n    \"override_justification\": \"\",\n    \"required_evidence\": \"PRELIMINARY\",\n    \"evidence_ceiling\": \"PRELIMINARY\"\n  },\n  \"residual_limitations\": [],\n  \"blocked_claims\": [],\n  \"override_records\": [],\n  \"evidence_ceiling\": null,\n  \"scientific_claim_ir\": {\n    \"claim_id\": \"CLAIM-584773\",\n    \"source_text\": \"输入哈希、坐标连接和输出哈希能够被重新核验。\",\n    \"subject_entity\": {\n      \"name\": \"输入哈希、坐标连接和输出哈希能够被重新核验。\",\n      \"entity_type\": \"biological_entity\",\n      \"features\": [],\n      \"raw_span\": \"输入哈希、坐标连接和输出哈希能够被重新核验。\"\n    },\n    \"object_entity\": null,\n    \"relationship\": \"correlation\",\n    \"direction\": \"undirected\",\n    \"comparison\": null,\n    \"population_scope\": \"\",\n    \"generalization_scope\": \"cohort_specific\",\n    \"association_type\": \"observational_correlation\",\n    \"causal_strength\": \"associational\",\n    \"mechanism_depth\": \"black_box\",\n    \"clinical_actionability\": \"none\",\n    \"claim_class\": \"descriptive\",\n    \"qualifiers\": [],\n    \"negated\": false,\n    \"metadata\": {}\n  },\n  \"claim_warrant_evaluation\": {\n    \"claim_id\": \"CLAIM-584773\",\n    \"is_fully_warranted\": false,\n    \"requested_claim_class\": \"descriptive\",\n    \"warranted_claim_class\": \"descriptive\",\n    \"evidence_ceiling\": \"ABSTAIN\",\n    \"tier_verdicts\": {\n      \"association_claim\": {\n        \"tier_name\": \"association_claim\",\n        \"status\": \"NOT_WARRANTED\",\n        \"is_warranted\": false,\n        \"rationale\": \"Correlational/associational relationship is supported by observational or spatial data.\",\n        \"missing_evidence\": [\n          \"observational_data\"\n        ]\n      },\n      \"population_claim\": {\n        \"tier_name\": \"population_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"Population-level generalization was not requested by this claim.\",\n        \"missing_evidence\": []\n      },\n      \"mechanistic_claim\": {\n        \"tier_name\": \"mechanistic_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A mechanistic claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"causal_claim\": {\n        \"tier_name\": \"causal_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A causal claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"cell_identity_claim\": {\n        \"tier_name\": \"cell_identity_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A cell-identity claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"clinical_claim\": {\n        \"tier_name\": \"clinical_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A clinical actionability claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"structural_conformation_claim\": {\n        \"tier_name\": \"structural_conformation_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A structural conformation claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"bioactive_binding_claim\": {\n        \"tier_name\": \"bioactive_binding_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A bioactive target binding claim was not requested.\",\n        \"missing_evidence\": []\n      }\n    },\n    \"evidence_gaps\": [\n      \"governing_status_needs_data\"\n    ],\n    \"remedies\": [],\n    \"rule_violations\": [],\n    \"epistemic_summary\": \"Claim 'CLAIM-584773' is not scientifically authorized: governing status NEEDS_DATA. Positive tier verdicts were replaced with NOT_ASSESSED; existing negative and not-applicable verdicts remain visible.\",\n    \"governing_status\": \"NEEDS_DATA\"\n  },\n  \"host_integration\": {\n    \"intended_hosts\": [\n      \"biomni\",\n      \"claude_code\",\n      \"codex\",\n      \"cursor\",\n      \"any_mcp_host\"\n    ],\n    \"call_timing\": \"Invoke BEFORE executing model-generated analysis code.\",\n    \"motivation\": \"Full-privilege agent platforms (e.g. Biomni) document that they execute LLM-generated code with full system privileges; sandboxing addresses OS-level risk, not scientific validity. This gate permits the compute but caps what the run may claim.\"\n  },\n  \"boundary\": \"Scientific warrant only: this verdict is not clinical validation, regulatory clearance, or proof that the analysis executed.\"\n}"
+          }
+        ],
+        "structuredContent": {
+          "result": "{\n  \"status\": \"NEEDS_DATA\",\n  \"matched_capability_id\": null,\n  \"target_skill\": \"start\",\n  \"recommended_script\": null,\n  \"recommended_command\": \"bionexus doctor\",\n  \"rationale\": \"No specific scientific analytical intent could be resolved from query. Defaulting to session orientation.\",\n  \"violations\": [],\n  \"remedies\": [],\n  \"missing_data_requests\": [\n    \"Clarify specific scientific analytical intent (e.g. differential expression, clustering, survival analysis, spatial transcriptomics).\"\n  ],\n  \"evidence_card_template\": null,\n  \"routing_layer\": \"none\",\n  \"routing_audit\": {\n    \"nominated_capability\": null,\n    \"layer\": \"none\",\n    \"score\": 0.0,\n    \"runner_up\": null,\n    \"runner_up_score\": 0.0,\n    \"matched_concepts\": [],\n    \"matched_variants\": []\n  },\n  \"purpose_context\": {\n    \"purpose\": \"exploratory\",\n    \"explicitly_declared\": true,\n    \"override_active\": false,\n    \"override_justification\": \"\",\n    \"required_evidence\": \"PRELIMINARY\",\n    \"evidence_ceiling\": \"PRELIMINARY\"\n  },\n  \"residual_limitations\": [],\n  \"blocked_claims\": [],\n  \"override_records\": [],\n  \"evidence_ceiling\": null,\n  \"scientific_claim_ir\": {\n    \"claim_id\": \"CLAIM-584773\",\n    \"source_text\": \"输入哈希、坐标连接和输出哈希能够被重新核验。\",\n    \"subject_entity\": {\n      \"name\": \"输入哈希、坐标连接和输出哈希能够被重新核验。\",\n      \"entity_type\": \"biological_entity\",\n      \"features\": [],\n      \"raw_span\": \"输入哈希、坐标连接和输出哈希能够被重新核验。\"\n    },\n    \"object_entity\": null,\n    \"relationship\": \"correlation\",\n    \"direction\": \"undirected\",\n    \"comparison\": null,\n    \"population_scope\": \"\",\n    \"generalization_scope\": \"cohort_specific\",\n    \"association_type\": \"observational_correlation\",\n    \"causal_strength\": \"associational\",\n    \"mechanism_depth\": \"black_box\",\n    \"clinical_actionability\": \"none\",\n    \"claim_class\": \"descriptive\",\n    \"qualifiers\": [],\n    \"negated\": false,\n    \"metadata\": {}\n  },\n  \"claim_warrant_evaluation\": {\n    \"claim_id\": \"CLAIM-584773\",\n    \"is_fully_warranted\": false,\n    \"requested_claim_class\": \"descriptive\",\n    \"warranted_claim_class\": \"descriptive\",\n    \"evidence_ceiling\": \"ABSTAIN\",\n    \"tier_verdicts\": {\n      \"association_claim\": {\n        \"tier_name\": \"association_claim\",\n        \"status\": \"NOT_WARRANTED\",\n        \"is_warranted\": false,\n        \"rationale\": \"Correlational/associational relationship is supported by observational or spatial data.\",\n        \"missing_evidence\": [\n          \"observational_data\"\n        ]\n      },\n      \"population_claim\": {\n        \"tier_name\": \"population_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"Population-level generalization was not requested by this claim.\",\n        \"missing_evidence\": []\n      },\n      \"mechanistic_claim\": {\n        \"tier_name\": \"mechanistic_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A mechanistic claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"causal_claim\": {\n        \"tier_name\": \"causal_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A causal claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"cell_identity_claim\": {\n        \"tier_name\": \"cell_identity_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A cell-identity claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"clinical_claim\": {\n        \"tier_name\": \"clinical_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A clinical actionability claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"structural_conformation_claim\": {\n        \"tier_name\": \"structural_conformation_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A structural conformation claim was not requested.\",\n        \"missing_evidence\": []\n      },\n      \"bioactive_binding_claim\": {\n        \"tier_name\": \"bioactive_binding_claim\",\n        \"status\": \"NOT_APPLICABLE\",\n        \"is_warranted\": false,\n        \"rationale\": \"A bioactive target binding claim was not requested.\",\n        \"missing_evidence\": []\n      }\n    },\n    \"evidence_gaps\": [\n      \"governing_status_needs_data\"\n    ],\n    \"remedies\": [],\n    \"rule_violations\": [],\n    \"epistemic_summary\": \"Claim 'CLAIM-584773' is not scientifically authorized: governing status NEEDS_DATA. Positive tier verdicts were replaced with NOT_ASSESSED; existing negative and not-applicable verdicts remain visible.\",\n    \"governing_status\": \"NEEDS_DATA\"\n  },\n  \"host_integration\": {\n    \"intended_hosts\": [\n      \"biomni\",\n      \"claude_code\",\n      \"codex\",\n      \"cursor\",\n      \"any_mcp_host\"\n    ],\n    \"call_timing\": \"Invoke BEFORE executing model-generated analysis code.\",\n    \"motivation\": \"Full-privilege agent platforms (e.g. Biomni) document that they execute LLM-generated code with full system privileges; sandboxing addresses OS-level risk, not scientific validity. This gate permits the compute but caps what the run may claim.\"\n  },\n  \"boundary\": \"Scientific warrant only: this verdict is not clinical validation, regulatory clearance, or proof that the analysis executed.\"\n}"
+        },
+        "isError": false
+      }
+    }
+  ]
+}

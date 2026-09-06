@@ -1,0 +1,169 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 7,
+    "name": "GRK4"
+  },
+  "source": "string",
+  "returncode": 0,
+  "elapsed_seconds": 2.513463600014802,
+  "completed_at_utc": "2026-09-06T01:47:43.591503+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\requests\\string\\gene-07-GRK4.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\raw\\string\\gene-07-GRK4.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "string-db-org",
+    "path": "network",
+    "method": "POST",
+    "status_code": 200,
+    "record_path": "$",
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\raw\\string\\gene-07-GRK4.raw",
+    "warnings": [],
+    "record_count_returned": 10,
+    "record_count_available": 32,
+    "truncated": true,
+    "records": [
+      {
+        "stringId_A": "9606.ENSP00000250617",
+        "stringId_B": "9606.ENSP00000381129",
+        "preferredName_A": "ARHGEF6",
+        "preferredName_B": "GRK4",
+        "ncbiTaxonId": "9606",
+        "score": 0.807,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000250617",
+        "stringId_B": "9606.ENSP00000267257",
+        "preferredName_A": "ARHGEF6",
+        "preferredName_B": "PXN",
+        "ncbiTaxonId": "9606",
+        "score": 0.974,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.049,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000250617",
+        "stringId_B": "9606.ENSP00000347464",
+        "preferredName_A": "ARHGEF6",
+        "preferredName_B": "GIT2",
+        "ncbiTaxonId": "9606",
+        "score": 0.998,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.062,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000250617",
+        "stringId_B": "9606.ENSP00000378338",
+        "preferredName_A": "ARHGEF6",
+        "preferredName_B": "GIT1",
+        "ncbiTaxonId": "9606",
+        "score": 0.999,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.044,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000267257",
+        "stringId_B": "9606.ENSP00000409581",
+        "preferredName_A": "PXN",
+        "preferredName_B": "ARRB1",
+        "ncbiTaxonId": "9606",
+        "score": 0.51,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.069,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000267257",
+        "stringId_B": "9606.ENSP00000381129",
+        "preferredName_A": "PXN",
+        "preferredName_B": "GRK4",
+        "ncbiTaxonId": "9606",
+        "score": 0.743,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000267257",
+        "stringId_B": "9606.ENSP00000378338",
+        "preferredName_A": "PXN",
+        "preferredName_B": "GIT1",
+        "ncbiTaxonId": "9606",
+        "score": 0.999,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.067,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000267257",
+        "stringId_B": "9606.ENSP00000347464",
+        "preferredName_A": "PXN",
+        "preferredName_B": "GIT2",
+        "ncbiTaxonId": "9606",
+        "score": 0.999,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.067,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000296271",
+        "stringId_B": "9606.ENSP00000394624",
+        "preferredName_A": "RHO",
+        "preferredName_B": "OPRM1",
+        "ncbiTaxonId": "9606",
+        "score": 0.574,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.131,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000296271",
+        "stringId_B": "9606.ENSP00000386884",
+        "preferredName_A": "RHO",
+        "preferredName_B": "CXCR4",
+        "ncbiTaxonId": "9606",
+        "score": 0.652,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0,
+        "_truncated_keys": 3
+      }
+    ],
+    "sources": [
+      {
+        "name": "STRING",
+        "url": "https://string-db.org/api/json/network",
+        "retrieved_at": "2026-09-06T01:47:43.568328+00:00",
+        "supports_claim": true,
+        "kind": "evidence",
+        "request_url": "https://string-db.org/api/json/network"
+      }
+    ]
+  },
+  "stderr": ""
+}

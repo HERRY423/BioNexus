@@ -53,7 +53,7 @@ calibration, and external-validation states are `NOT_ASSESSED`.
   - `empirical_evidence_refs`: Supporting literature DOIs or dataset accessions.
   - `reproduction_script_sha256`: Cryptographic hash of the executable reproduction workflow proving the claim.
 
-- **BNS-RC-003 (Adjudication & Consensus Lifecycle)**:
+- **BNS-RC-003** (Adjudication & Consensus Lifecycle):
   Challenges undergo formal peer review across the Challenge Network. The lifecycle states are:
   1. `PROPOSED`: Challenge registered in the decentralized ledger.
   2. `UNDER_REVIEW`: Review votes may be recorded, but unverified votes do not count toward consensus.
@@ -61,6 +61,9 @@ calibration, and external-validation states are `NOT_ASSESSED`.
   4. `REGIME_SPLIT`: Challenge demonstrates that the rule holds for some assays but not others; the rule is partitioned into distinct sub-regimes (e.g. droplet vs spatial vs imaging).
   5. `REJECTED_REFUTED`: Challenge is empirically refuted or demonstrated to be non-reproducible.
   6. `DEPRECATED`: The underlying premise is superseded by newer statistical theory.
+
+- **BNS-RC-003A (Connector Failure-to-Challenge Bridge)**:
+  When external connectors yield contradictory evidence, encounter unmodeled platform edge-cases, or fail invariant gates, the runtime MAY synthesize a structured `EMPIRICAL_COUNTEREXAMPLE` or `REGIME_BOUNDARY_VIOLATION` challenge proposal via `create_challenge_from_connector_conflict()`. This establishes the automated data flywheel translating real-world multi-tool failures into empirical rule calibrations and regime splits.
 
 - **BNS-RC-004 (Fail-Closed Integrity & Zero Silent Drift)**:
   Rule calibrations MUST be immutable at runtime and verifiable against cryptographic SHA-256 digests. Modifying local rules without recording a formal calibration or local overlay MUST be refused by the registry compiler (`BNS-EF-002`).

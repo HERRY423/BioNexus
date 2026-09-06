@@ -1,0 +1,1699 @@
+{
+  "schema_version": "bionexus.external-evidence-envelope.v1",
+  "evidence_id": "SPATIALWARRANT-S6-OPENTARGETS",
+  "family": "database",
+  "producer": {
+    "plugin_id": "life-sciences-databases",
+    "capability": "external-context-query",
+    "tool_name": "opentargets-skill",
+    "plugin_version": "0.1.5"
+  },
+  "captured_at": "2026-09-06T02:03:23.780341+00:00",
+  "source_context": {
+    "source_name": "Open Targets Platform",
+    "record_ids": [
+      "AC027237.3",
+      "AC087175.1",
+      "AL355075.4",
+      "CD274 PDCD1",
+      "CPB2-AS1",
+      "CXCL10 CXCR3",
+      "CXCL9 CXCR3",
+      "DMD",
+      "FMO4",
+      "FOXO6",
+      "HALLMARK_INTERFERON_GAMMA_RESPONSE",
+      "HEY2",
+      "IGLC1",
+      "IGLC3",
+      "LINC01144",
+      "LINC01489",
+      "MIF CD74_CXCR4",
+      "MIXL1",
+      "NRSN2-AS1",
+      "PCDH18",
+      "PTHLH",
+      "RAB6C",
+      "SPP1 CD44",
+      "SYCP3",
+      "TGFB1 TGFBR1 TGFBR2",
+      "TMEM233",
+      "ZSWIM8-AS1"
+    ],
+    "database_release": "live Platform GraphQL query 2026-09-06",
+    "identifier_namespace": "Ensembl/Platform entities or query targets",
+    "organism_taxon": "NCBI:9606"
+  },
+  "payload": [
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 1,
+        "name": "RAB6C"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.8635260999726597,
+      "completed_at_utc": "2026-09-06T02:00:49.387447+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-01-RAB6C.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-01-RAB6C.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 48,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "... (+15 more)"
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-01-RAB6C.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:00:49.361134+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 2,
+        "name": "LINC01144"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.705041599983815,
+      "completed_at_utc": "2026-09-06T02:00:49.228013+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-02-LINC01144.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-02-LINC01144.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 4,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "..."
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-02-LINC01144.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:00:49.203171+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 3,
+        "name": "FOXO6"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.7881302000023425,
+      "completed_at_utc": "2026-09-06T02:00:51.234226+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-03-FOXO6.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-03-FOXO6.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 67,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "... (+15 more)"
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-03-FOXO6.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:00:51.208003+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 4,
+        "name": "ZSWIM8-AS1"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.7057841000205372,
+      "completed_at_utc": "2026-09-06T02:00:52.941846+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-04-ZSWIM8-AS1.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-04-ZSWIM8-AS1.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 1,
+            "hits": [
+              "..."
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-04-ZSWIM8-AS1.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:00:52.915092+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 5,
+        "name": "PTHLH"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 2.5158755000156816,
+      "completed_at_utc": "2026-09-06T02:00:54.510535+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-05-PTHLH.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-05-PTHLH.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 330,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "... (+15 more)"
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-05-PTHLH.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:00:54.483828+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 6,
+        "name": "HEY2"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.4044246000121348,
+      "completed_at_utc": "2026-09-06T02:00:55.168123+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-06-HEY2.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-06-HEY2.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 815,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "... (+15 more)"
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-06-HEY2.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:00:55.143726+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 7,
+        "name": "DMD"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.3816725999931805,
+      "completed_at_utc": "2026-09-06T02:00:56.431957+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-07-DMD.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-07-DMD.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 1951,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "... (+15 more)"
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-07-DMD.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:00:56.405994+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 8,
+        "name": "IGLC3"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.470647399983136,
+      "completed_at_utc": "2026-09-06T02:00:57.905681+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-08-IGLC3.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-08-IGLC3.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 39,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "... (+15 more)"
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-08-IGLC3.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:00:57.878501+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 9,
+        "name": "IGLC1"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 3.7098827000008896,
+      "completed_at_utc": "2026-09-06T02:01:01.639344+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-09-IGLC1.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-09-IGLC1.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 18,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "... (+8 more)"
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-09-IGLC1.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:01:01.615483+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 10,
+        "name": "PCDH18"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.434380400023656,
+      "completed_at_utc": "2026-09-06T02:01:00.479509+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-10-PCDH18.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-10-PCDH18.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 25,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "... (+15 more)"
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-10-PCDH18.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:01:00.458700+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 11,
+        "name": "AC087175.1"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 2.1931814000126906,
+      "completed_at_utc": "2026-09-06T02:01:02.674184+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-11-AC087175.1.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-11-AC087175.1.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 0,
+            "hits": []
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-11-AC087175.1.raw",
+        "warnings": [],
+        "checked_sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:01:02.646863+00:00",
+            "supports_claim": false,
+            "kind": "checked",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "reason": "empty"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 12,
+        "name": "LINC01489"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.3689431000093464,
+      "completed_at_utc": "2026-09-06T02:01:03.158026+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-12-LINC01489.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-12-LINC01489.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 5,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-12-LINC01489.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:01:03.134633+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 13,
+        "name": "FMO4"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.6862096000113524,
+      "completed_at_utc": "2026-09-06T02:01:04.808524+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-13-FMO4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-13-FMO4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 59,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "... (+15 more)"
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-13-FMO4.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:01:04.782530+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 14,
+        "name": "AC027237.3"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.332535599998664,
+      "completed_at_utc": "2026-09-06T02:01:05.827804+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-14-AC027237.3.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-14-AC027237.3.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 0,
+            "hits": []
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-14-AC027237.3.raw",
+        "warnings": [],
+        "checked_sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:01:05.801315+00:00",
+            "supports_claim": false,
+            "kind": "checked",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "reason": "empty"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 15,
+        "name": "MIXL1"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.5247466000146233,
+      "completed_at_utc": "2026-09-06T02:01:07.204905+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-15-MIXL1.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-15-MIXL1.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 19,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "... (+9 more)"
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-15-MIXL1.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:01:07.182523+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 16,
+        "name": "AL355075.4"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.3705089999712072,
+      "completed_at_utc": "2026-09-06T02:01:08.169205+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-16-AL355075.4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-16-AL355075.4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 0,
+            "hits": []
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-16-AL355075.4.raw",
+        "warnings": [],
+        "checked_sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:01:08.141136+00:00",
+            "supports_claim": false,
+            "kind": "checked",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "reason": "empty"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 17,
+        "name": "SYCP3"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.597328900010325,
+      "completed_at_utc": "2026-09-06T02:01:09.775149+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-17-SYCP3.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-17-SYCP3.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 135,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "... (+15 more)"
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-17-SYCP3.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:01:09.753039+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 18,
+        "name": "TMEM233"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 2.1969322999939322,
+      "completed_at_utc": "2026-09-06T02:01:11.162746+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-18-TMEM233.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-18-TMEM233.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 15,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "... (+5 more)"
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-18-TMEM233.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:01:11.134757+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 19,
+        "name": "NRSN2-AS1"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.4007404000149108,
+      "completed_at_utc": "2026-09-06T02:01:11.499874+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-19-NRSN2-AS1.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-19-NRSN2-AS1.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 1,
+            "hits": [
+              "..."
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-19-NRSN2-AS1.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:01:11.474402+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "gene",
+        "rank": 20,
+        "name": "CPB2-AS1"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.8898382000043057,
+      "completed_at_utc": "2026-09-06T02:01:13.392134+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\opentargets\\gene-20-CPB2-AS1.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-20-CPB2-AS1.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 92,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "... (+15 more)"
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\opentargets\\gene-20-CPB2-AS1.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T02:01:13.368011+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 1,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.3163620000123046,
+      "completed_at_utc": "2026-09-06T01:46:26.090818+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\liana_interaction-01-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-01-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 0,
+            "hits": []
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-01-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "checked_sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T01:46:26.066958+00:00",
+            "supports_claim": false,
+            "kind": "checked",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "reason": "empty"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 2,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.3037099000066519,
+      "completed_at_utc": "2026-09-06T01:46:26.742605+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\liana_interaction-02-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-02-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 0,
+            "hits": []
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-02-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "checked_sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T01:46:26.717424+00:00",
+            "supports_claim": false,
+            "kind": "checked",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "reason": "empty"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 3,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.3483992000110447,
+      "completed_at_utc": "2026-09-06T01:46:27.441786+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\liana_interaction-03-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-03-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 0,
+            "hits": []
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-03-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "checked_sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T01:46:27.415237+00:00",
+            "supports_claim": false,
+            "kind": "checked",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "reason": "empty"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 4,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 3.7857835000031628,
+      "completed_at_utc": "2026-09-06T01:46:30.630551+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\liana_interaction-04-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-04-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 0,
+            "hits": []
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-04-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "checked_sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T01:46:30.589263+00:00",
+            "supports_claim": false,
+            "kind": "checked",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "reason": "empty"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 5,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.3250441999989562,
+      "completed_at_utc": "2026-09-06T01:46:29.025238+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\liana_interaction-05-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-05-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 0,
+            "hits": []
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-05-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "checked_sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T01:46:29.002001+00:00",
+            "supports_claim": false,
+            "kind": "checked",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "reason": "empty"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 6,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 3.2610924000036903,
+      "completed_at_utc": "2026-09-06T01:46:31.940479+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\liana_interaction-06-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-06-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 0,
+            "hits": []
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-06-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "checked_sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T01:46:31.906685+00:00",
+            "supports_claim": false,
+            "kind": "checked",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "reason": "empty"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 7,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.3036818999971729,
+      "completed_at_utc": "2026-09-06T01:46:30.573950+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\liana_interaction-07-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-07-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 0,
+            "hits": []
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-07-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "checked_sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T01:46:30.548988+00:00",
+            "supports_claim": false,
+            "kind": "checked",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "reason": "empty"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 8,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.282154200016521,
+      "completed_at_utc": "2026-09-06T01:46:31.865327+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\liana_interaction-08-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-08-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 0,
+            "hits": []
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-08-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "checked_sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T01:46:31.840997+00:00",
+            "supports_claim": false,
+            "kind": "checked",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "reason": "empty"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 9,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.6216322999971453,
+      "completed_at_utc": "2026-09-06T01:46:32.789886+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\liana_interaction-09-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-09-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 0,
+            "hits": []
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-09-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "checked_sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T01:46:32.761556+00:00",
+            "supports_claim": false,
+            "kind": "checked",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "reason": "empty"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "liana_interaction",
+        "rank": 10,
+        "name": "MIF CD74_CXCR4"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 2.107199899997795,
+      "completed_at_utc": "2026-09-06T01:46:33.976199+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\liana_interaction-10-MIF_CD74_CXCR4.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-10-MIF_CD74_CXCR4.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 0,
+            "hits": []
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\liana_interaction-10-MIF_CD74_CXCR4.raw",
+        "warnings": [],
+        "checked_sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T01:46:33.949268+00:00",
+            "supports_claim": false,
+            "kind": "checked",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "reason": "empty"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "prespecified",
+        "rank": 1,
+        "name": "CXCL9 CXCR3"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.5573024000041187,
+      "completed_at_utc": "2026-09-06T01:46:34.218602+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\prespecified-01-CXCL9_CXCR3.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\prespecified-01-CXCL9_CXCR3.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 9,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\prespecified-01-CXCL9_CXCR3.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T01:46:34.195461+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "prespecified",
+        "rank": 2,
+        "name": "CXCL10 CXCR3"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.452591899986146,
+      "completed_at_utc": "2026-09-06T01:46:35.212861+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\prespecified-02-CXCL10_CXCR3.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\prespecified-02-CXCL10_CXCR3.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 17,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "... (+7 more)"
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\prespecified-02-CXCL10_CXCR3.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T01:46:35.190063+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "prespecified",
+        "rank": 3,
+        "name": "CD274 PDCD1"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.6267776000022423,
+      "completed_at_utc": "2026-09-06T01:46:36.013008+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\prespecified-03-CD274_PDCD1.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\prespecified-03-CD274_PDCD1.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 484,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "... (+15 more)"
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\prespecified-03-CD274_PDCD1.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T01:46:35.988193+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "prespecified",
+        "rank": 4,
+        "name": "TGFB1 TGFBR1 TGFBR2"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 2.32512150000548,
+      "completed_at_utc": "2026-09-06T01:46:37.408306+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\prespecified-04-TGFB1_TGFBR1_TGFBR2.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\prespecified-04-TGFB1_TGFBR1_TGFBR2.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 10,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "..."
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\prespecified-04-TGFB1_TGFBR1_TGFBR2.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T01:46:37.386984+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "prespecified",
+        "rank": 5,
+        "name": "SPP1 CD44"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.4349080999963917,
+      "completed_at_utc": "2026-09-06T01:46:37.568917+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\prespecified-05-SPP1_CD44.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\prespecified-05-SPP1_CD44.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 20,
+            "hits": [
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "...",
+              "... (+10 more)"
+            ]
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\prespecified-05-SPP1_CD44.raw",
+        "warnings": [],
+        "sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T01:46:37.542277+00:00",
+            "supports_claim": true,
+            "kind": "evidence",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "target": {
+        "kind": "prespecified",
+        "rank": 6,
+        "name": "HALLMARK_INTERFERON_GAMMA_RESPONSE"
+      },
+      "source": "opentargets",
+      "returncode": 0,
+      "elapsed_seconds": 1.6134192000026815,
+      "completed_at_utc": "2026-09-06T01:46:38.536834+00:00",
+      "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\opentargets\\prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.request.json",
+      "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.raw",
+      "wrapper": {
+        "ok": true,
+        "source": "opentargets-graphql",
+        "top_keys": [
+          "search"
+        ],
+        "summary": {
+          "search": {
+            "total": 0,
+            "hits": []
+          }
+        },
+        "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\opentargets\\prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.raw",
+        "warnings": [],
+        "checked_sources": [
+          {
+            "name": "Open Targets Platform",
+            "url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "retrieved_at": "2026-09-06T01:46:38.514265+00:00",
+            "supports_claim": false,
+            "kind": "checked",
+            "request_url": "https://api.platform.opentargets.org/api/v4/graphql",
+            "reason": "empty"
+          }
+        ]
+      },
+      "stderr": ""
+    }
+  ],
+  "payload_sha256": "a359e61c59b19000a13fb00d180b3d308a2e69526e52af399069982cc7bffbde",
+  "request_sha256": "1f655ae1726b6b5ab1ffe3f9080b500572aa2d2a8fb1e870b0d2ac7f37c34ba9",
+  "semantic_envelope": null,
+  "epistemic_lineage": null
+}

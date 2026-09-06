@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bionexus-reliability"
-version = "1.0.0-rc.4"
+version = "1.0.0-rc.5"
 description = "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents (Warrant-First Evidence Assessment, Fail-Closed Invariants, Evidence-Capped Claims, Zero Silent Substitution)."
 authors = [{ name = "BioNexus Team" }]
 license = { text = "Apache-2.0" }
@@ -44,6 +44,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Full-package convenience extra. The external-review handoff deliberately
+# uses its bounded requirements-review.txt profile with a --no-deps install.
 review = [
     "pytest>=7.4.0,<10.0.0"
 ]
@@ -154,6 +156,7 @@ exclude = [
     "_eval_*",
     "_evaluation_*",
     ".pytest-tmp-*",
+    "review",
 ]
 
 [tool.ruff.lint]

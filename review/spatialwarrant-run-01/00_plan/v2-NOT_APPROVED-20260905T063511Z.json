@@ -1,0 +1,11 @@
+{
+  "decision": "NOT_APPROVED",
+  "source": "explicit user instruction",
+  "recorded_at_utc": "2026-09-05T06:35:11.167594+00:00",
+  "artifacts": {
+    "analysis-plan.lock.v2.md": "5ca06b5f7c06eaa8ff9e5298d010dd76cc7e5349952669dd071d632b45dbef56",
+    "storage-location-check.v2.json": "0d3c99f0cb4664f08645751bbaff95a86ccbefe9b4fe6b2ca06b8e052aa1211a",
+    "plan-v2.sha256": "505348209f00b6f18ee3be7b33b19a44701d2567a9231491f5133e4613cf921e"
+  },
+  "action": "Preserved original files unchanged; D is not an authorized storage target."
+}

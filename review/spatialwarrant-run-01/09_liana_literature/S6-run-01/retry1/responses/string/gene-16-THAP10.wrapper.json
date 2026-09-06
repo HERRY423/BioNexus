@@ -1,0 +1,169 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 16,
+    "name": "THAP10"
+  },
+  "source": "string",
+  "returncode": 0,
+  "elapsed_seconds": 3.0459121000021696,
+  "completed_at_utc": "2026-09-06T01:47:49.035263+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\requests\\string\\gene-16-THAP10.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\raw\\string\\gene-16-THAP10.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "string-db-org",
+    "path": "network",
+    "method": "POST",
+    "status_code": 200,
+    "record_path": "$",
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\retry1\\raw\\string\\gene-16-THAP10.raw",
+    "warnings": [],
+    "record_count_returned": 10,
+    "record_count_available": 26,
+    "truncated": true,
+    "records": [
+      {
+        "stringId_A": "9606.ENSP00000054650",
+        "stringId_B": "9606.ENSP00000292894",
+        "preferredName_A": "THAP3",
+        "preferredName_B": "THAP8",
+        "ncbiTaxonId": "9606",
+        "score": 0.503,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.067,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000054650",
+        "stringId_B": "9606.ENSP00000215742",
+        "preferredName_A": "THAP3",
+        "preferredName_B": "THAP7",
+        "ncbiTaxonId": "9606",
+        "score": 0.507,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.26,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000054650",
+        "stringId_B": "9606.ENSP00000249861",
+        "preferredName_A": "THAP3",
+        "preferredName_B": "THAP10",
+        "ncbiTaxonId": "9606",
+        "score": 0.57,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000054650",
+        "stringId_B": "9606.ENSP00000385006",
+        "preferredName_A": "THAP3",
+        "preferredName_B": "THAP4",
+        "ncbiTaxonId": "9606",
+        "score": 0.589,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.076,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000054650",
+        "stringId_B": "9606.ENSP00000309007",
+        "preferredName_A": "THAP3",
+        "preferredName_B": "THAP6",
+        "ncbiTaxonId": "9606",
+        "score": 0.624,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.049,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000054650",
+        "stringId_B": "9606.ENSP00000260045",
+        "preferredName_A": "THAP3",
+        "preferredName_B": "THAP12",
+        "ncbiTaxonId": "9606",
+        "score": 0.882,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000215742",
+        "stringId_B": "9606.ENSP00000249861",
+        "preferredName_A": "THAP7",
+        "preferredName_B": "THAP10",
+        "ncbiTaxonId": "9606",
+        "score": 0.573,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000215742",
+        "stringId_B": "9606.ENSP00000385006",
+        "preferredName_A": "THAP7",
+        "preferredName_B": "THAP4",
+        "ncbiTaxonId": "9606",
+        "score": 0.643,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.177,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000215742",
+        "stringId_B": "9606.ENSP00000260045",
+        "preferredName_A": "THAP7",
+        "preferredName_B": "THAP12",
+        "ncbiTaxonId": "9606",
+        "score": 0.912,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0.047,
+        "_truncated_keys": 3
+      },
+      {
+        "stringId_A": "9606.ENSP00000249861",
+        "stringId_B": "9606.ENSP00000385006",
+        "preferredName_A": "THAP10",
+        "preferredName_B": "THAP4",
+        "ncbiTaxonId": "9606",
+        "score": 0.571,
+        "nscore": 0,
+        "fscore": 0,
+        "pscore": 0,
+        "ascore": 0,
+        "_truncated_keys": 3
+      }
+    ],
+    "sources": [
+      {
+        "name": "STRING",
+        "url": "https://string-db.org/api/json/network",
+        "retrieved_at": "2026-09-06T01:47:49.008520+00:00",
+        "supports_claim": true,
+        "kind": "evidence",
+        "request_url": "https://string-db.org/api/json/network"
+      }
+    ]
+  },
+  "stderr": ""
+}

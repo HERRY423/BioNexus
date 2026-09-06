@@ -1,0 +1,40 @@
+{
+  "source_file": "PMC9044823.1.source.v1.xml",
+  "links": [
+    {
+      "tag": "media",
+      "href": "NIHMS1793222-supplement-1793222_Sup_Tab_1-11.xlsx",
+      "text": ""
+    },
+    {
+      "tag": "media",
+      "href": "NIHMS1793222-supplement-1793222_Sup_Note.pdf",
+      "text": ""
+    }
+  ],
+  "findings": [
+    {
+      "term": "CID4290A",
+      "hits": []
+    },
+    {
+      "term": "orig.ident",
+      "hits": []
+    },
+    {
+      "term": "three tissue regions",
+      "hits": [
+        "unctional molecules. Figure 6. Mapping breast cancer heterogeneity using spatial transcriptomics.  a,  Complete H&E images of all three tissue regions analysed using Visium for the sample TNBC  CID44971 . Pathological annotation of morphological regions into distinct categories including normal ductal (green), stroma and adipose"
+      ]
+    },
+    {
+      "term": "Supplementary Table 1",
+      "hits": [
+        "chitecture of breast cancers, we analyzed 26 primary pre-treatment tumors, including 11 ER+, 5 HER2+ and 10 TNBCs, by scRNA-Seq ( Supplementary Table 1 ). In total, 130,246 single-cells passed quality control ( Extended Data Fig. 1a \u2013 d ) and were annotated using canonical lineage markers ( Fig. 1a \u2013 b ). These high-level annota",
+        "alise therapy. Methods Patient material, ethics and consent for publication Primary untreated breast cancers used in this study ( Supplementary Table 1 ) were collected with written consent from all patients under the protocols x13-0133, x19-0496, x16-018 and x17-155 with approval from all relevant human research ethics committe",
+        "ibodies (Biolegend, USA). A total of four cases from our scRNA-Seq cohort were analyzed with a panel of 157 barcoded antibodies ( Supplementary Table 11 ), including one luminal (CID4040), one HER2 (CID383) and two TNBC (CID4515 and CID3956). Staining was performed as previously described by Stoeckius et. al 35 . Briefly, a maxi",
+        "cts the median. Extended Data Fig. 4 CITE-Seq vignette a,  UMAP Visualization of a TNBC sample with 157 DNA barcoded antibodies ( Supplementary Table 11 ). Cluster annotations were extracted from our final breast cancer atlas cell annotations.  b,  Heatmap visualization of the cluster averaged antibody derived tag (ADT) values f"
+      ]
+    }
+  ]
+}

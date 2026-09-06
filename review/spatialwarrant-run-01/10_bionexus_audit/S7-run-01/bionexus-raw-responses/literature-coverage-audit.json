@@ -1,0 +1,20 @@
+{
+  "evidence_id": "SPATIALWARRANT-S7-LITERATURE-COVERAGE",
+  "status": "INCOMPLETE",
+  "integrity_verified": true,
+  "producer_identity_status": "DECLARED_NOT_AUTHENTICATED",
+  "accepted_for_context": false,
+  "accepted_for_claim_support": false,
+  "conclusion_maturity": "UNASSESSED",
+  "allowed_context_use": "source-specific literature report",
+  "missing_context": [
+    "publication_status",
+    "study_design"
+  ],
+  "errors": [],
+  "warnings": [],
+  "prohibited_inferences": [
+    "Do not infer consensus, replication, or absence of evidence from one search result.",
+    "Do not treat an author's mechanistic interpretation as independently validated causality."
+  ]
+}

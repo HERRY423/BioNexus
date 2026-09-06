@@ -1,0 +1,9 @@
+{
+  "params": {
+    "id": "PMC5784859"
+  },
+  "max_items": 10,
+  "timeout_sec": 30,
+  "save_raw": true,
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\workbench-ifnb-demo\\workbench-run-01-records\\literature\\pmc-metadata.raw.json"
+}

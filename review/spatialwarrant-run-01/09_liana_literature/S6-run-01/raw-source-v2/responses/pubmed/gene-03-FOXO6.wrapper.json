@@ -1,0 +1,58 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 3,
+    "name": "FOXO6"
+  },
+  "source": "pubmed",
+  "returncode": 0,
+  "elapsed_seconds": 2.039099999994505,
+  "completed_at_utc": "2026-09-06T02:00:51.992246+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\requests\\pubmed\\gene-03-FOXO6.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\pubmed\\gene-03-FOXO6.raw",
+  "wrapper": {
+    "ok": true,
+    "source": "ncbi-entrez",
+    "endpoint": "esearch",
+    "database": "pubmed",
+    "record_path": "esearchresult.idlist",
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\pubmed\\gene-03-FOXO6.raw",
+    "warnings": [],
+    "record_count_returned": 9,
+    "record_count_available": 9,
+    "truncated": false,
+    "records": [
+      "31694904",
+      "30464613",
+      "29484124",
+      "36555288",
+      "34197655",
+      "31058255",
+      "42206911",
+      "15723337",
+      "29588373"
+    ],
+    "sources": [
+      {
+        "name": "NCBI Entrez",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=REDACTED&retmode=json&retmax=10&sort=relevance",
+        "retrieved_at": "2026-09-06T02:00:51.966230+00:00",
+        "supports_claim": true,
+        "kind": "evidence",
+        "request_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=REDACTED&retmode=json&retmax=10&sort=relevance",
+        "canonical_urls": [
+          "https://pubmed.ncbi.nlm.nih.gov/31694904/",
+          "https://pubmed.ncbi.nlm.nih.gov/30464613/",
+          "https://pubmed.ncbi.nlm.nih.gov/29484124/",
+          "https://pubmed.ncbi.nlm.nih.gov/36555288/",
+          "https://pubmed.ncbi.nlm.nih.gov/34197655/",
+          "https://pubmed.ncbi.nlm.nih.gov/31058255/",
+          "https://pubmed.ncbi.nlm.nih.gov/42206911/",
+          "https://pubmed.ncbi.nlm.nih.gov/15723337/",
+          "https://pubmed.ncbi.nlm.nih.gov/29588373/"
+        ]
+      }
+    ]
+  },
+  "stderr": ""
+}

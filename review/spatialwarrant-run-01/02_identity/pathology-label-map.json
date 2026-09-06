@@ -1,0 +1,7 @@
+{
+  "status": "PENDING_REVIEW_NOT_FROZEN",
+  "reason": "Most sections have only composite invasive-cancer labels. No expression-informed relabeling or new boundary rule is allowed. Preserve exact producer labels; human pathology interpretation/producer definitions needed before primary masks.",
+  "candidate_map_file": "pathology-label-inventory.csv",
+  "primary_geometry_rule_source": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\00_plan\\analysis-plan.lock.md",
+  "mask_generation": "NOT_RUN"
+}

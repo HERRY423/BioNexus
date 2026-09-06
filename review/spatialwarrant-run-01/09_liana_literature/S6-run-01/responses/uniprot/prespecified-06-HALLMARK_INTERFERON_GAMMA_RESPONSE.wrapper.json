@@ -1,0 +1,22 @@
+{
+  "target": {
+    "kind": "prespecified",
+    "rank": 6,
+    "name": "HALLMARK_INTERFERON_GAMMA_RESPONSE"
+  },
+  "source": "uniprot",
+  "returncode": 1,
+  "elapsed_seconds": 0.3013280000013765,
+  "completed_at_utc": "2026-09-06T01:46:37.292066+00:00",
+  "request_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\requests\\uniprot\\prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.request.json",
+  "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw\\uniprot\\prespecified-06-HALLMARK_INTERFERON_GAMMA_RESPONSE.raw",
+  "wrapper": {
+    "ok": false,
+    "error": {
+      "code": "invalid_input",
+      "message": "`base_url` is not a registered HTTPS base for this skill."
+    },
+    "warnings": []
+  },
+  "stderr": ""
+}

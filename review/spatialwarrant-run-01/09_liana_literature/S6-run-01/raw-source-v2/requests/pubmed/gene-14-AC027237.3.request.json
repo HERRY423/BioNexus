@@ -1,0 +1,23 @@
+{
+  "target": {
+    "kind": "gene",
+    "rank": 14,
+    "name": "AC027237.3"
+  },
+  "source": "pubmed",
+  "script": "C:\\Users\\13264\\.codex\\plugins\\cache\\openai-curated-remote\\life-sciences-literature\\0.1.5\\skills\\ncbi-entrez-skill\\scripts\\ncbi_entrez.py",
+  "requested_at_utc": "2026-09-06T02:01:04.991985+00:00",
+  "payload": {
+    "endpoint": "esearch",
+    "params": {
+      "db": "pubmed",
+      "term": "(AC027237.3) AND (breast cancer OR tumor microenvironment) AND (journal article[pt] NOT review[pt])",
+      "retmode": "json",
+      "retmax": 10,
+      "sort": "relevance"
+    },
+    "max_items": 10,
+    "save_raw": true,
+    "raw_output_path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\raw-source-v2\\raw\\pubmed\\gene-14-AC027237.3.raw"
+  }
+}

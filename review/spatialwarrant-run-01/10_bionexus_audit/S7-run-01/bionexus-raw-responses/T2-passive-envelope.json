@@ -1,0 +1,53 @@
+{
+  "schema_version": "bionexus.external-evidence-envelope.v1",
+  "evidence_id": "SPATIALWARRANT-S7-T2",
+  "family": "analysis",
+  "producer": {
+    "plugin_id": "local-python-s7-review",
+    "capability": "completed-artifact-scientific-review",
+    "tool_name": "build_spatialwarrant_s7.py",
+    "plugin_version": "sha256:03f5335df16d144aea3cca2c9764bce573c32ed110f0ec7c7dd45b157be1994a"
+  },
+  "captured_at": "2026-09-06T02:30:14.589899+00:00",
+  "source_context": {
+    "backend_name": "local Python/scverse artifact review",
+    "backend_version": "3.13.9",
+    "input_artifact_sha256": "25c3db916c96b0b88b816d22f35c0a725affc3b43bd636133e96d5251bdad663",
+    "parameters_sha256": "c93da14298e1fa8a14a5b9fc84be54a3859458ed1dac630d2471fbc541e20cbe",
+    "execution_receipt_sha256": "b6bd8e08981030d43fd0b934830611d71cf9d39dfdac570f7cba991ad3a55a93"
+  },
+  "payload": {
+    "claim_id": "T2",
+    "original_statement": "Input hashes, barcode joins, coordinate completeness, and output hashes can be independently recomputed.",
+    "artifacts": [
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\10_bionexus_audit\\S7-run-01\\technical-reverification.json",
+        "sha256": "b6bd8e08981030d43fd0b934830611d71cf9d39dfdac570f7cba991ad3a55a93"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\00_plan\\analysis-plan.lock.md",
+        "sha256": "854e2d06eb25903a870606934964fd8b7f0a40a16a9658ef565cf5ab14a03c82"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01\\SHA256SUMS.txt",
+        "sha256": "3e1355cbf5b9ceef8eb80bd524d9469e08f13b097548029661fa26ebeb72ed51"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\SHA256SUMS.txt",
+        "sha256": "a2f4f8b43f2abbd51fb633d7fc37bcf37f0f01e948926971e15fc35d5e142944"
+      }
+    ],
+    "host_review_state": "LOCAL_TECHNICAL_REVERIFICATION_PASS",
+    "support": "Declared input/output SHA-256 lists match; unique barcode sets match across S3/S4/S5; all 15601 coordinate rows finite.",
+    "counterevidence": "Same-host verification is not independent external execution or authenticated receipt; hash consistency does not validate biology.",
+    "maximum_claim": "Observed same-host technical hash/connection/coordinate recomputation only.",
+    "dependencies": [
+      "Immutable files",
+      "S7 read-only inspection implementation"
+    ]
+  },
+  "payload_sha256": "cd5029fe6791d0ef2f8431ff9f8367155dea6c0b76e3ba079cd00b1bd5651b36",
+  "request_sha256": "2be1bb28ce8cf4415f0d35b1411d64883e0f6182e050786b9222fd3893acea89",
+  "semantic_envelope": null,
+  "epistemic_lineage": null
+}

@@ -1,0 +1,59 @@
+{
+  "schema_version": "bionexus.external-evidence-envelope.v1",
+  "evidence_id": "SPATIALWARRANT-S7-C5",
+  "family": "analysis",
+  "producer": {
+    "plugin_id": "local-python-s7-review",
+    "capability": "completed-artifact-scientific-review",
+    "tool_name": "build_spatialwarrant_s7.py",
+    "plugin_version": "sha256:03f5335df16d144aea3cca2c9764bce573c32ed110f0ec7c7dd45b157be1994a"
+  },
+  "captured_at": "2026-09-06T02:30:14.522976+00:00",
+  "source_context": {
+    "backend_name": "local Python/scverse artifact review",
+    "backend_version": "3.13.9",
+    "input_artifact_sha256": "c851ae39fda778f5ed9d6c1403e3b24b4c3dd3adbd26e7e5a5b36fc19eace517",
+    "parameters_sha256": "41be32f010d83106f1f48fceb50f9794ecf2c6014fb076ffae5fbc891e95d0ca",
+    "execution_receipt_sha256": "b6bd8e08981030d43fd0b934830611d71cf9d39dfdac570f7cba991ad3a55a93"
+  },
+  "payload": {
+    "claim_id": "C5",
+    "original_statement": "CXCL9/10-CXCR3 drives T-cell recruitment to the boundary.",
+    "artifacts": [
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\liana-method-and-resource.json",
+        "sha256": "9f235fc148256f1c6f922c3c342bbbef381f185afd5b5045bf64ed68152cb80a"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\liana-prespecified-interactions.csv",
+        "sha256": "17b2dcbf5a8cc0a9df8f99aab7680bb8613486d09b20d99c79271fadb1846cdb"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\boundary-celltype-specific-liana-status.json",
+        "sha256": "16f7930d41bfa7d37c1ea015065c9803a67344a414cd1cd36f328b448e39d4f3"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\liana-spatial-niche-context.csv",
+        "sha256": "1a7aec911c650be04aaf87d4546cde78977a06cf052e0957d6be57790e0e450c"
+      },
+      {
+        "path": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\external-query-log.final.csv",
+        "sha256": "95852dfd9b08b12f60e999fdb0e1494ec84fb5a8974f0cabb865d5610504fa2f"
+      }
+    ],
+    "host_review_state": "CAUSAL_CLAIM_NOT_ESTABLISHED",
+    "support": "LIANA reference-wide rank_aggregate and prespecified CXCL9/10–CXCR3 records available; spatial composition/niche context is descriptive.",
+    "counterevidence": "Reference expression cannot identify boundary cell-type-specific communication; no perturbation, temporal ordering or directional recruitment evidence. Resource/output presence is not significant interaction evidence.",
+    "maximum_claim": "Communication feasibility and follow-up hypotheses only.",
+    "dependencies": [
+      "Wu scRNA",
+      "S2 reference",
+      "S4/S5 shared-reference derivatives",
+      "result-selected external queries"
+    ]
+  },
+  "payload_sha256": "9e0b2c8582df23165a9eb7d20f22a9c158d587c9d060f326b96e130f927f6eec",
+  "request_sha256": "2be1bb28ce8cf4415f0d35b1411d64883e0f6182e050786b9222fd3893acea89",
+  "semantic_envelope": null,
+  "epistemic_lineage": null
+}

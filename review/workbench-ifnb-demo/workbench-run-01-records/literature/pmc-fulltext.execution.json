@@ -1,0 +1,9 @@
+{
+  "source": "PMC Cloud HTTPS XML URL returned by Life Sciences Literature ncbi-pmc-skill",
+  "url": "https://pmc-oa-opendata.s3.amazonaws.com/PMC5784859.1/PMC5784859.1.xml?md5=b55056bfa14fcccd7ed9f2552db477b1",
+  "started_at": "2026-09-04T16:35:12.190350+00:00",
+  "finished_at": "2026-09-04T16:35:19.859071+00:00",
+  "status_code": 200,
+  "sha256": "129baa7c3befcd4ae7726aee4c02c7e6a0c6f5512ac0fe70a2a1ca37732c8968",
+  "bytes": 107051
+}

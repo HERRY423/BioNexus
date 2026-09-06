@@ -1,0 +1,20 @@
+{
+  "http_status": 200,
+  "resolved_url": "https://pmc-oa-opendata.s3.amazonaws.com/PMC9044823.1/PMC9044823.1.xml?md5=6cdde527c739412fb46613d67dc27e15",
+  "headers": {
+    "x-amz-id-2": "3GWP0u/UAxP4u0AUDPYMKq90K2M6Uz+bmZQqFx0e6tGWgHs3pX6Qkjfdq/fTSciWV2BaTCD7+Zw=",
+    "x-amz-request-id": "6RFVCAS08WF8AGND",
+    "Date": "Sat, 05 Sep 2026 10:27:42 GMT",
+    "Last-Modified": "Sat, 27 Jun 2026 03:36:09 GMT",
+    "ETag": "\"6cdde527c739412fb46613d67dc27e15\"",
+    "x-amz-server-side-encryption": "AES256",
+    "Accept-Ranges": "bytes",
+    "Content-Type": "binary/octet-stream",
+    "Content-Length": "184260",
+    "Server": "AmazonS3",
+    "Connection": "close"
+  },
+  "bytes": 184260,
+  "sha256": "60e48b1b806c633db268d8bf1290cbd5753b6f2d1fcae4ed07232e127bc35107",
+  "md5": "6cdde527c739412fb46613d67dc27e15"
+}

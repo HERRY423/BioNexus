@@ -1,0 +1,126 @@
+{
+  "source_file": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\01_inputs\\literature\\PMC9044823-BioC.xml",
+  "source_sha256": "e11409f1d3565b3ee5d4ead5d5d062f0b7fc3eee9853d1c21da97f96a41232b6",
+  "passages": [
+    {
+      "offset": "4841",
+      "section": {
+        "section_type": "RESULTS",
+        "type": "paragraph"
+      },
+      "text": "To elucidate the cellular architecture of breast cancers, we analyzed 26 primary pre-treatment tumors, including 11 ER+, 5 HER2+ and 10 TNBCs, by scRNA-Seq (Supplementary Table 1). In total, 130,246 single-cells passed quality control (Extended Data Fig. 1a\u2013d) and were annotated using canonical lineage markers (Fig. 1a\u2013b). These high-level annotations were further confirmed using published gene signatures. All major cell types were represented across all tumors and clinical subtypes (Fig. 1c). As previously reported in other cancers, UMAP visualization showed a clear separation of epithelial cells by tumor, although three clusters contained cells from multiple patients and subtypes (Fig. 1d\u2013e), which were identified as normal breast epithelial cells. In contrast, UMAP visualization of stromal and immune cells across tumors clustered together without batch correction (Extended Data Fig. 1e\u2013f). Since breast cancer is largely driven by DNA copy number changes, we estimated single-cell copy number variant (CNV) profiles using InferCNV to distinguish neoplastic from normal epithelial cells (Fig. 1f). Within neoplastic populations, substantial levels of large-scale genomic rearrangements were observed (Extended Data Fig. 1g; Supplementary Table 2). This revealed patient-unique copy number changes and those commonly seen in breast cancers, such as chr1q gain in luminal cancers and chr5q loss in basal-like breast cancers."
+    },
+    {
+      "offset": "22706",
+      "section": {
+        "section_type": "RESULTS",
+        "type": "paragraph"
+      },
+      "text": "To gain insights into the spatial organization of cell types, we performed spatially-resolved transcriptomics (ST) on six samples (\u201clocal cohort\u201d) comprising two ER+ (CID4535 and CID4290) and two TNBC (CID44971 and CID4465) from our scRNA-Seq cohort, and two additional TNBC (1142243F and 1160920F) processed in an independent laboratory (Fig. 6a; Extended Data Fig. 9a). To deconvolute the cellular composition of each ~55 uM diameter spot, we applied a probabilistic model called Stereoscope using clinical subtype matched scRNA-Seq data. Cell types were found associated with their appropriate pathological annotation (Fig. 6b)."
+    },
+    {
+      "offset": "40460",
+      "section": {
+        "section_type": "METHODS",
+        "type": "title_2"
+      },
+      "text": "Single-cell RNA Sequencing using 10X Chromium"
+    },
+    {
+      "offset": "44863",
+      "section": {
+        "section_type": "METHODS",
+        "type": "paragraph"
+      },
+      "text": "To design and validate a new subtyping tool specific for scRNA-Seq data, we first divided our tumor samples into training and testing sets. The training dataset was defined by identifying tumors with unambiguous molecular subtypes. Here, we identified robust training set samples using two subtyping approaches: (i) PAM50 subtyping of the Allcells-Pseudobulk datasets (described above); and (ii) hierarchical clustering of the Allcells-Pseudobulk data with the 1,100 tumors in the TCGA breast cancer RNA-Seq dataset using ~2000 genes from an intrinsic breast cancer genelist. We first identified tumors that shared the same \u201cconcordant\u201d subtype from both Allcells-Pseudobulk PAM50 calls and TCGA hierarchical clustering based subtype classifications (Supplementary Table 3). Next, since our methodology aimed to subtype cancer cells, we removed any tumors with <150 cancer cells. Finally, we did not include cells from the two metaplastic samples (CID4513 and CID4523) in the training data because this is a histological subtype not used in the original PAM50 training set. Only tumor cells with greater than 500 UMIs were used for training and test datasets in scSubtype (total of 24,889 cells). Within each training set subtype, we utilized the cancer cells from each tumor sample and performed pairwise single cell integrations and differential gene expression calculations. The integration was carried out in a \u201cwithin group\u201d pairwise fashion using the FindIntegrationAnchors and IntegrateData functions in the Seurat v3.0.0 package. Briefly, the first step identifies anchors between pairs of cells from each dataset using mutual nearest neighbors. The second step integrates the datasets together based on a distance based weights matrix constructed from the anchor pairs. Differentially expressed genes were calculated between each pair using a Wilcoxon Rank Sum test by the FindAllMarkers function within Seurat. The following pairs were analyzed: HER2E (CID3921-CID44991, CID44991-CID45171, CID45171-CID3921), Basal-like (CID4495-CID44971, CID44971-CID4515, CID4515-CID4495), LumA (CID4290-CID4530) and LumB (CID3948-CID4535). We removed any duplicate genes occurring between the 4 training groups, which yielded 4 sets of genes composed of 89 genes defining Basal_SC, 102 genes defining HER2E_SC, 46 genes defining LumA_SC and 65 genes defining LumB_SC, which we define as \u201cscSubtype\u201d gene signatures (Supplementary Table 4). To assign a subtype call to a cell we calculated the average (i.e. mean) read counts for each of the 4 signatures for each cell. The SC subtype with the highest signature score was then assigned to each cell. We utilized this method to subtype all 24,489 neoplastic cells, from both our training samples (n=10) and the remaining test (n=10) set samples."
+    },
+    {
+      "offset": "60120",
+      "section": {
+        "file": "nihms-1793222-f0009.jpg",
+        "id": "F9",
+        "section_type": "FIG",
+        "type": "fig_title_caption"
+      },
+      "text": "Identification of malignant cells, single-cell RNA sequencing metrics and non-integrated data of stromal and immune cells"
+    },
+    {
+      "offset": "61377",
+      "section": {
+        "file": "nihms-1793222-f0010.jpg",
+        "id": "F10",
+        "section_type": "FIG",
+        "type": "fig_caption"
+      },
+      "text": "a-b, Hierarchical Clustering of Allcells-Pseudobulk (indicated by yellow stars) and Ribozero mRNA-Seq (indicated by blue stars) profiles of the patient samples with TCGA patient mRNA-Seq data. a, View of the basal cluster showing pairing of Allcells-Pseudobulk and Ribozero mRNA-Seq profiles of 2 representative tumors (CID4495 and CID4515) in the present study. b, View of the luminal cluster showing pairing of Allcells-Pseudobulk and Ribozero mRNA-Seq profiles of 4 representative tumors (CID4067, CID4463, CID4290 and CID3948) in the present study. c, Heatmap of scSubtype gene sets across the training and test samples in each individual group. Colored outlined boxes highlighting the top expressed genes per group. d, Barplot representing proportions of scSubtype calls in individual samples. Test dataset samples are highlighted within the golden colored outline. e, Scatterplot of individual cancer cells plotted according to the Proliferation score (x-axis) and Differentiation \u2013 DScore (y-axis). Individual cells are colored based on the scSubtype calls. f, Scatterplot of individual TCGA breast tumors plotted according to the Proliferation score (x-axis) and Differentiation \u2013 DScore (y-axis). Individual patients are colored based on the PAM50 subtype calls."
+    },
+    {
+      "offset": "71166",
+      "section": {
+        "file": "nihms-1793222-f0017.jpg",
+        "id": "F17",
+        "section_type": "FIG",
+        "type": "fig_caption"
+      },
+      "text": "a, H&E images for the remaining five breast tumors analysed using Visium (TNBC: CID4465, 1142243F and 1160920F; ER+: CID4535 and CID4290). Scale bars represent 500 \u03bcm. b, Histograms of cancer deconvolution values, as estimated using Stereoscope. Red line indicates the 10% cutoff used to select spots for scoring breast cancer gene-modules. Spots are colored by the pathology annotation. c, Box plot of gene module scores for all cancer filtered spots, as determined using AUCell, grouped by sample (TNBC=red; ER=blue). Statistical significance was determined using a two-sided t-test, with p-values adjusted using the Benjamini\u2013Hochberg procedure. Box plots depict the first and third quartiles as the lower and upper bounds, respectively. The whiskers represent 1.5x the interquartile range and the centre depicts the median. P-values denoted by asterisks: *p < 0.05, **p < 0.01, ***p < 0.001 and ****p < 0.0001. d, Clustered gene module correlations across all cancer filtered spots. Color scales represent Pearson correlation values and are scaled per GM (\u201cn.s\u201d denotes not significant; two-sided correlation coefficient, Benjamini\u2013Hochberg adjusted p-value < 0.05). e, Heatmap of the deconvolution values for inflammatory-like CAFs, myofibroblast-like CAFs, Macrophage CXCL10/c9, LAM1 and LAM2 clusters. Spots (columns) are grouped by sample and pathology. Deconvolution abundances (rows) are scaled by cell type. f, Predicted signaling in tissue spots enriched for iCAFs and CD4/CD8+ T-cells. Spots filtered for CAF-ligands and T-cell receptors detected by scRNA-Seq. The mean interaction scores of cell-signaling pairs are defined as the product of the ligand and receptor expression. g, Plots of PD-1 (PDCD1; y axis) expression with PD-L1 (CD274; x axis) or PD-L2 (PDCD1LG2; x axis) expression in spots enriched for CD4/CD8+ T-cells and LAM2 cells, as determined by Stereoscope. Abundance of CD4/CD8 T-cells (combined as T_cell here) and LAM2 are overlaid on the expression plots."
+    },
+    {
+      "offset": "82346",
+      "section": {
+        "fpage": "63",
+        "name_0": "surname:Lun;given-names:ATL",
+        "pub-id_pmid": "30902100",
+        "section_type": "REF",
+        "source": "Genome Biol",
+        "type": "ref",
+        "volume": "20",
+        "year": "2019"
+      },
+      "text": "EmptyDrops: distinguishing cells from empty droplets in droplet-based single-cell RNA sequencing data"
+    },
+    {
+      "offset": "82591",
+      "section": {
+        "fpage": "278",
+        "name_0": "surname:Finak;given-names:G",
+        "pub-id_pmid": "26653891",
+        "section_type": "REF",
+        "source": "Genome Biol",
+        "type": "ref",
+        "volume": "16",
+        "year": "2015"
+      },
+      "text": "MAST: a flexible statistical framework for assessing transcriptional changes and characterizing heterogeneity in single-cell RNA sequencing data"
+    },
+    {
+      "offset": "84049",
+      "section": {
+        "file": "nihms-1793222-f0002.jpg",
+        "id": "F2",
+        "section_type": "FIG",
+        "type": "fig_caption"
+      },
+      "text": "Identifying drivers of neoplastic breast cancer cell heterogeneity. a, Heatmap showing the average expression (scaled) of all cells assigned to each of the four scSubtypes. The top-5 most highly expressed genes in each subtype are shown, and selected others are highlighted. b, Percentage of neoplastic cells in each tumor that are classified as each of the scSubtypes. Tumor samples are grouped according to their Allcells-pseudobulk classifications (NL = Normal-like). c, Representative images of CK5 (top) and ER (bottom) immunohistochemistry (IHC) from two tumors (CID4066, left; CID4290, right) with intrinsic subtype heterogeneity from b (n = 24 breast tumors analysed). The left panel represents whole tissue sections, with two regions of interest labelled (A and B). The middle panel represents CK5-/ER+ areas (insert A), whilst the right panel shows CK5+/ER\u2212 areas (insert B). Scale bar represent 100 \u03bcm. d, Scatter plot of the proliferation scores and Differentiation Scores (DScores) of each neoplastic cell. Individual cancer cells are colored and grouped based on the scSubtype calls. All pairwise comparisons between cells from each scSubtype were significantly different (Wilcox test p<0.001) for both proliferation and DScores. e, Gene-set enrichment, using ClusterProfiler, of the 200 genes in each of the gene-modules (GM1-7). Significantly enriched (bonferroni adjusted p-value < 0.05) gene-sets from the MSigDB HALLMARK collection are shown. f, Proportion of cells assigned to each of the scSubtype subtypes grouped according to gene-module. g, Scaled signature scores of each of the seven intra-tumor transcriptional heterogeneity gene-modules (rows) across all individual neoplastic cells (columns). Cells are ordered based on the strength of the gene-module signature score. h, Percentage of neoplastic cells assigned to each of the seven gene-modules."
+    },
+    {
+      "offset": "90424",
+      "section": {
+        "file": "nihms-1793222-f0006.jpg",
+        "id": "F6",
+        "section_type": "FIG",
+        "type": "fig_caption"
+      },
+      "text": "Mapping breast cancer heterogeneity using spatial transcriptomics. a, Complete H&E images of all three tissue regions analysed using Visium for the sample TNBC CID44971. Pathological annotation of morphological regions into distinct categories including normal ductal (green), stroma and adipose (blue), lymphocyte aggregates (yellow), ductal carcinoma in-situ (DCIS; orange) and invasive cancer (red). Black scale bars represent 500 \u03bcm. b, Deconvolution of the major cell type lineages in TNBC CID44971. Values signify the scaled cell type abundances per spots (columns), and are grouped by pathology annotation as in a. c, Box plot of gene module scores grouped by clinical subtype across the six cases (n = 11,535 spots from 4 x TNBC tumors and 2 x ER tumors). Only cancer filtered spots were used for this analysis. Signature scores were computed using the AUCell method. Statistical significance was determined using a two-sided t-test in a comparison of means between groups, with p-values adjusted using the Benjamini\u2013Hochberg procedure. Box plots depict the first and third quartiles as the lower and upper bounds, respectively. The whiskers represent 1.5x the interquartile range and the centre depicts the median. P-values denoted by asterisks: *p < 0.05, **p < 0.01, ***p < 0.001 and ****p < 0.0001. d, Pearson correlation heatmap of breast cancer gene modules in TNBC CID44971 (\u201cn.s\u201d represent non-significant correlations; two-sided correlation coefficient, Benjamini\u2013Hochberg adjusted p-values < 0.05). Spots with high cancer epithelial abundances (>10%), were scored with gene module (GM) signatures using AUCell. e, Negative correlation between GM3 (EMT) and GM4 (Proliferation/Cell Cycle) across all cancer epithelial spots from six breast cancers analysed by ST (two-sided correlation coefficient, *denotes p-value < 0.05). f-g, Scaled AUCell signature scores of GM3 (f) and GM4 (g) overlaid onto cancer epithelial spots in TNBC CID44971, as defined in the bottom left and right tissue sections in Figure 6a."
+    }
+  ],
+  "query_terms": [
+    "CID4290",
+    "orig.ident",
+    "26 primary",
+    "three tissue regions",
+    "sample collection",
+    "single-cell rna sequencing"
+  ],
+  "CID4290A_literal_occurrences": 0,
+  "note": "Source passages for provenance only; no findings accepted; no literature used to define primary boundary."
+}

@@ -1,0 +1,222 @@
+{
+  "created_at_utc": "2026-09-06T02:04:49.408358+00:00",
+  "root": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\08_pseudobulk\\S6-run-01",
+  "files": [
+    {
+      "path": "bionexus.provenance.sidecar.json",
+      "bytes": 11081,
+      "sha256": "c0652376734f7bbffecf8c1c4acb2f4d2435d285058469f8c8c4024c4994744b"
+    },
+    {
+      "path": "correct_s6_raw_pseudobulk.py",
+      "bytes": 16719,
+      "sha256": "a100b6fb688c7903a6507431be572ea00b6cabf4346b096ef738c2bceb44a11d"
+    },
+    {
+      "path": "descriptive-whole-gene-table.full.csv.gz",
+      "bytes": 854521,
+      "sha256": "4dd1ee7851703335de36b5d8cefe0a3c8fe1e4130beb78e6ca93f4c24621a0c3"
+    },
+    {
+      "path": "execution-environment.json",
+      "bytes": 834,
+      "sha256": "ba5f23ffb74dc1d428364cf9566b196ced3b682ee6b101b967866b02763ac5d7"
+    },
+    {
+      "path": "finalize_spatialwarrant_s6.py",
+      "bytes": 17063,
+      "sha256": "24b486bed602c7384ec2b7fb2c5dd5c75cc2c3dfab0b623b97860c962c3e3d46"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/bionexus.provenance.sidecar.json",
+      "bytes": 10031,
+      "sha256": "429cb75d7e5504fe561242655c74cdc3090c1b1a2fff290dc14b15e9825c2651"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/descriptive-whole-gene-table.full.csv.gz",
+      "bytes": 519699,
+      "sha256": "82ba4e4a940f44c10fafca6e256b2d91cf8fff5260da1e6ba7e183ffa7a75227"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/pathway-hallmark-results.full.csv",
+      "bytes": 8815,
+      "sha256": "2af1a375b014d57bb78f79861eb0c9241346027ed49f5cbd52ed04f15dc092dd"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/pathway-progeny-results.full.csv",
+      "bytes": 1916,
+      "sha256": "5dc3edd11de578ad1b876ee6ac15e286c018be669b2fcd12a7265ebf138bf38c"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/pathway-resource-and-coverage.json",
+      "bytes": 807,
+      "sha256": "1b086b13a70ab00454af597710bfb054eab493dc156cbb6c5027b717265dbd92"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/prespecified-six-genes.csv",
+      "bytes": 1527,
+      "sha256": "c2ac730baec53563cd6bfcbff90aa17ab0f8f030db6eb06993b419bd7d97af0f"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/primary-program-B1-B2-B3-sensitivity.csv",
+      "bytes": 284,
+      "sha256": "2100da7bf83faa480b1b6ac45b21d7d02cbb4061d3ba66d317e95d0ad74603e9"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/primary-program-gene-coverage.json",
+      "bytes": 3320,
+      "sha256": "3d72be4ca68f268941fd10bbe0f0d124338142ff9d9deaea3f417ddde3a5ba68"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/primary-program-matched-genes.csv",
+      "bytes": 1363,
+      "sha256": "ae3b57b8191f445ddba302e8faf41950cc23e0c08a1e05643096dccae2421529"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/primary-program-missing-genes.csv",
+      "bytes": 42,
+      "sha256": "06286d57e0051a47fc16cfde0c53290016edf31077575f3595b6b53b01a5b85f"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/primary-program-region-scores.csv",
+      "bytes": 366,
+      "sha256": "e3e2631f61bb3507f19df6ac0bf940a698113fca0ac72653c706c3bfc2acf0b2"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/pseudobulk-design-status.csv",
+      "bytes": 281,
+      "sha256": "696092c0e9ad9f4bf957070caf9017a67329b423e33c3fa774dbe5b7a452e192"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/region-pseudobulk-raw-counts.full.csv.gz",
+      "bytes": 157872,
+      "sha256": "e0962e2405d04e73b1b3994c800bd01a0a924674399249db24cb3889d0cdb827"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/S6-checkpoint.initial-filtered-attempt.md",
+      "bytes": 2017,
+      "sha256": "ac5c9432e457ed2c33b84dffb59b964af9941dd758f1e63df77752b70fd19a03"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/S6-integrated-figure.png",
+      "bytes": 242350,
+      "sha256": "de415157efae73feb51a5ed2a2660f196cdbd2dca01b47a23876adf16f5126be"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/S6-local-result.json",
+      "bytes": 6010,
+      "sha256": "df855eff07a586f78484618ced195c964ac32b14554d2fda76e235cff2799e2e"
+    },
+    {
+      "path": "historical-filtered-matrix-attempt1/S6-result.json",
+      "bytes": 9749,
+      "sha256": "1034528ed3d2ade20b513841b14afa9bc6a2cbf001507240614c662ead1386dd"
+    },
+    {
+      "path": "input-verification.json",
+      "bytes": 1617,
+      "sha256": "ee8b00f5a454c0380a4f7bf8f08965e7dee7f8e244dbcba500529e0b4bec8d4b"
+    },
+    {
+      "path": "methods-and-limitations.json",
+      "bytes": 835,
+      "sha256": "f97af10143d09fdca3ba2edf4aaecb1e354995f2abe261c6cfd2a0bff24c2732"
+    },
+    {
+      "path": "pathway-hallmark-results.full.csv",
+      "bytes": 10201,
+      "sha256": "c96d2567d3f58f32823da0ffde10bf78a896d7437abb41382942b05000220994"
+    },
+    {
+      "path": "pathway-progeny-results.full.csv",
+      "bytes": 1926,
+      "sha256": "b9f7d5ad109d180e768b227670851c58208467ecaa346273451509e2d45f4ae6"
+    },
+    {
+      "path": "pathway-resource-and-coverage.json",
+      "bytes": 732,
+      "sha256": "54c826de57c99cf5b7ab57f6e625cd2248c2f27a6f4107ea35bd675a7ee38bad"
+    },
+    {
+      "path": "prespecified-six-genes.csv",
+      "bytes": 1521,
+      "sha256": "aa61b8f27ea0ff1fe6f0bc48d35212e02f7c6557cd8d1168279ee217a583809b"
+    },
+    {
+      "path": "primary-program-B1-B2-B3-sensitivity.csv",
+      "bytes": 285,
+      "sha256": "e855c17352827915422922fb5973b3ebe960ed443e4492a53f741cc664329079"
+    },
+    {
+      "path": "primary-program-gene-coverage.json",
+      "bytes": 3771,
+      "sha256": "adb9072a6cc65ee361e75ed898394f8822706f18595385721a1568c6e0887c6c"
+    },
+    {
+      "path": "primary-program-matched-genes.csv",
+      "bytes": 1370,
+      "sha256": "8fa33e89941b132282c008fc563c312e63b81aa726cdc8ec83e823aafeed553a"
+    },
+    {
+      "path": "primary-program-missing-genes.csv",
+      "bytes": 35,
+      "sha256": "5b65fc1cdd43a51cd7768b631e68f06df51529a2d9d3f39ba8cc0b0f92d07f25"
+    },
+    {
+      "path": "primary-program-region-scores.csv",
+      "bytes": 366,
+      "sha256": "d9f36b4ebe1ca0d3ae0e4fc017ef4d207bc322d08f225409447c4e021b73b1f9"
+    },
+    {
+      "path": "pseudobulk-design-status.csv",
+      "bytes": 281,
+      "sha256": "45012090911fc760e876c23db3d015840947e907eeec584ef2aa328baaf15889"
+    },
+    {
+      "path": "raw-count-source-correction.v2.json",
+      "bytes": 971,
+      "sha256": "2c59d57a8086c6379fc4bd825837a26a2467332a13f51105c5bd67cd131a16a8"
+    },
+    {
+      "path": "refresh_s6_manifests.py",
+      "bytes": 1126,
+      "sha256": "3f55a58729aab4e77b272f7befcd15e9c97383ae8872487f6807ce65f9725b29"
+    },
+    {
+      "path": "region-pseudobulk-raw-counts.full.csv.gz",
+      "bytes": 410774,
+      "sha256": "f06d36efce4b0529ee042701e4d41533ef116b66b23ed5b2feafcedfd3356bb3"
+    },
+    {
+      "path": "run_spatialwarrant_s6.py",
+      "bytes": 32900,
+      "sha256": "2346bb637436ed84f69333fc49f18d36753ad9987fb2d1b4885a7d2c159408e2"
+    },
+    {
+      "path": "S6-checkpoint.md",
+      "bytes": 2057,
+      "sha256": "be73e50a5910647d9b002072972f052b9b453df10eee3983e94af4c3e92ad813"
+    },
+    {
+      "path": "S6-integrated-figure.png",
+      "bytes": 277763,
+      "sha256": "677fcf003513da777b727c553efdb5eeb71ed607e0fe998da6217b12f0c4e8eb"
+    },
+    {
+      "path": "S6-local-result.json",
+      "bytes": 6674,
+      "sha256": "3fde40339554fdd433642f34bbb773f1dc9b2c09fc5b87557ba81c24840dd4e8"
+    },
+    {
+      "path": "S6-result.json",
+      "bytes": 9795,
+      "sha256": "5014c658007e723feb6a44d632df56ab0b960357acaefe9f7abd10de472832d0"
+    },
+    {
+      "path": "SHA256SUMS.local.txt",
+      "bytes": 1775,
+      "sha256": "90f8bc62782b61eb3e1c2d8fe4910a295998b366890a7fbf6bf5040dc6483c55"
+    }
+  ],
+  "total_bytes_excluding_manifest": 2633442
+}

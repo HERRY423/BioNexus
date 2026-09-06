@@ -10,6 +10,7 @@ DEFAULT_SKILLS: FrozenSet[str] = frozenset(
         "start",
         "scientific-problem-selection",
         "single-cell-rna-qc",
+        "single-cell-de-audit",
         "scvi-tools",
         "nextflow-development",
         "instrument-data-to-allotrope",

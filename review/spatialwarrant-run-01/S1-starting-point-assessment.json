@@ -1,0 +1,47 @@
+{
+  "artifact_type": "starting_point_assessment",
+  "stage": "S1",
+  "status": "COMPLETED_WITH_OPEN_IDENTITY_AND_PATHOLOGY_GATES",
+  "created": "2026-09-05T07:02:02.132549+00:00",
+  "objective": "Preserved approved SpatialWarrant S0-S7 design; S1 acquisition/provenance/identity only",
+  "materials": {
+    "GSE176078": "DOWNLOADED_EXTRACTED_METADATA_JOIN_VERIFIED",
+    "Zenodo4739739": "ALL_5_FILES_DOWNLOADED_PROVIDER_MD5_VERIFIED_EXTRACTED",
+    "10x": "H5_AND_SPATIAL_INPUTS_OBSERVED",
+    "primary_program": "196/200 common unique feature matches; no expression scores",
+    "LIANA_PROGENy": "RESOURCE_SNAPSHOTS_ACQUIRED; no runtime installed or inference performed"
+  },
+  "scientific_model": {
+    "observation_unit": "spots",
+    "independent_unit": "patient/sample intended; identity gate still pending",
+    "boundary": "unchanged approved pathology-geometry definition; no masks generated",
+    "primary_endpoint": "unchanged; not executed"
+  },
+  "open_items": [
+    "scRNA metadata has orig.ident but no Patient column; patient/sample relationship needs explicit source/human review.",
+    "Visium CID4290 and scRNA/GEO CID4290A alias unresolved; no automatic merge.",
+    "Most invasive-cancer pathology classes are composite; code-to-role mapping is not frozen and needs review before S3 masks.",
+    "CID4290/CID44971/CID4535 include 6/2/2 off-tissue metadata rows; exclusion candidates recorded without changing inputs.",
+    "Raw and filtered feature tables differ; raw has stable IDs/symbol/type, filtered has selected symbol-only features.",
+    "Deposited scRNA archive contains 100064 cells; the paper reports a broader study cell total. Do not equate the release subset with the paper total without provenance.",
+    "Raw matrix headers declare integer counts; a complete scan of count values, biological QC, spatial registration, geometry and region thresholds is not performed in S1.",
+    "10x donor overlap/spot pathology truth not established; technical transfer only.",
+    "PROGENy retrieval snapshot frozen; downstream species/method compatibility remains pending.",
+    "Reactome/STRING/Open Targets/UniProt result-context queries remain S6 work, not omitted modules."
+  ],
+  "pending_user_decision": "Review S1 checkpoint and identity/pathology issues; no S2 execution authorization exists.",
+  "S2_started": false,
+  "S2_S6_dependencies_installed": false,
+  "scientific_results": "PENDING",
+  "machine_verdict": "PENDING",
+  "biological_conclusion_acceptance": "NOT_GIVEN",
+  "resource_measurements": {
+    "S1_wall_seconds_since_preflight": 1610.965879,
+    "primary_download_bytes": 1568957531,
+    "extracted_member_bytes": 3357908894,
+    "retained_input_bytes_including_recovery_files": 5485808784,
+    "free_C_bytes_at_checkpoint": 46966353920,
+    "S1_process_peak_RAM": "NOT_MEASURED",
+    "later_analysis_runtime_and_RAM": "PENDING"
+  }
+}

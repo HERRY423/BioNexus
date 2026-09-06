@@ -1,0 +1,76 @@
+[
+  {
+    "label": "python-packages",
+    "argv": [
+      "C:\\Users\\13264\\anaconda3\\python.exe",
+      "-m",
+      "pip",
+      "list",
+      "--format=json"
+    ],
+    "cwd": "C:\\Plugin\\BioNexus",
+    "started_at": "2026-09-04T16:30:42.562704+00:00",
+    "finished_at": "2026-09-04T16:30:44.382601+00:00",
+    "exit_code": 0
+  },
+  {
+    "label": "git-head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "C:\\Plugin\\BioNexus",
+    "started_at": "2026-09-04T16:30:44.383379+00:00",
+    "finished_at": "2026-09-04T16:30:44.427965+00:00",
+    "exit_code": 0
+  },
+  {
+    "label": "git-status",
+    "argv": [
+      "git",
+      "status",
+      "--short"
+    ],
+    "cwd": "C:\\Plugin\\BioNexus",
+    "started_at": "2026-09-04T16:30:44.428884+00:00",
+    "finished_at": "2026-09-04T16:30:44.502122+00:00",
+    "exit_code": 0
+  },
+  {
+    "label": "doctor",
+    "argv": [
+      "C:\\Users\\13264\\anaconda3\\python.exe",
+      "scripts/doctor.py"
+    ],
+    "cwd": "C:\\Plugin\\BioNexus",
+    "started_at": "2026-09-04T16:30:45.701043+00:00",
+    "finished_at": "2026-09-04T16:30:47.965761+00:00",
+    "exit_code": 0
+  },
+  {
+    "label": "fetch-inputs",
+    "argv": [
+      "C:\\Users\\13264\\anaconda3\\python.exe",
+      "review/workbench-ifnb-demo/fetch_inputs.py"
+    ],
+    "cwd": "C:\\Plugin\\BioNexus",
+    "started_at": "2026-09-04T16:30:47.966892+00:00",
+    "finished_at": "2026-09-04T16:30:48.144173+00:00",
+    "exit_code": 0
+  },
+  {
+    "label": "analysis",
+    "argv": [
+      "C:\\Users\\13264\\anaconda3\\python.exe",
+      "-u",
+      "review/workbench-ifnb-demo/run_analysis.py",
+      "--out",
+      "review\\workbench-ifnb-demo\\workbench-run-01"
+    ],
+    "cwd": "C:\\Plugin\\BioNexus",
+    "started_at": "2026-09-04T16:30:48.185386+00:00",
+    "finished_at": "2026-09-04T16:31:06.496100+00:00",
+    "exit_code": 0
+  }
+]

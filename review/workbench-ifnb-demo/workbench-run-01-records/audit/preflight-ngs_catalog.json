@@ -1,0 +1,197 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"count\": 12,\n  \"workflows\": [\n    {\n      \"workflow_id\": \"atacseq\",\n      \"name\": \"ATAC-seq\",\n      \"engine\": \"nextflow\",\n      \"description\": \"ATAC-seq alignment, QC, peak calling, consensus peaks, and signal outputs.\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/atacseq\",\n        \"revision\": \"2.1.2\"\n      },\n      \"current_version_id\": \"version-f92a9e6a4753d5f6b36ae4b88fde6f84\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"nf-core\"\n    },\n    {\n      \"workflow_id\": \"ampliseq\",\n      \"name\": \"Amplicon sequencing\",\n      \"engine\": \"nextflow\",\n      \"description\": \"Marker-gene amplicon denoising, taxonomy, diversity, and reporting.\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/ampliseq\",\n        \"revision\": \"2.18.0\"\n      },\n      \"current_version_id\": \"version-588e8b4eb2d58c4614b59d972f899142\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"nf-core\"\n    },\n    {\n      \"workflow_id\": \"rnaseq\",\n      \"name\": \"Bulk RNA-seq\",\n      \"engine\": \"nextflow\",\n      \"description\": \"Bulk RNA-seq FASTQ to QC, alignment or pseudoalignment, quantification, and MultiQC.\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/rnaseq\",\n        \"revision\": \"3.26.0\"\n      },\n      \"current_version_id\": \"version-56b25319c931e031bea1c3bb2cf9bd67\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"nf-core\"\n    },\n    {\n      \"workflow_id\": \"oai_fastq_qc\",\n      \"name\": \"Bundled FASTQ QC\",\n      \"engine\": \"snakemake\",\n      \"description\": \"Bundled FastQC, optional trimming, and MultiQC workflow.\",\n      \"source\": {\n        \"kind\": \"local\",\n        \"root\": \"workflows/fastq_qc\",\n        \"entrypoint\": \"workflow/Snakefile\",\n        \"source_sha256\": \"sha256:705bf609376de4193dafbb50a8967b75bc30ffeb5c17e1849a56cafe949db201\"\n      },\n      \"current_version_id\": \"version-8e0c15a605d394be27a4e68246a061ef\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"OpenAI\"\n    },\n    {\n      \"workflow_id\": \"oai_bulk_rnaseq_counts_qc\",\n      \"name\": \"Bundled bulk RNA-seq\",\n      \"engine\": \"snakemake\",\n      \"description\": \"Bundled FastQC, Salmon quantification, matrix aggregation, and MultiQC workflow.\",\n      \"source\": {\n        \"kind\": \"local\",\n        \"root\": \"workflows/bulk_rnaseq_counts_qc\",\n        \"entrypoint\": \"workflow/Snakefile\",\n        \"source_sha256\": \"sha256:eddf2cd523b62c20b3fa4496c4d441b9dfb48a303de9c5b922bad30d7e30f9cc\"\n      },\n      \"current_version_id\": \"version-a99d0908ddacd176e3b77e9ec2e482f3\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"OpenAI\"\n    },\n    {\n      \"workflow_id\": \"oai_scrnaseq_fastq_to_count\",\n      \"name\": \"Bundled single-cell RNA-seq\",\n      \"engine\": \"snakemake\",\n      \"description\": \"Bundled STARsolo FASTQ-to-count workflow.\",\n      \"source\": {\n        \"kind\": \"local\",\n        \"root\": \"workflows/scrnaseq_fastq_to_count\",\n        \"entrypoint\": \"workflow/Snakefile\",\n        \"source_sha256\": \"sha256:6f7aa0dcf4ed6fdb6e187ff0f8d1128b6ffa93504bc688aee341fe250a893510\"\n      },\n      \"current_version_id\": \"version-f3c773924a7ebc534c3adc131d4356ec\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"OpenAI\"\n    },\n    {\n      \"workflow_id\": \"cutandrun\",\n      \"name\": \"CUT&RUN / CUT&Tag\",\n      \"engine\": \"nextflow\",\n      \"description\": \"CUT&RUN or CUT&Tag alignment, QC, peak calling, and reporting.\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/cutandrun\",\n        \"revision\": \"3.2.2\"\n      },\n      \"current_version_id\": \"version-12c80630118a512a75ec8063dc7e8880\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"nf-core\"\n    },\n    {\n      \"workflow_id\": \"chipseq\",\n      \"name\": \"ChIP-seq\",\n      \"engine\": \"nextflow\",\n      \"description\": \"ChIP-seq alignment, QC, peak calling, consensus peaks, and signal outputs.\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/chipseq\",\n        \"revision\": \"2.1.0\"\n      },\n      \"current_version_id\": \"version-4d3c1067f971b260ceca1ede6844f26e\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"nf-core\"\n    },\n    {\n      \"workflow_id\": \"sarek\",\n      \"name\": \"DNA variant analysis\",\n      \"engine\": \"nextflow\",\n      \"description\": \"DNA germline or somatic variant analysis using nf-core/sarek.\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/sarek\",\n        \"revision\": \"3.10.0\"\n      },\n      \"current_version_id\": \"version-0d216fb69cac77a9898ca9b7fa4d5404\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"nf-core\"\n    },\n    {\n      \"workflow_id\": \"fastq_qc\",\n      \"name\": \"FASTQ QC\",\n      \"engine\": \"nextflow\",\n      \"description\": \"Basic FASTQ quality checks with FastQC and MultiQC, with optional SeqTK trimming.\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/demo\",\n        \"revision\": \"1.2.0\"\n      },\n      \"current_version_id\": \"version-f645b8d9af970b92e847e05b9509d9af\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"nf-core\"\n    },\n    {\n      \"workflow_id\": \"scrnaseq\",\n      \"name\": \"Single-cell RNA-seq\",\n      \"engine\": \"nextflow\",\n      \"description\": \"Single-cell or single-nucleus RNA-seq FASTQ to count matrices and QC outputs.\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/scrnaseq\",\n        \"revision\": \"4.2.0\"\n      },\n      \"current_version_id\": \"version-f7a811b05cfa887c80bbce68d90242ba\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"nf-core\"\n    },\n    {\n      \"workflow_id\": \"taxprofiler\",\n      \"name\": \"Taxonomic profiling\",\n      \"engine\": \"nextflow\",\n      \"description\": \"Shotgun metagenomics taxonomic and optional functional profiling.\",\n      \"source\": {\n        \"kind\": \"remote\",\n        \"workflow\": \"nf-core/taxprofiler\",\n        \"revision\": \"2.0.1\"\n      },\n      \"current_version_id\": \"version-f5757b4be50126eb5e59c68b78586d25\",\n      \"catalog\": \"bundled\",\n      \"archived\": false,\n      \"collection\": \"nf-core\"\n    }\n  ]\n}"
+    }
+  ],
+  "structuredContent": {
+    "count": 12,
+    "workflows": [
+      {
+        "workflow_id": "atacseq",
+        "name": "ATAC-seq",
+        "engine": "nextflow",
+        "description": "ATAC-seq alignment, QC, peak calling, consensus peaks, and signal outputs.",
+        "source": {
+          "kind": "remote",
+          "workflow": "nf-core/atacseq",
+          "revision": "2.1.2"
+        },
+        "current_version_id": "version-f92a9e6a4753d5f6b36ae4b88fde6f84",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "nf-core"
+      },
+      {
+        "workflow_id": "ampliseq",
+        "name": "Amplicon sequencing",
+        "engine": "nextflow",
+        "description": "Marker-gene amplicon denoising, taxonomy, diversity, and reporting.",
+        "source": {
+          "kind": "remote",
+          "workflow": "nf-core/ampliseq",
+          "revision": "2.18.0"
+        },
+        "current_version_id": "version-588e8b4eb2d58c4614b59d972f899142",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "nf-core"
+      },
+      {
+        "workflow_id": "rnaseq",
+        "name": "Bulk RNA-seq",
+        "engine": "nextflow",
+        "description": "Bulk RNA-seq FASTQ to QC, alignment or pseudoalignment, quantification, and MultiQC.",
+        "source": {
+          "kind": "remote",
+          "workflow": "nf-core/rnaseq",
+          "revision": "3.26.0"
+        },
+        "current_version_id": "version-56b25319c931e031bea1c3bb2cf9bd67",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "nf-core"
+      },
+      {
+        "workflow_id": "oai_fastq_qc",
+        "name": "Bundled FASTQ QC",
+        "engine": "snakemake",
+        "description": "Bundled FastQC, optional trimming, and MultiQC workflow.",
+        "source": {
+          "kind": "local",
+          "root": "workflows/fastq_qc",
+          "entrypoint": "workflow/Snakefile",
+          "source_sha256": "sha256:705bf609376de4193dafbb50a8967b75bc30ffeb5c17e1849a56cafe949db201"
+        },
+        "current_version_id": "version-8e0c15a605d394be27a4e68246a061ef",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "OpenAI"
+      },
+      {
+        "workflow_id": "oai_bulk_rnaseq_counts_qc",
+        "name": "Bundled bulk RNA-seq",
+        "engine": "snakemake",
+        "description": "Bundled FastQC, Salmon quantification, matrix aggregation, and MultiQC workflow.",
+        "source": {
+          "kind": "local",
+          "root": "workflows/bulk_rnaseq_counts_qc",
+          "entrypoint": "workflow/Snakefile",
+          "source_sha256": "sha256:eddf2cd523b62c20b3fa4496c4d441b9dfb48a303de9c5b922bad30d7e30f9cc"
+        },
+        "current_version_id": "version-a99d0908ddacd176e3b77e9ec2e482f3",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "OpenAI"
+      },
+      {
+        "workflow_id": "oai_scrnaseq_fastq_to_count",
+        "name": "Bundled single-cell RNA-seq",
+        "engine": "snakemake",
+        "description": "Bundled STARsolo FASTQ-to-count workflow.",
+        "source": {
+          "kind": "local",
+          "root": "workflows/scrnaseq_fastq_to_count",
+          "entrypoint": "workflow/Snakefile",
+          "source_sha256": "sha256:6f7aa0dcf4ed6fdb6e187ff0f8d1128b6ffa93504bc688aee341fe250a893510"
+        },
+        "current_version_id": "version-f3c773924a7ebc534c3adc131d4356ec",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "OpenAI"
+      },
+      {
+        "workflow_id": "cutandrun",
+        "name": "CUT&RUN / CUT&Tag",
+        "engine": "nextflow",
+        "description": "CUT&RUN or CUT&Tag alignment, QC, peak calling, and reporting.",
+        "source": {
+          "kind": "remote",
+          "workflow": "nf-core/cutandrun",
+          "revision": "3.2.2"
+        },
+        "current_version_id": "version-12c80630118a512a75ec8063dc7e8880",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "nf-core"
+      },
+      {
+        "workflow_id": "chipseq",
+        "name": "ChIP-seq",
+        "engine": "nextflow",
+        "description": "ChIP-seq alignment, QC, peak calling, consensus peaks, and signal outputs.",
+        "source": {
+          "kind": "remote",
+          "workflow": "nf-core/chipseq",
+          "revision": "2.1.0"
+        },
+        "current_version_id": "version-4d3c1067f971b260ceca1ede6844f26e",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "nf-core"
+      },
+      {
+        "workflow_id": "sarek",
+        "name": "DNA variant analysis",
+        "engine": "nextflow",
+        "description": "DNA germline or somatic variant analysis using nf-core/sarek.",
+        "source": {
+          "kind": "remote",
+          "workflow": "nf-core/sarek",
+          "revision": "3.10.0"
+        },
+        "current_version_id": "version-0d216fb69cac77a9898ca9b7fa4d5404",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "nf-core"
+      },
+      {
+        "workflow_id": "fastq_qc",
+        "name": "FASTQ QC",
+        "engine": "nextflow",
+        "description": "Basic FASTQ quality checks with FastQC and MultiQC, with optional SeqTK trimming.",
+        "source": {
+          "kind": "remote",
+          "workflow": "nf-core/demo",
+          "revision": "1.2.0"
+        },
+        "current_version_id": "version-f645b8d9af970b92e847e05b9509d9af",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "nf-core"
+      },
+      {
+        "workflow_id": "scrnaseq",
+        "name": "Single-cell RNA-seq",
+        "engine": "nextflow",
+        "description": "Single-cell or single-nucleus RNA-seq FASTQ to count matrices and QC outputs.",
+        "source": {
+          "kind": "remote",
+          "workflow": "nf-core/scrnaseq",
+          "revision": "4.2.0"
+        },
+        "current_version_id": "version-f7a811b05cfa887c80bbce68d90242ba",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "nf-core"
+      },
+      {
+        "workflow_id": "taxprofiler",
+        "name": "Taxonomic profiling",
+        "engine": "nextflow",
+        "description": "Shotgun metagenomics taxonomic and optional functional profiling.",
+        "source": {
+          "kind": "remote",
+          "workflow": "nf-core/taxprofiler",
+          "revision": "2.0.1"
+        },
+        "current_version_id": "version-f5757b4be50126eb5e59c68b78586d25",
+        "catalog": "bundled",
+        "archived": false,
+        "collection": "nf-core"
+      }
+    ]
+  },
+  "isError": false
+}

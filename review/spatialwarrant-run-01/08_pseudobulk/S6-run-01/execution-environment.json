@@ -1,0 +1,22 @@
+{
+  "created_at_utc": "2026-09-06T01:43:07.116916+00:00",
+  "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]",
+  "executable": "C:\\Users\\13264\\anaconda3\\python.exe",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "packages": {
+    "anndata": "0.13.1",
+    "scanpy": "1.12.2",
+    "numpy": "2.3.5",
+    "pandas": "2.3.3",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.6",
+    "psutil": "7.0.0",
+    "liana": "1.10.0",
+    "decoupler": "2.2.0",
+    "mudata": "0.4.1",
+    "plotnine": "0.15.8",
+    "marsilea": "0.8.1"
+  },
+  "dependency_install_log": "C:\\Plugin\\BioNexus\\review\\spatialwarrant-run-01\\09_liana_literature\\S6-run-01\\dependency-install.log",
+  "execution_route": "local Python/scverse execution; not a registered NGS workflow run"
+}
