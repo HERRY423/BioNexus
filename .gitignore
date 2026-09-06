@@ -129,7 +129,6 @@ data/independent/**/checkpoints/
 # Machine-local evidence produced by the real Antigravity acceptance run.
 cross-host/antigravity/mcp-audit.jsonl
 cross-host/antigravity/RUN.json
-cross-host/antigravity/REPORT.json
 
 # Submission and manuscript materials (DO NOT COMMIT)
 figures/

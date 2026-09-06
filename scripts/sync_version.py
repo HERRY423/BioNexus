@@ -78,6 +78,19 @@ def check_version_ssot(repo_root: Path, target_version: str | None = None) -> tu
         except Exception as e:
             diffs.append(f"plugin.json: unparseable ({e})")
 
+    # 5. Check review/SCIENTIFIC_REVIEW.json
+    scirev_json = repo_root / "review" / "SCIENTIFIC_REVIEW.json"
+    if scirev_json.is_file():
+        import json
+
+        try:
+            with open(scirev_json, "r", encoding="utf-8") as f:
+                sdata = json.load(f)
+            if sdata.get("project_version") != expected:
+                diffs.append(f"review/SCIENTIFIC_REVIEW.json: found '{sdata.get('project_version')}', expected '{expected}'")
+        except Exception as e:
+            diffs.append(f"review/SCIENTIFIC_REVIEW.json: unparseable ({e})")
+
     return (len(diffs) == 0, diffs)
 
 
@@ -114,6 +127,16 @@ def set_version_ssot(repo_root: Path, new_version: str) -> None:
     compile_and_write_all(repo_root, registry)
     sync_mirror_trees(repo_root)
     print(f" [REGENERATED] all manifests and plugin mirrors synced to version {new_version}")
+
+    # 5. Update review/SCIENTIFIC_REVIEW.json
+    scirev_json = repo_root / "review" / "SCIENTIFIC_REVIEW.json"
+    if scirev_json.is_file():
+        import json
+
+        sdata = json.loads(scirev_json.read_text(encoding="utf-8"))
+        sdata["project_version"] = new_version
+        scirev_json.write_text(json.dumps(sdata, indent=2) + "\n", encoding="utf-8")
+        print(f" [UPDATED] {scirev_json.relative_to(repo_root)} -> {new_version}")
 
 
 def main() -> int:

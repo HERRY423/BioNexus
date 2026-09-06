@@ -90,12 +90,19 @@ jobs:
       # -------------------------------------------------------------------
       # Gate 3: validation artifacts & provenance audit
       # -------------------------------------------------------------------
+      - name: Prepare Flagship Validation Datasets
+        run: |
+          python evals/datasets/download_flagship_datasets.py --only citeseq_pbmc_sorted
+          python evals/datasets/download_flagship_datasets.py --only xenium_spatial_truth
+
       - name: Validation Artifacts & Stress Benchmark Audit
         run: |
+          python evals/pseudobulk_stress_test.py
           python evals/annotation_stress_test.py
           python evals/spatial_stress_test.py
           python scripts/verify_validation_artifacts.py
-          pytest tests/unit/test_validation_verifier.py tests/unit/test_validation_artifacts.py tests/unit/test_certification.py -q
+          python scripts/check_evidence_index.py --check
+          pytest tests/unit/test_validation_verifier.py tests/unit/test_validation_artifacts.py tests/unit/test_certification.py tests/unit/test_evidence_index.py -q
 
 
       # -------------------------------------------------------------------

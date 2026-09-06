@@ -6,11 +6,16 @@ Provides enterprise LIMS connectivity for top-tier laboratories:
 - Generic REST & Webhook LIMS Connector: LabWare, Sapio Sciences, and custom lab databases.
 - C04 Custodian Pairing: High-integrity blinded clinical sample validation without leaking participant identifiers.
 - Cryptographic Audit Integration: Every sync/export emits a bionexus.tool-execution-receipt.v1.
+
+First-round laboratory pilot: this module is excluded. Empty measurements are not
+auto-filled, and live network export is refused until measurement validation and
+egress coverage are closed with evidence.
 """
 
 from __future__ import annotations
 
 import enum
+import logging
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -21,6 +26,17 @@ import requests
 
 from bionexus.tool_receipt import create_tool_receipt
 from bionexus.versions import VERSION
+
+logger = logging.getLogger(__name__)
+
+# Empty-measurement defaulting and live export coverage are unclosed.
+# First-round laboratory pilot therefore excludes this connector.
+FIRST_ROUND_PILOT_INCLUDED = False
+PILOT_EXCLUSION_REASON = (
+    "LIMS connectivity is excluded from the first-round laboratory pilot. "
+    "Empty-measurement defaulting and live export coverage remain unclosed."
+)
+_REQUIRED_MEASUREMENT_FIELDS = ("well", "value", "unit", "sample_id")
 
 
 class LIMSConnectorType(str, enum.Enum):
@@ -68,6 +84,25 @@ class LIMSExportResult:
         return asdict(self)
 
 
+def _pilot_metadata(extra: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    payload = {
+        "first_round_pilot_included": FIRST_ROUND_PILOT_INCLUDED,
+        "pilot_exclusion_reason": PILOT_EXCLUSION_REASON,
+    }
+    if extra:
+        payload.update(extra)
+    return payload
+
+
+def _missing_measurement_fields(measurement: Dict[str, Any]) -> List[str]:
+    missing = []
+    for key in _REQUIRED_MEASUREMENT_FIELDS:
+        value = measurement.get(key)
+        if value is None or (isinstance(value, str) and not value.strip()):
+            missing.append(key)
+    return missing
+
+
 class BenchlingConnector:
     """Connector for Benchling Electronic Lab Notebook (ELN) and Registry."""
 
@@ -83,28 +118,36 @@ class BenchlingConnector:
         measurements: List[Dict[str, Any]],
         project_id: Optional[str] = None,
     ) -> Dict[str, Any]:
-        """Format raw plate reader measurements into Benchling Assay Results schema."""
-        fields_payload: Dict[str, Any] = {}
+        """Format raw plate reader measurements into Benchling Assay Results schema.
+
+        Missing well/value/unit/sample_id is a hard error. Values are not invented.
+        """
+        if not self.config.project_id and not project_id:
+            raise ValueError("project_id is required; default project identifiers are not filled in")
         rows = []
         for idx, m in enumerate(measurements):
-            well = m.get("well", f"A{idx+1}")
-            value = m.get("value", 0.0)
-            unit = m.get("unit", "RFU")
+            missing = _missing_measurement_fields(m)
+            if missing:
+                raise ValueError(
+                    f"Measurement {idx} is missing required fields {missing}; "
+                    "empty measurements are not auto-filled"
+                )
             rows.append({
-                "well": well,
-                "value": float(value),
-                "unit": unit,
-                "sample_id": m.get("sample_id", f"SMP-{plate_id}-{well}"),
+                "well": m["well"],
+                "value": float(m["value"]),
+                "unit": m["unit"],
+                "sample_id": m["sample_id"],
             })
 
         return {
             "schemaId": schema_id,
-            "projectId": project_id or self.config.project_id or "prj_default",
+            "projectId": project_id or self.config.project_id,
             "plateId": plate_id,
-            "fields": fields_payload,
+            "fields": {},
             "results": rows,
             "generated_by": f"BioNexus/{self.plugin_version}",
             "timestamp": datetime.now(timezone.utc).isoformat(),
+            "first_round_pilot_included": FIRST_ROUND_PILOT_INCLUDED,
         }
 
     def export_assay_results(
@@ -115,15 +158,54 @@ class BenchlingConnector:
         mock_response: bool = True,
     ) -> LIMSExportResult:
         """Export assay results to Benchling and return a cryptographically signed receipt."""
-        payload = self.format_assay_payload(schema_id, plate_id, measurements)
+        if not FIRST_ROUND_PILOT_INCLUDED and not mock_response:
+            receipt = create_tool_receipt(
+                plugin_id=self.plugin_id,
+                plugin_version=self.plugin_version,
+                tool_name="lims.benchling_export_assay",
+                request_payload={"schema_id": schema_id, "plate_id": plate_id},
+                response_payload={"status": "PILOT_EXCLUDED"},
+                execution_status="ERROR",
+            )
+            return LIMSExportResult(
+                success=False,
+                connector_type=LIMSConnectorType.BENCHLING.value,
+                target_entity_id=plate_id,
+                records_synced=0,
+                receipt=receipt,
+                metadata=_pilot_metadata({"status": "PILOT_EXCLUDED"}),
+                errors=[PILOT_EXCLUSION_REASON],
+            )
+
+        try:
+            payload = self.format_assay_payload(schema_id, plate_id, measurements)
+        except (ValueError, TypeError) as exc:
+            logger.info("Refusing LIMS export with incomplete measurements: %s", exc)
+            receipt = create_tool_receipt(
+                plugin_id=self.plugin_id,
+                plugin_version=self.plugin_version,
+                tool_name="lims.benchling_export_assay",
+                request_payload={"schema_id": schema_id, "plate_id": plate_id},
+                response_payload={"status": "INVALID_MEASUREMENTS"},
+                execution_status="ERROR",
+            )
+            return LIMSExportResult(
+                success=False,
+                connector_type=LIMSConnectorType.BENCHLING.value,
+                target_entity_id=plate_id,
+                records_synced=0,
+                receipt=receipt,
+                metadata=_pilot_metadata({"status": "INVALID_MEASUREMENTS"}),
+                errors=[str(exc)],
+            )
 
         if mock_response:
-            resp_data = {
+            resp_data = _pilot_metadata({
                 "status": "CREATED",
                 "assayResultIds": [f"asyr_{plate_id}_{i}" for i in range(len(measurements))],
                 "benchlingUri": f"https://benchling.com/entity/plate/{plate_id}",
                 "is_mock": True,
-            }
+            })
             success = True
             errors: List[str] = []
         else:
@@ -194,6 +276,25 @@ class BenchlingConnector:
         mock_response: bool = True,
     ) -> LIMSExportResult:
         """Embed a BioNexus verified evidence card into a Benchling notebook entry."""
+        if not FIRST_ROUND_PILOT_INCLUDED and not mock_response:
+            receipt = create_tool_receipt(
+                plugin_id=self.plugin_id,
+                plugin_version=self.plugin_version,
+                tool_name="lims.benchling_post_evidence_card",
+                request_payload={"entry_id": entry_id, "title": title},
+                response_payload={"status": "PILOT_EXCLUDED"},
+                execution_status="ERROR",
+            )
+            return LIMSExportResult(
+                success=False,
+                connector_type=LIMSConnectorType.BENCHLING.value,
+                target_entity_id=entry_id,
+                records_synced=0,
+                receipt=receipt,
+                metadata=_pilot_metadata({"status": "PILOT_EXCLUDED"}),
+                errors=[PILOT_EXCLUSION_REASON],
+            )
+
         req_payload = {
             "entryId": entry_id,
             "title": title,
@@ -202,12 +303,12 @@ class BenchlingConnector:
         }
 
         if mock_response:
-            resp_data = {
+            resp_data = _pilot_metadata({
                 "entryId": entry_id,
                 "status": "UPDATED",
                 "customFieldKey": "bionexus_evidence_card",
                 "is_mock": True,
-            }
+            })
             success = True
             errors: List[str] = []
         else:
@@ -286,6 +387,25 @@ class GenericRestLIMSConnector:
         mock_response: bool = True,
     ) -> LIMSExportResult:
         """Sync a batch of sample metadata records to the target LIMS."""
+        if not FIRST_ROUND_PILOT_INCLUDED and not mock_response:
+            receipt = create_tool_receipt(
+                plugin_id=self.plugin_id,
+                plugin_version=self.plugin_version,
+                tool_name="lims.generic_sync_samples",
+                request_payload={"n_samples": len(samples)},
+                response_payload={"status": "PILOT_EXCLUDED"},
+                execution_status="ERROR",
+            )
+            return LIMSExportResult(
+                success=False,
+                connector_type=self.config.connector_type.value,
+                target_entity_id=endpoint_path,
+                records_synced=0,
+                receipt=receipt,
+                metadata=_pilot_metadata({"status": "PILOT_EXCLUDED"}),
+                errors=[PILOT_EXCLUSION_REASON],
+            )
+
         target_url = urljoin(self.config.base_url, endpoint_path)
         payload = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -294,12 +414,12 @@ class GenericRestLIMSConnector:
         }
 
         if mock_response:
-            resp_data = {
+            resp_data = _pilot_metadata({
                 "status": "ACCEPTED",
                 "processed": len(samples),
                 "endpoint": target_url,
                 "is_mock": True,
-            }
+            })
             success = True
             errors: List[str] = []
         else:

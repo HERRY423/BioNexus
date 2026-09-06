@@ -10,7 +10,7 @@
       "verdict": "TECHNICAL_ACCEPTANCE_PASS",
       "claim_boundary": {
         "supported": [
-          "Artifact diagnostics execute on authentic XOA bytes",
+          "BioNexus artifact diagnostics execute on authentic Xenium XOA bytes and respond in the expected direction to deterministic manufactured confounders.",
           "Deterministic responses to manufactured confounders (segmentation leakage delta 0.307, cell size bias delta 0.201, transcript density bias delta 0.886)",
           "5/5 locked technical endpoints passed"
         ],
@@ -43,7 +43,7 @@
       "data": {
         "dataset_name": "xenium_spatial_truth",
         "accession": "10x Genomics official Xenium XOA v4 tiny human kidney",
-        "vendor_disclaimer": "Vendor documents tiny dataset as format-testing material not intended for biological conclusions",
+        "vendor_disclaimer": "The vendor documents the tiny dataset as format-testing material not intended for biological conclusions.",
         "files": {
           "Xenium_V1_Protein_Human_Kidney_tiny_outs.zip": "abd7e8f7fd047dcc6afdb1e9eece90d4533d3ead053c6f05c482be050bdf79d2"
         }
@@ -51,12 +51,12 @@
       "host": {
         "platform": "Windows-11-10.0.26200-SP0",
         "execution_mode": "live_instrument_script",
-        "real_host_certified": true
+        "real_host_certified": false
       },
       "report_version": {
         "report_path": "validation/spatial/studies/BN-SP-IV-001/REPORT.json",
         "schema_version": "bionexus.spatial-real-instrument-validation-report.v1",
-        "project_version": "1.0.0-rc.5"
+        "project_version": "1.0.0-rc.4"
       },
       "upstream_nodes": [
         "DATA-XENIUM-TINY",
@@ -111,7 +111,8 @@
       },
       "host": {
         "platform": "Windows-11-10.0.26200-SP0",
-        "cross_host_status": "headless_only_6_traps_abstain_unmet_quota"
+        "cross_host_status": "headless_only_6_traps_abstain_unmet_quota",
+        "real_host_certified": false
       },
       "report_version": {
         "report_path": "validation/spatial/CERTIFICATION.json",
@@ -159,16 +160,16 @@
       },
       "data": {
         "dataset_name": "kang2018_pbmc_ifnb",
-        "accession": "GEO GSE96583",
+        "accession": "GEO GSE96583; Kang et al. 2018 doi:10.1038/nbt.4042",
         "files": {
-          "pbmc_ifnb_counts.h5ad": "d2ef55f0ba2b1fbb6065538356c9a356aee0e5ee4b0c2db8eb0a95e7b233e72e",
-          "published_de_truth.csv": "8cb6249d9774577884d5f49ee2f153f3e26bb55274aa1cffce4e1f7c35272a52"
+          "pbmc_ifnb_counts.h5ad": "46122ba4e196561a781123614d856fed7d1ca05743d39a1d117597fd6d0bb993",
+          "published_de_truth.csv": "ded3bb9b1e4606da34f5142ab129c5f97b619e0d23e30eade49b2b7be14b3d30"
         }
       },
       "host": {
         "platform": "Windows-11-10.0.26200-SP0",
         "execution_mode": "live_script_execution",
-        "real_host_certified": true
+        "real_host_certified": false
       },
       "report_version": {
         "report_path": "validation/pseudobulk/REPORT.json",
@@ -214,10 +215,12 @@
         "dataset_track": "independent_replication_attempt"
       },
       "host": {
-        "platform": "Windows-11-10.0.26200-SP0"
+        "platform": "Windows-11-10.0.26200-SP0",
+        "real_host_certified": false
       },
       "report_version": {
         "report_path": "validation/pseudobulk/independent/REPORT.json",
+        "schema_version": "bionexus.pseudobulk-independent-report.v1",
         "project_version": "1.0.0-rc.5"
       },
       "upstream_nodes": [
@@ -265,7 +268,8 @@
       },
       "host": {
         "platform": "Windows-11-10.0.26200-SP0",
-        "cross_host_status": "headless_only_6_traps_abstain_unmet_quota"
+        "cross_host_status": "headless_only_6_traps_abstain_unmet_quota",
+        "real_host_certified": false
       },
       "report_version": {
         "report_path": "validation/pseudobulk/CERTIFICATION.json",
@@ -282,17 +286,21 @@
     "BNC-ANNOTATION-AZIMUTH-003": {
       "conclusion_id": "BNC-ANNOTATION-AZIMUTH-003",
       "capability_id": "scrna.annotation_evidence",
-      "statement": "BN-ANN-IV-003 evaluated 148297 mapped cells against external Azimuth PBMC reference annotations; met locked endpoints but was nonblinded to label distributions (capped at CANDIDATE_EXTERNAL_REFERENCE_NONBLINDED).",
-      "verdict": "CANDIDATE_EXTERNAL_REFERENCE_NONBLINDED",
+      "statement": "BN-ANN-IV-003 evaluated 148297 mapped cells against external Azimuth PBMC reference annotations; met locked endpoints but was nonblinded to label distributions (capped at positive_candidate).",
+      "verdict": "positive_candidate",
       "claim_boundary": {
         "supported": [
           "148297 cells mapped against Azimuth PBMC",
           "Locked endpoints met"
         ],
         "not_supported": [
-          "blinded evaluation",
-          "independent biological ground truth",
-          "approved empirical calibration profile"
+          "blinded external validation",
+          "BioNexus cell-type assignment",
+          "fine-grained subtype validity",
+          "calibrated per-cell probability",
+          "cross-tissue transfer",
+          "clinical validity",
+          "independent external reviewer sign-off"
         ]
       },
       "source_files": {
@@ -319,11 +327,12 @@
       "host": {
         "platform": "Windows-11-10.0.26200-SP0",
         "execution_mode": "live_script_execution",
-        "real_host_certified": true
+        "real_host_certified": false
       },
       "report_version": {
         "report_path": "validation/annotation/studies/BN-ANN-IV-003/REPORT.json",
-        "project_version": "1.0.0-rc.5"
+        "schema_version": "bionexus.annotation-external-reference-validation-report.v1",
+        "project_version": "1.0.0-rc.2"
       },
       "upstream_nodes": [
         "DATA-CITESEQ-10K",
@@ -371,7 +380,8 @@
       },
       "host": {
         "platform": "Windows-11-10.0.26200-SP0",
-        "cross_host_status": "headless_only_6_traps_abstain_unmet_quota"
+        "cross_host_status": "headless_only_6_traps_abstain_unmet_quota",
+        "real_host_certified": false
       },
       "report_version": {
         "report_path": "validation/annotation/CERTIFICATION.json",
@@ -388,11 +398,11 @@
     "BNC-CROSS-HOST-CONCORDANCE": {
       "conclusion_id": "BNC-CROSS-HOST-CONCORDANCE",
       "capability_id": "cross-host.router_traps",
-      "statement": "Cross-host comparison records 6 router traps (BF-001..BF-006) executed on claude-code and antigravity, both yielding ABSTAIN (100% concordance, 6/6 consistent). This confirms software refusal consistency, but does not certify real-host execution or satisfy IVN multi-host quota (BNS-HC-007).",
+      "statement": "Cross-host comparison records 6 router traps (BF-001..BF-006) executed on claude-code, antigravity, all yielding ABSTAIN (100% concordance, 6/6 consistent). This confirms software refusal consistency, but does not certify real-host execution or satisfy IVN multi-host quota (BNS-HC-007).",
       "verdict": "PASS_HEADLESS_REFUSAL_CONCORDANCE",
       "claim_boundary": {
         "supported": [
-          "6 router traps compared on claude-code + antigravity",
+          "6 router traps compared on claude-code, antigravity",
           "100% agreement on ABSTAIN refusal (agreement_rate 1.0)",
           "Software contract conformance"
         ],
@@ -412,7 +422,7 @@
         "BNS-010"
       ],
       "dependencies": {
-        "python": "3.13.9"
+        "python": ">=3.10"
       },
       "data": {
         "traps": [
@@ -435,7 +445,7 @@
       "report_version": {
         "report_path": "cross-host/COMPARISON.json",
         "schema_version": "1.0",
-        "project_version": "1.0.0-rc.5"
+        "project_version": "1.0.0-rc.4"
       },
       "upstream_nodes": [
         "RULE-BNS-HC-007"

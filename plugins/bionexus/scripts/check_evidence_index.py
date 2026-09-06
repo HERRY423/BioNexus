@@ -8,7 +8,12 @@ import json
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+_candidate = Path(__file__).resolve().parents[1]
+if not (_candidate / "src").is_dir() and (_candidate.parent / "src").is_dir():
+    REPO_ROOT = _candidate.parent
+else:
+    REPO_ROOT = _candidate
+
 if str(REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(REPO_ROOT / "src"))
 
@@ -62,9 +67,8 @@ def main() -> int:
     root = args.root
     index_file = root / "validation" / "EVIDENCE_INDEX.json"
 
-    index = EvidenceIndex.build_current_index(root)
-
     if args.save:
+        index = EvidenceIndex.build_current_index(root)
         out_path = index.save(index_file)
         print(f"Successfully generated and saved Evidence Index to: {out_path.relative_to(root)}")
         return 0
@@ -87,7 +91,12 @@ def main() -> int:
         return 0 if res["passed"] else 1
 
     if args.impact:
-        impact = index.assess_upstream_changes(
+        # Prioritize loading frozen baseline index to detect changes against disk
+        if index_file.is_file():
+            active_index = EvidenceIndex.load(index_file)
+        else:
+            active_index = EvidenceIndex.build_current_index(root)
+        impact = active_index.assess_upstream_changes(
             repo_root=root,
             changed_files=args.changed_files,
             broken_rules=args.broken_rules,
@@ -99,6 +108,10 @@ def main() -> int:
         return 0
 
     # Default action: display index summary
+    if index_file.is_file():
+        index = EvidenceIndex.load(index_file)
+    else:
+        index = EvidenceIndex.build_current_index(root)
     if args.json:
         print(json.dumps(index.to_dict(), indent=2, ensure_ascii=False))
     else:

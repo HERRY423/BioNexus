@@ -27,10 +27,13 @@ Normative references:
 
 from __future__ import annotations
 
+import logging
 from dataclasses import asdict, dataclass, field
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Union
+
+from bionexus.de_audit_extract import extract_rank_genes_groups
 
 try:
     import numpy as np
@@ -41,6 +44,8 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
+
+logger = logging.getLogger(__name__)
 
 
 # ==============================================================================
@@ -53,6 +58,37 @@ class FindingSeverity(str, Enum):
     HIGH_IMPACT = "HIGH_IMPACT"  # 🟡 高风险：严重扭曲效应量或显著性，必须修正方可投稿
     ADVISORY = "ADVISORY"        # 🔵 建议：方法学规范与鲁棒性提升建议
     PASS = "PASS"                # 🟢 符合规范
+
+
+class CheckStatus(str, Enum):
+    """Explicit per-check outcome. Absence of a finding is not a pass."""
+    ASSESSED = "ASSESSED"                    # 已检查，未发现问题
+    ISSUE_FOUND = "ISSUE_FOUND"              # 已检查，发现问题
+    MISSING_EVIDENCE = "MISSING_EVIDENCE"    # 缺少证据，未评估
+    PARSE_FAILED = "PARSE_FAILED"            # 解析失败，显式报告
+
+
+CHECK_STATUS_ZH = {
+    CheckStatus.ASSESSED: "已检查",
+    CheckStatus.ISSUE_FOUND: "发现问题",
+    CheckStatus.MISSING_EVIDENCE: "缺少证据",
+    CheckStatus.PARSE_FAILED: "解析失败",
+}
+
+CELL_LEVEL_DE_METHODS = {
+    "t-test",
+    "t-test_overestim_var",
+    "wilcoxon",
+    "logreg",
+    "t_test",
+}
+
+DONOR_LEVEL_TABLE_MARKERS = {
+    "basemean",
+    "lfcse",
+    "logcpm",
+    "lr",
+}
 
 
 class FindingCategory(str, Enum):
@@ -111,13 +147,48 @@ class PIDecisionItem:
 
 
 @dataclass
+class CheckRecord:
+    """One audit check with an explicit assessed / issue / missing-evidence state."""
+    check_id: str
+    title: str
+    status: CheckStatus
+    summary: str
+    required_for_pass: bool = False
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "check_id": self.check_id,
+            "title": self.title,
+            "status": self.status.value,
+            "status_zh": CHECK_STATUS_ZH[self.status],
+            "summary": self.summary,
+            "required_for_pass": self.required_for_pass,
+        }
+
+
+@dataclass
+class ExecutionRecord:
+    """Facts that may be stated in the past tense, taken only from supplied artifacts."""
+    source: str = "none"
+    method: Optional[str] = None
+    fdr_method: Optional[str] = None
+    aggregation: Optional[str] = None
+    cell_level_condition_test: bool = False
+    facts: List[str] = field(default_factory=list)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
 class ClaimScopeBoundary:
     """Explicit scientific claim boundaries and recommended manuscript phrasing."""
     allowed_scope: str
     prohibited_scope: str
     recommended_methods_text: str
     recommended_results_text: str
-    overall_maturity: str = "EXPLORATORY"
+    overall_maturity: str = "NOT_ASSESSED"
+    executed_methods_text: str = ""
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -126,8 +197,10 @@ class ClaimScopeBoundary:
 @dataclass
 class DEAuditResult:
     """The complete, lab-ready audit verdict for multi-donor single-cell DE."""
-    overall_status: str  # "BLOCKER_DETECTED", "NEEDS_REVISION", "ROBUST_PASS"
+    overall_status: str  # BLOCKER_DETECTED / NEEDS_REVISION / NEEDS_DATA / NOT_ASSESSED / ROBUST_PASS
     findings: List[DEFinding] = field(default_factory=list)
+    checks: List[CheckRecord] = field(default_factory=list)
+    execution_record: Optional[ExecutionRecord] = None
     claim_boundary: Optional[ClaimScopeBoundary] = None
     pi_decisions: List[PIDecisionItem] = field(default_factory=list)
     cohort_summary: Dict[str, Any] = field(default_factory=dict)
@@ -135,7 +208,7 @@ class DEAuditResult:
 
     @property
     def passed(self) -> bool:
-        return not any(f.severity == FindingSeverity.BLOCKER for f in self.findings)
+        return self.overall_status == "ROBUST_PASS"
 
     @property
     def blocker_count(self) -> int:
@@ -160,6 +233,8 @@ class DEAuditResult:
             },
             "cohort_summary": self.cohort_summary,
             "metadata_columns_used": self.metadata_columns_used,
+            "checks": [c.to_dict() for c in self.checks],
+            "execution_record": self.execution_record.to_dict() if self.execution_record else None,
             "findings": [f.to_dict() for f in self.findings],
             "claim_boundary": self.claim_boundary.to_dict() if self.claim_boundary else None,
             "pi_decisions": [d.to_dict() for d in self.pi_decisions],
@@ -179,15 +254,19 @@ class DEAuditResult:
         lines.append(f"{bold} BioNexus 证据审计：多供体单细胞差异表达（组会/投稿/共享前审阅）{reset}")
         lines.append(f"{bold}================================================================================{reset}")
 
-        # Status badge
-        if self.blocker_count > 0:
+        # Status badge — never treat missing evidence as a pass
+        if self.overall_status == "BLOCKER_DETECTED" or self.blocker_count > 0:
             status_badge = f"{red}[🔴 存在阻断性问题 - 结论暂不能成立]{reset}"
-        elif self.high_impact_count > 0:
+        elif self.overall_status == "NEEDS_REVISION" or self.high_impact_count > 0:
             status_badge = f"{yellow}[🟡 存在高影响风险 - 需修正后投稿]{reset}"
+        elif self.overall_status in ("NEEDS_DATA", "NOT_ASSESSED"):
+            status_badge = f"{yellow}[⚪ 缺少证据 - 未评估 / 不能通过]{reset}"
+        elif self.overall_status == "ROBUST_PASS":
+            status_badge = f"{green}[🟢 已检查项通过 - 支持严谨群体推断]{reset}"
         else:
-            status_badge = f"{green}[🟢 审计通过 - 支持严谨群体推断]{reset}"
+            status_badge = f"{yellow}[⚪ 未评估]{reset}"
 
-        lines.append(f"\n【审计结论】 {status_badge}")
+        lines.append(f"\n【审计结论】 {status_badge}  `{self.overall_status}`")
         lines.append(f"  阻断性问题 (Blocker): {self.blocker_count} | 高风险问题 (High Impact): {self.high_impact_count} | 方法学建议 (Advisory): {self.advisory_count}")
 
         if self.cohort_summary:
@@ -200,8 +279,16 @@ class DEAuditResult:
         lines.append(f"\n{bold}--------------------------------------------------------------------------------{reset}")
         lines.append(f"{bold} 1. 哪个问题会影响当前结论 (Issues Affecting Conclusions){reset}")
         lines.append(f"{bold}--------------------------------------------------------------------------------{reset}")
+        if self.checks:
+            lines.append("\n  检查覆盖：")
+            for chk in self.checks:
+                lines.append(f"    • {chk.title}: {CHECK_STATUS_ZH[chk.status]} — {chk.summary}")
+
         if not self.findings:
-            lines.append(f"  {green}✔ 未检测到影响结论的方法学或统计学缺陷。{reset}")
+            if any(c.status in (CheckStatus.MISSING_EVIDENCE, CheckStatus.PARSE_FAILED) for c in self.checks):
+                lines.append(f"  {yellow}○ 未完成评估：必要证据缺失或解析失败，不能视为通过。{reset}")
+            else:
+                lines.append(f"  {green}✔ 已检查项未发现影响结论的方法学或统计学缺陷。{reset}")
         else:
             for idx, f in enumerate(self.findings, 1):
                 icon = "🔴" if f.severity == FindingSeverity.BLOCKER else ("🟡" if f.severity == FindingSeverity.HIGH_IMPACT else "🔵")
@@ -240,7 +327,11 @@ class DEAuditResult:
             lines.append(f"     {self.claim_boundary.allowed_scope}")
             lines.append(f"\n  {red}❌ 当前证据【严禁越界陈述】的范围：{reset}")
             lines.append(f"     {self.claim_boundary.prohibited_scope}")
-            lines.append(f"\n  📝 {bold}推荐组会/论文表述段落 (Recommended Phrasing)：{reset}")
+            lines.append(f"\n  📝 {bold}已执行方法（仅来自执行记录）：{reset}")
+            lines.append(f"     \"{self.claim_boundary.executed_methods_text}\"")
+            lines.append(f"\n  📝 {bold}建议分析（不作为已完成事实）：{reset}")
+            lines.append(f"     \"{self.claim_boundary.recommended_methods_text}\"")
+            lines.append(f"\n  📝 {bold}推荐结果表述：{reset}")
             lines.append(f"     \"{self.claim_boundary.recommended_results_text}\"")
 
         # 5. 哪些分歧需要负责人一次性裁决
@@ -262,7 +353,7 @@ class DEAuditResult:
         """Render a publication-ready Markdown report."""
         md = []
         md.append("# BioNexus 证据审计报告：多供体单细胞差异表达")
-        md.append(f"\n> **审计状态**：`{self.overall_status}` | **阻断性问题**：{self.blocker_count} | **高风险问题**：{self.high_impact_count} | **方法学建议**：{self.advisory_count}\n")
+        md.append(f"\n> **审计状态**：`{self.overall_status}` | **通过**：`{self.passed}` | **阻断性问题**：{self.blocker_count} | **高风险问题**：{self.high_impact_count} | **方法学建议**：{self.advisory_count}\n")
 
         if self.cohort_summary:
             md.append("## 实验设计与队列概况")
@@ -276,10 +367,24 @@ class DEAuditResult:
                 md.append(f"- **批次数量 (Batches)**: {self.cohort_summary['batches']}")
             md.append("")
 
+        if self.checks:
+            md.append("## 检查覆盖 (Assessed / Issue Found / Missing Evidence)")
+            md.append("| 检查项 | 状态 | 说明 | 通过所必需 |")
+            md.append("| :--- | :--- | :--- | :--- |")
+            for chk in self.checks:
+                md.append(
+                    f"| {chk.title} | {CHECK_STATUS_ZH[chk.status]} (`{chk.status.value}`) | {chk.summary} | "
+                    f"{'yes' if chk.required_for_pass else 'no'} |"
+                )
+            md.append("")
+
         # 1. 哪个问题会影响当前结论
         md.append("## 1. 哪个问题会影响当前结论 (Issues Affecting Conclusions)")
         if not self.findings:
-            md.append("> [!NOTE]\n> 未检测到影响差异表达结论的致命伤或严重偏差。\n")
+            if any(c.status in (CheckStatus.MISSING_EVIDENCE, CheckStatus.PARSE_FAILED) for c in self.checks):
+                md.append("> [!WARNING]\n> 未完成评估：必要证据缺失或解析失败，不能视为通过。\n")
+            else:
+                md.append("> [!NOTE]\n> 已检查项未发现影响差异表达结论的致命伤或严重偏差。\n")
         else:
             for f in self.findings:
                 alert_type = "CAUTION" if f.severity == FindingSeverity.BLOCKER else ("WARNING" if f.severity == FindingSeverity.HIGH_IMPACT else "NOTE")
@@ -311,11 +416,13 @@ class DEAuditResult:
             md.append("## 4. 当前可以陈述到什么范围 (Permissible Scientific Claim Scope)")
             md.append(f"> [!TIP]\n> **允许陈述的科学范围**：\n> {self.claim_boundary.allowed_scope}\n")
             md.append(f"> [!WARNING]\n> **严禁越界声称的范围**：\n> {self.claim_boundary.prohibited_scope}\n")
-            md.append("### 推荐投稿/汇报表述 (Recommended Manuscript Phrasing)")
-            md.append("**Results**:")
-            md.append(f"> \"{self.claim_boundary.recommended_results_text}\"\n")
-            md.append("**Methods**:")
+            md.append("### 已执行方法 vs 建议分析")
+            md.append("**Executed methods (past tense only from execution records)**:")
+            md.append(f"> \"{self.claim_boundary.executed_methods_text}\"\n")
+            md.append("**Recommended analysis (not claimed as completed)**:")
             md.append(f"> \"{self.claim_boundary.recommended_methods_text}\"\n")
+            md.append("**Results phrasing**:")
+            md.append(f"> \"{self.claim_boundary.recommended_results_text}\"\n")
 
         # 5. 负责人一次性裁决
         if self.pi_decisions:
@@ -389,9 +496,15 @@ class DEAuditEngine:
     ) -> DEAuditResult:
         """Run the 5-pillar differential expression evidence audit."""
         findings: List[DEFinding] = []
+        checks: List[CheckRecord] = []
         pi_decisions: List[PIDecisionItem] = []
         cohort_summary: Dict[str, Any] = {}
         cols_used: Dict[str, str] = {}
+        rgg_params: Dict[str, Any] = {}
+        supplied = any(
+            x is not None
+            for x in (adata, adata_path, de_table, sample_metadata, code_path, claim_text)
+        )
 
         # 1. Resolve AnnData object if provided
         if adata is None and adata_path is not None:
@@ -404,14 +517,43 @@ class DEAuditEngine:
         elif sample_metadata is not None:
             obs_df = self._load_dataframe(sample_metadata)
 
-        # 3. Resolve DE results table
+        # 3. Resolve DE results table. Parse failure is a check outcome, not an empty pass.
         de_df: Optional[pd.DataFrame] = None
+        de_parse_error: Optional[str] = None
+        de_source = "none"
         if de_table is not None:
             de_df = self._load_dataframe(de_table)
+            de_source = "de_table"
+            if de_df is None or (pd is not None and de_df.empty):
+                de_df = None
+                de_source = "none"
         elif adata is not None and hasattr(adata, "uns") and "rank_genes_groups" in adata.uns:
-            de_df = self._extract_de_from_anndata_uns(adata)
+            extracted = extract_rank_genes_groups(adata)
+            rgg_params = dict(extracted.params or {})
+            de_source = extracted.source or "rank_genes_groups"
+            if extracted.error:
+                de_parse_error = extracted.error
+                de_df = None
+                findings.append(
+                    DEFinding(
+                        rule_id="BFA-PARSE",
+                        severity=FindingSeverity.HIGH_IMPACT,
+                        category=FindingCategory.FDR_AND_TESTING,
+                        title="差异表达结果解析失败 (rank_genes_groups parse failure)",
+                        impact_on_conclusion=(
+                            "adata.uns['rank_genes_groups'] 存在但未能按 Scanpy 官方结构读取基因标识与统计量。"
+                            "不得将空表当作已检查的阴性结果。"
+                        ),
+                        step_or_location="adata.uns['rank_genes_groups']",
+                        minimal_fix="使用 scanpy.get.rank_genes_groups_df(adata) 导出完整基因名、pvals、pvals_adj、logfoldchanges 后再审计。",
+                        evidence_data={"parse_error": extracted.error, "source": extracted.source},
+                    )
+                )
+            else:
+                de_df = extracted.frame
 
         # 4. Infer metadata column mappings
+        d_col = c_col = ct_col = b_col = None
         if obs_df is not None:
             cols = list(obs_df.columns)
             d_col = donor_col or _match_column(cols, DONOR_KEYWORDS)
@@ -428,7 +570,6 @@ class DEAuditEngine:
             if b_col:
                 cols_used["batch"] = b_col
 
-            # Perform metadata-level audits (Replicates, Imbalance, Confounding)
             self._audit_metadata(
                 obs_df=obs_df,
                 d_col=d_col,
@@ -438,34 +579,156 @@ class DEAuditEngine:
                 findings=findings,
                 pi_decisions=pi_decisions,
                 cohort_summary=cohort_summary,
+                checks=checks,
+            )
+        else:
+            checks.append(
+                CheckRecord(
+                    check_id="donor_replicates",
+                    title="供体/生物学重复设计",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary="未提供样本表或 adata.obs，无法检查供体重复。",
+                    required_for_pass=True,
+                )
+            )
+            checks.append(
+                CheckRecord(
+                    check_id="batch_confounding",
+                    title="批次与组别混杂",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary="未提供样本设计，批次混杂未评估。",
+                    required_for_pass=False,
+                )
+            )
+            checks.append(
+                CheckRecord(
+                    check_id="donor_imbalance",
+                    title="供体细胞贡献失衡",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary="未提供细胞级元数据，供体失衡未评估。",
+                    required_for_pass=False,
+                )
             )
 
-        # 5. Perform matrix-level audits (Raw integer counts vs log/scaled floats)
+        # 5. Matrix-level audits
         if adata is not None:
-            self._audit_expression_matrix(adata, findings)
-
-        # 6. Perform DE Table audits (P-values, FDR, Pseudoreplication markers)
-        if de_df is not None:
-            self._audit_de_table(de_df, findings, pi_decisions)
-
-        # 7. Perform Code / Notebook audit if provided
-        if code_path is not None:
-            self._audit_code(code_path, findings)
-
-        # 8. Assess Scientific Claim Scope Boundaries & Manuscript Text
-        claim_boundary = self._determine_claim_boundary(findings, cohort_summary, claim_text)
-
-        # 9. Compute Overall Status
-        if any(f.severity == FindingSeverity.BLOCKER for f in findings):
-            overall_status = "BLOCKER_DETECTED"
-        elif any(f.severity == FindingSeverity.HIGH_IMPACT for f in findings):
-            overall_status = "NEEDS_REVISION"
+            self._audit_expression_matrix(adata, findings, checks)
         else:
-            overall_status = "ROBUST_PASS"
+            checks.append(
+                CheckRecord(
+                    check_id="input_count_type",
+                    title="原始整数计数层",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary="未提供表达矩阵，计数层未评估。",
+                    required_for_pass=False,
+                )
+            )
+
+        # 6. DE table audits
+        if de_parse_error and de_source != "none":
+            checks.append(
+                CheckRecord(
+                    check_id="de_results",
+                    title="差异表达结果表",
+                    status=CheckStatus.PARSE_FAILED,
+                    summary=de_parse_error,
+                    required_for_pass=True,
+                )
+            )
+            checks.append(
+                CheckRecord(
+                    check_id="fdr_and_testing",
+                    title="FDR / 多重检验",
+                    status=CheckStatus.PARSE_FAILED,
+                    summary="结果表解析失败，FDR 未评估。",
+                    required_for_pass=True,
+                )
+            )
+        elif de_df is not None and not (pd is not None and de_df.empty):
+            checks.append(
+                CheckRecord(
+                    check_id="de_results",
+                    title="差异表达结果表",
+                    status=CheckStatus.ASSESSED,
+                    summary=f"已读取 {len(de_df)} 行差异表达结果（来源: {de_source}）。",
+                    required_for_pass=True,
+                )
+            )
+            self._audit_de_table(de_df, findings, pi_decisions, checks)
+        else:
+            checks.append(
+                CheckRecord(
+                    check_id="de_results",
+                    title="差异表达结果表",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary=de_parse_error or "未提供 DE 表或可解析的 rank_genes_groups。",
+                    required_for_pass=True,
+                )
+            )
+            checks.append(
+                CheckRecord(
+                    check_id="fdr_and_testing",
+                    title="FDR / 多重检验",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary="无差异表达结果，FDR 未评估。",
+                    required_for_pass=True,
+                )
+            )
+
+        # 7. Code / notebook audit
+        if code_path is not None:
+            self._audit_code(code_path, findings, checks)
+        else:
+            checks.append(
+                CheckRecord(
+                    check_id="analysis_code",
+                    title="分析脚本/笔记本",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary="未提供分析脚本，静态方法学调用未评估。",
+                    required_for_pass=False,
+                )
+            )
+
+        execution = self._collect_execution_record(
+            de_df=de_df,
+            de_source=de_source,
+            rgg_params=rgg_params,
+            code_path=code_path,
+            findings=findings,
+        )
+        if execution.cell_level_condition_test and not any(f.rule_id == "BFA-001" for f in findings):
+            findings.append(
+                DEFinding(
+                    rule_id="BFA-001",
+                    severity=FindingSeverity.BLOCKER,
+                    category=FindingCategory.PSEUDOREPLICATION,
+                    title="执行记录显示细胞级条件差异检验 (Cell-level condition DE)",
+                    impact_on_conclusion=(
+                        f"rank_genes_groups params 记录 method={execution.method}，"
+                        "这是细胞级检验，不能当作供体级 NB GLM / Wald 结果。"
+                    ),
+                    step_or_location="adata.uns['rank_genes_groups']['params']",
+                    minimal_fix="按 (donor, cell_type, condition) 聚合 raw counts 后用 PyDESeq2 / edgeR 做供体级检验。",
+                    evidence_data={"params": rgg_params},
+                )
+            )
+            self._set_check_status(
+                checks,
+                "de_results",
+                CheckStatus.ISSUE_FOUND,
+                f"执行记录为细胞级方法 {execution.method}，不能支持群体推断。",
+            )
+
+        claim_boundary = self._determine_claim_boundary(
+            findings, cohort_summary, claim_text, checks, execution
+        )
+        overall_status = self._compute_overall_status(findings, checks, execution, supplied)
 
         return DEAuditResult(
             overall_status=overall_status,
             findings=findings,
+            checks=checks,
+            execution_record=execution,
             claim_boundary=claim_boundary,
             pi_decisions=pi_decisions,
             cohort_summary=cohort_summary,
@@ -486,6 +749,7 @@ class DEAuditEngine:
         findings: List[DEFinding],
         pi_decisions: List[PIDecisionItem],
         cohort_summary: Dict[str, Any],
+        checks: List[CheckRecord],
     ) -> None:
         """Audit biological replicates, donor imbalance, and batch confounding."""
         cohort_summary["n_cells"] = len(obs_df)
@@ -500,6 +764,33 @@ class DEAuditEngine:
                     impact_on_conclusion="元数据中未发现供体/样本列，无法区分细胞间变异与供体间真实生物学变异。直接进行组间差异分析构成纯粹伪重复，产出大量假阳性基因。",
                     step_or_location="sample_metadata / adata.obs",
                     minimal_fix="在 adata.obs 中补充供体标识列（例如 adata.obs['donor_id'] = ...），确保每个细胞可归属至具体生物学个体。",
+                )
+            )
+            checks.append(
+                CheckRecord(
+                    check_id="donor_replicates",
+                    title="供体/生物学重复设计",
+                    status=CheckStatus.ISSUE_FOUND,
+                    summary="元数据中未发现供体/样本列。",
+                    required_for_pass=True,
+                )
+            )
+            checks.append(
+                CheckRecord(
+                    check_id="batch_confounding",
+                    title="批次与组别混杂",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary="无供体列，批次混杂未评估。",
+                    required_for_pass=False,
+                )
+            )
+            checks.append(
+                CheckRecord(
+                    check_id="donor_imbalance",
+                    title="供体细胞贡献失衡",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary="无供体列，供体失衡未评估。",
+                    required_for_pass=False,
                 )
             )
             return
@@ -517,6 +808,33 @@ class DEAuditEngine:
                     title="未指定实验对比组别 (Condition Column Undetermined)",
                     impact_on_conclusion="未指定或未能自动推断 condition/disease 列，仅能审计聚类内部各供体的细胞分布特征。",
                     minimal_fix="使用参数 --condition-col <列名> 指定实验对照分组（如 Disease vs Healthy）。",
+                )
+            )
+            checks.append(
+                CheckRecord(
+                    check_id="donor_replicates",
+                    title="供体/生物学重复设计",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary=f"已识别 {len(donors)} 个供体，但未指定 condition 列，组别重复未评估。",
+                    required_for_pass=True,
+                )
+            )
+            checks.append(
+                CheckRecord(
+                    check_id="batch_confounding",
+                    title="批次与组别混杂",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary="无组别列，批次混杂未评估。",
+                    required_for_pass=False,
+                )
+            )
+            checks.append(
+                CheckRecord(
+                    check_id="donor_imbalance",
+                    title="供体细胞贡献失衡",
+                    status=CheckStatus.MISSING_EVIDENCE if not ct_col else CheckStatus.ASSESSED,
+                    summary="无组别列，仅能描述供体细胞分布。" if not ct_col else "已检查细胞类型内供体分布。",
+                    required_for_pass=False,
                 )
             )
             return
@@ -665,10 +983,34 @@ class DEAuditEngine:
                     )
                 )
 
-    def _audit_expression_matrix(self, adata: Any, findings: List[DEFinding]) -> None:
+        self._record_metadata_checks(
+            checks=checks,
+            findings=findings,
+            d_col=d_col,
+            c_col=c_col,
+            ct_col=ct_col,
+            b_col=b_col,
+            cond_donor_counts=cond_donor_counts,
+        )
+
+    def _audit_expression_matrix(
+        self,
+        adata: Any,
+        findings: List[DEFinding],
+        checks: List[CheckRecord],
+    ) -> None:
         """Audit whether integer counts or normalized/scaled floats are passed to count models."""
         X = getattr(adata, "X", None)
         if X is None:
+            checks.append(
+                CheckRecord(
+                    check_id="input_count_type",
+                    title="原始整数计数层",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary="AnnData 无 X 矩阵，计数层未评估。",
+                    required_for_pass=False,
+                )
+            )
             return
 
         is_integer = False
@@ -717,12 +1059,32 @@ class DEAuditEngine:
                     evidence_data={"is_integer": is_integer, "min_val": min_val, "max_val": max_val},
                 )
             )
+            checks.append(
+                CheckRecord(
+                    check_id="input_count_type",
+                    title="原始整数计数层",
+                    status=CheckStatus.ISSUE_FOUND,
+                    summary="adata.X 为非整数且未发现 counts/raw 层。",
+                    required_for_pass=False,
+                )
+            )
+            return
+        checks.append(
+            CheckRecord(
+                check_id="input_count_type",
+                title="原始整数计数层",
+                status=CheckStatus.ASSESSED,
+                summary="已检查表达矩阵：存在整数计数或 counts/raw 层。",
+                required_for_pass=False,
+            )
+        )
 
     def _audit_de_table(
         self,
         de_df: pd.DataFrame,
         findings: List[DEFinding],
         pi_decisions: List[PIDecisionItem],
+        checks: List[CheckRecord],
     ) -> None:
         """Audit DE results table for pseudoreplication p-value signatures and FDR control."""
         p_col = _match_column(de_df.columns, ["pvalue", "p_val", "pval", "p.value", "pvals"])
@@ -779,138 +1141,458 @@ class DEAuditEngine:
                     findings.append(
                         DEFinding(
                             rule_id="BFA-001c",
-                            severity=FindingSeverity.BLOCKER,
+                            severity=FindingSeverity.HIGH_IMPACT,
                             category=FindingCategory.PSEUDOREPLICATION,
-                            title="典型细胞级伪重复 P 值虚假膨胀 (P-value Inflation Signature: Pseudoreplication)",
-                            impact_on_conclusion=f"检测到 {zero_or_tiny_p} 个基因的 p 值低于 1e-100（最小 p={min_p}）。这是典型的单细胞细胞级检验（如 cell-level Wilcoxon / t-test）伪重复特征。将上万个细胞当做独立样本使有效样本量膨胀数千倍，产出大量假阳性，审稿人会直接要求重跑 Pseudobulk。",
-                            step_or_location="sc.tl.rank_genes_groups / Seurat FindMarkers",
+                            title="P 值极端偏小，提示细胞级伪重复嫌疑 (P-value inflation heuristic)",
+                            impact_on_conclusion=(
+                                f"检测到 {zero_or_tiny_p} 个基因的 p 值低于 1e-100（最小 p={min_p}）。"
+                                "这只能作为细胞级检验的疑点，不能仅凭数值把正确的供体级检验判为伪重复。"
+                            ),
+                            step_or_location="DE table p-value column",
                             minimal_fix=(
-                                "# 最小修复代码（改用供体级 Pseudobulk + PyDESeq2）：\n"
-                                "import scanpy as sc\n"
-                                "# 1. 按 (donor, cell_type, condition) 汇总 raw counts\n"
-                                "pb = adata.to_df(layer='counts').groupby([adata.obs['donor_id'], adata.obs['condition']]).sum()\n"
-                                "# 2. 运行真实供体级 DESeq2 / EdgeR Wald 检验"
+                                "# 核查统计单位，而不是仅因 p 值很小就否定供体级结果：\n"
+                                "# 1. 确认检验是否按 donor 聚合；\n"
+                                "# 2. 若确为 cell-level Wilcoxon/t-test，改用供体级 Pseudobulk + PyDESeq2。"
                             ),
                             evidence_data={"tiny_p_count": int(zero_or_tiny_p), "min_p": float(min_p)},
                         )
                     )
-            except Exception:
-                pass
+            except Exception as exc:
+                logger.info("P-value heuristic could not be evaluated: %s", exc)
+                checks.append(
+                    CheckRecord(
+                        check_id="pvalue_heuristic",
+                        title="P 值膨胀启发式",
+                        status=CheckStatus.PARSE_FAILED,
+                        summary=f"p 值列无法计算：{exc}",
+                        required_for_pass=False,
+                    )
+                )
 
-    def _audit_code(self, code_path: Union[str, Path], findings: List[DEFinding]) -> None:
+        padj_finding = any(f.rule_id in {"BFA-003", "BFA-003b"} for f in findings)
+        if padj_finding:
+            checks.append(
+                CheckRecord(
+                    check_id="fdr_and_testing",
+                    title="FDR / 多重检验",
+                    status=CheckStatus.ISSUE_FOUND,
+                    summary="已检查 DE 表：缺失或未使用 FDR 校正。",
+                    required_for_pass=True,
+                )
+            )
+        elif padj_col:
+            checks.append(
+                CheckRecord(
+                    check_id="fdr_and_testing",
+                    title="FDR / 多重检验",
+                    status=CheckStatus.ASSESSED,
+                    summary=f"已检查 DE 表：存在调整 p 值列 `{padj_col}`。",
+                    required_for_pass=True,
+                )
+            )
+        elif p_col:
+            checks.append(
+                CheckRecord(
+                    check_id="fdr_and_testing",
+                    title="FDR / 多重检验",
+                    status=CheckStatus.ISSUE_FOUND,
+                    summary="已检查 DE 表：仅有原始 p 值。",
+                    required_for_pass=True,
+                )
+            )
+        else:
+            checks.append(
+                CheckRecord(
+                    check_id="fdr_and_testing",
+                    title="FDR / 多重检验",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary="DE 表无可识别的 p 值或 padj 列。",
+                    required_for_pass=True,
+                )
+            )
+
+    def _audit_code(
+        self,
+        code_path: Union[str, Path],
+        findings: List[DEFinding],
+        checks: List[CheckRecord],
+    ) -> None:
         """Audit analysis scripts/notebooks for static scientific bugs using analysis_audit."""
         try:
             from bionexus.analysis_audit import audit_analysis
 
             res = audit_analysis(code_path)
-            for f in res.findings:
-                if f.rule_id == "BFA-001" and not any(ef.rule_id == "BFA-001" for ef in findings):
-                    findings.append(
-                        DEFinding(
-                            rule_id=f.rule_id,
-                            severity=FindingSeverity.BLOCKER,
-                            category=FindingCategory.PSEUDOREPLICATION,
-                            title="代码中存在细胞级伪重复调用 (Cell-level DE Call in Code)",
-                            impact_on_conclusion=f.message,
-                            step_or_location=f.location,
-                            minimal_fix=f.remedy,
-                        )
+        except Exception as exc:
+            logger.info("Analysis code audit failed: %s", exc)
+            checks.append(
+                CheckRecord(
+                    check_id="analysis_code",
+                    title="分析脚本/笔记本",
+                    status=CheckStatus.PARSE_FAILED,
+                    summary=f"分析脚本无法审计：{exc}",
+                    required_for_pass=False,
+                )
+            )
+            findings.append(
+                DEFinding(
+                    rule_id="BFA-PARSE",
+                    severity=FindingSeverity.HIGH_IMPACT,
+                    category=FindingCategory.CLAIM_BOUNDARY,
+                    title="分析脚本解析失败",
+                    impact_on_conclusion="无法读取脚本/笔记本，不能把未检查的代码当作已通过。",
+                    step_or_location=str(code_path),
+                    minimal_fix="提供可解析的 .py / .ipynb / .R 源码后再审计。",
+                    evidence_data={"error": str(exc)},
+                )
+            )
+            return
+
+        code_issue = False
+        for f in res.findings:
+            if f.rule_id == "BFA-001" and not any(ef.rule_id == "BFA-001" for ef in findings):
+                code_issue = True
+                findings.append(
+                    DEFinding(
+                        rule_id=f.rule_id,
+                        severity=FindingSeverity.BLOCKER,
+                        category=FindingCategory.PSEUDOREPLICATION,
+                        title="代码中存在细胞级伪重复调用 (Cell-level DE Call in Code)",
+                        impact_on_conclusion=f.message,
+                        step_or_location=f.location,
+                        minimal_fix=f.remedy,
                     )
-                elif f.rule_id == "BFA-002" and not any(ef.rule_id == "BFA-002" for ef in findings):
-                    findings.append(
-                        DEFinding(
-                            rule_id=f.rule_id,
-                            severity=FindingSeverity.BLOCKER,
-                            category=FindingCategory.INPUT_COUNT_TYPE,
-                            title=f.trap_class,
-                            impact_on_conclusion=f.message,
-                            step_or_location=f.location,
-                            minimal_fix=f.remedy,
-                        )
+                )
+            elif f.rule_id == "BFA-002" and not any(ef.rule_id == "BFA-002" for ef in findings):
+                code_issue = True
+                findings.append(
+                    DEFinding(
+                        rule_id=f.rule_id,
+                        severity=FindingSeverity.BLOCKER,
+                        category=FindingCategory.INPUT_COUNT_TYPE,
+                        title=f.rule_name,
+                        impact_on_conclusion=f.message,
+                        step_or_location=f.location,
+                        minimal_fix=f.remedy,
                     )
-                elif f.rule_id == "BFA-011":
-                    findings.append(
-                        DEFinding(
-                            rule_id=f.rule_id,
-                            severity=FindingSeverity.HIGH_IMPACT,
-                            category=FindingCategory.CLAIM_BOUNDARY,
-                            title="文稿或代码注释过度声称因果机制 (Overclaimed Causality)",
-                            impact_on_conclusion=f.message,
-                            step_or_location=f.location,
-                            minimal_fix=f.remedy,
-                        )
+                )
+            elif f.rule_id == "BFA-011":
+                code_issue = True
+                findings.append(
+                    DEFinding(
+                        rule_id=f.rule_id,
+                        severity=FindingSeverity.HIGH_IMPACT,
+                        category=FindingCategory.CLAIM_BOUNDARY,
+                        title="文稿或代码注释过度声称因果机制 (Overclaimed Causality)",
+                        impact_on_conclusion=f.message,
+                        step_or_location=f.location,
+                        minimal_fix=f.remedy,
                     )
-        except Exception:
-            pass
+                )
+        checks.append(
+            CheckRecord(
+                check_id="analysis_code",
+                title="分析脚本/笔记本",
+                status=CheckStatus.ISSUE_FOUND if code_issue else CheckStatus.ASSESSED,
+                summary=(
+                    "静态审计发现问题。" if code_issue else "已检查分析脚本；静态规则未发现阻断性调用。"
+                ),
+                required_for_pass=False,
+            )
+        )
+
+    def _record_metadata_checks(
+        self,
+        checks: List[CheckRecord],
+        findings: List[DEFinding],
+        d_col: Optional[str],
+        c_col: Optional[str],
+        ct_col: Optional[str],
+        b_col: Optional[str],
+        cond_donor_counts: Dict[str, int],
+    ) -> None:
+        replicate_ids = {"BFA-001", "BFA-001b", "BFA-005"}
+        if any(f.rule_id in replicate_ids for f in findings):
+            min_n = min(cond_donor_counts.values()) if cond_donor_counts else 0
+            checks.append(
+                CheckRecord(
+                    check_id="donor_replicates",
+                    title="供体/生物学重复设计",
+                    status=CheckStatus.ISSUE_FOUND,
+                    summary=f"已检查样本设计：每组最少 {min_n} 个供体。",
+                    required_for_pass=True,
+                )
+            )
+        else:
+            summary = ", ".join(f"{k} N={v}" for k, v in cond_donor_counts.items()) or "condition counts unavailable"
+            checks.append(
+                CheckRecord(
+                    check_id="donor_replicates",
+                    title="供体/生物学重复设计",
+                    status=CheckStatus.ASSESSED,
+                    summary=f"已检查样本设计：{summary}。",
+                    required_for_pass=True,
+                )
+            )
+
+        if not ct_col:
+            checks.append(
+                CheckRecord(
+                    check_id="donor_imbalance",
+                    title="供体细胞贡献失衡",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary="未提供细胞类型列，供体失衡未评估。",
+                    required_for_pass=False,
+                )
+            )
+        elif any(f.rule_id == "BFA-007" for f in findings):
+            checks.append(
+                CheckRecord(
+                    check_id="donor_imbalance",
+                    title="供体细胞贡献失衡",
+                    status=CheckStatus.ISSUE_FOUND,
+                    summary="已检查细胞类型内供体分布：存在单一供体主导。",
+                    required_for_pass=False,
+                )
+            )
+        else:
+            checks.append(
+                CheckRecord(
+                    check_id="donor_imbalance",
+                    title="供体细胞贡献失衡",
+                    status=CheckStatus.ASSESSED,
+                    summary="已检查细胞类型内供体分布，未见超过阈值的单一供体主导。",
+                    required_for_pass=False,
+                )
+            )
+
+        if not b_col:
+            checks.append(
+                CheckRecord(
+                    check_id="batch_confounding",
+                    title="批次与组别混杂",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary="未提供批次列，混杂未评估。",
+                    required_for_pass=False,
+                )
+            )
+        elif any(f.rule_id == "BFA-004" for f in findings):
+            checks.append(
+                CheckRecord(
+                    check_id="batch_confounding",
+                    title="批次与组别混杂",
+                    status=CheckStatus.ISSUE_FOUND,
+                    summary="已检查：组别与批次完全混杂。",
+                    required_for_pass=False,
+                )
+            )
+        else:
+            checks.append(
+                CheckRecord(
+                    check_id="batch_confounding",
+                    title="批次与组别混杂",
+                    status=CheckStatus.ASSESSED,
+                    summary="已检查批次与组别交叉表，未见完全混杂。",
+                    required_for_pass=False,
+                )
+            )
+
+    @staticmethod
+    def _set_check_status(
+        checks: List[CheckRecord],
+        check_id: str,
+        status: CheckStatus,
+        summary: str,
+    ) -> None:
+        for chk in checks:
+            if chk.check_id == check_id:
+                chk.status = status
+                chk.summary = summary
+                return
+
+    def _collect_execution_record(
+        self,
+        de_df: Optional[pd.DataFrame],
+        de_source: str,
+        rgg_params: Dict[str, Any],
+        code_path: Optional[Union[str, Path]],
+        findings: List[DEFinding],
+    ) -> ExecutionRecord:
+        facts: List[str] = []
+        method = None
+        fdr_method = None
+        aggregation = None
+        source = "none"
+        cell_level = False
+
+        if rgg_params:
+            source = "rank_genes_groups"
+            method = rgg_params.get("method")
+            fdr_method = rgg_params.get("corr_method")
+            groupby = str(rgg_params.get("groupby") or "")
+            facts.append(
+                f"adata.uns['rank_genes_groups']['params'] records method={method!r}, "
+                f"groupby={groupby!r}, corr_method={fdr_method!r}."
+            )
+            method_key = str(method or "").lower().replace("-", "_")
+            condition_like = any(
+                token in groupby.lower()
+                for token in ("condition", "treatment", "group", "genotype", "stim", "disease")
+            )
+            if method_key.replace("_", "-") in CELL_LEVEL_DE_METHODS or method_key in {
+                m.replace("-", "_") for m in CELL_LEVEL_DE_METHODS
+            }:
+                if condition_like:
+                    cell_level = True
+                    aggregation = "cell"
+                    facts.append(
+                        "This is a cell-level ranking method; donor-level count-model testing was not recorded."
+                    )
+
+        if de_df is not None and pd is not None and not de_df.empty:
+            cols = {str(c).lower().replace("_", "") for c in de_df.columns}
+            if DONOR_LEVEL_TABLE_MARKERS.intersection(cols):
+                source = source if source != "none" else "de_table"
+                aggregation = aggregation or "donor_level_inferred_from_result_schema"
+                facts.append(
+                    "DE table columns match a donor-level count-model schema "
+                    f"({sorted(DONOR_LEVEL_TABLE_MARKERS.intersection(cols))}); "
+                    "the fitting procedure itself was not observed."
+                )
+            if "padj" in cols or "pvalsadj" in cols or "fdr" in cols or "qval" in cols:
+                fdr_method = fdr_method or "adjusted_p_present"
+                facts.append("An adjusted p-value / FDR column is present in the supplied DE table.")
+            if de_source == "de_table" and source == "none":
+                source = "de_table"
+                facts.append(f"A DE table with {len(de_df)} rows was supplied and inspected.")
+
+        if code_path is not None and any(f.step_or_location and "code" in (f.step_or_location or "").lower() for f in findings):
+            source = source if source != "none" else "code"
+
+        if not facts:
+            facts.append("No analysis execution record was supplied; no completed differential-expression method is confirmed.")
+
+        return ExecutionRecord(
+            source=source,
+            method=method,
+            fdr_method=fdr_method,
+            aggregation=aggregation,
+            cell_level_condition_test=cell_level,
+            facts=facts,
+        )
+
+    def _compute_overall_status(
+        self,
+        findings: List[DEFinding],
+        checks: List[CheckRecord],
+        execution: ExecutionRecord,
+        supplied: bool,
+    ) -> str:
+        if any(f.severity == FindingSeverity.BLOCKER for f in findings):
+            return "BLOCKER_DETECTED"
+        if not supplied:
+            return "NOT_ASSESSED"
+        if any(c.status == CheckStatus.PARSE_FAILED and c.required_for_pass for c in checks):
+            return "NEEDS_DATA"
+        if any(f.severity == FindingSeverity.HIGH_IMPACT for f in findings):
+            return "NEEDS_REVISION"
+        required = [c for c in checks if c.required_for_pass]
+        if any(c.status in (CheckStatus.MISSING_EVIDENCE, CheckStatus.PARSE_FAILED) for c in required):
+            return "NEEDS_DATA"
+        donor_level = execution.aggregation == "donor_level_inferred_from_result_schema" and not execution.cell_level_condition_test
+        replicate = next((c for c in checks if c.check_id == "donor_replicates"), None)
+        if replicate is None or replicate.status != CheckStatus.ASSESSED:
+            return "NEEDS_DATA"
+        if not donor_level:
+            return "NEEDS_DATA"
+        return "ROBUST_PASS"
 
     def _determine_claim_boundary(
         self,
         findings: List[DEFinding],
         cohort_summary: Dict[str, Any],
         claim_text: Optional[str],
+        checks: List[CheckRecord],
+        execution: ExecutionRecord,
     ) -> ClaimScopeBoundary:
-        """Compute permissible scientific claims and ready-to-use manuscript phrasing."""
+        """Claim scope and Methods text. Past-tense facts come only from execution records."""
         has_blocker = any(f.severity == FindingSeverity.BLOCKER for f in findings)
         has_high = any(f.severity == FindingSeverity.HIGH_IMPACT for f in findings)
-        n_donors = cohort_summary.get("n_donors", 0)
+        n_donors = cohort_summary.get("n_donors")
+        conditions = cohort_summary.get("conditions") or {}
+        required_missing = any(
+            c.required_for_pass and c.status in (CheckStatus.MISSING_EVIDENCE, CheckStatus.PARSE_FAILED)
+            for c in checks
+        )
+        donor_level = (
+            execution.aggregation == "donor_level_inferred_from_result_schema"
+            and not execution.cell_level_condition_test
+        )
+
+        recommended_methods = (
+            "Recommended analysis, not recorded as performed: aggregate raw integer counts to donor-level "
+            "pseudobulks per cell type (Squair et al., 2021), then test condition effects with a negative "
+            "binomial GLM, Wald tests, and Benjamini-Hochberg FDR. Do not treat cell-level "
+            "rank_genes_groups p-values as population inference."
+        )
+        executed_methods = " ".join(execution.facts)
 
         if has_blocker:
             allowed = "仅限作为该批次样本的初步技术描述 (Technical descriptive observation only)，不得外推至生物学总体。"
             prohibited = "严禁声称任何疾病关联、生物标志物 (Biomarkers)、群体差异或因果治疗靶点。"
-            methods = (
-                "Single-cell exploratory analyses were performed within this sequenced batch. "
-                "Due to limited biological replication or sample confounding, observations are strictly "
-                "descriptive and hypothesis-generating for orthogonal follow-up."
-            )
             results = (
-                "Within this sample cohort, exploratory single-cell profiling identified descriptive expression shifts; "
-                "formal population-level biomarker inference was withheld pending independent donor replication."
+                "Inspected artifacts do not support population-level differential-expression claims; "
+                "formal inference is withheld."
             )
             maturity = "UNWARRANTED"
-        elif has_high or n_donors < 3:
+        elif required_missing:
+            design_bits = []
+            if n_donors:
+                design_bits.append(f"{n_donors} donors")
+            if conditions:
+                design_bits.append("condition counts " + ", ".join(f"{k}={v}" for k, v in conditions.items()))
+            design_txt = "; ".join(design_bits) if design_bits else "no sample design"
             allowed = (
-                f"可陈述为本研究队列 ({n_donors} 例供体) 内部的探索性差异表达候选基因集，"
-                "可用于指导后续有针对性的正交分子实验（qPCR / 免疫组化）。"
+                f"只能确认已检查的输入（{design_txt}）。缺少差异表达执行记录或结果时，"
+                "不得陈述已完成的群体差异表达。"
             )
-            prohibited = (
-                "严禁声称该基因在全人群中普遍具备诊断或病理学特异性；"
-                "严禁在无功能扰动实验（如 CRISPR/敲除）的前提下使用因果机制动词（如「X 导致了 Y」）。"
-            )
-            methods = (
-                f"Differential expression was evaluated across {n_donors} biological donors using pseudobulk aggregation. "
-                "Statistical models applied empirical Bayes moderation, and candidate genes were prioritized with nominal FDR < 0.05 "
-                "subject to downstream validation."
-            )
+            prohibited = "严禁把未提供的矩阵、模型或 DE 结果写成已经执行的 NB GLM、Wald 或 BH 校正。"
             results = (
-                f"In this cohort of {n_donors} donors, pseudobulk profiling revealed candidate transcriptional shifts "
-                "between conditions, prioritizing candidate genes for targeted orthogonal confirmation."
+                "Only inspected design or partial artifacts are described; differential-expression "
+                "execution was not confirmed."
             )
+            maturity = "NOT_ASSESSED"
+        elif has_high or (isinstance(n_donors, int) and n_donors < 3):
+            allowed = (
+                f"可陈述为已检查队列内部的探索性候选（供体记录: {n_donors}），"
+                "不能升级为稳健群体推断。"
+            )
+            prohibited = "严禁声称全人群诊断标志物或无扰动实验的因果机制。"
+            results = "Inspected artifacts support exploratory candidate language only."
             maturity = "EXPLORATORY_COHORT"
-        else:
+        elif donor_level:
             allowed = (
-                f"完全支持群体级别统计推断 (Population-level Statistical Inference)。"
-                f"在 N={n_donors} 独立生物学重复支撑下，可正式汇报该细胞类型在疾病与对照间的差异表达基因集。"
+                f"在已检查的供体级结果与样本设计下，可陈述该队列的群体级别统计推断。"
+                f"{f' N={n_donors} 独立生物学重复。' if n_donors else ''}"
             )
-            prohibited = (
-                "严禁将横断面观察性转录组差异直接陈述为因果驱动机制（建议使用 'is associated with' / 'correlates with'）。"
-            )
-            methods = (
-                f"Multi-donor single-cell differential expression was performed by aggregating raw integer counts into donor-level "
-                f"pseudobulks per cell type (Squair et al., 2021). Condition effects across {n_donors} biological replicates "
-                "were tested using negative binomial generalized linear models with Wald tests and Benjamini-Hochberg FDR correction."
-            )
+            prohibited = "严禁将观察性转录组差异直接陈述为因果驱动机制。"
             results = (
-                f"Donor-aware pseudobulk differential analysis across {n_donors} biological replicates identified robust condition-associated "
-                "transcriptional alterations (FDR < 0.05), controlling for donor-level biological variance and technical batch effects."
+                "Donor-level count-model results were inspected and, together with the sample design, "
+                "support population-level association language (not causation)."
             )
             maturity = "ROBUST_POPULATION"
+        else:
+            allowed = "已检查提供的结果表与设计，但没有供体级执行记录，不能授权群体推断。"
+            prohibited = "严禁把细胞级 rank_genes_groups 或来源不明的 p 值写成 NB GLM / Wald / BH 已执行。"
+            results = "Results were inspected; the statistical unit of the test was not confirmed as donor-level."
+            maturity = "NOT_ASSESSED"
 
         return ClaimScopeBoundary(
             allowed_scope=allowed,
             prohibited_scope=prohibited,
-            recommended_methods_text=methods,
+            recommended_methods_text=recommended_methods,
             recommended_results_text=results,
             overall_maturity=maturity,
+            executed_methods_text=executed_methods,
         )
 
     # --------------------------------------------------------------------------
@@ -935,32 +1617,12 @@ class DEAuditEngine:
         return pd.read_csv(path)
 
     def _extract_de_from_anndata_uns(self, adata: Any) -> pd.DataFrame:
-        """Extract structured DataFrame from Scanpy adata.uns['rank_genes_groups']."""
-        rgg = adata.uns.get("rank_genes_groups", {})
-        if not rgg or "names" not in rgg:
+        """Extract a DE table from Scanpy uns; empty frame only when error is reported by caller."""
+        extracted = extract_rank_genes_groups(adata)
+        if extracted.error or extracted.frame is None:
+            logger.info("rank_genes_groups extraction failed: %s", extracted.error)
             return pd.DataFrame()
-        try:
-            records = []
-            names_rec = rgg["names"]
-            group_keys = names_rec.dtype.names if hasattr(names_rec, "dtype") and names_rec.dtype.names else list(names_rec.keys())
-
-            for g in group_keys:
-                genes = names_rec[g] if isinstance(names_rec, dict) else [x[0] for x in names_rec[g]]
-                pvals = rgg.get("pvals", {}).get(g, []) if isinstance(rgg.get("pvals"), dict) else []
-                padjs = rgg.get("pvals_adj", {}).get(g, []) if isinstance(rgg.get("pvals_adj"), dict) else []
-                lfcs = rgg.get("logfoldchanges", {}).get(g, []) if isinstance(rgg.get("logfoldchanges"), dict) else []
-
-                for idx, gene in enumerate(genes):
-                    records.append({
-                        "cluster": g,
-                        "gene": gene,
-                        "pvalue": float(pvals[idx]) if len(pvals) > idx else None,
-                        "padj": float(padjs[idx]) if len(padjs) > idx else None,
-                        "log2fc": float(lfcs[idx]) if len(lfcs) > idx else None,
-                    })
-            return pd.DataFrame(records)
-        except Exception:
-            return pd.DataFrame()
+        return extracted.frame
 
 
 # ==============================================================================

@@ -16,10 +16,12 @@ from scipy import sparse
 
 from bionexus.cli import main as cli_main
 from bionexus.de_audit import (
+    CheckStatus,
     FindingCategory,
     FindingSeverity,
     audit_differential_expression,
 )
+from bionexus.de_audit_extract import extract_rank_genes_groups
 
 
 def _create_mock_anndata(
@@ -98,7 +100,8 @@ def test_replicates_n_equals_2_triggers_high_impact_and_pi_decision():
     )
     result = audit_differential_expression(adata=adata)
 
-    assert result.passed  # N=2 is not a fatal BLOCKER, but HIGH_IMPACT
+    assert result.overall_status == "NEEDS_REVISION"
+    assert not result.passed
     assert result.high_impact_count >= 1
     replicate_finding = next(
         f for f in result.findings if f.category == FindingCategory.DONOR_REPLICATES
@@ -192,8 +195,9 @@ def test_de_table_pseudoreplication_tiny_pvalues():
     tiny_p_finding = next(
         f for f in result.findings if f.rule_id == "BFA-001c"
     )
-    assert tiny_p_finding.severity == FindingSeverity.BLOCKER
-    assert "P 值虚假膨胀" in tiny_p_finding.title
+    assert tiny_p_finding.severity == FindingSeverity.HIGH_IMPACT
+    assert result.overall_status == "NEEDS_REVISION"
+    assert not result.passed
 
 
 def test_de_table_missing_fdr():
@@ -214,26 +218,31 @@ def test_de_table_missing_fdr():
     assert "multipletests" in fdr_finding.minimal_fix
 
 
-def test_clean_pseudobulk_pass_all():
-    """Test a properly designed multi-donor pseudobulk experiment passes with flying colors."""
+def test_clean_design_without_de_results_is_needs_data():
+    """A balanced 6-donor matrix is not a completed DE analysis."""
     adata = _create_mock_anndata(
         n_cells=600,
         donors=["D1", "D2", "D3", "D4", "D5", "D6"],
         conditions=["Control", "Control", "Control", "Disease", "Disease", "Disease"],
-        batches=["B1", "B2"],  # Balanced across conditions
+        batches=["B1", "B2"],
         is_raw_counts=True,
     )
-    # Ensure balanced batches
     for i, d in enumerate(["D1", "D2", "D3", "D4", "D5", "D6"]):
         mask = adata.obs["donor_id"] == d
         adata.obs.loc[mask, "batch"] = "B1" if i % 2 == 0 else "B2"
 
     result = audit_differential_expression(adata=adata)
-    assert result.passed
+    assert result.overall_status == "NEEDS_DATA"
+    assert not result.passed
     assert result.blocker_count == 0
-    assert result.claim_boundary.overall_maturity == "ROBUST_POPULATION"
-    assert "完全支持群体级别统计推断" in result.claim_boundary.allowed_scope
+    assert result.claim_boundary.overall_maturity == "NOT_ASSESSED"
+    executed = result.claim_boundary.executed_methods_text.lower()
+    assert "negative binomial" not in executed
+    assert "wald" not in executed
+    assert "pseudobulk aggregation" not in executed or "not confirmed" in executed
     assert "Squair et al." in result.claim_boundary.recommended_methods_text
+    de_check = next(c for c in result.checks if c.check_id == "de_results")
+    assert de_check.status == CheckStatus.MISSING_EVIDENCE
 
 
 def test_summary_and_markdown_rendering():
@@ -275,7 +284,166 @@ def test_cli_audit_de_invocation(tmp_path, monkeypatch):
     )
 
     exit_code = cli_main()
-    assert exit_code == 0
+    assert exit_code == 1
     assert out_md.is_file()
     content = out_md.read_text(encoding="utf-8")
     assert "BioNexus 证据审计报告" in content
+    assert "NEEDS_DATA" in content
+
+
+def _assert_not_executed_methods(result) -> None:
+    executed = (result.claim_boundary.executed_methods_text or "").lower()
+    for banned in ("negative binomial", "wald test", "empirical bayes", "were tested using"):
+        assert banned not in executed
+
+
+def test_no_input_is_not_assessed():
+    result = audit_differential_expression()
+    assert result.overall_status == "NOT_ASSESSED"
+    assert not result.passed
+    _assert_not_executed_methods(result)
+    assert result.claim_boundary.overall_maturity == "NOT_ASSESSED"
+    statuses = {c.check_id: c.status for c in result.checks}
+    assert statuses["donor_replicates"] == CheckStatus.MISSING_EVIDENCE
+    assert statuses["de_results"] == CheckStatus.MISSING_EVIDENCE
+
+
+def test_empty_de_table_is_needs_data():
+    result = audit_differential_expression(de_table=pd.DataFrame())
+    assert result.overall_status == "NEEDS_DATA"
+    assert not result.passed
+    _assert_not_executed_methods(result)
+
+
+def test_single_row_pvalue_padj_table_is_needs_data():
+    de_data = pd.DataFrame({"pvalue": [0.02], "padj": [0.04]})
+    result = audit_differential_expression(de_table=de_data)
+    assert result.overall_status == "NEEDS_DATA"
+    assert not result.passed
+    _assert_not_executed_methods(result)
+    fdr = next(c for c in result.checks if c.check_id == "fdr_and_testing")
+    assert fdr.status == CheckStatus.ASSESSED
+    donor = next(c for c in result.checks if c.check_id == "donor_replicates")
+    assert donor.status == CheckStatus.MISSING_EVIDENCE
+
+
+def test_claim_text_only_is_not_a_pass():
+    result = audit_differential_expression(claim_text="IFITM1 is a population biomarker")
+    assert result.overall_status in {"NOT_ASSESSED", "NEEDS_DATA"}
+    assert not result.passed
+    _assert_not_executed_methods(result)
+
+
+def test_sample_sheet_only_does_not_claim_nb_glm():
+    samples = pd.DataFrame(
+        {
+            "donor_id": [f"D{i}" for i in range(1, 7)],
+            "condition": ["A", "A", "A", "B", "B", "B"],
+        }
+    )
+    result = audit_differential_expression(sample_metadata=samples)
+    assert result.overall_status == "NEEDS_DATA"
+    assert not result.passed
+    assert result.claim_boundary.overall_maturity != "ROBUST_POPULATION"
+    executed = result.claim_boundary.executed_methods_text.lower()
+    assert "negative binomial" not in executed
+    assert "wald" not in executed
+    assert "benjamini-hochberg" not in executed
+    donor = next(c for c in result.checks if c.check_id == "donor_replicates")
+    assert donor.status == CheckStatus.ASSESSED
+    de_check = next(c for c in result.checks if c.check_id == "de_results")
+    assert de_check.status == CheckStatus.MISSING_EVIDENCE
+
+
+def _official_rank_genes_groups_uns() -> dict:
+    n = 2
+    names = np.empty(n, dtype=[("stim", "O")])
+    names["stim"] = np.array(["IFITM1", "STAT1"], dtype=object)
+    pvals = np.empty(n, dtype=[("stim", "f8")])
+    pvals["stim"] = np.array([0.001, 0.01])
+    padj = np.empty(n, dtype=[("stim", "f8")])
+    padj["stim"] = np.array([0.01, 0.03])
+    lfc = np.empty(n, dtype=[("stim", "f8")])
+    lfc["stim"] = np.array([2.0, 1.0])
+    scores = np.empty(n, dtype=[("stim", "f8")])
+    scores["stim"] = np.array([10.0, 5.0])
+    return {
+        "params": {
+            "groupby": "stim",
+            "method": "wilcoxon",
+            "corr_method": "benjamini-hochberg",
+        },
+        "names": names,
+        "scores": scores,
+        "pvals": pvals,
+        "pvals_adj": padj,
+        "logfoldchanges": lfc,
+    }
+
+
+def test_scanpy_structured_array_preserves_identifiers_and_values():
+    adata = _create_mock_anndata(n_cells=20, n_genes=4, donors=["D1", "D2"], conditions=["A", "B"])
+    adata.uns["rank_genes_groups"] = _official_rank_genes_groups_uns()
+
+    extracted = extract_rank_genes_groups(adata)
+    assert extracted.error is None
+    genes = list(extracted.frame["gene"])
+    assert genes == ["IFITM1", "STAT1"]
+    assert list(extracted.frame["pvalue"]) == [0.001, 0.01]
+    assert list(extracted.frame["padj"]) == [0.01, 0.03]
+    assert list(extracted.frame["log2fc"]) == [2.0, 1.0]
+
+    result = audit_differential_expression(adata=adata)
+    assert result.overall_status != "ROBUST_PASS"
+    assert not result.passed
+    de_check = next(c for c in result.checks if c.check_id == "de_results")
+    assert de_check.status in {CheckStatus.ASSESSED, CheckStatus.ISSUE_FOUND}
+    executed = result.claim_boundary.executed_methods_text.lower()
+    assert "wilcoxon" in executed
+    assert "were tested using negative binomial" not in executed
+    assert "donor-level count-model testing was not recorded" in executed
+
+
+def test_rank_genes_groups_parse_failure_is_reported():
+    adata = _create_mock_anndata(
+        n_cells=60,
+        n_genes=3,
+        donors=["D1", "D2", "D3", "D4", "D5", "D6"],
+        conditions=["A", "A", "A", "B", "B", "B"],
+    )
+    for i, d in enumerate(["D1", "D2", "D3", "D4", "D5", "D6"]):
+        adata.obs.loc[adata.obs["donor_id"] == d, "batch"] = "B1" if i % 2 == 0 else "B2"
+    adata.uns["rank_genes_groups"] = {"params": {"method": "wilcoxon"}}
+    result = audit_differential_expression(adata=adata)
+    assert result.overall_status in {"NEEDS_DATA", "NEEDS_REVISION"}
+    assert not result.passed
+    parse = next(c for c in result.checks if c.check_id == "de_results")
+    assert parse.status == CheckStatus.PARSE_FAILED
+    assert any(f.rule_id == "BFA-PARSE" for f in result.findings)
+
+
+def test_deseq2_schema_with_balanced_design_can_pass():
+    samples = pd.DataFrame(
+        {
+            "donor_id": [f"D{i}" for i in range(1, 7)],
+            "condition": ["Control", "Control", "Control", "Disease", "Disease", "Disease"],
+        }
+    )
+    de_data = pd.DataFrame(
+        {
+            "gene": ["IFITM1", "STAT1"],
+            "baseMean": [120.0, 80.0],
+            "log2FoldChange": [1.5, -0.8],
+            "lfcSE": [0.2, 0.3],
+            "stat": [7.5, -2.6],
+            "pvalue": [1e-8, 0.01],
+            "padj": [1e-6, 0.04],
+        }
+    )
+    result = audit_differential_expression(sample_metadata=samples, de_table=de_data)
+    assert result.overall_status == "ROBUST_PASS"
+    assert result.passed
+    assert result.claim_boundary.overall_maturity == "ROBUST_POPULATION"
+    executed = result.claim_boundary.executed_methods_text.lower()
+    assert "basemean" in executed or "donor-level" in executed
+    assert "wald" not in result.claim_boundary.executed_methods_text.lower() or "schema" in executed

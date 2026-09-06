@@ -9,10 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **DE audit no longer passes without evidence**: `audit_differential_expression` reports each check as assessed / issue found / missing evidence. Missing inputs return `NEEDS_DATA` or `NOT_ASSESSED` instead of `ROBUST_PASS`. Methods past-tense statements come only from execution records; recommended analysis is listed separately.
+- **Scanpy `rank_genes_groups` structured arrays** are read without truncating gene identifiers or dropping p-values / log-fold changes. Parse failures are reported instead of becoming an empty passing table.
+- **Static BFA-001 bypass**: a string such as `note = 'pseudobulk later'` no longer suppresses the cell-level DE finding.
+- **LIMS first-round pilot exclusion**: empty measurements are not auto-filled; live export is refused and marked outside the first-round laboratory pilot.
+
 ## [1.0.0-rc.5] - 2026-09-06
 
 ### 🔬 Added (Lab Readiness, DE Audit Engine & Connector Profiles)
 
+- **Evidence Index Verification & Epistemic Impact Engine (`bionexus.evidence_index`, `validation/EVIDENCE_INDEX.json`)**:
+  - `verify_index_integrity` dynamically computes and compares real SHA-256 digests across all 19 referenced source files and datasets on disk; memory hash corruption or tampering fails immediately with distinct mismatch diagnostics.
+  - Dynamically extracts and verifies verdicts from bound validation reports; host certification claims (`real_host_certified`) fail closed unless substantiated by underlying execution attestations.
+  - `assess_upstream_changes` and `UpstreamImpactReport` rigorously distinguish rule violations (`invalidated_conclusions`), scientific recomputations (`requires_recomputation`), report metadata drift (`metadata_updates`), and stable nodes (`unaffected_conclusions`).
+  - Analysis prioritizes the frozen baseline `validation/EVIDENCE_INDEX.json`, preventing accidental baseline overwrite prior to change detection.
+- **CI/CD Workflows & Clean-Checkout Reproducibility**:
+  - Un-ignored `cross-host/antigravity/REPORT.json` in `.gitignore` to guarantee clean checkout availability for cross-host verification.
+  - Added automated flagship dataset acquisition and pseudobulk stress testing to `release.yml` Gate 3, ensuring clean runner validation passes.
+  - Fixed SIF asset upload tag resolution in `container.yml` via `${{ github.event.release.tag_name || github.ref_name }}` to prevent HTTP 422 errors.
+  - Synchronized flagship validation reports with current `1.0.0-rc.5` commit and snapshot hashes, eliminating provenance drift in Main CI diff gates.
 - **Differential Expression Audit Engine (`bionexus.de_audit`, BFA-001/003)**:
   - Added `DEAuditEngine` and `audit_differential_expression` for auditing single-cell DE tables and raw AnnData matrices.
   - Automatically flags pseudoreplication p-value inflation signatures, missing FDR/BH multi-testing corrections, donor representation skew, and unmodeled batch confounding.
@@ -22,9 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **External Scientific Capability Receipt & Connector Profiles (BNS-025)**:
   - Standardized connector profile specifications (`standards/connector-profiles/`) and verification suite.
   - Fail-closed evaluation of external scientific tools with cryptographic receipts and warrant enforcement.
-- **Cryptographic Evidence Index & Epistemic Lineage (`bionexus.evidence_index`, `validation/EVIDENCE_INDEX.json`)**:
-  - Full cryptographic indexing and hash verification of 53+ empirical validation artifacts, flagship reports, and benchmark datasets.
-  - Lineage tracking tool `scripts/check_evidence_index.py` ensuring zero drift across validation artifacts.
 - **BNS-019 Trial Protocol TypeScript SDK (`interoperability/bns019/typescript/`)**:
   - TypeScript types, client, and submission validator for external interoperability trials.
 

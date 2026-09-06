@@ -46,6 +46,39 @@ class TestEvidenceIndexBuildAndIntegrity:
             assert loaded_entry.rules == entry.rules
             assert loaded_entry.dependencies == entry.dependencies
 
+    def test_verify_index_fails_when_source_hashes_corrupted(self):
+        """Address user scenario: corrupting in-memory source hashes must trigger failure."""
+        index = EvidenceIndex.build_current_index(_REPO_ROOT)
+        corrupted_count = 0
+        for entry in index.conclusions.values():
+            for path_key in entry.source_files:
+                entry.source_files[path_key] = "0" * 64
+                corrupted_count += 1
+        assert corrupted_count >= 19
+
+        res = index.verify_index_integrity(_REPO_ROOT)
+        assert res["passed"] is False
+        assert len(res["errors"]) >= 19
+        assert all("hash mismatch" in err.lower() for err in res["errors"])
+
+    def test_verify_index_fails_when_report_verdict_mismatches(self):
+        index = EvidenceIndex.build_current_index(_REPO_ROOT)
+        entry = index.conclusions["BNC-SP-001-TECH-ACCEPTANCE"]
+        entry.verdict = "FAIL"
+
+        res = index.verify_index_integrity(_REPO_ROOT)
+        assert res["passed"] is False
+        assert any("verdict mismatch" in err.lower() for err in res["errors"])
+
+    def test_verify_index_fails_when_unauthorized_host_claimed(self):
+        index = EvidenceIndex.build_current_index(_REPO_ROOT)
+        entry = index.conclusions["BNC-CROSS-HOST-CONCORDANCE"]
+        entry.host["real_host_certified"] = True
+
+        res = index.verify_index_integrity(_REPO_ROOT)
+        assert res["passed"] is False
+        assert any("host certification" in err.lower() for err in res["errors"])
+
 
 class TestUpstreamChangeAnalysis:
     """Tests distinguishing between invalidated conclusions and recomputation needed."""
@@ -97,3 +130,32 @@ class TestUpstreamChangeAnalysis:
         assert "BNC-PSEUDOBULK-INDEP-002" in unaffected
         assert "BNC-ANNOTATION-AZIMUTH-003" in unaffected
         assert "BNC-ANNOTATION-CAPABILITY-VALIDATED" in unaffected
+
+    def test_report_metadata_update_triggers_metadata_update_not_recomputation(self):
+        index = EvidenceIndex.build_current_index(_REPO_ROOT)
+        impact = index.assess_upstream_changes(
+            repo_root=_REPO_ROOT,
+            changed_files=["validation/spatial/studies/BN-SP-IV-001/REPORT.json"],
+            broken_rules=[],
+        )
+
+        meta_ids = [m["conclusion_id"] for m in impact.metadata_updates]
+        assert "BNC-SP-001-TECH-ACCEPTANCE" in meta_ids
+        recompute_ids = [r["conclusion_id"] for r in impact.requires_recomputation]
+        assert "BNC-SP-001-TECH-ACCEPTANCE" not in recompute_ids
+        assert len(impact.invalidated_conclusions) == 0
+
+    def test_scientific_code_change_triggers_recomputation_not_metadata_update(self):
+        index = EvidenceIndex.build_current_index(_REPO_ROOT)
+        impact = index.assess_upstream_changes(
+            repo_root=_REPO_ROOT,
+            changed_files=["evals/spatial_instrument_validation.py"],
+            broken_rules=[],
+        )
+
+        recompute_ids = [r["conclusion_id"] for r in impact.requires_recomputation]
+        assert "BNC-SP-001-TECH-ACCEPTANCE" in recompute_ids
+        meta_ids = [m["conclusion_id"] for m in impact.metadata_updates]
+        assert "BNC-SP-001-TECH-ACCEPTANCE" not in meta_ids
+        assert len(impact.invalidated_conclusions) == 0
+

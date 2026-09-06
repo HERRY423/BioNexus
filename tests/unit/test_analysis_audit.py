@@ -239,3 +239,56 @@ def test_comment_with_pseudobulk_keyword_does_not_suppress_bfa001(tmp_path):
     result = audit_analysis(nb)
     assert not result.passed
     assert any(f.rule_id == "BFA-001" for f in result.findings)
+
+
+def test_string_literal_pseudobulk_does_not_suppress_bfa001(tmp_path):
+    """A string assignment must not count as donor-level aggregation."""
+    nb = _notebook(
+        tmp_path,
+        [
+            "note = 'pseudobulk later'\nsc.tl.rank_genes_groups(adata, groupby='condition')",
+        ],
+    )
+    result = audit_analysis(nb)
+    assert not result.passed
+    assert any(f.rule_id == "BFA-001" for f in result.findings)
+
+
+def test_docstring_and_uncalled_function_do_not_suppress_bfa001(tmp_path):
+    nb = _notebook(
+        tmp_path,
+        [
+            '"""we will run pseudobulk() later"""\n'
+            "def helper(adata):\n"
+            "    return pseudobulk_aggregate(adata, groupby='donor_id')\n"
+            "sc.tl.rank_genes_groups(adata, groupby='condition')\n",
+        ],
+    )
+    result = audit_analysis(nb)
+    assert not result.passed
+    assert any(f.rule_id == "BFA-001" for f in result.findings)
+
+
+def test_string_with_call_text_does_not_suppress_bfa001(tmp_path):
+    nb = _notebook(
+        tmp_path,
+        [
+            "note = 'run pseudobulk() later'\nsc.tl.rank_genes_groups(adata, groupby='condition')",
+        ],
+    )
+    result = audit_analysis(nb)
+    assert not result.passed
+    assert any(f.rule_id == "BFA-001" for f in result.findings)
+
+
+def test_violin_groupby_donor_does_not_suppress_bfa001(tmp_path):
+    nb = _notebook(
+        tmp_path,
+        [
+            "sc.pl.violin(adata, keys='n_counts', groupby='donor')\n"
+            "sc.tl.rank_genes_groups(adata, groupby='condition', method='t-test')\n",
+        ],
+    )
+    result = audit_analysis(nb)
+    assert not result.passed
+    assert any(f.rule_id == "BFA-001" for f in result.findings)

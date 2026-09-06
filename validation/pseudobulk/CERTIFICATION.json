@@ -6,7 +6,7 @@
   "certification_effect": "NONE",
   "independent_assurance_status": "NOT_ASSESSED",
   "assessment_date": "2026-08-19",
-  "project_version": "1.0.0-rc.4",
+  "project_version": "1.0.0-rc.5",
   "standards": [
     {
       "standard_id": "reference_backend",

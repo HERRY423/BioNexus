@@ -26,11 +26,12 @@ disclaimer is normative, BNS-FW-011).
 
 from __future__ import annotations
 
+import ast
 import json
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 from bionexus.claim_checker import audit_prohibited_claims
 
@@ -68,9 +69,12 @@ _DE_CALL = re.compile(r"rank_genes_groups|DESeqDataSet|pydeseq2|DESeq\(|edgeR|gl
 _CONDITION_GROUPBY = re.compile(
     r"groupby\s*=\s*['\"](?:condition|treatment|group|genotype|stim|disease)", re.IGNORECASE
 )
-_PSEUDOBULK_MARKER = re.compile(
-    r"pseudobulk|pb_|aggregate|groupby\s*=\s*['\"](?:donor|sample_id|donor_id|sample)['\"]", re.IGNORECASE
+# Fallback for non-Python sources: function-call form only. Not groupby= on plots.
+_PSEUDOBULK_CALL_RE = re.compile(
+    r"(?<!def )\bpseudobulk\w*\s*\(",
+    re.IGNORECASE,
 )
+_DONOR_KEYS = {"donor", "donor_id", "sample", "sample_id", "patient_id"}
 _DONOR_COLUMN_REF = re.compile(r"['\"](?:donor_id|donor|sample_id|sample|patient_id)['\"]", re.IGNORECASE)
 _LOG_NORM = re.compile(r"normalize_total|log1p|sc\.pp\.scale|CPM|counts_per_million", re.IGNORECASE)
 _COUNT_MODEL = re.compile(r"DESeqDataSet|pydeseq2|deseq2|NegativeBinomial|scvi\.model|SCVI\(", re.IGNORECASE)
@@ -252,6 +256,80 @@ def _finding(
     )
 
 
+def _call_name(node: ast.Call) -> str:
+    func = node.func
+    if isinstance(func, ast.Name):
+        return func.id
+    if isinstance(func, ast.Attribute):
+        return func.attr
+    return ""
+
+
+def _is_donor_key_node(node: ast.AST) -> bool:
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return node.value.lower() in _DONOR_KEYS
+    if isinstance(node, ast.List):
+        return any(_is_donor_key_node(elt) for elt in node.elts)
+    if isinstance(node, ast.Tuple):
+        return any(_is_donor_key_node(elt) for elt in node.elts)
+    if isinstance(node, ast.Subscript):
+        sl = node.slice
+        if isinstance(sl, ast.Constant) and isinstance(sl.value, str):
+            return sl.value.lower() in _DONOR_KEYS
+    return False
+
+
+def _called_function_names(tree: ast.AST) -> Set[str]:
+    names: Set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call):
+            name = _call_name(node)
+            if name:
+                names.add(name)
+    return names
+
+
+class _DonorAggregationVisitor(ast.NodeVisitor):
+    """Walk executed code only: skip uncalled defs; ignore string/docstring literals."""
+
+    def __init__(self, called: Set[str]) -> None:
+        self.called = called
+        self.found = False
+
+    def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+        if node.name in self.called:
+            self.generic_visit(node)
+
+    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+        if node.name in self.called:
+            self.generic_visit(node)
+
+    def visit_Call(self, node: ast.Call) -> None:
+        name = _call_name(node).lower()
+        if "pseudobulk" in name:
+            self.found = True
+        elif name == "groupby":
+            args = list(node.args) + [kw.value for kw in node.keywords]
+            if any(_is_donor_key_node(arg) for arg in args):
+                self.found = True
+        self.generic_visit(node)
+
+
+def _has_donor_level_aggregation(source: str) -> bool:
+    """True only if executed code performs donor-level aggregation.
+
+    Comments, string literals, docstrings, uncalled functions, and plot
+    kwargs such as ``sc.pl.violin(..., groupby='donor')`` do not count.
+    """
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return bool(_PSEUDOBULK_CALL_RE.search(_strip_code_comments(source)))
+    visitor = _DonorAggregationVisitor(_called_function_names(tree))
+    visitor.visit(tree)
+    return visitor.found
+
+
 def _strip_code_comments(source: str) -> str:
     """
     Strip comments from source code so text annotations and TODO comments
@@ -308,7 +386,8 @@ def audit_analysis(path: str | Path) -> AnalysisAuditResult:
     de_cell = cell_of(_DE_CALL)
     if de_cell is not None:
         cond_groupby = _CONDITION_GROUPBY.search(de_cell.source)
-        if cond_groupby and not _PSEUDOBULK_MARKER.search(executable_code):
+        has_donor_aggregation = _has_donor_level_aggregation(code)
+        if cond_groupby and not has_donor_aggregation:
             findings.append(
                 _finding(
                     "BFA-001", "cell-level pseudoreplication", "BN-F002", "FATAL",
@@ -321,7 +400,7 @@ def audit_analysis(path: str | Path) -> AnalysisAuditResult:
                 )
             )
         # BFA-005 inappropriate statistical unit (donor column exists but unused)
-        elif _DONOR_COLUMN_REF.search(code) and cond_groupby and not _PSEUDOBULK_MARKER.search(executable_code):
+        elif _DONOR_COLUMN_REF.search(code) and cond_groupby and not has_donor_aggregation:
             findings.append(
                 _finding(
                     "BFA-005", "inappropriate statistical unit", "BN-F002", "FATAL",
