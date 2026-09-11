@@ -65,7 +65,6 @@ from bionexus.versions import VERSION
 SYNTHETIC_DATA_DIR = REPO_ROOT / "validation" / "spatial" / "evidence"
 SYNTHETIC_H5AD_PATH = SYNTHETIC_DATA_DIR / "spatial_synthetic_technical_acceptance.h5ad"
 OUTPUT_REPORT = REPO_ROOT / "validation" / "spatial" / "INFERENTIAL_STRESS_REPORT.json"
-VALIDATION_REPORT = REPO_ROOT / "validation" / "spatial" / "REPORT.json"
 
 
 def generate_synthetic_spatial_dataset(output_path: Path | None = None) -> ad.AnnData:
@@ -557,54 +556,6 @@ def main() -> int:
     OUTPUT_REPORT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_REPORT.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"\nWritten complete stress test report to {OUTPUT_REPORT.relative_to(REPO_ROOT)}")
-
-    # Standard validation REPORT.json (explicitly labeled synthetic technical acceptance)
-    metrics = [
-        {"name": "confounder_leakage_detection", "expected": "CONFLICTED", "observed": dim2["warrant_verdict"], "result": "pass" if dim2["passed"] else "fail"},
-        {"name": "cell_density_confounding", "expected": "CONFLICTED", "observed": dim3["confounded_verdict"], "result": "pass" if dim3["passed"] else "fail"},
-        {"name": "radius_perturbation_fragile", "expected": "FRAGILE", "observed": dim7["untested_radius_verdict"], "result": "pass" if dim7["passed"] else "fail"},
-        {"name": "permutation_null_robust", "expected": "ROBUST", "observed": dim10["with_permutation_null_verdict"], "result": "pass" if dim10["passed"] else "fail"},
-        {"name": "executable_battery_without_approved_profile", "expected": "FRAGILE", "observed": dim11["verdict"], "result": "pass" if dim11["passed"] else "fail"},
-    ]
-    all_metrics_pass = all(m["result"] == "pass" for m in metrics)
-
-    val_report = {
-        "capability": "spatial.inference_validity",
-        "dataset": {
-            "name": "spatial_synthetic_technical_acceptance",
-            "dataset_track": "synthetic_technical_acceptance",
-            "version": "1.0-synthetic",
-            "accession": "synthetic_technical_acceptance (in-silico manufactured spatial slice; not 10x Genomics Xenium / Vizgen MERSCOPE)",
-            "data_source": "in_silico_generator",
-            "checksum_sha256": dataset_checksum,
-        },
-        "pipeline": {
-            "version": VERSION,
-            "backend_identity": {
-                "capability_id": "spatial.inference_validity",
-                "track": "canonical",
-                "claimed_backend": "local bounded alternative-explanation battery",
-                "observed_backend": "bionexus",
-                "reference_algorithm": "empirically_calibrated_spatial_alternative_explanation_battery_v1",
-                "state": "CONFORMANT",
-            },
-            "provenance": prov,
-        },
-        "metrics": metrics,
-        "limitations": [
-            "Synthetic technical acceptance only: evaluated on in-silico spatial fixture; does not satisfy public_reference_dataset or independent_ground_truth external validation (BNS-010).",
-            "No approved real spatial calibration profile is packaged; the executable battery therefore correctly remains FRAGILE in this report.",
-            "Dimensions 1-10 exercise legacy declarative control semantics; dimension 11 executes the v2 battery and is the runtime calibration acceptance gate.",
-        ],
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "evidence_files": [
-            "validation/spatial/INFERENTIAL_STRESS_REPORT.json",
-        ],
-        "status": "pass" if (all_passed and all_metrics_pass) else "fail",
-    }
-    VALIDATION_REPORT.parent.mkdir(parents=True, exist_ok=True)
-    VALIDATION_REPORT.write_text(json.dumps(val_report, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"Written validation report to {VALIDATION_REPORT.relative_to(REPO_ROOT)}")
 
     print("\n" + "=" * 75)
     print("Spatial Validity Benchmark Summary:")

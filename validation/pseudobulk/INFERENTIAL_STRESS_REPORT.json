@@ -9,12 +9,12 @@
   "provenance": {
     "data_source": "GEO GSE96583 (Kang et al. 2018, Nat Biotechnol doi:10.1038/nbt.4042)",
     "download_date": "2026-08-19T00:00:00+00:00",
-    "commit_sha": "b77a05ced5d27e0deaa799f4153113699ed57477",
+    "commit_sha": "bfe8c171bfb181860c8622714be55f2219cd211c",
     "git_dirty": false,
     "environment_lockfile_hashes": {
-      "pyproject.toml": "156d1e950587d37ad1612d2ac721f9947e3e30d310fb0bd4c21c473a834f9a25",
-      "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
-      "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
+      "pyproject.toml": "a982dafc951265a0c133d599ef9ff627cb30badc1ac9387af359a3e591468943",
+      "requirements-dev.txt": "d5697d2689c87167f554b3b9c35086f7f8696d7c5a3b23c20507c39a474f82d4",
+      "requirements.txt": "8fa95b3e0de8230cca2932263ddb088403e5e9e878eeb97b8ee94f038fffc4d4"
     },
     "command": [
       "evals/pseudobulk_stress_test.py"
@@ -23,17 +23,17 @@
     "generator_version": "1.0.0-rc.6",
     "python_version": "3.13.9",
     "platform": "Windows-11-10.0.26200-SP0",
-    "timestamp": "2026-09-06T15:32:35.367301+00:00",
+    "timestamp": "2026-09-11T16:07:14.366074+00:00",
     "extra_metadata": {
       "n_cells": 13487,
       "n_donors": 8
     },
     "repository_dirty_at_execution": false,
     "validation_source_dirty": false,
-    "source_snapshot_sha256": "d6dc2730e403781d4e777587e4178eba68d175715074268e4900b0fedff5b006"
+    "source_snapshot_sha256": "a0f3e3a25ff52b5d587ff05093a218801132456463718b7993e0bf639e8a7d07"
   },
-  "timestamp": "2026-09-06T15:33:40.786335+00:00",
-  "elapsed_seconds": 65.67,
+  "timestamp": "2026-09-11T16:07:59.719747+00:00",
+  "elapsed_seconds": 45.61,
   "overall_status": "PASS",
   "dimensions": {
     "dim1_public_reference": {

@@ -88,7 +88,7 @@
       "source_files": {
         "src/bionexus/certification.py": "ca935d861b11165aa9309ab89e093fad4bc5272ed2423be97f7c290518799102",
         "src/bionexus/capabilities.py": "e30453b75cef23748f9da024f5c276a7e277b54a90f65d2a5dd03d84ff08c73a",
-        "evals/spatial_stress_test.py": "c12533a1d52a9d3dc33310af5a14b719f1f641b86b93e47ec769228f3d5615aa"
+        "evals/spatial_stress_test.py": "1120498e1d30295300935c88d9275bd51a6cdac10f17d2867768ae8bf818f84e"
       },
       "rules": [
         "BNS-010",
@@ -362,7 +362,7 @@
       },
       "source_files": {
         "src/bionexus/certification.py": "ca935d861b11165aa9309ab89e093fad4bc5272ed2423be97f7c290518799102",
-        "evals/annotation_stress_test.py": "ee3d531282a980b95ea12d26dcf5859a611d8c9608c5c4dad031c728c33b5bdc"
+        "evals/annotation_stress_test.py": "b1eb95e89c1769ae8e4c66787060db11a3bf4f5e17baa3cabf111f8eddb8121d"
       },
       "rules": [
         "BNS-010",

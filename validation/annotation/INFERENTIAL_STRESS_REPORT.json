@@ -6,13 +6,13 @@
   "dataset_checksum_sha256": "d3ecbf0e65a40e783c1c80ef4e9c21872cf0d8b8544de48ec5c9f7c32fa24bed",
   "provenance": {
     "data_source": "synthetic_generator (in-silico generated multimodal fixture)",
-    "download_date": "2026-09-06T15:32:24.776252+00:00",
-    "commit_sha": "b77a05ced5d27e0deaa799f4153113699ed57477",
+    "download_date": "2026-09-11T16:08:25.797723+00:00",
+    "commit_sha": "bfe8c171bfb181860c8622714be55f2219cd211c",
     "git_dirty": false,
     "environment_lockfile_hashes": {
-      "pyproject.toml": "156d1e950587d37ad1612d2ac721f9947e3e30d310fb0bd4c21c473a834f9a25",
-      "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
-      "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
+      "pyproject.toml": "a982dafc951265a0c133d599ef9ff627cb30badc1ac9387af359a3e591468943",
+      "requirements-dev.txt": "d5697d2689c87167f554b3b9c35086f7f8696d7c5a3b23c20507c39a474f82d4",
+      "requirements.txt": "8fa95b3e0de8230cca2932263ddb088403e5e9e878eeb97b8ee94f038fffc4d4"
     },
     "command": [
       "evals/annotation_stress_test.py"
@@ -21,7 +21,7 @@
     "generator_version": "1.0.0-rc.6",
     "python_version": "3.13.9",
     "platform": "Windows-11-10.0.26200-SP0",
-    "timestamp": "2026-09-06T15:32:24.908382+00:00",
+    "timestamp": "2026-09-11T16:08:25.926731+00:00",
     "extra_metadata": {
       "dataset_track": "synthetic_technical_acceptance",
       "n_cells": 1200,
@@ -47,9 +47,9 @@
     },
     "repository_dirty_at_execution": false,
     "validation_source_dirty": false,
-    "source_snapshot_sha256": "d6dc2730e403781d4e777587e4178eba68d175715074268e4900b0fedff5b006"
+    "source_snapshot_sha256": "a0f3e3a25ff52b5d587ff05093a218801132456463718b7993e0bf639e8a7d07"
   },
-  "timestamp": "2026-09-06T15:32:25.064001+00:00",
+  "timestamp": "2026-09-11T16:08:26.093387+00:00",
   "elapsed_seconds": 0.37,
   "overall_status": "PASS",
   "dimensions": {

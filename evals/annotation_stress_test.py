@@ -56,7 +56,6 @@ from evals.annotation_calibration_fixture import (
 SYNTHETIC_DATA_DIR = REPO_ROOT / "validation" / "annotation" / "evidence"
 SYNTHETIC_H5AD_PATH = SYNTHETIC_DATA_DIR / "citeseq_synthetic_technical_acceptance.h5ad"
 OUTPUT_REPORT = REPO_ROOT / "validation" / "annotation" / "INFERENTIAL_STRESS_REPORT.json"
-VALIDATION_REPORT = REPO_ROOT / "validation" / "annotation" / "REPORT.json"
 SYNTHETIC_CALIBRATION_CONTEXT = synthetic_annotation_context()
 SYNTHETIC_CALIBRATION_REGISTRY = synthetic_annotation_registry()
 
@@ -435,54 +434,6 @@ def main() -> int:
     OUTPUT_REPORT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_REPORT.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"\nWritten complete stress test report to {OUTPUT_REPORT.relative_to(REPO_ROOT)}")
-
-    # Standard validation REPORT.json (explicitly labeled synthetic technical acceptance)
-    metrics = [
-        {"name": "distrust_under_evidenced", "expected": "TENTATIVE", "observed": dim2["verdict"], "result": "pass" if dim2["passed"] else "fail"},
-        {"name": "negative_marker_violation", "expected": "TENTATIVE", "observed": dim3["verdict"], "result": "pass" if dim3["passed"] else "fail"},
-        {"name": "orthogonal_protein_robust", "expected": "ROBUST", "observed": dim5["verdict"], "result": "pass" if dim5["passed"] else "fail"},
-        {"name": "open_set_abstain", "expected": "ABSTAIN", "observed": dim7["verdict"], "result": "pass" if dim7["passed"] else "fail"},
-        {"name": "discordant_conflicted", "expected": "CONFLICTED", "observed": dim6["verdict"], "result": "pass" if dim6["passed"] else "fail"},
-    ]
-    all_metrics_pass = all(m["result"] == "pass" for m in metrics)
-
-    val_report = {
-        "capability": "scrna.annotation_evidence",
-        "dataset": {
-            "name": "citeseq_synthetic_technical_acceptance",
-            "dataset_track": "synthetic_technical_acceptance",
-            "version": "1.0-synthetic",
-            "accession": "synthetic_technical_acceptance (in-silico generated multimodal fixture; not 10x Genomics / Hao et al. 2021)",
-            "data_source": "in_silico_generator",
-            "checksum_sha256": dataset_checksum,
-        },
-        "pipeline": {
-            "version": VERSION,
-            "backend_identity": {
-                "capability_id": "scrna.annotation_evidence",
-                "track": "canonical",
-                "claimed_backend": "local deterministic evidence combiner",
-                "observed_backend": "bionexus",
-                "state": "CONFORMANT",
-            },
-            "provenance": prov,
-        },
-        "metrics": metrics,
-        "limitations": [
-            "Synthetic technical acceptance only: evaluated on in-silico multimodal fixture; does not satisfy public_reference_dataset or independent_ground_truth external validation (BNS-010).",
-            "Threshold profiles are synthetic resolver fixtures, are not packaged in the runtime registry, and do not establish empirical tissue/platform/reference calibration.",
-            "The packaged runtime calibration registry has zero APPROVED profiles and remains incomplete_not_claim_ready.",
-        ],
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "evidence_files": [
-            "validation/annotation/INFERENTIAL_STRESS_REPORT.json",
-        ],
-        "status": "pass" if (all_passed and all_metrics_pass) else "fail",
-    }
-
-    VALIDATION_REPORT.parent.mkdir(parents=True, exist_ok=True)
-    VALIDATION_REPORT.write_text(json.dumps(val_report, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"Written validation report to {VALIDATION_REPORT.relative_to(REPO_ROOT)}")
 
     print("\n" + "=" * 75)
     print("Cell Annotation Evidence Benchmark Summary:")
