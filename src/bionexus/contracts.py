@@ -403,7 +403,8 @@ _MATURITY_ORDER = [
     ConclusionMaturity.REPLICATED,
 ]
 
-_MATURITY_RANK = {m: i for i, m in enumerate(_MATURITY_ORDER)}
+# String enums and their serialized values share the same lookup semantics.
+_MATURITY_RANK: dict[str, int] = {m: i for i, m in enumerate(_MATURITY_ORDER)}
 
 
 def cap_conclusion_by_purpose(

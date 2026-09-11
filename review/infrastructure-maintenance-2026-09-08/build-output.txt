@@ -1,0 +1,441 @@
+* Getting build dependencies for wheel...
+C:\Users\13264\anaconda3\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:82: SetuptoolsDeprecationWarning: `project.license` as a TOML table is deprecated
+!!
+
+        ********************************************************************************
+        Please use a simple string containing a SPDX expression for `project.license`. You can also use `project.license-files`. (Both options available on setuptools>=77.0.0).
+
+        This deprecation is overdue, please update your project and remove deprecated
+        calls to avoid build errors in the future.
+
+        See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+        ********************************************************************************
+
+!!
+  corresp(dist, value, root_dir)
+running egg_info
+writing src\bionexus_reliability.egg-info\PKG-INFO
+writing dependency_links to src\bionexus_reliability.egg-info\dependency_links.txt
+writing entry points to src\bionexus_reliability.egg-info\entry_points.txt
+writing requirements to src\bionexus_reliability.egg-info\requires.txt
+writing top-level names to src\bionexus_reliability.egg-info\top_level.txt
+reading manifest file 'src\bionexus_reliability.egg-info\SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+adding license file 'LICENSE'
+writing manifest file 'src\bionexus_reliability.egg-info\SOURCES.txt'
+* Building wheel...
+C:\Users\13264\anaconda3\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:82: SetuptoolsDeprecationWarning: `project.license` as a TOML table is deprecated
+!!
+
+        ********************************************************************************
+        Please use a simple string containing a SPDX expression for `project.license`. You can also use `project.license-files`. (Both options available on setuptools>=77.0.0).
+
+        This deprecation is overdue, please update your project and remove deprecated
+        calls to avoid build errors in the future.
+
+        See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+        ********************************************************************************
+
+!!
+  corresp(dist, value, root_dir)
+running bdist_wheel
+running build
+running build_py
+copying src\bionexus\abi.py -> build\lib\bionexus
+copying src\bionexus\agent_routing.py -> build\lib\bionexus
+copying src\bionexus\airgap_guard.py -> build\lib\bionexus
+copying src\bionexus\analysis_audit.py -> build\lib\bionexus
+copying src\bionexus\annotation_evidence.py -> build\lib\bionexus
+copying src\bionexus\artifacts.py -> build\lib\bionexus
+copying src\bionexus\attestation_authority.py -> build\lib\bionexus
+copying src\bionexus\backends.py -> build\lib\bionexus
+copying src\bionexus\backend_conformance.py -> build\lib\bionexus
+copying src\bionexus\bigdata.py -> build\lib\bionexus
+copying src\bionexus\calibration_freeze.py -> build\lib\bionexus
+copying src\bionexus\capabilities.py -> build\lib\bionexus
+copying src\bionexus\causal_dag.py -> build\lib\bionexus
+copying src\bionexus\certification.py -> build\lib\bionexus
+copying src\bionexus\claim_checker.py -> build\lib\bionexus
+copying src\bionexus\claim_semantics.py -> build\lib\bionexus
+copying src\bionexus\cli.py -> build\lib\bionexus
+copying src\bionexus\closed_loop.py -> build\lib\bionexus
+copying src\bionexus\cluster.py -> build\lib\bionexus
+copying src\bionexus\clustering_stability.py -> build\lib\bionexus
+copying src\bionexus\compliance_ledger.py -> build\lib\bionexus
+copying src\bionexus\connector_profile.py -> build\lib\bionexus
+copying src\bionexus\contracts.py -> build\lib\bionexus
+copying src\bionexus\contract_traceability.py -> build\lib\bionexus
+copying src\bionexus\cryptographic_verifier.py -> build\lib\bionexus
+copying src\bionexus\debt.py -> build\lib\bionexus
+copying src\bionexus\de_audit.py -> build\lib\bionexus
+copying src\bionexus\de_audit_extract.py -> build\lib\bionexus
+copying src\bionexus\de_bundle.py -> build\lib\bionexus
+copying src\bionexus\de_pilot.py -> build\lib\bionexus
+copying src\bionexus\doctor.py -> build\lib\bionexus
+copying src\bionexus\ecosystem_claim.py -> build\lib\bionexus
+copying src\bionexus\ecosystem_intake.py -> build\lib\bionexus
+copying src\bionexus\egress_guard.py -> build\lib\bionexus
+copying src\bionexus\empirical_warrant.py -> build\lib\bionexus
+copying src\bionexus\epistemic_lineage.py -> build\lib\bionexus
+copying src\bionexus\evaluation_contract.py -> build\lib\bionexus
+copying src\bionexus\eval_receipt.py -> build\lib\bionexus
+copying src\bionexus\evidence_index.py -> build\lib\bionexus
+copying src\bionexus\evidence_model.py -> build\lib\bionexus
+copying src\bionexus\failclosed.py -> build\lib\bionexus
+copying src\bionexus\failures.py -> build\lib\bionexus
+copying src\bionexus\gate.py -> build\lib\bionexus
+copying src\bionexus\guard.py -> build\lib\bionexus
+copying src\bionexus\human_adjudication.py -> build\lib\bionexus
+copying src\bionexus\independent_pseudobulk.py -> build\lib\bionexus
+copying src\bionexus\instrument_gateway.py -> build\lib\bionexus
+copying src\bionexus\integrity.py -> build\lib\bionexus
+copying src\bionexus\intent_router.py -> build\lib\bionexus
+copying src\bionexus\interop.py -> build\lib\bionexus
+copying src\bionexus\inventory.py -> build\lib\bionexus
+copying src\bionexus\io.py -> build\lib\bionexus
+copying src\bionexus\ivn.py -> build\lib\bionexus
+copying src\bionexus\ivn_ledger_page.py -> build\lib\bionexus
+copying src\bionexus\lab_policy.py -> build\lib\bionexus
+copying src\bionexus\ledger.py -> build\lib\bionexus
+copying src\bionexus\lims_hub.py -> build\lib\bionexus
+copying src\bionexus\local_cache.py -> build\lib\bionexus
+copying src\bionexus\nextflow_bridge.py -> build\lib\bionexus
+copying src\bionexus\pipeline_config.py -> build\lib\bionexus
+copying src\bionexus\preflight.py -> build\lib\bionexus
+copying src\bionexus\private_llm_provider.py -> build\lib\bionexus
+copying src\bionexus\provenance.py -> build\lib\bionexus
+copying src\bionexus\pseudobulk_warrant.py -> build\lib\bionexus
+copying src\bionexus\registry.py -> build\lib\bionexus
+copying src\bionexus\remediation.py -> build\lib\bionexus
+copying src\bionexus\researcher_override.py -> build\lib\bionexus
+copying src\bionexus\research_purpose.py -> build\lib\bionexus
+copying src\bionexus\research_snapshot.py -> build\lib\bionexus
+copying src\bionexus\rosalind_adapter.py -> build\lib\bionexus
+copying src\bionexus\rule_calibration.py -> build\lib\bionexus
+copying src\bionexus\rule_classification.py -> build\lib\bionexus
+copying src\bionexus\rule_provenance.py -> build\lib\bionexus
+copying src\bionexus\scfm.py -> build\lib\bionexus
+copying src\bionexus\scientific_semantics.py -> build\lib\bionexus
+copying src\bionexus\semantic_consistency.py -> build\lib\bionexus
+copying src\bionexus\semantic_router.py -> build\lib\bionexus
+copying src\bionexus\skill_runtime.py -> build\lib\bionexus
+copying src\bionexus\spatial_alternative_battery.py -> build\lib\bionexus
+copying src\bionexus\spatial_empirical_gold.py -> build\lib\bionexus
+copying src\bionexus\spatial_gold_cli.py -> build\lib\bionexus
+copying src\bionexus\spatial_inference.py -> build\lib\bionexus
+copying src\bionexus\spec_registry.py -> build\lib\bionexus
+copying src\bionexus\standards.py -> build\lib\bionexus
+copying src\bionexus\statistical_rules.py -> build\lib\bionexus
+copying src\bionexus\tangram.py -> build\lib\bionexus
+copying src\bionexus\tool_receipt.py -> build\lib\bionexus
+copying src\bionexus\trust_cli.py -> build\lib\bionexus
+copying src\bionexus\trust_evidence.py -> build\lib\bionexus
+copying src\bionexus\validation_network.py -> build\lib\bionexus
+copying src\bionexus\validation_verifier.py -> build\lib\bionexus
+copying src\bionexus\verification.py -> build\lib\bionexus
+copying src\bionexus\versions.py -> build\lib\bionexus
+copying src\bionexus\warrant.py -> build\lib\bionexus
+copying src\bionexus\__init__.py -> build\lib\bionexus
+copying src\bionexus\bctk\cli.py -> build\lib\bionexus\bctk
+copying src\bionexus\bctk\engine.py -> build\lib\bionexus\bctk
+copying src\bionexus\bctk\profiles.py -> build\lib\bionexus\bctk
+copying src\bionexus\bctk\reporters.py -> build\lib\bionexus\bctk
+copying src\bionexus\bctk\spec.py -> build\lib\bionexus\bctk
+copying src\bionexus\bctk\targets.py -> build\lib\bionexus\bctk
+copying src\bionexus\bctk\__init__.py -> build\lib\bionexus\bctk
+copying src\bionexus\data\__init__.py -> build\lib\bionexus\data
+copying src\bionexus\bctk\dimensions\abstention.py -> build\lib\bionexus\bctk\dimensions
+copying src\bionexus\bctk\dimensions\backend_identity.py -> build\lib\bionexus\bctk\dimensions
+copying src\bionexus\bctk\dimensions\biological_semantics.py -> build\lib\bionexus\bctk\dimensions
+copying src\bionexus\bctk\dimensions\claim_warrant.py -> build\lib\bionexus\bctk\dimensions
+copying src\bionexus\bctk\dimensions\cross_host.py -> build\lib\bionexus\bctk\dimensions
+copying src\bionexus\bctk\dimensions\failure_handling.py -> build\lib\bionexus\bctk\dimensions
+copying src\bionexus\bctk\dimensions\input_honesty.py -> build\lib\bionexus\bctk\dimensions
+copying src\bionexus\bctk\dimensions\provenance.py -> build\lib\bionexus\bctk\dimensions
+copying src\bionexus\bctk\dimensions\_unassessed.py -> build\lib\bionexus\bctk\dimensions
+copying src\bionexus\bctk\dimensions\__init__.py -> build\lib\bionexus\bctk\dimensions
+running egg_info
+writing src\bionexus_reliability.egg-info\PKG-INFO
+writing dependency_links to src\bionexus_reliability.egg-info\dependency_links.txt
+writing entry points to src\bionexus_reliability.egg-info\entry_points.txt
+writing requirements to src\bionexus_reliability.egg-info\requires.txt
+writing top-level names to src\bionexus_reliability.egg-info\top_level.txt
+reading manifest file 'src\bionexus_reliability.egg-info\SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+adding license file 'LICENSE'
+writing manifest file 'src\bionexus_reliability.egg-info\SOURCES.txt'
+copying src\bionexus\data\de-bundle-verification.schema.json -> build\lib\bionexus\data
+copying src\bionexus\data\de-shadow-bundle.schema.json -> build\lib\bionexus\data
+copying src\bionexus\data\empirical_calibration_registry.json -> build\lib\bionexus\data
+copying src\bionexus\data\evidence_attestation.schema.json -> build\lib\bionexus\data
+copying src\bionexus\data\rule_registry.json -> build\lib\bionexus\data
+copying src\bionexus\data\signed_revocation.schema.json -> build\lib\bionexus\data
+copying src\bionexus\data\trust_registry.json -> build\lib\bionexus\data
+copying src\bionexus\data\de-bundle-verification.schema.json -> build\lib\bionexus\data
+copying src\bionexus\data\de-shadow-bundle.schema.json -> build\lib\bionexus\data
+copying src\bionexus\data\empirical_calibration_registry.json -> build\lib\bionexus\data
+copying src\bionexus\data\evidence_attestation.schema.json -> build\lib\bionexus\data
+copying src\bionexus\data\rule_registry.json -> build\lib\bionexus\data
+copying src\bionexus\data\signed_revocation.schema.json -> build\lib\bionexus\data
+copying src\bionexus\data\trust_registry.json -> build\lib\bionexus\data
+installing to build\bdist.win-amd64\wheel
+running install
+running install_lib
+creating build\bdist.win-amd64\wheel
+creating build\bdist.win-amd64\wheel\bionexus
+copying build\lib\bionexus\abi.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\agent_routing.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\airgap_guard.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\analysis_audit.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\annotation_evidence.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\artifacts.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\attestation_authority.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\backends.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\backend_conformance.py -> build\bdist.win-amd64\wheel\.\bionexus
+creating build\bdist.win-amd64\wheel\bionexus\bctk
+copying build\lib\bionexus\bctk\cli.py -> build\bdist.win-amd64\wheel\.\bionexus\bctk
+creating build\bdist.win-amd64\wheel\bionexus\bctk\dimensions
+copying build\lib\bionexus\bctk\dimensions\abstention.py -> build\bdist.win-amd64\wheel\.\bionexus\bctk\dimensions
+copying build\lib\bionexus\bctk\dimensions\backend_identity.py -> build\bdist.win-amd64\wheel\.\bionexus\bctk\dimensions
+copying build\lib\bionexus\bctk\dimensions\biological_semantics.py -> build\bdist.win-amd64\wheel\.\bionexus\bctk\dimensions
+copying build\lib\bionexus\bctk\dimensions\claim_warrant.py -> build\bdist.win-amd64\wheel\.\bionexus\bctk\dimensions
+copying build\lib\bionexus\bctk\dimensions\cross_host.py -> build\bdist.win-amd64\wheel\.\bionexus\bctk\dimensions
+copying build\lib\bionexus\bctk\dimensions\failure_handling.py -> build\bdist.win-amd64\wheel\.\bionexus\bctk\dimensions
+copying build\lib\bionexus\bctk\dimensions\input_honesty.py -> build\bdist.win-amd64\wheel\.\bionexus\bctk\dimensions
+copying build\lib\bionexus\bctk\dimensions\provenance.py -> build\bdist.win-amd64\wheel\.\bionexus\bctk\dimensions
+copying build\lib\bionexus\bctk\dimensions\_unassessed.py -> build\bdist.win-amd64\wheel\.\bionexus\bctk\dimensions
+copying build\lib\bionexus\bctk\dimensions\__init__.py -> build\bdist.win-amd64\wheel\.\bionexus\bctk\dimensions
+copying build\lib\bionexus\bctk\engine.py -> build\bdist.win-amd64\wheel\.\bionexus\bctk
+copying build\lib\bionexus\bctk\profiles.py -> build\bdist.win-amd64\wheel\.\bionexus\bctk
+copying build\lib\bionexus\bctk\reporters.py -> build\bdist.win-amd64\wheel\.\bionexus\bctk
+copying build\lib\bionexus\bctk\spec.py -> build\bdist.win-amd64\wheel\.\bionexus\bctk
+copying build\lib\bionexus\bctk\targets.py -> build\bdist.win-amd64\wheel\.\bionexus\bctk
+copying build\lib\bionexus\bctk\__init__.py -> build\bdist.win-amd64\wheel\.\bionexus\bctk
+copying build\lib\bionexus\bigdata.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\calibration_freeze.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\capabilities.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\causal_dag.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\certification.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\claim_checker.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\claim_semantics.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\cli.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\closed_loop.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\cluster.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\clustering_stability.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\compliance_ledger.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\connector_profile.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\contracts.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\contract_traceability.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\cryptographic_verifier.py -> build\bdist.win-amd64\wheel\.\bionexus
+creating build\bdist.win-amd64\wheel\bionexus\data
+copying build\lib\bionexus\data\de-bundle-verification.schema.json -> build\bdist.win-amd64\wheel\.\bionexus\data
+copying build\lib\bionexus\data\de-shadow-bundle.schema.json -> build\bdist.win-amd64\wheel\.\bionexus\data
+copying build\lib\bionexus\data\empirical_calibration_registry.json -> build\bdist.win-amd64\wheel\.\bionexus\data
+copying build\lib\bionexus\data\evidence_attestation.schema.json -> build\bdist.win-amd64\wheel\.\bionexus\data
+copying build\lib\bionexus\data\rule_registry.json -> build\bdist.win-amd64\wheel\.\bionexus\data
+copying build\lib\bionexus\data\signed_revocation.schema.json -> build\bdist.win-amd64\wheel\.\bionexus\data
+copying build\lib\bionexus\data\trust_registry.json -> build\bdist.win-amd64\wheel\.\bionexus\data
+copying build\lib\bionexus\data\__init__.py -> build\bdist.win-amd64\wheel\.\bionexus\data
+copying build\lib\bionexus\debt.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\de_audit.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\de_audit_extract.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\de_bundle.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\de_pilot.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\doctor.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\ecosystem_claim.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\ecosystem_intake.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\egress_guard.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\empirical_warrant.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\epistemic_lineage.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\evaluation_contract.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\eval_receipt.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\evidence_index.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\evidence_model.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\failclosed.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\failures.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\gate.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\guard.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\human_adjudication.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\independent_pseudobulk.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\instrument_gateway.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\integrity.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\intent_router.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\interop.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\inventory.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\io.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\ivn.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\ivn_ledger_page.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\lab_policy.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\ledger.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\lims_hub.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\local_cache.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\nextflow_bridge.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\pipeline_config.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\preflight.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\private_llm_provider.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\provenance.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\pseudobulk_warrant.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\registry.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\remediation.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\researcher_override.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\research_purpose.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\research_snapshot.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\rosalind_adapter.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\rule_calibration.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\rule_classification.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\rule_provenance.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\scfm.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\scientific_semantics.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\semantic_consistency.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\semantic_router.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\skill_runtime.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\spatial_alternative_battery.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\spatial_empirical_gold.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\spatial_gold_cli.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\spatial_inference.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\spec_registry.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\standards.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\statistical_rules.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\tangram.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\tool_receipt.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\trust_cli.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\trust_evidence.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\validation_network.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\validation_verifier.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\verification.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\versions.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\warrant.py -> build\bdist.win-amd64\wheel\.\bionexus
+copying build\lib\bionexus\__init__.py -> build\bdist.win-amd64\wheel\.\bionexus
+running install_egg_info
+Copying src\bionexus_reliability.egg-info to build\bdist.win-amd64\wheel\.\bionexus_reliability-1.0.0rc5-py3.13.egg-info
+running install_scripts
+creating build\bdist.win-amd64\wheel\bionexus_reliability-1.0.0rc5.dist-info\WHEEL
+creating 'C:\Plugin\BioNexus\review\infrastructure-maintenance-2026-09-08\dist\final\.tmp-cdmbwjd5\bionexus_reliability-1.0.0rc5-py3-none-any.whl' and adding 'build\bdist.win-amd64\wheel' to it
+adding 'bionexus/__init__.py'
+adding 'bionexus/abi.py'
+adding 'bionexus/agent_routing.py'
+adding 'bionexus/airgap_guard.py'
+adding 'bionexus/analysis_audit.py'
+adding 'bionexus/annotation_evidence.py'
+adding 'bionexus/artifacts.py'
+adding 'bionexus/attestation_authority.py'
+adding 'bionexus/backend_conformance.py'
+adding 'bionexus/backends.py'
+adding 'bionexus/bigdata.py'
+adding 'bionexus/calibration_freeze.py'
+adding 'bionexus/capabilities.py'
+adding 'bionexus/causal_dag.py'
+adding 'bionexus/certification.py'
+adding 'bionexus/claim_checker.py'
+adding 'bionexus/claim_semantics.py'
+adding 'bionexus/cli.py'
+adding 'bionexus/closed_loop.py'
+adding 'bionexus/cluster.py'
+adding 'bionexus/clustering_stability.py'
+adding 'bionexus/compliance_ledger.py'
+adding 'bionexus/connector_profile.py'
+adding 'bionexus/contract_traceability.py'
+adding 'bionexus/contracts.py'
+adding 'bionexus/cryptographic_verifier.py'
+adding 'bionexus/de_audit.py'
+adding 'bionexus/de_audit_extract.py'
+adding 'bionexus/de_bundle.py'
+adding 'bionexus/de_pilot.py'
+adding 'bionexus/debt.py'
+adding 'bionexus/doctor.py'
+adding 'bionexus/ecosystem_claim.py'
+adding 'bionexus/ecosystem_intake.py'
+adding 'bionexus/egress_guard.py'
+adding 'bionexus/empirical_warrant.py'
+adding 'bionexus/epistemic_lineage.py'
+adding 'bionexus/eval_receipt.py'
+adding 'bionexus/evaluation_contract.py'
+adding 'bionexus/evidence_index.py'
+adding 'bionexus/evidence_model.py'
+adding 'bionexus/failclosed.py'
+adding 'bionexus/failures.py'
+adding 'bionexus/gate.py'
+adding 'bionexus/guard.py'
+adding 'bionexus/human_adjudication.py'
+adding 'bionexus/independent_pseudobulk.py'
+adding 'bionexus/instrument_gateway.py'
+adding 'bionexus/integrity.py'
+adding 'bionexus/intent_router.py'
+adding 'bionexus/interop.py'
+adding 'bionexus/inventory.py'
+adding 'bionexus/io.py'
+adding 'bionexus/ivn.py'
+adding 'bionexus/ivn_ledger_page.py'
+adding 'bionexus/lab_policy.py'
+adding 'bionexus/ledger.py'
+adding 'bionexus/lims_hub.py'
+adding 'bionexus/local_cache.py'
+adding 'bionexus/nextflow_bridge.py'
+adding 'bionexus/pipeline_config.py'
+adding 'bionexus/preflight.py'
+adding 'bionexus/private_llm_provider.py'
+adding 'bionexus/provenance.py'
+adding 'bionexus/pseudobulk_warrant.py'
+adding 'bionexus/registry.py'
+adding 'bionexus/remediation.py'
+adding 'bionexus/research_purpose.py'
+adding 'bionexus/research_snapshot.py'
+adding 'bionexus/researcher_override.py'
+adding 'bionexus/rosalind_adapter.py'
+adding 'bionexus/rule_calibration.py'
+adding 'bionexus/rule_classification.py'
+adding 'bionexus/rule_provenance.py'
+adding 'bionexus/scfm.py'
+adding 'bionexus/scientific_semantics.py'
+adding 'bionexus/semantic_consistency.py'
+adding 'bionexus/semantic_router.py'
+adding 'bionexus/skill_runtime.py'
+adding 'bionexus/spatial_alternative_battery.py'
+adding 'bionexus/spatial_empirical_gold.py'
+adding 'bionexus/spatial_gold_cli.py'
+adding 'bionexus/spatial_inference.py'
+adding 'bionexus/spec_registry.py'
+adding 'bionexus/standards.py'
+adding 'bionexus/statistical_rules.py'
+adding 'bionexus/tangram.py'
+adding 'bionexus/tool_receipt.py'
+adding 'bionexus/trust_cli.py'
+adding 'bionexus/trust_evidence.py'
+adding 'bionexus/validation_network.py'
+adding 'bionexus/validation_verifier.py'
+adding 'bionexus/verification.py'
+adding 'bionexus/versions.py'
+adding 'bionexus/warrant.py'
+adding 'bionexus/bctk/__init__.py'
+adding 'bionexus/bctk/cli.py'
+adding 'bionexus/bctk/engine.py'
+adding 'bionexus/bctk/profiles.py'
+adding 'bionexus/bctk/reporters.py'
+adding 'bionexus/bctk/spec.py'
+adding 'bionexus/bctk/targets.py'
+adding 'bionexus/bctk/dimensions/__init__.py'
+adding 'bionexus/bctk/dimensions/_unassessed.py'
+adding 'bionexus/bctk/dimensions/abstention.py'
+adding 'bionexus/bctk/dimensions/backend_identity.py'
+adding 'bionexus/bctk/dimensions/biological_semantics.py'
+adding 'bionexus/bctk/dimensions/claim_warrant.py'
+adding 'bionexus/bctk/dimensions/cross_host.py'
+adding 'bionexus/bctk/dimensions/failure_handling.py'
+adding 'bionexus/bctk/dimensions/input_honesty.py'
+adding 'bionexus/bctk/dimensions/provenance.py'
+adding 'bionexus/data/__init__.py'
+adding 'bionexus/data/de-bundle-verification.schema.json'
+adding 'bionexus/data/de-shadow-bundle.schema.json'
+adding 'bionexus/data/empirical_calibration_registry.json'
+adding 'bionexus/data/evidence_attestation.schema.json'
+adding 'bionexus/data/rule_registry.json'
+adding 'bionexus/data/signed_revocation.schema.json'
+adding 'bionexus/data/trust_registry.json'
+adding 'bionexus_reliability-1.0.0rc5.dist-info/licenses/LICENSE'
+adding 'bionexus_reliability-1.0.0rc5.dist-info/METADATA'
+adding 'bionexus_reliability-1.0.0rc5.dist-info/WHEEL'
+adding 'bionexus_reliability-1.0.0rc5.dist-info/entry_points.txt'
+adding 'bionexus_reliability-1.0.0rc5.dist-info/top_level.txt'
+adding 'bionexus_reliability-1.0.0rc5.dist-info/RECORD'
+removing build\bdist.win-amd64\wheel
+Successfully built bionexus_reliability-1.0.0rc5-py3-none-any.whl

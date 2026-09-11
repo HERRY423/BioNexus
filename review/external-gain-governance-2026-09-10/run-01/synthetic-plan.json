@@ -1,0 +1,24 @@
+{
+  "schema": "bionexus.de-external-plan.v1",
+  "study_id": "SYNTHETIC_SOFTWARE_REHEARSAL",
+  "intended_use": "exercise contracts, not a scientific study",
+  "source_sha256": "b69ebb9c51fb6f0ff180924ca46748010c418c2d4895070581502e3a46be4be2",
+  "frozen_at": "2026-09-11T04:32:38.719403+00:00",
+  "developer_ids": [
+    "SOFTWARE_FIXTURE"
+  ],
+  "development_dataset_sha256": [
+    "4bda30da6046f5eee3753947709ff6ec1e5d292d618fdf1aa34e5055d2ecb424"
+  ],
+  "cases": [
+    {
+      "case_id": "DEMO",
+      "task_family": "SYNTHETIC",
+      "site_id": "NO_LAB",
+      "packet_sha256": "4bda30da6046f5eee3753947709ff6ec1e5d292d618fdf1aa34e5055d2ecb424",
+      "dataset_sha256": "4bda30da6046f5eee3753947709ff6ec1e5d292d618fdf1aa34e5055d2ecb424",
+      "data_origin": "SYNTHETIC_DEMO",
+      "not_used_in_development": false
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "schema": "bionexus.rule-impact.v1",
+  "before_registry_sha256": "02e46920d18d37565eeced988c8cfc1fe037f025df2bf983226f62bc4b3cf682",
+  "after_registry_sha256": "66d7f8e8e29ae9dd3d1c048f7aa86fd03aea9fbbe1e9ea5aa2a859fad951c26f",
+  "changes": [
+    {
+      "rule_id": "DEMO_ONLY",
+      "aliases": [
+        "BFA-003"
+      ],
+      "change": "MODIFIED",
+      "before_sha256": "a29af1f7e89cdad5491cf34bb59df99f20e6a609fe4cde9168c149d1d8abb1ec",
+      "after_sha256": "3e626be8e2714d5e96e852071ba99c87dcd2b35d4217670e34d557d1b1f532f6",
+      "before_scope": [],
+      "after_scope": []
+    }
+  ],
+  "cases": [
+    {
+      "bundle": "C:\\Plugin\\BioNexus\\review\\external-gain-governance-2026-09-10\\run-01\\synthetic-bundle",
+      "bundle_integrity": "CONSISTENT",
+      "manifest_sha256": "4bda30da6046f5eee3753947709ff6ec1e5d292d618fdf1aa34e5055d2ecb424",
+      "human_owner": null,
+      "human_decision": "PENDING",
+      "scientific_authorization": "NONE",
+      "audit_sha256": "3271d3a479f98f1c748b1dc03d37a31faf84bb72b800114ea4d52c2ef92ae832",
+      "previous_status": "NEEDS_REVISION",
+      "matched_rule_ids": [
+        "BFA-003"
+      ],
+      "impact": "REASSESS_REQUIRED"
+    }
+  ],
+  "scope": "SUPPLIED_BUNDLES_AND_REGISTRY_ONLY",
+  "rule_revision_approval": "NOT_ESTABLISHED",
+  "scientific_authorization": "NONE",
+  "limitations": [
+    "Findings are not a complete rule-application trace; no matching finding cannot establish no impact.",
+    "Registry comparison does not detect implementation-only rule changes or audits not supplied.",
+    "No old artifact is modified, no rule activated, and no historical scientific conclusion upgraded.",
+    "Snapshot hashes bind content, not independent reviewer identity or approval."
+  ]
+}

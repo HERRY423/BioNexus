@@ -204,6 +204,10 @@ def to_claude_plugin_json(registry: Dict[str, Any]) -> Dict[str, Any]:
         "version": pkg["version"],
         "description": pkg["description"],
         "author": {"name": author_name},
+        "license": pkg.get("license", "Apache-2.0"),
+        "keywords": list(pkg.get("keywords", [])),
+        "skills": "./skills/",
+        "mcpServers": "./.mcp.json",
     }
 
 
@@ -212,7 +216,17 @@ def to_claude_mcp_json(registry: Dict[str, Any]) -> Dict[str, Any]:
     mcp_data = registry.get("mcp_servers", {})
     servers: Dict[str, Any] = {}
 
-    # Hosted MCP servers (with Claude standard http type)
+    # 1. Local stdio MCP servers
+    for s_id, s_conf in mcp_data.get("local", {}).items():
+        if s_conf.get("enabled", True):
+            servers[s_id] = {
+                "type": s_conf.get("type", "stdio"),
+                "command": s_conf.get("command", "python"),
+                "args": s_conf.get("args", []),
+                "cwd": s_conf.get("cwd", "${PLUGIN_ROOT}"),
+            }
+
+    # 2. Hosted MCP servers (with Claude standard http type)
     for s_id, s_conf in mcp_data.get("hosted", {}).items():
         if (
             s_conf.get("enabled", True)

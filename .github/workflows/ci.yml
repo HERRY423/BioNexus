@@ -27,6 +27,8 @@ jobs:
           pip install -e .
       - name: Run Ruff Linter
         run: ruff check .
+      - name: Passive DE Bundle Compatibility
+        run: python scripts/check_de_bundle_contract.py
       - name: Check Canonical Registry Drift & Validate Endpoints
         run: |
           python scripts/registry_compiler.py --check
@@ -36,12 +38,37 @@ jobs:
           python scripts/sync_flagship_reports.py
           git diff --exit-code -- validation
 
+  reliability-quality:
+    name: Core Types, Branch Coverage & DE Requirement Evidence
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Install Core Quality Dependencies
+        run: python -m pip install -e '.[dev]'
+      - name: Check Core Types
+        run: python -m mypy
+      - name: Enforce Core Line and Branch Floors
+        run: python scripts/run_core_quality.py --output .quality/core
+      - name: Execute DE Requirement Evidence
+        run: python scripts/check_de_traceability.py --run --output .quality/de-traceability
+      - name: Preserve Quality Measurements
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reliability-quality
+          path: .quality/
+          include-hidden-files: true
+
   # --------------------------------------------------------------------------
   # 2. Core Reliability Matrix: Python 3.10-3.12 x Win/macOS/Linux (Must be 100% Green)
   # --------------------------------------------------------------------------
   core-matrix:
     name: Core Reliability (${{ matrix.os }}, Python ${{ matrix.python-version }})
-    needs: lint
+    needs: [lint, reliability-quality]
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

@@ -848,10 +848,30 @@ class EvidenceIndex:
                     elif "overall" in rep_data and isinstance(rep_data["overall"], dict):
                         rep_verdict = rep_data["overall"].get("conformance_verdict")
 
-                    if rep_verdict:
-                        norm_rep = str(rep_verdict).upper().replace("-", "_")
-                        norm_entry = str(entry.verdict).upper().replace("-", "_")
-                        if norm_rep not in norm_entry and norm_entry not in norm_rep:
+                    if not rep_verdict:
+                        errors.append(f"{cid} report missing verdict/status: {rep_rel}")
+                    else:
+                        norm_rep = str(rep_verdict).upper().replace("-", "_").strip()
+                        norm_entry = str(entry.verdict).upper().replace("-", "_").strip()
+                        is_compatible = (norm_rep == norm_entry)
+                        if not is_compatible:
+                            contradictions = {"NOT_", "NON_", "FAIL", "UNWARRANTED", "INVALID", "REJECT", "UNVERIFIED"}
+                            rep_is_neg = any(c in norm_rep for c in contradictions)
+                            entry_is_neg = any(c in norm_entry for c in contradictions)
+                            # If one is negative and the other is not, strictly reject
+                            if rep_is_neg != entry_is_neg:
+                                is_compatible = False
+                            else:
+                                allowed_equivalences = {
+                                    "NEGATIVE_RESULT_FREEZE": {"NEGATIVE_RESULT", "NEGATIVE_RESULT_FREEZE"},
+                                    "PASS_HEADLESS_REFUSAL_CONCORDANCE": {"PASS", "PASS_HEADLESS_REFUSAL_CONCORDANCE"},
+                                    "TECHNICAL_ACCEPTANCE_PASS": {"TECHNICAL_ACCEPTANCE_PASS", "PASS"},
+                                }
+                                for canonical, syns in allowed_equivalences.items():
+                                    if (norm_entry == canonical or norm_entry in syns) and (norm_rep == canonical or norm_rep in syns):
+                                        is_compatible = True
+                                        break
+                        if not is_compatible:
                             errors.append(
                                 f"{cid} report verdict mismatch: index has '{entry.verdict}', report has '{rep_verdict}'"
                             )

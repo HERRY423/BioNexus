@@ -1,0 +1,10 @@
+{
+  "case_id": "causal_overclaim-2",
+  "family": "causal_overclaim",
+  "paraphrase": 2,
+  "invalid": true,
+  "claim": "Our reported conclusion is: These observational results prove that IL1RN causes disease.",
+  "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+  "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+  "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+}

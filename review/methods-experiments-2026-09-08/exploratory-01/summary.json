@@ -1,0 +1,24 @@
+{
+  "status": "COMPLETE_EXPLORATORY",
+  "product_code_changed": false,
+  "arms": [
+    {
+      "arm": "heuristic_advisory",
+      "invalid_accepted": 24,
+      "invalid_total": 42,
+      "valid_retained": 9,
+      "valid_total": 12,
+      "unsupported_acceptance_rate": 0.5714285714285714,
+      "valid_retention": 0.75
+    },
+    {
+      "arm": "heuristic_advisory_without_claim",
+      "invalid_accepted": 33,
+      "invalid_total": 42,
+      "valid_retained": 12,
+      "valid_total": 12,
+      "unsupported_acceptance_rate": 0.7857142857142857,
+      "valid_retention": 1.0
+    }
+  ]
+}

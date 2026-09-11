@@ -1,8 +1,25 @@
 {
   "name": "bionexus-reliability",
-  "version": "1.0.0-rc.5",
-  "description": "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents (Warrant-First Evidence Assessment, Fail-Closed Invariants, Evidence-Capped Claims, Zero Silent Substitution).",
+  "version": "1.0.0-rc.6",
+  "description": "Pre-submission shadow review for multi-donor single-cell differential expression: inspect existing results, locate evidence gaps, suggest repairs, and support human scientific review.",
   "author": {
     "name": "BioNexus Team"
-  }
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "bionexus",
+    "bioinformatics",
+    "single-cell",
+    "scanpy",
+    "scvi-tools",
+    "nextflow",
+    "nf-core",
+    "allotrope",
+    "mcp",
+    "variant-interpretation",
+    "spatial-transcriptomics",
+    "squidpy"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json"
 }

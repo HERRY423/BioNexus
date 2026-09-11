@@ -203,6 +203,7 @@ class RuleChallenge:
     status: ChallengeStatus = ChallengeStatus.PROPOSED
     reviewer_votes: Dict[str, str] = field(default_factory=dict)
     reviewer_attestation_ids: Dict[str, str] = field(default_factory=dict)
+    review_history: List[Dict[str, Any]] = field(default_factory=list)
     resolution_notes: str = ""
     created_at: str = ""
     resolved_at: Optional[str] = None
@@ -220,6 +221,7 @@ class RuleChallenge:
             "status": self.status.value,
             "reviewer_votes": self.reviewer_votes,
             "reviewer_attestation_ids": self.reviewer_attestation_ids,
+            "review_history": self.review_history,
             "resolution_notes": self.resolution_notes,
             "created_at": self.created_at,
             "resolved_at": self.resolved_at,
@@ -456,6 +458,7 @@ class ChallengeNetwork:
                 status=ChallengeStatus(cdata.get("status", ChallengeStatus.PROPOSED.value)),
                 reviewer_votes=dict(cdata.get("reviewer_votes", {})),
                 reviewer_attestation_ids=dict(cdata.get("reviewer_attestation_ids", {})),
+                review_history=list(cdata.get("review_history", [])),
                 resolution_notes=cdata.get("resolution_notes", ""),
                 created_at=cdata.get("created_at", ""),
                 resolved_at=cdata.get("resolved_at"),
@@ -487,6 +490,8 @@ class ChallengeNetwork:
         platform: Optional[str] = None,
         sample_count: int = 1,
         design: str = "unpaired",
+        feature_count: Optional[int] = None,
+        tissue: Optional[str] = None,
     ) -> Tuple[bool, str]:
         """Evaluate if this rule applies to the specified analytical regime."""
         rule = self.get_rule(rule_id)
@@ -494,21 +499,30 @@ class ChallengeNetwork:
             return (False, f"Rule '{rule_id}' not found in registry.")
 
         if not rule.applicable_regimes:
-            return (True, "Rule applies universally (no regime restrictions declared).")
+            return (False, "Rule scope is NOT_ASSESSED: no applicable regimes declared; this is not scientific approval.")
+
+        if type(sample_count) is not int or sample_count < 0:
+            raise ValueError("sample_count must be a nonnegative integer")
+        if feature_count is not None and (type(feature_count) is not int or feature_count < 0):
+            raise ValueError("feature_count must be a nonnegative integer or None")
 
         for regime in rule.applicable_regimes:
-            platform_match = True
-            if platform and regime.target_platforms:
-                p_norm = platform.lower().replace("-", "_")
-                platform_match = any(p_norm in tp.lower() for tp in regime.target_platforms)
+            normalize = lambda value: value.lower().replace("-", "_").replace(" ", "_")  # noqa: E731
+            platform_match = not regime.target_platforms or (
+                bool(platform) and normalize(platform) in {normalize(tp) for tp in regime.target_platforms}
+            )
 
             sample_match = sample_count >= regime.min_samples
             design_match = regime.sample_design == "any" or regime.sample_design == design
+            feature_match = regime.min_features == 0 or (feature_count is not None and feature_count >= regime.min_features)
+            tissue_match = not regime.tissue_contexts or "all" in regime.tissue_contexts or (
+                bool(tissue) and normalize(tissue) in {normalize(t) for t in regime.tissue_contexts}
+            )
 
-            if platform_match and sample_match and design_match:
+            if platform_match and sample_match and design_match and feature_match and tissue_match:
                 return (True, f"Rule matches applicable regime: '{regime.regime_id}' ({regime.description}).")
 
-        return (False, f"Experimental setup does not match declared applicable regimes for rule '{rule_id}'.")
+        return (False, f"Experimental setup does not match declared applicable regimes for rule '{rule_id}'; missing context is not approval.")
 
     def submit_challenge(
         self,
@@ -543,7 +557,7 @@ class ChallengeNetwork:
             empirical_evidence_refs=empirical_evidence_refs or [],
             reproduction_script_sha256=script_hash,
             status=ChallengeStatus.PROPOSED,
-            created_at="2026-08",
+            created_at=datetime.now(timezone.utc).isoformat(),
         )
         self.challenges[cid] = challenge
         return challenge
@@ -561,8 +575,31 @@ class ChallengeNetwork:
         if not challenge:
             raise KeyError(f"Challenge '{challenge_id}' not found.")
 
+        if vote not in {"ACCEPT_AMENDMENT", "SPLIT_REGIME", "REJECT_CHALLENGE"}:
+            raise ValueError("Unknown challenge vote")
+        if not isinstance(reviewer_id, str) or not reviewer_id.strip() or not isinstance(review_note, str) or not review_note.strip():
+            raise ValueError("A named reviewer and reason are required")
+        if review_attestation_id and (
+            review_attestation_id in challenge.reviewer_attestation_ids.values()
+            or any(h.get("attestation_id") == review_attestation_id for h in challenge.review_history)
+        ):
+            raise ValueError("An attestation cannot be reused for a new vote or another reviewer")
+        # Retain the old imported state when upgrading a legacy challenge ledger.
+        if not challenge.review_history and challenge.reviewer_votes:
+            challenge.review_history.append({"event": "LEGACY_SNAPSHOT", "votes": dict(challenge.reviewer_votes),
+                                             "attestations": dict(challenge.reviewer_attestation_ids),
+                                             "resolution_notes": challenge.resolution_notes})
+        challenge.review_history.append({"event": "VOTE", "reviewer_id": reviewer_id, "vote": vote,
+                                         "note": review_note, "attestation_id": review_attestation_id,
+                                         "recorded_at": datetime.now(timezone.utc).isoformat(),
+                                         "previous_vote": challenge.reviewer_votes.get(reviewer_id)})
+
         challenge.reviewer_votes[reviewer_id] = vote
         challenge.status = ChallengeStatus.UNDER_REVIEW
+        challenge.resolved_at = None
+        challenge.resolution_notes = "Awaiting verified reviews. Historical dissent is retained in review_history."
+        # A revised vote must not inherit authentication of the previous vote.
+        challenge.reviewer_attestation_ids.pop(reviewer_id, None)
         if review_attestation_id:
             challenge.reviewer_attestation_ids[reviewer_id] = review_attestation_id
 
@@ -584,6 +621,12 @@ class ChallengeNetwork:
         split_votes = sum(1 for v in verified_votes if v == "SPLIT_REGIME")
 
         total = len(verified_votes)
+        if len(set(verified_votes)) > 1:
+            challenge.resolution_notes = (
+                "Verified expert disagreement remains unresolved; retain all reasons and request "
+                "a scoped amendment or further evidence. A majority does not erase dissent."
+            )
+            return challenge.status
         if total >= 3:
             if accept_votes >= 2:
                 challenge.status = ChallengeStatus.ACCEPTED_AMENDMENT

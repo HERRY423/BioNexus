@@ -1,0 +1,44 @@
+{
+  "status": "COMPLETE",
+  "n_control_monocytes": 2155,
+  "n_donors": 8,
+  "donor_cell_counts": {
+    "101": 179,
+    "1015": 600,
+    "1016": 277,
+    "1039": 92,
+    "107": 176,
+    "1244": 339,
+    "1256": 318,
+    "1488": 174
+  },
+  "n_genes": 1000,
+  "partition_results": [
+    {
+      "method": "cell_welch",
+      "n_partitions": 35,
+      "partitions_with_discoveries": 35,
+      "conditional_any_discovery_fraction": 1.0,
+      "median_discoveries": 229.0,
+      "max_discoveries": 348
+    },
+    {
+      "method": "donor_mean_welch",
+      "n_partitions": 35,
+      "partitions_with_discoveries": 1,
+      "conditional_any_discovery_fraction": 0.02857142857142857,
+      "median_discoveries": 0.0,
+      "max_discoveries": 1
+    },
+    {
+      "method": "exact_donor_randomization",
+      "n_partitions": 35,
+      "partitions_with_discoveries": 0,
+      "conditional_any_discovery_fraction": 0.0,
+      "median_discoveries": 0.0,
+      "max_discoveries": 0
+    }
+  ],
+  "independent_partitions": false,
+  "minimum_exact_two_sided_p": 0.02857142857142857
+}

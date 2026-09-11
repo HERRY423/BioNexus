@@ -79,6 +79,11 @@ def sync_flagship_reports(commit_sha: str | None = None) -> None:
     for t in targets:
         if t.is_file():
             data = json.loads(t.read_text(encoding='utf-8'))
+            if t.name == 'REPORT.json' and 'pipeline' in data and isinstance(data['pipeline'], dict):
+                data['pipeline']['version'] = VERSION
+                backend = data['pipeline'].get('backend_identity', {})
+                if 'package_under_test' in backend and isinstance(backend['package_under_test'], dict):
+                    backend['package_under_test']['version'] = VERSION
             recorded_snapshots = source_snapshots(data)
             update_commit = bool(recorded_snapshots) and recorded_snapshots != {current_snapshot}
             sync_nested_provenance(

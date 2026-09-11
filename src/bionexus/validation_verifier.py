@@ -56,6 +56,8 @@ _VALIDATION_SOURCE_FILES = (
     "requirements-dev.txt",
 )
 _SOURCE_IGNORED_PARTS = {"__pycache__", ".pytest_cache", ".ruff_cache"}
+_SOURCE_IGNORED_EXTS = {".log", ".tmp"}
+_SOURCE_IGNORED_NAMES = {".DS_Store", ".bionexus-doctor.json", "local_mcp_server.log"}
 
 
 _SNAPSHOT_TEXT_EXTS = {".py", ".json", ".yaml", ".yml", ".md", ".txt", ".csv", ".toml", ".cfg", ".ini", ".rst"}
@@ -92,11 +94,14 @@ def _validation_source_paths(root: Path) -> List[Path]:
             paths.extend(
                 path
                 for path in directory.rglob("*")
-                if path.is_file() and not any(part in _SOURCE_IGNORED_PARTS for part in path.parts)
+                if path.is_file()
+                and not any(part in _SOURCE_IGNORED_PARTS for part in path.parts)
+                and path.suffix.lower() not in _SOURCE_IGNORED_EXTS
+                and path.name not in _SOURCE_IGNORED_NAMES
             )
     for rel_file in _VALIDATION_SOURCE_FILES:
         path = root / rel_file
-        if path.is_file():
+        if path.is_file() and path.suffix.lower() not in _SOURCE_IGNORED_EXTS and path.name not in _SOURCE_IGNORED_NAMES:
             paths.append(path)
 
     return sorted(set(paths), key=lambda item: item.relative_to(root).as_posix())

@@ -1,0 +1,36 @@
+{
+  "schema": "bionexus.de-external-observations.v1",
+  "plan_sha256": "8bc1a4da720e52588f2e685d40eca4b594c5bbd8e53ccf48a6ff9bc32c247b17",
+  "installation_totals": {
+    "NO_LAB": {
+      "baseline": null,
+      "assisted": null
+    }
+  },
+  "cases": [
+    {
+      "case_id": "DEMO",
+      "reference_reviews": [],
+      "arms": {},
+      "costs": {
+        "unit": "person_minutes",
+        "comparison": null,
+        "allocation_note": null,
+        "baseline": {
+          "installation": null,
+          "review": null,
+          "false_alarm_handling": null,
+          "repair": null,
+          "communication": null
+        },
+        "assisted": {
+          "installation": null,
+          "review": null,
+          "false_alarm_handling": null,
+          "repair": null,
+          "communication": null
+        }
+      }
+    }
+  ]
+}

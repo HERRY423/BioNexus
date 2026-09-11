@@ -2,6 +2,12 @@
 
 ## 1. Principle & Motivation
 
+Current implementation and bounded operating procedure:
+[external task evaluation, full costs and correctable governance](../external-gain-and-correctable-governance.zh-CN.md).
+The lifecycle below is a maintainer process, not evidence of a staffed independent
+council or an SLA. Local review history preserves revisions but is not an
+externally anchored transparency log.
+
 In BioNexus, scientific rules are **falsifiable empirical models**, not immutable dogma. As new biological assays (e.g. single-cell combinatorial indexing, spatial sub-cellular barcoding) and statistical methods emerge, the community governance process must actively absorb domain feedback and evolve the rule registry.
 
 A mature governance lifecycle is defined by its **end-to-end closed loop**:
@@ -21,20 +27,24 @@ flowchart TD
 ## 2. The 7-Stage Closed-Loop Process
 
 ### Stage 1: External Challenge Intake
-- **Channel**: GitHub Issue Form ([`.github/ISSUE_TEMPLATE/scientific_rule_challenge.yml`](../../.github/ISSUE_TEMPLATE/scientific_rule_challenge.yml)) or GitHub Discussions ([`Scientific Rule Challenge`](https://github.com/HERRY423/BioNexus/discussions/categories/scientific-rule-challenge)).
+- **Channel**: [scientific rule challenge issue form](../../.github/ISSUE_TEMPLATE/1_scientific_rule_challenge.yml).
 - **Mandatory Submission Requirements**:
   1. Target Rule ID (e.g., `INV-001`, `INV-004`, `BN-F002`, `RULE-018`).
   2. Biological Context (e.g., paired isogenic tumor vs normal, high-throughput combinatorial CRISPR screen, multi-modal CITE-seq).
   3. Literature Evidence (peer-reviewed papers with DOIs or official regulatory guidance).
   4. Proposed Alternative Formulation (context-conditioned factor, exception, or calibrated threshold adjustment).
 
-### Stage 2: Maintainer Triage (within 72 hours)
+### Stage 2: Maintainer Triage (best effort; no fixed response SLA)
 Maintainers tag and triage the submission into one of three classes:
 - `triage:counterexample`: Demonstrates a biological scenario where the existing rule produces a false refusal or improper claim ceiling.
 - `triage:epistemic-incompleteness`: Identifies a missing context factor (e.g. within-donor dispersion, paired vs unpaired design).
 - `triage:methodological-bug`: Discloses a mathematical or implementation error in rule evaluation.
 
 ### Stage 3: Domain Reviewer Independent Assessment
+- Preserve every reviewer identity declaration, reason, conflicting opinion and
+  revision. Verified disagreement keeps the challenge UNDER_REVIEW; obtain new
+  evidence or propose separate scopes. Revised votes need new, artifact-bound
+  attestations. Never reuse an old vote's verification for a changed opinion.
 - Assigned to a designated computational biology / statistics domain reviewer.
 - Reviewer assesses:
   - Is the counterexample biologically and statistically sound?
@@ -56,6 +66,11 @@ Maintainers tag and triage the submission into one of three classes:
   - Recompile platform manifests via `python scripts/registry_compiler.py --generate`.
 
 ### Stage 6: Release Notes & Cryptographic Provenance
+- Produce the read-only historical bundle queue with `python -m bionexus.rule_impact`.
+  Match changed rules and aliases, preserve unknown applicability, and separately
+  assess implementation changes through the existing evidence index. Reassess
+  in new directories; a named scientific owner reviews the new assessment via
+  `human_adjudication`. Never rewrite historical conclusions.
 - Record the rule change in `CHANGELOG.md` under `## [Unreleased]`.
 - Include:
   - Rule ID and name.

@@ -289,12 +289,76 @@ def _called_function_names(tree: ast.AST) -> Set[str]:
     return names
 
 
+def _extract_root_var(node: ast.AST) -> Optional[str]:
+    """Recursively extract the base variable identifier from subscripts, attributes, or copies."""
+    if isinstance(node, ast.Name):
+        return node.id
+    if isinstance(node, ast.Subscript):
+        return _extract_root_var(node.value)
+    if isinstance(node, ast.Attribute):
+        return _extract_root_var(node.value) or node.attr
+    if isinstance(node, ast.Call):
+        if isinstance(node.func, ast.Attribute):
+            return _extract_root_var(node.func.value)
+        if isinstance(node.func, ast.Name) and node.args:
+            return _extract_root_var(node.args[0])
+    return None
+
+
+def _eval_static_bool(node: ast.AST) -> Optional[bool]:
+    """Statically evaluate simple boolean constants and conditions."""
+    if isinstance(node, ast.Constant):
+        return bool(node.value)
+    if isinstance(node, ast.Name):
+        if node.id == "False":
+            return False
+        if node.id == "True":
+            return True
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.Not):
+        sub = _eval_static_bool(node.operand)
+        if sub is not None:
+            return not sub
+    if isinstance(node, ast.Compare) and len(node.ops) == 1 and len(node.comparators) == 1:
+        left = node.left
+        right = node.comparators[0]
+        if isinstance(left, ast.Constant) and isinstance(right, ast.Constant):
+            if isinstance(node.ops[0], ast.Eq):
+                return left.value == right.value
+            if isinstance(node.ops[0], ast.NotEq):
+                return left.value != right.value
+    return None
+
+
+def _extract_de_target(source: str) -> Optional[str]:
+    """Extract root variable name of the data object passed to the DE call."""
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return None
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call):
+            name = _call_name(node).lower()
+            if "rank_genes_groups" in name or "deseq" in name or "edger" in name:
+                target_node = None
+                if node.args:
+                    target_node = node.args[0]
+                elif node.keywords:
+                    for kw in node.keywords:
+                        if kw.arg in ("adata", "data", "counts", "x"):
+                            target_node = kw.value
+                            break
+                if target_node is not None:
+                    return _extract_root_var(target_node)
+    return None
+
+
 class _DonorAggregationVisitor(ast.NodeVisitor):
-    """Walk executed code only: skip uncalled defs; ignore string/docstring literals."""
+    """Walk executed code only: skip uncalled defs; ignore string/docstring literals; skip dead branches."""
 
     def __init__(self, called: Set[str]) -> None:
         self.called = called
         self.found = False
+        self.pseudobulk_vars: Set[str] = set()
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
         if node.name in self.called:
@@ -304,22 +368,54 @@ class _DonorAggregationVisitor(ast.NodeVisitor):
         if node.name in self.called:
             self.generic_visit(node)
 
+    def visit_If(self, node: ast.If) -> None:
+        # Static dead branch detection: do not traverse unexecuted branch
+        test_val = _eval_static_bool(node.test)
+        if test_val is False:
+            for stmt in node.orelse:
+                self.visit(stmt)
+            return
+        elif test_val is True:
+            for stmt in node.body:
+                self.visit(stmt)
+            return
+        self.generic_visit(node)
+
+    def visit_Assign(self, node: ast.Assign) -> None:
+        if isinstance(node.value, ast.Call):
+            name = _call_name(node.value).lower()
+            if "pseudobulk" in name:
+                for t in node.targets:
+                    root = _extract_root_var(t)
+                    if root:
+                        self.pseudobulk_vars.add(root)
+            elif name == "groupby":
+                receiver = ""
+                if isinstance(node.value.func, ast.Attribute):
+                    receiver = _extract_root_var(node.value.func.value) or ""
+                if receiver.lower() not in {"metadata", "obs", "meta", "df", "samples", "sample_sheet", "sample_metadata"}:
+                    args = list(node.value.args) + [kw.value for kw in node.value.keywords]
+                    if any(_is_donor_key_node(arg) for arg in args):
+                        for t in node.targets:
+                            root = _extract_root_var(t)
+                            if root:
+                                self.pseudobulk_vars.add(root)
+        self.generic_visit(node)
+
     def visit_Call(self, node: ast.Call) -> None:
         name = _call_name(node).lower()
-        if "pseudobulk" in name:
-            self.found = True
-        elif name == "groupby":
-            args = list(node.args) + [kw.value for kw in node.keywords]
-            if any(_is_donor_key_node(arg) for arg in args):
-                self.found = True
+        if "pseudobulk" in name and node.args:
+            root = _extract_root_var(node.args[0])
+            if root:
+                self.pseudobulk_vars.add(root)
         self.generic_visit(node)
 
 
-def _has_donor_level_aggregation(source: str) -> bool:
-    """True only if executed code performs donor-level aggregation.
+def _has_donor_level_aggregation(source: str, de_target: Optional[str] = None) -> bool:
+    """True only if executed code performs donor-level aggregation that feeds the DE analysis.
 
-    Comments, string literals, docstrings, uncalled functions, and plot
-    kwargs such as ``sc.pl.violin(..., groupby='donor')`` do not count.
+    Comments, string literals, docstrings, uncalled functions, dead branches,
+    and metadata-only grouping do not count.
     """
     try:
         tree = ast.parse(source)
@@ -327,7 +423,9 @@ def _has_donor_level_aggregation(source: str) -> bool:
         return bool(_PSEUDOBULK_CALL_RE.search(_strip_code_comments(source)))
     visitor = _DonorAggregationVisitor(_called_function_names(tree))
     visitor.visit(tree)
-    return visitor.found
+    if de_target:
+        return de_target in visitor.pseudobulk_vars
+    return bool(visitor.pseudobulk_vars)
 
 
 def _strip_code_comments(source: str) -> str:
@@ -386,7 +484,8 @@ def audit_analysis(path: str | Path) -> AnalysisAuditResult:
     de_cell = cell_of(_DE_CALL)
     if de_cell is not None:
         cond_groupby = _CONDITION_GROUPBY.search(de_cell.source)
-        has_donor_aggregation = _has_donor_level_aggregation(code)
+        de_target = _extract_de_target(de_cell.source)
+        has_donor_aggregation = _has_donor_level_aggregation(code, de_target=de_target)
         if cond_groupby and not has_donor_aggregation:
             findings.append(
                 _finding(

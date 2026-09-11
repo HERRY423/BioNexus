@@ -318,4 +318,56 @@ def test_no_proprietary_interchange_format_claim():
     exporters = [n for n in public if n.startswith("export_")]
     # export_workflow_run_crate (BNS-IO-014) is the Workflow Run RO-Crate
     # Research Object bundle export -- still a published community standard.
-    assert set(exporters) == {"export_ro_crate", "export_bco", "export_workflow_run_crate"}
+    assert set(exporters) == {
+        "export_ro_crate",
+        "export_bco",
+        "export_workflow_run_crate",
+        "export_de_audit_to_rocrate",
+    }
+
+
+def test_export_de_audit_to_rocrate(tmp_path):
+    from bionexus.interop import export_de_audit_to_rocrate, validate_ro_crate
+
+    dummy_report = {
+        "overall_status": "ROBUST_PASS",
+        "passed": True,
+        "summary_counts": {"blocker": 0, "high_impact": 0, "advisory": 1},
+        "cohort_summary": {"n_donors": 12, "n_cells": 5000},
+        "findings": [
+            {
+                "check_id": "CHK_01",
+                "severity": "ADVISORY",
+                "title": "Minor batch variation",
+                "problem": "Slight donor batch effect detected",
+                "fix_code": "adata.obs['batch'] = batch_covariate",
+            }
+        ],
+        "claim_boundary": {
+            "allowed_scope": "Condition-specific cell-state shift",
+            "prohibited_scope": "Cellular proliferation claim",
+        },
+    }
+
+    deg_file = tmp_path / "degs.csv"
+    deg_file.write_text("gene,log2fc,pval\nTP53,2.1,0.001\n", encoding="utf-8")
+
+    out_crate = tmp_path / "de_crate_out"
+    res = export_de_audit_to_rocrate(
+        audit_report=dummy_report,
+        output_dir=out_crate,
+        associated_files={"results/degs.csv": deg_file},
+        zip_archive=True,
+    )
+
+    assert res.verified is True
+    assert res.files_copied == 3
+    assert (out_crate / "ro-crate-metadata.json").is_file()
+    assert (out_crate / "de_audit_report.json").is_file()
+    assert (out_crate / "audit_summary.md").is_file()
+    assert (out_crate / "results" / "degs.csv").is_file()
+    assert res.zip_path is not None and res.zip_path.is_file()
+
+    meta_doc = json.loads((out_crate / "ro-crate-metadata.json").read_text(encoding="utf-8"))
+    assert validate_ro_crate(meta_doc) == []
+

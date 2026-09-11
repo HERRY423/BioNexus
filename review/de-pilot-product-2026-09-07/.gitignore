@@ -1,0 +1,4 @@
+# Local packaging smoke artifacts, not source or laboratory evidence.
+dist/
+wheel-install/
+wheel-install-final/

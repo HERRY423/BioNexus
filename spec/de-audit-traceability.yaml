@@ -1,0 +1,134 @@
+scope: Bounded DE input, warrant, audit-status and bundle-consumer engineering profile. Passing mapped tests is
+  not whole-BNS conformance, independent validation or certification.
+requirements:
+  BNS-II-001:
+    scope_note: Numeric gate only; integer-likeness cannot authenticate biological raw-count provenance.
+    positive_tests:
+    - tests/unit/test_de_requirement_boundaries.py::test_actual_counts_accept_integer_valued_float_and_sparse_inputs
+    negative_tests:
+    - tests/unit/test_de_requirement_boundaries.py::test_actual_counts_reject_negative_nonfinite_and_transformed_values
+    evidence:
+    - kind: implementation
+      target: src/bionexus/integrity.py::require_raw_count_matrix
+    - kind: test
+      target: tests/unit/test_de_requirement_boundaries.py::test_actual_counts_accept_integer_valued_float_and_sparse_inputs
+    - kind: test
+      target: tests/unit/test_de_requirement_boundaries.py::test_actual_counts_reject_negative_nonfinite_and_transformed_values
+  BNS-II-002:
+    scope_note: Strict raw-count input gate; no model is executed by these tests, and no automatic raw/X substitution
+      is allowed.
+    positive_tests:
+    - tests/unit/test_de_requirement_boundaries.py::test_explicit_counts_layer_is_returned_without_substitution
+    negative_tests:
+    - tests/unit/test_de_requirement_boundaries.py::test_missing_counts_layer_never_substitutes_even_integer_x
+    - tests/unit/test_de_requirement_boundaries.py::test_actual_counts_reject_negative_nonfinite_and_transformed_values
+    evidence:
+    - kind: implementation
+      target: src/bionexus/integrity.py::require_counts_layer
+    - kind: test
+      target: tests/unit/test_de_requirement_boundaries.py::test_explicit_counts_layer_is_returned_without_substitution
+    - kind: test
+      target: tests/unit/test_de_requirement_boundaries.py::test_missing_counts_layer_never_substitutes_even_integer_x
+    - kind: test
+      target: tests/unit/test_de_requirement_boundaries.py::test_actual_counts_reject_negative_nonfinite_and_transformed_values
+  BNS-II-003:
+    scope_note: Dense and sparse actual values including invalid values at the final position; not filename or metadata
+      inference.
+    positive_tests:
+    - tests/unit/test_de_requirement_boundaries.py::test_actual_counts_accept_integer_valued_float_and_sparse_inputs
+    negative_tests:
+    - tests/unit/test_de_requirement_boundaries.py::test_actual_counts_reject_negative_nonfinite_and_transformed_values
+    evidence:
+    - kind: implementation
+      target: src/bionexus/integrity.py::require_raw_count_matrix
+    - kind: test
+      target: tests/unit/test_de_requirement_boundaries.py::test_actual_counts_accept_integer_valued_float_and_sparse_inputs
+    - kind: test
+      target: tests/unit/test_de_requirement_boundaries.py::test_actual_counts_reject_negative_nonfinite_and_transformed_values
+  BNS-II-010:
+    scope_note: Bounded warrant checks consume declared donor metadata; they do not independently authenticate donor
+      identity.
+    positive_tests:
+    - tests/unit/test_pseudobulk_inferential_warrant.py::test_population_inference_regime
+    negative_tests:
+    - tests/unit/test_pseudobulk_inferential_warrant.py::test_abstain_unreplicated_regime
+    - tests/unit/test_pseudobulk_inferential_warrant.py::test_abstain_confounded_design
+    evidence:
+    - kind: implementation
+      target: src/bionexus/pseudobulk_warrant.py::evaluate_pseudobulk_inferential_warrant
+    - kind: test
+      target: tests/unit/test_pseudobulk_inferential_warrant.py::test_population_inference_regime
+    - kind: test
+      target: tests/unit/test_pseudobulk_inferential_warrant.py::test_abstain_unreplicated_regime
+    - kind: test
+      target: tests/unit/test_pseudobulk_inferential_warrant.py::test_abstain_confounded_design
+  BNS-EM-003:
+    scope_note: 'EvidenceCard core: untested stays distinct from tested fragile or conflicted evidence.'
+    positive_tests:
+    - tests/unit/test_evidence_card.py::test_evidence_card_defaults_and_serialization
+    negative_tests:
+    - tests/unit/test_evidence_card.py::test_layer2_untested_vs_conflicted_distinction
+    evidence:
+    - kind: implementation
+      target: src/bionexus/contracts.py::synthesize_conclusion_maturity
+    - kind: test
+      target: tests/unit/test_evidence_card.py::test_evidence_card_defaults_and_serialization
+    - kind: test
+      target: tests/unit/test_evidence_card.py::test_layer2_untested_vs_conflicted_distinction
+  BNS-FW-008:
+    scope_note: Passive DE audit status boundary only. The positive test uses synthetic self-declared execution
+      metadata; ROBUST_PASS is the legacy audit status, not verified producer identity or independent scientific
+      warrant.
+    positive_tests:
+    - tests/unit/test_de_audit.py::test_deseq2_with_verified_execution_record_achieves_pass
+    negative_tests:
+    - tests/unit/test_de_audit.py::test_no_input_is_not_assessed
+    - tests/unit/test_de_audit.py::test_de_table_format_recognized_requires_execution_binding_for_pass
+    - tests/unit/test_de_audit.py::test_failed_fit_status_blocks_and_issues_bfa013b
+    evidence:
+    - kind: implementation
+      target: src/bionexus/de_audit.py::DEAuditEngine._compute_overall_status
+    - kind: implementation
+      target: src/bionexus/de_audit.py::DEAuditEngine._verify_execution_binding
+    - kind: test
+      target: tests/unit/test_de_audit.py::test_deseq2_with_verified_execution_record_achieves_pass
+    - kind: test
+      target: tests/unit/test_de_audit.py::test_no_input_is_not_assessed
+    - kind: test
+      target: tests/unit/test_de_audit.py::test_de_table_format_recognized_requires_execution_binding_for_pass
+    - kind: test
+      target: tests/unit/test_de_audit.py::test_failed_fit_status_blocks_and_issues_bfa013b
+  BNS-PV-008:
+    scope_note: Consumer hash consistency only; a rewritten manifest requires an external expected hash to detect,
+      and no producer/scientific authority is granted.
+    positive_tests:
+    - tests/unit/test_de_bundle.py::test_new_writer_and_old_reader_contract
+    negative_tests:
+    - tests/unit/test_de_bundle.py::test_any_changed_immutable_file_rejected
+    - tests/unit/test_de_bundle.py::test_rewriting_hashes_requires_external_anchor_to_detect
+    - tests/unit/test_de_bundle.py::test_unknown_or_contradictory_audit_is_not_success
+    evidence:
+    - kind: implementation
+      target: src/bionexus/de_bundle.py::verify_de_bundle
+    - kind: test
+      target: tests/unit/test_de_bundle.py::test_new_writer_and_old_reader_contract
+    - kind: test
+      target: tests/unit/test_de_bundle.py::test_any_changed_immutable_file_rejected
+    - kind: test
+      target: tests/unit/test_de_bundle.py::test_rewriting_hashes_requires_external_anchor_to_detect
+    - kind: test
+      target: tests/unit/test_de_bundle.py::test_unknown_or_contradictory_audit_is_not_success
+  BNS-EM-007:
+    limitation: Independent calibration of DE audit outcomes is not established by these synthetic/local tests.
+    evidence:
+    - kind: gap
+      target: NOT_ESTABLISHED
+      note: Independent calibration of DE audit outcomes is not established by these synthetic/local tests.
+  BNS-PV-009:
+    limitation: Readers detect byte mismatch and preserve prior bundles, but filesystem-enforced immutable storage
+      and independently anchored append-only provenance are not established by this profile.
+    evidence:
+    - kind: gap
+      target: NOT_ESTABLISHED
+      note: Readers detect byte mismatch and preserve prior bundles, but filesystem-enforced immutable storage and
+        independently anchored append-only provenance are not established by this profile.

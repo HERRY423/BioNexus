@@ -528,9 +528,19 @@ class DeterministicClaimParser:
         else:
             forward_verb_match = None
             for verb_pat in cls._CAUSAL_VERBS_FORWARD:
-                m = re.search(verb_pat, clean_text, re.IGNORECASE)
-                if m:
+                for m in re.finditer(verb_pat, clean_text, re.IGNORECASE):
+                    if m.group(0).lower().startswith("control"):
+                        # Ensure 'control' is not acting as a comparison/experimental condition noun
+                        start, end = m.span()
+                        before = clean_text[:start].lower()
+                        after = clean_text[end:].lower()
+                        if any(before.rstrip().endswith(w) for w in ("versus", "vs", "vs.", "-", "negative", "positive", "healthy", "untreated")):
+                            continue
+                        if any(after.lstrip().startswith(w) for w in ("group", "sample", "condition", "arm", "cell", "donor", "result", "level", "cohort", "well", "plate", "run")):
+                            continue
                     forward_verb_match = m
+                    break
+                if forward_verb_match:
                     break
 
             passive_verb_match = None
@@ -719,10 +729,17 @@ class DeterministicClaimParser:
                     norm_explicit = ClaimClass.CELL_IDENTITY
                 elif s == "association":
                     norm_explicit = ClaimClass.ASSOCIATION
-                elif s in ("technical", "model_fidelity"):
-                    norm_explicit = ClaimClass.MODEL_FIDELITY
                 elif s == "descriptive":
                     norm_explicit = ClaimClass.DESCRIPTIVE
+                else:
+                    try:
+                        norm_explicit = ClaimClass(s)
+                    except ValueError:
+                        # Model fidelity is a relationship, not a supported
+                        # claim class. Preserve unsupported input for review;
+                        # never invent a class or silently infer an easier one.
+                        norm_explicit = ClaimClass.UNSPECIFIED
+                        meta_dict["unsupported_explicit_claim_class"] = str(explicit_claim_class)
 
             if isinstance(norm_explicit, ClaimClass):
                 if norm_explicit != claim_class:
@@ -830,6 +847,28 @@ class DeterministicWarrantEngine:
         evidence_gaps: List[str] = []
         remedies: List[str] = []
         rule_violations: List[str] = []
+
+        if claim.claim_class == ClaimClass.UNSPECIFIED:
+            # Unsupported explicit classes cannot inherit a descriptive pass,
+            # including through the negated-statement shortcut below.
+            return WarrantEvaluationResult(
+                claim_id=claim.claim_id,
+                is_fully_warranted=False,
+                requested_claim_class=claim.claim_class.value,
+                warranted_claim_class=ClaimClass.UNSPECIFIED.value,
+                evidence_ceiling=ConclusionMaturity.UNASSESSED.value,
+                tier_verdicts={"claim_class": WarrantTierVerdict(
+                    tier_name="claim_class", status=WarrantTierStatus.NOT_WARRANTED,
+                    is_warranted=False, rationale="A supported claim class must be specified.",
+                    missing_evidence=["supported_claim_class"],
+                )},
+                evidence_gaps=["supported_claim_class"],
+                remedies=["Specify a supported claim class and re-evaluate."],
+                rule_violations=["UNSPECIFIED_CLAIM_CLASS"],
+                epistemic_summary="Claim class is unspecified or unsupported; warrant was not established.",
+                has_claim_conflict=bool(claim.metadata.get("has_claim_conflict", False)),
+                conflict_details=claim.metadata.get("conflict_details"),
+            )
 
         # If claim is explicitly negated (e.g. "cannot prove drug caused DEGs"),
         # it is epistemically honest and immediately warranted!

@@ -1,0 +1,99 @@
+{
+  "status": "COMPLETED_LOCAL_ENGINEERING_VALIDATION",
+  "python": "3.13.9",
+  "full_unit_profile": {
+    "passed": 1492,
+    "skipped": [
+      {
+        "test": "tests.unit.test_de_bundle::test_symlink_cannot_escape_bundle",
+        "reason": "Creating symlinks is unavailable on this host"
+      },
+      {
+        "test": "tests.unit.test_slurm_gates::test_all_gates_pass_chain_exits_zero",
+        "reason": "Slurm gate-chain contract requires a POSIX bash environment"
+      },
+      {
+        "test": "tests.unit.test_slurm_gates::test_refused_preflight_blocks_analysis_and_propagates_exit_one",
+        "reason": "Slurm gate-chain contract requires a POSIX bash environment"
+      },
+      {
+        "test": "tests.unit.test_slurm_gates::test_missing_evidence_exit_two_propagates",
+        "reason": "Slurm gate-chain contract requires a POSIX bash environment"
+      },
+      {
+        "test": "tests.unit.test_slurm_gates::test_failed_analysis_skips_verify_gate",
+        "reason": "Slurm gate-chain contract requires a POSIX bash environment"
+      },
+      {
+        "test": "tests.unit.test_slurm_gates::test_rejected_results_fail_the_job_despite_good_compute",
+        "reason": "Slurm gate-chain contract requires a POSIX bash environment"
+      },
+      {
+        "test": "tests.unit.test_slurm_gates::test_chain_script_requires_three_arguments",
+        "reason": "Slurm gate-chain contract requires a POSIX bash environment"
+      }
+    ],
+    "deselected": 1,
+    "excluded_file": "tests/unit/test_scvi_smoke.py",
+    "line_percent": 79.70399933482996,
+    "branch_percent": 65.24236158970825
+  },
+  "fixed_core_profile": {
+    "passed": 191,
+    "skipped": 1,
+    "coverage_gate": "PASSED",
+    "seed": 20260911,
+    "modules": {
+      "src/bionexus/claim_semantics.py": {
+        "line_percent": 85.76271186440678,
+        "branch_percent": 71.09375
+      },
+      "src/bionexus/contracts.py": {
+        "line_percent": 80.11363636363636,
+        "branch_percent": 61.29032258064516
+      },
+      "src/bionexus/de_audit.py": {
+        "line_percent": 65.42792792792793,
+        "branch_percent": 54.255319148936174
+      },
+      "src/bionexus/de_bundle.py": {
+        "line_percent": 87.5,
+        "branch_percent": 87.03703703703704
+      },
+      "src/bionexus/evidence_model.py": {
+        "line_percent": 84.23423423423424,
+        "branch_percent": 77.90697674418605
+      },
+      "src/bionexus/warrant.py": {
+        "line_percent": 95.96774193548387,
+        "branch_percent": 80.55555555555556
+      }
+    }
+  },
+  "type_gate": {
+    "modules": 6,
+    "result": "PASSED",
+    "initial_errors": 16,
+    "third_party_types": "OUTSIDE_PROFILE"
+  },
+  "cli": {
+    "before_lines": 4852,
+    "after_lines": 1349,
+    "command_modules": 11,
+    "compatibility_tests_passed": 21,
+    "wheel_smoke": "PASSED_WITH_HOST_DEPENDENCIES"
+  },
+  "de_traceability": {
+    "tests_passed": 21,
+    "tested_requirements": 7,
+    "acknowledged_gaps": [
+      "BNS-EM-007",
+      "BNS-PV-009"
+    ],
+    "source_hashes_match_current": true,
+    "scientific_authorization": "NONE"
+  },
+  "hosted_ci": "NOT_RUN_OR_VERIFIED",
+  "initial_full_baseline": "INTERRUPTED_NOT_PASS_EVIDENCE",
+  "existing_worktree": "Pre-existing uncommitted work retained; no commit or push performed"
+}

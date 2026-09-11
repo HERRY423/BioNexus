@@ -1,5 +1,20 @@
 # BioNexus Product Matrix & Scope Boundaries
 
+## First laboratory product
+
+**Pre-submission shadow review of multi-donor single-cell differential expression.**
+The first adoption path receives existing DE results, a sample sheet and a claim,
+then returns located findings, missing evidence, suggested repairs and human review
+items. `audit-de --bundle` packages the review; `audit-de-summary` describes
+human-entered pilot observations. Error reduction and time savings are hypotheses
+to measure, not established product outcomes.
+
+The first pilot covers this bounded review workflow. It does not require pipeline
+migration, an autonomous agent, LIMS writes, clinical use, cell-type assignment or
+institution-wide certification. Other capabilities below retain their existing
+evidence limits. See [first use](quickstart-shadow-audit.md) and
+[pilot measurement](de-pilot-guide.zh-CN.md).
+
 BioNexus is the **Scientific Reliability Layer / Scientific Warrant Engine** for
 agentic biology: it assesses what the evidence warrants (policy-independent),
 caps claims that exceed their evidence, and blocks execution only where a true

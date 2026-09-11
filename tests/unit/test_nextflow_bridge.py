@@ -214,3 +214,31 @@ def test_nfcore_launch_extended_pipelines(tmp_path: Path):
         assert cmd[0] == "nextflow"
         assert cmd[1] == "run"
         assert cmd[2] == f"nf-core/{p}"
+
+
+def test_generate_nextflow_elastic_config():
+    """Verify Nextflow elastic configuration generator outputs dynamic resource retry DSL."""
+    from bionexus.nextflow_bridge import generate_nextflow_elastic_config
+
+    cfg = generate_nextflow_elastic_config(
+        base_memory_gb=32,
+        base_cpus=8,
+        max_memory_gb=512,
+        max_retries=4,
+        custom_params={"input_dir": "/mnt/data/fastqs"},
+    )
+
+    assert "manifest {" in cfg
+    assert "params {" in cfg
+    assert "max_memory = '512.GB'" in cfg
+    assert "input_dir = '/mnt/data/fastqs'" in cfg
+    assert "errorStrategy = { task.exitStatus in [137, 140, 143] ? 'retry' : 'finish' }" in cfg
+    assert "maxRetries = 4" in cfg
+    assert "memory = { check_max( 32.GB * task.attempt, 'memory' ) }" in cfg
+    assert "cpus = { check_max( 8 * task.attempt, 'cpus' ) }" in cfg
+    assert "awsbatch {" in cfg
+    assert "googlebatch {" in cfg
+    assert "seqera_tower {" in cfg
+    assert "slurm {" in cfg
+    assert "def check_max(obj, type)" in cfg
+

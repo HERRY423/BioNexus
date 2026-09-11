@@ -1,0 +1,43 @@
+{
+  "mypy": {
+    "command": [
+      "C:\\Users\\13264\\anaconda3\\python.exe",
+      "-m",
+      "mypy"
+    ],
+    "exit_code": 0,
+    "stdout": "Success: no issues found in 6 source files\n",
+    "stderr": ""
+  },
+  "ruff": {
+    "command": [
+      "C:\\Users\\13264\\anaconda3\\python.exe",
+      "-m",
+      "ruff",
+      "check",
+      "."
+    ],
+    "exit_code": 0,
+    "stdout": "All checks passed!\n",
+    "stderr": "warning: Encountered error: 拒绝访问。 (os error 5)\n"
+  },
+  "registry": {
+    "command": [
+      "C:\\Users\\13264\\anaconda3\\python.exe",
+      "scripts/registry_compiler.py",
+      "--check"
+    ],
+    "exit_code": 0,
+    "stdout": "\n=== Checking for Configuration Drift ===\n[OK] All platform manifests are strictly in sync with bionexus.registry.yaml.\n[OK] Plugin mirror trees (plugins/bionexus/skills, scripts) are byte-identical to the canonical root.\n",
+    "stderr": ""
+  },
+  "bundle_compatibility": {
+    "command": [
+      "C:\\Users\\13264\\anaconda3\\python.exe",
+      "scripts/check_de_bundle_contract.py"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"status\": \"PASS\",\n  \"reader\": \"C:\\\\Plugin\\\\BioNexus\\\\src\\\\bionexus\\\\de_bundle.py\",\n  \"installed_wheel\": false,\n  \"checks\": [\n    \"packaged_schemas\",\n    \"frozen_legacy_bytes\",\n    \"legacy_limit\",\n    \"profile_consistency\",\n    \"tampered_human_report\",\n    \"unknown_schema\",\n    \"no_scientific_authority\"\n  ]\n}\n",
+    "stderr": ""
+  }
+}

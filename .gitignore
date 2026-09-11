@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *.class
+*.log
 
 # C extensions
 *.so
@@ -151,6 +152,7 @@ figures/
 !interoperability/bns019/trial/results/**
 
 # Temporary test & eval runs
+.quality/
 .phase2-pytest-*/
 _evaluation_*/
 _eval_*/

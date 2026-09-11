@@ -1,0 +1,108 @@
+{
+  "schema": "bionexus.de-external-summary.v1",
+  "study_id": "SYNTHETIC_SOFTWARE_REHEARSAL",
+  "plan_sha256": "8bc1a4da720e52588f2e685d40eca4b594c5bbd8e53ccf48a6ff9bc32c247b17",
+  "observations_sha256": "b0bd8ec9dedd40fbb64d576003e8a72d4be95192d41b3850d99ac702004fcda1",
+  "plan_anchor": "MATCHED",
+  "registered_tasks": 1,
+  "declared_holdout_tasks": 0,
+  "reported_sites": 0,
+  "dataset_groups": 0,
+  "excluded_tasks": 1,
+  "unresolved_reference_tasks": 0,
+  "metrics": {
+    "baseline": {
+      "invalid_tasks": 0,
+      "valid_tasks": 0,
+      "false_accepts": 0,
+      "false_holds_or_failures": 0,
+      "valid_retained": 0,
+      "missing_invalid": 0,
+      "missing_valid": 0,
+      "false_accept_rate": null,
+      "false_hold_rate": null,
+      "false_accept_rate_worst_case": null,
+      "false_hold_rate_worst_case": null,
+      "failures": 0,
+      "missing": 0
+    },
+    "assisted": {
+      "invalid_tasks": 0,
+      "valid_tasks": 0,
+      "false_accepts": 0,
+      "false_holds_or_failures": 0,
+      "valid_retained": 0,
+      "missing_invalid": 0,
+      "missing_valid": 0,
+      "false_accept_rate": null,
+      "false_hold_rate": null,
+      "false_accept_rate_worst_case": null,
+      "false_hold_rate_worst_case": null,
+      "failures": 0,
+      "missing": 0
+    }
+  },
+  "by_task_family": {},
+  "joint_error_reduction_observed": null,
+  "fully_costed_tasks": 0,
+  "joint_quality_and_time_gain_observed": null,
+  "recorded_person_minutes_saved": null,
+  "installation_allocation": "INCOMPLETE",
+  "cohort_person_minutes_saved": null,
+  "external_validation": "NOT_ESTABLISHED",
+  "net_benefit": "NOT_ESTABLISHED",
+  "scientific_authorization": "NONE",
+  "cases": [
+    {
+      "case_id": "DEMO",
+      "task_family": "SYNTHETIC",
+      "site_id": "NO_LAB",
+      "packet_sha256": "4bda30da6046f5eee3753947709ff6ec1e5d292d618fdf1aa34e5055d2ecb424",
+      "dataset_sha256": "4bda30da6046f5eee3753947709ff6ec1e5d292d618fdf1aa34e5055d2ecb424",
+      "data_origin": "SYNTHETIC_DEMO",
+      "not_used_in_development": false,
+      "eligible_declared_holdout": false,
+      "reference_label": "UNRESOLVED",
+      "limitations": [
+        "fewer_than_two_reference_reviewers",
+        "reference_disagreement_or_missing",
+        "synthetic_demo",
+        "development_overlap"
+      ],
+      "decisions": {
+        "baseline": "MISSING",
+        "assisted": "MISSING"
+      },
+      "costs": {
+        "status": "INCOMPLETE",
+        "minutes_saved": null,
+        "totals": {
+          "baseline": null,
+          "assisted": null
+        },
+        "missing": [
+          "baseline.installation",
+          "baseline.review",
+          "baseline.false_alarm_handling",
+          "baseline.repair",
+          "baseline.communication",
+          "assisted.installation",
+          "assisted.review",
+          "assisted.false_alarm_handling",
+          "assisted.repair",
+          "assisted.communication"
+        ],
+        "allocation_note": null,
+        "measurement_authentication": "NOT_ESTABLISHED"
+      }
+    }
+  ],
+  "limitations": [
+    "Independence, blinding, timestamps and time logs are declarations, not authenticated evidence.",
+    "Unknown references are retained, not relabeled; failure is a lost valid conclusion when reference is valid.",
+    "Missing outputs remain in registered denominators with worst-case rates.",
+    "Rates are descriptive, not confidence intervals; correlated tasks are not independent replicates.",
+    "Person-minutes exclude money, compute and scientific harm; no total economic-benefit claim.",
+    "A local plan hash is not public preregistration; external verification uses trust_evidence/validation_network."
+  ]
+}

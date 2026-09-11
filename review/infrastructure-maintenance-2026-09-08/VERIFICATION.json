@@ -1,0 +1,25 @@
+{
+  "wheel_sha256": "f2839bceccb3c80b40a6436ce621b12682735616cb57ad43a9f9153b8331ad20",
+  "installed_files_match_source": {
+    "de_bundle.py": true,
+    "de_pilot.py": true,
+    "cli.py": true,
+    "data/de-shadow-bundle.schema.json": true,
+    "data/de-bundle-verification.schema.json": true
+  },
+  "tests": {
+    "passed": 65,
+    "skipped": 1,
+    "skip_reason": "Windows host cannot create symlink"
+  },
+  "source_contract_gate": "PASS",
+  "installed_wheel_contract_gate": "PASS",
+  "installed_demo_audit_status": "NEEDS_REVISION",
+  "installed_demo_bundle_integrity": "CONSISTENT",
+  "legacy_fixture_integrity": "LEGACY_LIMITED",
+  "summary_included_cases": 0,
+  "installation_scope": "pip --no-deps --no-index --target; existing dependencies reused, not clean-machine validation",
+  "hosted_ci": "NOT_RUN",
+  "published": "NO",
+  "scientific_rule_fixes": "NOT_PART_OF_THIS_CHANGE"
+}

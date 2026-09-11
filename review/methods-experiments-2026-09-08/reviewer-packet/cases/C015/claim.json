@@ -1,0 +1,5 @@
+{
+  "case_id": "C015",
+  "claim": "For this completed analysis, no genes were significant after FDR correction in the supplied result.",
+  "scope": "Completed supplied analysis only; evaluate whether evidence supports the exact statement."
+}

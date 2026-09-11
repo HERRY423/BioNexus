@@ -487,3 +487,17 @@ def test_explicit_claim_class_conflict_preservation():
     assert verdict.conflict_details is not None
     assert verdict.requested_claim_class == ClaimClass.POPULATION_EFFECT.value
 
+
+def test_unsupported_explicit_claim_class_never_crashes_or_inherits_a_pass():
+    for requested in ("technical", "model_fidelity", "populaton_effect", "unspecified"):
+        for text in ("Expression is associated with treatment", "Treatment does not cause disease"):
+            ir = DeterministicClaimParser.parse(text, explicit_claim_class=requested)
+            assert ir.claim_class == ClaimClass.UNSPECIFIED
+            if requested != "unspecified":
+                assert ir.metadata["unsupported_explicit_claim_class"] == requested
+            verdict = DeterministicWarrantEngine.evaluate(ir, EvidenceProfile(
+                observational_data=True, independent_validation=True, biological_replicates_count=10))
+            assert not verdict.is_fully_warranted
+            assert verdict.evidence_ceiling == "UNASSESSED"
+            assert "supported_claim_class" in verdict.evidence_gaps
+            assert not any(t.is_warranted for t in verdict.tier_verdicts.values())

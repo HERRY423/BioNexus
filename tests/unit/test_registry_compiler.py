@@ -87,11 +87,15 @@ def test_generate_claude_manifests():
     c_mcp = to_claude_mcp_json(registry)
 
     assert c_plugin["name"] == "bionexus-reliability"
+    assert c_plugin["license"] == "Apache-2.0"
+    assert c_plugin["skills"] == "./skills/"
+    assert c_plugin["mcpServers"] == "./.mcp.json"
     assert "mcpServers" in c_mcp
     servers = c_mcp["mcpServers"]
+    assert "bionexus-local-mcp" in servers
+    assert servers["bionexus-local-mcp"]["type"] == "stdio"
+    assert servers["bionexus-local-mcp"]["command"] == "python"
     assert "pubmed" not in servers
-    # Verify no bionexus-local-mcp in hosted-only Claude manifest and disabled benchling is absent
-    assert "bionexus-local-mcp" not in servers
     assert "benchling" not in servers
 
 

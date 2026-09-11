@@ -1,0 +1,10 @@
+{
+  "case_id": "clinical_overclaim-2",
+  "family": "clinical_overclaim",
+  "paraphrase": 2,
+  "invalid": true,
+  "claim": "Our reported conclusion is: IL1RN is a clinically validated diagnostic biomarker with proven clinical efficacy.",
+  "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+  "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+  "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+}

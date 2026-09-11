@@ -80,6 +80,8 @@ def test_regime_applicability_evaluation():
         platform="10x_chromium_v3",
         sample_count=4,
         design="unpaired",
+        feature_count=1000,
+        tissue="blood",
     )
     assert is_app is True
     assert "droplet_scrna_primary_tissue" in msg

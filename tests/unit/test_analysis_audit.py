@@ -60,7 +60,7 @@ def test_pseudobulk_not_flagged(tmp_path):
         tmp_path,
         [
             "pb = pseudobulk_aggregate(adata, groupby='donor_id')",
-            "sc.tl.rank_genes_groups(adata, groupby='condition')",
+            "sc.tl.rank_genes_groups(pb, groupby='condition')",
         ],
     )
     result = audit_analysis(nb)
@@ -292,3 +292,56 @@ def test_violin_groupby_donor_does_not_suppress_bfa001(tmp_path):
     result = audit_analysis(nb)
     assert not result.passed
     assert any(f.rule_id == "BFA-001" for f in result.findings)
+
+
+def test_dead_branch_pseudobulk_does_not_suppress_bfa001(tmp_path):
+    """Dead branch `if False:` containing pseudobulk must not suppress BFA-001."""
+    nb = _notebook(
+        tmp_path,
+        [
+            "if False:\n    pseudobulk_aggregate(adata)\nsc.tl.rank_genes_groups(adata, groupby='condition')",
+        ],
+    )
+    result = audit_analysis(nb)
+    assert not result.passed
+    assert any(f.rule_id == "BFA-001" for f in result.findings)
+
+
+def test_dead_branch_constant_falsy_does_not_suppress_bfa001(tmp_path):
+    """Dead branch `if 0:` containing pseudobulk must not suppress BFA-001."""
+    nb = _notebook(
+        tmp_path,
+        [
+            "if 0:\n    pseudobulk_aggregate(adata)\nsc.tl.rank_genes_groups(adata, groupby='condition')",
+        ],
+    )
+    result = audit_analysis(nb)
+    assert not result.passed
+    assert any(f.rule_id == "BFA-001" for f in result.findings)
+
+
+def test_sliced_adata_with_unrelated_pseudobulk_flags_bfa001(tmp_path):
+    """Calling DE on adata[subset] when pseudobulk was called on another object must flag BFA-001."""
+    nb = _notebook(
+        tmp_path,
+        [
+            "pb = pseudobulk_aggregate(other_data)\nsc.tl.rank_genes_groups(adata[subset], groupby='condition')",
+        ],
+    )
+    result = audit_analysis(nb)
+    assert not result.passed
+    assert any(f.rule_id == "BFA-001" for f in result.findings)
+
+
+def test_adata_copy_with_unrelated_pseudobulk_flags_bfa001(tmp_path):
+    """Calling DE on adata.copy() when pseudobulk was called on another object must flag BFA-001."""
+    nb = _notebook(
+        tmp_path,
+        [
+            "pb = pseudobulk_aggregate(other_data)\nsc.tl.rank_genes_groups(adata.copy(), groupby='condition')",
+        ],
+    )
+    result = audit_analysis(nb)
+    assert not result.passed
+    assert any(f.rule_id == "BFA-001" for f in result.findings)
+

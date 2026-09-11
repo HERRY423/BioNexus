@@ -1,0 +1,17 @@
+sample_id,donor,condition,n_cells
+101__ctrl,101,control,488
+101__stim,101,treated,692
+107__ctrl,107,control,327
+107__stim,107,treated,314
+1015__ctrl,1015,control,1588
+1015__stim,1015,treated,1504
+1016__ctrl,1016,control,690
+1016__stim,1016,treated,730
+1039__ctrl,1039,control,272
+1039__stim,1039,treated,388
+1244__ctrl,1244,control,1015
+1244__stim,1244,treated,944
+1256__ctrl,1256,control,1154
+1256__stim,1256,treated,1185
+1488__ctrl,1488,control,850
+1488__stim,1488,treated,1346

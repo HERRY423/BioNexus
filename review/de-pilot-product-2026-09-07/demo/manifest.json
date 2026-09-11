@@ -1,0 +1,10 @@
+{
+  "schema": "bionexus.de-shadow-bundle.v1",
+  "created_at": "2026-09-08T05:10:52.776667+00:00",
+  "bionexus_version": "1.0.0-rc.5",
+  "audit_sha256": "3271d3a479f98f1c748b1dc03d37a31faf84bb72b800114ea4d52c2ef92ae832",
+  "inputs": {},
+  "claim": "These genes are significantly differentially expressed after FDR correction.",
+  "data_origin": "SYNTHETIC_DEMO",
+  "scientific_authorization": "NONE"
+}

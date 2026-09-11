@@ -1,0 +1,13 @@
+{
+  "summary.json": "73e2833402a460033ac8e3b8137adfeff61df860eb7fa00fa0efbe49fcf2141f",
+  "coverage.after.json": "788eae639eb06cc0dff3e13a0c932cee40b0f3435d2f4c92c7c60111ae830418",
+  "tests.after.xml": "425c69a29f456eadbba40f67c1877f605ace21b7e0ab8d8cbcb8a71d07a85cb2",
+  "core-seeded/coverage.json": "c787619ff1d564e28635310cfcfe794f7aaf674518b4b85ef75a47ce99a68c09",
+  "core-seeded/tests.xml": "591b34b809f746667494ddf46f6793d1b2b21720c63eb09fa7313220bead7b79",
+  "de-final/report.json": "f2ac236d2f8aad5bfb530a25114b204b056938a49ddcc224ec2906c9dfe3cc7e",
+  "de-final/receipts.json": "97e72610216795c31d217afb056559e00e3d8761f5ccb35979c9d7c225149d8b",
+  "wheel-smoke.json": "0541b1021268db94c04d58ed868bd1dbc4c13fef5c3831b60dd380e89abd1547",
+  "dist/bionexus_reliability-1.0.0rc5-py3-none-any.whl": "d0c1e2a52c39e18163d3ed9a9b681618b130d539595e8b1f3b04cefda00f8f0a",
+  "static-final.json": "acf46a86615fec7824a6a0a64942602e64952e9559d2324591caffd41e71868f",
+  "REPORT.zh-CN.md": "4cdb669399beafb43632803c0b84feb4f85abaa42cf5eb415790924addf9255b"
+}

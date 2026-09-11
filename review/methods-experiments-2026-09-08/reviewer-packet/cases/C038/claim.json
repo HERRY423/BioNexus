@@ -1,0 +1,5 @@
+{
+  "case_id": "C038",
+  "claim": "For this completed analysis, the supplied result table is unchanged from the recorded execution output.",
+  "scope": "Completed supplied analysis only; evaluate whether evidence supports the exact statement."
+}

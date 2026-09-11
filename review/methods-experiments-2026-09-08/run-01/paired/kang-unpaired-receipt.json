@@ -1,0 +1,31 @@
+{
+  "cohort": "kang",
+  "model": "unpaired",
+  "method": "pydeseq2",
+  "design": "~ condition",
+  "statistical_unit": "donor",
+  "aggregation": "donor_pseudobulk",
+  "fit_status": "COMPLETE",
+  "result_sha256": "354bf2357be35bc4cd9e07670f63b54850323f2f262e01e30e26027cef960e97",
+  "counts_sha256": "5fbef52972513998e7b758e4fed9352f7cd848fb2192fd1f03e6e684742c4d2c",
+  "sample_metadata_sha256": "dfbababc9b6f1ee0c435bcdcc4037ec9dcb73ae95aca6a9758de81073c85226e",
+  "design_matrix_sha256": "82f50a43d43496788c473374b6ad04a8e37175a9e4af4be33eee0ff96cd0007e",
+  "design_rank": 2,
+  "residual_df": 14,
+  "design_matrix_columns": [
+    "Intercept",
+    "condition[T.treated]"
+  ],
+  "n_samples": 16,
+  "n_donors": 8,
+  "n_genes": 2000,
+  "significant": 1044,
+  "native_significant": 1044,
+  "n_nonfinite_p": 0,
+  "seconds": 4.503704899980221,
+  "warnings": [
+    "UserWarning: The dispersion trend curve fitting did not converge. Switching to a mean-based dispersion trend."
+  ],
+  "scientific_authority": "LOCAL_EXECUTION_NOT_EXTERNAL_ATTESTATION",
+  "fdr_method": "BH_on_all_finite_raw_pvalues"
+}

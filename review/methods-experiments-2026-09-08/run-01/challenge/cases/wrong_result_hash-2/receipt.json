@@ -1,0 +1,38 @@
+{
+  "cohort": "kang",
+  "model": "paired",
+  "method": "pydeseq2",
+  "design": "~ donor + condition",
+  "statistical_unit": "donor",
+  "aggregation": "donor_pseudobulk",
+  "fit_status": "COMPLETE",
+  "result_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "counts_sha256": "5fbef52972513998e7b758e4fed9352f7cd848fb2192fd1f03e6e684742c4d2c",
+  "sample_metadata_sha256": "dfbababc9b6f1ee0c435bcdcc4037ec9dcb73ae95aca6a9758de81073c85226e",
+  "design_matrix_sha256": "8c1acdf1fe1ac6a3c61c10d36cb322d527a13d3b1fe1f3a1592471e575c6698e",
+  "design_rank": 9,
+  "residual_df": 7,
+  "design_matrix_columns": [
+    "Intercept",
+    "donor[T.1015]",
+    "donor[T.1016]",
+    "donor[T.1039]",
+    "donor[T.107]",
+    "donor[T.1244]",
+    "donor[T.1256]",
+    "donor[T.1488]",
+    "condition[T.treated]"
+  ],
+  "n_samples": 16,
+  "n_donors": 8,
+  "n_genes": 2000,
+  "significant": 1219,
+  "native_significant": 1219,
+  "n_nonfinite_p": 0,
+  "seconds": 2.166756299964618,
+  "warnings": [
+    "UserWarning: The dispersion trend curve fitting did not converge. Switching to a mean-based dispersion trend."
+  ],
+  "scientific_authority": "LOCAL_EXECUTION_NOT_EXTERNAL_ATTESTATION",
+  "fdr_method": "BH_on_all_finite_raw_pvalues"
+}

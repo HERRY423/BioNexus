@@ -190,12 +190,13 @@ def _classification_of(trigger: Any) -> Optional[Any]:
 def _rule_basis_entry(trigger: Any) -> RuleBasisEntry:
     prov = getattr(trigger, "provenance", None)
     classification = _classification_of(trigger)
+    consensus = getattr(prov, "consensus", None)
     return RuleBasisEntry(
         rule_id=getattr(trigger, "condition_id", ""),
         category=classification.category.value if classification else "",
         description=getattr(trigger, "description", ""),
         citation=getattr(prov, "source_citation", "") if prov else "",
-        consensus=getattr(prov, "consensus", "").value if prov and getattr(prov, "consensus", None) else "",
+        consensus=str(getattr(consensus, "value", consensus)) if consensus else "",
     )
 
 

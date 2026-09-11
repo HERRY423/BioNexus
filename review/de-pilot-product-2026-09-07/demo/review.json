@@ -1,0 +1,36 @@
+{
+  "schema": "bionexus.de-pilot-review.v1",
+  "case_id": "demo",
+  "site_id": null,
+  "audit_sha256": "3271d3a479f98f1c748b1dc03d37a31faf84bb72b800114ea4d52c2ef92ae832",
+  "data_origin": "SYNTHETIC_DEMO",
+  "review_status": "PENDING",
+  "reviewer_name": null,
+  "reference_review": {
+    "reviewer_name": null,
+    "reviewed_before_audit": null,
+    "issues": null
+  },
+  "finding_judgments": [
+    {
+      "finding_id": "F001",
+      "rule_id": "BFA-003",
+      "title": "缺失 FDR 多重假设检验校正 (Missing FDR / Adjusted P-value)",
+      "judgment": null,
+      "reference_issue_id": null,
+      "note": null
+    }
+  ],
+  "timing": {
+    "comparison": null,
+    "baseline_review_minutes": null,
+    "assisted_review_minutes": null,
+    "setup_minutes": null,
+    "repair_minutes": null
+  },
+  "author_help_count": null,
+  "report_understood": null,
+  "claim_changed": null,
+  "would_reuse": null,
+  "reviewer_note": null
+}

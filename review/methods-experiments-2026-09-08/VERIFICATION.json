@@ -1,0 +1,33 @@
+{
+  "status": "PASS",
+  "checks": [
+    "simulate: completed, with all outputs retained",
+    "real-null: completed, with all outputs retained",
+    "paired: completed, with all outputs retained",
+    "challenge: completed, with all outputs retained",
+    "800 unique simulation seeds, 1600 paired method results; FDP denominators and finite p values verified",
+    "BH checked against SciPy implementation on 1000 independent random p values",
+    "Exact donor permutation checked against SciPy exhaustive 70 assignments for 25 genes",
+    "Independent second local execution reproduced 14 CSV artifacts byte-for-byte",
+    "All 54 case result hashes verified; all 12 valid cases match result, metadata and design receipt hashes",
+    "Current product source still matches pre-execution snapshot; no product fixes mixed into comparison",
+    "Reviewer packet contains only pending blank ratings; zero external review evidence"
+  ],
+  "reproduced_csv_files": [
+    "cross-cohort-signature.csv",
+    "kang-counts.csv",
+    "kang-metadata.csv",
+    "kang-paired-de.csv",
+    "kang-paired-design.csv",
+    "kang-unpaired-de.csv",
+    "kang-unpaired-design.csv",
+    "parse-counts.csv",
+    "parse-donor-signature-scores.csv",
+    "parse-metadata.csv",
+    "parse-paired-de.csv",
+    "parse-paired-design.csv",
+    "parse-unpaired-de.csv",
+    "parse-unpaired-design.csv"
+  ],
+  "verification_type": "LOCAL_COMPUTATIONAL_NOT_INDEPENDENT_LAB_VALIDATION"
+}

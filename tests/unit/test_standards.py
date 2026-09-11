@@ -75,6 +75,12 @@ def test_statuses_reflect_reality():
     assert ALIGNMENTS["ro-crate"].status == "implemented"
     assert ALIGNMENTS["bco"].status == "implemented"
     assert ALIGNMENTS["workflow-run-crate"].status == "implemented"
+    assert ALIGNMENTS["ga4gh-drs"].status == "implemented"
+    assert ALIGNMENTS["ga4gh-tes"].status == "implemented"
+    assert ALIGNMENTS["phenopackets"].status == "implemented"
+    assert ALIGNMENTS["ga4gh-drs"].verification == "repository_tested"
+    assert ALIGNMENTS["ga4gh-tes"].verification == "repository_tested"
+    assert ALIGNMENTS["phenopackets"].verification == "repository_tested"
     assert ALIGNMENTS["ro-crate"].verification == "third_party_tool_validated"
     assert ALIGNMENTS["workflow-run-crate"].verification == "third_party_tool_validated"
     # GA4GH remains tracked until an accountable external submission exists.

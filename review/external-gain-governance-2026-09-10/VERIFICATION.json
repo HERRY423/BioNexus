@@ -1,0 +1,28 @@
+{
+  "status": "LOCAL_IMPLEMENTATION_VERIFIED_EXTERNAL_GAIN_NOT_ESTABLISHED",
+  "verification_date": "2026-09-10",
+  "tests": {
+    "passed": 104,
+    "skipped": 1,
+    "failed": 0,
+    "skip_reason": "Windows symlink creation unavailable in test environment",
+    "scope": "8 targeted and related compatibility test modules; not the full suite"
+  },
+  "ruff": "PASS",
+  "git_diff_check": "PASS",
+  "registry_and_plugin_mirror_check": "PASS",
+  "legacy_de_bundle_contract_check": "PASS",
+  "rehearsal": "run-01/REHEARSAL.json",
+  "current_local_ivn_counts": {
+    "lab_studies": 0,
+    "reviews": 0,
+    "calibration_freezes": 0
+  },
+  "scientific_thresholds_recalibrated": false,
+  "hosted_ci": "NOT_RUN",
+  "installed_plugin_acceptance": "NOT_RUN",
+  "release_published": false,
+  "external_validation": "NOT_ESTABLISHED",
+  "net_benefit": "NOT_ESTABLISHED",
+  "scientific_authorization": "NONE"
+}

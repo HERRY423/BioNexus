@@ -1,0 +1,13 @@
+{
+  "source": "review/de-pilot-product-2026-09-07/verified-demo",
+  "origin": "SYNTHETIC_DEMO",
+  "purpose": "Frozen previous local writer compatibility; not scientific validation",
+  "sha256": {
+    "audit.json": "3271d3a479f98f1c748b1dc03d37a31faf84bb72b800114ea4d52c2ef92ae832",
+    "audit-full.md": "fe4e7125a30416911abbdffb5ddd12eed1750ae748fc36054d97911be73c40bc",
+    "REVIEW.md": "0b89068a5ce4bcafa70319abb78f316f5a844fe67696550bf88dad896bfc6f94",
+    "manifest.json": "67fed3189b6bd099e0e739b130c70ab6ca8b90f1bf96e798a8bc4dc67115db63",
+    "review.json": "5270fecefd90e9d509f60100d22eb9e1c5d9d70055edaa0035b4dd9016540b3d",
+    "reference-review.json": "ead6e822b13a5a8139f8f675da586d901c0b3f8a2d9d180f0689cc8ffaf33618"
+  }
+}

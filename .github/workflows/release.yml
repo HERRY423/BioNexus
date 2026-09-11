@@ -20,9 +20,8 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Release Tag (e.g. v0.10.0)'
+        description: 'Existing release tag to build and verify (must match package version)'
         required: true
-        default: 'v0.10.0'
 
 permissions:
   contents: write
@@ -34,12 +33,15 @@ jobs:
   build-and-release:
     name: Build, Verify Wheel & Publish Release
     runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag_name || github.ref_name }}
 
     steps:
       - name: Checkout Source
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          ref: refs/tags/${{ env.RELEASE_TAG }}
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v6
@@ -53,10 +55,12 @@ jobs:
       # -------------------------------------------------------------------
       - name: Version SSOT Check
         run: |
-          TAG="${{ github.ref_name }}"
-          if [ -z "$TAG" ] || [ "$TAG" = "main" ]; then
-            TAG="${{ github.event.inputs.tag_name }}"
+          TAG="$RELEASE_TAG"
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][A-Za-z0-9.-]+)?$ ]]; then
+            echo "[BLOCK] An explicit version tag is required."
+            exit 1
           fi
+          test "$(git rev-parse HEAD)" = "$(git rev-parse "refs/tags/${TAG}^{commit}")"
           VERSION="${TAG#v}"
           PYPROJECT_VERSION=$(python -c "import tomllib,pathlib; print(tomllib.loads(pathlib.Path('pyproject.toml').read_text(encoding='utf-8'))['project']['version'])")
           SOURCE_VERSION=$(python -c "import re,pathlib; m=re.search(r'VERSION\s*=\s*\"([^\"]+)\"', pathlib.Path('src/bionexus/versions.py').read_text(encoding='utf-8')); print(m.group(1))")
@@ -85,7 +89,14 @@ jobs:
       # -------------------------------------------------------------------
       - name: Unit Tests
         run: |
-          pytest tests/unit/ -q -p no:cacheprovider --ignore=tests/unit/test_scvi_smoke.py
+          pytest tests/unit/ -q -p no:cacheprovider -m "not flagship_data" --ignore=tests/unit/test_scvi_smoke.py
+          python scripts/check_de_bundle_contract.py
+
+      - name: Core Type, Coverage and DE Requirement Gates
+        run: |
+          python -m mypy
+          python scripts/run_core_quality.py --output .quality/core
+          python scripts/check_de_traceability.py --run --output .quality/de-traceability
 
       # -------------------------------------------------------------------
       # Gate 3: validation artifacts & provenance audit
@@ -142,6 +153,8 @@ jobs:
           cp -r .claude-plugin .codex .codex-plugin .agents .mcp.json .wheelws/ 2>/dev/null || true
           cd .wheelws
 
+          ../wheelcheck/bin/python scripts/check_de_bundle_contract.py --installed
+
           echo "--- Gate 6: bionexus doctor (wheel) ---"
           ../wheelcheck/bin/bionexus doctor
 
@@ -196,10 +209,7 @@ jobs:
       - name: Extract Release Notes from CHANGELOG.md
         id: extract_notes
         run: |
-          TAG="${{ github.ref_name }}"
-          if [ -z "$TAG" ] || [ "$TAG" = "main" ]; then
-            TAG="${{ github.event.inputs.tag_name }}"
-          fi
+          TAG="$RELEASE_TAG"
           VERSION="${TAG#v}"
           echo "Building release for version: $VERSION"
           if [[ "$TAG" == *"-rc"* ]] || [[ "$TAG" == *"-alpha"* ]] || [[ "$TAG" == *"-beta"* ]] || [[ "$TAG" == *"-pre"* ]]; then
@@ -230,7 +240,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: "BioNexus ${{ github.ref_name || github.event.inputs.tag_name }}"
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: "BioNexus ${{ env.RELEASE_TAG }}"
           body_path: dist/RELEASE_NOTES.md
           draft: false
           prerelease: ${{ env.IS_PRERELEASE == 'true' }}

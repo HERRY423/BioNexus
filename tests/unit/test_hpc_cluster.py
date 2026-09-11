@@ -198,3 +198,83 @@ def test_diagnose_job_failure_command_not_found():
     diag = diagnose_job_failure(exit_code=127, log_content="/tmp/slurm_script.sh: line 12: samtools: command not found")
     assert "not found in PATH" in diag.primary_cause
     assert "module load" in diag.remedy
+
+
+def test_generate_tes_task_valid_schema():
+    """Verify GA4GH Task Execution Service (TES) v1.0.0 descriptor generation."""
+    import json
+
+    from bionexus.cluster import JobResourceConfig, generate_job_script, generate_tes_task
+
+    res = JobResourceConfig(job_name="tes_scrna_qc", cpus=16, memory="64GB")
+    task = generate_tes_task(
+        name="tes_scrna_qc",
+        command=["python", "scrna_qc.py", "--input", "/data/sample.h5ad"],
+        image="quay.io/biocontainers/scanpy:1.10.0",
+        resources=res,
+        inputs=[{"path": "/data/sample.h5ad", "url": "s3://bio-bucket/sample.h5ad", "type": "FILE"}],
+        outputs=[{"path": "/data/qc_out", "url": "s3://bio-bucket/results", "type": "DIRECTORY"}],
+    )
+
+    d = task.to_dict()
+    assert d["name"] == "tes_scrna_qc"
+    assert len(d["executors"]) == 1
+    assert d["executors"][0]["image"] == "quay.io/biocontainers/scanpy:1.10.0"
+    assert d["resources"]["cpu_cores"] == 16
+    assert d["resources"]["ram_gb"] == 64.0
+    assert d["resources"]["preemptible"] is True
+    assert d["inputs"][0]["type"] == "FILE"
+    assert d["outputs"][0]["type"] == "DIRECTORY"
+    assert d["tags"]["framework"] == "BioNexus"
+
+    # Also verify generate_job_script with scheduler="tes"
+    script_str = generate_job_script(
+        scheduler="tes",
+        command=["python", "run.py"],
+        resources=res,
+    )
+    parsed = json.loads(script_str)
+    assert parsed["name"] == "tes_scrna_qc"
+    assert len(parsed["executors"]) == 1
+
+
+def test_elastic_scale_policy_retry_escalation():
+    """Verify ElasticScalePolicy escalates memory exponentially on exit code 137 (OOM)."""
+    from bionexus.cluster import ElasticScalePolicy, JobResourceConfig
+
+    policy = ElasticScalePolicy(max_retries_on_oom=3, oom_memory_multiplier=2.0)
+    init_res = JobResourceConfig(job_name="heavy_job", cpus=8, memory="16GB")
+
+    # Attempt 0 -> next attempt 1 (should be 16 * 2^1 = 32GB)
+    res_att1 = policy.compute_retry_resources(attempt=0, current_resources=init_res, exit_code=137)
+    assert res_att1 is not None
+    assert res_att1.memory == "32GB"
+    assert res_att1.job_name == "heavy_job_retry1"
+
+    # Attempt 1 -> next attempt 2 (should be 16 * 2^2 = 64GB)
+    res_att2 = policy.compute_retry_resources(attempt=1, current_resources=init_res, exit_code=137)
+    assert res_att2 is not None
+    assert res_att2.memory == "64GB"
+
+    # Attempt 3 -> retries exhausted
+    res_exhausted = policy.compute_retry_resources(attempt=3, current_resources=init_res, exit_code=137)
+    assert res_exhausted is None
+
+
+def test_cloud_native_batch_profile():
+    """Verify CloudNativeBatchProfile serializes multi-cloud elastic container execution."""
+    from bionexus.cluster import CloudNativeBatchProfile, ElasticScalePolicy
+
+    prof = CloudNativeBatchProfile(
+        provider="kubernetes",
+        container_engine="docker",
+        image_uri="quay.io/biocontainers/scanpy:1.10.0",
+        storage_mounts={"/mnt/nfs/data": "/data"},
+        environment={"BIO_DEBUG": "1"},
+        elastic_policy=ElasticScalePolicy(max_nodes=128),
+    )
+    d = prof.to_dict()
+    assert d["provider"] == "kubernetes"
+    assert d["storage_mounts"]["/mnt/nfs/data"] == "/data"
+    assert d["elastic_policy"]["max_nodes"] == 128
+

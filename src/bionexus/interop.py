@@ -1651,3 +1651,209 @@ def _write_crate_zip(crate_dir: Path) -> Path:
             info.compress_type = zipfile.ZIP_DEFLATED
             zf.writestr(info, path.read_bytes())
     return zip_path
+
+
+def export_de_audit_to_rocrate(
+    audit_report: Any,
+    output_dir: Path | str,
+    associated_files: Optional[Dict[str, Path | str]] = None,
+    zip_archive: bool = False,
+) -> CrateExportResult:
+    """Package a Multi-Donor Single-Cell Differential Expression Audit Report into an RO-Crate 1.1 bundle.
+
+    Includes:
+    - de_audit_report.json: Complete machine-readable verdict, checks, and findings.
+    - audit_summary.md: Human-readable report summary.
+    - ro-crate-metadata.json: Standards-compliant graph linking files, assess action, and evidence.
+    - Associated data tables (e.g. DEG tables, samplesheets, counts) if provided.
+
+    Fail-closed: validates metadata structure, copies files, and ensures SHA-256 agreement.
+    """
+    import datetime
+
+    # 1. Resolve audit report dictionary
+    if hasattr(audit_report, "to_dict") and callable(audit_report.to_dict):
+        report_data = audit_report.to_dict()
+    elif isinstance(audit_report, (str, Path)):
+        p = Path(audit_report)
+        if not p.is_file():
+            raise FileNotFoundError(f"Audit report file not found: {p}")
+        report_data = json.loads(p.read_text(encoding="utf-8"))
+    elif isinstance(audit_report, dict):
+        report_data = dict(audit_report)
+    else:
+        raise ValueError(f"Unsupported audit_report type: {type(audit_report)}")
+
+    if not report_data:
+        raise ValueError("Audit report cannot be empty.")
+
+    crate_dir = Path(output_dir)
+    if crate_dir.exists() and any(crate_dir.iterdir()):
+        raise ValueError(f"Refusing to overwrite non-empty crate directory: {crate_dir}")
+
+    crate_dir.mkdir(parents=True, exist_ok=True)
+
+    def _cleanup() -> None:
+        shutil.rmtree(crate_dir, ignore_errors=True)
+
+    try:
+        # 2. Write de_audit_report.json
+        report_path = crate_dir / "de_audit_report.json"
+        report_json_text = json.dumps(report_data, indent=2, ensure_ascii=False) + "\n"
+        report_path.write_text(report_json_text, encoding="utf-8")
+
+        # 3. Generate and write audit_summary.md
+        summary_lines = [
+            "# BioNexus Single-Cell Differential Expression Evidence Audit",
+            "",
+            f"**Overall Status**: `{report_data.get('overall_status', 'UNKNOWN')}`",
+            f"**Passed**: `{report_data.get('passed', False)}`",
+            "",
+            "## Summary Counts",
+            "",
+        ]
+        counts = report_data.get("summary_counts", {})
+        for k, v in counts.items():
+            summary_lines.append(f"- **{k}**: {v}")
+        summary_lines.append("")
+
+        findings = report_data.get("findings", [])
+        if findings:
+            summary_lines.append("## Findings")
+            summary_lines.append("")
+            for f in findings:
+                summary_lines.append(f"### [{f.get('severity', 'UNKNOWN')}] {f.get('title', 'Finding')}")
+                summary_lines.append(f"- **Problem**: {f.get('problem', '')}")
+                if f.get("fix_code"):
+                    summary_lines.append(f"```python\n{f.get('fix_code')}\n```")
+                summary_lines.append("")
+
+        boundary = report_data.get("claim_boundary", {})
+        if boundary:
+            summary_lines.append("## Scientific Claim Scope Boundary")
+            summary_lines.append("")
+            summary_lines.append(f"- **Allowed Scope**: {boundary.get('allowed_scope', '')}")
+            summary_lines.append(f"- **Prohibited Scope**: {boundary.get('prohibited_scope', '')}")
+            summary_lines.append("")
+
+        summary_path = crate_dir / "audit_summary.md"
+        summary_text = "\n".join(summary_lines) + "\n"
+        summary_path.write_text(summary_text, encoding="utf-8")
+
+        # 4. Copy any associated files (e.g. CSV results, count tables)
+        exported_files: List[Tuple[str, str, Path]] = [
+            ("de_audit_report.json", "application/json", report_path),
+            ("audit_summary.md", "text/markdown", summary_path),
+        ]
+
+        if associated_files:
+            for target_name, src_path in associated_files.items():
+                s_p = Path(src_path)
+                if not s_p.is_file():
+                    raise FileNotFoundError(f"Associated file missing: {s_p}")
+                dest = crate_dir / target_name
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(s_p, dest)
+                ext = dest.suffix.lower()
+                fmt = _ENCODING_FORMATS.get(ext, "application/octet-stream")
+                exported_files.append((target_name, fmt, dest))
+
+        # 5. Build RO-Crate @graph
+        graph: List[Dict[str, Any]] = []
+
+        # Descriptor
+        descriptor = {
+            "@id": "ro-crate-metadata.json",
+            "@type": "CreativeWork",
+            "about": {"@id": "./"},
+            "conformsTo": {"@id": RO_CRATE_PROFILE},
+        }
+        graph.append(descriptor)
+
+        # File entities
+        file_entities = []
+        for rel_name, mime, path_on_disk in exported_files:
+            file_sha = _file_sha256(path_on_disk)
+            file_ent = {
+                "@id": rel_name,
+                "@type": "File",
+                "name": rel_name,
+                "encodingFormat": mime,
+                "sha256": file_sha,
+            }
+            file_entities.append(file_ent)
+            graph.append(file_ent)
+
+        # Agent
+        agent_ent = {
+            "@id": BIONEXUS_AGENT_ID,
+            "@type": "SoftwareApplication",
+            "name": "BioNexus",
+            "softwareVersion": PLUGIN_VERSION,
+            "description": "The Scientific Reliability Layer for Agentic Biology",
+        }
+        graph.append(agent_ent)
+
+        # Action: AssessAction (CreativeWork audit)
+        now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        action_ent = {
+            "@id": "#audit-action",
+            "@type": "AssessAction",
+            "name": "Single-Cell Differential Expression Evidence Audit",
+            "agent": {"@id": BIONEXUS_AGENT_ID},
+            "startTime": now_iso,
+            "endTime": now_iso,
+            "description": f"Overall status: {report_data.get('overall_status', 'UNKNOWN')}; blockers: {counts.get('blocker', 0)}",
+            "result": [{"@id": "de_audit_report.json"}, {"@id": "audit_summary.md"}],
+            "actionStatus": _COMPLETED_STATUS if report_data.get("passed", False) else _FAILED_STATUS,
+        }
+        graph.append(action_ent)
+
+        # Root Dataset
+        root_dataset = {
+            "@id": "./",
+            "@type": "Dataset",
+            "name": f"Single-Cell Differential Expression Evidence Audit: {report_data.get('overall_status', 'AUDIT')}",
+            "description": (
+                "RO-Crate 1.1 research object bundle packaging BioNexus Multi-Donor scRNA Differential "
+                "Expression Evidence Audit verdict, checks, claim boundaries, and verified outputs."
+            ),
+            "datePublished": now_iso,
+            "author": {"@id": BIONEXUS_AGENT_ID},
+            "hasPart": [{"@id": rel_name} for rel_name, _, _ in exported_files],
+            "mentions": [{"@id": "#audit-action"}],
+        }
+        graph.append(root_dataset)
+
+        crate_doc = {"@context": RO_CRATE_CONTEXT, "@graph": graph}
+        crate_errors = validate_ro_crate(crate_doc)
+        if crate_errors:
+            _cleanup()
+            raise ValueError(f"RO-Crate metadata validation failed: {'; '.join(crate_errors)}")
+
+        metadata_path = crate_dir / "ro-crate-metadata.json"
+        _write_lf_json(metadata_path, crate_doc)
+
+        post_errors = verify_workflow_run_crate(crate_dir)
+        if any("data entity" in e for e in post_errors):
+            _cleanup()
+            raise ValueError(f"Exported crate failed post-write verification: {'; '.join(post_errors)}")
+
+        zip_path: Optional[Path] = None
+        if zip_archive:
+            zip_path = _write_crate_zip(crate_dir)
+
+        return CrateExportResult(
+            crate_dir=crate_dir,
+            metadata_path=metadata_path,
+            zip_path=zip_path,
+            files_copied=len(exported_files),
+            steps_projected=0,
+            ledger_included=False,
+            validation_errors=[],
+            verified=True,
+        )
+    except Exception:
+        _cleanup()
+        raise
+

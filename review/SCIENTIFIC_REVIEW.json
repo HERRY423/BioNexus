@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "project": "bionexus-reliability",
-  "project_version": "1.0.0-rc.5",
+  "project_version": "1.0.0-rc.6",
   "review_date": "2026-08-18",
   "reviewers": [
     {
@@ -9,24 +9,42 @@
       "name": "[PENDING]",
       "role": "single-cell computational researcher",
       "affiliation": "[PENDING]",
-      "expertise": ["single-cell RNA-seq", "pseudobulk DE"],
-      "cases_assigned": ["pseudobulk"]
+      "expertise": [
+        "single-cell RNA-seq",
+        "pseudobulk DE"
+      ],
+      "cases_assigned": [
+        "pseudobulk"
+      ]
     },
     {
       "id": "reviewer-2",
       "name": "[PENDING]",
       "role": "spatial transcriptomics researcher",
       "affiliation": "[PENDING]",
-      "expertise": ["spatial transcriptomics", "MERFISH", "Xenium"],
-      "cases_assigned": ["spatial"]
+      "expertise": [
+        "spatial transcriptomics",
+        "MERFISH",
+        "Xenium"
+      ],
+      "cases_assigned": [
+        "spatial"
+      ]
     },
     {
       "id": "reviewer-3",
       "name": "[PENDING]",
       "role": "biostatistics / computational methods researcher",
       "affiliation": "[PENDING]",
-      "expertise": ["statistical methods", "FDR", "replication"],
-      "cases_assigned": ["pseudobulk", "annotation"]
+      "expertise": [
+        "statistical methods",
+        "FDR",
+        "replication"
+      ],
+      "cases_assigned": [
+        "pseudobulk",
+        "annotation"
+      ]
     }
   ],
   "invariants_reviewed": [],

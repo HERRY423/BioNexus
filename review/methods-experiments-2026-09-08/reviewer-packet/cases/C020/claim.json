@@ -1,0 +1,5 @@
+{
+  "case_id": "C020",
+  "claim": "For this completed analysis, the supplied execution receipt is bound to the exact supplied result table.",
+  "scope": "Completed supplied analysis only; evaluate whether evidence supports the exact statement."
+}

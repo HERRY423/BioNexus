@@ -1,0 +1,235 @@
+{
+  "overall_status": "NEEDS_REVISION",
+  "passed": false,
+  "summary_counts": {
+    "blocker": 0,
+    "high_impact": 1,
+    "advisory": 1
+  },
+  "cohort_summary": {
+    "n_cells": 16,
+    "n_donors": 8,
+    "donors": [
+      101,
+      107,
+      1015,
+      1016,
+      1039,
+      1244,
+      1256,
+      1488
+    ],
+    "conditions": {
+      "control": 8,
+      "treated": 8
+    }
+  },
+  "metadata_columns_used": {
+    "donor": "donor",
+    "condition": "condition"
+  },
+  "checks": [
+    {
+      "check_id": "donor_replicates",
+      "title": "供体/生物学重复设计",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "已检查样本设计：control N=8, treated N=8。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "donor_imbalance",
+      "title": "供体细胞贡献失衡",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供细胞类型列，供体失衡未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "batch_confounding",
+      "title": "批次与组别混杂",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供批次列，混杂未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "input_count_type",
+      "title": "原始整数计数层",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供表达矩阵，计数层未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "de_results",
+      "title": "差异表达结果表",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "已读取 2000 行差异表达结果（来源: de_table）。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "fdr_and_testing",
+      "title": "FDR / 多重检验",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "已检查 DE 表：存在调整 p 值列 `padj`。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "analysis_code",
+      "title": "分析脚本/笔记本",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供分析脚本，静态方法学调用未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "analysis_execution_binding",
+      "title": "分析事实与执行记录绑定",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "已核查分析执行记录：统计单位为供体级，设计矩阵与拟合状态已绑定。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "claim_targeted_warrant",
+      "title": "科学声明定向审计",
+      "status": "ISSUE_FOUND",
+      "status_zh": "发现问题",
+      "summary": "声明超出证据边界：Claim 'CLAIM-USER-DE' Epistemic Evaluation: Warranted tiers: [association_claim]; Unwarranted tiers: [causal_claim]. Not requested: [population_claim, mechanistic_claim, cell_identity_claim, clinical_claim, structural_conformation_claim, bioactive_binding_claim]. Max warranted class: 'association', ceiling: 'FRAGILE'. (缺失: missing_causal_identification)",
+      "required_for_pass": true
+    }
+  ],
+  "execution_record": {
+    "source": "execution_record",
+    "method": "pydeseq2",
+    "fdr_method": "BH_on_all_finite_raw_pvalues",
+    "aggregation": "donor_pseudobulk",
+    "cell_level_condition_test": false,
+    "facts": [
+      "Verified execution record supplied: method='pydeseq2', statistical_unit='donor', design='~ donor + condition'.",
+      "DE table columns match count-model format markers (['basemean', 'lfcse']); format recognized, but table headers alone do not verify execution binding.",
+      "An adjusted p-value / FDR column is present in the supplied DE table."
+    ]
+  },
+  "findings": [
+    {
+      "rule_id": "BFA-001c",
+      "severity": "ADVISORY",
+      "category": "PSEUDOREPLICATION",
+      "title": "P 值极端偏小，提示细胞级伪重复嫌疑 (P-value inflation heuristic)",
+      "impact_on_conclusion": "检测到 18 个基因的 p 值低于 1e-100（最小 p=1.8571412410296082e-200）。这只能作为细胞级检验的疑点，不能仅凭数值把正确的供体级检验判为伪重复。",
+      "sample_or_donor": null,
+      "step_or_location": "DE table p-value column",
+      "claim_affected": null,
+      "minimal_fix": "# 核查统计单位，而不是仅因 p 值很小就否定供体级结果：\n# 1. 确认检验是否按 donor 聚合；\n# 2. 若确为 cell-level Wilcoxon/t-test，改用供体级 Pseudobulk + PyDESeq2。",
+      "evidence_data": {
+        "tiny_p_count": 18,
+        "min_p": 1.8571412410296082e-200
+      }
+    },
+    {
+      "rule_id": "BFA-008",
+      "severity": "HIGH_IMPACT",
+      "category": "CLAIM_BOUNDARY",
+      "title": "科学声明超出证据边界 (Claim Exceeds Evidence Ceiling)",
+      "impact_on_conclusion": "用户提交的具体声明 'Our reported conclusion is: IL1RN is upregulated and significant after FDR correction in the supplied treated-versus-control result.' 断言了超出当前证据上限的结论 （请求类别: causal，证据上限: FRAGILE）。缺失关键证据: missing_causal_identification。",
+      "sample_or_donor": null,
+      "step_or_location": "User Claim Text Audit",
+      "claim_affected": "Our reported conclusion is: IL1RN is upregulated and significant after FDR correction in the supplied treated-versus-control result.",
+      "minimal_fix": "修改文稿声明，仅陈述为已观察到的转录组差异表达关联，不得在无扰动实验或临床金标准时断言因果靶点。",
+      "evidence_data": {
+        "claim_id": "CLAIM-USER-DE",
+        "is_fully_warranted": false,
+        "requested_claim_class": "causal",
+        "warranted_claim_class": "association",
+        "evidence_ceiling": "FRAGILE",
+        "tier_verdicts": {
+          "association_claim": {
+            "tier_name": "association_claim",
+            "status": "WARRANTED",
+            "is_warranted": true,
+            "rationale": "Correlational/associational relationship is supported by observational or spatial data.",
+            "missing_evidence": []
+          },
+          "population_claim": {
+            "tier_name": "population_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "Population-level generalization was not requested by this claim.",
+            "missing_evidence": []
+          },
+          "mechanistic_claim": {
+            "tier_name": "mechanistic_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A mechanistic claim was not requested.",
+            "missing_evidence": []
+          },
+          "causal_claim": {
+            "tier_name": "causal_claim",
+            "status": "NOT_WARRANTED",
+            "is_warranted": false,
+            "rationale": "Causal claim NOT warranted: observational data cannot rule out unobserved confounding.",
+            "missing_evidence": [
+              "experimental_perturbation",
+              "scm_backdoor_satisfaction"
+            ]
+          },
+          "cell_identity_claim": {
+            "tier_name": "cell_identity_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A cell-identity claim was not requested.",
+            "missing_evidence": []
+          },
+          "clinical_claim": {
+            "tier_name": "clinical_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A clinical actionability claim was not requested.",
+            "missing_evidence": []
+          },
+          "structural_conformation_claim": {
+            "tier_name": "structural_conformation_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A structural conformation claim was not requested.",
+            "missing_evidence": []
+          },
+          "bioactive_binding_claim": {
+            "tier_name": "bioactive_binding_claim",
+            "status": "NOT_APPLICABLE",
+            "is_warranted": false,
+            "rationale": "A bioactive target binding claim was not requested.",
+            "missing_evidence": []
+          }
+        },
+        "evidence_gaps": [
+          "missing_causal_identification"
+        ],
+        "remedies": [
+          "Downgrade claim phrasing from causal assertions ('drives', 'causes', 'induces') to correlational observations ('is associated with', 'co-localizes with'), or conduct targeted functional perturbation."
+        ],
+        "rule_violations": [
+          "CAUSAL_OVERCLAIM: Action verb asserting counterfactual causality without perturbation or DAG backdoor closure."
+        ],
+        "epistemic_summary": "Claim 'CLAIM-USER-DE' Epistemic Evaluation: Warranted tiers: [association_claim]; Unwarranted tiers: [causal_claim]. Not requested: [population_claim, mechanistic_claim, cell_identity_claim, clinical_claim, structural_conformation_claim, bioactive_binding_claim]. Max warranted class: 'association', ceiling: 'FRAGILE'.",
+        "governing_status": null,
+        "has_claim_conflict": false,
+        "conflict_details": null
+      }
+    }
+  ],
+  "claim_boundary": {
+    "allowed_scope": "在已核查的供体级结果与设计下（N=8 独立生物学重复），仅支持群体级别的观察性统计关联措辞（Observational Association）。",
+    "prohibited_scope": "严禁对未提供因果扰动、实验验证或临床金标准支持的基因做出因果疗效、治疗驱动或临床诊断靶点声明。",
+    "recommended_methods_text": "Recommended analysis, not recorded as performed: aggregate raw integer counts to donor-level pseudobulks per cell type (Squair et al., 2021), then test condition effects with a negative binomial GLM, Wald tests, and Benjamini-Hochberg FDR. Do not treat cell-level rank_genes_groups p-values as population inference.",
+    "recommended_results_text": "Observed differential expression supports associative findings only; causal or biomarker claims are unwarranted.",
+    "overall_maturity": "EXPLORATORY_COHORT",
+    "executed_methods_text": "Verified execution record supplied: method='pydeseq2', statistical_unit='donor', design='~ donor + condition'. DE table columns match count-model format markers (['basemean', 'lfcse']); format recognized, but table headers alone do not verify execution binding. An adjusted p-value / FDR column is present in the supplied DE table."
+  },
+  "pi_decisions": []
+}

@@ -32,6 +32,7 @@ class SchedulerType(str, Enum):
     KUBERNETES = "kubernetes"
     AWS_BATCH = "aws_batch"
     GCP_BATCH = "gcp_batch"
+    TES = "tes"
     LOCAL = "local"
 
 
@@ -526,6 +527,15 @@ def generate_job_script(
         project = kwargs.get("project", "default-project")
         region = kwargs.get("region", "us-central1")
         return json.dumps(generate_gcp_batch_job(cmd_str, project, region, res), indent=2)
+    elif sched in ("tes", "ga4gh_tes"):
+        img = kwargs.get("image") or res.container_image or "quay.io/biocontainers/scanpy:1.10.0"
+        task = generate_tes_task(
+            name=res.job_name,
+            command=cmd_list,
+            image=img,
+            resources=res,
+        )
+        return task.to_json()
     else:
         # Default fallback: self-contained robust local script
         return (
@@ -792,3 +802,211 @@ def diagnose_job_failure(
         primary_cause=f"Job exited with non-zero exit code {exit_code}.",
         remedy="Inspect worker node stderr log tail for specific traceback details.",
     )
+
+
+# ==============================================================================
+# GA4GH Task Execution Service (TES) & Cloud-Native Elasticity
+# ==============================================================================
+
+
+@dataclass
+class TESExecutor:
+    """Single container executor within a GA4GH TES task."""
+
+    image: str
+    command: List[str]
+    workdir: Optional[str] = None
+    env: Dict[str, str] = field(default_factory=dict)
+    stdout: Optional[str] = None
+    stderr: Optional[str] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {k: v for k, v in asdict(self).items() if v is not None}
+
+
+@dataclass
+class TESInputOutput:
+    """Data input or output mount descriptor for GA4GH TES."""
+
+    path: str
+    url: Optional[str] = None
+    type: str = "FILE"  # "FILE" | "DIRECTORY"
+    description: Optional[str] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {k: v for k, v in asdict(self).items() if v is not None}
+
+
+@dataclass
+class TESResources:
+    """Compute resource specification adhering to GA4GH TES v1.0.0."""
+
+    cpu_cores: int = 8
+    ram_gb: float = 32.0
+    disk_gb: float = 100.0
+    preemptible: bool = True
+    zones: List[str] = field(default_factory=list)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
+class TESTask:
+    """Complete GA4GH Task Execution Service (TES) v1.0.0 task specification."""
+
+    name: str
+    description: str
+    executors: List[TESExecutor]
+    resources: TESResources
+    inputs: List[TESInputOutput] = field(default_factory=list)
+    outputs: List[TESInputOutput] = field(default_factory=list)
+    tags: Dict[str, str] = field(default_factory=dict)
+    volumes: List[str] = field(default_factory=list)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "name": self.name,
+            "description": self.description,
+            "executors": [e.to_dict() for e in self.executors],
+            "resources": self.resources.to_dict(),
+            "inputs": [i.to_dict() for i in self.inputs],
+            "outputs": [o.to_dict() for o in self.outputs],
+            "tags": self.tags,
+            "volumes": self.volumes,
+        }
+
+    def to_json(self, indent: int = 2) -> str:
+        return json.dumps(self.to_dict(), indent=indent)
+
+
+def generate_tes_task(
+    name: str,
+    command: List[str],
+    image: str = "quay.io/biocontainers/scanpy:1.10.0",
+    resources: Optional[JobResourceConfig] = None,
+    inputs: Optional[List[Dict[str, str]]] = None,
+    outputs: Optional[List[Dict[str, str]]] = None,
+    description: str = "BioNexus Cloud-Native Scalable Task",
+    preemptible: bool = True,
+    tags: Optional[Dict[str, str]] = None,
+) -> TESTask:
+    """Generate a standard GA4GH TES v1.0.0 task JSON descriptor."""
+    res = resources or JobResourceConfig()
+
+    mem_val = 32.0
+    mem_str = str(res.memory).upper().strip()
+    if mem_str.endswith("GB") or mem_str.endswith("GI"):
+        try:
+            mem_val = float(mem_str.rstrip("GBI"))
+        except ValueError:
+            mem_val = 32.0
+
+    tes_res = TESResources(
+        cpu_cores=res.cpus,
+        ram_gb=mem_val,
+        disk_gb=100.0,
+        preemptible=preemptible,
+    )
+
+    executor = TESExecutor(
+        image=image,
+        command=command,
+        workdir=res.workdir,
+        env=res.env_vars,
+        stdout=res.output_log,
+        stderr=res.error_log,
+    )
+
+    in_list = [TESInputOutput(**i) for i in (inputs or [])]
+    out_list = [TESInputOutput(**o) for o in (outputs or [])]
+
+    final_tags = {"framework": "BioNexus", "epistemic_audit": "enabled"}
+    if tags:
+        final_tags.update(tags)
+
+    return TESTask(
+        name=name,
+        description=description,
+        executors=[executor],
+        resources=tes_res,
+        inputs=in_list,
+        outputs=out_list,
+        tags=final_tags,
+    )
+
+
+@dataclass
+class ElasticScalePolicy:
+    """Dynamic autoscaling, spot instance mitigation, and memory escalation retry policy."""
+
+    min_nodes: int = 1
+    max_nodes: int = 64
+    target_cpu_utilization: float = 0.80
+    max_retries_on_oom: int = 3
+    oom_memory_multiplier: float = 2.0
+    timeout_multiplier: float = 1.5
+    allow_spot_instances: bool = True
+    spot_allocation_strategy: str = "price_capacity_optimized"
+    fallback_to_on_demand_on_preemption: bool = True
+    max_concurrent_tasks_per_donor: int = 8
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+    def compute_retry_resources(
+        self,
+        attempt: int,
+        current_resources: JobResourceConfig,
+        exit_code: int,
+    ) -> Optional[JobResourceConfig]:
+        """Compute escalated resources for the next attempt or return None if retries exhausted."""
+        if attempt >= self.max_retries_on_oom:
+            return None
+
+        mem_str = str(current_resources.memory).strip().upper()
+        mem_val = 16.0
+        if mem_str.endswith("GB") or mem_str.endswith("GI"):
+            try:
+                mem_val = float(mem_str.rstrip("GBI"))
+            except ValueError:
+                mem_val = 16.0
+
+        escalated_mem = mem_val * (self.oom_memory_multiplier ** (attempt + 1))
+
+        return JobResourceConfig(
+            job_name=f"{current_resources.job_name}_retry{attempt+1}",
+            cpus=current_resources.cpus,
+            memory=f"{int(round(escalated_mem))}GB" if exit_code in (134, 137) else current_resources.memory,
+            time_limit=current_resources.time_limit,
+            partition=current_resources.partition,
+            account=current_resources.account,
+            qos=current_resources.qos,
+            gpus=current_resources.gpus,
+            gpu_type=current_resources.gpu_type,
+            container_image=current_resources.container_image,
+            container_engine=current_resources.container_engine,
+            workdir=current_resources.workdir,
+            output_log=current_resources.output_log,
+            error_log=current_resources.error_log,
+            modules_to_load=list(current_resources.modules_to_load),
+            env_vars=dict(current_resources.env_vars),
+        )
+
+
+@dataclass
+class CloudNativeBatchProfile:
+    """Unified cross-cloud containerized execution profile."""
+
+    provider: str  # "kubernetes", "aws_batch", "gcp_batch", "slurm"
+    container_engine: str = "docker"  # "docker", "singularity", "apptainer"
+    image_uri: str = "quay.io/biocontainers/scanpy:1.10.0"
+    elastic_policy: ElasticScalePolicy = field(default_factory=ElasticScalePolicy)
+    storage_mounts: Dict[str, str] = field(default_factory=dict)  # host_path -> container_path
+    environment: Dict[str, str] = field(default_factory=dict)
+
+    def to_dict(self) -> Dict[str, Any]:
+        d = asdict(self)
+        d["elastic_policy"] = self.elastic_policy.to_dict()
+        return d
+

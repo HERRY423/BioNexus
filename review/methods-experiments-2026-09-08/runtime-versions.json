@@ -1,0 +1,15 @@
+{
+  "numpy": "2.3.5",
+  "pandas": "2.3.3",
+  "scipy": "1.16.3",
+  "anndata": "0.13.1",
+  "pydeseq2": "0.5.4",
+  "matplotlib": "3.10.6",
+  "formulaic": "1.2.2",
+  "formulaic-contrasts": "1.0.0",
+  "statsmodels": "0.14.5",
+  "joblib": "1.5.2",
+  "scikit-learn": "1.7.2",
+  "h5py": "3.15.1",
+  "threadpoolctl": "3.5.0"
+}

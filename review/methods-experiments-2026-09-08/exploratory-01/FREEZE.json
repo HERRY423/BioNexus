@@ -1,0 +1,7 @@
+{
+  "started_utc": "2026-09-08T13:51:43.932796+00:00",
+  "parent_freeze_sha256": "ff5757956036fc4f43866e7e2028669a6fd69285a81f36f75e92288ddd2c201b",
+  "amendment_sha256": "1d52abb3e51c8d4459dceaf75fc7337c1df3e23ec7c7d01b2b488a8ef12a5c78",
+  "runner_sha256": "6de9a4ae748db9cc438e2cca643f1361fe19f56e47ec723fffea10fa35dbdc2d",
+  "status": "EXPLORATORY_AFTER_PRIMARY_OUTCOMES"
+}

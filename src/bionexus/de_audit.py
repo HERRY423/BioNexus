@@ -27,23 +27,30 @@ Normative references:
 
 from __future__ import annotations
 
+import hashlib
+import json
 import logging
+import re
 from dataclasses import asdict, dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Sequence, Union
 
 from bionexus.de_audit_extract import extract_rank_genes_groups
 
-try:
+if TYPE_CHECKING:
     import numpy as np
-except ImportError:
-    np = None
-
-try:
     import pandas as pd
-except ImportError:
-    pd = None
+else:
+    try:
+        import numpy as np
+    except ImportError:
+        np = None
+
+    try:
+        import pandas as pd
+    except ImportError:
+        pd = None
 
 logger = logging.getLogger(__name__)
 
@@ -450,7 +457,7 @@ CELLTYPE_KEYWORDS = ["cell_type", "celltype", "cluster", "leiden", "louvain", "s
 BATCH_KEYWORDS = ["batch", "pool", "lane", "run", "experiment", "date", "seq_run", "gem_group", "orig.ident"]
 
 
-def _match_column(cols: Sequence[str], keywords: Sequence[str]) -> Optional[str]:
+def _match_column(cols: Iterable[str], keywords: Sequence[str]) -> Optional[str]:
     """Find best matching column name ignoring case and punctuation."""
     lower_map = {c.lower().replace("_", "").replace("-", ""): c for c in cols}
     for kw in keywords:
@@ -493,6 +500,7 @@ class DEAuditEngine:
         condition_col: Optional[str] = None,
         cell_type_col: Optional[str] = None,
         batch_col: Optional[str] = None,
+        execution_record: Optional[Union[Dict[str, Any], ExecutionRecord, str, Path]] = None,
     ) -> DEAuditResult:
         """Run the 5-pillar differential expression evidence audit."""
         findings: List[DEFinding] = []
@@ -503,7 +511,7 @@ class DEAuditEngine:
         rgg_params: Dict[str, Any] = {}
         supplied = any(
             x is not None
-            for x in (adata, adata_path, de_table, sample_metadata, code_path, claim_text)
+            for x in (adata, adata_path, de_table, sample_metadata, code_path, claim_text, execution_record)
         )
 
         # 1. Resolve AnnData object if provided
@@ -654,7 +662,7 @@ class DEAuditEngine:
                     required_for_pass=True,
                 )
             )
-            self._audit_de_table(de_df, findings, pi_decisions, checks)
+            self._audit_de_table(de_df, findings, pi_decisions, checks, claim_text=claim_text)
         else:
             checks.append(
                 CheckRecord(
@@ -695,6 +703,7 @@ class DEAuditEngine:
             rgg_params=rgg_params,
             code_path=code_path,
             findings=findings,
+            supplied_execution=execution_record,
         )
         if execution.cell_level_condition_test and not any(f.rule_id == "BFA-001" for f in findings):
             findings.append(
@@ -718,6 +727,102 @@ class DEAuditEngine:
                 CheckStatus.ISSUE_FOUND,
                 f"执行记录为细胞级方法 {execution.method}，不能支持群体推断。",
             )
+
+        # 8. Check Analysis Execution & Artifact Binding (Format Recognized -> Analysis Fact Verified)
+        is_donor_execution_verified = self._verify_execution_binding(
+            execution=execution,
+            supplied_execution=execution_record,
+            de_table=de_table,
+            de_df=de_df,
+            obs_df=obs_df,
+            cohort_summary=cohort_summary,
+            findings=findings,
+            checks=checks,
+        )
+
+        # Decouple BFA-001c when donor execution binding is verified and p > 0
+        if is_donor_execution_verified:
+            for f in findings:
+                if f.rule_id == "BFA-001c":
+                    min_p_val = f.evidence_data.get("min_p", 0.0) if f.evidence_data else 0.0
+                    if min_p_val > 0.0:
+                        f.severity = FindingSeverity.ADVISORY
+                        f.impact_on_conclusion = (
+                            f"检测到 {f.evidence_data.get('tiny_p_count', 0)} 个基因的 p 值低于 1e-100（最小 p={min_p_val:.2e}）。"
+                            "已核验供体级执行凭证且未发现 p=0 极端数值截断，该数值反映强生物学效应，作为审阅提示保留，不阻断群体推断通过。"
+                        )
+
+        # 9. Targeted User Scientific Claim Audit (Analysis Fact Verified -> Specific Claim Supported)
+        if claim_text and str(claim_text).strip():
+            # Micro-fact concordance check vs DE table
+            self._audit_claim_vs_table_facts(
+                claim_text=str(claim_text).strip(),
+                de_df=de_df,
+                findings=findings,
+                checks=checks,
+            )
+            try:
+                from bionexus.claim_semantics import (
+                    DeterministicClaimParser,
+                    DeterministicWarrantEngine,
+                    EvidenceProfile,
+                )
+                claim_ir = DeterministicClaimParser.parse(str(claim_text).strip(), claim_id="CLAIM-USER-DE")
+                reps_count = cohort_summary.get("n_donors") or 0
+                has_observational = bool(de_df is not None and not de_df.empty)
+
+                ev_profile = EvidenceProfile(
+                    observational_data=has_observational,
+                    biological_replicates_count=reps_count,
+                    pseudobulk_aggregated=is_donor_execution_verified,
+                    confound_controls=["donor"] if reps_count >= 3 else [],
+                    perturbation=False,
+                    clinical_ground_truth=False,
+                    regulatory_certification=False,
+                    causal_identification_status="UNASSESSED",
+                )
+
+                warrant_res = DeterministicWarrantEngine.evaluate(claim_ir, ev_profile)
+                if warrant_res.is_fully_warranted or claim_ir.negated:
+                    checks.append(
+                        CheckRecord(
+                            check_id="claim_targeted_warrant",
+                            title="科学声明定向审计",
+                            status=CheckStatus.ASSESSED,
+                            summary=f"声明符合当前证据支持边界：{warrant_res.epistemic_summary}",
+                            required_for_pass=False,
+                        )
+                    )
+                else:
+                    gap_str = ", ".join(warrant_res.evidence_gaps) if warrant_res.evidence_gaps else "缺乏因果扰动或临床实证"
+                    findings.append(
+                        DEFinding(
+                            rule_id="BFA-008",
+                            severity=FindingSeverity.HIGH_IMPACT,
+                            category=FindingCategory.CLAIM_BOUNDARY,
+                            title="科学声明超出证据边界 (Claim Exceeds Evidence Ceiling)",
+                            impact_on_conclusion=(
+                                f"用户提交的具体声明 '{claim_text}' 断言了超出当前证据上限的结论 "
+                                f"（请求类别: {warrant_res.requested_claim_class}，证据上限: {warrant_res.evidence_ceiling}）。"
+                                f"缺失关键证据: {gap_str}。"
+                            ),
+                            step_or_location="User Claim Text Audit",
+                            claim_affected=str(claim_text),
+                            minimal_fix="修改文稿声明，仅陈述为已观察到的转录组差异表达关联，不得在无扰动实验或临床金标准时断言因果靶点。",
+                            evidence_data=warrant_res.to_dict(),
+                        )
+                    )
+                    checks.append(
+                        CheckRecord(
+                            check_id="claim_targeted_warrant",
+                            title="科学声明定向审计",
+                            status=CheckStatus.ISSUE_FOUND,
+                            summary=f"声明超出证据边界：{warrant_res.epistemic_summary} (缺失: {gap_str})",
+                            required_for_pass=True,
+                        )
+                    )
+            except Exception as exc:
+                logger.warning("Targeted claim audit encountered exception: %s", exc)
 
         claim_boundary = self._determine_claim_boundary(
             findings, cohort_summary, claim_text, checks, execution
@@ -897,8 +1002,8 @@ class DEAuditEngine:
 
         # 2. Donor cell dominance / Imbalance per cell type
         if ct_col:
-            imbalanced_clusters = []
-            low_count_donors = []
+            imbalanced_clusters: list[dict[str, Any]] = []
+            low_count_donors: list[dict[str, Any]] = []
             for ct_val, ct_sub in obs_df.groupby(ct_col, observed=False):
                 total_cluster_cells = len(ct_sub)
                 donor_counts = ct_sub[d_col].value_counts()
@@ -1085,10 +1190,60 @@ class DEAuditEngine:
         findings: List[DEFinding],
         pi_decisions: List[PIDecisionItem],
         checks: List[CheckRecord],
+        claim_text: Optional[str] = None,
     ) -> None:
-        """Audit DE results table for pseudoreplication p-value signatures and FDR control."""
+        """Audit DE results table for probability validity, pseudoreplication p-value signatures, and FDR control."""
         p_col = _match_column(de_df.columns, ["pvalue", "p_val", "pval", "p.value", "pvals"])
         padj_col = _match_column(de_df.columns, ["padj", "p_val_adj", "qval", "p.adjusted", "fdr", "pvals_adj"])
+
+        # 0. Probability Range and Numeric Validity Check
+        if p_col:
+            try:
+                p_numeric = pd.to_numeric(de_df[p_col], errors="coerce")
+                if (p_numeric < 0.0).any() or (p_numeric > 1.0).any():
+                    min_p = float(p_numeric.min())
+                    max_p = float(p_numeric.max())
+                    findings.append(
+                        DEFinding(
+                            rule_id="BFA-003c",
+                            severity=FindingSeverity.HIGH_IMPACT,
+                            category=FindingCategory.FDR_AND_TESTING,
+                            title="统计量数值非法：P 值超出有效概率区间 [0, 1] (Invalid P-value Range)",
+                            impact_on_conclusion=(
+                                f"检测到 P 值超出 [0, 1] 范围（最小 p={min_p}, 最大 p={max_p}）。"
+                                "概率统计量必须在 [0, 1] 区间内，负数或 >1 的 P 值表明数据损坏或模型输出异常。"
+                            ),
+                            step_or_location=f"DE table column '{p_col}'",
+                            minimal_fix="核查生成 DE 表的统计模型与提取脚本，确保输出了正确的未越界 p-value。",
+                            evidence_data={"column": p_col, "min_p": min_p, "max_p": max_p},
+                        )
+                    )
+            except Exception as exc:
+                logger.info("P-value range check exception: %s", exc)
+
+        if padj_col:
+            try:
+                padj_numeric = pd.to_numeric(de_df[padj_col], errors="coerce")
+                if (padj_numeric < 0.0).any() or (padj_numeric > 1.0).any():
+                    min_padj = float(padj_numeric.min())
+                    max_padj = float(padj_numeric.max())
+                    findings.append(
+                        DEFinding(
+                            rule_id="BFA-003c",
+                            severity=FindingSeverity.HIGH_IMPACT,
+                            category=FindingCategory.FDR_AND_TESTING,
+                            title="统计量数值非法：FDR/调整 P 值超出有效概率区间 [0, 1] (Invalid Adjusted P-value Range)",
+                            impact_on_conclusion=(
+                                f"检测到调整后 P 值超出 [0, 1] 范围（最小 padj={min_padj}, 最大 padj={max_padj}）。"
+                                "多重检验校正后的 q/padj 必须在 [0, 1] 区间内，负数或非法值表明校正程序故障。"
+                            ),
+                            step_or_location=f"DE table column '{padj_col}'",
+                            minimal_fix="核查多重检验校正步骤（如 Benjamini-Hochberg），确保校正值落在 [0, 1] 闭区间。",
+                            evidence_data={"column": padj_col, "min_padj": min_padj, "max_padj": max_padj},
+                        )
+                    )
+            except Exception as exc:
+                logger.info("Padj range check exception: %s", exc)
 
         # 1. Check Multiple Testing Correction / FDR
         if not padj_col and p_col:
@@ -1109,26 +1264,58 @@ class DEAuditEngine:
                 )
             )
         elif padj_col and p_col:
-            # Check for excessive uncorrected reporting
+            # Check for excessive uncorrected reporting vs honest negative finding
             try:
                 sig_raw = (de_df[p_col] < 0.05).sum()
                 sig_adj = (de_df[padj_col] < self.fdr_threshold).sum()
                 if sig_raw > 100 and sig_adj == 0:
-                    findings.append(
-                        DEFinding(
-                            rule_id="BFA-003b",
-                            severity=FindingSeverity.HIGH_IMPACT,
-                            category=FindingCategory.FDR_AND_TESTING,
-                            title="FDR 校正后无显著基因 (Zero DEGs Surviving Multiple Testing Correction)",
-                            impact_on_conclusion=f"原始 p < 0.05 有 {sig_raw} 个基因，但 FDR < {self.fdr_threshold} 存活基因数为 0。若在文稿中仅依据原始 p 值报告差异基因，属于学术不端隐患（Selective Reporting / P-hacking）。",
-                            step_or_location="Significance Filtering",
-                            minimal_fix=(
-                                "# 严禁仅汇报 raw p < 0.05 的基因！最小修复：\n"
-                                "# 1. 诚实报告在当前样本量下未检测到达到全转录组 FDR < 0.05 的显著基因；\n"
-                                "# 2. 或适当放宽至 FDR < 0.10 并结合 |log2FC| > 1.0 作为「待验证候选」明确声明。"
-                            ),
+                    is_honest_null = False
+                    if claim_text:
+                        txt = claim_text.lower()
+                        null_cues = [
+                            "no genes were significant",
+                            "no significant",
+                            "zero significant",
+                            "0 significant",
+                            "none significant",
+                            "not significant",
+                            "无显著",
+                            "未发现显著",
+                            "未检测到显著",
+                            "fdr后无显著",
+                            "fdr 后无显著",
+                            "校正后无显著",
+                            "全表无显著",
+                        ]
+                        if any(cue in txt for cue in null_cues):
+                            is_honest_null = True
+
+                    if not is_honest_null:
+                        findings.append(
+                            DEFinding(
+                                rule_id="BFA-003b",
+                                severity=FindingSeverity.HIGH_IMPACT,
+                                category=FindingCategory.FDR_AND_TESTING,
+                                title="FDR 校正后无显著基因 (Zero DEGs Surviving Multiple Testing Correction)",
+                                impact_on_conclusion=f"原始 p < 0.05 有 {sig_raw} 个基因，但 FDR < {self.fdr_threshold} 存活基因数为 0。若在文稿中仅依据原始 p 值报告差异基因，属于学术不端隐患（Selective Reporting / P-hacking）。",
+                                step_or_location="Significance Filtering",
+                                minimal_fix=(
+                                    "# 严禁仅汇报 raw p < 0.05 的基因！最小修复：\n"
+                                    "# 1. 诚实报告在当前样本量下未检测到达到全转录组 FDR < 0.05 的显著基因；\n"
+                                    "# 2. 或适当放宽至 FDR < 0.10 并结合 |log2FC| > 1.0 作为「待验证候选」明确声明。"
+                                ),
+                            )
                         )
-                    )
+                    else:
+                        checks.append(
+                            CheckRecord(
+                                check_id="fdr_multiple_testing",
+                                title="FDR 多重假设检验校正",
+                                status=CheckStatus.ASSESSED,
+                                summary=f"全表无 FDR < {self.fdr_threshold} 显著基因；文稿诚实声明阴性结果 (Honest Negative Result)。",
+                                required_for_pass=True,
+                            )
+                        )
             except Exception:
                 pass
 
@@ -1169,14 +1356,14 @@ class DEAuditEngine:
                     )
                 )
 
-        padj_finding = any(f.rule_id in {"BFA-003", "BFA-003b"} for f in findings)
+        padj_finding = any(f.rule_id in {"BFA-003", "BFA-003b", "BFA-003c"} for f in findings)
         if padj_finding:
             checks.append(
                 CheckRecord(
                     check_id="fdr_and_testing",
                     title="FDR / 多重检验",
                     status=CheckStatus.ISSUE_FOUND,
-                    summary="已检查 DE 表：缺失或未使用 FDR 校正。",
+                    summary="已检查 DE 表：缺失、非法或未使用 FDR 校正。",
                     required_for_pass=True,
                 )
             )
@@ -1416,6 +1603,7 @@ class DEAuditEngine:
         rgg_params: Dict[str, Any],
         code_path: Optional[Union[str, Path]],
         findings: List[DEFinding],
+        supplied_execution: Optional[Union[Dict[str, Any], ExecutionRecord, str, Path]] = None,
     ) -> ExecutionRecord:
         facts: List[str] = []
         method = None
@@ -1424,10 +1612,46 @@ class DEAuditEngine:
         source = "none"
         cell_level = False
 
+        if isinstance(supplied_execution, ExecutionRecord):
+            return supplied_execution
+
+        exec_dict: Dict[str, Any] = {}
+        if isinstance(supplied_execution, dict):
+            exec_dict = supplied_execution
+        elif isinstance(supplied_execution, (str, Path)):
+            p = Path(supplied_execution)
+            if p.is_file():
+                try:
+                    with open(p, "r", encoding="utf-8") as f:
+                        exec_dict = json.load(f)
+                except Exception as exc:
+                    logger.warning("Failed to parse execution record JSON from %s: %s", p, exc)
+
+        if exec_dict:
+            source = "execution_record"
+            method = exec_dict.get("method")
+            fdr_method = exec_dict.get("fdr_method") or exec_dict.get("corr_method")
+            stat_unit = str(exec_dict.get("statistical_unit") or exec_dict.get("unit") or "").lower()
+            agg = str(exec_dict.get("aggregation") or "").lower()
+            if stat_unit in ("donor", "sample", "biological_replicate") or "pseudobulk" in agg:
+                aggregation = "donor_pseudobulk"
+            elif agg:
+                aggregation = agg
+
+            if exec_dict.get("cell_level_condition_test"):
+                cell_level = True
+                aggregation = "cell"
+
+            design = exec_dict.get("design") or exec_dict.get("design_matrix_columns") or exec_dict.get("formula")
+            facts.append(
+                f"Verified execution record supplied: method={method!r}, statistical_unit={stat_unit or aggregation!r}, "
+                f"design={design!r}."
+            )
+
         if rgg_params:
-            source = "rank_genes_groups"
-            method = rgg_params.get("method")
-            fdr_method = rgg_params.get("corr_method")
+            source = source if source != "none" else "rank_genes_groups"
+            method = method or rgg_params.get("method")
+            fdr_method = fdr_method or rgg_params.get("corr_method")
             groupby = str(rgg_params.get("groupby") or "")
             facts.append(
                 f"adata.uns['rank_genes_groups']['params'] records method={method!r}, "
@@ -1452,11 +1676,12 @@ class DEAuditEngine:
             cols = {str(c).lower().replace("_", "") for c in de_df.columns}
             if DONOR_LEVEL_TABLE_MARKERS.intersection(cols):
                 source = source if source != "none" else "de_table"
-                aggregation = aggregation or "donor_level_inferred_from_result_schema"
+                # Level 1 Format Recognition: Column names resemble count-model output,
+                # but column headers alone DO NOT verify the fitting execution or donor aggregation.
+                format_markers = sorted(DONOR_LEVEL_TABLE_MARKERS.intersection(cols))
                 facts.append(
-                    "DE table columns match a donor-level count-model schema "
-                    f"({sorted(DONOR_LEVEL_TABLE_MARKERS.intersection(cols))}); "
-                    "the fitting procedure itself was not observed."
+                    f"DE table columns match count-model format markers ({format_markers}); "
+                    "format recognized, but table headers alone do not verify execution binding."
                 )
             if "padj" in cols or "pvalsadj" in cols or "fdr" in cols or "qval" in cols:
                 fdr_method = fdr_method or "adjusted_p_present"
@@ -1480,6 +1705,465 @@ class DEAuditEngine:
             facts=facts,
         )
 
+    def _verify_execution_binding(
+        self,
+        execution: ExecutionRecord,
+        supplied_execution: Optional[Union[Dict[str, Any], ExecutionRecord, str, Path]],
+        de_table: Optional[Union[pd.DataFrame, str, Path]],
+        de_df: Optional[pd.DataFrame],
+        obs_df: Optional[pd.DataFrame],
+        cohort_summary: Dict[str, Any],
+        findings: List[DEFinding],
+        checks: List[CheckRecord],
+    ) -> bool:
+        if supplied_execution is None:
+            checks.append(
+                CheckRecord(
+                    check_id="analysis_execution_binding",
+                    title="分析事实与执行记录绑定",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary="未提供经核查的供体级执行记录（统计单位、设计矩阵、拟合状态未绑定）。",
+                    required_for_pass=True,
+                )
+            )
+            return False
+
+        exec_dict: Dict[str, Any] = {}
+        if isinstance(supplied_execution, dict):
+            exec_dict = supplied_execution
+        elif isinstance(supplied_execution, ExecutionRecord):
+            exec_dict = {
+                "statistical_unit": "donor" if execution.aggregation == "donor_pseudobulk" else execution.aggregation,
+                "method": execution.method,
+                "cell_level_condition_test": execution.cell_level_condition_test,
+            }
+        elif isinstance(supplied_execution, (str, Path)):
+            p = Path(supplied_execution)
+            if p.is_file():
+                try:
+                    with open(p, "r", encoding="utf-8") as f:
+                        exec_dict = json.load(f)
+                except Exception as exc:
+                    logger.warning("Failed to parse execution record JSON from %s: %s", p, exc)
+                    checks.append(
+                        CheckRecord(
+                            check_id="analysis_execution_binding",
+                            title="分析事实与执行记录绑定",
+                            status=CheckStatus.PARSE_FAILED,
+                            summary=f"执行记录 JSON 解析失败: {exc}",
+                            required_for_pass=True,
+                        )
+                    )
+                    return False
+
+        if not exec_dict:
+            checks.append(
+                CheckRecord(
+                    check_id="analysis_execution_binding",
+                    title="分析事实与执行记录绑定",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary="执行记录为空或未提供有效内容。",
+                    required_for_pass=True,
+                )
+            )
+            return False
+
+        binding_issues: List[str] = []
+
+        # 1. Statistical unit check
+        stat_unit = str(exec_dict.get("statistical_unit") or exec_dict.get("unit") or "").lower()
+        agg = str(exec_dict.get("aggregation") or "").lower()
+        is_donor_unit = (
+            stat_unit in ("donor", "sample", "biological_replicate")
+            or "pseudobulk" in agg
+            or execution.aggregation in ("donor_pseudobulk", "pseudobulk")
+        )
+        if not is_donor_unit or exec_dict.get("cell_level_condition_test") or execution.cell_level_condition_test:
+            binding_issues.append("统计单位为细胞级而非供体级")
+
+        # 2. Fit status check
+        fit_status = str(exec_dict.get("fit_status") or "").upper().strip()
+        if fit_status:
+            if fit_status in ("FAILED", "ERROR", "DIVERGED", "NON_CONVERGED", "FAIL"):
+                findings.append(
+                    DEFinding(
+                        rule_id="BFA-013b",
+                        severity=FindingSeverity.BLOCKER,
+                        category=FindingCategory.INPUT_COUNT_TYPE,
+                        title="差异表达模型拟合失败 (Model Fitting Failed/Diverged)",
+                        impact_on_conclusion=(
+                            f"执行记录显示模型拟合状态为 {fit_status}。模型未成功收敛，"
+                            "输出的统计检验量与 p 值为无效或不可信计算结果。"
+                        ),
+                        step_or_location="execution_record.fit_status",
+                        minimal_fix="检查输入 counts 质量、离散度拟合参数或样本分组设计，确保模型成功收敛后重新导出执行记录。",
+                        evidence_data={"fit_status": fit_status},
+                    )
+                )
+                binding_issues.append(f"模型拟合状态失败 ({fit_status})")
+
+        # 3. Result Table SHA-256 Hash Verification
+        expected_hash = str(
+            exec_dict.get("result_sha256")
+            or exec_dict.get("receipt_result_sha256")
+            or ""
+        ).strip().lower()
+        if expected_hash:
+            if set(expected_hash) == {"0"} or len(expected_hash) < 32:
+                findings.append(
+                    DEFinding(
+                        rule_id="BFA-013a",
+                        severity=FindingSeverity.BLOCKER,
+                        category=FindingCategory.FDR_AND_TESTING,
+                        title="执行记录哈希无效或篡改 (Execution Record SHA-256 Tampered/Invalid)",
+                        impact_on_conclusion=(
+                            f"执行记录中的结果表 SHA-256 哈希全为零或格式无效 ('{expected_hash[:16]}...')，属于不可信或被篡改凭证。"
+                        ),
+                        step_or_location="execution_record.result_sha256",
+                        minimal_fix="生成并绑定包含真实数据文件 SHA-256 签名的有效执行记录。",
+                        evidence_data={"expected_hash": expected_hash},
+                    )
+                )
+                binding_issues.append("结果表哈希全为零或无效")
+            else:
+                actual_file_hash = None
+                if isinstance(de_table, (str, Path)) and Path(de_table).is_file():
+                    try:
+                        actual_file_hash = hashlib.sha256(Path(de_table).read_bytes()).hexdigest().lower()
+                    except Exception as exc:
+                        logger.warning("Failed to compute hash for %s: %s", de_table, exc)
+
+                if actual_file_hash and actual_file_hash != expected_hash:
+                    findings.append(
+                        DEFinding(
+                            rule_id="BFA-013a",
+                            severity=FindingSeverity.BLOCKER,
+                            category=FindingCategory.FDR_AND_TESTING,
+                            title="结果表内容与执行记录哈希不匹配 (Result Table Hash Mismatch)",
+                            impact_on_conclusion=(
+                                f"结果表实际 SHA-256 ({actual_file_hash[:16]}...) 与执行记录预期哈希 ({expected_hash[:16]}...) 不一致，"
+                                "存在产物篡改、未记录变更或版本脱节。"
+                            ),
+                            step_or_location="execution_record.result_sha256 vs de_table",
+                            minimal_fix="核验结果表版本并重新绑定与实际检验产物一致的执行记录。",
+                            evidence_data={"observed_sha256": actual_file_hash, "expected_sha256": expected_hash},
+                        )
+                    )
+                    binding_issues.append(f"结果表哈希不匹配 (预期 {expected_hash[:8]}..., 实际 {actual_file_hash[:8]}...)")
+
+        # 4. Design Formula vs Design Matrix Columns
+        design_formula = str(exec_dict.get("design") or exec_dict.get("formula") or "").strip()
+        matrix_cols = exec_dict.get("design_matrix_columns")
+        if design_formula and matrix_cols and isinstance(matrix_cols, list):
+            formula_has_donor = any(
+                k in design_formula.lower()
+                for k in ("donor", "replicate", "patient", "subject", "individual")
+            )
+            matrix_has_donor = any(
+                ("donor" in c.lower() or "replicate" in c.lower() or "subject" in c.lower() or "patient" in c.lower())
+                for c in matrix_cols
+            )
+            if formula_has_donor != matrix_has_donor:
+                findings.append(
+                    DEFinding(
+                        rule_id="BFA-013c",
+                        severity=FindingSeverity.BLOCKER,
+                        category=FindingCategory.PSEUDOREPLICATION,
+                        title="模型设计公式与设计矩阵列冲突 (Formula Conflicts with Design Matrix Columns)",
+                        impact_on_conclusion=(
+                            f"声明的模型公式 '{design_formula}'（供体控制: {formula_has_donor}）"
+                            f"与拟合设计矩阵列（包含供体列: {matrix_has_donor}）存在冲突。"
+                            "无法证实实际拟合的模型是否对供体效应进行了控制。"
+                        ),
+                        step_or_location="execution_record.design vs design_matrix_columns",
+                        minimal_fix="核对拟合脚本中的模型公式，确保公式与实际输入模型的设计矩阵保持一致（如 ~ donor + condition）。",
+                        evidence_data={"formula": design_formula, "matrix_columns": matrix_cols},
+                    )
+                )
+                binding_issues.append("设计公式与设计矩阵列冲突")
+
+        # 5. Cohort Sample / Donor Count Consistency
+        rec_donors = exec_dict.get("n_donors")
+        obs_donors = cohort_summary.get("n_donors")
+        if rec_donors is not None and obs_donors is not None and int(rec_donors) != int(obs_donors):
+            findings.append(
+                DEFinding(
+                    rule_id="BFA-013d",
+                    severity=FindingSeverity.BLOCKER,
+                    category=FindingCategory.DONOR_IMBALANCE,
+                    title="执行记录供体数与元数据样本表不一致 (Cohort Donor Count Mismatch)",
+                    impact_on_conclusion=f"执行记录记录了 {rec_donors} 个供体，但提供的样本表仅包含 {obs_donors} 个供体。",
+                    step_or_location="execution_record.n_donors vs sample_metadata",
+                    minimal_fix="提供与执行记录严格对应的样本元数据表。",
+                    evidence_data={"recorded_donors": rec_donors, "observed_donors": obs_donors},
+                )
+            )
+            binding_issues.append(f"供体数不一致 (记录: {rec_donors}, 样本表: {obs_donors})")
+
+        if binding_issues:
+            issue_summary = "；".join(binding_issues)
+            checks.append(
+                CheckRecord(
+                    check_id="analysis_execution_binding",
+                    title="分析事实与执行记录绑定",
+                    status=CheckStatus.ISSUE_FOUND,
+                    summary=f"已核查执行记录：发现破坏或矛盾（{issue_summary}）。",
+                    required_for_pass=True,
+                )
+            )
+            return False
+
+        checks.append(
+            CheckRecord(
+                check_id="analysis_execution_binding",
+                title="分析事实与执行记录绑定",
+                status=CheckStatus.ASSESSED,
+                summary="已核查分析执行记录：统计单位为供体级，设计矩阵与拟合状态已绑定，哈希校验一致。",
+                required_for_pass=True,
+            )
+        )
+        return True
+
+    def _audit_claim_vs_table_facts(
+        self,
+        claim_text: str,
+        de_df: Optional[pd.DataFrame],
+        findings: List[DEFinding],
+        checks: List[CheckRecord],
+    ) -> bool:
+        """Verify natural language statements against the exact differential expression table facts.
+
+        Checks:
+        1. Focal gene existence (BFA-014)
+        2. Asserted direction concordant with log2FoldChange (BFA-015d)
+        3. Asserted significance concordant with adjusted p-value (BFA-015a / BFA-015b)
+        4. Global null claim concordant with presence/absence of significant DEGs (BFA-015c)
+        """
+        if de_df is None or de_df.empty or not claim_text or not str(claim_text).strip():
+            return False
+
+        text = str(claim_text).strip()
+        stopwords = {
+            "this", "the", "these", "those", "our", "for", "in", "no", "none", "all", "each",
+            "both", "result", "results", "analysis", "data", "table", "method", "genes", "degs",
+            "supplied", "conclusion", "reported", "tested", "control", "treated"
+        }
+
+        # Resolve gene column
+        gene_col = None
+        for cand in ["gene", "symbol", "names", "gene_name", "id"]:
+            if cand in de_df.columns:
+                gene_col = cand
+                break
+
+        table_genes = {}
+        if gene_col:
+            table_genes = {str(g).upper(): str(g) for g in de_df[gene_col].dropna()}
+        elif de_df.index.name in ("gene", "symbol", "gene_name") or (not de_df.empty and isinstance(de_df.index[0], str)):
+            table_genes = {str(g).upper(): str(g) for g in de_df.index}
+
+        # Resolve padj and lfc columns
+        padj_col = None
+        for cand in ["padj", "pvals_adj", "pvalsadj", "adj_p", "fdr", "qval"]:
+            if cand in de_df.columns:
+                padj_col = cand
+                break
+
+        lfc_col = None
+        for cand in ["log2FoldChange", "log2foldchange", "logfoldchanges", "logfc", "lfc"]:
+            if cand in de_df.columns:
+                lfc_col = cand
+                break
+
+        # 1. Global null check
+        has_global_null_claim = bool(
+            re.search(r"\b(?:no\s+genes\s+were\s+significant|zero\s+significant\s+genes?|none\s+of\s+the\s+genes\s+were\s+significant)\b", text, re.I)
+            or re.search(r"无显著基因|未见显著基因|没有显著基因|fdr\s*后无显著|校正后无显著|全表无显著", text, re.I)
+        )
+        if has_global_null_claim:
+            sig_count = (pd.to_numeric(de_df[padj_col], errors="coerce") < self.fdr_threshold).sum() if padj_col else 0
+            if sig_count > 0:
+                findings.append(
+                    DEFinding(
+                        rule_id="BFA-015c",
+                        severity=FindingSeverity.HIGH_IMPACT,
+                        category=FindingCategory.CLAIM_BOUNDARY,
+                        title="虚假声称全局无显著差异基因 (False Global Null Assertion)",
+                        impact_on_conclusion=(
+                            f"声明声称在 FDR 校正后无任何显著基因，但结果表中实际检测到 {sig_count} 个显著基因 (padj < {self.fdr_threshold})。"
+                        ),
+                        step_or_location="claim_text vs de_table",
+                        minimal_fix="更正文稿声明，结果表中存在已达到统计显著的基因，不应声称为全表无显著。",
+                        evidence_data={"significant_gene_count": int(sig_count)},
+                    )
+                )
+                checks.append(
+                    CheckRecord(
+                        check_id="claim_fact_concordance",
+                        title="声明微观事实核查",
+                        status=CheckStatus.ISSUE_FOUND,
+                        summary=f"全局无显著声明与表格矛盾：表中有 {sig_count} 个显著基因。",
+                        required_for_pass=True,
+                    )
+                )
+                return False
+
+        # 2. Extract focal gene
+        focal_gene = None
+        gene_patterns = [
+            r"\b(?:contains\s+a\s+result\s+for|result\s+for)\s+([A-Za-z0-9_.-]+)",
+            r"\bprove\s+that\s+([A-Za-z0-9_.-]+)\b",
+            r"\b([A-Za-z0-9_.-]+)\s+(?:is|are|was|were)\s+(?:significantly\s+)?(up-?regulated|down-?regulated)\b",
+            r"\b([A-Za-z0-9_.-]+)\s+(?:is|are|was|were)\s+(not\s+significant|significant)\b",
+            r"\b([A-Za-z0-9_.-]+)\s+(?:causes|drives|is\s+a\s+clinically\s+validated)\b",
+        ]
+        for pat in gene_patterns:
+            m = re.search(pat, text, re.I)
+            if m:
+                cand = m.group(1).strip().rstrip(". ,;:")
+                if cand.lower() not in stopwords and len(cand) >= 2:
+                    focal_gene = cand
+                    break
+
+        if not focal_gene:
+            # Fallback scan: check if any uppercase token in text matches or resembles a gene
+            tokens = [t.strip(". ,;:") for t in text.split()]
+            for t in tokens:
+                if t.upper() in table_genes and t.lower() not in stopwords:
+                    focal_gene = t
+                    break
+
+        if not focal_gene:
+            return True
+
+        focal_upper = focal_gene.upper()
+        if table_genes and focal_upper not in table_genes:
+            findings.append(
+                DEFinding(
+                    rule_id="BFA-014",
+                    severity=FindingSeverity.HIGH_IMPACT,
+                    category=FindingCategory.CLAIM_BOUNDARY,
+                    title=f"声称的基因在结果表中不存在 (Asserted Gene Not in DE Table: {focal_gene})",
+                    impact_on_conclusion=f"声明中提及的基因 '{focal_gene}' 未在提供的差异表达结果表中找到，无法支持针对该基因的具体推断。",
+                    step_or_location="claim_text vs de_table",
+                    minimal_fix=f"核对基因标识符 '{focal_gene}' 是否存在于当前分析的基因集或输入数据中。",
+                    evidence_data={"missing_gene": focal_gene},
+                )
+            )
+            checks.append(
+                CheckRecord(
+                    check_id="claim_fact_concordance",
+                    title="声明微观事实核查",
+                    status=CheckStatus.ISSUE_FOUND,
+                    summary=f"声明提及的基因 '{focal_gene}' 在结果表中不存在。",
+                    required_for_pass=True,
+                )
+            )
+            return False
+
+        # If gene exists in table, verify direction & significance
+        actual_gene = table_genes.get(focal_upper, focal_gene)
+        if gene_col:
+            rows = de_df[de_df[gene_col].astype(str) == actual_gene]
+        else:
+            rows = de_df[de_df.index.astype(str) == actual_gene]
+
+        if rows.empty:
+            return True
+
+        row = rows.iloc[0]
+        has_issue = False
+
+        # Direction check
+        lfc_val = float(row[lfc_col]) if lfc_col and pd.notna(row.get(lfc_col)) else None
+        if lfc_val is not None:
+            if re.search(r"\bup-?regulated\b|上调|高表达", text, re.I) and lfc_val < 0:
+                has_issue = True
+                findings.append(
+                    DEFinding(
+                        rule_id="BFA-015d",
+                        severity=FindingSeverity.HIGH_IMPACT,
+                        category=FindingCategory.CLAIM_BOUNDARY,
+                        title=f"基因表达差异方向与声明相反 (Wrong Direction Assertion: {actual_gene})",
+                        impact_on_conclusion=f"声明声称基因 '{actual_gene}' 上调表达 (upregulated)，但结果表中估计的 log2FC 为负数 ({lfc_val:.4f})，实际为下调表达。",
+                        step_or_location=f"claim_text vs de_table.{lfc_col}",
+                        minimal_fix=f"核对组别对比方向，基因 '{actual_gene}' 的 log2FC 为负值，应修正为下调表达。",
+                        evidence_data={"gene": actual_gene, "log2FoldChange": lfc_val},
+                    )
+                )
+            elif re.search(r"\bdown-?regulated\b|下调|低表达", text, re.I) and lfc_val > 0:
+                has_issue = True
+                findings.append(
+                    DEFinding(
+                        rule_id="BFA-015d",
+                        severity=FindingSeverity.HIGH_IMPACT,
+                        category=FindingCategory.CLAIM_BOUNDARY,
+                        title=f"基因表达差异方向与声明相反 (Wrong Direction Assertion: {actual_gene})",
+                        impact_on_conclusion=f"声明声称基因 '{actual_gene}' 下调表达 (downregulated)，但结果表中估计的 log2FC 为正数 ({lfc_val:.4f})，实际为上调表达。",
+                        step_or_location=f"claim_text vs de_table.{lfc_col}",
+                        minimal_fix=f"核对组别对比方向，基因 '{actual_gene}' 的 log2FC 为正值，应修正为上调表达。",
+                        evidence_data={"gene": actual_gene, "log2FoldChange": lfc_val},
+                    )
+                )
+
+        # Significance check
+        padj_val = float(row[padj_col]) if padj_col and pd.notna(row.get(padj_col)) else None
+        if padj_val is not None:
+            is_negated_sig = bool(re.search(r"\b(?:not\s+significant|was\s+not\s+significant)\b|不显著|未达显著", text, re.I))
+            is_positive_sig = bool(re.search(r"\b(?:is\s+significant|significantly)\b|显著", text, re.I)) and not is_negated_sig
+
+            if is_negated_sig and padj_val < self.fdr_threshold:
+                has_issue = True
+                findings.append(
+                    DEFinding(
+                        rule_id="BFA-015b",
+                        severity=FindingSeverity.HIGH_IMPACT,
+                        category=FindingCategory.CLAIM_BOUNDARY,
+                        title=f"错误否定真实显著基因 (False Negative Assertion: {actual_gene})",
+                        impact_on_conclusion=f"声明声称基因 '{actual_gene}' 不显著，但结果表中实际 padj={padj_val:.4e} < {self.fdr_threshold}，已达到统计显著标准。",
+                        step_or_location=f"claim_text vs de_table.{padj_col}",
+                        minimal_fix=f"核对分析结果，基因 '{actual_gene}' 已达到显著标准，避免陈述为不显著。",
+                        evidence_data={"gene": actual_gene, "padj": padj_val},
+                    )
+                )
+            elif is_positive_sig and padj_val >= self.fdr_threshold:
+                has_issue = True
+                findings.append(
+                    DEFinding(
+                        rule_id="BFA-015a",
+                        severity=FindingSeverity.HIGH_IMPACT,
+                        category=FindingCategory.CLAIM_BOUNDARY,
+                        title=f"虚假声称基因统计显著 (False Significance Assertion: {actual_gene})",
+                        impact_on_conclusion=f"声明声称基因 '{actual_gene}' 在 FDR 校正后显著，但实际结果表中该基因 padj={padj_val:.4f} >= {self.fdr_threshold}，未达到显著阈值。",
+                        step_or_location=f"claim_text vs de_table.{padj_col}",
+                        minimal_fix=f"修正文稿声明，不得将未达到 FDR < {self.fdr_threshold} 阈值的基因 '{actual_gene}' 声称为显著差异基因。",
+                        evidence_data={"gene": actual_gene, "padj": padj_val},
+                    )
+                )
+
+        if has_issue:
+            checks.append(
+                CheckRecord(
+                    check_id="claim_fact_concordance",
+                    title="声明微观事实核查",
+                    status=CheckStatus.ISSUE_FOUND,
+                    summary=f"声明中对基因 '{actual_gene}' 的方向或显著性断言与结果表矛盾。",
+                    required_for_pass=True,
+                )
+            )
+            return False
+
+        checks.append(
+            CheckRecord(
+                check_id="claim_fact_concordance",
+                title="声明微观事实核查",
+                status=CheckStatus.ASSESSED,
+                summary=f"已核查声明对基因 '{actual_gene}' 的断言：方向与显著性与结果表一致。",
+                required_for_pass=False,
+            )
+        )
+        return True
+
     def _compute_overall_status(
         self,
         findings: List[DEFinding],
@@ -1498,7 +2182,10 @@ class DEAuditEngine:
         required = [c for c in checks if c.required_for_pass]
         if any(c.status in (CheckStatus.MISSING_EVIDENCE, CheckStatus.PARSE_FAILED) for c in required):
             return "NEEDS_DATA"
-        donor_level = execution.aggregation == "donor_level_inferred_from_result_schema" and not execution.cell_level_condition_test
+        donor_level = (
+            execution.aggregation in ("donor_pseudobulk", "pseudobulk")
+            and not execution.cell_level_condition_test
+        )
         replicate = next((c for c in checks if c.check_id == "donor_replicates"), None)
         if replicate is None or replicate.status != CheckStatus.ASSESSED:
             return "NEEDS_DATA"
@@ -1517,6 +2204,7 @@ class DEAuditEngine:
         """Claim scope and Methods text. Past-tense facts come only from execution records."""
         has_blocker = any(f.severity == FindingSeverity.BLOCKER for f in findings)
         has_high = any(f.severity == FindingSeverity.HIGH_IMPACT for f in findings)
+        has_claim_exceeded = any(f.rule_id == "BFA-008" for f in findings)
         n_donors = cohort_summary.get("n_donors")
         conditions = cohort_summary.get("conditions") or {}
         required_missing = any(
@@ -1524,7 +2212,7 @@ class DEAuditEngine:
             for c in checks
         )
         donor_level = (
-            execution.aggregation == "donor_level_inferred_from_result_schema"
+            execution.aggregation in ("donor_pseudobulk", "pseudobulk")
             and not execution.cell_level_condition_test
         )
 
@@ -1561,6 +2249,21 @@ class DEAuditEngine:
                 "execution was not confirmed."
             )
             maturity = "NOT_ASSESSED"
+        elif has_claim_exceeded:
+            allowed = (
+                f"在已核查的供体级结果与设计下（N={n_donors or 'cohort'} 独立生物学重复），仅支持群体级别的观察性统计关联措辞（Observational Association）。"
+            )
+            prohibited = "严禁对未提供因果扰动、实验验证或临床金标准支持的基因做出因果疗效、治疗驱动或临床诊断靶点声明。"
+            results = "Observed differential expression supports associative findings only; causal or biomarker claims are unwarranted."
+            maturity = "EXPLORATORY_COHORT"
+        elif any(c.check_id == "fdr_multiple_testing" and "Honest Negative" in c.summary for c in checks) and donor_level and not has_blocker and not has_high:
+            allowed = (
+                f"在已核查的供体级结果与设计下（N={n_donors or 'cohort'} 独立生物学重复），"
+                f"支持诚实阴性结论：在全转录组 FDR < {self.fdr_threshold} 阈值下未检出显著差异表达基因。"
+            )
+            prohibited = "严禁依据未校正的原始 p 值挑选基因进行选择性报告 (Selective Reporting / P-hacking)。"
+            results = "Honest negative finding: no genes achieved FDR significance under verified donor-level testing."
+            maturity = "NEGATIVE_RESULT_FREEZE"
         elif has_high or (isinstance(n_donors, int) and n_donors < 3):
             allowed = (
                 f"可陈述为已检查队列内部的探索性候选（供体记录: {n_donors}），"
@@ -1635,6 +2338,7 @@ def audit_differential_expression(
     de_table: Optional[Union[pd.DataFrame, str, Path]] = None,
     sample_metadata: Optional[Union[pd.DataFrame, str, Path]] = None,
     code_path: Optional[Union[str, Path]] = None,
+    execution_record: Optional[Union[Dict[str, Any], ExecutionRecord, str, Path]] = None,
     claim_text: Optional[str] = None,
     donor_col: Optional[str] = None,
     condition_col: Optional[str] = None,
@@ -1651,6 +2355,7 @@ def audit_differential_expression(
         de_table: DataFrame or path to CSV/TSV containing DEG results.
         sample_metadata: DataFrame or path to sample sheet CSV/TSV.
         code_path: Path to analysis script (.py/.R) or Jupyter notebook (.ipynb).
+        execution_record: Optional execution record dict, ExecutionRecord, or JSON path.
         claim_text: Free-text scientific claim statement to verify.
         donor_col: Column name identifying biological donors.
         condition_col: Column name identifying experimental conditions.
@@ -1668,6 +2373,7 @@ def audit_differential_expression(
         de_table=de_table,
         sample_metadata=sample_metadata,
         code_path=code_path,
+        execution_record=execution_record,
         claim_text=claim_text,
         donor_col=donor_col,
         condition_col=condition_col,

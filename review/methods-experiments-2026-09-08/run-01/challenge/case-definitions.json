@@ -1,0 +1,542 @@
+[
+  {
+    "case_id": "valid_positive-0",
+    "family": "valid_positive",
+    "paraphrase": 0,
+    "invalid": false,
+    "claim": "IL1RN is upregulated and significant after FDR correction in the supplied treated-versus-control result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "valid_positive-1",
+    "family": "valid_positive",
+    "paraphrase": 1,
+    "invalid": false,
+    "claim": "For this completed analysis, iL1RN is upregulated and significant after FDR correction in the supplied treated-versus-control result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "valid_positive-2",
+    "family": "valid_positive",
+    "paraphrase": 2,
+    "invalid": false,
+    "claim": "Our reported conclusion is: IL1RN is upregulated and significant after FDR correction in the supplied treated-versus-control result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "valid_negative-0",
+    "family": "valid_negative",
+    "paraphrase": 0,
+    "invalid": false,
+    "claim": "ABCC1 was not significant after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "valid_negative-1",
+    "family": "valid_negative",
+    "paraphrase": 1,
+    "invalid": false,
+    "claim": "For this completed analysis, aBCC1 was not significant after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "valid_negative-2",
+    "family": "valid_negative",
+    "paraphrase": 2,
+    "invalid": false,
+    "claim": "Our reported conclusion is: ABCC1 was not significant after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "valid_limited-0",
+    "family": "valid_limited",
+    "paraphrase": 0,
+    "invalid": false,
+    "claim": "These differential-expression results do not establish causality or clinical efficacy.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "valid_limited-1",
+    "family": "valid_limited",
+    "paraphrase": 1,
+    "invalid": false,
+    "claim": "For this completed analysis, these differential-expression results do not establish causality or clinical efficacy.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "valid_limited-2",
+    "family": "valid_limited",
+    "paraphrase": 2,
+    "invalid": false,
+    "claim": "Our reported conclusion is: These differential-expression results do not establish causality or clinical efficacy.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "valid_table_presence-0",
+    "family": "valid_table_presence",
+    "paraphrase": 0,
+    "invalid": false,
+    "claim": "The supplied differential-expression table contains a result for IL1RN.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "valid_table_presence-1",
+    "family": "valid_table_presence",
+    "paraphrase": 1,
+    "invalid": false,
+    "claim": "For this completed analysis, the supplied differential-expression table contains a result for IL1RN.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "valid_table_presence-2",
+    "family": "valid_table_presence",
+    "paraphrase": 2,
+    "invalid": false,
+    "claim": "Our reported conclusion is: The supplied differential-expression table contains a result for IL1RN.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "absent_gene-0",
+    "family": "absent_gene",
+    "paraphrase": 0,
+    "invalid": true,
+    "claim": "BN_NOT_IN_INPUT_20260908 is significantly upregulated after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "absent_gene-1",
+    "family": "absent_gene",
+    "paraphrase": 1,
+    "invalid": true,
+    "claim": "For this completed analysis, bN_NOT_IN_INPUT_20260908 is significantly upregulated after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "absent_gene-2",
+    "family": "absent_gene",
+    "paraphrase": 2,
+    "invalid": true,
+    "claim": "Our reported conclusion is: BN_NOT_IN_INPUT_20260908 is significantly upregulated after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "wrong_direction-0",
+    "family": "wrong_direction",
+    "paraphrase": 0,
+    "invalid": true,
+    "claim": "IL1RN is significantly downregulated after FDR correction in the supplied treated-versus-control result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "wrong_direction-1",
+    "family": "wrong_direction",
+    "paraphrase": 1,
+    "invalid": true,
+    "claim": "For this completed analysis, iL1RN is significantly downregulated after FDR correction in the supplied treated-versus-control result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "wrong_direction-2",
+    "family": "wrong_direction",
+    "paraphrase": 2,
+    "invalid": true,
+    "claim": "Our reported conclusion is: IL1RN is significantly downregulated after FDR correction in the supplied treated-versus-control result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "false_significance-0",
+    "family": "false_significance",
+    "paraphrase": 0,
+    "invalid": true,
+    "claim": "ABCC1 is significant after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "false_significance-1",
+    "family": "false_significance",
+    "paraphrase": 1,
+    "invalid": true,
+    "claim": "For this completed analysis, aBCC1 is significant after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "false_significance-2",
+    "family": "false_significance",
+    "paraphrase": 2,
+    "invalid": true,
+    "claim": "Our reported conclusion is: ABCC1 is significant after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "false_negative-0",
+    "family": "false_negative",
+    "paraphrase": 0,
+    "invalid": true,
+    "claim": "IL1RN was not significant after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "false_negative-1",
+    "family": "false_negative",
+    "paraphrase": 1,
+    "invalid": true,
+    "claim": "For this completed analysis, iL1RN was not significant after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "false_negative-2",
+    "family": "false_negative",
+    "paraphrase": 2,
+    "invalid": true,
+    "claim": "Our reported conclusion is: IL1RN was not significant after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "false_global_null-0",
+    "family": "false_global_null",
+    "paraphrase": 0,
+    "invalid": true,
+    "claim": "No genes were significant after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "false_global_null-1",
+    "family": "false_global_null",
+    "paraphrase": 1,
+    "invalid": true,
+    "claim": "For this completed analysis, no genes were significant after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "false_global_null-2",
+    "family": "false_global_null",
+    "paraphrase": 2,
+    "invalid": true,
+    "claim": "Our reported conclusion is: No genes were significant after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "causal_overclaim-0",
+    "family": "causal_overclaim",
+    "paraphrase": 0,
+    "invalid": true,
+    "claim": "These observational results prove that IL1RN causes disease.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "causal_overclaim-1",
+    "family": "causal_overclaim",
+    "paraphrase": 1,
+    "invalid": true,
+    "claim": "For this completed analysis, these observational results prove that IL1RN causes disease.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "causal_overclaim-2",
+    "family": "causal_overclaim",
+    "paraphrase": 2,
+    "invalid": true,
+    "claim": "Our reported conclusion is: These observational results prove that IL1RN causes disease.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "clinical_overclaim-0",
+    "family": "clinical_overclaim",
+    "paraphrase": 0,
+    "invalid": true,
+    "claim": "IL1RN is a clinically validated diagnostic biomarker with proven clinical efficacy.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "clinical_overclaim-1",
+    "family": "clinical_overclaim",
+    "paraphrase": 1,
+    "invalid": true,
+    "claim": "For this completed analysis, iL1RN is a clinically validated diagnostic biomarker with proven clinical efficacy.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "clinical_overclaim-2",
+    "family": "clinical_overclaim",
+    "paraphrase": 2,
+    "invalid": true,
+    "claim": "Our reported conclusion is: IL1RN is a clinically validated diagnostic biomarker with proven clinical efficacy.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "missing_fdr-0",
+    "family": "missing_fdr",
+    "paraphrase": 0,
+    "invalid": true,
+    "claim": "IL1RN is significant after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "ded8aca3489954d5888e23961f4ed4b3f7c4046c191681501df5e6e1eddc50d3",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "missing_fdr-1",
+    "family": "missing_fdr",
+    "paraphrase": 1,
+    "invalid": true,
+    "claim": "For this completed analysis, iL1RN is significant after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "ded8aca3489954d5888e23961f4ed4b3f7c4046c191681501df5e6e1eddc50d3",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "missing_fdr-2",
+    "family": "missing_fdr",
+    "paraphrase": 2,
+    "invalid": true,
+    "claim": "Our reported conclusion is: IL1RN is significant after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "ded8aca3489954d5888e23961f4ed4b3f7c4046c191681501df5e6e1eddc50d3",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "invalid_probability-0",
+    "family": "invalid_probability",
+    "paraphrase": 0,
+    "invalid": true,
+    "claim": "IL1RN is significant after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "8863eedc6c51375b3a7af5c859f1186aa5a90f17dc8b28a3ad9399495cf17d4d",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "invalid_probability-1",
+    "family": "invalid_probability",
+    "paraphrase": 1,
+    "invalid": true,
+    "claim": "For this completed analysis, iL1RN is significant after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "8863eedc6c51375b3a7af5c859f1186aa5a90f17dc8b28a3ad9399495cf17d4d",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "invalid_probability-2",
+    "family": "invalid_probability",
+    "paraphrase": 2,
+    "invalid": true,
+    "claim": "Our reported conclusion is: IL1RN is significant after FDR correction in the supplied result.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "8863eedc6c51375b3a7af5c859f1186aa5a90f17dc8b28a3ad9399495cf17d4d",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "missing_receipt-0",
+    "family": "missing_receipt",
+    "paraphrase": 0,
+    "invalid": true,
+    "claim": "The supplied execution evidence verifies a completed donor-level fit for this table.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": null
+  },
+  {
+    "case_id": "missing_receipt-1",
+    "family": "missing_receipt",
+    "paraphrase": 1,
+    "invalid": true,
+    "claim": "For this completed analysis, the supplied execution evidence verifies a completed donor-level fit for this table.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": null
+  },
+  {
+    "case_id": "missing_receipt-2",
+    "family": "missing_receipt",
+    "paraphrase": 2,
+    "invalid": true,
+    "claim": "Our reported conclusion is: The supplied execution evidence verifies a completed donor-level fit for this table.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": null
+  },
+  {
+    "case_id": "wrong_result_hash-0",
+    "family": "wrong_result_hash",
+    "paraphrase": 0,
+    "invalid": true,
+    "claim": "The supplied execution receipt is bound to the exact supplied result table.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "case_id": "wrong_result_hash-1",
+    "family": "wrong_result_hash",
+    "paraphrase": 1,
+    "invalid": true,
+    "claim": "For this completed analysis, the supplied execution receipt is bound to the exact supplied result table.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "case_id": "wrong_result_hash-2",
+    "family": "wrong_result_hash",
+    "paraphrase": 2,
+    "invalid": true,
+    "claim": "Our reported conclusion is: The supplied execution receipt is bound to the exact supplied result table.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "case_id": "changed_result-0",
+    "family": "changed_result",
+    "paraphrase": 0,
+    "invalid": true,
+    "claim": "The supplied result table is unchanged from the recorded execution output.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "f708dbcab64a1e16ebe4db90af0d69f4a6536d315d96e310062cb7717e102f4c",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "changed_result-1",
+    "family": "changed_result",
+    "paraphrase": 1,
+    "invalid": true,
+    "claim": "For this completed analysis, the supplied result table is unchanged from the recorded execution output.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "f708dbcab64a1e16ebe4db90af0d69f4a6536d315d96e310062cb7717e102f4c",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "changed_result-2",
+    "family": "changed_result",
+    "paraphrase": 2,
+    "invalid": true,
+    "claim": "Our reported conclusion is: The supplied result table is unchanged from the recorded execution output.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "f708dbcab64a1e16ebe4db90af0d69f4a6536d315d96e310062cb7717e102f4c",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "failed_fit-0",
+    "family": "failed_fit",
+    "paraphrase": 0,
+    "invalid": true,
+    "claim": "The recorded model fit completed successfully.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "failed_fit-1",
+    "family": "failed_fit",
+    "paraphrase": 1,
+    "invalid": true,
+    "claim": "For this completed analysis, the recorded model fit completed successfully.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "failed_fit-2",
+    "family": "failed_fit",
+    "paraphrase": 2,
+    "invalid": true,
+    "claim": "Our reported conclusion is: The recorded model fit completed successfully.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "wrong_design-0",
+    "family": "wrong_design",
+    "paraphrase": 0,
+    "invalid": true,
+    "claim": "The recorded donor-adjusted model formula agrees with the fitted design matrix.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "wrong_design-1",
+    "family": "wrong_design",
+    "paraphrase": 1,
+    "invalid": true,
+    "claim": "For this completed analysis, the recorded donor-adjusted model formula agrees with the fitted design matrix.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  },
+  {
+    "case_id": "wrong_design-2",
+    "family": "wrong_design",
+    "paraphrase": 2,
+    "invalid": true,
+    "claim": "Our reported conclusion is: The recorded donor-adjusted model formula agrees with the fitted design matrix.",
+    "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+    "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+    "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+  }
+]

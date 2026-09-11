@@ -14,6 +14,8 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
+import numpy as np
+
 
 @dataclass
 class MemoryEstimation:
@@ -267,3 +269,236 @@ def generate_streaming_plan(
         estimated_memory_per_chunk_mb=mem_per_chunk_mb,
         streaming_pipeline_steps=steps,
     )
+
+
+# ==============================================================================
+# Online Numerical Statistics & Streaming Aggregators
+# ==============================================================================
+
+
+@dataclass
+class OnlineWelfordStats:
+    """Online, numerically stable accumulation of mean, variance, and sparsity (Welford's algorithm)."""
+
+    n_features: int
+    count: int = 0
+    mean: np.ndarray = field(default_factory=lambda: np.zeros(0, dtype=np.float64))
+    M2: np.ndarray = field(default_factory=lambda: np.zeros(0, dtype=np.float64))
+    non_zero_counts: np.ndarray = field(default_factory=lambda: np.zeros(0, dtype=np.int64))
+    min_val: float = float("inf")
+    max_val: float = float("-inf")
+
+    def __post_init__(self):
+        if len(self.mean) == 0 and self.n_features > 0:
+            self.mean = np.zeros(self.n_features, dtype=np.float64)
+            self.M2 = np.zeros(self.n_features, dtype=np.float64)
+            self.non_zero_counts = np.zeros(self.n_features, dtype=np.int64)
+
+    def update(self, chunk: Any) -> None:
+        """Update statistics with a 2D chunk of shape (n_chunk_samples, n_features)."""
+        import scipy.sparse as sp
+
+        if sp.issparse(chunk):
+            chunk_arr = chunk.toarray()
+        else:
+            chunk_arr = np.asarray(chunk)
+
+        if chunk_arr.ndim != 2 or chunk_arr.shape[1] != self.n_features:
+            raise ValueError(f"Chunk shape {chunk_arr.shape} does not match expected n_features {self.n_features}")
+
+        n_b = chunk_arr.shape[0]
+        if n_b == 0:
+            return
+
+        chunk_min = float(np.min(chunk_arr))
+        chunk_max = float(np.max(chunk_arr))
+        if chunk_min < self.min_val:
+            self.min_val = chunk_min
+        if chunk_max > self.max_val:
+            self.max_val = chunk_max
+
+        self.non_zero_counts += np.count_nonzero(chunk_arr, axis=0)
+
+        n_a = self.count
+        self.count = n_a + n_b
+
+        mean_b = np.mean(chunk_arr, axis=0)
+        M2_b = np.sum((chunk_arr - mean_b) ** 2, axis=0)
+
+        if n_a == 0:
+            self.mean = mean_b
+            self.M2 = M2_b
+        else:
+            delta = mean_b - self.mean
+            self.mean = self.mean + delta * (n_b / self.count)
+            self.M2 = self.M2 + M2_b + (delta**2) * (n_a * n_b / self.count)
+
+    @property
+    def variance(self) -> np.ndarray:
+        """Sample variance (ddof=1) or zeros if count <= 1."""
+        if self.count <= 1:
+            return np.zeros(self.n_features, dtype=np.float64)
+        return self.M2 / (self.count - 1)
+
+    @property
+    def standard_deviation(self) -> np.ndarray:
+        return np.sqrt(self.variance)
+
+    @property
+    def sparsity(self) -> float:
+        """Overall matrix sparsity fraction."""
+        if self.count == 0 or self.n_features == 0:
+            return 0.0
+        total_elements = self.count * self.n_features
+        total_nz = int(np.sum(self.non_zero_counts))
+        return float(1.0 - (total_nz / total_elements))
+
+
+def stream_raw_count_matrix_audit(
+    chunk_iterator: Any,
+    *,
+    n_features: int,
+    label: str = "streamed counts",
+) -> Dict[str, Any]:
+    """Audit streaming matrix chunks for finite, non-negative integer raw counts with O(1) memory."""
+    from bionexus.integrity import ScientificInputError
+
+    total_samples = 0
+    total_nonzeros = 0
+    import scipy.sparse as sp
+
+    for idx, chunk in enumerate(chunk_iterator):
+        if sp.issparse(chunk):
+            values = chunk.data
+            n_rows = chunk.shape[0]
+            n_cols = chunk.shape[1]
+        else:
+            arr = np.asarray(chunk)
+            if arr.ndim != 2:
+                raise ScientificInputError(f"{label} chunk {idx} must be 2D, got shape {arr.shape}")
+            values = arr.ravel()
+            n_rows, n_cols = arr.shape
+
+        if n_cols != n_features:
+            raise ScientificInputError(
+                f"{label} chunk {idx} feature dimension {n_cols} != expected {n_features}"
+            )
+
+        if not np.issubdtype(values.dtype, np.number):
+            raise ScientificInputError(f"{label} chunk {idx} must contain numeric values")
+        if values.size and not np.all(np.isfinite(values)):
+            raise ScientificInputError(f"{label} chunk {idx} contains NaN or infinite values")
+        if values.size and np.any(values < 0):
+            raise ScientificInputError(f"{label} chunk {idx} contains negative values")
+        if values.size and not np.all(np.isclose(values, np.rint(values), rtol=0.0, atol=1e-6)):
+            raise ScientificInputError(
+                f"{label} chunk {idx} contains non-integer values; unnormalized raw counts required"
+            )
+
+        total_samples += n_rows
+        total_nonzeros += int(np.count_nonzero(values))
+
+    if total_samples == 0:
+        raise ScientificInputError(f"{label} contains zero samples across all chunks")
+
+    return {
+        "shape": [total_samples, n_features],
+        "n_samples": total_samples,
+        "n_features": n_features,
+        "n_stored_nonzeros": total_nonzeros,
+        "integer_counts_verified": True,
+        "stream_audited": True,
+    }
+
+
+class StreamingPseudobulkAggregator:
+    """
+    Online chunked aggregator that computes pseudobulk sums per sample group.
+    Operates in O(1) memory relative to total cell count.
+    """
+
+    def __init__(self, gene_names: List[str], group_keys: List[str]):
+        self.gene_names = [str(g) for g in gene_names]
+        self.n_genes = len(self.gene_names)
+        self.group_keys = list(group_keys)
+        # Mapping from group tuple -> accumulated int64 numpy sum vector
+        self._accumulator: Dict[Tuple[str, ...], np.ndarray] = {}
+        self._cell_counts: Dict[Tuple[str, ...], int] = {}
+
+    def add_chunk(self, chunk_counts: Any, chunk_obs: Any) -> None:
+        """
+        Aggregate a chunk of cells.
+        chunk_counts: (n_chunk_cells, n_genes) 2D array or sparse matrix.
+        chunk_obs: DataFrame or dict of arrays for chunk_keys of length n_chunk_cells.
+        """
+        import pandas as pd
+        import scipy.sparse as sp
+
+        if not isinstance(chunk_obs, pd.DataFrame):
+            chunk_obs = pd.DataFrame(chunk_obs)
+
+        n_cells = chunk_obs.shape[0]
+        if n_cells == 0:
+            return
+
+        is_sparse = sp.issparse(chunk_counts)
+        if not is_sparse:
+            chunk_counts = np.asarray(chunk_counts)
+
+        for col in self.group_keys:
+            if col not in chunk_obs.columns:
+                raise KeyError(f"Grouping column '{col}' missing from chunk observations")
+
+        # Group indices within this chunk
+        grouped_indices = chunk_obs.groupby(self.group_keys, observed=False).indices
+
+        for group_val, row_idxs in grouped_indices.items():
+            key = (group_val,) if not isinstance(group_val, tuple) else group_val
+            key = tuple(str(k) for k in key)
+            n_group_cells = len(row_idxs)
+
+            if is_sparse:
+                sub_sum = np.asarray(chunk_counts[row_idxs, :].sum(axis=0)).ravel()
+            else:
+                sub_sum = np.sum(chunk_counts[row_idxs, :], axis=0)
+
+            sub_sum = np.rint(sub_sum).astype(np.int64)
+
+            if key not in self._accumulator:
+                self._accumulator[key] = sub_sum
+                self._cell_counts[key] = n_group_cells
+            else:
+                self._accumulator[key] += sub_sum
+                self._cell_counts[key] += n_group_cells
+
+    def to_dataframe(self) -> Tuple[Any, Any]:
+        """
+        Produce (counts_df, design_df) suitable for scrna_deseq.py.
+        Returns:
+            counts_df: DataFrame indexed by sample_id, columns=gene_names
+            design_df: DataFrame indexed by sample_id, with group_keys and cell_count
+        """
+        import pandas as pd
+
+        if not self._accumulator:
+            empty_counts = pd.DataFrame(columns=self.gene_names)
+            empty_design = pd.DataFrame(columns=self.group_keys + ["cell_count"])
+            return empty_counts, empty_design
+
+        sample_ids = []
+        rows = []
+        design_records = []
+
+        for key, sum_vec in sorted(self._accumulator.items()):
+            sample_id = "__".join(key)
+            sample_ids.append(sample_id)
+            rows.append(sum_vec)
+            rec = {k: v for k, v in zip(self.group_keys, key)}
+            rec["sample_id"] = sample_id
+            rec["cell_count"] = self._cell_counts[key]
+            design_records.append(rec)
+
+        counts_df = pd.DataFrame(rows, index=sample_ids, columns=self.gene_names)
+        design_df = pd.DataFrame(design_records).set_index("sample_id")
+        return counts_df, design_df
+

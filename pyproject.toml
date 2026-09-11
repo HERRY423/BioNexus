@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bionexus-reliability"
-version = "1.0.0-rc.5"
+version = "1.0.0-rc.6"
 description = "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents (Warrant-First Evidence Assessment, Fail-Closed Invariants, Evidence-Capped Claims, Zero Silent Substitution)."
 authors = [{ name = "BioNexus Team" }]
 license = { text = "Apache-2.0" }
@@ -108,6 +108,7 @@ dev = [
     "pytest-asyncio>=0.21.0,<1.0.0",
     "hypothesis>=6.0.0,<7.0.0",
     "ruff>=0.1.0,<1.0.0",
+    "mypy>=1.17.1,<2.0.0",
     "mcp>=1.0.0"
 ]
 all = [
@@ -119,6 +120,7 @@ bionexus = "bionexus.cli:main"
 bctk = "bionexus.bctk.cli:main"
 bionexus-evidence-verify = "bionexus.trust_cli:main"
 bionexus-spatial-gold = "bionexus.spatial_gold_cli:main"
+bionexus-mcp = "bionexus.mcp_server:main"
 
 [tool.setuptools.packages.find]
 

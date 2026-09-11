@@ -1,0 +1,300 @@
+{
+  "source_commit": "bdf38e1942ff4f517ae696c3c413bf481d8ebac4",
+  "python": "3.13.9",
+  "scope": "Synthetic source behavior probes, not independent biological or real-host validation.",
+  "source_sha256": {
+    "src/bionexus/de_audit.py": "974e34b7378997066ca8562edf36dd4e9c86664f4e4989a3cadc398ba27a6f0f",
+    "src/bionexus/de_audit_extract.py": "82a3befef8468f1dc3a6e4f0e1d6a4c564987c368df95f0a7a9132a1fbdb933f",
+    "src/bionexus/analysis_audit.py": "ac55dfcbcb63d19ecabed715295c8192a1179f9132ace8c27449b7548ca7f3d9",
+    "src/bionexus/evidence_index.py": "1a323bbed56a025c28ce86a0a1a11656b89fcb0d680e8805fd9efdeef62639c6",
+    "src/bionexus/lims_hub.py": "01cafd8edfbdee35bd2ba5dacce9046edfdca6309121169f99f5b50caa6c749b"
+  },
+  "results": {
+    "no_inputs": {
+      "status": "NOT_ASSESSED",
+      "passed": false,
+      "maturity": "NOT_ASSESSED",
+      "allowed": "只能确认已检查的输入（no sample design）。缺少差异表达执行记录或结果时，不得陈述已完成的群体差异表达。",
+      "findings": [],
+      "missing_checks": [
+        "donor_replicates",
+        "batch_confounding",
+        "donor_imbalance",
+        "input_count_type",
+        "de_results",
+        "fdr_and_testing",
+        "analysis_code",
+        "analysis_execution_binding"
+      ],
+      "execution": {
+        "source": "none",
+        "method": null,
+        "fdr_method": null,
+        "aggregation": null,
+        "cell_level_condition_test": false,
+        "facts": [
+          "No analysis execution record was supplied; no completed differential-expression method is confirmed."
+        ]
+      }
+    },
+    "metadata_only": {
+      "status": "NEEDS_DATA",
+      "passed": false,
+      "maturity": "NOT_ASSESSED",
+      "allowed": "只能确认已检查的输入（6 donors; condition counts A=3, B=3）。缺少差异表达执行记录或结果时，不得陈述已完成的群体差异表达。",
+      "findings": [],
+      "missing_checks": [
+        "donor_imbalance",
+        "batch_confounding",
+        "input_count_type",
+        "de_results",
+        "fdr_and_testing",
+        "analysis_code",
+        "analysis_execution_binding"
+      ],
+      "execution": {
+        "source": "none",
+        "method": null,
+        "fdr_method": null,
+        "aggregation": null,
+        "cell_level_condition_test": false,
+        "facts": [
+          "No analysis execution record was supplied; no completed differential-expression method is confirmed."
+        ]
+      }
+    },
+    "plain_table_and_metadata": {
+      "status": "NEEDS_DATA",
+      "passed": false,
+      "maturity": "NOT_ASSESSED",
+      "allowed": "只能确认已检查的输入（6 donors; condition counts A=3, B=3）。缺少差异表达执行记录或结果时，不得陈述已完成的群体差异表达。",
+      "findings": [],
+      "missing_checks": [
+        "donor_imbalance",
+        "batch_confounding",
+        "input_count_type",
+        "analysis_code",
+        "analysis_execution_binding"
+      ],
+      "execution": {
+        "source": "de_table",
+        "method": null,
+        "fdr_method": "adjusted_p_present",
+        "aggregation": null,
+        "cell_level_condition_test": false,
+        "facts": [
+          "An adjusted p-value / FDR column is present in the supplied DE table.",
+          "A DE table with 1 rows was supplied and inspected."
+        ]
+      }
+    },
+    "schema_column_only_upgrade": {
+      "status": "NEEDS_DATA",
+      "passed": false,
+      "maturity": "NOT_ASSESSED",
+      "allowed": "只能确认已检查的输入（6 donors; condition counts A=3, B=3）。缺少差异表达执行记录或结果时，不得陈述已完成的群体差异表达。",
+      "findings": [],
+      "missing_checks": [
+        "donor_imbalance",
+        "batch_confounding",
+        "input_count_type",
+        "analysis_code",
+        "analysis_execution_binding"
+      ],
+      "execution": {
+        "source": "de_table",
+        "method": null,
+        "fdr_method": "adjusted_p_present",
+        "aggregation": null,
+        "cell_level_condition_test": false,
+        "facts": [
+          "DE table columns match count-model format markers (['basemean']); format recognized, but table headers alone do not verify execution binding.",
+          "An adjusted p-value / FDR column is present in the supplied DE table."
+        ]
+      }
+    },
+    "causal_claim_same_table": {
+      "status": "NEEDS_REVISION",
+      "passed": false,
+      "maturity": "NOT_ASSESSED",
+      "allowed": "只能确认已检查的输入（6 donors; condition counts A=3, B=3）。缺少差异表达执行记录或结果时，不得陈述已完成的群体差异表达。",
+      "findings": [
+        "BFA-008"
+      ],
+      "missing_checks": [
+        "donor_imbalance",
+        "batch_confounding",
+        "input_count_type",
+        "analysis_code",
+        "analysis_execution_binding"
+      ],
+      "execution": {
+        "source": "de_table",
+        "method": null,
+        "fdr_method": "adjusted_p_present",
+        "aggregation": null,
+        "cell_level_condition_test": false,
+        "facts": [
+          "DE table columns match count-model format markers (['basemean']); format recognized, but table headers alone do not verify execution binding.",
+          "An adjusted p-value / FDR column is present in the supplied DE table."
+        ]
+      }
+    },
+    "invalid_probability_table": {
+      "status": "NEEDS_REVISION",
+      "passed": false,
+      "maturity": "NOT_ASSESSED",
+      "allowed": "只能确认已检查的输入（6 donors; condition counts A=3, B=3）。缺少差异表达执行记录或结果时，不得陈述已完成的群体差异表达。",
+      "findings": [
+        "BFA-003c",
+        "BFA-003c"
+      ],
+      "missing_checks": [
+        "donor_imbalance",
+        "batch_confounding",
+        "input_count_type",
+        "analysis_code",
+        "analysis_execution_binding"
+      ],
+      "execution": {
+        "source": "de_table",
+        "method": null,
+        "fdr_method": "adjusted_p_present",
+        "aggregation": null,
+        "cell_level_condition_test": false,
+        "facts": [
+          "DE table columns match count-model format markers (['basemean']); format recognized, but table headers alone do not verify execution binding.",
+          "An adjusted p-value / FDR column is present in the supplied DE table."
+        ]
+      }
+    },
+    "null_result": {
+      "status": "NEEDS_DATA",
+      "passed": false,
+      "maturity": "NOT_ASSESSED",
+      "allowed": "只能确认已检查的输入（6 donors; condition counts A=3, B=3）。缺少差异表达执行记录或结果时，不得陈述已完成的群体差异表达。",
+      "findings": [],
+      "missing_checks": [
+        "donor_imbalance",
+        "batch_confounding",
+        "input_count_type",
+        "analysis_code",
+        "analysis_execution_binding"
+      ],
+      "execution": {
+        "source": "de_table",
+        "method": null,
+        "fdr_method": "adjusted_p_present",
+        "aggregation": null,
+        "cell_level_condition_test": false,
+        "facts": [
+          "DE table columns match count-model format markers (['basemean']); format recognized, but table headers alone do not verify execution binding.",
+          "An adjusted p-value / FDR column is present in the supplied DE table."
+        ]
+      }
+    },
+    "scanpy_structured_array": {
+      "scope": "Unified reader fallback probe. A separate AnnData structured-array integration test passed after NUMBA_CACHE_DIR was redirected into the writable workspace; the initial import stalled in numba cache creation.",
+      "error": null,
+      "records": [
+        {
+          "cluster": "A",
+          "gene": "IFITM1",
+          "pvalue": 0.01,
+          "padj": 0.02,
+          "log2fc": 1.0
+        },
+        {
+          "cluster": "A",
+          "gene": "STAT1",
+          "pvalue": 0.02,
+          "padj": 0.03,
+          "log2fc": 2.0
+        }
+      ]
+    },
+    "static_audit": {
+      "plain": {
+        "passed": false,
+        "findings": [
+          "BFA-001",
+          "BFA-003"
+        ]
+      },
+      "string_literal": {
+        "passed": false,
+        "findings": [
+          "BFA-001",
+          "BFA-003"
+        ]
+      },
+      "dead_branch": {
+        "passed": false,
+        "findings": [
+          "BFA-001",
+          "BFA-003"
+        ]
+      },
+      "unrelated_groupby": {
+        "passed": false,
+        "findings": [
+          "BFA-001",
+          "BFA-003"
+        ]
+      },
+      "unrelated_pseudobulk": {
+        "passed": false,
+        "findings": [
+          "BFA-001",
+          "BFA-003"
+        ]
+      }
+    },
+    "tampered_source_hashes": {
+      "changed_hashes": 19,
+      "passed": false,
+      "checked_count": 8,
+      "errors": [
+        "BNC-SP-001-TECH-ACCEPTANCE source file hash mismatch for evals/spatial_instrument_validation.py: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed d0bf507af0a065c2e91cea701be10ddc7a69ff851aa9ac3406132e91c53fbd7a",
+        "BNC-SP-001-TECH-ACCEPTANCE source file hash mismatch for src/bionexus/capabilities.py: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed e30453b75cef23748f9da024f5c276a7e277b54a90f65d2a5dd03d84ff08c73a",
+        "BNC-SP-001-TECH-ACCEPTANCE source file hash mismatch for src/bionexus/abi.py: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed 361acaa8ee1903fe0e2f41e35fed80ae6bf3a1bbceaa91fb8373a79ee5d799c6",
+        "BNC-SPATIAL-CAPABILITY-VALIDATED source file hash mismatch for src/bionexus/certification.py: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed ca935d861b11165aa9309ab89e093fad4bc5272ed2423be97f7c290518799102",
+        "BNC-SPATIAL-CAPABILITY-VALIDATED source file hash mismatch for src/bionexus/capabilities.py: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed e30453b75cef23748f9da024f5c276a7e277b54a90f65d2a5dd03d84ff08c73a",
+        "BNC-SPATIAL-CAPABILITY-VALIDATED source file hash mismatch for evals/spatial_stress_test.py: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed c12533a1d52a9d3dc33310af5a14b719f1f641b86b93e47ec769228f3d5615aa",
+        "BNC-PSEUDOBULK-GSE96583 source file hash mismatch for evals/flagship_validation.py: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed 9b928ce139e5fb78d33b56156969e906a249e56af1be347a05bd6d2cc855d5de",
+        "BNC-PSEUDOBULK-GSE96583 source file hash mismatch for src/bionexus/pseudobulk_warrant.py: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed 9a979b69658164c8b0610a69d7f3671894109e71a944f6895a966f1a1293179d",
+        "BNC-PSEUDOBULK-GSE96583 source file hash mismatch for src/bionexus/abi.py: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed 361acaa8ee1903fe0e2f41e35fed80ae6bf3a1bbceaa91fb8373a79ee5d799c6",
+        "BNC-PSEUDOBULK-INDEP-002 source file hash mismatch for validation/pseudobulk/independent/REPORT.json: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed 2907afbf989a68ee1d2c404c4812c24745b32afab1275908a922abbde706e275",
+        "BNC-PSEUDOBULK-CAPABILITY-VALIDATED source file hash mismatch for src/bionexus/certification.py: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed ca935d861b11165aa9309ab89e093fad4bc5272ed2423be97f7c290518799102",
+        "BNC-PSEUDOBULK-CAPABILITY-VALIDATED source file hash mismatch for evals/pseudobulk_stress_test.py: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed 813e3d313cc62aa8b82cc19d879a5df95024ba2cb0558ed938b6e269a49c2c05",
+        "BNC-ANNOTATION-AZIMUTH-003 source file hash mismatch for evals/annotation_external_holdout_validation.py: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed 4b3cb0306b634d355540bf6fdf17a0276557d224be84243b5dd99a241b5bd335",
+        "BNC-ANNOTATION-AZIMUTH-003 source file hash mismatch for src/bionexus/annotation_evidence.py: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed 064648598962aee7477583dfb8fdfcc6dbcccb2b0c7b914094ea453fceda543c",
+        "BNC-ANNOTATION-CAPABILITY-VALIDATED source file hash mismatch for src/bionexus/certification.py: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed ca935d861b11165aa9309ab89e093fad4bc5272ed2423be97f7c290518799102",
+        "BNC-ANNOTATION-CAPABILITY-VALIDATED source file hash mismatch for evals/annotation_stress_test.py: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed ee3d531282a980b95ea12d26dcf5859a611d8c9608c5c4dad031c728c33b5bdc",
+        "BNC-CROSS-HOST-CONCORDANCE source file hash mismatch for cross-host/COMPARISON.json: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed bf7b604afca2a3d8abad7a0422de6fd1b8c8ad665647334204c3113a6277ec94",
+        "BNC-CROSS-HOST-CONCORDANCE source file hash mismatch for cross-host/claude-code/REPORT.json: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed a0973860ad0e0d8d296130382ce0ca2e9a54405e882ccc5b5a1fbdb4abd236e5",
+        "BNC-CROSS-HOST-CONCORDANCE source file hash mismatch for cross-host/antigravity/REPORT.json: recorded 0000000000000000000000000000000000000000000000000000000000000000, observed fe38409bdcccbd64056a2f3152bcf95c9f7fda5771e3bb899ad02d98ac69e738"
+      ]
+    },
+    "incompatible_verdict_substring": {
+      "passed": false,
+      "checked_count": 4,
+      "errors": [
+        "BNC-PSEUDOBULK-GSE96583 report verdict mismatch: index has 'NOT_PASS', report has 'pass'"
+      ]
+    },
+    "empty_lims_measurement": {
+      "rejected": true,
+      "error": "Measurement 0 is missing required fields ['well', 'value', 'unit', 'sample_id']; empty measurements are not auto-filled"
+    },
+    "live_lims_excluded": {
+      "success": false,
+      "post_called": false,
+      "metadata": {
+        "first_round_pilot_included": false,
+        "pilot_exclusion_reason": "LIMS connectivity is excluded from the first-round laboratory pilot. Empty-measurement defaulting and live export coverage remain unclosed.",
+        "status": "PILOT_EXCLUDED"
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "cohort": "parse",
+  "model": "unpaired",
+  "method": "pydeseq2",
+  "design": "~ condition",
+  "statistical_unit": "donor",
+  "aggregation": "donor_pseudobulk",
+  "fit_status": "COMPLETE",
+  "result_sha256": "0ce6dad7dcb53265d6011eee6418f36f1baaa2b0a741ae7ac01f34b1fbca289e",
+  "counts_sha256": "5f29f7c2a444de2ec169148938f65ac5acf112e7f16816ae0fb0fb68317b33b7",
+  "sample_metadata_sha256": "f0a74e365a6e076769167818c85bd18709fd32baf57674feb91a81bb8c99ddbc",
+  "design_matrix_sha256": "0421814c7c90592008f6761c3bb2f276f0506f90ec12874bb14e8315a9614146",
+  "design_rank": 2,
+  "residual_df": 22,
+  "design_matrix_columns": [
+    "Intercept",
+    "condition[T.treated]"
+  ],
+  "n_samples": 24,
+  "n_donors": 12,
+  "n_genes": 2000,
+  "significant": 964,
+  "native_significant": 964,
+  "n_nonfinite_p": 0,
+  "seconds": 2.4540785000426695,
+  "warnings": [],
+  "scientific_authority": "LOCAL_EXECUTION_NOT_EXTERNAL_ATTESTATION",
+  "fdr_method": "BH_on_all_finite_raw_pvalues"
+}

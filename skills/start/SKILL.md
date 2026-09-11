@@ -1,13 +1,23 @@
 ---
 name: start
-description: Orient a session on this plugin. Use first. Run scripts/doctor.py, then route only to core gold-chain skills unless the user names a heuristic job. Do not assign cell-type labels. Do not use this skill to run analyses.
+description: Orient a session on this plugin. Use first. Route completed single-cell DE to the pre-submission shadow review; check backend readiness before a requested analysis. Do not assign cell-type labels or run analyses from this skill.
 ---
 
 # BioNexus start
 
 This plugin is an **agent skill pack**. It stops at **numeric clusters + marker tables**. It does not annotate cell types.
 
-## Mandatory first step
+## First laboratory use
+
+For completed single-cell differential expression, use `single-cell-de-audit`.
+Start with existing DE results, a sample sheet and the proposed claim. The core
+table-review path does not require scientific backends or a new analysis run.
+`bionexus audit-de --demo --bundle review-demo` demonstrates a synthetic review;
+it deliberately returns a non-pass and never establishes laboratory benefit.
+
+For other tasks, preserve the explicit user scope and use the routes below.
+
+## Before backend execution
 
 ```bash
 python scripts/doctor.py

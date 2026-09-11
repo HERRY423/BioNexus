@@ -1,0 +1,17 @@
+sample_id,Intercept,condition[T.treated]
+101__ctrl,1.0,0
+101__stim,1.0,1
+107__ctrl,1.0,0
+107__stim,1.0,1
+1015__ctrl,1.0,0
+1015__stim,1.0,1
+1016__ctrl,1.0,0
+1016__stim,1.0,1
+1039__ctrl,1.0,0
+1039__stim,1.0,1
+1244__ctrl,1.0,0
+1244__stim,1.0,1
+1256__ctrl,1.0,0
+1256__stim,1.0,1
+1488__ctrl,1.0,0
+1488__stim,1.0,1

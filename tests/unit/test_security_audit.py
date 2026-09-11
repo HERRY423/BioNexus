@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 from pathlib import Path
 from typing import List
@@ -49,7 +50,17 @@ def test_zero_private_keys_or_secret_seeds_in_repository():
     """Verify that NO private keys, seeds, or hardcoded secrets exist in tracked files."""
     violations: List[str] = []
 
-    for file_path in REPO_ROOT.rglob("*"):
+    # Prune ignored directories before descending. Filtering after rglob still
+    # walks every installed package/cache, making the local gate unbounded by
+    # the actual scan scope. The set of eligible files is unchanged.
+    def scan_files():
+        for directory, subdirs, filenames in os.walk(REPO_ROOT, followlinks=False):
+            subdirs[:] = [name for name in subdirs
+                          if not name.startswith((".", "_")) and name not in IGNORED_SCAN_PARTS]
+            for name in filenames:
+                yield Path(directory) / name
+
+    for file_path in scan_files():
         if not file_path.is_file():
             continue
         rel_parts = file_path.relative_to(REPO_ROOT).parts

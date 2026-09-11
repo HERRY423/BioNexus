@@ -510,3 +510,354 @@ class C04PairingCustodianHub:
         )
         res["receipt"] = receipt
         return res
+
+
+# ==============================================================================
+# Allotrope ASM to LIMS Bridge & Egress Controlled Transport
+# ==============================================================================
+
+BLOCKED_IP_PREFIXES = ("169.254.", "127.", "0.0.0.0")
+METADATA_HOSTS = ("metadata.google.internal", "instance-data", "169.254.169.254")
+DEFAULT_ALLOWED_DOMAINS = (
+    "api.benchling.com",
+    "benchling.com",
+    "labware.internal",
+    "sapio.internal",
+    "lims.internal",
+    "localhost",
+)
+
+
+class EgressControlledLIMSClient:
+    """SSRF-guarded HTTP client for laboratory LIMS dispatch.
+
+    Enforces domain allowlisting, rejects cloud metadata endpoints and unauthorized
+    private addresses, and emits cryptographic tool receipts for all egress attempts.
+    """
+
+    def __init__(
+        self,
+        allowed_domains: Optional[List[str]] = None,
+        allow_private_ips: bool = False,
+        timeout_seconds: float = 30.0,
+    ) -> None:
+        self.allowed_domains = tuple(allowed_domains) if allowed_domains else DEFAULT_ALLOWED_DOMAINS
+        self.allow_private_ips = allow_private_ips
+        self.timeout_seconds = timeout_seconds
+        self.plugin_id = "bionexus"
+        self.plugin_version = VERSION
+
+    def is_url_permitted(self, url: str) -> tuple[bool, str]:
+        from urllib.parse import urlparse
+
+        try:
+            parsed = urlparse(url)
+        except Exception as exc:
+            return False, f"Malformed URL: {exc}"
+
+        if parsed.scheme not in ("http", "https"):
+            return False, f"Unsupported scheme '{parsed.scheme}'. Only http/https permitted."
+
+        hostname = (parsed.hostname or "").lower()
+        if not hostname:
+            return False, "URL hostname is empty."
+
+        # Reject metadata services
+        if hostname in METADATA_HOSTS or any(hostname.startswith(p) for p in BLOCKED_IP_PREFIXES):
+            return False, f"SSRF Guard: Egress to metadata service or link-local address '{hostname}' is blocked."
+
+        # Domain whitelist verification
+        allowed = False
+        for domain in self.allowed_domains:
+            if hostname == domain or hostname.endswith("." + domain):
+                allowed = True
+                break
+
+        if not allowed:
+            return False, f"Domain '{hostname}' is not in the configured LIMS egress allowlist: {self.allowed_domains}"
+
+        return True, "Permitted"
+
+    def dispatch(
+        self,
+        url: str,
+        payload: Dict[str, Any],
+        headers: Optional[Dict[str, str]] = None,
+        auth_token: Optional[str] = None,
+        method: str = "POST",
+        mock_response: bool = False,
+    ) -> Dict[str, Any]:
+        """Dispatch an HTTP request with SSRF guard and emit a tool receipt."""
+        permitted, reason = self.is_url_permitted(url)
+        if not permitted:
+            receipt = create_tool_receipt(
+                plugin_id=self.plugin_id,
+                plugin_version=self.plugin_version,
+                tool_name="lims.egress_dispatch",
+                request_payload={"url": url, "method": method},
+                response_payload={"status": "EGRESS_BLOCKED", "reason": reason},
+                execution_status="ERROR",
+            )
+            return {
+                "success": False,
+                "status": "EGRESS_BLOCKED",
+                "error": reason,
+                "receipt": receipt,
+            }
+
+        if mock_response:
+            resp_payload = {
+                "status": "MOCK_SUCCESS",
+                "url": url,
+                "payload_keys": list(payload.keys()),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            }
+            receipt = create_tool_receipt(
+                plugin_id=self.plugin_id,
+                plugin_version=self.plugin_version,
+                tool_name="lims.egress_dispatch",
+                request_payload={"url": url, "method": method},
+                response_payload=resp_payload,
+                execution_status="SUCCESS",
+            )
+            return {
+                "success": True,
+                "status": "MOCK_SUCCESS",
+                "data": resp_payload,
+                "receipt": receipt,
+            }
+
+        req_headers = {"Content-Type": "application/json", "User-Agent": f"BioNexus/{self.plugin_version}"}
+        if headers:
+            req_headers.update(headers)
+        if auth_token:
+            req_headers["Authorization"] = f"Bearer {auth_token}"
+
+        try:
+            res = requests.request(
+                method=method.upper(),
+                url=url,
+                json=payload,
+                headers=req_headers,
+                timeout=self.timeout_seconds,
+            )
+            success = 200 <= res.status_code < 300
+            try:
+                res_data = res.json()
+            except Exception:
+                res_data = {"raw_response": res.text[:1000], "status_code": res.status_code}
+            receipt = create_tool_receipt(
+                plugin_id=self.plugin_id,
+                plugin_version=self.plugin_version,
+                tool_name="lims.egress_dispatch",
+                request_payload={"url": url, "method": method},
+                response_payload={"status_code": res.status_code, "success": success},
+                execution_status="SUCCESS" if success else "ERROR",
+            )
+            return {
+                "success": success,
+                "status_code": res.status_code,
+                "data": res_data,
+                "receipt": receipt,
+            }
+        except requests.RequestException as exc:
+            receipt = create_tool_receipt(
+                plugin_id=self.plugin_id,
+                plugin_version=self.plugin_version,
+                tool_name="lims.egress_dispatch",
+                request_payload={"url": url, "method": method},
+                response_payload={"exception": type(exc).__name__, "error": str(exc)},
+                execution_status="ERROR",
+            )
+            return {
+                "success": False,
+                "status": "NETWORK_ERROR",
+                "error": str(exc),
+                "receipt": receipt,
+            }
+
+
+class AllotropeASMLIMSBridge:
+    """Bridge converting Allotrope Simple Model (ASM) instrument outputs to LIMS assays."""
+
+    def __init__(self, egress_client: Optional[EgressControlledLIMSClient] = None) -> None:
+        self.egress_client = egress_client or EgressControlledLIMSClient()
+        self.plugin_id = "bionexus"
+        self.plugin_version = VERSION
+
+    def parse_asm_to_measurements(self, asm_document: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Extract plate reader/spectrophotometry well measurements from ASM JSON.
+
+        Fail-closed: requires valid non-empty well, numerical value, unit, and sample_id.
+        Raises ValueError if any required measurement field is missing or invalid.
+        """
+        if not isinstance(asm_document, dict):
+            raise ValueError("asm_document must be a dictionary.")
+
+        raw_list: Optional[List[Any]] = None
+
+        # 1. Check standard measurement_aggregate_document
+        if "measurement_aggregate_document" in asm_document:
+            agg = asm_document["measurement_aggregate_document"]
+            if isinstance(agg, dict):
+                raw_list = agg.get("measurement_document")
+
+        # 2. Check plate reader aggregate document hierarchy
+        if raw_list is None and "plate reader aggregate document" in asm_document:
+            pr_agg = asm_document["plate reader aggregate document"]
+            if isinstance(pr_agg, dict) and "plate reader document" in pr_agg:
+                pr_doc = pr_agg["plate reader document"]
+                if isinstance(pr_doc, list) and pr_doc:
+                    raw_list = pr_doc[0].get("measurement aggregate document", {}).get("measurement document")
+                elif isinstance(pr_doc, dict):
+                    raw_list = pr_doc.get("measurement aggregate document", {}).get("measurement document")
+
+        # 3. Direct measurement list
+        if raw_list is None:
+            raw_list = asm_document.get("measurements")
+
+        if not raw_list or not isinstance(raw_list, list):
+            raise ValueError("No measurement documents found in ASM structure.")
+
+        measurements = []
+        for idx, item in enumerate(raw_list):
+            if not isinstance(item, dict):
+                raise ValueError(f"Measurement record {idx} is not an object.")
+
+            well = item.get("location_identifier") or item.get("well") or item.get("well_location")
+            if not well or not str(well).strip():
+                raise ValueError(f"Measurement record {idx} is missing location_identifier/well.")
+
+            # Value resolution: check fluorescence, absorbance, luminescence, value
+            val = None
+            for v_key in ("fluorescence", "absorbance", "luminescence", "value", "measurement_value"):
+                if v_key in item and item[v_key] is not None:
+                    val = item[v_key]
+                    break
+
+            if val is None:
+                raise ValueError(f"Measurement record {idx} (well {well}) is missing numerical measurement value.")
+
+            try:
+                num_val = float(val)
+            except (TypeError, ValueError):
+                raise ValueError(f"Measurement record {idx} (well {well}) value '{val}' is not a valid float.")
+
+            unit = item.get("unit") or item.get("fluorescence_unit") or item.get("absorbance_unit") or "RFU"
+            if not str(unit).strip():
+                raise ValueError(f"Measurement record {idx} (well {well}) has empty unit.")
+
+            sample_id = item.get("sample_identifier") or item.get("sample_id") or f"SMP-{str(well).strip()}"
+
+            measurements.append({
+                "well": str(well).strip(),
+                "value": num_val,
+                "unit": str(unit).strip(),
+                "sample_id": str(sample_id).strip(),
+            })
+
+        return measurements
+
+    def transform_for_lims(
+        self,
+        asm_document: Dict[str, Any],
+        target_system: LIMSConnectorType = LIMSConnectorType.BENCHLING,
+        schema_id: str = "sch_plate_reader",
+        plate_id: str = "PLT-001",
+        project_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """Convert ASM document to target LIMS payload."""
+        measurements = self.parse_asm_to_measurements(asm_document)
+
+        if target_system == LIMSConnectorType.BENCHLING:
+            config = LIMSConnectionConfig(connector_type=LIMSConnectorType.BENCHLING, project_id=project_id or "prj_default")
+            connector = BenchlingConnector(config)
+            return connector.format_assay_payload(
+                schema_id=schema_id,
+                plate_id=plate_id,
+                measurements=measurements,
+                project_id=project_id,
+            )
+
+        # Generic / LabWare format
+        return {
+            "target_system": target_system.value,
+            "plate_id": plate_id,
+            "schema_id": schema_id,
+            "project_id": project_id,
+            "records_count": len(measurements),
+            "records": measurements,
+            "generated_by": f"BioNexus/{self.plugin_version}",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+
+    def export_asm_to_lims(
+        self,
+        asm_document: Dict[str, Any],
+        endpoint_url: str,
+        target_system: LIMSConnectorType = LIMSConnectorType.BENCHLING,
+        schema_id: str = "sch_plate_reader",
+        plate_id: str = "PLT-001",
+        project_id: Optional[str] = None,
+        auth_token: Optional[str] = None,
+        mock_response: bool = False,
+    ) -> LIMSExportResult:
+        """Parse ASM document, format for LIMS, and dispatch via EgressControlledLIMSClient."""
+        try:
+            payload = self.transform_for_lims(
+                asm_document=asm_document,
+                target_system=target_system,
+                schema_id=schema_id,
+                plate_id=plate_id,
+                project_id=project_id,
+            )
+        except Exception as exc:
+            receipt = create_tool_receipt(
+                plugin_id=self.plugin_id,
+                plugin_version=self.plugin_version,
+                tool_name="lims.allotrope_bridge_export",
+                request_payload={"target_system": target_system.value, "plate_id": plate_id},
+                response_payload={"error": str(exc)},
+                execution_status="ERROR",
+            )
+            return LIMSExportResult(
+                success=False,
+                connector_type=target_system.value,
+                target_entity_id=plate_id,
+                records_synced=0,
+                receipt=receipt,
+                errors=[str(exc)],
+            )
+
+        dispatch_res = self.egress_client.dispatch(
+            url=endpoint_url,
+            payload=payload,
+            auth_token=auth_token,
+            mock_response=mock_response,
+        )
+
+        n_records = len(payload.get("results") or payload.get("records") or [])
+        success = bool(dispatch_res.get("success", False))
+
+        receipt = create_tool_receipt(
+            plugin_id=self.plugin_id,
+            plugin_version=self.plugin_version,
+            tool_name="lims.allotrope_bridge_export",
+            request_payload={"target_system": target_system.value, "plate_id": plate_id, "endpoint_url": endpoint_url},
+            response_payload=dispatch_res,
+            execution_status="SUCCESS" if success else "ERROR",
+        )
+
+        errors = []
+        if not success:
+            errors.append(dispatch_res.get("error", "Dispatch failed"))
+
+        return LIMSExportResult(
+            success=success,
+            connector_type=target_system.value,
+            target_entity_id=plate_id,
+            records_synced=n_records if success else 0,
+            receipt=receipt,
+            metadata=dispatch_res,
+            errors=errors,
+        )

@@ -1,0 +1,9 @@
+{
+  "installed_package_path": "C:\\Plugin\\BioNexus\\review\\de-pilot-product-2026-09-07\\wheel-install-final\\bionexus",
+  "wheel_sha256": "d61f73abf84c50af7107c492cd842995367336ad025c510f7580a0c9f3c56146",
+  "source_bytes_match": true,
+  "demo_exit_code": 1,
+  "summary_included_cases": 0,
+  "net_benefit": "NOT_ESTABLISHED",
+  "scope": "Offline installed wheel smoke with existing dependencies; not fresh-machine or hosted release certification"
+}

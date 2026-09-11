@@ -92,3 +92,89 @@ def test_generate_streaming_plan():
     assert plan.estimated_memory_per_chunk_mb <= 1500.0
     assert len(plan.streaming_pipeline_steps) >= 4
     assert any("IncrementalPCA" in s for s in plan.streaming_pipeline_steps)
+
+
+def test_online_welford_stats_matches_numpy():
+    """Verify online Welford accumulator matches full numpy mean, variance, and sparsity."""
+    import numpy as np
+
+    from bionexus.bigdata import OnlineWelfordStats
+
+    rng = np.random.default_rng(123)
+    n_features = 15
+    chunks = [rng.poisson(lam=5, size=(40, n_features)).astype(float) for _ in range(5)]
+    full_matrix = np.vstack(chunks)
+
+    stats = OnlineWelfordStats(n_features=n_features)
+    for c in chunks:
+        stats.update(c)
+
+    assert stats.count == 200
+    np.testing.assert_allclose(stats.mean, np.mean(full_matrix, axis=0), rtol=1e-5)
+    np.testing.assert_allclose(stats.variance, np.var(full_matrix, axis=0, ddof=1), rtol=1e-5)
+    np.testing.assert_allclose(stats.standard_deviation, np.std(full_matrix, axis=0, ddof=1), rtol=1e-5)
+    expected_sparsity = 1.0 - (np.count_nonzero(full_matrix) / full_matrix.size)
+    assert abs(stats.sparsity - expected_sparsity) < 1e-4
+
+
+def test_streaming_pseudobulk_aggregator():
+    """Verify StreamingPseudobulkAggregator aggregates correctly across streaming chunks."""
+    import numpy as np
+    import pandas as pd
+
+    from bionexus.bigdata import StreamingPseudobulkAggregator
+
+    genes = ["gA", "gB", "gC"]
+    agg = StreamingPseudobulkAggregator(gene_names=genes, group_keys=["donor", "condition"])
+
+    # Chunk 1: donor1_ctrl, donor2_ctrl
+    c1 = np.array([[10, 20, 30], [5, 15, 25]])
+    obs1 = pd.DataFrame({"donor": ["d1", "d2"], "condition": ["ctrl", "ctrl"]})
+    agg.add_chunk(c1, obs1)
+
+    # Chunk 2: donor1_ctrl again (streaming more cells from same donor), donor1_stim
+    c2 = np.array([[15, 25, 35], [50, 60, 70]])
+    obs2 = pd.DataFrame({"donor": ["d1", "d1"], "condition": ["ctrl", "stim"]})
+    agg.add_chunk(c2, obs2)
+
+    counts_df, design_df = agg.to_dataframe()
+
+    # d1__ctrl should have [10+15, 20+25, 30+35] = [25, 45, 65], cell_count = 2
+    assert "d1__ctrl" in counts_df.index
+    assert list(counts_df.loc["d1__ctrl"]) == [25, 45, 65]
+    assert int(design_df.loc["d1__ctrl", "cell_count"]) == 2
+
+    # d1__stim should have [50, 60, 70], cell_count = 1
+    assert "d1__stim" in counts_df.index
+    assert list(counts_df.loc["d1__stim"]) == [50, 60, 70]
+    assert int(design_df.loc["d1__stim", "cell_count"]) == 1
+
+    # d2__ctrl should have [5, 15, 25], cell_count = 1
+    assert "d2__ctrl" in counts_df.index
+    assert list(counts_df.loc["d2__ctrl"]) == [5, 15, 25]
+
+
+def test_stream_raw_count_matrix_audit():
+    """Verify stream_raw_count_matrix_audit validates integer counts and catches infractions."""
+    import numpy as np
+    import pytest
+
+    from bionexus.bigdata import stream_raw_count_matrix_audit
+    from bionexus.integrity import ScientificInputError
+
+    # Valid chunks
+    valid_chunks = [np.array([[1, 2, 3], [4, 5, 6]]), np.array([[7, 8, 9]])]
+    res = stream_raw_count_matrix_audit(valid_chunks, n_features=3)
+    assert res["integer_counts_verified"] is True
+    assert res["n_samples"] == 3
+
+    # Invalid non-integer chunk
+    bad_chunks = [np.array([[1.0, 2.5, 3.0]])]
+    with pytest.raises(ScientificInputError, match="non-integer values"):
+        stream_raw_count_matrix_audit(bad_chunks, n_features=3)
+
+    # Invalid negative chunk
+    negative_chunks = [np.array([[1, -2, 3]])]
+    with pytest.raises(ScientificInputError, match="negative values"):
+        stream_raw_count_matrix_audit(negative_chunks, n_features=3)
+

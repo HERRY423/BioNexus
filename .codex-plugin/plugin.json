@@ -1,7 +1,7 @@
 {
   "name": "bionexus-reliability",
-  "version": "1.0.0-rc.5",
-  "description": "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents (Warrant-First Evidence Assessment, Fail-Closed Invariants, Evidence-Capped Claims, Zero Silent Substitution).",
+  "version": "1.0.0-rc.6",
+  "description": "Pre-submission shadow review for multi-donor single-cell differential expression: inspect existing results, locate evidence gaps, suggest repairs, and support human scientific review.",
   "author": {
     "name": "BioNexus Team",
     "url": "https://github.com/HERRY423/BioNexus"
@@ -27,7 +27,7 @@
   "interface": {
     "displayName": "BioNexus",
     "shortDescription": "The Scientific Reliability Layer for Agentic Biology",
-    "longDescription": "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents (Warrant-First Evidence Assessment, Fail-Closed Invariants, Evidence-Capped Claims, Zero Silent Substitution).",
+    "longDescription": "Pre-submission shadow review for multi-donor single-cell differential expression: inspect existing results, locate evidence gaps, suggest repairs, and support human scientific review.",
     "developerName": "BioNexus Team",
     "category": "Science",
     "capabilities": [

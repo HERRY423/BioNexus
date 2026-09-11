@@ -11,3 +11,12 @@ GitHub Private Vulnerability Reporting where available.
 
 Support is best effort. A plugin response, local test pass, or support reply is
 not scientific, clinical, regulatory, or institutional approval.
+
+The current release-candidate line receives best-effort maintenance; no LTS or
+response-time SLA is established. See [maintenance policy](MAINTENANCE.md) for
+scope, responsibility, version changes and rollback.
+
+For DE handoffs, run `bionexus audit-de-verify BUNDLE_DIRECTORY` and include its
+schema, status and sanitized issue codes. Exit 0 means file consistency only.
+Old audit-only bundles return LEGACY_LIMITED (exit 3), retaining their evidence
+gap. See [bundle compatibility](docs/de-bundle-compatibility.md).

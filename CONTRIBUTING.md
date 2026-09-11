@@ -53,6 +53,11 @@ BioNexus is built on an uncompromising commitment to scientific veracity. Every 
 
 ## 🚦 Definition of Done & PR Acceptance Criteria
 
+Public review interface changes follow [MAINTENANCE.md](MAINTENANCE.md) and
+[DE bundle compatibility](docs/de-bundle-compatibility.md). Preserve historical
+fixtures, disclose changed interpretations and name the actual assignee and
+reviewer in the PR. A local check is not independent scientific review.
+
 Before submitting a Pull Request, verify that your contribution satisfies all criteria:
 
 - [ ] **100% Green CI**: All matrix test jobs (Ubuntu, macOS, Windows across Python 3.10, 3.11, 3.12) pass with zero failures.

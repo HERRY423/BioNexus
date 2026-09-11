@@ -6,12 +6,13 @@ BioNexus is designed as a **Warrant-First Scientific Reliability & Data Governan
 
 ## 1. Supported Versions
 
-We provide security updates and patches for the following versions:
+The project is a release candidate. The authoritative package version is in
+`src/bionexus/versions.py`; see [MAINTENANCE.md](MAINTENANCE.md).
 
 | Version | Supported | Notes |
 | :--- | :--- | :--- |
-| `0.10.x` | :white_check_mark: | Current stable release line |
-| `< 0.10.0` | :x: | Legacy / unsupported |
+| Current `1.0.0` RC line | Best effort | No GA/LTS or guaranteed backport window |
+| Older versions | No standing backport commitment | Retain pinned copies for historical reproduction |
 
 ---
 
@@ -20,23 +21,26 @@ We provide security updates and patches for the following versions:
 If you discover a security vulnerability, data leakage vector, or prompt injection vulnerability in BioNexus:
 
 1. **Do NOT file a public GitHub Issue or Discussion.**
-2. Email the core security team at `security@bionexus.org` (or contact the maintainers via GitHub Private Vulnerability Reporting).
+2. Use GitHub Private Vulnerability Reporting when enabled. If unavailable, request a private reporting channel from repository maintainers without posting vulnerability details. This document does not establish a monitored security mailbox.
 3. Include:
    - Description of the vulnerability and attack vector.
    - Proof-of-concept (PoC) script or minimal reproducible example.
    - Potential impact on data confidentiality, integrity, or computational safety.
-4. We acknowledge reports within **48 hours** and provide a coordinated disclosure timeline (typically 30–90 days).
+4. Handling is best effort. Agree disclosure timing with the responding maintainer; no fixed response-time SLA or staffed on-call rota is established.
 
 ---
 
 ## 3. Data Governance & Egress Control Architecture
 
-BioNexus enforces a formal **Data Egress Contract** (`bionexus.egress_guard`) with three runtime modes:
+`bionexus.egress_guard` applies three modes to calls routed through its guarded
+interfaces. It is not a process sandbox or system firewall. Arbitrary host MCP
+calls, third-party libraries and direct networking can bypass those interfaces.
+Institutional isolation also requires host and operating-system controls.
 
 ```mermaid
 flowchart TD
     Data[Experimental Data / Queries] --> Guard{Egress Guard Engine\nbionexus.egress_guard}
-    Guard -->|OFFLINE_STRICT| Local[Local Compute Only\nZero External Network Access]
+    Guard -->|OFFLINE_STRICT| Local[Guarded Request Blocked]
     Guard -->|ALLOWLIST| Filter{Payload & Domain Inspector\nNo Matrices / No PHI / No Secrets}
     Filter -->|Approved & Filtered| PublicMCP[Approved Public Knowledge APIs\nPubMed, ChEMBL, UniProt, OpenTargets]
     Filter -->|Matrix/PHI/Unapproved| Block[Deterministic Block & Audit Log]
@@ -45,15 +49,16 @@ flowchart TD
 
 ### Egress Modes
 
-- **`OFFLINE_STRICT`**: Air-gapped mode. All outgoing network connections, cloud MCP tools, and external HTTP endpoints are deterministically blocked at runtime.
-- **`ALLOWLIST`** (Default): Permitted outgoing calls are strictly restricted to approved public scientific knowledge repositories (e.g., NCBI PubMed, Ensembl, UniProt, ChEMBL, Open Targets). **Invariant:** Zero raw biological matrices, expression count tables, unindexed patient sequences, or clinical PHI may be transmitted.
-- **`CONNECTED`**: External API calls allowed for integrated cloud services, with mandatory cryptographic audit logging of all requests and responses.
+- **`OFFLINE_STRICT`**: Blocks requests evaluated through the guard. This setting alone does not make an arbitrary Python process air-gapped.
+- **`ALLOWLIST`** (Default): Guarded calls apply configured domain and payload checks; these are not complete detectors of sensitive biological or clinical information.
+- **`CONNECTED`**: Guarded calls use the connected policy and its logging behavior; no blanket guarantee is made about all host or service operations.
 
 ---
 
 ## 4. Cryptographic Audit Trail
 
-Every external MCP and network invocation is logged into an immutable audit ledger (`logs/egress_audit.jsonl`) recording:
+Guarded operations can record local audit entries (`logs/egress_audit.jsonl`, or
+the configured path) with fields including:
 - `timestamp`: UTC ISO-8601 timestamp.
 - `endpoint`: Destination URL / MCP service.
 - `purpose`: Scientific rationale for the external query.
@@ -62,6 +67,11 @@ Every external MCP and network invocation is logged into an immutable audit ledg
 - `response_hash`: SHA-256 hash of returned data.
 - `egress_mode`: Active policy mode (`OFFLINE_STRICT` / `ALLOWLIST` / `CONNECTED`).
 - `outcome`: `PERMITTED` or `BLOCKED`.
+
+Local files are not inherently immutable, and hashes alone do not authenticate
+their producer. Verify actual integration logging and apply filesystem controls
+and external anchoring. DE bundle file verification likewise does not establish
+scientific truth, statistical execution or producer identity.
 
 ---
 

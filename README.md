@@ -1,9 +1,9 @@
 
-# BioNexus — Scientific Reliability for AI-Assisted Biology
+# BioNexus — Review Single-Cell DE Before Submission
 
 <div align="center">
 
-[![Release](https://img.shields.io/badge/Release-v1.0.0--rc.5-blue.svg?style=flat-square)](https://github.com/HERRY423/BioNexus/releases/tag/v1.0.0-rc.5)
+[![Release](https://img.shields.io/badge/Release-v1.0.0--rc.6-blue.svg?style=flat-square)](https://github.com/HERRY423/BioNexus/releases/tag/v1.0.0-rc.6)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg?style=flat-square)](https://www.python.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
 [![CI](https://github.com/HERRY423/BioNexus/actions/workflows/ci.yml/badge.svg)](https://github.com/HERRY423/BioNexus/actions/workflows/ci.yml)
@@ -11,7 +11,35 @@
 
 </div>
 
-> **Know what your evidence actually warrants.**
+> **Review multi-donor single-cell differential expression before submission.**
+
+**First product promise:** bring an existing DE table, sample sheet and intended
+claim; receive located findings, missing evidence, suggested repairs and a concise
+review for the responsible scientist. Keep your existing analysis workflow.
+
+**首个产品承诺：多供体单细胞差异表达的投稿前影子审计。**
+帮助研究者发现可能影响声明的问题，并记录复核与修复成本。
+减少错误外推、节省审阅时间是试点要验证的目标，当前不宣称已验证净收益。
+
+```bash
+# Synthetic teaching example; no research data or analysis execution required.
+bionexus audit-de --demo --bundle review-demo
+```
+
+Open `review-demo/REVIEW.md`. Exit code 1 is expected: the example deliberately
+lacks evidence. The report preserves that result. See the
+[first review walkthrough](docs/quickstart-shadow-audit.md) and
+[laboratory pilot guide](docs/de-pilot-guide.zh-CN.md).
+
+On the current development checkout, run `bionexus audit-de-verify review-demo`: it checks report-file
+consistency without authorizing scientific claims. See
+[versioned bundle compatibility](docs/de-bundle-compatibility.md) and
+[maintenance, support and rollback](MAINTENANCE.md).
+
+The development checkout also provides [frozen external-task comparisons, full
+laboratory time accounting and rule-revision impact review](docs/external-gain-and-correctable-governance.zh-CN.md).
+These retain missing outcomes, false refusals, expert dissent and negative time savings;
+they do not establish external validation or laboratory benefit.
 
 BioNexus is a warrant-first scientific reliability layer for AI-assisted bioinformatics. It audits analytical assumptions, calibrates evidence strength, caps unsupported claims, verifies execution provenance, and abstains when evidence is insufficient.
 
@@ -448,7 +476,7 @@ Institutional pipelines (Galaxy, DNAnexus, Seven Bridges, WorkflowHub) can inges
 
 ---
 
-## ⚡ 5-Minute Plugin Quickstart
+## First Plugin Review
 
 Install BioNexus into your preferred environment and complete a first audit:
 

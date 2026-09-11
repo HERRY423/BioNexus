@@ -1,0 +1,16 @@
+{
+  "schema": "bionexus.de-shadow-bundle.v1",
+  "created_at": "2026-09-08T14:31:08.672000+00:00",
+  "bionexus_version": "1.0.0-rc.5",
+  "audit_sha256": "3271d3a479f98f1c748b1dc03d37a31faf84bb72b800114ea4d52c2ef92ae832",
+  "inputs": {},
+  "claim": "These genes are significantly differentially expressed after FDR correction.",
+  "data_origin": "SYNTHETIC_DEMO",
+  "scientific_authorization": "NONE",
+  "integrity_profile": "bionexus.de-shadow-integrity.v1",
+  "immutable_artifacts": {
+    "audit.json": "3271d3a479f98f1c748b1dc03d37a31faf84bb72b800114ea4d52c2ef92ae832",
+    "audit-full.md": "fe4e7125a30416911abbdffb5ddd12eed1750ae748fc36054d97911be73c40bc",
+    "REVIEW.md": "454134c01e2eec4a5d6a4a980be3e2c69332906515359afd0f490489e4f62ed7"
+  }
+}

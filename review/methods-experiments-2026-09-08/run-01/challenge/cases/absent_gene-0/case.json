@@ -1,0 +1,10 @@
+{
+  "case_id": "absent_gene-0",
+  "family": "absent_gene",
+  "paraphrase": 0,
+  "invalid": true,
+  "claim": "BN_NOT_IN_INPUT_20260908 is significantly upregulated after FDR correction in the supplied result.",
+  "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+  "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+  "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+}

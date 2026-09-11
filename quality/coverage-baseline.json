@@ -1,0 +1,13 @@
+{
+  "scope": "Fixed core-dependency profile in quality/core-tests.json; not whole-package coverage",
+  "measurement": "review/engineering-hardening-2026-09-11/run-01/core-before/coverage.json",
+  "policy": "Floors are the initial measured percentages rounded down to two decimals. Never lower to accommodate a regression; review explicit scope changes.",
+  "files": {
+    "src/bionexus/contracts.py": {"line": 80.11, "branch": 61.29},
+    "src/bionexus/evidence_model.py": {"line": 84.23, "branch": 77.90},
+    "src/bionexus/warrant.py": {"line": 95.93, "branch": 80.55},
+    "src/bionexus/claim_semantics.py": {"line": 83.76, "branch": 67.18},
+    "src/bionexus/de_audit.py": {"line": 65.42, "branch": 54.25},
+    "src/bionexus/de_bundle.py": {"line": 87.50, "branch": 87.03}
+  }
+}

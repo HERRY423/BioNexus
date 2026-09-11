@@ -1,0 +1,7 @@
+{
+  "status": "COMPLETE",
+  "datasets": 800,
+  "method_results": 1600,
+  "truth": "SYNTHETIC_GENERATING_MECHANISM",
+  "independent_validation": false
+}

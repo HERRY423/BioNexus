@@ -1,0 +1,56 @@
+{
+  "schema": "bionexus.de-pilot-summary.v1",
+  "evidence_status": "NOT_ASSESSED",
+  "net_benefit": "NOT_ESTABLISHED",
+  "external_validation": "NOT_ESTABLISHED",
+  "submitted_cases": 1,
+  "included_cases": 0,
+  "reported_sites": 0,
+  "paired_timing_cases": 0,
+  "mean_review_minutes_saved": null,
+  "fully_costed_cases": 0,
+  "mean_minutes_saved_after_setup_and_repair": null,
+  "counts": {
+    "detected_reference_issues": 0,
+    "missed_reference_issues": 0,
+    "unresolved_reference_issues": 0,
+    "false_alarm_findings": 0,
+    "unresolved_findings": 0
+  },
+  "feedback": {
+    "report_understood": {
+      "answered": 0,
+      "yes": 0,
+      "no": 0
+    },
+    "claim_changed": {
+      "answered": 0,
+      "yes": 0,
+      "no": 0
+    },
+    "would_reuse": {
+      "answered": 0,
+      "yes": 0,
+      "no": 0
+    }
+  },
+  "reference_negative_cases": 0,
+  "reference_negative_cases_with_false_alarms": 0,
+  "cases": [
+    {
+      "case_id": "demo",
+      "site_id": null,
+      "status": "PENDING",
+      "data_origin": "SYNTHETIC_DEMO",
+      "review_sha256": "1145f82a9e43d1b7e17b453d529d3fb67d25451bbbb8eb3b1db73fc399e35a47",
+      "audit_sha256": "3271d3a479f98f1c748b1dc03d37a31faf84bb72b800114ea4d52c2ef92ae832",
+      "excluded_reason": "synthetic_demo"
+    }
+  ],
+  "limitations": [
+    "Human-entered observations; identity, independence and timing are not authenticated.",
+    "Pending cases and synthetic demonstrations are excluded, never scored as successes.",
+    "Time differences are descriptive paired self-reports, not causal benefit estimates.",
+    "Missing costs remain unknown. No adoption, scientific authorization or calibration is granted."
+  ]
+}

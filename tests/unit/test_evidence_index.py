@@ -79,6 +79,29 @@ class TestEvidenceIndexBuildAndIntegrity:
         assert res["passed"] is False
         assert any("host certification" in err.lower() for err in res["errors"])
 
+    def test_verify_index_fails_when_verdict_substring_clash(self):
+        """P1: Substring containment like 'NOT_PASS' vs 'PASS' must strictly fail."""
+        index = EvidenceIndex.build_current_index(_REPO_ROOT)
+        entry = index.conclusions["BNC-PSEUDOBULK-GSE96583"]
+        entry.verdict = "NOT_PASS"
+
+        res = index.verify_index_integrity(_REPO_ROOT)
+        assert res["passed"] is False
+        assert any("verdict mismatch" in err.lower() for err in res["errors"])
+
+    def test_verify_index_fails_when_report_verdict_missing(self, tmp_path: Path):
+        """P1: Report lacking a verdict must fail-closed."""
+        index = EvidenceIndex.build_current_index(_REPO_ROOT)
+        entry = index.conclusions["BNC-SP-001-TECH-ACCEPTANCE"]
+        # Point to a report with no verdict
+        empty_rep = tmp_path / "EMPTY_REPORT.json"
+        empty_rep.write_text('{"unrelated_field": 123}\n', encoding="utf-8")
+        entry.report_version["report_path"] = str(empty_rep.relative_to(tmp_path))
+
+        res = index.verify_index_integrity(tmp_path)
+        assert res["passed"] is False
+        assert any("missing verdict" in err.lower() for err in res["errors"])
+
 
 class TestUpstreamChangeAnalysis:
     """Tests distinguishing between invalidated conclusions and recomputation needed."""

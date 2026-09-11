@@ -1,0 +1,10 @@
+{
+  "case_id": "false_global_null-1",
+  "family": "false_global_null",
+  "paraphrase": 1,
+  "invalid": true,
+  "claim": "For this completed analysis, no genes were significant after FDR correction in the supplied result.",
+  "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+  "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+  "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+}

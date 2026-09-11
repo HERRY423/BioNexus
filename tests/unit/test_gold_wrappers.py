@@ -95,6 +95,92 @@ def test_pydeseq2_recovers_planted_gene():
     assert "g0" in top
 
 
+def test_pydeseq2_paired_donor_design_succeeds():
+    pytest.importorskip("pydeseq2")
+    from scrna_deseq import run_pydeseq2
+
+    rng = np.random.default_rng(42)
+    genes = [f"g{i}" for i in range(20)]
+    donors = ["d1", "d2", "d3", "d4"]
+    samples = [f"{d}_{c}" for c in ["A", "B"] for d in donors]
+    design = pd.DataFrame({
+        "sample_id": samples,
+        "donor": donors * 2,
+        "condition": ["A"] * 4 + ["B"] * 4,
+    })
+    mat = rng.poisson(25, size=(8, 20)).astype(int)
+    # Plant strong paired effect on g0
+    mat[4:, 0] += 100
+    counts = pd.DataFrame(mat, index=samples, columns=genes)
+
+    table, contract = run_pydeseq2(
+        counts,
+        design,
+        condition="condition",
+        donor="donor",
+        reference="A",
+        contrast_level="B",
+    )
+    assert contract["method"] == "pydeseq2.DeseqStats"
+    assert contract["paired"] is True
+    assert contract["design_formula"] == "~ donor + condition"
+    assert contract["donor"] == "donor"
+    assert contract["n_donors"] == 4
+    top = table.sort_values("pvalue").head(5)["gene"].astype(str).tolist()
+    assert "g0" in top
+
+
+def test_pydeseq2_unidentifiable_collinear_donor_rejected():
+    pytest.importorskip("pydeseq2")
+    from scrna_deseq import run_pydeseq2
+
+    from bionexus.integrity import ScientificInputError
+
+    rng = np.random.default_rng(42)
+    genes = [f"g{i}" for i in range(10)]
+    samples = ["s1", "s2", "s3", "s4"]
+    # d1, d2 only in A; d3, d4 only in B -> completely collinear
+    design = pd.DataFrame({
+        "sample_id": samples,
+        "donor": ["d1", "d2", "d3", "d4"],
+        "condition": ["A", "A", "B", "B"],
+    })
+    counts = pd.DataFrame(rng.poisson(20, size=(4, 10)).astype(int), index=samples, columns=genes)
+
+    with pytest.raises(ScientificInputError, match="completely collinear with condition"):
+        run_pydeseq2(
+            counts,
+            design,
+            condition="condition",
+            donor="donor",
+        )
+
+
+def test_pydeseq2_missing_donor_column_rejected():
+    pytest.importorskip("pydeseq2")
+    from scrna_deseq import run_pydeseq2
+
+    from bionexus.integrity import ScientificInputError
+
+    rng = np.random.default_rng(42)
+    genes = [f"g{i}" for i in range(10)]
+    samples = ["s1", "s2", "s3", "s4"]
+    design = pd.DataFrame({
+        "sample_id": samples,
+        "condition": ["A", "A", "B", "B"],
+    })
+    counts = pd.DataFrame(rng.poisson(20, size=(4, 10)).astype(int), index=samples, columns=genes)
+
+    with pytest.raises(ScientificInputError, match="donor 'nonexistent' not found"):
+        run_pydeseq2(
+            counts,
+            design,
+            condition="condition",
+            donor="nonexistent",
+        )
+
+
+
 def test_nfcore_launch_writes_script_and_rejects_unknown_pipeline():
     from nfcore_launch import build_launch_command, write_launch_script
 

@@ -79,3 +79,28 @@ def test_wheel_package_contents_and_metadata(tmp_path):
         assert "bionexus/nextflow_bridge.py" in names
         assert "bionexus/bctk/profiles.py" in names
         assert "bionexus/data/rule_registry.json" in names
+        assert "bionexus/mcp_server.py" in names
+        assert "bionexus/mcp_host_audit.py" in names
+
+
+def test_requirements_txt_matches_pyproject_dependencies():
+    """Verify requirements.txt and pyproject.toml core dependencies stay 100% in sync."""
+    try:
+        import tomllib
+    except ImportError:
+        import tomli as tomllib  # type: ignore
+
+    pyproject_data = tomllib.loads((_REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    pyproject_deps = pyproject_data.get("project", {}).get("dependencies", [])
+
+    req_lines = [
+        line.strip()
+        for line in (_REPO_ROOT / "requirements.txt").read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.strip().startswith("#")
+    ]
+
+    assert set(req_lines) == set(pyproject_deps), (
+        f"Mismatch between requirements.txt and pyproject.toml dependencies:\n"
+        f"In pyproject.toml only: {set(pyproject_deps) - set(req_lines)}\n"
+        f"In requirements.txt only: {set(req_lines) - set(pyproject_deps)}"
+    )

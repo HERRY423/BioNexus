@@ -1,0 +1,11 @@
+{
+  "rehearsal_only": true,
+  "rules": {
+    "DEMO_ONLY": {
+      "aliases": [
+        "BFA-003"
+      ],
+      "applicable_regimes": []
+    }
+  }
+}

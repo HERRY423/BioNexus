@@ -1,0 +1,10 @@
+{
+  "schema": "bionexus.de-external-plan.v1",
+  "study_id": null,
+  "intended_use": null,
+  "source_sha256": null,
+  "frozen_at": null,
+  "developer_ids": [],
+  "development_dataset_sha256": [],
+  "cases": []
+}

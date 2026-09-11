@@ -1,0 +1,83 @@
+{
+  "status": "COMPLETE",
+  "n_cases": 54,
+  "n_families": 18,
+  "independent_expert_labels": false,
+  "live_llm_baselines": "NOT_RUN_NO_API_CREDENTIALS",
+  "human_review_minutes": null,
+  "arms": [
+    {
+      "arm": "accept_all",
+      "invalid_cases": 42,
+      "valid_cases": 12,
+      "invalid_accepted": 42,
+      "valid_retained": 12,
+      "invalid_issue_identified": 0,
+      "invalid_abstained": 0,
+      "unsupported_acceptance_rate": 1.0,
+      "valid_retention": 1.0,
+      "median_machine_seconds": 7.90000194683671e-06
+    },
+    {
+      "arm": "bionexus_full",
+      "invalid_cases": 42,
+      "valid_cases": 12,
+      "invalid_accepted": 0,
+      "valid_retained": 0,
+      "invalid_issue_identified": 42,
+      "invalid_abstained": 0,
+      "unsupported_acceptance_rate": 0.0,
+      "valid_retention": 0.0,
+      "median_machine_seconds": 0.007274050003616139
+    },
+    {
+      "arm": "deterministic_checklist",
+      "invalid_cases": 42,
+      "valid_cases": 12,
+      "invalid_accepted": 33,
+      "valid_retained": 12,
+      "invalid_issue_identified": 9,
+      "invalid_abstained": 0,
+      "unsupported_acceptance_rate": 0.7857142857142857,
+      "valid_retention": 1.0,
+      "median_machine_seconds": 0.000952000031247735
+    },
+    {
+      "arm": "reject_all",
+      "invalid_cases": 42,
+      "valid_cases": 12,
+      "invalid_accepted": 0,
+      "valid_retained": 0,
+      "invalid_issue_identified": 42,
+      "invalid_abstained": 0,
+      "unsupported_acceptance_rate": 0.0,
+      "valid_retention": 0.0,
+      "median_machine_seconds": 7.00005330145359e-07
+    },
+    {
+      "arm": "without_claim_text",
+      "invalid_cases": 42,
+      "valid_cases": 12,
+      "invalid_accepted": 0,
+      "valid_retained": 0,
+      "invalid_issue_identified": 42,
+      "invalid_abstained": 0,
+      "unsupported_acceptance_rate": 0.0,
+      "valid_retention": 0.0,
+      "median_machine_seconds": 0.007027649960946292
+    },
+    {
+      "arm": "without_execution_metadata",
+      "invalid_cases": 42,
+      "valid_cases": 12,
+      "invalid_accepted": 0,
+      "valid_retained": 0,
+      "invalid_issue_identified": 42,
+      "invalid_abstained": 0,
+      "unsupported_acceptance_rate": 0.0,
+      "valid_retention": 0.0,
+      "median_machine_seconds": 0.0073711000150069594
+    }
+  ],
+  "warning": "Issue identification is any high-impact finding, not necessarily correct localization. See raw findings."
+}

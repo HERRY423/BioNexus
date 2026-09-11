@@ -1,0 +1,12 @@
+{
+  "status": "LOCAL_SOFTWARE_REHEARSAL_COMPLETED",
+  "data_origin": "SYNTHETIC_DEMO",
+  "component_source_inventory_sha256": "b69ebb9c51fb6f0ff180924ca46748010c418c2d4895070581502e3a46be4be2",
+  "external_tasks_scored": 0,
+  "expert_labels_created": 0,
+  "laboratory_time_records_created": 0,
+  "old_bundle_bytes_preserved": true,
+  "scientific_authorization": "NONE",
+  "external_validation": "NOT_ESTABLISHED",
+  "net_benefit": "NOT_ESTABLISHED"
+}

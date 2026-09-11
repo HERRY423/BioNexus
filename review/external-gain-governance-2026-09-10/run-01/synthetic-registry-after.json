@@ -1,0 +1,12 @@
+{
+  "rehearsal_only": true,
+  "rules": {
+    "DEMO_ONLY": {
+      "aliases": [
+        "BFA-003"
+      ],
+      "applicable_regimes": [],
+      "note": "synthetic revision to exercise impact inventory; never activated"
+    }
+  }
+}

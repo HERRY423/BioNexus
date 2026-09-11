@@ -1,0 +1,26 @@
+{
+  "review_date": "2026-09-07",
+  "local_and_remote_main": "bdf38e1942ff4f517ae696c3c413bf481d8ebac4",
+  "comparison_base_rc5": "6f84745b47f07bf4bb5a2c3c95dbe5f732472218",
+  "latest_public_release": "v1.0.0-rc.5",
+  "latest_release_prerelease": true,
+  "latest_release_published_at": "2026-09-06T08:52:32Z",
+  "local_python": "3.13.9",
+  "focused_tests": {
+    "files": ["tests/unit/test_de_audit.py", "tests/unit/test_evidence_index.py", "tests/unit/test_analysis_audit.py", "tests/unit/test_lims_hub.py", "tests/unit/test_pseudobulk_inferential_warrant.py"],
+    "first_completed_selection": "63 passed, 1 deselected",
+    "remaining_test": "test_scanpy_structured_array_preserves_identifiers_and_values",
+    "remaining_test_result": "1 passed, 17 deselected",
+    "unique_tests_passed": 64,
+    "environment_adjustment": "NUMBA_CACHE_DIR redirected into a new workspace directory after a timed stack dump located the initial stall in numba cache file creation.",
+    "scope": "Focused software tests in local Python 3.13.9; not full-suite, supported release-matrix, external-lab, or independent scientific validation."
+  },
+  "evidence_index_check": {"passed": true, "checked_count": 30, "errors": []},
+  "public_ci": {
+    "main": {"run_id": 34102272492, "conclusion": "failure", "successful_jobs": 17, "failed_jobs": 9, "failure": "Core Reliability matrix fails at test collection: ModuleNotFoundError: No module named anndata"},
+    "container": {"run_id": 34102272537, "conclusion": "success"},
+    "official_rocrate": {"run_id": 34102272575, "conclusion": "success"}
+  },
+  "registry_snapshot": {"verified_external_lab_studies": 0, "verified_non_author_reviews": 0, "calibration_freezes": 0, "verified_active_adopting_organizations": 0, "accepted_external_interoperability_submissions": 0},
+  "limitations": ["No real biological analysis was rerun in this review.", "No clean installation of a newly published post-rc.5 release was available or certified.", "Counterexamples are synthetic, locally reproduced, and do not estimate population error rates.", "No source implementation files were changed."]
+}

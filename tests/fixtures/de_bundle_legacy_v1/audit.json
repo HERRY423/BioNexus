@@ -1,0 +1,136 @@
+{
+  "overall_status": "NEEDS_REVISION",
+  "passed": false,
+  "summary_counts": {
+    "blocker": 0,
+    "high_impact": 1,
+    "advisory": 0
+  },
+  "cohort_summary": {
+    "n_cells": 6,
+    "n_donors": 6,
+    "donors": [
+      "DEMO_D1",
+      "DEMO_D2",
+      "DEMO_D3",
+      "DEMO_D4",
+      "DEMO_D5",
+      "DEMO_D6"
+    ],
+    "conditions": {
+      "control": 3,
+      "treated": 3
+    }
+  },
+  "metadata_columns_used": {
+    "donor": "donor",
+    "condition": "condition"
+  },
+  "checks": [
+    {
+      "check_id": "donor_replicates",
+      "title": "供体/生物学重复设计",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "已检查样本设计：control N=3, treated N=3。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "donor_imbalance",
+      "title": "供体细胞贡献失衡",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供细胞类型列，供体失衡未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "batch_confounding",
+      "title": "批次与组别混杂",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供批次列，混杂未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "input_count_type",
+      "title": "原始整数计数层",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供表达矩阵，计数层未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "de_results",
+      "title": "差异表达结果表",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "已读取 2 行差异表达结果（来源: de_table）。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "fdr_and_testing",
+      "title": "FDR / 多重检验",
+      "status": "ISSUE_FOUND",
+      "status_zh": "发现问题",
+      "summary": "已检查 DE 表：缺失、非法或未使用 FDR 校正。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "analysis_code",
+      "title": "分析脚本/笔记本",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供分析脚本，静态方法学调用未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "analysis_execution_binding",
+      "title": "分析事实与执行记录绑定",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供经核查的供体级执行记录（统计单位、设计矩阵、拟合状态未绑定）。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "claim_targeted_warrant",
+      "title": "科学声明定向审计",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "声明符合当前证据支持边界：Claim 'CLAIM-USER-DE' Epistemic Evaluation: Warranted tiers: [association_claim]; Unwarranted tiers: [none]. Not requested: [population_claim, mechanistic_claim, causal_claim, cell_identity_claim, clinical_claim, structural_conformation_claim, bioactive_binding_claim]. Max warranted class: 'descriptive', ceiling: 'SUPPORTED'.",
+      "required_for_pass": false
+    }
+  ],
+  "execution_record": {
+    "source": "de_table",
+    "method": null,
+    "fdr_method": null,
+    "aggregation": null,
+    "cell_level_condition_test": false,
+    "facts": [
+      "A DE table with 2 rows was supplied and inspected."
+    ]
+  },
+  "findings": [
+    {
+      "rule_id": "BFA-003",
+      "severity": "HIGH_IMPACT",
+      "category": "FDR_AND_TESTING",
+      "title": "缺失 FDR 多重假设检验校正 (Missing FDR / Adjusted P-value)",
+      "impact_on_conclusion": "差异分析结果表中仅报告了原始 p 值，未进行 Benjamini-Hochberg (FDR) 校正。单细胞转录组同时检验数万个基因，若仅以 p < 0.05 筛选，存在成百上千个假阳性基因被当做真实生物学发现的风险。",
+      "sample_or_donor": null,
+      "step_or_location": "Differential Expression Post-processing",
+      "claim_affected": null,
+      "minimal_fix": "from statsmodels.stats.multitest import multipletests\n_, padj, _, _ = multipletests(de_df['pvalue'], method='fdr_bh')\nde_df['padj'] = padj\nsig_degs = de_df[de_df['padj'] < 0.05]",
+      "evidence_data": {}
+    }
+  ],
+  "claim_boundary": {
+    "allowed_scope": "只能确认已检查的输入（6 donors; condition counts control=3, treated=3）。缺少差异表达执行记录或结果时，不得陈述已完成的群体差异表达。",
+    "prohibited_scope": "严禁把未提供的矩阵、模型或 DE 结果写成已经执行的 NB GLM、Wald 或 BH 校正。",
+    "recommended_methods_text": "Recommended analysis, not recorded as performed: aggregate raw integer counts to donor-level pseudobulks per cell type (Squair et al., 2021), then test condition effects with a negative binomial GLM, Wald tests, and Benjamini-Hochberg FDR. Do not treat cell-level rank_genes_groups p-values as population inference.",
+    "recommended_results_text": "Only inspected design or partial artifacts are described; differential-expression execution was not confirmed.",
+    "overall_maturity": "NOT_ASSESSED",
+    "executed_methods_text": "A DE table with 2 rows was supplied and inspected."
+  },
+  "pi_decisions": []
+}

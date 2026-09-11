@@ -9,7 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
+## [1.0.0-rc.6] - 2026-09-11
+
+### 🛡️ Added (Engineering Hardening, Modular CLI & Quality Gates)
+
+- **Hardened Quality Gates (`scripts/run_core_quality.py`, `scripts/check_coverage.py`, `mypy.ini`)**:
+  - Enforced static typing across core modules with MyPy gate in CI and release workflows.
+  - Implemented empirical line and branch coverage floors based on seeded pre-modification baselines.
+  - Established formal requirement traceability gate (`scripts/check_de_traceability.py`) linking 7 DE specifications to bidirectional execution evidence.
+- **Modular CLI Architecture (`bionexus.commands.*`)**:
+  - Refactored monolithic CLI entry point into 11 dedicated, single-responsibility command modules while maintaining 100% backward compatibility with existing argument contracts.
+- **External-task observations and correctable scientific governance**:
+  - Added a passive offline DE study scorer with a frozen task roster, separate reference labels, paired false-accept/false-hold reporting, failures, missing output bounds, development overlap exclusions and dataset-family strata. All results remain descriptive and externally unverified.
+  - Added both-arm installation, review, false-alarm, repair and communication person-minutes; reconcile installation allocations to the observed site cohort. Pilot summary schema is now v2: old setup/repair counts are explicitly partial; historical review.v1 and bundle.v1 inputs remain readable.
+  - Corrected registry scope matching: missing scope is not universal; match explicit platforms, sample/feature counts, design and tissue. Preserve every challenge vote and reason; revised votes cannot inherit old verification; verified disagreement remains unresolved rather than becoming majority truth.
+  - Added read-only before/after registry impact reports for supplied historic DE bundles. Unknown rule application remains unknown; old conclusions are never rewritten. No scientific thresholds were recalibrated and no external study, reviewer, net benefit or adoption is claimed by these engineering changes.
+- **Passive review compatibility and maintenance**:
+  - Added an offline DE bundle reader with CONSISTENT, LEGACY_LIMITED, INVALID and UNSUPPORTED_SCHEMA outcomes; file checks never authorize science.
+  - New v1 bundles additionally bind human-readable reports, retaining legacy audit-only compatibility and editable reviews. Summaries check integrity and disclose legacy limits. Added packaged schemas and installed-wheel checks.
+  - Documented responsibility, support scope, migration and rollback without an unstaffed SLA or implied stable release.
+  - These changes do not fix or supersede the scientific-rule failures recorded by the 2026-09-08 methods experiments; those results remain historical evidence.
+
+### 🔧 Fixed
 
 - **DE audit no longer passes without evidence**: `audit_differential_expression` reports each check as assessed / issue found / missing evidence. Missing inputs return `NEEDS_DATA` or `NOT_ASSESSED` instead of `ROBUST_PASS`. Methods past-tense statements come only from execution records; recommended analysis is listed separately.
 - **Scanpy `rank_genes_groups` structured arrays** are read without truncating gene identifiers or dropping p-values / log-fold changes. Parse failures are reported instead of becoming an empty passing table.

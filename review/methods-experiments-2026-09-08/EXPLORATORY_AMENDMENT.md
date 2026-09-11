@@ -1,0 +1,10 @@
+# Exploratory amendment after run-01 outcomes
+
+The original freeze and run-01 outcomes remain unchanged. This amendment follows observation of the 54/54 rejection result and is therefore **post-outcome exploratory work**.
+
+1. Re-run all 54 unchanged cases after changing only BFA-001c from HIGH_IMPACT to ADVISORY in an in-memory experimental subclass. Retain the finding. Do not change p values, claim text, input counts, receipts, or repository product code. Compare with and without claim text. This is a mechanism ablation, not a shipped fix or a confirmatory performance estimate. It tests whether a blanket heuristic masks missing verification elsewhere.
+2. Extract the original check-level results for evidence binding and targeted claims. A generic unrelated finding must not be called correct issue localization. Report binding failures that were marked ASSESSED, and false gene/direction/significance statements that were marked ASSESSED.
+3. Add a prospective-use reviewer packet with opaque randomized case IDs, input artifacts and blank forms; retain the key separately. Existing developer labels are provisional and cannot be counted as expert ratings. No reviewer, institution, elapsed human time, agreement statistic or recruitment is invented.
+4. Export descriptive figures and a methods/results supplement from actual saved outputs. Preserve both the observed 0% valid retention and any ablation-induced unsafe acceptance. Intervals over 50 simulation replicates are coarse; add Wilson intervals for binary false-positive frequency because percentile bootstrap intervals can collapse at 0 or 1. This extra interval is explicitly an exploratory reporting supplement.
+
+The cross-cohort sign-flip p value additionally assumes sign exchangeability/symmetry of independent donor scores under the null. Genes were selected using abundance in both already-known datasets, not a previously untouched validation cohort. Library normalization for the signature diagnostic uses the selected 2,000-gene panel. It must not replace or overturn the historical preregistered independent-validation endpoint and its negative result.
