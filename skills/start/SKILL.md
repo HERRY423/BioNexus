@@ -1,11 +1,11 @@
 ---
 name: start
-description: Orient a session on this plugin. Use first. Route completed single-cell DE to the pre-submission shadow review; check backend readiness before a requested analysis. Do not assign cell-type labels or run analyses from this skill.
+description: Orient a session on this plugin. BioNexus is a Scientific Reliability Layer for AI-Assisted Biology. Route completed single-cell DE to the pre-submission shadow review; check backend readiness before a requested analysis. Do not assign cell-type labels or run analyses from this skill.
 ---
 
 # BioNexus start
 
-This plugin is an **agent skill pack**. It stops at **numeric clusters + marker tables**. It does not annotate cell types.
+BioNexus is a **Scientific Reliability Layer for AI-Assisted Biology**, not a generic bioinformatics toolbox. Its Capability Plane provides **reference implementations** to demonstrate and test evidence boundaries. It stops at **numeric clusters + marker tables** and does not annotate cell types.
 
 ## First laboratory use
 
@@ -27,9 +27,11 @@ Honor `tier`, `ready.scverse_ready` / `scvi_ready` / `spatial_ready`, `allowed_n
 
 Install: `pip install -e .` (kernel). scRNA gold chain: `pip install -e ".[goldchain]"`. Spatial: `pip install -e ".[spatial]"`. Full scVI: `pip install -e ".[scverse]"`.
 
-## Route by tier
+## Capability Plane: Reference Implementations
 
-| Priority | Tier | Skills | When |
+The capability plane provides reference execution pipelines (not an all-in-one bioinformatics suite):
+
+| Priority | Tier | Skills (Reference Implementations) | When |
 |---|---|---|---|
 | 1 | **core** | `single-cell-rna-qc`, `spatial-transcriptomics` (squidpy), `scvi-tools`, `nextflow-development` | Default for real data |
 | 2 | wrapper | Allotrope, provenance | Named lab-ops jobs |

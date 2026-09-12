@@ -5,31 +5,21 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "bionexus-reliability"
 version = "1.0.0-rc.7"
-description = "Scientific Reliability Layer & Scientific Warrant Engine for AI Agents (Warrant-First Evidence Assessment, Fail-Closed Invariants, Evidence-Capped Claims, Zero Silent Substitution)."
+description = "Scientific Reliability Layer for AI-Assisted Biology. Know what your evidence actually warrants: pre-submission shadow review of multi-donor single-cell differential expression, evidence gap location, and human scientific review support."
 authors = [{ name = "BioNexus Team" }]
 license = { text = "Apache-2.0" }
 readme = "README.md"
 requires-python = ">=3.10"
 keywords = [
     "bionexus",
-    "biology",
+    "scientific-reliability",
+    "warrant-engine",
     "bioinformatics",
-    "genomics",
-    "biologics-design",
-    "antibody-engineering",
-    "protein-language-models",
-    "clinical-cohort-analysis",
     "single-cell",
-    "spatial-transcriptomics",
-    "variant-interpretation",
-    "protein-structure",
-    "alphafold",
-    "molecular-docking",
-    "multiome",
-    "nextflow",
-    "allotrope",
+    "differential-expression",
+    "pseudobulk",
+    "reproducibility",
     "mcp",
-    "scvi-tools"
 ]
 dependencies = [
     "numpy>=1.23.0",

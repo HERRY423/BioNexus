@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.0-rc.7] - 2026-09-12
 
-### 🎯 GA Closure Candidate — Engineering Hardening, Modular Architecture & P0 Closure
+### 🎯 GA Closure Candidate (Software/API Closure, Not Scientific Validation) — Engineering Hardening, Modular Architecture & P0 Closure
 
 #### 🛡️ Added & Hardened
 - **Modular CLI Architecture (`bionexus.commands.*`)**: Refactored monolithic CLI entrypoint into 11 single-responsibility submodules (`claims`, `de`, `diagnostics`, `execution`, `experimental`, `ivn`, `lab`, `scaffold`, `security`, `standards`, `validation`) preserving 100% backward-compatible flag and command contracts.

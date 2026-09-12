@@ -1,7 +1,7 @@
 {
   "name": "bionexus-reliability",
   "version": "1.0.0-rc.7",
-  "description": "Pre-submission shadow review for multi-donor single-cell differential expression: inspect existing results, locate evidence gaps, suggest repairs, and support human scientific review.",
+  "description": "Scientific Reliability Layer for AI-Assisted Biology. Know what your evidence actually warrants: pre-submission shadow review of multi-donor single-cell differential expression, evidence gap location, and human scientific review support.",
   "author": {
     "name": "BioNexus Team",
     "url": "https://github.com/HERRY423/BioNexus"
@@ -11,23 +11,20 @@
   "license": "Apache-2.0",
   "keywords": [
     "bionexus",
+    "scientific-reliability",
+    "warrant-engine",
     "bioinformatics",
     "single-cell",
-    "scanpy",
-    "scvi-tools",
-    "nextflow",
-    "nf-core",
-    "allotrope",
-    "mcp",
-    "variant-interpretation",
-    "spatial-transcriptomics",
-    "squidpy"
+    "differential-expression",
+    "pseudobulk",
+    "reproducibility",
+    "mcp"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "BioNexus",
     "shortDescription": "The Scientific Reliability Layer for Agentic Biology",
-    "longDescription": "Pre-submission shadow review for multi-donor single-cell differential expression: inspect existing results, locate evidence gaps, suggest repairs, and support human scientific review.",
+    "longDescription": "Scientific Reliability Layer for AI-Assisted Biology. Know what your evidence actually warrants: pre-submission shadow review of multi-donor single-cell differential expression, evidence gap location, and human scientific review support.",
     "developerName": "BioNexus Team",
     "category": "Science",
     "capabilities": [

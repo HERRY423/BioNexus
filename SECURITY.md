@@ -1,6 +1,6 @@
 # BioNexus Security & Data Governance Policy
 
-BioNexus is designed as a **Warrant-First Scientific Reliability & Data Governance Layer** for biological AI agents and computational laboratories. Because BioNexus operates in clinical, biomedical, and biopharma environments handling pre-publication discoveries, proprietary IP, and patient genomics, security and data confidentiality are foundational invariants.
+BioNexus is designed as a **Warrant-First Scientific Reliability & Data Governance Layer** for biological AI agents and computational laboratories. Because BioNexus is designed for research settings that may be deployed in biomedical and biopharma environments handling pre-publication discoveries, proprietary IP, and research genomics, security and data confidentiality are foundational invariants.
 
 ---
 

@@ -14,9 +14,10 @@ the package. See [scope](docs/product-matrix.md) and
 ## Support scope
 
 `src/bionexus/versions.py` is the synchronized package version source. BioNexus
-is in the 1.0.0 release-candidate series. Maintenance of the current RC line is
-best effort. No GA/LTS window, paid SLA, staffed on-call rota or standing
-independent scientific council is established. Older pinned versions remain
+is in the 1.0.0 release-candidate series (v1.0.0-rc.7 is a GA Closure Candidate
+representing software/API closure, not completed scientific validation). Maintenance
+of the current RC line is best effort. No GA/LTS window, paid SLA, staffed on-call
+rota or standing independent scientific council is established. Older pinned versions remain
 useful for reproduction but have no automatic backport commitment. A future
 stable release must activate the following policy with its actual release date
 and named maintainers. This policy does not declare the RC to be GA.
