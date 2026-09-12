@@ -22,11 +22,9 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: "pages"
+  group: "ivn-ledger-${{ github.ref }}"
   cancel-in-progress: false
 
 jobs:
@@ -62,16 +60,28 @@ jobs:
           python -m bionexus.cli ivn build-ledger --output public/index.html
 
       - name: Upload Pages Artifact
-        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
           path: public/
 
+      - name: Retain Verified Ledger for Review
+        uses: actions/upload-artifact@v4
+        with:
+          name: ivn-ledger-${{ github.sha }}
+          path: public/
+          if-no-files-found: error
+
   deploy-pages:
     name: Deploy to GitHub Pages
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    # github-pages permits main only. Release tags retain verified artifacts;
+    # they must not publish an older registry over the current public ledger.
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: build-and-verify-ledger
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

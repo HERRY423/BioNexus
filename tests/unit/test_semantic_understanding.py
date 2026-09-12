@@ -17,6 +17,8 @@ if str(_REPO_ROOT) not in sys.path:
 from bionexus.claim_semantics import (  # noqa: E402
     CausalStrength,
     DeterministicClaimParser,
+    DeterministicWarrantEngine,
+    EvidenceProfile,
     GeneralizationScope,
     detect_assertive_causal_language,
 )
@@ -151,12 +153,24 @@ def test_p3_plural_passive_parsed_as_causal():
 # ---------------------------------------------------------------------------
 
 
-def test_p4_negated_causal_statement_downgrades_ir():
+def test_p4_negative_causal_assertion_retains_its_evidence_burden():
     ir = DeterministicClaimParser.parse("IL-6 does not drive T cell exhaustion.")
     assert ir.negated is True
+    assert ir.is_negative_assertion
+    assert ir.causal_strength == CausalStrength.COUNTERFACTUAL_CAUSAL
+    assert ir.claim_class == ClaimClass.MECHANISTIC
+    assert not DeterministicWarrantEngine.evaluate(ir, EvidenceProfile(observational_data=True)).is_fully_warranted
+
+
+def test_p4_scoped_disclaimer_downgrades_ir_without_biological_warrant():
+    ir = DeterministicClaimParser.parse("We cannot prove that IL-6 drives T cell exhaustion.")
+    assert ir.is_epistemic_disclaimer
     assert ir.causal_strength == CausalStrength.NONE
     assert ir.claim_class == ClaimClass.DESCRIPTIVE
-    assert ir.mechanism_depth.value == "black_box"  # regression guard: downgrade must bind mech_depth
+    assert ir.mechanism_depth.value == "black_box"
+    verdict = DeterministicWarrantEngine.evaluate(ir, EvidenceProfile())
+    assert verdict.is_fully_warranted
+    assert verdict.evidence_ceiling == ConclusionMaturity.UNASSESSED.value
 
 
 def test_p4_extended_negation_did_not_alter():

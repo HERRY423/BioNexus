@@ -423,3 +423,115 @@ def handle_ivn(args: argparse.Namespace) -> int:
         print(f"Error: {exc}")
         return 2
 
+
+def register_ivn_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 9.5 ivn (Independent Validation Network, BNS-023)
+    p_ivn = subparsers.add_parser(
+        "ivn",
+        help="Independent Validation Network: >= 3 independent datasets x >= 2 external labs x >= 1 non-author reviewer per flagship (BNS-023)",
+    )
+    ivn_subs = p_ivn.add_subparsers(dest="ivn_action", help="IVN actions")
+
+    p_ivn_status = ivn_subs.add_parser(
+        "status", help="Assess every flagship capability against the IVN quotas and OPEN_QUESTIONS blockers"
+    )
+    p_ivn_status.add_argument("--registry", default=None, help="Path to the IVN registry (default: validation/ivn/REGISTRY.json)")
+    p_ivn_status.add_argument("--repo-root", default=".", help="Repository root used to resolve artifact paths")
+    p_ivn_status.add_argument("--json", action="store_true", help="Output the full assessment as JSON")
+
+    p_ivn_verify = ivn_subs.add_parser(
+        "verify", help="Recompute every recorded artifact hash in the IVN registry (drift check)"
+    )
+    p_ivn_verify.add_argument("--registry", default=None, help="Path to the IVN registry")
+    p_ivn_verify.add_argument("--repo-root", default=".", help="Repository root used to resolve artifact paths")
+    p_ivn_verify.add_argument("--json", action="store_true", help="Output the integrity report as JSON")
+
+    for register_kind, register_help in (
+        ("register-dataset", "Register an independent dataset (requires on-disk preregistration/report artifacts)"),
+        ("register-lab-study", "Register an external-lab study executed against a registered dataset"),
+        ("register-review", "Register a blinded non-author review (refuses author-roster overlap)"),
+    ):
+        p_reg = ivn_subs.add_parser(register_kind, help=register_help)
+        p_reg.add_argument("--payload", required=True, help="Entity JSON payload (see validation/ivn/templates/)")
+        p_reg.add_argument("--registry", default=None, help="Path to the IVN registry")
+        p_reg.add_argument("--repo-root", default=".", help="Repository root used to resolve artifact paths")
+        p_reg.add_argument("--json", action="store_true", help="Output the registration receipt as JSON")
+
+    p_ivn_verify_review = ivn_subs.add_parser(
+        "verify-review",
+        help="Promote one REGISTERED review after fail-closed artifact and blinding verification",
+    )
+    p_ivn_verify_review.add_argument("--review-id", required=True, help="Registered review id")
+    p_ivn_verify_review.add_argument(
+        "--expected-commit", required=True, help="Full immutable commit reviewed by the external reviewer"
+    )
+    p_ivn_verify_review.add_argument(
+        "--verified-by", required=True, help="Named maintainer or governance body performing the check"
+    )
+    p_ivn_verify_review.add_argument(
+        "--receipt-output",
+        default=None,
+        help="Repository-relative verification receipt path (default: alongside the review)",
+    )
+    p_ivn_verify_review.add_argument("--notes", default="", help="Verification notes")
+    p_ivn_verify_review.add_argument("--registry", default=None, help="Path to the IVN registry")
+    p_ivn_verify_review.add_argument("--repo-root", default=".", help="Repository root for artifact paths")
+    p_ivn_verify_review.add_argument("--json", action="store_true", help="Output the verification receipt summary")
+
+    p_ivn_freeze = ivn_subs.add_parser(
+        "freeze-profile", help="Freeze an APPROVED calibration profile to its held-out contexts (fail-closed)"
+    )
+    p_ivn_freeze.add_argument("--profile-json", required=True, help="Calibration profile JSON payload")
+    p_ivn_freeze.add_argument("--held-out-json", required=True, help="JSON list of held-out context payloads")
+    p_ivn_freeze.add_argument("--freeze-id", required=True, help="Unique freeze id")
+    p_ivn_freeze.add_argument("--frozen-by", required=True, help="Accountable person or body performing the freeze")
+    p_ivn_freeze.add_argument("--notes", default="", help="Freeze notes")
+    p_ivn_freeze.add_argument("--registry", default=None, help="Path to the IVN registry (freezes are recorded there)")
+    p_ivn_freeze.add_argument("--repo-root", default=".", help="Repository root used to resolve default registry path")
+    p_ivn_freeze.add_argument("--json", action="store_true", help="Output the freeze record as JSON")
+
+    p_ivn_authorize = ivn_subs.add_parser(
+        "authorize", help="Fail-closed gate: may a calibration profile authorize this context? (requires an intact freeze)"
+    )
+    p_ivn_authorize.add_argument("--profile-json", required=True, help="Calibration profile JSON payload")
+    p_ivn_authorize.add_argument("--context-json", required=True, help="Held-out context JSON payload")
+    p_ivn_authorize.add_argument("--registry", default=None, help="Path to the IVN registry")
+    p_ivn_authorize.add_argument("--repo-root", default=".", help="Repository root used to resolve default registry path")
+    p_ivn_authorize.add_argument("--json", action="store_true", help="Output the decision as JSON")
+
+    p_ivn_build = ivn_subs.add_parser(
+        "build-ledger",
+        aliases=["render-page", "render-ledger"],
+        help="Compile and render the standalone public IVN evidence ledger HTML portal (GitHub Pages ready)",
+    )
+    p_ivn_build.add_argument("-o", "--output", default="docs/ivn/index.html", help="Output path for HTML file (default: docs/ivn/index.html)")
+    p_ivn_build.add_argument("--registry", default=None, help="Path to the IVN registry")
+    p_ivn_build.add_argument("--repo-root", default=".", help="Repository root used to resolve artifact paths")
+    p_ivn_build.add_argument("--json", action="store_true", help="Output build summary as JSON")
+    return p_ivn
+
+
+def register_debt_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 22. debt (Scientific Evidence Debt Engine - BNS-021)
+    p_debt = subparsers.add_parser("debt", help="BioNexus Scientific Evidence Debt Engine (BNS-021) — Track & Amortize Scientific Debt")
+    debt_subs = p_debt.add_subparsers(dest="debt_action", help="Evidence debt actions")
+
+    p_d_audit = debt_subs.add_parser("audit", help="Audit project evidence debt and epistemic keystones")
+    p_d_audit.add_argument("target", nargs="?", default=".", help="Path to ledger.json or project directory (default: .)")
+    p_d_audit.add_argument("--json", action="store_true", help="Output machine-readable JSON debt report")
+    p_d_audit.add_argument("--markdown", "--md", action="store_true", help="Output Markdown debt certificate")
+    p_d_audit.add_argument("-o", "--output", default=None, help="Save report to file path")
+    p_d_audit.add_argument("-v", "--verbose", action="store_true", help="Display detailed debt breakdown")
+
+    p_d_payoff = debt_subs.add_parser("payoff", aliases=["schedule"], help="Compute optimal scientific debt repayment schedule")
+    p_d_payoff.add_argument("target", nargs="?", default=".", help="Path to ledger.json or project directory (default: .)")
+    p_d_payoff.add_argument("--json", action="store_true", help="Output schedule as JSON")
+    p_d_payoff.add_argument("--markdown", "--md", action="store_true", help="Output schedule as Markdown")
+
+    p_d_graph = debt_subs.add_parser("graph", help="Generate Mermaid DAG visualization of evidence debt propagation")
+    p_d_graph.add_argument("target", nargs="?", default=".", help="Path to ledger.json or project directory (default: .)")
+
+    p_d_sample = debt_subs.add_parser("sample", help="Generate and audit an exemplary 20-claim research debt ledger")
+    p_d_sample.add_argument("-o", "--output", default="sample_evidence_debt_ledger.json", help="Save sample ledger JSON to file")
+    p_d_sample.add_argument("--json", action="store_true", help="Output audit report as JSON")
+    p_d_sample.add_argument("--markdown", "--md", action="store_true", help="Output audit report as Markdown")

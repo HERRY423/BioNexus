@@ -50,7 +50,11 @@ def parser_contract(entry):
 
 
 def test_all_command_arguments_aliases_defaults_and_help_remain_compatible():
-    assert parser_contract(cli.main) == json.loads(FIXTURE.read_text(encoding="utf-8"))
+    actual = parser_contract(cli.main)
+    expected = json.loads(FIXTURE.read_text(encoding="utf-8"))
+    assert actual == expected
+    # Dictionary equality alone misses command registration/help ordering.
+    assert json.dumps(actual, ensure_ascii=False) == json.dumps(expected, ensure_ascii=False)
 
 
 def test_legacy_handler_imports_remain_callable():

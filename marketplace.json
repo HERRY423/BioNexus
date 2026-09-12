@@ -10,7 +10,7 @@
     {
       "name": "bionexus-reliability",
       "description": "Pre-submission shadow review for multi-donor single-cell differential expression: inspect existing results, locate evidence gaps, suggest repairs, and support human scientific review.",
-      "version": "1.0.0-rc.6",
+      "version": "1.0.0-rc.7",
       "source": {
         "source": "local",
         "path": "./plugins/bionexus"

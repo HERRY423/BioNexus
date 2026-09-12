@@ -11,7 +11,7 @@
     }
   },
   "pipeline": {
-    "version": "1.0.0-rc.6",
+    "version": "1.0.0-rc.7",
     "backend_identity": {
       "capability_id": "spatial.inference_validity",
       "track": "canonical",
@@ -32,12 +32,12 @@
       "state": "CONFORMANT",
       "action": "RUN PERMITTED (identity)",
       "failure_mode_ids": [],
-      "reason": "declared_backend == observed_backend: 'local deterministic alternative-explanation tester' (distribution 'bionexus', version 1.0.0-rc.6, entry points 2/2 resolved, fallback False)."
+      "reason": "declared_backend == observed_backend: 'local deterministic alternative-explanation tester' (distribution 'bionexus', version 1.0.0-rc.7, entry points 2/2 resolved, fallback False)."
     },
     "provenance": {
       "data_source": "10x Genomics official Xenium XOA v4 tiny human kidney output bundle",
       "download_date": "2026-08-28",
-      "commit_sha": "bfe8c171bfb181860c8622714be55f2219cd211c",
+      "commit_sha": "4bf9a754cb9a58a02bddaad3acb7d8f62d518f5d",
       "git_dirty": false,
       "environment_lockfile_hashes": {
         "pyproject.toml": "156d1e950587d37ad1612d2ac721f9947e3e30d310fb0bd4c21c473a834f9a25",
@@ -48,7 +48,7 @@
         "scripts/run_flagship_validation.py"
       ],
       "command_str": "scripts/run_flagship_validation.py",
-      "generator_version": "1.0.0-rc.6",
+      "generator_version": "1.0.0-rc.7",
       "python_version": "3.13.9",
       "platform": "Windows-11-10.0.26200-SP0",
       "timestamp": "2026-09-06T15:34:15.870204+00:00",
@@ -59,7 +59,7 @@
       },
       "repository_dirty_at_execution": false,
       "validation_source_dirty": false,
-      "source_snapshot_sha256": "a0f3e3a25ff52b5d587ff05093a218801132456463718b7993e0bf639e8a7d07"
+      "source_snapshot_sha256": "ea79140066e90d9c6cffaeeccb64ccc097bd00274b80c56ecea36f9b9682e97e"
     }
   },
   "metrics": [

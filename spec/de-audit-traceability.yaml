@@ -5,11 +5,19 @@ requirements:
     scope_note: Numeric gate only; integer-likeness cannot authenticate biological raw-count provenance.
     positive_tests:
     - tests/unit/test_de_requirement_boundaries.py::test_actual_counts_accept_integer_valued_float_and_sparse_inputs
+    - tests/unit/test_de_input_boundaries.py::test_valid_counts_layer_is_identified_without_claiming_analysis_used_it
     negative_tests:
     - tests/unit/test_de_requirement_boundaries.py::test_actual_counts_reject_negative_nonfinite_and_transformed_values
+    - tests/unit/test_de_input_boundaries.py::test_layer_name_does_not_prove_valid_counts
     evidence:
     - kind: implementation
       target: src/bionexus/integrity.py::require_raw_count_matrix
+    - kind: implementation
+      target: src/bionexus/de_audit.py::DEAuditEngine._audit_expression_matrix
+    - kind: test
+      target: tests/unit/test_de_input_boundaries.py::test_valid_counts_layer_is_identified_without_claiming_analysis_used_it
+    - kind: test
+      target: tests/unit/test_de_input_boundaries.py::test_layer_name_does_not_prove_valid_counts
     - kind: test
       target: tests/unit/test_de_requirement_boundaries.py::test_actual_counts_accept_integer_valued_float_and_sparse_inputs
     - kind: test
@@ -21,10 +29,15 @@ requirements:
     - tests/unit/test_de_requirement_boundaries.py::test_explicit_counts_layer_is_returned_without_substitution
     negative_tests:
     - tests/unit/test_de_requirement_boundaries.py::test_missing_counts_layer_never_substitutes_even_integer_x
+    - tests/unit/test_de_input_boundaries.py::test_invalid_explicit_counts_do_not_fall_back_to_integer_x
     - tests/unit/test_de_requirement_boundaries.py::test_actual_counts_reject_negative_nonfinite_and_transformed_values
     evidence:
     - kind: implementation
       target: src/bionexus/integrity.py::require_counts_layer
+    - kind: implementation
+      target: src/bionexus/de_audit.py::DEAuditEngine._audit_expression_matrix
+    - kind: test
+      target: tests/unit/test_de_input_boundaries.py::test_invalid_explicit_counts_do_not_fall_back_to_integer_x
     - kind: test
       target: tests/unit/test_de_requirement_boundaries.py::test_explicit_counts_layer_is_returned_without_substitution
     - kind: test
@@ -38,9 +51,14 @@ requirements:
     - tests/unit/test_de_requirement_boundaries.py::test_actual_counts_accept_integer_valued_float_and_sparse_inputs
     negative_tests:
     - tests/unit/test_de_requirement_boundaries.py::test_actual_counts_reject_negative_nonfinite_and_transformed_values
+    - tests/unit/test_de_input_boundaries.py::test_invalid_value_after_diagnostic_sample_is_never_a_pass
     evidence:
     - kind: implementation
       target: src/bionexus/integrity.py::require_raw_count_matrix
+    - kind: implementation
+      target: src/bionexus/de_audit.py::DEAuditEngine._audit_expression_matrix
+    - kind: test
+      target: tests/unit/test_de_input_boundaries.py::test_invalid_value_after_diagnostic_sample_is_never_a_pass
     - kind: test
       target: tests/unit/test_de_requirement_boundaries.py::test_actual_counts_accept_integer_valued_float_and_sparse_inputs
     - kind: test
@@ -81,10 +99,18 @@ requirements:
       warrant.
     positive_tests:
     - tests/unit/test_de_audit.py::test_deseq2_with_verified_execution_record_achieves_pass
+    - tests/unit/test_rc6_p0_boundaries.py::test_complete_receipt_has_bounded_consistency_summary
+    - tests/unit/test_rc6_p0_boundaries.py::test_honest_negative_or_scoped_limitation_remains_usable
     negative_tests:
     - tests/unit/test_de_audit.py::test_no_input_is_not_assessed
     - tests/unit/test_de_audit.py::test_de_table_format_recognized_requires_execution_binding_for_pass
     - tests/unit/test_de_audit.py::test_failed_fit_status_blocks_and_issues_bfa013b
+    - tests/unit/test_rc6_p0_boundaries.py::test_each_missing_binding_field_prevents_pass
+    - tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass
+    - tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance
+    - tests/unit/test_rc6_p0_boundaries.py::test_disclaimer_does_not_license_other_propositions
+    - tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result
+    - tests/unit/test_rc6_p0_boundaries.py::test_global_negative_does_not_treat_missing_tests_as_nonsignificant
     evidence:
     - kind: implementation
       target: src/bionexus/de_audit.py::DEAuditEngine._compute_overall_status
@@ -98,6 +124,22 @@ requirements:
       target: tests/unit/test_de_audit.py::test_de_table_format_recognized_requires_execution_binding_for_pass
     - kind: test
       target: tests/unit/test_de_audit.py::test_failed_fit_status_blocks_and_issues_bfa013b
+    - kind: test
+      target: tests/unit/test_rc6_p0_boundaries.py::test_complete_receipt_has_bounded_consistency_summary
+    - kind: test
+      target: tests/unit/test_rc6_p0_boundaries.py::test_honest_negative_or_scoped_limitation_remains_usable
+    - kind: test
+      target: tests/unit/test_rc6_p0_boundaries.py::test_each_missing_binding_field_prevents_pass
+    - kind: test
+      target: tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass
+    - kind: test
+      target: tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance
+    - kind: test
+      target: tests/unit/test_rc6_p0_boundaries.py::test_disclaimer_does_not_license_other_propositions
+    - kind: test
+      target: tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result
+    - kind: test
+      target: tests/unit/test_rc6_p0_boundaries.py::test_global_negative_does_not_treat_missing_tests_as_nonsignificant
   BNS-PV-008:
     scope_note: Consumer hash consistency only; a rewritten manifest requires an external expected hash to detect,
       and no producer/scientific authority is granted.

@@ -124,7 +124,7 @@ class EvidenceCard:
 
     def __post_init__(self) -> None:
         # Support legacy execution_fidelity initialization
-        if self.execution_fidelity is not None:
+        if self.execution_fidelity is not None and self.execution_state == ExecutionState.EXECUTED.value:
             fid_upper = str(self.execution_fidelity).upper()
             if fid_upper in ("A", "GOLD-WRAPPER", "EXECUTED"):
                 self.execution_state = ExecutionState.EXECUTED.value
@@ -133,6 +133,8 @@ class EvidenceCard:
             elif fid_upper in ("ABSTAIN", "REFUSE", "REFUSED"):
                 self.execution_state = ExecutionState.REFUSED.value
             elif fid_upper in ("FAILED", "FAIL"):
+                self.execution_state = ExecutionState.FAILED.value
+            else:
                 self.execution_state = ExecutionState.FAILED.value
         else:
             if self.execution_state == ExecutionState.EXECUTED.value:
@@ -201,7 +203,7 @@ def synthesize_conclusion_maturity(card: EvidenceCard | Dict[str, Any], abstain:
     if isinstance(card, dict):
         exec_state = card.get("execution_state")
         exec_fid = card.get("execution_fidelity", GRADE_A)
-        if not exec_state:
+        if "execution_state" not in card:
             fid_upper = str(exec_fid).upper()
             if fid_upper in ("A", "GOLD-WRAPPER", "EXECUTED"):
                 exec_state = ExecutionState.EXECUTED.value
@@ -227,6 +229,10 @@ def synthesize_conclusion_maturity(card: EvidenceCard | Dict[str, Any], abstain:
         concord = card.cross_method_concordance
         ext_val = card.external_validation
 
+    # Explicit invalid states must not inherit a legacy successful execution.
+    if not isinstance(exec_state, str) or exec_state not in tuple(state.value for state in ExecutionState):
+        return ConclusionMaturity.ABSTAIN.value
+
     # 1. Hard Abstention / Refusal / Failure
     if (
         abstain
@@ -237,7 +243,7 @@ def synthesize_conclusion_maturity(card: EvidenceCard | Dict[str, Any], abstain:
         return ConclusionMaturity.ABSTAIN.value
 
     # 2. Preflight / Unexecuted Permitted State
-    if exec_state in (ExecutionState.PERMITTED.value, "PERMITTED"):
+    if exec_state in (ExecutionState.PERMITTED.value, ExecutionState.PERMITTED_WITH_LIMITS.value):
         return ConclusionMaturity.UNASSESSED.value
 
     # 3. Conflicted across alternative methods

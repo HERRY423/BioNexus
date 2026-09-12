@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "cli": "C:\\Plugin\\BioNexus\\review\\engineering-hardening-2026-09-11\\run-02\\wheel-install\\bionexus\\cli.py",
+  "command_modules": [
+    "claims",
+    "de",
+    "diagnostics",
+    "execution",
+    "experimental",
+    "ivn",
+    "lab",
+    "scaffold",
+    "security",
+    "standards",
+    "validation"
+  ],
+  "parser_contract": "MATCHES_PRE_REFACTOR",
+  "legacy_bundle": "LEGACY_LIMITED",
+  "scope": "Isolated wheel target with existing host dependencies, not clean-machine acceptance"
+}

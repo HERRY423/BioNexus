@@ -172,7 +172,7 @@ class RuleClassification:
             ),
             RuleCategory.WARRANT_EPISTEMIC: (
                 "Epistemic warrant constraint: limits what the current evidence "
-                "can justify. Execution is legal; claims are capped.",
+                "can justify. Execution is legal; claims are capped."
             ),
         }
         return mapping.get(self.category, "Unclassified constraint.")

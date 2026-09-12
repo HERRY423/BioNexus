@@ -1,13 +1,43 @@
 {
   "scope": "Fixed core-dependency profile in quality/core-tests.json; not whole-package coverage",
-  "measurement": "review/engineering-hardening-2026-09-11/run-01/core-before/coverage.json",
-  "policy": "Floors are the initial measured percentages rounded down to two decimals. Never lower to accommodate a regression; review explicit scope changes.",
+  "measurement": "review/engineering-hardening-2026-09-11/run-02/core-measure/coverage.json",
+  "policy": "Ratchet each floor upward from measured line/branch percentages rounded down to two decimals; never lower an existing floor to accommodate a regression.",
   "files": {
-    "src/bionexus/contracts.py": {"line": 80.11, "branch": 61.29},
-    "src/bionexus/evidence_model.py": {"line": 84.23, "branch": 77.90},
-    "src/bionexus/warrant.py": {"line": 95.93, "branch": 80.55},
-    "src/bionexus/claim_semantics.py": {"line": 83.76, "branch": 67.18},
-    "src/bionexus/de_audit.py": {"line": 65.42, "branch": 54.25},
-    "src/bionexus/de_bundle.py": {"line": 87.50, "branch": 87.03}
+    "src/bionexus/contracts.py": {
+      "line": 95.53,
+      "branch": 92.18
+    },
+    "src/bionexus/evidence_model.py": {
+      "line": 84.23,
+      "branch": 77.9
+    },
+    "src/bionexus/warrant.py": {
+      "line": 95.96,
+      "branch": 80.55
+    },
+    "src/bionexus/claim_semantics.py": {
+      "line": 85.76,
+      "branch": 71.09
+    },
+    "src/bionexus/de_audit.py": {
+      "line": 71.63,
+      "branch": 63.1
+    },
+    "src/bionexus/de_bundle.py": {
+      "line": 87.5,
+      "branch": 87.03
+    },
+    "src/bionexus/de_pilot.py": {
+      "line": 90.15,
+      "branch": 74.41
+    },
+    "src/bionexus/pilot_costs.py": {
+      "line": 80.55,
+      "branch": 65.0
+    },
+    "src/bionexus/spec_registry.py": {
+      "line": 85.57,
+      "branch": 78.33
+    }
   }
 }

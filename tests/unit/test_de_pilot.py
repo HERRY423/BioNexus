@@ -8,6 +8,25 @@ from bionexus.de_audit import audit_differential_expression
 from bionexus.de_pilot import demo_inputs, summarize_reviews, write_bundle
 
 
+def test_bundle_writer_accepts_an_independent_report_adapter(tmp_path):
+    """The persistence boundary needs report methods, not engine inheritance."""
+    from bionexus.de_bundle import verify_de_bundle
+
+    payload = audit_differential_expression(**demo_inputs()).to_dict()
+
+    class ImportedReport:
+        def to_dict(self):
+            return payload
+
+        def to_markdown(self):
+            return "# Imported audit\n\nUnverified external report.\n"
+
+    path = write_bundle(ImportedReport(), tmp_path / "imported", inputs={}, claim=None)
+    assert (path / "audit-full.md").read_text(encoding="utf-8").startswith("# Imported audit")
+    assert verify_de_bundle(path)["status"] == "CONSISTENT"
+    assert _read(path / "manifest.json")["scientific_authorization"] == "NONE"
+
+
 def _bundle(tmp_path, name="case", synthetic=False):
     result = audit_differential_expression(**demo_inputs())
     directory = write_bundle(result, tmp_path / name, inputs={}, claim="synthetic test", synthetic=synthetic)

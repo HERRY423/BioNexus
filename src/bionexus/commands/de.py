@@ -169,3 +169,50 @@ def handle_audit(args: argparse.Namespace) -> int:
             print(f"  - {note}")
         return 0 if grade in ("A", "B") else 1
 
+
+def register_audit_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 5. audit (data files AND notebooks/scripts -> static scientific audit)
+    p_audit = subparsers.add_parser(
+        "audit",
+        help="Audit a notebook/script for scientific flaws, or audit data matrix semantics",
+    )
+    p_audit.add_argument(
+        "path",
+        help="Path to notebook (.ipynb), script (.py/.R/.Rmd/.qmd), or data file (.h5ad/csv)",
+    )
+    p_audit.add_argument("--expected-type", choices=["counts", "normalized"], default="counts")
+    p_audit.add_argument("--de", action="store_true", help="Perform comprehensive multi-donor single-cell differential expression audit")
+    p_audit.add_argument("--json", action="store_true", help="Output audit result as JSON")
+
+
+def register_audit_de_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 5.1 audit-de (Multi-donor single-cell DE evidence audit for lab meeting / submission / sharing)
+    p_audit_de = subparsers.add_parser(
+        "audit-de",
+        aliases=["de-audit"],
+        help="Evidence audit for multi-donor single-cell differential expression before lab meetings, submission, or sharing",
+    )
+    p_audit_de.add_argument("path", nargs="?", default=None, help="Path to .h5ad, DE table (.csv), or analysis script")
+    p_audit_de.add_argument("--h5ad", "--data", dest="h5ad", default=None, help="Path to AnnData (.h5ad) file")
+    p_audit_de.add_argument("--de-table", "--results", dest="de_table", default=None, help="Path to DEG results table (CSV/TSV)")
+    p_audit_de.add_argument("--sample-sheet", "--design", dest="sample_sheet", default=None, help="Path to sample/donor metadata CSV/TSV")
+    p_audit_de.add_argument("--script", "--notebook", dest="script", default=None, help="Path to analysis script (.py/.R) or notebook (.ipynb)")
+    p_audit_de.add_argument("--execution", "--execution-record", dest="execution", default=None, help="Path to execution record JSON or verification bundle")
+    p_audit_de.add_argument("--claim", "--statement", dest="claim", default=None, help="Free-text scientific claim statement to verify")
+    p_audit_de.add_argument("--donor-col", dest="donor_col", default=None, help="Column name for biological donors (auto-detected if omitted)")
+    p_audit_de.add_argument("--condition-col", dest="condition_col", default=None, help="Column name for experimental conditions (auto-detected if omitted)")
+    p_audit_de.add_argument("--cell-type-col", dest="cell_type_col", default=None, help="Column name for cell types/clusters (auto-detected if omitted)")
+    p_audit_de.add_argument("--batch-col", dest="batch_col", default=None, help="Column name for technical batches (auto-detected if omitted)")
+    p_audit_de.add_argument("-o", "--out", "--output", dest="out", default=None, help="Export audit report to Markdown (.md) or JSON (.json)")
+    p_audit_de.add_argument("--json", action="store_true", help="Output audit result as JSON")
+    p_audit_de.add_argument("--bundle", default=None, help="New directory for concise review, evidence and human pilot observation template")
+    p_audit_de.add_argument("--demo", action="store_true", help="Use synthetic teaching inputs with --bundle; excluded from pilot outcomes")
+
+    p_de_summary = subparsers.add_parser("audit-de-summary", help="Summarize human-reported DE pilot observations without certifying benefit")
+    p_de_summary.add_argument("reviews", nargs="+", help="Paths to completed or pending bundle review.json files")
+    p_de_summary.add_argument("--json", action="store_true", help="Output descriptive observations as JSON")
+    p_de_summary.add_argument("-o", "--out", default=None, help="Write a new summary file; existing files are never replaced")
+
+    p_de_verify = subparsers.add_parser("audit-de-verify", help="Read-only DE bundle file verification; never scientific approval")
+    p_de_verify.add_argument("bundle", help="Existing DE shadow-review directory")
+    p_de_verify.add_argument("--expected-manifest-sha256", default=None, help="Manifest digest retained independently by the caller")

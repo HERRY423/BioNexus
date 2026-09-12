@@ -399,3 +399,124 @@ def handle_certification(args: argparse.Namespace) -> int:
         print("M4 target is unchanged and is never reached by weakening criteria (BNS-CF-006).\n")
     return 0
 
+
+def register_interop_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 5.8 interop (standards-based exports, BNS-016)
+    p_interop = subparsers.add_parser(
+        "interop",
+        help="Standards-based exports: RO-Crate / Workflow Run RO-Crate / BioCompute Object (BNS-016)",
+    )
+    interop_subs = p_interop.add_subparsers(dest="interop_action", help="Interoperability actions")
+    p_io_crate = interop_subs.add_parser(
+        "ro-crate", help="Export a run capsule or ledger as an RO-Crate 1.1 document"
+    )
+    p_io_crate.add_argument("path", help="Run capsule (dir/run.json) or ledger JSON")
+    p_io_crate.add_argument("--out", default=None, help="Output file (default: print to stdout)")
+    p_io_bco = interop_subs.add_parser(
+        "bco", help="Export a run capsule as an IEEE 2791-2020 BioCompute Object"
+    )
+    p_io_bco.add_argument("path", help="Run capsule directory or run.json file")
+    p_io_bco.add_argument("--out", default=None, help="Output file (default: print to stdout)")
+    p_io_wfrun = interop_subs.add_parser(
+        "wfrun-crate",
+        help=(
+            "Export a run capsule as a Workflow Run RO-Crate Research Object "
+            "(inputs, software, execution, steps, outputs, EvidenceCard, Claim Ledger)"
+        ),
+    )
+    p_io_wfrun.add_argument("path", help="Run capsule directory or run.json file")
+    p_io_wfrun.add_argument("--out", default=None, help="Output crate directory (default: print to stdout)")
+    p_io_wfrun.add_argument(
+        "--ledger", default=None, help="Claim–Evidence Ledger JSON to embed (default: adjacent bionexus.ledger.json)"
+    )
+    p_io_wfrun.add_argument("--zip", action="store_true", help="Also write a deterministic .zip of the crate")
+    p_io_de_crate = interop_subs.add_parser(
+        "de-crate", help="Export a Differential Expression audit report as an RO-Crate 1.1 Research Object"
+    )
+    p_io_de_crate.add_argument("report", help="Path to differential expression audit report JSON")
+    p_io_de_crate.add_argument("--out", required=True, help="Output crate directory")
+    p_io_de_crate.add_argument("--zip", action="store_true", help="Also write a deterministic .zip of the crate")
+    p_io_check = interop_subs.add_parser(
+        "check", help="Structurally validate the projections for a run capsule or ledger"
+    )
+    p_io_check.add_argument("path", help="Run capsule (dir/run.json) or ledger JSON")
+    return p_interop
+
+
+def register_standards_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 5.9 standards (alignment registry, BNS-016)
+    p_standards = subparsers.add_parser(
+        "standards",
+        help="Standards alignment registry: RO-Crate, BCO, PROV-O, GA4GH, ... (honest statuses)",
+    )
+    p_standards.add_argument("--json", action="store_true", help="Output alignment report as JSON")
+
+
+def register_capability_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 6. capability
+    p_cap = subparsers.add_parser(
+        "capability", help="Query and validate machine-readable scientific capability contracts"
+    )
+    cap_subs = p_cap.add_subparsers(dest="capability_action", help="Capability actions")
+
+    # capability list
+    p_cap_list = cap_subs.add_parser("list", help="List available capability contracts")
+    p_cap_list.add_argument("--intent", default=None, help="Filter by scientific intent")
+    p_cap_list.add_argument("--skill", default=None, help="Filter by skill name")
+    p_cap_list.add_argument("--json", action="store_true", help="Output as JSON")
+
+    # capability show <id>
+    p_cap_show = cap_subs.add_parser("show", help="Show full capability contract specification")
+    p_cap_show.add_argument("id", help="Capability contract ID (e.g. scrna.pseudobulk_de)")
+    p_cap_show.add_argument("--json", action="store_true", help="Output contract as JSON")
+
+    # capability check <id>
+    p_cap_check = cap_subs.add_parser("check", help="Evaluate capability preconditions and refusal triggers")
+    p_cap_check.add_argument("id", help="Capability contract ID (e.g. scrna.pseudobulk_de)")
+    p_cap_check.add_argument("--meta-json", default=None, help="Path to input metadata JSON")
+    p_cap_check.add_argument("--min-replicates", type=int, default=None, help="Number of replicates per condition")
+    p_cap_check.add_argument("--is-normalized", action="store_true", help="Flag if input is normalized floats")
+    p_cap_check.add_argument("--json", action="store_true", help="Output evaluation as JSON")
+    return p_cap
+
+
+def register_abi_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 6.5 abi (Biological Capability ABI)
+    p_abi = subparsers.add_parser(
+        "abi", help="Inspect the Biological Capability ABI (Scientific ABI boundary for host agents)"
+    )
+    abi_subs = p_abi.add_subparsers(dest="abi_action", help="ABI actions")
+
+    # abi list
+    p_abi_list = abi_subs.add_parser("list", help="List all capability ABI records")
+    p_abi_list.add_argument("--json", action="store_true", help="Output as JSON")
+
+    # abi show <id>
+    p_abi_show = abi_subs.add_parser("show", help="Show the full ABI record for a capability")
+    p_abi_show.add_argument("id", help="Capability contract ID (e.g. spatial.morans_svg)")
+    p_abi_show.add_argument("--json", action="store_true", help="Output ABI record as JSON")
+
+    # abi audit-claims <id> --claims ...
+    p_abi_audit = abi_subs.add_parser(
+        "audit-claims", help="Audit candidate output claims against the capability's forbidden claims"
+    )
+    p_abi_audit.add_argument("id", help="Capability contract ID")
+    p_abi_audit.add_argument(
+        "--claims", nargs="+", required=True, help="Candidate claim strings to audit"
+    )
+    p_abi_audit.add_argument("--json", action="store_true", help="Output audit as JSON")
+
+    # abi conformance
+    p_abi_conf = abi_subs.add_parser(
+        "conformance", help="Structural conformance scan of all ABI records (BNS-CC-010..014)"
+    )
+    p_abi_conf.add_argument("--json", action="store_true", help="Output as JSON")
+    return p_abi
+
+
+def register_certification_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 6.6 certification (BNS-010)
+    p_cert = subparsers.add_parser(
+        "certification", help="Capability certification tiers, evidence, and honest gap roadmap (BNS-010)"
+    )
+    p_cert.add_argument("--json", action="store_true", help="Output full certification report as JSON")

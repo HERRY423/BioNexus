@@ -1,0 +1,17 @@
+{
+  "REPORT.zh-CN.md": "eaa481d51d047ad45607e9365a483266cfc47fba63d9b971250eb9566ad49bad",
+  "summary.json": "ce5d725d6ea45be4a75215fe3c09901448cd62f07b0d7e76490324b3d213e438",
+  "tests.full.log": "28b780bd270fd35a00e135a0a1a2691c28537f7e5113364eea9f9b3c5d541a6a",
+  "tests.full.xml": "a5e0067ea05d0985a83d9c3c56d38947a8d04da2062887537cd9fd63eea1647a",
+  "full-coverage.json": "85bbd5e65a39fa395b993b84ce193726669b166d9ef381fcb65d0ed2c2a1ec94",
+  "core-verified/coverage.json": "d63d81a835f720951e4b1550756eadaf68873267ce6bd5c31bf76e2477ac4b18",
+  "core-verified/tests.xml": "1a01b3f708977c89516b49f99c44d31bf78de2e9dbb1be0ca6d3d9623dc55ff2",
+  "de-verified/report.json": "81dd7fba8b0ee32dddbbfbd84c1fe15ee79b45da8f07997b405e495b67ae592f",
+  "de-verified/receipts.json": "e310fa662ebe322be35ee9895008e721ddeea2756c4a3ace6da0264a88113287",
+  "types.final.log": "c923e79f0805707656f7c031b04d45e70d607ff357b623139fea93414a374d46",
+  "ruff.final.log": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+  "registry.log": "ecdb80274192b8fd32fa4e71d0b30615daf856f9dd839eda0cda75e18426034f",
+  "bundle-contract.log": "e27e9fc759c92f47639fdf5f4d7cbc5fdf54224bfc11af82d0130e3429cd04be",
+  "input.final.log": "8bd2fda27b0d080302c2c1db950c1041fcaa663423d58a4f1bda962e21912591",
+  "wheel-smoke-final.json": "4c6cc48f9bdad1a063b8b9ec3ad61d5214b23957dd33002332562d5ad960b268"
+}

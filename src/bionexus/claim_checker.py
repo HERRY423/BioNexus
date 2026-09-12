@@ -256,12 +256,21 @@ def audit_prohibited_claims(
     for sent in sentences:
         try:
             claim_ir = DeterministicClaimParser.parse(sent)
-            # Negated and hedged claims are epistemically honest
-            if claim_ir.negated:
+            # Epistemic disclaimers (absence of evidence) are epistemically honest disclaimers
+            if (claim_ir.is_epistemic_disclaimer and not claim_ir.is_negative_assertion
+                    and DeterministicClaimParser.is_scoped_disclaimer(claim_ir.source_text)):
                 continue
 
             w_res = DeterministicWarrantEngine.evaluate(claim_ir, ev_profile)
             if not w_res.is_fully_warranted:
+                for tier_name in ("evidence_of_absence", "negation_scope"):
+                    tier = w_res.tier_verdicts.get(tier_name)
+                    if tier is not None and not tier.is_warranted:
+                        violations.append(ClaimViolation(
+                            violation_type=ClaimViolationType.PROHIBITED_CLAIM_MATCH,
+                            matched_text=sent, rule_description=tier.rationale,
+                            remedy="; ".join(w_res.remedies) or "Submit separately scoped claims for review.",
+                        ))
                 # Tier 1: Cell Identity Claim
                 if (
                     w_res.tier_verdicts.get("cell_identity_claim")
@@ -463,5 +472,3 @@ def audit_claim_semantics(
         w_eval = DeterministicWarrantEngine.evaluate(claim_ir, ev)
         results.append({"claim_ir": claim_ir.to_dict(), "warrant_evaluation": w_eval.to_dict()})
     return results
-
-

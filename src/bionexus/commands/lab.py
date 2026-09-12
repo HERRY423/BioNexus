@@ -343,3 +343,161 @@ def handle_nextflow(args: argparse.Namespace) -> int:
 
     return 0
 
+
+def register_lims_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 23. lims
+    p_lims = subparsers.add_parser("lims", help="BioNexus LIMS Hub (BNS-LIMS-001) — Benchling, LabWare, C04 Pairing Connectors")
+    lims_subs = p_lims.add_subparsers(dest="lims_action", help="LIMS actions")
+
+    p_l_audit = lims_subs.add_parser("audit-pairing", help="Audit C04 custodian pairing manifest")
+    p_l_audit.add_argument("manifest", help="Path to pairing manifest CSV")
+    p_l_audit.add_argument("--json", action="store_true", help="Output JSON report")
+
+    p_l_sync = lims_subs.add_parser("sync-samples", help="Sync samples with generic REST LIMS")
+    p_l_sync.add_argument("--url", default="https://lims.internal/api/v1", help="LIMS base URL")
+    p_l_sync.add_argument("--samples", nargs="+", default=["SMP-001", "SMP-002"], help="Sample IDs")
+    p_l_sync.add_argument("--json", action="store_true", help="Output JSON report")
+
+    p_l_export = lims_subs.add_parser("export-assay", help="Export plate assay results to Benchling")
+    p_l_export.add_argument("--plate-id", default="PLT-001", help="Plate identifier")
+    p_l_export.add_argument("--schema-id", default="sch_plate_reader", help="Benchling assay schema ID")
+    p_l_export.add_argument("--wells", type=int, default=96, help="Well count")
+    p_l_export.add_argument("--json", action="store_true", help="Output JSON report")
+
+    p_l_export_asm = lims_subs.add_parser("export-asm", help="Bridge Allotrope ASM instrument file to LIMS assay")
+    p_l_export_asm.add_argument("--asm", required=True, help="Path to Allotrope ASM JSON file")
+    p_l_export_asm.add_argument("--endpoint", default="https://api.benchling.com/v2/assay-results", help="Target LIMS endpoint URL")
+    p_l_export_asm.add_argument("--target", default="BENCHLING", choices=["BENCHLING", "LABWARE", "SAPIO", "GENERIC_REST"], help="Target LIMS system")
+    p_l_export_asm.add_argument("--schema-id", default="sch_plate_reader", help="Assay schema ID")
+    p_l_export_asm.add_argument("--plate-id", default="PLT-001", help="Plate identifier")
+    p_l_export_asm.add_argument("--project-id", default=None, help="LIMS project ID")
+    p_l_export_asm.add_argument("--token", default=None, help="Bearer authorization token")
+    p_l_export_asm.add_argument("--mock", action="store_true", help="Perform mock dispatch")
+    p_l_export_asm.add_argument("--json", action="store_true", help="Output JSON report")
+    return p_lims
+
+
+def register_instrument_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 24. instrument
+    p_inst = subparsers.add_parser("instrument", help="BioNexus Instrument Gateway (BNS-INST-001) — Plate Reader, NGS, Single-Cell Ingestion")
+    inst_subs = p_inst.add_subparsers(dest="instrument_action", help="Instrument actions")
+
+    p_i_detect = inst_subs.add_parser("detect", help="Auto-detect laboratory instrument file type")
+    p_i_detect.add_argument("file", help="Path to instrument output file")
+    p_i_detect.add_argument("--json", action="store_true", help="Output JSON result")
+
+    p_i_ingest = inst_subs.add_parser("ingest", help="Ingest and standardize instrument file to Allotrope ASM")
+    p_i_ingest.add_argument("file", help="Path to instrument output file")
+    p_i_ingest.add_argument("-o", "--output", default=None, help="Output JSON/ASM path")
+    p_i_ingest.add_argument("--json", action="store_true", help="Output JSON result")
+    return p_inst
+
+
+def register_airgap_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 25. airgap
+    p_airgap = subparsers.add_parser("airgap", help="BioNexus Airgap & Zero-Egress DLP Guard (BNS-SEC-011)")
+    airgap_subs = p_airgap.add_subparsers(dest="airgap_action", help="Airgap actions")
+
+    p_a_audit = airgap_subs.add_parser("audit", help="Audit airgap policy and DLP metrics")
+    p_a_audit.add_argument("--mode", default="AIRGAP_STRICT", choices=["AIRGAP_STRICT", "VPC_INTERNAL_ONLY", "ALLOWLIST_AUDITED", "OPEN_CONNECTED"])
+    p_a_audit.add_argument("--json", action="store_true", help="Output JSON report")
+
+    p_a_eval = airgap_subs.add_parser("evaluate", help="Evaluate destination egress permissions and DLP")
+    p_a_eval.add_argument("url", help="Destination URL or hostname")
+    p_a_eval.add_argument("--mode", default="AIRGAP_STRICT", choices=["AIRGAP_STRICT", "VPC_INTERNAL_ONLY", "ALLOWLIST_AUDITED", "OPEN_CONNECTED"])
+    p_a_eval.add_argument("--payload", default=None, help="Payload string to inspect")
+    p_a_eval.add_argument("--json", action="store_true", help="Output JSON report")
+    return p_airgap
+
+
+def register_compliance_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 26. compliance
+    p_comp = subparsers.add_parser("compliance", help="BioNexus 21 CFR Part 11 & GxP Compliance Engine (BNS-COMP-001)")
+    comp_subs = p_comp.add_subparsers(dest="compliance_action", help="Compliance actions")
+
+    p_cmp_sign = comp_subs.add_parser("sign", help="Apply 21 CFR Part 11 electronic signature to artifact")
+    p_cmp_sign.add_argument("target", help="Path to target artifact")
+    p_cmp_sign.add_argument("--name", default="Dr. Alice Smith", help="Signer name")
+    p_cmp_sign.add_argument("--email", default="alice.smith@lab.org", help="Signer email")
+    p_cmp_sign.add_argument("--role", default="PI_SIGNER", choices=["PI_SIGNER", "QA_AUDITOR", "SYSTEM_ADMIN", "BIOINFORMATICIAN", "RESEARCHER"])
+    p_cmp_sign.add_argument("--reason", default="APPROVAL_OF_SCIENTIFIC_EVIDENCE", help="Signing reason")
+    p_cmp_sign.add_argument("--json", action="store_true", help="Output JSON signature")
+
+    p_cmp_ver = comp_subs.add_parser("verify-sig", help="Verify 21 CFR Part 11 electronic signature")
+    p_cmp_ver.add_argument("target", help="Path to target artifact")
+    p_cmp_ver.add_argument("signature_file", help="Path to JSON signature file")
+    p_cmp_ver.add_argument("--json", action="store_true", help="Output JSON verification")
+
+    p_cmp_ledger = comp_subs.add_parser("audit-ledger", help="Audit GxP hash chain integrity")
+    p_cmp_ledger.add_argument("--json", action="store_true", help="Output JSON report")
+    return p_comp
+
+
+def register_nextflow_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 27. nextflow (execution provenance and explicit launch preparation)
+    p_nextflow = subparsers.add_parser(
+        "nextflow", help="Passive Nextflow execution-provenance harvester and launch preparation (BNS-021)"
+    )
+    nf_subs = p_nextflow.add_subparsers(dest="nextflow_action", help="Nextflow actions")
+
+    p_nf_ingest = nf_subs.add_parser(
+        "ingest", help="Harvest a run directory and emit a hash-bound provenance-only receipt"
+    )
+    p_nf_ingest.add_argument("--run-dir", "-r", required=True, help="Path to Nextflow execution directory")
+    p_nf_ingest.add_argument("--pipeline-name", "-p", default=None, help="Pipeline name (e.g. nf-core/rnaseq)")
+    p_nf_ingest.add_argument(
+        "--samplesheet",
+        "-s",
+        default=None,
+        help="Optional explicit descriptive input; never creates scientific evidence factors",
+    )
+    p_nf_ingest.add_argument("-o", "--output", default=None, help="Output path for receipt JSON")
+    p_nf_ingest.add_argument("--json", action="store_true", help="Output JSON receipt to stdout")
+
+    p_nf_inspect = nf_subs.add_parser(
+        "inspect", help="Inspect Nextflow run directory and display execution summary"
+    )
+    p_nf_inspect.add_argument("run_dir", help="Path to Nextflow execution directory")
+    p_nf_inspect.add_argument("--json", action="store_true", help="Output execution summary as JSON")
+
+    p_nf_launch = nf_subs.add_parser("launch", help="Prepare nf-core launch script and configurations")
+    p_nf_launch.add_argument(
+        "--pipeline",
+        required=True,
+        choices=[
+            "rnaseq",
+            "scrnaseq",
+            "differentialabundance",
+            "sarek",
+            "spatialtranscriptomics",
+            "ampliseq",
+        ],
+        help="nf-core pipeline name",
+    )
+    p_nf_launch.add_argument("--samplesheet", required=True, help="Path to input samplesheet.csv")
+    p_nf_launch.add_argument("--outdir", default="results", help="Pipeline output directory")
+    p_nf_launch.add_argument("-o", "--output", default="run.sh", help="Output path for run script")
+    p_nf_launch.add_argument("--profile", default="docker", help="Execution profile (e.g. docker, singularity, slurm)")
+    return p_nextflow
+
+
+def register_ga4gh_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 28. ga4gh
+    p_ga4gh = subparsers.add_parser("ga4gh", help="GA4GH Global Standards (DRS v1.2.0, Phenopackets v2)")
+    ga4gh_subs = p_ga4gh.add_subparsers(dest="ga4gh_action", help="GA4GH actions")
+
+    p_g_drs = ga4gh_subs.add_parser("drs-descriptor", help="Generate GA4GH DRS v1.2.0 object descriptor for data file")
+    p_g_drs.add_argument("file", help="Path to data file")
+    p_g_drs.add_argument("--id", default=None, help="DRS identifier (default: filename)")
+    p_g_drs.add_argument("--authority", default="bionexus.local", help="DRS authority URI prefix")
+    p_g_drs.add_argument("--mime-type", default=None, help="MIME type")
+    p_g_drs.add_argument("--json", action="store_true", help="Output JSON object")
+
+    p_g_pheno = ga4gh_subs.add_parser("phenopacket", help="Export donor/patient clinical phenotype as GA4GH Phenopacket v2")
+    p_g_pheno.add_argument("donor_id", help="Donor / Subject identifier")
+    p_g_pheno.add_argument("--sex", default="UNKNOWN_SEX", choices=["UNKNOWN_SEX", "FEMALE", "MALE", "OTHER_SEX"], help="Biological sex")
+    p_g_pheno.add_argument("--disease", default=None, help="Disease CURIE:Label (e.g. MONDO:0005015:Diabetes)")
+    p_g_pheno.add_argument("--phenotype", default=None, help="Phenotype CURIE:Label (e.g. HP:0001250:Seizure)")
+    p_g_pheno.add_argument("-o", "--output", default=None, help="Output JSON file path")
+    p_g_pheno.add_argument("--json", action="store_true", help="Output JSON phenopacket")
+    return p_ga4gh

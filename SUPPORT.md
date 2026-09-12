@@ -16,6 +16,11 @@ The current release-candidate line receives best-effort maintenance; no LTS or
 response-time SLA is established. See [maintenance policy](MAINTENANCE.md) for
 scope, responsibility, version changes and rollback.
 
+The proposed Core 1.x GA contract covers 12 months from actual GA publication,
+with precise dates and named maintainer acceptance required in that release.
+It is not yet activated; see the maintenance policy for fixes, backports,
+scientific rule changes and EOL. No response-time SLA is implied.
+
 For DE handoffs, run `bionexus audit-de-verify BUNDLE_DIRECTORY` and include its
 schema, status and sanitized issue codes. Exit 0 means file consistency only.
 Old audit-only bundles return LEGACY_LIMITED (exit 3), retaining their evidence

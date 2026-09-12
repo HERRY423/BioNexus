@@ -9,11 +9,23 @@ import json
 import math
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol
 
 from bionexus.de_bundle import IMMUTABLE_ARTIFACTS, INTEGRITY_PROFILE, MAX_ARTIFACT_BYTES, verify_de_bundle
 from bionexus.pilot_costs import empty_costs, summarize_costs
 from bionexus.versions import VERSION
+
+
+class AuditReport(Protocol):
+    """Only the two renderings the passive bundle writer consumes.
+
+    Producers need not inherit an implementation or import the audit engine.
+    Matching this interface grants no scientific or producer authority.
+    """
+
+    def to_dict(self) -> dict[str, Any]: ...
+
+    def to_markdown(self) -> str: ...
 
 
 def _json(value: Any) -> str:
@@ -99,7 +111,7 @@ def render_review(audit: dict[str, Any], case_id: str, synthetic: bool, claim: s
     return "\n".join(lines) + "\n"
 
 
-def write_bundle(result: Any, destination: str | Path, *, inputs: dict[str, Any],
+def write_bundle(result: AuditReport, destination: str | Path, *, inputs: dict[str, Any],
                  claim: str | None, synthetic: bool = False) -> Path:
     directory = Path(destination)
     audit = result.to_dict()
@@ -157,7 +169,8 @@ def _number(value: Any, field: str) -> None:
 
 def summarize_reviews(paths: list[str | Path]) -> dict[str, Any]:
     """Describe supplied observations; never infer independent review or net benefit."""
-    cases, seen = [], set()
+    cases: list[dict[str, Any]] = []
+    seen: set[tuple[str | None, str]] = set()
     for value in paths:
         path = Path(value)
         integrity = verify_de_bundle(path.parent)

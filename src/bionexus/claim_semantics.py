@@ -155,7 +155,10 @@ class ScientificClaimIR:
     clinical_actionability: ClinicalActionability = ClinicalActionability.NONE
     claim_class: ClaimClass = ClaimClass.ASSOCIATION
     qualifiers: List[str] = field(default_factory=list)  # ["putative", "candidate", "exploratory"]
-    negated: bool = False  # True if statement asserts absence of effect ("cannot prove", "does not cause")
+    negated: bool = False  # True if statement asserts absence of effect or disclaims proof
+    negation_type: str = "NONE"  # "NONE" | "ABSENCE_OF_EVIDENCE" | "EVIDENCE_OF_ABSENCE"
+    is_epistemic_disclaimer: bool = False  # True if stating inability to prove / absence of evidence
+    is_negative_assertion: bool = False  # True if asserting non-existence of effect / evidence of absence
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
@@ -176,6 +179,9 @@ class ScientificClaimIR:
             "claim_class": self.claim_class.value,
             "qualifiers": self.qualifiers,
             "negated": self.negated,
+            "negation_type": self.negation_type,
+            "is_epistemic_disclaimer": self.is_epistemic_disclaimer,
+            "is_negative_assertion": self.is_negative_assertion,
             "metadata": self.metadata,
         }
 
@@ -400,28 +406,63 @@ class DeterministicClaimParser:
     )
     _HEDGE_WINDOW_CHARS = 64
 
-    # Negation Markers
-    _NEGATION_PATTERNS = [
+    # Negation Markers: strictly partitioned into Absence of Evidence vs Evidence of Absence
+    _ABSENCE_OF_EVIDENCE_PATTERNS = [
         r"不能(?:证明|推断|得出|建立)",
         r"无法(?:证明|推断|得出|建立)",
         r"并未(?:证明|显示|发现)",
-        r"不(?:存在|构成|具备)",
-        r"没有证据表明",
+        r"没有证据(?:表明|支持|证明)",
         r"不足以(?:证明|推断|得出)",
+        r"缺乏证据",
         r"\bcannot\s+(?:prove|demonstrate|establish|confirm|conclude)\b",
         r"\bcan\s+not\s+(?:prove|demonstrate|establish|confirm|conclude)\b",
-        r"\bdoes\s+not\s+(?:prove|cause|drive|induce|imply|show|affect|alter|correlate|associate|change)\b",
-        r"\bdo\s+not\s+(?:prove|cause|drive|induce|imply|show|affect|alter|correlate|associate|change)\b",
-        r"\bdid\s+not\s+(?:prove|cause|drive|induce|affect|change|alter|show)\b",
-        r"\bnever\s+(?:prove|cause|drive|induce)\b",
-        r"\bnot\s+(?:proven|established|sufficient|causal)\b",
-        r"\b(?:is|are)\s+not\s+(?:associated|correlated|linked)\s+with\b",
-        r"\bunable\s+to\s+(?:prove|establish|conclude)\b",
+        r"\bcould\s+not\s+(?:prove|demonstrate|establish|confirm|conclude)\b",
+        r"\bunable\s+to\s+(?:prove|demonstrate|establish|confirm|conclude)\b",
+        r"\bdoes\s+not\s+(?:prove|demonstrate|establish|imply)\b",
+        r"\bdo\s+not\s+(?:prove|demonstrate|establish|imply)\b",
+        r"\bdid\s+not\s+(?:prove|demonstrate|establish|imply)\b",
+        r"\bnot\s+(?:proven|established|sufficient)\b",
         r"\bno\s+evidence\s+(?:for|of|that)\b",
-        r"\bfails?\s+to\s+(?:show|induce|cause|drive|demonstrate|reveal)\b",
-        r"\bnot\s+sufficient\s+to\s+(?:prove|establish|infer|conclude|claim)\b",
         r"\bwithout\s+evidence\s+(?:of|for)\b",
+        r"\bfails?\s+to\s+(?:demonstrate|prove|establish)\b",
+        r"\bnot\s+sufficient\s+to\s+(?:prove|establish|infer|conclude|claim)\b",
     ]
+
+    _EVIDENCE_OF_ABSENCE_PATTERNS = [
+        r"不(?:存在|构成|具备|引起|导致|诱导|改变|影响)",
+        r"没有差异",
+        r"无(?:效应|作用|差异|影响)",
+        r"(?:等效|非劣效|不劣于)",
+        r"\b(?:no|zero|without)\s+(?:biological\s+|causal\s+)?(?:effect|effects|difference|differences|association)\b",
+        r"\b(?:equivalent|equivalence|non[- ]?inferior|non[- ]?inferiority)\b",
+        r"\bdoes\s+not\s+(?:cause|drive|induce|show|affect|alter|correlate|associate|change)\b",
+        r"\bdo\s+not\s+(?:cause|drive|induce|show|affect|alter|correlate|associate|change)\b",
+        r"\bdid\s+not\s+(?:cause|drive|induce|affect|change|alter|show)\b",
+        r"\bnever\s+(?:cause|drive|induce)\b",
+        r"\bnot\s+causal\b",
+        r"\b(?:is|are)\s+not\s+(?:associated|correlated|linked)\s+with\b",
+        r"\bfails?\s+to\s+(?:show|induce|cause|drive|reveal)\b",
+    ]
+
+    _NEGATION_PATTERNS = _ABSENCE_OF_EVIDENCE_PATTERNS + _EVIDENCE_OF_ABSENCE_PATTERNS
+
+    @classmethod
+    def is_scoped_disclaimer(cls, text: str) -> bool:
+        """Bounded disclaimer recognition; a limitation cannot license another clause.
+
+        Ambiguous compound prose requires separate review. This checks language,
+        not the truth of a literature-wide assertion that no evidence exists.
+        """
+        # Allow a short context preamble, but not an asserted clause before a comma.
+        text = re.sub(r"^\s*(?:in (?:our|this|the) (?:cohort|study|analysis)|本研究中)[,，]\s*", "", text, flags=re.I)
+        clauses = [c.strip() for c in re.split(
+            r"[,，;；。!?！？\n\r:]|\.(?:\s+|$)|\b(?:but|however|yet|and|therefore|thus|although|whereas|because)\b|但(?:是)?|然而|并且|因此|所以|尽管",
+            text, flags=re.I,
+        ) if c.strip()]
+        return bool(clauses) and all(
+            any(re.search(p, clause, re.I) for p in cls._ABSENCE_OF_EVIDENCE_PATTERNS)
+            for clause in clauses
+        )
 
     # Population & Context Scopes
     _POPULATION_PATTERNS = [
@@ -456,8 +497,15 @@ class DeterministicClaimParser:
         clean_text = text.strip()
         cid = claim_id or f"CLAIM-{abs(hash(clean_text)) % 1000000:06d}"
 
-        # 1. Negation detection
-        negated = any(re.search(pat, clean_text, re.IGNORECASE) for pat in cls._NEGATION_PATTERNS)
+        # 1. Negation detection: strictly decouple Absence of Evidence vs Evidence of Absence
+        is_epistemic_disclaimer = any(re.search(pat, clean_text, re.IGNORECASE) for pat in cls._ABSENCE_OF_EVIDENCE_PATTERNS)
+        is_negative_assertion = any(re.search(pat, clean_text, re.IGNORECASE) for pat in cls._EVIDENCE_OF_ABSENCE_PATTERNS)
+        negated = is_epistemic_disclaimer or is_negative_assertion
+        negation_type = (
+            "ABSENCE_OF_EVIDENCE"
+            if is_epistemic_disclaimer
+            else ("EVIDENCE_OF_ABSENCE" if is_negative_assertion else "NONE")
+        )
 
         # 2. Qualifiers / Hedges extraction (word-boundary exact)
         text_lower = clean_text.lower()
@@ -636,13 +684,9 @@ class DeterministicClaimParser:
                 rel_type = ClaimRelationshipType.CORRELATION
                 claim_class = ClaimClass.DESCRIPTIVE
 
-        # Negation suppression: a statement that explicitly disclaims causation
-        # ("X does not drive Y", "cannot prove X caused Y") is a disclaimer or
-        # negative finding, not an assertive causal claim — downgrade any causal
-        # classification so downstream ledgers never record it as positive
-        # mechanistic support. The warrant engine additionally short-circuits
-        # negated claims as honest disclaimers.
-        if negated and causal_strength in (
+        # Only a scoped epistemic limitation suppresses asserted causality.
+        # Negative biological assertions retain their requested evidence burden.
+        if is_epistemic_disclaimer and not is_negative_assertion and cls.is_scoped_disclaimer(clean_text) and causal_strength in (
             CausalStrength.COUNTERFACTUAL_CAUSAL,
             CausalStrength.HYPOTHESIZED_CAUSAL,
             CausalStrength.MECHANISTIC_DRIVER,
@@ -779,6 +823,9 @@ class DeterministicClaimParser:
             claim_class=claim_class,
             qualifiers=qualifiers,
             negated=negated,
+            negation_type=negation_type,
+            is_epistemic_disclaimer=is_epistemic_disclaimer,
+            is_negative_assertion=is_negative_assertion,
             metadata=meta_dict,
         )
 
@@ -870,29 +917,65 @@ class DeterministicWarrantEngine:
                 conflict_details=claim.metadata.get("conflict_details"),
             )
 
-        # If claim is explicitly negated (e.g. "cannot prove drug caused DEGs"),
-        # it is epistemically honest and immediately warranted!
-        if claim.negated:
+        # Warrant Policy for Negated Claims: strictly decouple Absence of Evidence vs Evidence of Absence.
+        # "没有证据支持 X" (Absence of evidence / Epistemic disclaimer) acknowledges epistemic limitations
+        # and is warranted as an honest disclaimer.
+        # "有证据证明不存在 X" (Evidence of absence / Negative assertion) makes a biological claim that an
+        # effect does not exist, which requires functional perturbation or controlled experimental evidence
+        # and must NOT automatically be considered fully warranted.
+        scoped_disclaimer = (
+            claim.is_epistemic_disclaimer and not claim.is_negative_assertion
+            and DeterministicClaimParser.is_scoped_disclaimer(claim.source_text)
+        )
+        if scoped_disclaimer:
             tier_verdicts["negated_qualification"] = WarrantTierVerdict(
                 tier_name="negated_qualification",
                 status=WarrantTierStatus.WARRANTED,
                 is_warranted=True,
-                rationale="Statement explicitly disclaims unwarranted causation or states inability to prove.",
+                rationale="Statement explicitly disclaims unwarranted causation or states inability to prove (Absence of Evidence != Evidence of Absence).",
+            )
+            tier_verdicts["epistemic_disclaimer"] = WarrantTierVerdict(
+                tier_name="epistemic_disclaimer",
+                status=WarrantTierStatus.WARRANTED,
+                is_warranted=True,
+                rationale="Statement acknowledges absence of evidence / inability to prove within epistemic boundaries.",
             )
             return WarrantEvaluationResult(
                 claim_id=claim.claim_id,
                 is_fully_warranted=True,
                 requested_claim_class=claim.claim_class.value,
-                warranted_claim_class=claim.claim_class.value,
-                evidence_ceiling=ConclusionMaturity.ROBUST.value,
+                warranted_claim_class=ClaimClass.DESCRIPTIVE.value,
+                evidence_ceiling=ConclusionMaturity.UNASSESSED.value,
                 tier_verdicts=tier_verdicts,
                 evidence_gaps=[],
                 remedies=[],
                 rule_violations=[],
-                epistemic_summary="Claim is a scientifically honest disclaimer or negative finding.",
+                epistemic_summary="Scoped epistemic disclaimer is permitted as a limitation; this does not establish a negative biological result or assess the underlying evidence.",
                 has_claim_conflict=bool(claim.metadata.get("has_claim_conflict", False)),
                 conflict_details=claim.metadata.get("conflict_details"),
             )
+
+        if claim.negated and not claim.is_negative_assertion:
+            tier_verdicts["negation_scope"] = WarrantTierVerdict(
+                tier_name="negation_scope", status=WarrantTierStatus.NOT_ASSESSED,
+                is_warranted=False,
+                rationale="Negation alone or a limitation in compound prose does not warrant every proposition.",
+                missing_evidence=["separately_scoped_claims"],
+            )
+            evidence_gaps.append("separately_scoped_claims")
+
+        if claim.is_negative_assertion:
+            # This profile has no endpoint/margin/CI/test receipt for absence,
+            # equivalence or non-inferiority. A perturbation boolean cannot supply it.
+            tier_verdicts["evidence_of_absence"] = WarrantTierVerdict(
+                tier_name="evidence_of_absence", status=WarrantTierStatus.NOT_WARRANTED,
+                is_warranted=False,
+                rationale="No-effect, equivalence and non-inferiority assertions require claim-specific evidence; ordinary nonsignificance or perturbation metadata is insufficient.",
+                missing_evidence=["claim_specific_absence_test_and_margin_review"],
+            )
+            evidence_gaps.append("claim_specific_absence_test_and_margin_review")
+            rule_violations.append("EVIDENCE_OF_ABSENCE_OVERCLAIM: The supplied profile cannot verify an absence, equivalence or non-inferiority conclusion.")
+            remedies.append("Report the observed estimate and uncertainty or the actual nonsignificant result. Submit the prespecified endpoint, margin, interval and appropriate test for scientific review before asserting equivalence or absence of a meaningful effect.")
 
         # ----------------------------------------------------------------------
         # Tier 1: Observational & Associational Warrant

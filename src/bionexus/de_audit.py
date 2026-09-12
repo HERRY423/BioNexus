@@ -28,6 +28,7 @@ Normative references:
 from __future__ import annotations
 
 import hashlib
+import io
 import json
 import logging
 import re
@@ -55,7 +56,7 @@ else:
 logger = logging.getLogger(__name__)
 
 
-# ==============================================================================
+    # ==============================================================================
 # Domain Models & Enums
 # ==============================================================================
 
@@ -573,6 +574,7 @@ class DEAuditEngine:
                 cols_used["donor"] = d_col
             if c_col:
                 cols_used["condition"] = c_col
+                cohort_summary["condition_key"] = c_col
             if ct_col:
                 cols_used["cell_type"] = ct_col
             if b_col:
@@ -749,7 +751,9 @@ class DEAuditEngine:
                         f.severity = FindingSeverity.ADVISORY
                         f.impact_on_conclusion = (
                             f"检测到 {f.evidence_data.get('tiny_p_count', 0)} 个基因的 p 值低于 1e-100（最小 p={min_p_val:.2e}）。"
-                            "已核验供体级执行凭证且未发现 p=0 极端数值截断，该数值反映强生物学效应，作为审阅提示保留，不阻断群体推断通过。"
+                            "已核验供体级执行凭证且未发现 p=0 极端数值截断。根据核心科学准则，extreme P 是 diagnostic signal，"
+                            "不是 methodological invalidity 的充分条件。该数值本身不能证明效应大小或生物学有效性，"
+                            "作为审阅提示（ADVISORY）保留，不阻断群体推断通过。"
                         )
 
         # 9. Targeted User Scientific Claim Audit (Analysis Fact Verified -> Specific Claim Supported)
@@ -783,7 +787,7 @@ class DEAuditEngine:
                 )
 
                 warrant_res = DeterministicWarrantEngine.evaluate(claim_ir, ev_profile)
-                if warrant_res.is_fully_warranted or claim_ir.negated:
+                if warrant_res.is_fully_warranted:
                     checks.append(
                         CheckRecord(
                             check_id="claim_targeted_warrant",
@@ -1005,6 +1009,8 @@ class DEAuditEngine:
             imbalanced_clusters: list[dict[str, Any]] = []
             low_count_donors: list[dict[str, Any]] = []
             for ct_val, ct_sub in obs_df.groupby(ct_col, observed=False):
+                if ct_sub.empty:
+                    continue
                 total_cluster_cells = len(ct_sub)
                 donor_counts = ct_sub[d_col].value_counts()
                 max_donor = donor_counts.index[0]
@@ -1064,9 +1070,9 @@ class DEAuditEngine:
             contingency = pd.crosstab(obs_df[c_col], obs_df[b_col])
             cohort_summary["batches"] = len(obs_df[b_col].unique())
             # Check if condition is completely collinear with batch
-            row_max = contingency.max(axis=1)
-            row_sums = contingency.sum(axis=1)
-            is_perfectly_confounded = all(row_max.iloc[i] == row_sums.iloc[i] for i in range(len(contingency)))
+            # Complete confounding means each observed batch identifies only
+            # one condition. A single batch shared by conditions is not a confound.
+            is_perfectly_confounded = bool((contingency.gt(0).sum(axis=0) <= 1).all())
 
             if is_perfectly_confounded and len(contingency) > 1:
                 findings.append(
@@ -1104,85 +1110,66 @@ class DEAuditEngine:
         findings: List[DEFinding],
         checks: List[CheckRecord],
     ) -> None:
-        """Audit whether integer counts or normalized/scaled floats are passed to count models."""
-        X = getattr(adata, "X", None)
-        if X is None:
-            checks.append(
-                CheckRecord(
-                    check_id="input_count_type",
-                    title="原始整数计数层",
+        """Validate the actual named count source, never just a layer name/sample.
+
+        This establishes numerical availability only, not which matrix an
+        external analysis used or whether its producer is authenticated.
+        """
+        source = "adata.X"
+        try:
+            from bionexus.integrity import ScientificInputError, require_raw_count_matrix
+
+            layers = getattr(adata, "layers", {})
+            if "counts" in layers:
+                source, matrix = "adata.layers['counts']", layers["counts"]
+            elif "raw" in layers:
+                source, matrix = "adata.layers['raw']", layers["raw"]
+            elif getattr(adata, "raw", None) is not None:
+                source, matrix = "adata.raw.X", adata.raw.X
+            else:
+                matrix = getattr(adata, "X", None)
+            if matrix is None:
+                checks.append(CheckRecord(
+                    check_id="input_count_type", title="原始整数计数层",
                     status=CheckStatus.MISSING_EVIDENCE,
-                    summary="AnnData 无 X 矩阵，计数层未评估。",
-                    required_for_pass=False,
-                )
-            )
-            return
-
-        is_integer = False
-        min_val = 0.0
-        max_val = 0.0
-
-        if np is not None:
+                    summary=f"{source} 缺失；计数输入未评估。", required_for_pass=True,
+                ))
+                return
             try:
-                # Sample up to 5000 non-zero elements
-                if hasattr(X, "data"):  # scipy sparse
-                    sample = X.data[:5000] if len(X.data) > 0 else np.array([0])
-                elif isinstance(X, np.ndarray):
-                    flat = X.ravel()
-                    sample = flat[:5000] if len(flat) > 0 else np.array([0])
-                else:
-                    sample = np.array([0])
-
-                if len(sample) > 0:
-                    min_val = float(np.min(sample))
-                    max_val = float(np.max(sample))
-                    # Check if elements are close to integers
-                    is_integer = bool(np.all(np.abs(sample - np.round(sample)) < 1e-4))
-            except Exception:
-                pass
-
-        # If adata.X is continuous normalized floats and no 'counts' layer exists
-        has_raw_counts_layer = (
-            hasattr(adata, "layers") and ("counts" in adata.layers or "raw" in adata.layers)
-        ) or getattr(adata, "raw", None) is not None
-
-        if not is_integer and not has_raw_counts_layer:
-            findings.append(
-                DEFinding(
-                    rule_id="BFA-002",
-                    severity=FindingSeverity.BLOCKER,
+                require_raw_count_matrix(matrix, label=source)
+            except ScientificInputError as exc:
+                findings.append(DEFinding(
+                    rule_id="BFA-002", severity=FindingSeverity.BLOCKER,
                     category=FindingCategory.INPUT_COUNT_TYPE,
-                    title="输入矩阵缺乏原始整数计数层 (Raw Count Layer Missing for DE Modeling)",
-                    impact_on_conclusion="当前 adata.X 为经过 log 变换或缩放的浮点数，且未发现 adata.layers['counts'] 或 adata.raw。负二项分布 GLM（如 PyDESeq2 / edgeR）严格假设离散整数抽样分布。输入已归一化浮点数会导致离散度估计严重失真，使统计检验失效。",
-                    step_or_location="adata.X / Data Preprocessing",
-                    minimal_fix=(
-                        "# 最小修复（在归一化前保留 counts 原始层）：\n"
-                        "adata.layers['counts'] = adata.X.copy()  # 在运行 sc.pp.normalize_total 之前保存\n"
-                        "# 供体 Pseudobulk 聚合时显式指定 raw counts：\n"
-                        "# pb_counts = aggregate_pseudobulk(adata, layer='counts')"
-                    ),
-                    evidence_data={"is_integer": is_integer, "min_val": min_val, "max_val": max_val},
-                )
-            )
-            checks.append(
-                CheckRecord(
-                    check_id="input_count_type",
-                    title="原始整数计数层",
-                    status=CheckStatus.ISSUE_FOUND,
-                    summary="adata.X 为非整数且未发现 counts/raw 层。",
-                    required_for_pass=False,
-                )
-            )
+                    title="输入矩阵不满足计数要求 (Invalid Count Input)",
+                    impact_on_conclusion=(f"{source} 未通过完整计数检查：{exc}。"
+                                          "该输入不能作为有效计数证据；层名不证明数据类型。"),
+                    step_or_location=source,
+                    minimal_fix=("从原始来源恢复并核对非负有限整数 counts，"
+                                 "保留输入来源和实际分析所用矩阵记录；不要四舍五入变换数据或静默切换层。"),
+                    evidence_data={"checked_source": source, "validation_error": str(exc)},
+                ))
+                checks.append(CheckRecord(
+                    check_id="input_count_type", title="原始整数计数层",
+                    status=CheckStatus.ISSUE_FOUND, summary=f"{source} 计数检查失败：{exc}",
+                    required_for_pass=True,
+                ))
+                return
+        except Exception as exc:
+            checks.append(CheckRecord(
+                check_id="input_count_type", title="原始整数计数层",
+                status=CheckStatus.PARSE_FAILED,
+                summary=f"{source} 无法检查：{type(exc).__name__}；不视为通过。",
+                required_for_pass=True,
+            ))
             return
-        checks.append(
-            CheckRecord(
-                check_id="input_count_type",
-                title="原始整数计数层",
-                status=CheckStatus.ASSESSED,
-                summary="已检查表达矩阵：存在整数计数或 counts/raw 层。",
-                required_for_pass=False,
-            )
-        )
+        checks.append(CheckRecord(
+            check_id="input_count_type", title="原始整数计数层",
+            status=CheckStatus.ASSESSED,
+            summary=(f"已完整检查 {source}：非空、有限、非负、整数值。"
+                     "这仅确认可用计数，不证明实际分析使用了该矩阵。"),
+            required_for_pass=True,
+        ))
 
     def _audit_de_table(
         self,
@@ -1330,16 +1317,18 @@ class DEAuditEngine:
                             rule_id="BFA-001c",
                             severity=FindingSeverity.HIGH_IMPACT,
                             category=FindingCategory.PSEUDOREPLICATION,
-                            title="P 值极端偏小，提示细胞级伪重复嫌疑 (P-value inflation heuristic)",
+                            title="极小 P 值诊断信号：提示需核验统计单位，非方法学无效充分条件 (Extreme P-value Diagnostic Signal)",
                             impact_on_conclusion=(
                                 f"检测到 {zero_or_tiny_p} 个基因的 p 值低于 1e-100（最小 p={min_p}）。"
-                                "这只能作为细胞级检验的疑点，不能仅凭数值把正确的供体级检验判为伪重复。"
+                                "极小 P 值为诊断信号（diagnostic signal），提示需核验分析是否在单细胞级别直接检验（存在伪重复方差膨胀），"
+                                "而非方法学无效（methodological invalidity）的充分条件。"
+                                "在缺乏供体级执行凭证时提示核验；若供体级聚合已验证且无 p=0 极端截断，反映强生物学效应，降为 ADVISORY 审阅提示。"
                             ),
                             step_or_location="DE table p-value column",
                             minimal_fix=(
-                                "# 核查统计单位，而不是仅因 p 值很小就否定供体级结果：\n"
-                                "# 1. 确认检验是否按 donor 聚合；\n"
-                                "# 2. 若确为 cell-level Wilcoxon/t-test，改用供体级 Pseudobulk + PyDESeq2。"
+                                "# extreme P 是诊断信号，不是方法学无效的充分条件：\n"
+                                "# 1. 若实际已按供体级 Pseudobulk 分析，提供执行记录（execution_record）进行供体级凭证绑定，规则将降为 ADVISORY 审阅提示；\n"
+                                "# 2. 若实际检验直接在细胞级别（如 cell-level Wilcoxon/t-test）进行，则存在伪重复膨胀，应改用供体级 Pseudobulk + PyDESeq2。"
                             ),
                             evidence_data={"tiny_p_count": int(zero_or_tiny_p), "min_p": float(min_p)},
                         )
@@ -1349,7 +1338,7 @@ class DEAuditEngine:
                 checks.append(
                     CheckRecord(
                         check_id="pvalue_heuristic",
-                        title="P 值膨胀启发式",
+                        title="极小 P 值诊断信号",
                         status=CheckStatus.PARSE_FAILED,
                         summary=f"p 值列无法计算：{exc}",
                         required_for_pass=False,
@@ -1623,17 +1612,17 @@ class DEAuditEngine:
             if p.is_file():
                 try:
                     with open(p, "r", encoding="utf-8") as f:
-                        exec_dict = json.load(f)
+                        exec_dict = json.load(f, object_pairs_hook=self._execution_json_object)
                 except Exception as exc:
                     logger.warning("Failed to parse execution record JSON from %s: %s", p, exc)
 
-        if exec_dict:
+        if isinstance(exec_dict, dict) and exec_dict:
             source = "execution_record"
             method = exec_dict.get("method")
             fdr_method = exec_dict.get("fdr_method") or exec_dict.get("corr_method")
             stat_unit = str(exec_dict.get("statistical_unit") or exec_dict.get("unit") or "").lower()
             agg = str(exec_dict.get("aggregation") or "").lower()
-            if stat_unit in ("donor", "sample", "biological_replicate") or "pseudobulk" in agg:
+            if stat_unit in ("donor", "sample", "biological_replicate"):
                 aggregation = "donor_pseudobulk"
             elif agg:
                 aggregation = agg
@@ -1644,7 +1633,7 @@ class DEAuditEngine:
 
             design = exec_dict.get("design") or exec_dict.get("design_matrix_columns") or exec_dict.get("formula")
             facts.append(
-                f"Verified execution record supplied: method={method!r}, statistical_unit={stat_unit or aggregation!r}, "
+                f"Supplied execution metadata (not authenticated): method={method!r}, statistical_unit={stat_unit or aggregation!r}, "
                 f"design={design!r}."
             )
 
@@ -1705,6 +1694,15 @@ class DEAuditEngine:
             facts=facts,
         )
 
+    @staticmethod
+    def _execution_json_object(pairs: List[tuple[str, Any]]) -> Dict[str, Any]:
+        record: Dict[str, Any] = {}
+        for key, value in pairs:
+            if key in record:
+                raise ValueError(f"Duplicate execution record key: {key}")
+            record[key] = value
+        return record
+
     def _verify_execution_binding(
         self,
         execution: ExecutionRecord,
@@ -1742,7 +1740,7 @@ class DEAuditEngine:
             if p.is_file():
                 try:
                     with open(p, "r", encoding="utf-8") as f:
-                        exec_dict = json.load(f)
+                        exec_dict = json.load(f, object_pairs_hook=self._execution_json_object)
                 except Exception as exc:
                     logger.warning("Failed to parse execution record JSON from %s: %s", p, exc)
                     checks.append(
@@ -1755,6 +1753,14 @@ class DEAuditEngine:
                         )
                     )
                     return False
+
+        if not isinstance(exec_dict, dict):
+            checks.append(CheckRecord(
+                check_id="analysis_execution_binding", title="分析事实与执行记录绑定",
+                status=CheckStatus.PARSE_FAILED, summary="执行记录必须是 JSON object。",
+                required_for_pass=True,
+            ))
+            return False
 
         if not exec_dict:
             checks.append(
@@ -1769,20 +1775,37 @@ class DEAuditEngine:
             return False
 
         binding_issues: List[str] = []
+        missing: List[str] = []
+        for primary, alias in (("statistical_unit", "unit"), ("design", "formula"), ("result_sha256", "receipt_result_sha256")):
+            if primary in exec_dict and alias in exec_dict and exec_dict[primary] != exec_dict[alias]:
+                binding_issues.append(f"执行记录别名冲突: {primary}/{alias}")
 
         # 1. Statistical unit check
         stat_unit = str(exec_dict.get("statistical_unit") or exec_dict.get("unit") or "").lower()
         agg = str(exec_dict.get("aggregation") or "").lower()
-        is_donor_unit = (
-            stat_unit in ("donor", "sample", "biological_replicate")
-            or "pseudobulk" in agg
-            or execution.aggregation in ("donor_pseudobulk", "pseudobulk")
-        )
-        if not is_donor_unit or exec_dict.get("cell_level_condition_test") or execution.cell_level_condition_test:
-            binding_issues.append("统计单位为细胞级而非供体级")
+        if not stat_unit:
+            missing.append("statistical_unit")
+        elif stat_unit not in ("donor", "sample", "biological_replicate"):
+            binding_issues.append("统计单位未明确为生物学重复单位")
+        if agg and agg not in ("donor_pseudobulk", "pseudobulk", "donor", "sample", "biological_replicate"):
+            binding_issues.append("aggregation 与供体级统计单位不一致或不受支持")
+        cell_flag = exec_dict.get("cell_level_condition_test", False)
+        if not isinstance(cell_flag, bool):
+            binding_issues.append("cell_level_condition_test 必须为布尔值")
+        if cell_flag or execution.cell_level_condition_test:
+            binding_issues.append("执行记录包含细胞级条件检验")
+        method = exec_dict.get("method")
+        if not isinstance(method, str) or not method.strip():
+            missing.append("method")
+        elif method.lower().replace("_", "-") in {m.replace("_", "-") for m in CELL_LEVEL_DE_METHODS}:
+            binding_issues.append("method 是细胞级排名方法，不能凭 donor 标签认证为供体模型")
 
         # 2. Fit status check
         fit_status = str(exec_dict.get("fit_status") or "").upper().strip()
+        if not fit_status:
+            missing.append("fit_status")
+        elif fit_status not in ("SUCCESS", "SUCCEEDED", "CONVERGED", "COMPLETED", "PASS", "PASSED", "OK"):
+            binding_issues.append(f"未确认成功拟合状态 ({fit_status})")
         if fit_status:
             if fit_status in ("FAILED", "ERROR", "DIVERGED", "NON_CONVERGED", "FAIL"):
                 findings.append(
@@ -1808,8 +1831,10 @@ class DEAuditEngine:
             or exec_dict.get("receipt_result_sha256")
             or ""
         ).strip().lower()
+        if not expected_hash:
+            missing.append("result_sha256")
         if expected_hash:
-            if set(expected_hash) == {"0"} or len(expected_hash) < 32:
+            if set(expected_hash) == {"0"} or not re.fullmatch(r"[0-9a-f]{64}", expected_hash):
                 findings.append(
                     DEFinding(
                         rule_id="BFA-013a",
@@ -1829,10 +1854,17 @@ class DEAuditEngine:
                 actual_file_hash = None
                 if isinstance(de_table, (str, Path)) and Path(de_table).is_file():
                     try:
-                        actual_file_hash = hashlib.sha256(Path(de_table).read_bytes()).hexdigest().lower()
+                        result_bytes = Path(de_table).read_bytes()
+                        actual_file_hash = hashlib.sha256(result_bytes).hexdigest().lower()
+                        sep = "\t" if Path(de_table).suffix.lower() in (".tsv", ".txt") else ","
+                        bound_frame = pd.read_csv(io.BytesIO(result_bytes), sep=sep)
+                        if de_df is None or not bound_frame.equals(de_df):
+                            binding_issues.append("哈希对应结果内容与本次已读取的表格不一致")
                     except Exception as exc:
                         logger.warning("Failed to compute hash for %s: %s", de_table, exc)
 
+                if actual_file_hash is None:
+                    missing.append("可读取的原始结果文件（DataFrame 不保留原始文件字节）")
                 if actual_file_hash and actual_file_hash != expected_hash:
                     findings.append(
                         DEFinding(
@@ -1854,7 +1886,30 @@ class DEAuditEngine:
         # 4. Design Formula vs Design Matrix Columns
         design_formula = str(exec_dict.get("design") or exec_dict.get("formula") or "").strip()
         matrix_cols = exec_dict.get("design_matrix_columns")
-        if design_formula and matrix_cols and isinstance(matrix_cols, list):
+        if not design_formula:
+            missing.append("design")
+        valid_columns = (
+            isinstance(matrix_cols, list) and bool(matrix_cols)
+            and all(isinstance(c, str) and c.strip() for c in matrix_cols)
+        )
+        if not valid_columns:
+            missing.append("design_matrix_columns (非空字符串列表)")
+        if design_formula and valid_columns and isinstance(matrix_cols, list):
+            if len(set(matrix_cols)) != len(matrix_cols):
+                binding_issues.append("设计矩阵列重复")
+            # Only verify the bounded additive formula grammar that we can compare.
+            rhs = design_formula.removeprefix("~").strip()
+            terms = [t.strip() for t in rhs.split("+")]
+            if not design_formula.startswith("~") or any(not re.fullmatch(r"[A-Za-z_]\w*|[01]", t) for t in terms):
+                missing.append("支持的加法设计公式（复杂设计需外部审阅）")
+            else:
+                factors = set(terms) - {"0", "1"}
+                column_factors = {re.split(r"[\[.]", c)[0] for c in matrix_cols if c != "Intercept"}
+                if not factors or factors != column_factors:
+                    binding_issues.append("设计公式项与设计矩阵列不一致")
+                condition_col = cohort_summary.get("condition_key")
+                if condition_col and condition_col not in factors:
+                    binding_issues.append("设计公式未包含所审核条件")
             formula_has_donor = any(
                 k in design_formula.lower()
                 for k in ("donor", "replicate", "patient", "subject", "individual")
@@ -1885,7 +1940,18 @@ class DEAuditEngine:
         # 5. Cohort Sample / Donor Count Consistency
         rec_donors = exec_dict.get("n_donors")
         obs_donors = cohort_summary.get("n_donors")
-        if rec_donors is not None and obs_donors is not None and int(rec_donors) != int(obs_donors):
+        valid_donors = isinstance(rec_donors, int) and not isinstance(rec_donors, bool) and rec_donors > 0
+        if not valid_donors:
+            missing.append("n_donors (正整数)")
+        if obs_df is None or obs_donors is None:
+            missing.append("可核查的供体元数据")
+        donor_ids = exec_dict.get("donor_ids")
+        if not isinstance(donor_ids, list) or not donor_ids or not all(isinstance(d, str) and d.strip() for d in donor_ids):
+            missing.append("donor_ids (非空供体标识列表)")
+        elif (len(set(donor_ids)) != len(donor_ids)
+              or set(donor_ids) != {str(d) for d in cohort_summary.get("donors", [])}):
+            binding_issues.append("执行记录供体标识与元数据不一致或重复")
+        if valid_donors and obs_donors is not None and rec_donors != obs_donors:
             findings.append(
                 DEFinding(
                     rule_id="BFA-013d",
@@ -1913,12 +1979,21 @@ class DEAuditEngine:
             )
             return False
 
+        if missing:
+            checks.append(CheckRecord(
+                check_id="analysis_execution_binding", title="分析事实与执行记录绑定",
+                status=CheckStatus.MISSING_EVIDENCE,
+                summary="执行绑定未完成，缺失或无法核查：" + "；".join(missing),
+                required_for_pass=True,
+            ))
+            return False
+
         checks.append(
             CheckRecord(
                 check_id="analysis_execution_binding",
                 title="分析事实与执行记录绑定",
                 status=CheckStatus.ASSESSED,
-                summary="已核查分析执行记录：统计单位为供体级，设计矩阵与拟合状态已绑定，哈希校验一致。",
+                summary="记录声明供体级成功拟合；设计公式/列名及供体数量一致，结果文件 SHA-256 匹配。此为输入一致性核查，不证明真实模型执行、生产者身份或科学有效性。",
                 required_for_pass=True,
             )
         )
@@ -1981,7 +2056,16 @@ class DEAuditEngine:
             or re.search(r"无显著基因|未见显著基因|没有显著基因|fdr\s*后无显著|校正后无显著|全表无显著", text, re.I)
         )
         if has_global_null_claim:
-            sig_count = (pd.to_numeric(de_df[padj_col], errors="coerce") < self.fdr_threshold).sum() if padj_col else 0
+            adjusted = pd.to_numeric(de_df[padj_col], errors="coerce") if padj_col else None
+            if adjusted is None or not np.isfinite(adjusted).all():
+                checks.append(CheckRecord(
+                    check_id="claim_fact_concordance", title="声明微观事实核查",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary="全表无显著声明需要所有所述检验的有效调整 p 值；缺失值不等于不显著。",
+                    required_for_pass=True,
+                ))
+                return False
+            sig_count = (adjusted < self.fdr_threshold).sum()
             if sig_count > 0:
                 findings.append(
                     DEFinding(
@@ -2107,11 +2191,21 @@ class DEAuditEngine:
                 )
 
         # Significance check
-        padj_val = float(row[padj_col]) if padj_col and pd.notna(row.get(padj_col)) else None
+        is_negated_sig = bool(re.search(
+            r"\b(?:not\s+(?:statistically\s+)?significant|no\s+(?:statistically\s+)?significant|non[- ]significant)\b|不显著|未达显著|无显著|未见显著|未发现显著",
+            text, re.I,
+        ))
+        is_positive_sig = bool(re.search(r"\b(?:is\s+significant|significantly)\b|显著", text, re.I)) and not is_negated_sig
+        padj_val = pd.to_numeric(row.get(padj_col), errors="coerce") if padj_col else None
+        if (is_negated_sig or is_positive_sig) and (padj_val is None or not np.isfinite(padj_val)):
+            checks.append(CheckRecord(
+                check_id="claim_fact_concordance", title="声明微观事实核查",
+                status=CheckStatus.MISSING_EVIDENCE,
+                summary=f"{actual_gene} 的显著性声明缺少有效调整 p 值；缺失检验不等于阴性结果。",
+                required_for_pass=True,
+            ))
+            return False
         if padj_val is not None:
-            is_negated_sig = bool(re.search(r"\b(?:not\s+significant|was\s+not\s+significant)\b|不显著|未达显著", text, re.I))
-            is_positive_sig = bool(re.search(r"\b(?:is\s+significant|significantly)\b|显著", text, re.I)) and not is_negated_sig
-
             if is_negated_sig and padj_val < self.fdr_threshold:
                 has_issue = True
                 findings.append(
@@ -2180,7 +2274,9 @@ class DEAuditEngine:
         if any(f.severity == FindingSeverity.HIGH_IMPACT for f in findings):
             return "NEEDS_REVISION"
         required = [c for c in checks if c.required_for_pass]
-        if any(c.status in (CheckStatus.MISSING_EVIDENCE, CheckStatus.PARSE_FAILED) for c in required):
+        if any(c.status == CheckStatus.ISSUE_FOUND for c in required):
+            return "NEEDS_REVISION"
+        if any(c.status != CheckStatus.ASSESSED for c in required):
             return "NEEDS_DATA"
         donor_level = (
             execution.aggregation in ("donor_pseudobulk", "pseudobulk")
@@ -2208,7 +2304,7 @@ class DEAuditEngine:
         n_donors = cohort_summary.get("n_donors")
         conditions = cohort_summary.get("conditions") or {}
         required_missing = any(
-            c.required_for_pass and c.status in (CheckStatus.MISSING_EVIDENCE, CheckStatus.PARSE_FAILED)
+            c.required_for_pass and c.status != CheckStatus.ASSESSED
             for c in checks
         )
         donor_level = (

@@ -9,6 +9,25 @@ from typing import Any, Mapping
 import yaml
 
 _ID_PATTERN = re.compile(r"^BNS-(\d{3})$")
+_STATUSES = {
+    "active", "draft", "development", "development_unverified",
+    "development_not_certifiable", "draft_council_forming",
+    "development_no_certification_effect", "deprecated",
+}
+
+
+class _UniqueSafeLoader(yaml.SafeLoader):
+    """Reject ambiguous keys instead of silently retaining the last value."""
+
+    def construct_mapping(self, node: Any, deep: bool = False) -> dict[Any, Any]:
+        self.flatten_mapping(node)
+        result: dict[Any, Any] = {}
+        for key_node, value_node in node.value:
+            key = self.construct_object(key_node, deep=deep)
+            if key in result:
+                raise ValueError(f"duplicate registry key: {key!r}")
+            result[key] = self.construct_object(value_node, deep=deep)
+        return result
 
 
 def validate_spec_registry(spec_dir: Path) -> list[str]:
@@ -17,7 +36,16 @@ def validate_spec_registry(spec_dir: Path) -> list[str]:
     registry_path = spec_dir / "registry.yaml"
     if not registry_path.is_file():
         return ["spec/registry.yaml is missing"]
-    raw: Mapping[str, Any] = yaml.safe_load(registry_path.read_text(encoding="utf-8")) or {}
+    try:
+        raw = yaml.load(registry_path.read_text(encoding="utf-8"), Loader=_UniqueSafeLoader)
+    except (OSError, ValueError, TypeError, yaml.YAMLError) as exc:
+        return [f"spec registry cannot be parsed: {exc}"]
+    if not isinstance(raw, Mapping):
+        return ["spec registry must be an object"]
+    if raw.get("schema_version") != "bionexus.spec-registry.v1":
+        errors.append("unsupported spec registry schema_version")
+    if raw.get("series") != "BNS":
+        errors.append("spec registry series must be BNS")
     freeze = raw.get("numbering_freeze")
     freeze_n: int | None = None
     if not isinstance(freeze, dict) or not freeze.get("max_id"):
@@ -31,6 +59,8 @@ def validate_spec_registry(spec_dir: Path) -> list[str]:
     documents = raw.get("documents", [])
     if not isinstance(documents, list):
         return errors + ["registry documents must be a list"]
+    if not documents:
+        errors.append("registry documents must not be empty")
 
     ids: list[str] = []
     files: list[str] = []
@@ -51,8 +81,14 @@ def validate_spec_registry(spec_dir: Path) -> list[str]:
         numbers.append(int(match.group(1)))
         if not title:
             errors.append(f"{spec_id} has no title")
+        if not isinstance(entry.get("status"), str) or entry["status"] not in _STATUSES:
+            errors.append(f"{spec_id} has an unknown or missing lifecycle status")
         if not filename.startswith(f"{spec_id}-"):
             errors.append(f"{spec_id} filename does not preserve its identifier: {filename}")
+        if (any(char in filename for char in ("/", "\\", ":"))
+                or not filename.endswith(".md")):
+            errors.append(f"{spec_id} filename must be a local Markdown basename")
+            continue
         path = spec_dir / filename
         if not path.is_file():
             errors.append(f"{spec_id} registered file is missing: {filename}")

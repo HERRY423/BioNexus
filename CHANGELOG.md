@@ -7,7 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [1.0.0-rc.7] - 2026-09-12
+
+### 🎯 GA Closure Candidate — Engineering Hardening, Modular Architecture & P0 Closure
+
+#### 🛡️ Added & Hardened
+- **Modular CLI Architecture (`bionexus.commands.*`)**: Refactored monolithic CLI entrypoint into 11 single-responsibility submodules (`claims`, `de`, `diagnostics`, `execution`, `experimental`, `ivn`, `lab`, `scaffold`, `security`, `standards`, `validation`) preserving 100% backward-compatible flag and command contracts.
+- **Strict Quality Gates**:
+  - Expanded static type verification (`mypy`) from 6 to 18 core modules.
+  - Implemented empirical line and branch coverage floors (`quality/coverage-baseline.json`, `scripts/run_core_quality.py`).
+  - Added formal DE requirement traceability gate (`scripts/check_de_traceability.py`) mapping 7 core specifications bi-directionally to execution counterexamples and positive tests.
+
+#### 🔧 P0 Fixes & Boundary Hardening
+- **Negation Warrant & Epistemic Boundaries**:
+  - Scoped epistemic limitations (e.g. *"We cannot prove that X causes Y"*) carry an explicit biological ceiling of `UNASSESSED`.
+  - Disclaimers cannot license other assertions in compound text.
+  - Removed negation-based warrant bypasses; nonsignificant DE tests, cohort size, or `perturbation=True` do not establish equivalence, non-inferiority, or biological absence.
+  - Retained honest non-significant table findings without biological over-claims.
+- **Execution Binding Verification**:
+  - Required complete and consistent execution metadata: explicit statistical unit (`donor`, `sample`, `biological_replicate`), recognized method, explicit fit success (`SUCCESS`, `CONVERGED`, `PASSED`, `OK`), additive formula/matrix column consistency, valid donor count and IDs, and exact 64-hex SHA-256 byte-matching between result file and audited table.
+  - **Migration Notice**: Stricter execution binding intentionally causes legacy or incomplete inputs to return insufficient evidence (`NEEDS_DATA` or `ISSUE_FOUND` preventing `ROBUST_PASS`). Historical bundles remain readable under legacy compatibility modes; old conclusions are never silently rewritten.
+- **IVN Public Ledger & GitHub Pages**:
+  - Restricted Pages deployment strictly to the `main` branch to conform with GitHub Pages environment protection rules.
+  - Release tags and PR workflows build and retain verified ledger artifacts without attempting unauthorized deployment.
+- **GA Support Policy**:
+  - Formalized proposed Core 1.x support window (12-month support, latest-minor fixes, 90-day critical backports, 90-day EOL notice) in `MAINTENANCE.md`, `SECURITY.md`, and `SUPPORT.md`.
+  - Policy remains proposed pending named maintainer activation at final GA.
+- **Migration Documentation**: Detailed migration guidance and limitations in [docs/rc6-p0-closure.md](docs/rc6-p0-closure.md).
 
 ## [1.0.0-rc.6] - 2026-09-11
 

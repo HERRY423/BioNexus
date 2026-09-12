@@ -127,7 +127,7 @@ class RuleProvenance:
     classification: Optional[RuleClassification] = None
 
     def to_dict(self) -> Dict[str, Any]:
-        d = {
+        d: Dict[str, Any] = {
             "source_kind": self.source_kind.value,
             "source_citation": self.source_citation,
             "evidence": [e.to_dict() for e in self.evidence],

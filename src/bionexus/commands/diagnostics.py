@@ -194,3 +194,45 @@ def handle_registry(args: argparse.Namespace) -> int:
 
     return exit_code
 
+
+def register_doctor_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 2. doctor
+    p_doctor = subparsers.add_parser("doctor", help="Run environment preflight diagnostics")
+    p_doctor.add_argument("--json", action="store_true", help="Output diagnostic report in JSON")
+    p_doctor.add_argument("--require-scverse", action="store_true", help="Enforce scverse stack presence")
+    p_doctor.add_argument("--require-spatial", action="store_true", help="Enforce spatial stack presence")
+
+
+def register_backend_identity_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 2.5 backend-identity
+    p_backend_identity = subparsers.add_parser(
+        "backend-identity",
+        help="Audit Backend Identity Conformance: declared_backend == observed_backend (BNS-EF-012..016, BN-F010)",
+    )
+    p_backend_identity.add_argument("--json", action="store_true", help="Output identity reports as JSON")
+    p_backend_identity.add_argument("--capability", default=None, help="Audit a single capability id")
+    p_backend_identity.add_argument("--canonical-only", action="store_true", help="Skip the frontier track")
+
+
+def register_list_skills_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 3. list-skills / inventory
+    for cmd_name in ("list-skills", "inventory"):
+        p_skills = subparsers.add_parser(cmd_name, help="Display canonical skill inventory and capability tiers")
+        p_skills.add_argument("--json", action="store_true", help="Output inventory as JSON")
+        p_skills.add_argument("--tier", choices=["core", "wrapper", "heuristic", "outline"], default=None)
+        p_skills.add_argument(
+            "--status", choices=["canonical", "active", "heuristic", "outline", "deprecated"], default=None
+        )
+        p_skills.add_argument(
+            "--grade", choices=["A", "B", "C", "gold-wrapper", "heuristic", "refuse", "outline"], default=None
+        )
+
+
+def register_registry_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 4. registry
+    p_registry = subparsers.add_parser("registry", help="Compile and validate multi-platform registry manifests")
+    p_registry.add_argument("--generate", action="store_true", help="Compile manifests from registry")
+    p_registry.add_argument("--check", action="store_true", help="Verify zero configuration drift")
+    p_registry.add_argument("--validate-endpoints", action="store_true", help="Validate MCP endpoint syntax")
+    p_registry.add_argument("--live-check", action="store_true", help="Probe live HTTP endpoints")
+    p_registry.add_argument("--registry-path", default=None, help="Path to bionexus.registry.yaml")

@@ -224,3 +224,63 @@ def handle_cache(args: argparse.Namespace) -> int:
 
     return 0
 
+
+def register_security_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 15. security (Data Governance, Egress Policy, Cryptographic Audit, SBOM)
+    p_security = subparsers.add_parser("security", help="Data governance, egress control policy, and cryptographic audit")
+    sec_subs = p_security.add_subparsers(dest="security_action", help="Security actions")
+
+    # security egress-policy
+    p_sec_policy = sec_subs.add_parser("egress-policy", aliases=["policy"], help="Display or update active Data Egress policy")
+    p_sec_policy.add_argument(
+        "--mode",
+        choices=["OFFLINE_STRICT", "ALLOWLIST", "CONNECTED"],
+        default=None,
+        help="Update active egress mode (OFFLINE_STRICT / ALLOWLIST / CONNECTED)",
+    )
+    p_sec_policy.add_argument("--json", action="store_true", help="Output policy as JSON")
+
+    # security audit
+    p_sec_audit = sec_subs.add_parser("audit", help="Display cryptographic egress audit trail")
+    p_sec_audit.add_argument("--limit", type=int, default=20, help="Number of recent records to display (default: 20)")
+    p_sec_audit.add_argument("--json", action="store_true", help="Output audit log as JSON")
+
+    # security sbom
+    p_sec_sbom = sec_subs.add_parser("sbom", help="Generate CycloneDX Software Bill of Materials (SBOM)")
+    p_sec_sbom.add_argument("-o", "--output", default="sbom.json", help="Output JSON path (default: sbom.json)")
+    return p_security
+
+
+def register_guard_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 19. guard (Pre-Tool Runtime Guard & Constraint Injection)
+    p_guard = subparsers.add_parser("guard", help="Runtime pre-execution guard and warrant constraint injection")
+    guard_subs = p_guard.add_subparsers(dest="guard_action", help="Guard actions")
+    p_guard_check = guard_subs.add_parser("check", help="Preflight check a code snippet or script file")
+    p_guard_check.add_argument("code", nargs="?", default=None, help="Code string to inspect")
+    p_guard_check.add_argument("-f", "--file", default=None, help="Script path to inspect")
+    p_guard_check.add_argument("--json", action="store_true", help="Output result as JSON")
+
+    p_guard_run = guard_subs.add_parser("run", help="Run command with active pre-tool guard protection")
+    p_guard_run.add_argument("cmd", nargs=argparse.REMAINDER, help="Command and arguments to execute")
+
+    p_guard_hook = guard_subs.add_parser("hook", help="Show Agent pre-tool hook setup instructions")
+    p_guard_hook.add_argument("--agent", default="codex", choices=["codex", "claude", "cursor"], help="Target AI agent")
+    return p_guard
+
+
+def register_cache_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 20. cache (Air-Gapped Embedded Knowledge Base & Local Cache)
+    p_cache = subparsers.add_parser("cache", help="Query local offline biomedical knowledge base")
+    cache_subs = p_cache.add_subparsers(dest="cache_action", help="Cache actions")
+    p_cache_gene = cache_subs.add_parser("gene", help="Query gene symbol / Ensembl / UniProt from local cache")
+    p_cache_gene.add_argument("query", help="Gene symbol, synonym, or ID")
+    p_cache_gene.add_argument("--json", action="store_true", help="Output result as JSON")
+
+    p_cache_markers = cache_subs.add_parser("markers", help="Query canonical markers for a cell type")
+    p_cache_markers.add_argument("cell_type", help="Cell type name (e.g. 'T cell', 'B cell')")
+    p_cache_markers.add_argument("--json", action="store_true", help="Output result as JSON")
+
+    p_cache_pathway = cache_subs.add_parser("pathway", help="Query Reactome pathways for a gene")
+    p_cache_pathway.add_argument("gene", help="Gene symbol (e.g. TP53, EGFR)")
+    p_cache_pathway.add_argument("--json", action="store_true", help="Output result as JSON")
+    return p_cache

@@ -306,3 +306,204 @@ def handle_eval(args: argparse.Namespace) -> int:
 
     return 0 if report.failed_cases == 0 else 1
 
+
+def register_preflight_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 5.5 preflight (Scientific Assertion Firewall entry 1, BNS-013)
+    p_preflight = subparsers.add_parser(
+        "preflight",
+        help="Scientific preflight: decide BEFORE compute whether an analysis should run (BNS-013)",
+    )
+    p_preflight.add_argument("data", nargs="?", default=None, help="Optional path to data file (.h5ad)")
+    p_preflight.add_argument(
+        "--intent",
+        default=None,
+        help="Analytical intent (e.g. differential-expression, clustering, annotation-evidence, spatial-inference-validity)",
+    )
+    p_preflight.add_argument("--query", default=None, help="Optional free-text analysis request (routed as-is)")
+    p_preflight.add_argument("--metadata", default=None, help="Path to input metadata JSON (replicates, namespaces, ...)")
+    p_preflight.add_argument("--claim-maturity", default=None, help="Maturity the host intends to claim (ceiling audit)")
+    p_preflight.add_argument(
+        "--external-validation", action="store_true", help="External (orthogonal) validation evidence exists"
+    )
+    p_preflight.add_argument("--allow-degraded", action="store_true", help="Consent to Grade C degradation")
+    p_preflight.add_argument(
+        "--allow-frontier", action="store_true", help="Explicit opt-in to execute experimental frontier capabilities"
+    )
+    p_preflight.add_argument("--json", action="store_true", help="Output preflight report as JSON")
+    return p_preflight
+
+
+def register_verify_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 5.6 verify (Scientific Assertion Firewall entry 3, BNS-013)
+    p_verify = subparsers.add_parser(
+        "verify",
+        help="Verify final results against their Claim-Evidence Ledger (BNS-013)",
+    )
+    p_verify.add_argument("path", help="Path to results ledger JSON or a results directory containing one")
+    p_verify.add_argument("--json", action="store_true", help="Output verification report as JSON")
+
+
+def register_bench_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 5.7 bench (BioFailureBench trap corpus, BNS-014)
+    p_bench = subparsers.add_parser(
+        "bench", help="BioFailureBench Scientific Trap Corpus and Community Submissions (BNS-014)"
+    )
+    bench_subs = p_bench.add_subparsers(dest="bench_action", help="BioFailureBench actions")
+
+    p_bench_validate = bench_subs.add_parser("validate", help="Validate corpus schema and taxonomy linkage")
+    p_bench_validate.add_argument("--json", action="store_true", help="Output corpus report as JSON")
+
+    p_bench_valt = bench_subs.add_parser("validate-trap", help="Validate a community-submitted failure trap YAML/JSON file")
+    p_bench_valt.add_argument("file", help="Path to trap YAML/JSON file")
+    p_bench_valt.add_argument("--json", action="store_true", help="Output result as JSON")
+
+    p_bench_tpl = bench_subs.add_parser("template", help="Output formatted community failure trap submission template")
+    p_bench_tpl.add_argument("-o", "--output", default=None, help="Save template to file path")
+
+    p_bench_stat = bench_subs.add_parser("stats", help="Display BioFailureBench corpus coverage and data flywheel statistics")
+    p_bench_stat.add_argument("--json", action="store_true", help="Output statistics as JSON")
+
+    p_bench_run = bench_subs.add_parser("run", help="Run the trap suite (same as eval --suite biofailurebench)")
+    p_bench_run.add_argument("--provider", choices=["auto", "openai", "anthropic", "gemini", "replay"], default="auto")
+    p_bench_run.add_argument("--model", default=None)
+    p_bench_run.add_argument("--json", action="store_true", help="Output benchmark as JSON")
+    p_bench_run.add_argument("--strict", action="store_true", help="Strict mode: skips are failures")
+    p_bench_run.add_argument("--report", default=None, help="Path to save Markdown report")
+    return p_bench
+
+
+def register_prevent_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 6.8 prevent (fail-closed gate, BNS-005 §6)
+    p_prevent = subparsers.add_parser(
+        "prevent", help="Fail-closed gate: prevent_invalid_run() before any execution (BNS-AD-013)"
+    )
+    p_prevent.add_argument("query", help="Requested scientific analysis")
+    p_prevent.add_argument("--min-replicates", type=int, default=None, help="Replicates per condition metadata")
+    p_prevent.add_argument("--is-normalized", action="store_true", help="Input matrix is normalized floats")
+    p_prevent.add_argument("--n-spatial-spots", type=int, default=None, help="Spatial spot count metadata")
+    p_prevent.add_argument("--claim-maturity", default=None, help="Maturity the host intends to claim (ceiling audit)")
+    p_prevent.add_argument("--allow-degraded", action="store_true", help="Consent to Grade C degradation")
+    p_prevent.add_argument(
+        "--allow-frontier", action="store_true", help="Explicit opt-in to execute experimental frontier capabilities"
+    )
+    p_prevent.add_argument("--json", action="store_true", help="Output verdict as JSON")
+
+
+def register_eval_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 8. eval (BioNexus Agent Behavior & Epistemic Benchmark)
+    p_eval = subparsers.add_parser(
+        "eval", help="Run BioNexus Agent Behavior & Scientific Reliability Benchmark (BioNexus Eval 2.0)"
+    )
+    p_eval.add_argument(
+        "--level",
+        choices=["all", "L1", "L2", "L3"],
+        default="all",
+        help="Benchmark tier level (L1=Router, L2=Agent Claims, L3=Outcome)",
+    )
+    p_eval.add_argument(
+        "--suite",
+        choices=[
+            "all",
+            "routing",
+            "refusal",
+            "capability_claim",
+            "scientific_semantics",
+            "backend_failure",
+            "adversarial",
+            "l2_agent_claims",
+            "l3_scientific_outcomes",
+            "biofailurebench",
+            "flagship_validation",
+        ],
+        default="all",
+        help="Benchmark evaluation suite (biofailurebench = the scientific trap corpus, BNS-014; flagship_validation = real-data external track, BNS-015)",
+    )
+    p_eval.add_argument(
+        "--provider",
+        choices=["auto", "openai", "anthropic", "gemini", "replay"],
+        default="auto",
+        help="Host Agent LLM provider for live L2 evaluation",
+    )
+    p_eval.add_argument(
+        "--model", default=None, help="Host model override (e.g. gpt-4o, claude-3-5-sonnet, gemini-1.5-pro)"
+    )
+    p_eval.add_argument("--report", default=None, help="Path to save Markdown evaluation report")
+    p_eval.add_argument(
+        "--exclude",
+        default=None,
+        help=(
+            "Comma-separated dataset file stems to omit (e.g. 'flagship_validation' when the "
+            "real external datasets are absent). Omissions are disclosed, never silent."
+        ),
+    )
+    p_eval.add_argument("--json", action="store_true", help="Output benchmark results as JSON")
+    p_eval.add_argument(
+        "--strict",
+        action="store_true",
+        help=(
+            "Fail-closed mode: cases skipped due to missing backends (SKIPPED_NO_BACKEND) are "
+            "treated as failures and the command exits non-zero. Required when citing an L3 score. "
+            "Equivalent to BIONEXUS_EVAL_STRICT=1."
+        ),
+    )
+
+
+def register_eval_audit_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 8b. eval-audit (tamper-evident receipt chain for benchmark runs)
+    p_eval_audit = subparsers.add_parser(
+        "eval-audit",
+        help="Verify the hash-chained eval receipt log (tamper-evident benchmark history).",
+    )
+    p_eval_audit.add_argument(
+        "--log",
+        default=None,
+        help="Path to the eval receipt log (default: logs/eval_audit.jsonl under the repo root).",
+    )
+    p_eval_audit.add_argument(
+        "--last",
+        type=int,
+        default=1,
+        help="How many recent receipts to print in detail (default: 1).",
+    )
+
+
+def register_verify_artifacts_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 16. verify-artifacts (Validation Artifacts & Certification Verifier)
+    p_verify_art = subparsers.add_parser(
+        "verify-artifacts",
+        aliases=["verify_validation_artifacts"],
+        help="Verify validation artifacts, checksums, provenance, and certification consistency",
+    )
+    p_verify_art.add_argument("--root", type=Path, default=None, help="Repository root path")
+    p_verify_art.add_argument("--enforce-version", type=str, default=None, help="Enforce specific version string")
+    p_verify_art.add_argument("--json", action="store_true", help="Output result as JSON")
+
+
+def register_conformance_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 21. conformance (BioNexus Conformance Test Kit - BCTK)
+    p_conf = subparsers.add_parser("conformance", help="BCTK target-bound development diagnostics; certification suspended")
+    conf_subs = p_conf.add_subparsers(dest="conformance_action", help="Conformance actions")
+
+    p_c_test = conf_subs.add_parser("test", help="Run a non-certifying diagnostic against a target")
+    p_c_test.add_argument("target", nargs="?", default=".", help="Target path, module, or package (default: .)")
+    p_c_test.add_argument("--json", action="store_true", help="Output machine-readable JSON")
+    p_c_test.add_argument("--markdown", "--md", action="store_true", help="Output Markdown diagnostic")
+    p_c_test.add_argument("-o", "--output", default=None, help="Save report to file path")
+    p_c_test.add_argument("--badge", action="store_true", help="Request badge issuance (always refused while suspended)")
+    p_c_test.add_argument("--strict", action="store_true", help="Enforce strict failure on warnings")
+    p_c_test.add_argument("-v", "--verbose", action="store_true", help="Display verbose per-rule evaluation")
+
+    p_c_inspect = conf_subs.add_parser("inspect", help="Inspect target structure and entrypoints")
+    p_c_inspect.add_argument("target", nargs="?", default=".", help="Target path or spec")
+    p_c_inspect.add_argument("--json", action="store_true", help="Output inspection as JSON")
+
+    p_c_badge = conf_subs.add_parser("badge", help="Badge issuance is suspended")
+    p_c_badge.add_argument("--tier", default="GOLD", choices=["GOLD", "SILVER", "BRONZE", "NON_CONFORMANT"])
+    p_c_badge.add_argument("-o", "--output", default="bionexus-conformance-badge.svg", help="Output SVG path")
+
+    p_c_rules = conf_subs.add_parser("rules", aliases=["list-rules"], help="List all normative rules in BCTK")
+    p_c_rules.add_argument("--json", action="store_true", help="Output rules as JSON")
+
+    p_c_init = conf_subs.add_parser("init", help="Initialize .bctk.yaml configuration in repository")
+    p_c_init.add_argument("-f", "--force", action="store_true", help="Overwrite existing configuration")
+    return p_conf

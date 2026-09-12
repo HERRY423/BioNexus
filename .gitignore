@@ -75,7 +75,7 @@ data/flagship/*/ifnb.SeuratData/
 data/flagship/xenium_spatial_truth/*.zip
 data/flagship/xenium_spatial_truth/official_tiny_outs/
 data/flagship/citeseq_pbmc_sorted/.zenodo_parts/
-.coverage
+.coverage*
 coverage.xml
 htmlcov/
 *.fastq
@@ -157,3 +157,9 @@ figures/
 _evaluation_*/
 _eval_*/
 _benchmark_upload_*/
+.pytest-cache*/
+.pytest_cache/
+review/**/tmp/
+review/**/wheel-install*/
+review/**/dist*/
+review/**/numba-cache/

@@ -14,6 +14,12 @@ The project is a release candidate. The authoritative package version is in
 | Current `1.0.0` RC line | Best effort | No GA/LTS or guaranteed backport window |
 | Older versions | No standing backport commitment | Retain pinned copies for historical reproduction |
 
+The proposed Core 1.x GA policy in [MAINTENANCE.md](MAINTENANCE.md#core-1x-ga-support-policy)
+defines a 12-month window, latest-minor fixes, 90-day critical-fix backports for
+superseded minors (within that window), and EOL notices. It is **NOT ACTIVATED**:
+the stable release must publish actual dates and named maintainer acceptance.
+Until then, the RC support table above remains authoritative.
+
 ---
 
 ## 2. Reporting a Vulnerability

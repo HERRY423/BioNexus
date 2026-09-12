@@ -1,0 +1,12 @@
+{
+  "status": "LOCAL_STRUCTURE_CHECK_PASSED",
+  "remote_deployment": "NOT_RUN_WITH_THIS_WORKING_TREE",
+  "workflow_sha256": "bbf7f7658f1c99e5277b3e7e105b140f452583515e1384f3fb5e4052fa17f803",
+  "observed_failed_run": 34620670777,
+  "observed_annotation": "Tag \"v1.0.0-rc.6\" is not allowed to deploy to github-pages due to environment protection rules.",
+  "observed_environment_policy": {
+    "name": "main",
+    "type": "branch"
+  },
+  "condition": "github.ref == 'refs/heads/main' && github.event_name != 'pull_request'"
+}

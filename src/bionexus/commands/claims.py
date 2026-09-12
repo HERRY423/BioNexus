@@ -459,3 +459,142 @@ def handle_rule(args: argparse.Namespace) -> int:
 
     return 0
 
+
+def register_failures_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 6.7 failures (BNS-011)
+    p_fail = subparsers.add_parser(
+        "failures", help="BioNexus Scientific Failure Taxonomy (BN-Fxxx) (BNS-011)"
+    )
+    fail_subs = p_fail.add_subparsers(dest="failures_action", help="Failure taxonomy actions")
+
+    p_fail_list = fail_subs.add_parser("list", help="List all failure modes")
+    p_fail_list.add_argument("--json", action="store_true", help="Output as JSON")
+
+    p_fail_matrix = fail_subs.add_parser("matrix", help="Show Capability x Failure Mode mapping matrix")
+    p_fail_matrix.add_argument("--json", action="store_true", help="Output as JSON")
+
+    p_fail_tax = fail_subs.add_parser("taxonomy", help="Dump complete Failure Taxonomy v1 specification")
+    p_fail_tax.add_argument("--json", action="store_true", help="Output as JSON")
+
+    p_fail_show = fail_subs.add_parser("show", help="Show one failure mode record")
+    p_fail_show.add_argument("id", help="Failure mode ID (e.g. BN-F002)")
+    p_fail_show.add_argument("--json", action="store_true", help="Output as JSON")
+    return p_fail
+
+
+def register_ledger_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 6.9 ledger (BNS-012)
+    p_ledger = subparsers.add_parser(
+        "ledger", help="Inspect a Claim–Evidence Ledger JSON artifact (BNS-012)"
+    )
+    ledger_subs = p_ledger.add_subparsers(dest="ledger_action", help="Ledger actions")
+
+    p_ledger_show = ledger_subs.add_parser("show", help="Render ledger claims and evidence status")
+    p_ledger_show.add_argument("path", help="Path to ledger JSON file")
+    p_ledger_show.add_argument("--json", action="store_true", help="Output raw ledger as JSON")
+
+    p_ledger_ld = ledger_subs.add_parser("jsonld", help="Project the ledger as PROV-O JSON-LD")
+    p_ledger_ld.add_argument("path", help="Path to ledger JSON file")
+    return p_ledger
+
+
+def register_route_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 7. route (Validated Scientific Intent Router)
+    p_route = subparsers.add_parser(
+        "route", help="Route scientific queries to validated capabilities with invariant checks"
+    )
+    p_route.add_argument("query", help="User scientific query / intent string")
+    p_route.add_argument("--data", default=None, help="Optional path to dataset file (.h5ad, .csv)")
+    p_route.add_argument(
+        "--min-replicates", type=int, default=None, help="Number of biological replicates per condition"
+    )
+    p_route.add_argument(
+        "--is-normalized", action="store_true", help="Flag if input matrix is normalized continuous floats"
+    )
+    p_route.add_argument("--allow-degraded", action="store_true", help="Allow fallback to Grade C heuristics")
+    p_route.add_argument(
+        "--allow-frontier", action="store_true", help="Explicit opt-in to execute experimental frontier capabilities"
+    )
+    p_route.add_argument("--purpose", "--research-purpose", dest="purpose", default=None, help="Explicit research purpose (exploratory / screening / confirmatory / causal / clinical)")
+    p_route.add_argument("--factors", "--evidence-factors", dest="factors", default=None, help="Comma-separated declared evidence factors")
+    p_route.add_argument("--claim-class", dest="claim_class", default=None, help="Claim class under evaluation")
+    p_route.add_argument("--documented-extras", dest="documented_extras", default=None, help="Comma-separated documentable extra conditions")
+    p_route.add_argument("--override-justification", default="", help="Justification string for researcher override")
+    p_route.add_argument("--lab-policy", default=None, help="Lab policy profile name")
+    p_route.add_argument("--json", action="store_true", help="Output routing decision as JSON")
+
+
+def register_audit_claims_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 9. audit-claims (Prohibited Claims & Hallucination Auditor)
+    p_claim = subparsers.add_parser(
+        "audit-claims", help="Audit text response or report artifact for prohibited scientific claims"
+    )
+    p_claim.add_argument("target", help="Response text or file path to evaluate")
+    p_claim.add_argument("--capability", default=None, help="Optional capability context ID")
+    p_claim.add_argument("--json", action="store_true", help="Output claim audit result as JSON")
+
+
+def register_parse_claim_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 9.1 parse-claim (Scientific Claim IR Parser, BNS-017)
+    p_parse = subparsers.add_parser(
+        "parse-claim", help="Parse natural-language claim into structured ScientificClaimIR (BNS-017)"
+    )
+    p_parse.add_argument("claim", help="Natural-language claim statement or file path")
+    p_parse.add_argument("--json", action="store_true", help="Output structured claim IR as JSON")
+
+
+def register_warrant_claim_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 9.2 warrant-claim (Deterministic Warrant Engine, BNS-017)
+    p_warrant = subparsers.add_parser(
+        "warrant-claim", help="Evaluate claim against EvidenceProfile using Deterministic Warrant Engine (BNS-017)"
+    )
+    p_warrant.add_argument("claim", help="Natural-language claim statement or file path")
+    p_warrant.add_argument("--evidence-json", default=None, help="Path to JSON file containing EvidenceProfile")
+    p_warrant.add_argument("--spatial", action="store_true", help="Flag: spatial colocalization evidence present")
+    p_warrant.add_argument("--ligand-receptor", action="store_true", help="Flag: ligand-receptor inference present")
+    p_warrant.add_argument("--perturbation", action="store_true", help="Flag: experimental perturbation present")
+    p_warrant.add_argument("--replicates", type=int, default=0, help="Number of biological replicates")
+    p_warrant.add_argument("--json", action="store_true", help="Output warrant evaluation result as JSON")
+
+
+def register_rule_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 9.3 rule (Rule Calibration & Challenge Network, BNS-018)
+    p_rule = subparsers.add_parser(
+        "rule", help="Inspect and challenge rules in the Scientific Reliability Knowledge Base (BNS-018)"
+    )
+    rule_subs = p_rule.add_subparsers(dest="rule_action", help="Rule actions")
+
+    # rule list
+    p_r_list = rule_subs.add_parser("list", help="List all calibrated rules in the reliability knowledge base")
+    p_r_list.add_argument("--json", action="store_true", help="Output rules as JSON")
+
+    # rule show <rule_id>
+    p_r_show = rule_subs.add_parser("show", help="Show detailed calibration, sensitivity, and peer reviews for a rule")
+    p_r_show.add_argument("rule_id", help="Canonical rule ID or alias")
+    p_r_show.add_argument("--json", action="store_true", help="Output calibrated rule as JSON")
+
+    # rule challenge <rule_id>
+    p_r_chal = rule_subs.add_parser("challenge", help="Submit a formal challenge to a rule in the network")
+    p_r_chal.add_argument("rule_id", help="Canonical rule ID to challenge")
+    p_r_chal.add_argument("--challenger", required=True, help="Challenger identity (ORCID, name, or institution)")
+    p_r_chal.add_argument(
+        "--type",
+        default="EMPIRICAL_COUNTEREXAMPLE",
+        choices=[
+            "EMPIRICAL_COUNTEREXAMPLE",
+            "BENCHMARK_DISSENT",
+            "REGIME_BOUNDARY_VIOLATION",
+            "PARAMETER_DRIFT",
+            "MATHEMATICAL_FLAW",
+            "PLATFORM_INCOMPATIBILITY",
+        ],
+        help="Category of scientific challenge",
+    )
+    p_r_chal.add_argument("--title", required=True, help="Short title of the challenge")
+    p_r_chal.add_argument("--description", required=True, help="Detailed scientific rationale and empirical proof")
+    p_r_chal.add_argument("--dataset", default=None, help="Supporting dataset DOI, URL, or accession")
+
+    # rule list-challenges
+    p_r_lchal = rule_subs.add_parser("list-challenges", help="List all recorded scientific challenges and statuses")
+    p_r_lchal.add_argument("--json", action="store_true", help="Output challenges as JSON")
+    return p_rule

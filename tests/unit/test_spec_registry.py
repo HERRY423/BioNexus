@@ -1,8 +1,37 @@
 from pathlib import Path
 
+import pytest
 import yaml
 
 from bionexus.spec_registry import validate_spec_registry
+
+
+@pytest.mark.parametrize("payload", ["null", "[]", "1", "false", "[unclosed", "series: BNS\nseries: OTHER"])
+def test_malformed_or_ambiguous_registry_returns_errors(tmp_path, payload):
+    (tmp_path / "registry.yaml").write_text(payload, encoding="utf-8")
+    assert validate_spec_registry(tmp_path)
+
+
+@pytest.mark.parametrize("field,value,expected", [
+    ("status", "certified_by_filename", "lifecycle status"),
+    ("status", None, "lifecycle status"),
+    ("file", "BNS-001-../../outside.md", "local Markdown basename"),
+    ("file", "BNS-001-..\\outside.md", "local Markdown basename"),
+])
+def test_status_and_filename_are_validated_before_reading(tmp_path, field, value, expected):
+    root = Path(__file__).resolve().parents[2] / "spec"
+    raw = yaml.safe_load((root / "registry.yaml").read_text(encoding="utf-8"))
+    raw["documents"][0][field] = value
+    (tmp_path / "registry.yaml").write_text(yaml.safe_dump(raw), encoding="utf-8")
+    assert any(expected in error for error in validate_spec_registry(tmp_path))
+
+
+def test_empty_or_unknown_schema_is_not_a_valid_registry(tmp_path):
+    (tmp_path / "registry.yaml").write_text(
+        "schema_version: future\nseries: UNKNOWN\ndocuments: []\n", encoding="utf-8")
+    errors = validate_spec_registry(tmp_path)
+    assert any("schema_version" in e for e in errors)
+    assert any("must not be empty" in e for e in errors)
 
 
 def test_spec_registry_is_unique_contiguous_and_complete():

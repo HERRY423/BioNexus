@@ -26,7 +26,8 @@ def summarize_costs(costs: dict[str, Any] | None) -> dict[str, Any]:
         raise ValueError("costs must declare person_minutes")
     if costs.get("comparison") not in (None, "PAIRED_SAME_CASE"):
         raise ValueError("costs comparison must be null or PAIRED_SAME_CASE")
-    totals, missing = {}, []
+    totals: dict[str, float | None] = {}
+    missing: list[str] = []
     for arm in ARMS:
         entries = costs.get(arm)
         if not isinstance(entries, dict) or set(entries) != set(COST_FIELDS):
@@ -36,14 +37,17 @@ def summarize_costs(costs: dict[str, Any] | None) -> dict[str, Any]:
                 missing.append(f"{arm}.{field}")
             elif type(value) not in (int, float) or not math.isfinite(value) or value < 0:
                 raise ValueError(f"{arm}.{field} must be null or finite nonnegative minutes")
-        totals[arm] = None if any(v is None for v in entries.values()) else sum(entries.values())
-        if totals[arm] is not None and not math.isfinite(totals[arm]):
+        total = None if any(v is None for v in entries.values()) else sum(entries.values())
+        if total is not None and not math.isfinite(total):
             raise ValueError("cost total is not finite")
+        totals[arm] = total
     note = costs.get("allocation_note")
     complete = not missing and costs.get("comparison") == "PAIRED_SAME_CASE"
     if complete and (not isinstance(note, str) or not note.strip()):
         raise ValueError("complete costs require an installation allocation and no-double-counting note")
+    baseline, assisted = totals["baseline"], totals["assisted"]
+    saved = baseline - assisted if complete and baseline is not None and assisted is not None else None
     return {"status": "REPORTED_COMPLETE" if complete else "INCOMPLETE",
-            "minutes_saved": totals["baseline"] - totals["assisted"] if complete else None,
+            "minutes_saved": saved,
             "totals": totals, "missing": missing, "allocation_note": note,
             "measurement_authentication": "NOT_ESTABLISHED"}

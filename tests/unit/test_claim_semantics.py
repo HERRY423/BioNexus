@@ -176,10 +176,58 @@ def test_negated_claim_epistemic_honesty():
     ir = DeterministicClaimParser.parse(negated_claim)
 
     assert ir.negated is True
+    assert ir.is_epistemic_disclaimer is True
+    assert ir.is_negative_assertion is False
+    assert ir.negation_type == "ABSENCE_OF_EVIDENCE"
     verdict = DeterministicWarrantEngine.evaluate(ir, EvidenceProfile())
 
     assert verdict.is_fully_warranted is True
     assert verdict.tier_verdicts["negated_qualification"].status == WarrantTierStatus.WARRANTED
+    assert verdict.tier_verdicts["epistemic_disclaimer"].status == WarrantTierStatus.WARRANTED
+
+
+def test_absence_of_evidence_vs_evidence_of_absence_decoupling():
+    """Verify that absence of evidence (disclaimer) is decoupled from evidence of absence (negative assertion)."""
+    # 1. Absence of evidence: "cannot prove" is an honest disclaimer, fully warranted even with 0 evidence
+    disclaimer = "Our findings cannot prove that IFITM1 drives disease pathogenesis."
+    ir_disc = DeterministicClaimParser.parse(disclaimer)
+    assert ir_disc.is_epistemic_disclaimer is True
+    assert ir_disc.is_negative_assertion is False
+    assert ir_disc.negation_type == "ABSENCE_OF_EVIDENCE"
+    w_disc = DeterministicWarrantEngine.evaluate(ir_disc, EvidenceProfile())
+    assert w_disc.is_fully_warranted is True
+    assert "epistemic disclaimer" in w_disc.epistemic_summary.lower()
+
+    # 2. Evidence of absence: "does not drive" asserts lack of causal effect; NOT warranted without perturbation
+    neg_assert = "IFITM1 does not drive disease pathogenesis."
+    ir_neg = DeterministicClaimParser.parse(neg_assert)
+    assert ir_neg.is_negative_assertion is True
+    assert ir_neg.negation_type == "EVIDENCE_OF_ABSENCE"
+    # Without perturbation evidence, claiming evidence of absence must NOT be fully warranted
+    w_neg_no_pert = DeterministicWarrantEngine.evaluate(ir_neg, EvidenceProfile(observational_data=True))
+    assert w_neg_no_pert.is_fully_warranted is False
+    assert w_neg_no_pert.tier_verdicts["evidence_of_absence"].status == WarrantTierStatus.NOT_WARRANTED
+    assert any("EVIDENCE_OF_ABSENCE_OVERCLAIM" in v for v in w_neg_no_pert.rule_violations)
+
+    # Perturbation alone has no endpoint, margin or negative-test result
+    w_neg_pert = DeterministicWarrantEngine.evaluate(
+        ir_neg,
+        EvidenceProfile(observational_data=True, perturbation=True, biological_replicates_count=3)
+    )
+    assert w_neg_pert.tier_verdicts["evidence_of_absence"].status == WarrantTierStatus.NOT_WARRANTED
+
+    # 3. Chinese parsing distinction
+    zh_disc = DeterministicClaimParser.parse("本研究并未证明药物诱导差异表达")
+    assert zh_disc.is_epistemic_disclaimer is True
+    assert zh_disc.negation_type == "ABSENCE_OF_EVIDENCE"
+    w_zh_disc = DeterministicWarrantEngine.evaluate(zh_disc, EvidenceProfile())
+    assert w_zh_disc.is_fully_warranted is True
+
+    zh_assert = DeterministicClaimParser.parse("药物不引起细胞凋亡")
+    assert zh_assert.is_negative_assertion is True
+    assert zh_assert.negation_type == "EVIDENCE_OF_ABSENCE"
+    w_zh_assert = DeterministicWarrantEngine.evaluate(zh_assert, EvidenceProfile())
+    assert w_zh_assert.is_fully_warranted is False
 
 
 def test_cell_identity_qualifiers():

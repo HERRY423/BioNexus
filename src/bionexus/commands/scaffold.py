@@ -447,3 +447,37 @@ def handle_create_plugin(args: argparse.Namespace) -> int:
     print(" 3. Sync platform manifests: bionexus registry --generate\n")
     return 0
 
+
+def register_create_plugin_arguments(subparsers: argparse._SubParsersAction) -> None:
+    # 1. create-plugin / create-skill
+    for cmd_name in ("create-plugin", "create-skill"):
+        p_scaffold = subparsers.add_parser(
+            cmd_name,
+            help="Scaffold a new skill following the Gold Reference pattern",
+        )
+        p_scaffold.add_argument("name", help="Name of the skill (e.g., spatial-cell-type-mapper)")
+        p_scaffold.add_argument("--display-name", default=None, help="Human-readable title")
+        p_scaffold.add_argument(
+            "--tier",
+            choices=["core", "wrapper", "heuristic", "outline"],
+            default="core",
+            help="Capability tier (default: core)",
+        )
+        p_scaffold.add_argument(
+            "--grade",
+            choices=["A", "B", "C", "abstain"],
+            default="A",
+            help="Evidence grade (default: A)",
+        )
+        p_scaffold.add_argument(
+            "--status",
+            choices=["canonical", "active", "heuristic", "outline", "deprecated"],
+            default="canonical",
+            help="Lifecycle status (default: canonical)",
+        )
+        p_scaffold.add_argument("--backend", default="scanpy", help="Required backend (default: scanpy)")
+        p_scaffold.add_argument("--description", default=None, help="Brief skill summary")
+        p_scaffold.add_argument("--author", default="BioNexus Team", help="Skill author")
+        p_scaffold.add_argument("--output-dir", default=None, help="Target skill directory")
+        p_scaffold.add_argument("--test-dir", default=None, help="Target unit test directory")
+        p_scaffold.add_argument("--no-test", action="store_true", help="Skip creating unit test file")

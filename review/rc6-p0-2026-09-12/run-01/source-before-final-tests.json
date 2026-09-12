@@ -1,0 +1,19 @@
+{
+  "src/bionexus/de_audit.py": "2a81c0079c2ea5802ee13a7b055ae90a88d1472b08c22d3521cd9247a74c6f9a",
+  "src/bionexus/claim_semantics.py": "548be081893edb72bb13efabb616a01dd9f8c1b6cff062299eb4c7a35015b7aa",
+  "src/bionexus/claim_checker.py": "6bf6c739ca712ea8ed18735e09d8dfc5aa5167c6627d1dda63c827f652174fd2",
+  "tests/unit/test_rc6_p0_boundaries.py": "13f27049764da1dfb07fc61a57c67e99dd8357b0d6c5185e59188d6034434871",
+  "tests/unit/test_de_audit.py": "6ed2a97c45fa17cf400a94a3377be598c9e285fa260db272c9e3520b60860b29",
+  "tests/unit/test_claim_semantics.py": "a849d31f8b24cf8b3c8e17e8045484d16465db7bcf9f38c8f18927bc6f045437",
+  "tests/unit/test_semantic_understanding.py": "e2eb99ae57a282052e664aa94b021cab78d7d930c73c6e41810c26cabcd5b160",
+  "spec/de-audit-traceability.yaml": "ff2f0d298717d66293bd53287f813692b5932f962542948d2be9e0d8e389511b",
+  "quality/core-tests.json": "1fb1f08eb35c5a1b5d374ddcf7d76e71a1b2cbdf1fdc40fca9d91d68176980fc",
+  "quality/coverage-baseline.json": "adb5b862d1af3fed52bac0dcf4ffca3ddc99f10954d1eb6be7e40fe7107a2ba3",
+  ".github/workflows/ivn-ledger-pages.yml": "bbf7f7658f1c99e5277b3e7e105b140f452583515e1384f3fb5e4052fa17f803",
+  "MAINTENANCE.md": "d0c0600f0d17126d91890ca54eb6198e850d83bf196cb0dbc23939facfda446d",
+  "SECURITY.md": "a1cfd28977e3d8a24ddd1b09279f2ba7da459a863ae298502838a6d07bb204a3",
+  "SUPPORT.md": "d4084670697428c34ef0c5197f6abf1278da5c837884c548ed2b5e532141eab1",
+  "docs/rc6-p0-closure.md": "dfc9f3c97ced6ef44828050b6a68c60a4f5a50a4d75a4c2f92a540d175e289b5",
+  "docs/engineering-quality.md": "c9e6f9238d72c708bfbe083f0991013cc5eb4ba3ede8e11589fd48854fdbe6eb",
+  "CHANGELOG.md": "8d4f728d8b74c81dff48f8d7eaa3a196c80ecbdf1cdbdf1b5b27660994782527"
+}

@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "source": "C:\\Plugin\\BioNexus\\.quality\\rc6-p0-wheel-install\\bionexus\\de_audit.py",
+  "test_sha256": "13f27049764da1dfb07fc61a57c67e99dd8357b0d6c5185e59188d6034434871",
+  "legacy_bundle": "LEGACY_LIMITED",
+  "scientific_authorization": "NONE",
+  "scope": "Modified local wheel, isolated package imports with host dependencies; not the published rc6 wheel or clean-machine acceptance"
+}

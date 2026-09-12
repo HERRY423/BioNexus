@@ -466,3 +466,170 @@ def handle_scfm(args: argparse.Namespace) -> int:
 
     return 0
 
+
+def register_run_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 10. run (Run Capsule Artifact Contract)
+    p_run = subparsers.add_parser("run", help="Manage and inspect standardized BioNexus Run Capsule Artifacts")
+    run_subs = p_run.add_subparsers(dest="run_action", help="Run capsule actions")
+
+    # run inspect <path>
+    p_run_inspect = run_subs.add_parser("inspect", help="Inspect a run.json capsule descriptor for agent handoff")
+    p_run_inspect.add_argument("path", help="Path to run/ directory or run.json file")
+    p_run_inspect.add_argument("--json", action="store_true", help="Output descriptor as JSON")
+
+    # run verify <path>
+    p_run_verify = run_subs.add_parser(
+        "verify", help="Verify cryptographic completeness and tamper integrity of run capsule"
+    )
+    p_run_verify.add_argument("path", help="Path to run/ directory or run.json file")
+    p_run_verify.add_argument("--json", action="store_true", help="Output verification as JSON")
+
+    # run list [path]
+    p_run_list = run_subs.add_parser("list", help="List all BioNexus run capsules in a directory")
+    p_run_list.add_argument("path", nargs="?", default=".", help="Parent directory to search (default: .)")
+    return p_run
+
+
+def register_cluster_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 11. cluster (HPC & Cloud Cluster Orchestrator)
+    p_cluster = subparsers.add_parser("cluster", help="HPC and Cloud-Native batch cluster job orchestrator")
+    cluster_subs = p_cluster.add_subparsers(dest="cluster_action", help="Cluster actions")
+
+    # cluster probe
+    p_cl_probe = cluster_subs.add_parser("probe", help="Probe host environment for available schedulers and GPUs")
+    p_cl_probe.add_argument("--json", action="store_true", help="Output probe report as JSON")
+
+    # cluster generate
+    p_cl_gen = cluster_subs.add_parser("generate", help="Generate submission script for HPC / cloud batch")
+    p_cl_gen.add_argument("--scheduler", default="slurm", choices=["slurm", "pbs", "lsf", "kubernetes", "aws_batch", "gcp_batch", "local"])
+    p_cl_gen.add_argument("--command", "--cmd", dest="job_command", required=True, help="Bioinformatics command string to execute")
+    p_cl_gen.add_argument("--job-name", default="bionexus_job", help="Job name identifier")
+    p_cl_gen.add_argument("--cpus", type=int, default=8, help="Number of CPU cores requested")
+    p_cl_gen.add_argument("--memory", default="32GB", help="Memory limit (e.g. 64GB, 128GB)")
+    p_cl_gen.add_argument("--time-limit", default="24:00:00", help="Walltime limit (HH:MM:SS)")
+    p_cl_gen.add_argument("--partition", default=None, help="Queue or partition name")
+    p_cl_gen.add_argument("--account", default=None, help="Allocation or billing account")
+    p_cl_gen.add_argument("--qos", default=None, help="Quality of service level")
+    p_cl_gen.add_argument("--gpus", type=int, default=0, help="Number of GPUs requested")
+    p_cl_gen.add_argument("--gpu-type", default=None, help="GPU type (e.g. a100, v100, h100)")
+    p_cl_gen.add_argument("--image", default=None, help="Container image for K8s / Cloud Batch")
+    p_cl_gen.add_argument("--workdir", default=None, help="Working directory on worker node")
+    p_cl_gen.add_argument("--output-log", default=None, help="Custom path for stdout log")
+    p_cl_gen.add_argument("--error-log", default=None, help="Custom path for stderr log")
+    p_cl_gen.add_argument("-o", "--output", default=None, help="File path to save the generated script")
+
+    # cluster submit
+    p_cl_sub = cluster_subs.add_parser("submit", help="Submit script file to cluster scheduler")
+    p_cl_sub.add_argument("script", help="Path to batch submission script")
+    p_cl_sub.add_argument("--scheduler", default="slurm", choices=["slurm", "pbs", "lsf", "kubernetes", "local"])
+    p_cl_sub.add_argument("--dry-run", action="store_true", help="Validate submission without executing")
+    p_cl_sub.add_argument("--json", action="store_true", help="Output submission result as JSON")
+
+    # cluster status
+    p_cl_stat = cluster_subs.add_parser("status", help="Check execution state of an HPC job")
+    p_cl_stat.add_argument("job_id", help="Cluster job ID to query")
+    p_cl_stat.add_argument("--scheduler", default="slurm", choices=["slurm", "pbs", "lsf"])
+    p_cl_stat.add_argument("--json", action="store_true", help="Output status as JSON")
+
+    # cluster diagnose
+    p_cl_diag = cluster_subs.add_parser("diagnose", help="Diagnose post-mortem failure cause from exit code and logs")
+    p_cl_diag.add_argument("exit_code", type=int, help="Process exit code (e.g. 137, 143, 127)")
+    p_cl_diag.add_argument("--log", default=None, help="Path to worker log file")
+    p_cl_diag.add_argument("--memory-gb", type=float, default=32.0, help="Memory allocated in failed run")
+    p_cl_diag.add_argument("--cpus", type=int, default=8, help="CPUs allocated in failed run")
+    p_cl_diag.add_argument("--json", action="store_true", help="Output diagnosis as JSON")
+
+    # cluster tes-task
+    p_cl_tes = cluster_subs.add_parser("tes-task", help="Generate GA4GH Task Execution Service (TES) v1.0.0 task JSON")
+    p_cl_tes.add_argument("--command", "--cmd", dest="job_command", required=True, help="Command string or arguments to execute")
+    p_cl_tes.add_argument("--job-name", default="bionexus_tes_job", help="Job name identifier")
+    p_cl_tes.add_argument("--image", default="quay.io/biocontainers/scanpy:1.10.0", help="Container image")
+    p_cl_tes.add_argument("--cpus", type=int, default=8, help="Number of CPU cores")
+    p_cl_tes.add_argument("--memory", default="32GB", help="Memory limit (e.g. 32GB, 64GB)")
+    p_cl_tes.add_argument("--workdir", default=None, help="Working directory path")
+    p_cl_tes.add_argument("-o", "--output", default=None, help="Save task JSON to file")
+
+    # cluster elastic-profile
+    p_cl_ep = cluster_subs.add_parser("elastic-profile", help="Generate cloud-native elastic scaling and retry profile")
+    p_cl_ep.add_argument("--provider", default="kubernetes", choices=["kubernetes", "aws_batch", "gcp_batch", "slurm"], help="Cloud/cluster execution provider")
+    p_cl_ep.add_argument("--container-engine", default="docker", choices=["docker", "singularity", "apptainer"], help="Container engine")
+    p_cl_ep.add_argument("--image", default=None, help="Container image URI")
+    p_cl_ep.add_argument("--min-nodes", type=int, default=1, help="Minimum worker nodes")
+    p_cl_ep.add_argument("--max-nodes", type=int, default=64, help="Maximum worker nodes")
+    p_cl_ep.add_argument("--max-retries", type=int, default=3, help="Max OOM retries")
+    p_cl_ep.add_argument("--oom-multiplier", type=float, default=2.0, help="Memory escalation multiplier on exit 137")
+    p_cl_ep.add_argument("-o", "--output", default=None, help="Save profile JSON to file")
+    return p_cluster
+
+
+def register_bigdata_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 12. bigdata (Out-of-Core & Large-Scale Biological Matrix Safeguard)
+    p_bigdata = subparsers.add_parser("bigdata", help="Large-scale biological matrix memory safety and out-of-core tools")
+    bigdata_subs = p_bigdata.add_subparsers(dest="bigdata_action", help="Bigdata actions")
+
+    # bigdata estimate
+    p_bd_est = bigdata_subs.add_parser("estimate", help="Estimate working RAM requirements for large matrix")
+    p_bd_est.add_argument("--n-cells", type=int, required=True, help="Number of cells / observations")
+    p_bd_est.add_argument("--n-genes", type=int, default=30000, help="Number of genes / variables")
+    p_bd_est.add_argument("--dense", action="store_true", help="Treat matrix as dense instead of sparse CSR")
+    p_bd_est.add_argument("--sparsity", type=float, default=0.90, help="Expected fraction of zero values (default: 0.90)")
+    p_bd_est.add_argument("--layers", type=int, default=1, help="Number of expression layers stored")
+    p_bd_est.add_argument("--pcs", type=int, default=50, help="Number of PCA components computed")
+    p_bd_est.add_argument("--precision", default="float32", choices=["float32", "float64"])
+    p_bd_est.add_argument("--ram-gb", type=float, default=None, help="Host RAM to test against")
+    p_bd_est.add_argument("--json", action="store_true", help="Output memory estimation as JSON")
+
+    # bigdata audit
+    p_bd_aud = bigdata_subs.add_parser("audit", help="Audit dataset storage format and out-of-core streaming readiness")
+    p_bd_aud.add_argument("path", help="Path to dataset file or Zarr directory")
+    p_bd_aud.add_argument("--json", action="store_true", help="Output storage audit as JSON")
+
+    # bigdata plan
+    p_bd_plan = bigdata_subs.add_parser("plan", help="Generate out-of-core chunked streaming execution plan")
+    p_bd_plan.add_argument("--n-cells", type=int, required=True, help="Total number of cells")
+    p_bd_plan.add_argument("--n-genes", type=int, default=30000, help="Total number of genes")
+    p_bd_plan.add_argument("--target-ram-mb", type=float, default=2048.0, help="RAM budget per chunk in MB")
+    p_bd_plan.add_argument("--json", action="store_true", help="Output streaming plan as JSON")
+
+    # bigdata stream-aggregate
+    p_bd_sa = bigdata_subs.add_parser("stream-aggregate", help="Stream-aggregate large count matrix into pseudobulk counts")
+    p_bd_sa.add_argument("--counts", required=True, help="Counts CSV file (cells x genes)")
+    p_bd_sa.add_argument("--obs", required=True, help="Observations CSV file with grouping columns")
+    p_bd_sa.add_argument("--groupby", default="donor,condition", help="Comma-separated grouping columns")
+    p_bd_sa.add_argument("--chunk-size", type=int, default=5000, help="Chunk size in number of cells")
+    p_bd_sa.add_argument("-o", "--output-dir", required=True, help="Output directory for pseudobulk_counts.csv and pseudobulk_design.csv")
+    return p_bigdata
+
+
+def register_scfm_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    # 13. scfm (Single-Cell Foundation Models: Geneformer & scGPT)
+    p_scfm = subparsers.add_parser("scfm", help="Single-Cell Foundation Models (Geneformer & scGPT) inference tools")
+    scfm_subs = p_scfm.add_subparsers(dest="scfm_action", help="scFM actions")
+
+    # scfm embed
+    p_scfm_emb = scfm_subs.add_parser("embed", help="Extract zero-shot or pretrained foundation model cell representations")
+    p_scfm_emb.add_argument("input", help="Path to single-cell .h5ad dataset")
+    p_scfm_emb.add_argument("--model", default="geneformer", choices=["geneformer", "scgpt"], help="Foundation model family")
+    p_scfm_emb.add_argument("--checkpoint", default=None, help="Path to official pretrained checkpoint directory or HuggingFace ID")
+    p_scfm_emb.add_argument("--proxy", action="store_true", help="Explicitly use Grade C Rank-Weighted SVD exploratory proxy")
+    p_scfm_emb.add_argument("--allow-proxy", action="store_true", help="Allow fallback to Grade C proxy if checkpoint is absent")
+    p_scfm_emb.add_argument("--dim", type=int, default=512, help="Embedding dimension (default: 512)")
+    p_scfm_emb.add_argument("--device", default="auto", choices=["auto", "cuda", "cpu"], help="Inference device")
+    p_scfm_emb.add_argument("--output", "-o", default=None, help="Optional output path to save updated .h5ad file")
+    p_scfm_emb.add_argument("--json", action="store_true", help="Output embedding result as JSON")
+
+    # scfm perturb
+    p_scfm_pert = scfm_subs.add_parser("perturb", help="Simulate in silico genetic perturbation (knockout/overexpression)")
+    p_scfm_pert.add_argument("input", help="Path to single-cell .h5ad dataset")
+    p_scfm_pert.add_argument("--gene", required=True, help="Target gene identifier to perturb (e.g. TP53, MYC)")
+    p_scfm_pert.add_argument("--mode", default="knockout", choices=["knockout", "overexpression"], help="Perturbation mode")
+    p_scfm_pert.add_argument("--model", default="geneformer", choices=["geneformer", "scgpt"], help="Foundation model family")
+    p_scfm_pert.add_argument("--checkpoint", default=None, help="Path to official pretrained checkpoint directory or HuggingFace ID")
+    p_scfm_pert.add_argument(
+        "--allow-proxy",
+        action="store_true",
+        help="Explicitly allow fallback to the Grade C proxy if the canonical checkpoint is absent",
+    )
+    p_scfm_pert.add_argument("--device", default="auto", choices=["auto", "cuda", "cpu"], help="Inference device")
+    p_scfm_pert.add_argument("--json", action="store_true", help="Output perturbation report as JSON")
+    return p_scfm

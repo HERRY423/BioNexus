@@ -4,6 +4,8 @@ Pure core DataFrame & metadata tests with NO AnnData / SciPy dependencies,
 ensuring clean test collection in core CI matrix environments.
 """
 
+import hashlib
+
 import numpy as np
 import pandas as pd
 
@@ -13,6 +15,19 @@ from bionexus.de_audit import (
     FindingSeverity,
     audit_differential_expression,
 )
+
+
+def _bound_result(tmp_path, frame):
+    """Synthetic receipt verifies byte/metadata consistency, never real execution."""
+    path = tmp_path / "results.csv"
+    frame.to_csv(path, index=False)
+    return path, {
+        "statistical_unit": "donor", "method": "pydeseq2",
+        "fit_status": "CONVERGED", "design": "~ condition",
+        "design_matrix_columns": ["Intercept", "condition[T.T]"],
+        "n_donors": 6, "result_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        "donor_ids": [f"D{i}" for i in range(1, 7)],
+    }
 
 
 def _assert_not_executed_methods(result) -> None:
@@ -192,7 +207,7 @@ def test_de_table_format_recognized_requires_execution_binding_for_pass():
     assert binding_check.status == CheckStatus.MISSING_EVIDENCE
 
 
-def test_deseq2_with_verified_execution_record_achieves_pass():
+def test_deseq2_with_verified_execution_record_achieves_pass(tmp_path):
     """When both balanced design and verified donor execution record are supplied, audit passes."""
     samples = pd.DataFrame(
         {
@@ -211,14 +226,11 @@ def test_deseq2_with_verified_execution_record_achieves_pass():
             "padj": [1e-6, 0.04],
         }
     )
+    result_path, receipt = _bound_result(tmp_path, de_data)
     result = audit_differential_expression(
         sample_metadata=samples,
-        de_table=de_data,
-        execution_record={
-            "statistical_unit": "donor",
-            "method": "pydeseq2",
-            "design": "~ donor + condition",
-        },
+        de_table=result_path,
+        execution_record=receipt,
     )
     assert result.overall_status == "ROBUST_PASS"
     assert result.passed
@@ -365,7 +377,7 @@ def test_negative_pvalues_trigger_bfa003c_and_refuse_pass():
     assert any(f.rule_id == "BFA-003c" for f in result.findings)
 
 
-def test_tiny_pvalues_with_verified_donor_execution_not_blocked():
+def test_tiny_pvalues_with_verified_donor_execution_not_blocked(tmp_path):
     """P1: 18 genes with p < 1e-100 in verified donor execution must not be blocked by BFA-001c."""
     samples = pd.DataFrame({"donor_id": [f"D{i}" for i in range(1, 7)], "condition": ["C"]*3 + ["T"]*3})
     # Create 18 genes with p < 1e-100 (non-zero)
@@ -374,10 +386,11 @@ def test_tiny_pvalues_with_verified_donor_execution_not_blocked():
     padjs = [1e-118] * 18 + [0.02, 0.03]
     lfcs = [2.0] * 20
     de_data = pd.DataFrame({"gene": genes, "pvalue": pvals, "padj": padjs, "log2FoldChange": lfcs})
+    result_path, receipt = _bound_result(tmp_path, de_data)
     result = audit_differential_expression(
         sample_metadata=samples,
-        de_table=de_data,
-        execution_record={"statistical_unit": "donor", "method": "pydeseq2"},
+        de_table=result_path,
+        execution_record=receipt,
     )
     assert result.passed is True
     assert result.overall_status == "ROBUST_PASS"
@@ -462,7 +475,7 @@ def test_claim_false_global_null_triggers_bfa015c():
     assert any(f.rule_id == "BFA-015c" for f in result.findings)
 
 
-def test_valid_claims_concordant_with_table_achieve_robust_pass():
+def test_valid_claims_concordant_with_table_achieve_robust_pass(tmp_path):
     """P1: Valid claims concordant with table (positive, negative, presence) achieve ROBUST_PASS."""
     samples = pd.DataFrame({"donor_id": [f"D{i}" for i in range(1, 7)], "condition": ["C"]*3 + ["T"]*3})
     de_data = pd.DataFrame({
@@ -472,10 +485,11 @@ def test_valid_claims_concordant_with_table_achieve_robust_pass():
         "log2FoldChange": [2.5, -0.1],
     })
     # Valid positive claim
+    result_path, receipt = _bound_result(tmp_path, de_data)
     r1 = audit_differential_expression(
         sample_metadata=samples,
-        de_table=de_data,
-        execution_record={"statistical_unit": "donor", "method": "pydeseq2"},
+        de_table=result_path,
+        execution_record=receipt,
         claim_text="IL1RN is upregulated and significant after FDR correction in the supplied treated-versus-control result.",
     )
     assert r1.passed is True
@@ -484,8 +498,8 @@ def test_valid_claims_concordant_with_table_achieve_robust_pass():
     # Valid negative claim
     r2 = audit_differential_expression(
         sample_metadata=samples,
-        de_table=de_data,
-        execution_record={"statistical_unit": "donor", "method": "pydeseq2"},
+        de_table=result_path,
+        execution_record=receipt,
         claim_text="NEG1 was not significant after FDR correction in the supplied result.",
     )
     assert r2.passed is True
@@ -494,10 +508,78 @@ def test_valid_claims_concordant_with_table_achieve_robust_pass():
     # Valid table presence claim
     r3 = audit_differential_expression(
         sample_metadata=samples,
-        de_table=de_data,
-        execution_record={"statistical_unit": "donor", "method": "pydeseq2"},
+        de_table=result_path,
+        execution_record=receipt,
         claim_text="The supplied differential-expression table contains a result for IL1RN.",
     )
     assert r3.passed is True
     assert r3.overall_status == "ROBUST_PASS"
 
+
+def test_unwarranted_negative_causal_assertion_rejected():
+    """Negative causal assertion ('does not cause') without perturbation must NOT bypass warrant via negation."""
+    samples = pd.DataFrame({"donor_id": [f"D{i}" for i in range(1, 7)], "condition": ["C"]*3 + ["T"]*3})
+    de_data = pd.DataFrame({
+        "gene": ["IFITM1", "STAT1"],
+        "baseMean": [100.0, 80.0],
+        "log2FoldChange": [1.5, -0.8],
+        "pvalue": [1e-4, 0.01],
+        "padj": [1e-3, 0.04],
+    })
+    # Negative causal assertion: asserting evidence of absence without perturbation
+    claim = "IFITM1 does not cause disease pathogenesis in the treated cohort."
+    result = audit_differential_expression(
+        sample_metadata=samples,
+        de_table=de_data,
+        execution_record={"statistical_unit": "donor", "method": "pydeseq2"},
+        claim_text=claim,
+    )
+    assert result.passed is False
+    assert result.overall_status == "NEEDS_REVISION"
+    # Must trigger BFA-008 for exceeding evidence ceiling (absence of evidence != evidence of absence)
+    bfa008 = next((f for f in result.findings if f.rule_id == "BFA-008"), None)
+    assert bfa008 is not None
+    assert "超出证据边界" in bfa008.title
+    check_targeted = next(c for c in result.checks if c.check_id == "claim_targeted_warrant")
+    assert check_targeted.status == CheckStatus.ISSUE_FOUND
+
+
+def test_epistemic_disclaimer_honest_warrant_accepted(tmp_path):
+    """Epistemic disclaimer ('cannot prove') acknowledging absence of evidence is warranted and passes."""
+    samples = pd.DataFrame({"donor_id": [f"D{i}" for i in range(1, 7)], "condition": ["C"]*3 + ["T"]*3})
+    de_data = pd.DataFrame({
+        "gene": ["IFITM1", "STAT1"],
+        "baseMean": [100.0, 80.0],
+        "log2FoldChange": [1.5, -0.8],
+        "pvalue": [1e-4, 0.01],
+        "padj": [1e-3, 0.04],
+    })
+    # Honest epistemic disclaimer stating inability to prove
+    claim = "In our cohort, marker p-values cannot prove IFITM1 causes disease pathogenesis."
+    result_path, receipt = _bound_result(tmp_path, de_data)
+    result = audit_differential_expression(
+        sample_metadata=samples,
+        de_table=result_path,
+        execution_record=receipt,
+        claim_text=claim,
+    )
+    assert result.passed is True
+    assert result.overall_status == "ROBUST_PASS"
+    assert not any(f.rule_id == "BFA-008" for f in result.findings)
+    check_targeted = next(c for c in result.checks if c.check_id == "claim_targeted_warrant")
+    assert check_targeted.status == CheckStatus.ASSESSED
+
+
+def test_extreme_p_diagnostic_signal_wording():
+    """Verify BFA-001c explicitly defines extreme P as diagnostic signal, not methodological invalidity."""
+    de_data = pd.DataFrame({
+        "gene": [f"G_{i}" for i in range(50)],
+        "pvalue": [1e-150] * 15 + [0.01] * 35,
+        "padj": [1e-148] * 15 + [0.04] * 35,
+    })
+    result = audit_differential_expression(de_table=de_data)
+    f = next(f for f in result.findings if f.rule_id == "BFA-001c")
+    assert "诊断信号" in f.title
+    assert "diagnostic signal" in f.impact_on_conclusion
+    assert "methodological invalidity" in f.impact_on_conclusion
+    assert "非方法学无效" in f.impact_on_conclusion

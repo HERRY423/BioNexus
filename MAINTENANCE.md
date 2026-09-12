@@ -18,7 +18,37 @@ is in the 1.0.0 release-candidate series. Maintenance of the current RC line is
 best effort. No GA/LTS window, paid SLA, staffed on-call rota or standing
 independent scientific council is established. Older pinned versions remain
 useful for reproduction but have no automatic backport commitment. A future
-stable release must declare its support window and actual staffing capacity.
+stable release must activate the following policy with its actual release date
+and named maintainers. This policy does not declare the RC to be GA.
+
+## Core 1.x GA support policy
+
+The proposed 1.x operational contract below takes effect only when the first
+stable release publishes its activation record. It applies to the Core CLI,
+documented Evidence/Warrant contracts, v1 DE bundle readers and passive
+multi-donor DE shadow review. Experimental annotation/spatial/model backends,
+third-party hosts and scientific certification have separate evidence states.
+
+| Item | Contract to activate with Core 1.0 GA |
+|---|---|
+| Duration | 12 calendar months from the actual 1.0 GA publication date; publish the exact start and EOL dates in the release notes |
+| Maintainers | Name the actual primary maintainer and release/security contact in the activation record, with their acceptance; no fictional roster or implied independent reviewer |
+| Fix delivery | Publish fixes on the newest supported 1.x minor; users should install its latest patch. Prior minors receive critical security and scientific false-pass backports for 90 days after their successor's release, bounded by the published 1.x EOL date |
+| Security | Use SECURITY.md private reporting; disclose affected/fixed versions, impact and mitigation. Prioritize exploitable data exposure, integrity failures and arbitrary execution. Handling remains best effort, with no guaranteed response time or on-call service |
+| Scientific rule changes | A false-pass/false-refusal correction may ship as a patch with rule IDs, affected contexts, before/after cases and a reassessment notice. Do not silently alter claim meanings or old evidence; a breaking scientific/consumer contract requires a new identifier and migration under the compatibility rules below |
+| Backport exception | If a safe compatible fix is infeasible, document why, publish the mitigation and required upgrade, and retain the unresolved issue. Do not silently mark the old version fixed |
+| EOL | Give at least 90 days' public notice before the declared EOL. Extension requires a new dated acceptance record. At EOL stop promising fixes and identify migration options; retain historical tags, artifacts, hashes and notices |
+
+**Activation record required in the GA release notes:** actual version and tag,
+release date, support end date, supported minor(s), named accepting maintainer(s),
+release/security contact, supported scope, verification links and unresolved
+limitations. The operator must check actual capacity before publication. Missing
+names, dates or acceptance keep this contract **PROPOSED / NOT ACTIVATED** and
+block claiming an established GA support window. Current status: **NOT ACTIVATED**.
+
+The 12-month duration is a release-policy proposal, not evidence of funded
+staffing or an obligation already accepted by a named person. The first GA
+release must include that human acceptance; software checks cannot supply it.
 
 Core CI is configured for Python 3.10–3.12 on Linux, macOS and Windows. That is
 a test target, not evidence that the current hosted run passed. Scientific
