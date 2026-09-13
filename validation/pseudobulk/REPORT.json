@@ -16,7 +16,7 @@
     }
   },
   "pipeline": {
-    "version": "1.0.0-rc.7",
+    "version": "1.0.0-rc.8",
     "backend_identity": {
       "capability_id": "scrna.pseudobulk_de",
       "track": "canonical",
@@ -42,29 +42,29 @@
     "provenance": {
       "data_source": "GEO GSE96583; Kang et al. 2018 doi:10.1038/nbt.4042",
       "download_date": "2026-08-19T00:00:00+00:00",
-      "commit_sha": "11c8132a1eb820fe4e80854131e111ecf5e9eb53",
+      "commit_sha": "fffd792fcd3949805debeee5c421feee8fbba921",
       "git_dirty": false,
       "environment_lockfile_hashes": {
-        "pyproject.toml": "156d1e950587d37ad1612d2ac721f9947e3e30d310fb0bd4c21c473a834f9a25",
-        "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
-        "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
+        "pyproject.toml": "af00cd2b797d49c3ed2d0da185dcfcfeb0fbd913aa3de6815139e362514c31d6",
+        "requirements-dev.txt": "d5697d2689c87167f554b3b9c35086f7f8696d7c5a3b23c20507c39a474f82d4",
+        "requirements.txt": "8fa95b3e0de8230cca2932263ddb088403e5e9e878eeb97b8ee94f038fffc4d4"
       },
       "command": [
         "scripts/run_flagship_validation.py"
       ],
       "command_str": "scripts/run_flagship_validation.py",
-      "generator_version": "1.0.0-rc.7",
+      "generator_version": "1.0.0-rc.8",
       "python_version": "3.13.9",
       "platform": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-09-06T15:34:09.049167+00:00",
+      "timestamp": "2026-09-13T15:00:37.309616+00:00",
       "extra_metadata": {
         "capability": "scrna.pseudobulk_de",
         "dataset_id": "kang2018_pbmc_ifnb",
         "present": true
       },
-      "repository_dirty_at_execution": false,
+      "repository_dirty_at_execution": true,
       "validation_source_dirty": false,
-      "source_snapshot_sha256": "fd57efc235ac92a128a8c0738e5477f38de03ec13f9df350f765c16b5c1634b3"
+      "source_snapshot_sha256": "1dc420be0e48d26fdef0ecdd48544cc073085aa89faeca04e9b5f0722e1038d9"
     }
   },
   "metrics": [
@@ -91,7 +91,7 @@
     "The Kang et al. 2018 paper's own DE table is not machine-accessible (supplements 403, figshare 403, Interferome offline, Zenodo 403); the truth is instead a published-knowledge membership set (MSigDB Hallmark IFN response signatures + curated GO annotations), so the metric measures published support for the top-N DE genes rather than rank correlation with the paper's table.",
     "Counts derive from SeuratData 'ifnb' with donor identities joined from GEO GSE96583 per-cell metadata (demuxlet 'ind' column); singlets only."
   ],
-  "timestamp": "2026-09-06T15:34:09.211942+00:00",
+  "timestamp": "2026-09-13T15:00:37.566768+00:00",
   "evidence_files": [
     "validation\\pseudobulk\\evidence\\.gitkeep",
     "validation\\pseudobulk\\evidence\\bionexus_pseudobulk_full_de.csv",

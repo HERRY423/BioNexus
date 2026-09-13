@@ -6,11 +6,11 @@
   "dataset_checksum_sha256": "72dbb054e8c2a2b75160678c33782c25db2eeb7c265c4e6d3049ef49a6ec8762",
   "provenance": {
     "data_source": "synthetic_generator (in-silico manufactured spatial slice)",
-    "download_date": "2026-09-11T16:08:29.822910+00:00",
-    "commit_sha": "11c8132a1eb820fe4e80854131e111ecf5e9eb53",
+    "download_date": "2026-09-13T15:00:08.086672+00:00",
+    "commit_sha": "fffd792fcd3949805debeee5c421feee8fbba921",
     "git_dirty": false,
     "environment_lockfile_hashes": {
-      "pyproject.toml": "a982dafc951265a0c133d599ef9ff627cb30badc1ac9387af359a3e591468943",
+      "pyproject.toml": "af00cd2b797d49c3ed2d0da185dcfcfeb0fbd913aa3de6815139e362514c31d6",
       "requirements-dev.txt": "d5697d2689c87167f554b3b9c35086f7f8696d7c5a3b23c20507c39a474f82d4",
       "requirements.txt": "8fa95b3e0de8230cca2932263ddb088403e5e9e878eeb97b8ee94f038fffc4d4"
     },
@@ -18,21 +18,21 @@
       "evals/spatial_stress_test.py"
     ],
     "command_str": "evals/spatial_stress_test.py",
-    "generator_version": "1.0.0-rc.7",
+    "generator_version": "1.0.0-rc.8",
     "python_version": "3.13.9",
     "platform": "Windows-11-10.0.26200-SP0",
-    "timestamp": "2026-09-11T16:08:29.970926+00:00",
+    "timestamp": "2026-09-13T15:00:08.249523+00:00",
     "extra_metadata": {
       "dataset_track": "synthetic_technical_acceptance",
       "n_cells": 1000,
       "n_genes": 200
     },
-    "repository_dirty_at_execution": false,
+    "repository_dirty_at_execution": true,
     "validation_source_dirty": false,
-    "source_snapshot_sha256": "fd57efc235ac92a128a8c0738e5477f38de03ec13f9df350f765c16b5c1634b3"
+    "source_snapshot_sha256": "1dc420be0e48d26fdef0ecdd48544cc073085aa89faeca04e9b5f0722e1038d9"
   },
-  "timestamp": "2026-09-11T16:08:30.150248+00:00",
-  "elapsed_seconds": 0.4,
+  "timestamp": "2026-09-13T15:00:08.540507+00:00",
+  "elapsed_seconds": 0.52,
   "overall_status": "PASS",
   "dimensions": {
     "dim1_1_synthetic_technical_acceptance_baseline": {

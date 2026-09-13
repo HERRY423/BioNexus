@@ -1,6 +1,6 @@
 {
   "schema_version": "bionexus.evidence-index.v1",
-  "project_version": "1.0.0-rc.7",
+  "project_version": "1.0.0-rc.8",
   "total_conclusions": 8,
   "conclusions": {
     "BNC-SP-001-TECH-ACCEPTANCE": {
@@ -88,7 +88,7 @@
       "source_files": {
         "src/bionexus/certification.py": "ca935d861b11165aa9309ab89e093fad4bc5272ed2423be97f7c290518799102",
         "src/bionexus/capabilities.py": "e30453b75cef23748f9da024f5c276a7e277b54a90f65d2a5dd03d84ff08c73a",
-        "evals/spatial_stress_test.py": "1120498e1d30295300935c88d9275bd51a6cdac10f17d2867768ae8bf818f84e"
+        "evals/spatial_stress_test.py": "b8a6e1a31584eec6c22ea7c77329b0c872441400fead53bbd31aeceb9a532d73"
       },
       "rules": [
         "BNS-010",
@@ -117,7 +117,7 @@
       "report_version": {
         "report_path": "validation/spatial/CERTIFICATION.json",
         "schema_version": "1.0",
-        "project_version": "1.0.0-rc.7"
+        "project_version": "1.0.0-rc.8"
       },
       "upstream_nodes": [
         "BNC-SP-001-TECH-ACCEPTANCE",
@@ -174,7 +174,7 @@
       "report_version": {
         "report_path": "validation/pseudobulk/REPORT.json",
         "schema_version": "bionexus.flagship-validation-report.v1",
-        "project_version": "1.0.0-rc.7"
+        "project_version": "1.0.0-rc.8"
       },
       "upstream_nodes": [
         "DATA-GSE96583",
@@ -221,7 +221,7 @@
       "report_version": {
         "report_path": "validation/pseudobulk/independent/REPORT.json",
         "schema_version": "bionexus.pseudobulk-independent-report.v1",
-        "project_version": "1.0.0-rc.7"
+        "project_version": "1.0.0-rc.8"
       },
       "upstream_nodes": [
         "SRC-PYDESEQ2-WRAPPER"
@@ -249,7 +249,7 @@
       },
       "source_files": {
         "src/bionexus/certification.py": "ca935d861b11165aa9309ab89e093fad4bc5272ed2423be97f7c290518799102",
-        "evals/pseudobulk_stress_test.py": "813e3d313cc62aa8b82cc19d879a5df95024ba2cb0558ed938b6e269a49c2c05"
+        "evals/pseudobulk_stress_test.py": "dd03106c9d806a78dd93f2731efc46a8e9627bc1e26064b26cc4c4871d34ce53"
       },
       "rules": [
         "BNS-010",
@@ -274,7 +274,7 @@
       "report_version": {
         "report_path": "validation/pseudobulk/CERTIFICATION.json",
         "schema_version": "1.0",
-        "project_version": "1.0.0-rc.7"
+        "project_version": "1.0.0-rc.8"
       },
       "upstream_nodes": [
         "BNC-PSEUDOBULK-GSE96583",
@@ -362,7 +362,7 @@
       },
       "source_files": {
         "src/bionexus/certification.py": "ca935d861b11165aa9309ab89e093fad4bc5272ed2423be97f7c290518799102",
-        "evals/annotation_stress_test.py": "b1eb95e89c1769ae8e4c66787060db11a3bf4f5e17baa3cabf111f8eddb8121d"
+        "evals/annotation_stress_test.py": "6c67131d368670929192d56a37722baf8b1cb434777bea81e7fb745098982b78"
       },
       "rules": [
         "BNS-010",
@@ -386,7 +386,7 @@
       "report_version": {
         "report_path": "validation/annotation/CERTIFICATION.json",
         "schema_version": "1.0",
-        "project_version": "1.0.0-rc.7"
+        "project_version": "1.0.0-rc.8"
       },
       "upstream_nodes": [
         "BNC-ANNOTATION-AZIMUTH-003",
