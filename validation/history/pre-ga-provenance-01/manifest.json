@@ -1,0 +1,19 @@
+{
+  "schema": "bionexus.validation-history.v1",
+  "source_commit": "b0419b30d2415d7a0218234f6b7a143175907d32",
+  "original_execution_authenticity": "NOT_ESTABLISHED",
+  "reason": "Preserved reports affected by metadata-only provenance synchronization; not current execution evidence.",
+  "reports": {
+    "validation/pseudobulk/REPORT.json": "b9ba7d90f0afa17aab194483b7b574757622b9422dc6effeaa8b7adfaaab0dd4",
+    "validation/pseudobulk/INFERENTIAL_STRESS_REPORT.json": "a0fe80fdd825f01480307f01cfeea0d60f7dc7fc6e9d2fb18a9d2472e8dd0071",
+    "validation/pseudobulk/CERTIFICATION.json": "4d2250f3d94d73c33e9e4cfd6586cbbc01661f40706ef40d4b47e6ac918c5192",
+    "validation/annotation/REPORT.json": "33b39b33b8bae29aedd450ae3bd230655578c2d4ccf93fd38691562edfcf4878",
+    "validation/annotation/INFERENTIAL_STRESS_REPORT.json": "a75dfe662986007e002484dc738a0b54b07c4a08ad09069182f599390697bc01",
+    "validation/annotation/CERTIFICATION.json": "e312172c1b3bb670e6829a25e10df490338e060c2a6411e5ee4bd27cb941f0cb",
+    "validation/spatial/REPORT.json": "c8c8f842ffe86b4302b6ebe493e4b0c830c1eca5f1f03e0e2a8a0974bcf46f14",
+    "validation/spatial/INFERENTIAL_STRESS_REPORT.json": "621aefedfbd516582bc452e137574b4e130b85372cae88a24b0ec77a8822a03a",
+    "validation/spatial/CERTIFICATION.json": "07cd0bbf685822db4fe5fddcc00c3d62f809f63d5f48f9d36773d0ed86d0c27b",
+    "validation/annotation/FLAGSHIP_REPORT.json": "397e2e70d570ad5ca0162a5ff5fa723cd1b8a61a224c55ec1cb031f18b611905",
+    "validation/spatial/FLAGSHIP_REPORT.json": "90f369cb8ea6447bef74f23471e25d27d8db887e2a003393b3fdaf30f6fead03"
+  }
+}

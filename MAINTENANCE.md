@@ -1,5 +1,11 @@
 # Maintenance and stable boundaries
 
+The exact Core 1.0 support surface is frozen in
+[`core-support.v1.json`](src/bionexus/data/core-support.v1.json), with acceptance
+criteria in [GA_CRITERIA.md](GA_CRITERIA.md). This scope freeze does not activate
+GA support. The machine-readable activation record is
+[`release/GA_ACTIVATION.json`](release/GA_ACTIVATION.json).
+
 Executable core quality gates, CLI compatibility and bounded DE requirement
 evidence are documented in [engineering quality](docs/engineering-quality.md).
 
@@ -14,7 +20,7 @@ the package. See [scope](docs/product-matrix.md) and
 ## Support scope
 
 `src/bionexus/versions.py` is the synchronized package version source. BioNexus
-is in the 1.0.0 release-candidate series (v1.0.0-rc.7 is a GA Closure Candidate
+is in the 1.0.0 release-candidate series (v1.0.0-rc.8 is a GA Closure Candidate
 representing software/API closure, not completed scientific validation). Maintenance
 of the current RC line is best effort. No GA/LTS window, paid SLA, staffed on-call
 rota or standing independent scientific council is established. Older pinned versions remain

@@ -234,7 +234,9 @@ def test_deseq2_with_verified_execution_record_achieves_pass(tmp_path):
     )
     assert result.overall_status == "ROBUST_PASS"
     assert result.passed
-    assert result.claim_boundary.overall_maturity == "ROBUST_POPULATION"
+    assert result.claim_boundary.overall_maturity == "EXPLORATORY_COHORT"
+    assert result.to_dict()["scientific_authorization"] == "NONE"
+    assert result.to_dict()["analysis_execution_verification"] == "NOT_PERFORMED"
     binding_check = next(c for c in result.checks if c.check_id == "analysis_execution_binding")
     assert binding_check.status == CheckStatus.ASSESSED
 

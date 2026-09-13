@@ -6,7 +6,7 @@
   "certification_effect": "NONE",
   "independent_assurance_status": "NOT_ASSESSED",
   "assessment_date": "2026-08-19",
-  "project_version": "1.0.0-rc.7",
+  "project_version": "1.0.0-rc.8",
   "standards": [
     {
       "standard_id": "reference_backend",
@@ -102,7 +102,7 @@
       "external_reviewer"
     ],
     "verdict": "VALIDATED",
-    "verdict_rationale": "12/14 criteria satisfied including all 6 core criteria plus real-data public-reference validation (GSE96583 executed, not skipped), parameter perturbation, and degradation tests. Per BNS-CF-001, VALIDATED requires all core criteria. CERTIFIED requires all 14 \u2014 2 remain unsatisfied and both are blocked on external resources (a second host provider for cross-host L2 audits; human domain reviewers), not on automatable work."
+    "verdict_rationale": "12/14 criteria satisfied including all 6 core criteria plus real-data public-reference validation (GSE96583 executed, not skipped), parameter perturbation, and degradation tests. Per BNS-CF-001, VALIDATED requires all core criteria. CERTIFIED requires all 14 — 2 remain unsatisfied and both are blocked on external resources (a second host provider for cross-host L2 audits; human domain reviewers), not on automatable work."
   },
   "evidence_bundle": {
     "validation_report": "validation/pseudobulk/REPORT.json",

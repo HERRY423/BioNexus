@@ -40,6 +40,7 @@ from bionexus.pseudobulk_warrant import (
     InferentialRegime,
     evaluate_pseudobulk_inferential_warrant,
 )
+from bionexus.validation_runs import record_validation_run
 from bionexus.validation_verifier import bind_validation_source_provenance
 from bionexus.versions import VERSION
 from evals.flagship_validation import FLAGSHIP_DATASETS
@@ -383,6 +384,7 @@ def test_dim7_claim_interception() -> Dict[str, Any]:
 # Main Runner
 # ==============================================================================
 
+@record_validation_run(REPO_ROOT)
 def main() -> int:
     print("=" * 75)
     print("BioNexus 7-Dimensional Empirical Stress Test Suite (scrna.pseudobulk_de)")

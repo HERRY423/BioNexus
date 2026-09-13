@@ -46,6 +46,7 @@ from bionexus.annotation_evidence import (
 )
 from bionexus.claim_checker import audit_prohibited_claims
 from bionexus.provenance import capture_execution_provenance, sha256_file
+from bionexus.validation_runs import record_validation_run
 from bionexus.validation_verifier import bind_validation_source_provenance
 from bionexus.versions import VERSION
 from evals.annotation_calibration_fixture import (
@@ -376,6 +377,7 @@ def test_dim10_claim_interception() -> Dict[str, Any]:
 # Main Runner
 # ==============================================================================
 
+@record_validation_run(REPO_ROOT)
 def main() -> int:
     print("=" * 75)
     print("BioNexus 10-Dimensional Cell Annotation Evidence Benchmark (Synthetic Technical Acceptance)")

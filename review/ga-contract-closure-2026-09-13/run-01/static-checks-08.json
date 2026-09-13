@@ -1,0 +1,65 @@
+[
+  {
+    "name": "ruff-08",
+    "command": [
+      "C:\\Users\\13264\\anaconda3\\python.exe",
+      "-m",
+      "ruff",
+      "check",
+      "src",
+      "scripts",
+      "evals",
+      "tests"
+    ],
+    "return_code": 0
+  },
+  {
+    "name": "mypy-08",
+    "command": [
+      "C:\\Users\\13264\\anaconda3\\python.exe",
+      "-m",
+      "mypy",
+      "--config-file",
+      "mypy.ini"
+    ],
+    "return_code": 0
+  },
+  {
+    "name": "registry-08",
+    "command": [
+      "C:\\Users\\13264\\anaconda3\\python.exe",
+      "scripts/registry_compiler.py",
+      "--check"
+    ],
+    "return_code": 0
+  },
+  {
+    "name": "endpoints-08",
+    "command": [
+      "C:\\Users\\13264\\anaconda3\\python.exe",
+      "scripts/registry_compiler.py",
+      "--validate-endpoints"
+    ],
+    "return_code": 0
+  },
+  {
+    "name": "diff-check-08",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "return_code": 0
+  },
+  {
+    "name": "coverage-gate-08",
+    "command": [
+      "C:\\Users\\13264\\anaconda3\\python.exe",
+      "scripts/check_coverage.py",
+      "C:\\Plugin\\BioNexus\\review\\ga-contract-closure-2026-09-13\\run-01\\core-08\\coverage.json",
+      "--baseline",
+      "quality/coverage-baseline.json"
+    ],
+    "return_code": 0
+  }
+]

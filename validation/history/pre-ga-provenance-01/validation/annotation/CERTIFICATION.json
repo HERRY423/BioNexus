@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "scrna.annotation_evidence",
+  "certification_level": "VALIDATED",
+  "assessment_authority": "INTERNAL_EVIDENCE_ASSESSMENT",
+  "certification_effect": "NONE",
+  "independent_assurance_status": "NOT_ASSESSED",
+  "assessment_date": "2026-08-28",
+  "project_version": "1.0.0-rc.7",
+  "standards": [
+    {
+      "standard_id": "reference_backend",
+      "satisfied": true,
+      "evidence": "validation/annotation/REPORT.json -> pipeline.backend_identity.state = CONFORMANT",
+      "notes": "Local deterministic evidence combiner (bionexus >= 0.9.0); entry point bionexus.annotation_evidence resolved"
+    },
+    {
+      "standard_id": "formal_input_contract",
+      "satisfied": true,
+      "evidence": "src/bionexus/abi.py -> abi.get_capability_abi('scrna.annotation_evidence')",
+      "notes": "Complete ABI input contract defined"
+    },
+    {
+      "standard_id": "invariants",
+      "satisfied": true,
+      "evidence": "src/bionexus/capabilities.py -> preconditions: annotation_source_recorded, negative_markers_evaluated; review/SCIENTIFIC_RULE_CATALOG.json -> INV-004..INV-008, INV-016",
+      "notes": "Machine-checkable preconditions; router traps: no_annotation_evidence, open_set_population"
+    },
+    {
+      "standard_id": "known_failure_modes",
+      "satisfied": true,
+      "evidence": "src/bionexus/failures.py -> BN-F003, BN-F011",
+      "notes": "Failure taxonomy modes linked with detection rules"
+    },
+    {
+      "standard_id": "positive_test",
+      "satisfied": true,
+      "evidence": "tests/unit/test_flagship_capabilities.py (SUPPORTED/TENTATIVE verdict ladder)",
+      "notes": "Verified execution producing expected scientific result"
+    },
+    {
+      "standard_id": "negative_test",
+      "satisfied": true,
+      "evidence": "tests/unit/test_flagship_capabilities.py -> BF-004 (no evidence source refused), BF-022 (open-set refused)",
+      "notes": "Invalid inputs and invalid requests refused deterministically"
+    },
+    {
+      "standard_id": "adversarial_test",
+      "satisfied": true,
+      "evidence": "evals/annotation_stress_test.py::test_dim10_claim_interception",
+      "notes": "Coercion audit verified: unverified cell-type overclaims intercepted deterministically"
+    },
+    {
+      "standard_id": "public_reference_dataset",
+      "satisfied": true,
+      "evidence": "BN-ANN-IV-001 executed two real public CITE-seq datasets; BN-ANN-IV-003 evaluated 148297 mapped cells against external Azimuth PBMC reference annotations",
+      "notes": "BN-ANN-IV-003 met its locked endpoints but was not blinded to label distributions and is capped at CANDIDATE_EXTERNAL_REFERENCE_NONBLINDED"
+    },
+    {
+      "standard_id": "independent_ground_truth",
+      "satisfied": false,
+      "evidence": "BN-ANN-IV-003 uses externally authored reference annotations; BN-ANN-IV-001 uses paired ADT anchors",
+      "notes": "Reference annotations and orthogonal ADT are not experimental biological ground truth; no approved calibration profile was activated"
+    },
+    {
+      "standard_id": "parameter_perturbation",
+      "satisfied": true,
+      "evidence": "evals/annotation_stress_test.py::test_dim9_resolution_perturbation (ARI stability >= 0.80)",
+      "notes": "Clustering resolution sweep (0.2 -> 1.5) audited with mean ARI stability >= 0.80"
+    },
+    {
+      "standard_id": "degradation_test",
+      "satisfied": true,
+      "evidence": "evals/annotation_stress_test.py::test_dim7_open_set_gating (missing evidence -> ABSTAIN)",
+      "notes": "Open-set novel populations and unevidenced inputs deterministically refuse execution"
+    },
+    {
+      "standard_id": "provenance_test",
+      "satisfied": true,
+      "evidence": "tests/unit/test_provenance_tracker.py, tests/unit/test_validation_artifacts.py",
+      "notes": "Provenance sidecar completeness and integrity tested"
+    },
+    {
+      "standard_id": "cross_host_test",
+      "satisfied": false,
+      "evidence": "cross-host/COMPARISON.json (hosts: claude-code + antigravity; 6 traps compared, all ABSTAIN, agreement_rate 1.0)",
+      "notes": "Headless COMPARISON.json cannot satisfy BNS-HC-007. Cross-host remains unsatisfied until the IVN external-lab quota is met with hash-verified studies on >= 2 distinct hosts."
+    },
+    {
+      "standard_id": "external_reviewer",
+      "satisfied": false,
+      "evidence": "review/SCIENTIFIC_REVIEW.json (framework created, reviewer-3 assigned to annotation)",
+      "notes": "Review framework established; reviewer-3 assigned. Blocked on external domain reviewer sign-off."
+    }
+  ],
+  "summary": {
+    "total_standards": 14,
+    "satisfied": 11,
+    "unsatisfied": 3,
+    "unsatisfied_list": [
+      "independent_ground_truth",
+      "cross_host_test",
+      "external_reviewer"
+    ],
+    "verdict": "VALIDATED",
+    "verdict_rationale": "11/14 criteria satisfied. BN-ANN-IV-001 was inconclusive, BN-ANN-IV-002 failed its locked input contract, and BN-ANN-IV-003 met all locked endpoints on external Azimuth PBMC reference annotations but was not blinded to label distributions. Independent biological ground truth, cross-host reproduction, external review, and any approved empirical warrant remain absent."
+  },
+  "evidence_bundle": {
+    "validation_report": "validation/annotation/REPORT.json",
+    "cross_host_report": "cross-host/COMPARISON.json",
+    "scientific_review": "review/SCIENTIFIC_REVIEW.json",
+    "scientific_rule_catalog": "review/SCIENTIFIC_RULE_CATALOG.json",
+    "certification_source": "src/bionexus/certification.py -> _EVIDENCE['scrna.annotation_evidence']"
+  }
+}

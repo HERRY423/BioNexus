@@ -1,0 +1,120 @@
+{
+  "schema": "bionexus.local-engineering-closure.v1",
+  "status": "LOCAL_ENGINEERING_VERIFIED",
+  "created_at": "2026-09-13T07:46:23.805723+00:00",
+  "base_commit": "b0419b30d2415d7a0218234f6b7a143175907d32",
+  "working_tree": "UNCOMMITTED",
+  "package_version": "1.0.0-rc.7 (locally modified; not the published rc7 wheel)",
+  "validation_source_snapshot_sha256": "7cd0af17f44e0ad1ca7f75914d6fd98eb553e10ff9458999ef0554d13c3bd85c",
+  "suites": {
+    "full_unit": {
+      "junit": "full-08.xml",
+      "passed": 1722,
+      "skipped": 7,
+      "failed_or_error": 0,
+      "skip_reasons": [
+        {
+          "case": "test_symlink_cannot_escape_bundle",
+          "reason": "Creating symlinks is unavailable on this host"
+        },
+        {
+          "case": "test_all_gates_pass_chain_exits_zero",
+          "reason": "Slurm gate-chain contract requires a POSIX bash environment"
+        },
+        {
+          "case": "test_refused_preflight_blocks_analysis_and_propagates_exit_one",
+          "reason": "Slurm gate-chain contract requires a POSIX bash environment"
+        },
+        {
+          "case": "test_missing_evidence_exit_two_propagates",
+          "reason": "Slurm gate-chain contract requires a POSIX bash environment"
+        },
+        {
+          "case": "test_failed_analysis_skips_verify_gate",
+          "reason": "Slurm gate-chain contract requires a POSIX bash environment"
+        },
+        {
+          "case": "test_rejected_results_fail_the_job_despite_good_compute",
+          "reason": "Slurm gate-chain contract requires a POSIX bash environment"
+        },
+        {
+          "case": "test_chain_script_requires_three_arguments",
+          "reason": "Slurm gate-chain contract requires a POSIX bash environment"
+        }
+      ]
+    },
+    "core": {
+      "junit": "core-08/tests.xml",
+      "passed": 427,
+      "skipped": 1,
+      "failed_or_error": 0,
+      "skip_reasons": [
+        {
+          "case": "test_symlink_cannot_escape_bundle",
+          "reason": "Creating symlinks is unavailable on this host"
+        }
+      ]
+    },
+    "de_requirements": {
+      "junit": "de-08/tests.xml",
+      "passed": 140,
+      "skipped": 0,
+      "failed_or_error": 0,
+      "skip_reasons": []
+    },
+    "installed_wheel": {
+      "junit": "wheel-tests-08.xml",
+      "passed": 118,
+      "skipped": 0,
+      "failed_or_error": 0,
+      "skip_reasons": []
+    }
+  },
+  "history": {
+    "preserved_reports": 11,
+    "archive_integrity": "VERIFIED",
+    "original_execution_authenticity": "NOT_ESTABLISHED"
+  },
+  "strict_flagship_verification": {
+    "passed": false,
+    "expected_rejection": true,
+    "errors": [
+      "REPORT.json: HISTORICAL_PROVENANCE_UNVERIFIED; requires a new execution",
+      "REPORT.json: CURRENT_EXECUTION_RECEIPT_MISSING; metadata changes are not execution",
+      "INFERENTIAL_STRESS_REPORT.json: HISTORICAL_PROVENANCE_UNVERIFIED; requires a new execution",
+      "INFERENTIAL_STRESS_REPORT.json: CURRENT_EXECUTION_RECEIPT_MISSING; metadata changes are not execution",
+      "scrna.pseudobulk_de REPORT.json source_snapshot_sha256 'fd57efc235ac92a128a8c0738e5477f38de03ec13f9df350f765c16b5c1634b3' != current validation source snapshot '7cd0af17f44e0ad1ca7f75914d6fd98eb553e10ff9458999ef0554d13c3bd85c'",
+      "scrna.pseudobulk_de INFERENTIAL_STRESS_REPORT.json source_snapshot_sha256 'fd57efc235ac92a128a8c0738e5477f38de03ec13f9df350f765c16b5c1634b3' != current validation source snapshot '7cd0af17f44e0ad1ca7f75914d6fd98eb553e10ff9458999ef0554d13c3bd85c'",
+      "REPORT.json: HISTORICAL_PROVENANCE_UNVERIFIED; requires a new execution",
+      "REPORT.json: CURRENT_EXECUTION_RECEIPT_MISSING; metadata changes are not execution",
+      "INFERENTIAL_STRESS_REPORT.json: HISTORICAL_PROVENANCE_UNVERIFIED; requires a new execution",
+      "INFERENTIAL_STRESS_REPORT.json: CURRENT_EXECUTION_RECEIPT_MISSING; metadata changes are not execution",
+      "scrna.annotation_evidence REPORT.json source_snapshot_sha256 'fd57efc235ac92a128a8c0738e5477f38de03ec13f9df350f765c16b5c1634b3' != current validation source snapshot '7cd0af17f44e0ad1ca7f75914d6fd98eb553e10ff9458999ef0554d13c3bd85c'",
+      "scrna.annotation_evidence INFERENTIAL_STRESS_REPORT.json source_snapshot_sha256 'fd57efc235ac92a128a8c0738e5477f38de03ec13f9df350f765c16b5c1634b3' != current validation source snapshot '7cd0af17f44e0ad1ca7f75914d6fd98eb553e10ff9458999ef0554d13c3bd85c'",
+      "REPORT.json: HISTORICAL_PROVENANCE_UNVERIFIED; requires a new execution",
+      "REPORT.json: CURRENT_EXECUTION_RECEIPT_MISSING; metadata changes are not execution",
+      "INFERENTIAL_STRESS_REPORT.json: HISTORICAL_PROVENANCE_UNVERIFIED; requires a new execution",
+      "INFERENTIAL_STRESS_REPORT.json: CURRENT_EXECUTION_RECEIPT_MISSING; metadata changes are not execution",
+      "spatial.inference_validity REPORT.json source_snapshot_sha256 'fd57efc235ac92a128a8c0738e5477f38de03ec13f9df350f765c16b5c1634b3' != current validation source snapshot '7cd0af17f44e0ad1ca7f75914d6fd98eb553e10ff9458999ef0554d13c3bd85c'",
+      "spatial.inference_validity INFERENTIAL_STRESS_REPORT.json source_snapshot_sha256 'fd57efc235ac92a128a8c0738e5477f38de03ec13f9df350f765c16b5c1634b3' != current validation source snapshot '7cd0af17f44e0ad1ca7f75914d6fd98eb553e10ff9458999ef0554d13c3bd85c'",
+      "Evidence Index integrity error: BNC-SPATIAL-CAPABILITY-VALIDATED source file hash mismatch for evals/spatial_stress_test.py: recorded 1120498e1d30295300935c88d9275bd51a6cdac10f17d2867768ae8bf818f84e, observed b8a6e1a31584eec6c22ea7c77329b0c872441400fead53bbd31aeceb9a532d73",
+      "Evidence Index integrity error: BNC-PSEUDOBULK-CAPABILITY-VALIDATED source file hash mismatch for evals/pseudobulk_stress_test.py: recorded 813e3d313cc62aa8b82cc19d879a5df95024ba2cb0558ed938b6e269a49c2c05, observed dd03106c9d806a78dd93f2731efc46a8e9627bc1e26064b26cc4c4871d34ce53",
+      "Evidence Index integrity error: BNC-ANNOTATION-CAPABILITY-VALIDATED source file hash mismatch for evals/annotation_stress_test.py: recorded b1eb95e89c1769ae8e4c66787060db11a3bf4f5e17baa3cabf111f8eddb8121d, observed 6c67131d368670929192d56a37722baf8b1cb434777bea81e7fb745098982b78"
+    ]
+  },
+  "support_scope": "RC_SCOPE_VALID",
+  "ga_activation": "BLOCKED",
+  "known_severe_cases": "Recorded counterexamples closed by executable regressions; not proof of absence of unknown defects",
+  "full_suite_selection": "tests/unit -m 'not flagship_data' --ignore=tests/unit/test_scvi_smoke.py (existing CI selection; one deselected case)",
+  "wheel_environment": "Isolated import path and local wheel, using pre-existing host dependencies; not clean-machine installation",
+  "scientific_authorization": "NONE",
+  "independent_validation": "NOT_ESTABLISHED",
+  "current_hosted_ci": "NOT_RUN",
+  "published_release": "NOT_PERFORMED",
+  "limitations": [
+    "Historical flagship reports and source-bound evidence index remain stale; actual scientific reruns and reviewed index updates are still required.",
+    "Named maintainer support acceptance and external review are not created by this repair.",
+    "Local capsules are not authenticated producers, independently anchored logs or scientific certification.",
+    "Early collection attempts stalled in Windows Numba cache creation; full-05 passed after writable cache configuration. full-07 was stopped after a final contract correction. Only final -08 outputs attest this final candidate."
+  ]
+}

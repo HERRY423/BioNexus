@@ -1,0 +1,10 @@
+{
+  "schema": "bionexus.release-contract-check.v1",
+  "version": "1.0.0",
+  "status": "BLOCKED",
+  "errors": [
+    "GA support has not been activated by named maintainers"
+  ],
+  "identity_authentication": "NOT_PERFORMED",
+  "scientific_authorization": "NONE"
+}

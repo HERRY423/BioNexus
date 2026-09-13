@@ -1,0 +1,13 @@
+{
+  "schema": "bionexus.ga-activation.v1",
+  "status": "PROPOSED",
+  "version": null,
+  "release_date": null,
+  "support_end_date": null,
+  "scope_sha256": null,
+  "maintainers": [],
+  "release_security_contact": null,
+  "verification_records": [],
+  "limitations": ["Independent scientific validation and external laboratory benefit are not established."],
+  "scientific_authorization": "NONE"
+}

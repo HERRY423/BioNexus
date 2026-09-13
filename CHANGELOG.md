@@ -5,6 +5,26 @@ All notable changes to **BioNexus** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-rc.8] - 2026-09-13
+
+### 🎯 Deliverable Release Candidate (Traceable Evidence, Strict Verification & False Rejection Closure)
+
+#### 🛡️ Added & Hardened
+- **Claim Boundary Accuracy & False Rejection Prevention**:
+  - Refined focal gene extraction and clause splitting in `_audit_claim_vs_table_facts` to support multilingual and unspaced natural language assertions (e.g., Chinese punctuation and single-gene statements) without false rejections.
+  - Preserved strict fail-closed gates against multi-gene ambiguity, second-clause contradictions, non-finite/zero directional effects, and unwarranted population extrapolation.
+  - Added 41 executable regression tests in `tests/unit/test_ga_semantic_boundaries.py`.
+- **Full-Cycle Verification & Immutable Run Capsules**:
+  - Executed fresh runs across pseudobulk, annotation, and spatial benchmarks with automatic capsule preservation in `validation/runs/<uuid>/`.
+  - Recompiled `validation/EVIDENCE_INDEX.json` from scratch with live source snapshots and report hashes, eliminating stale bindings without hash manipulation.
+- **Enhanced GA Acceptance Gating (`release_contract.py`)**:
+  - Implemented automated verification of required acceptance categories completeness (`core_quality`, `de_contract`, `installed_wheel`, `static_checks`, `validation_history`, `evidence_index`).
+  - Added strict pass status verification and candidate parity validation (commit SHA, version, source snapshot).
+  - Preserved explicit human sign-off responsibility: `identity_authentication: "NOT_PERFORMED"`, `maintainer_signoff_verification: "MANUAL_INSPECTION_REQUIRED"`.
+- **Legacy Bundle Backward Compatibility**:
+  - Confirmed legacy DE bundle reader stability (`LEGACY_LIMITED` status for historical v1 bundles), ensuring zero regressions for downstream consumers.
+  - Published re-review advisory in `docs/releases/rc8-re-review-advisory.md` for historical reports impacted by tightened rules.
+
 ---
 
 ## [1.0.0-rc.7] - 2026-09-12

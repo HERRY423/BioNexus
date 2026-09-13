@@ -163,3 +163,6 @@ review/**/tmp/
 review/**/wheel-install*/
 review/**/dist*/
 review/**/numba-cache/
+review/**/numba-cache-*/
+review/**/mpl-*/
+validation/runs/

@@ -59,6 +59,7 @@ from bionexus.spatial_alternative_battery import (
 from bionexus.spatial_inference import (
     assess_spatial_inference,
 )
+from bionexus.validation_runs import record_validation_run
 from bionexus.validation_verifier import bind_validation_source_provenance
 from bionexus.versions import VERSION
 
@@ -503,6 +504,7 @@ def test_dim11_executable_battery() -> Dict[str, Any]:
 # Main Runner
 # ==============================================================================
 
+@record_validation_run(REPO_ROOT)
 def main() -> int:
     print("=" * 75)
     print("BioNexus 11-Dimensional Spatial Validity & Confounder Benchmark (Synthetic Technical Acceptance)")

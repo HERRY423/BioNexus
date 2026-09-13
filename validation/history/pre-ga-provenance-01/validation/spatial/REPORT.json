@@ -1,0 +1,145 @@
+{
+  "capability": "spatial.inference_validity",
+  "dataset": {
+    "name": "xenium_spatial_truth",
+    "version": "BN-SP-IV-001",
+    "dataset_track": "real_instrument_technical_acceptance",
+    "accession": "10x Genomics official Xenium XOA v4 tiny human kidney output bundle",
+    "checksum_sha256": {
+      "DATASET_MANIFEST.json": "e56d177bd12a2284dce782fb3e49a614eb547332296cbf43ed5932faf47eec80",
+      "Xenium_V1_Protein_Human_Kidney_tiny_outs.zip": "abd7e8f7fd047dcc6afdb1e9eece90d4533d3ead053c6f05c482be050bdf79d2"
+    }
+  },
+  "pipeline": {
+    "version": "1.0.0-rc.7",
+    "backend_identity": {
+      "capability_id": "spatial.inference_validity",
+      "track": "canonical",
+      "claimed_backend": "local deterministic alternative-explanation tester",
+      "observed_backend": "bionexus",
+      "entry_points_declared": [
+        "bionexus.spatial_alternative_battery",
+        "bionexus.spatial_inference"
+      ],
+      "entry_points_resolved": [
+        "bionexus.spatial_alternative_battery",
+        "bionexus.spatial_inference"
+      ],
+      "entry_points_missing": [],
+      "version": "1.0.0-rc.5",
+      "execution_fingerprint": "ed14c194ffc61d41",
+      "fallback": false,
+      "state": "CONFORMANT",
+      "action": "RUN PERMITTED (identity)",
+      "failure_mode_ids": [],
+      "reason": "declared_backend == observed_backend: 'local deterministic alternative-explanation tester' (distribution 'bionexus', version 1.0.0-rc.7, entry points 2/2 resolved, fallback False)."
+    },
+    "provenance": {
+      "data_source": "10x Genomics official Xenium XOA v4 tiny human kidney output bundle",
+      "download_date": "2026-08-28",
+      "commit_sha": "11c8132a1eb820fe4e80854131e111ecf5e9eb53",
+      "git_dirty": false,
+      "environment_lockfile_hashes": {
+        "pyproject.toml": "156d1e950587d37ad1612d2ac721f9947e3e30d310fb0bd4c21c473a834f9a25",
+        "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
+        "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
+      },
+      "command": [
+        "scripts/run_flagship_validation.py"
+      ],
+      "command_str": "scripts/run_flagship_validation.py",
+      "generator_version": "1.0.0-rc.7",
+      "python_version": "3.13.9",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "timestamp": "2026-09-06T15:34:15.870204+00:00",
+      "extra_metadata": {
+        "capability": "spatial.inference_validity",
+        "dataset_id": "xenium_spatial_truth",
+        "present": true
+      },
+      "repository_dirty_at_execution": false,
+      "validation_source_dirty": false,
+      "source_snapshot_sha256": "fd57efc235ac92a128a8c0738e5477f38de03ec13f9df350f765c16b5c1634b3"
+    }
+  },
+  "metrics": [
+    {
+      "name": "segmentation_leakage",
+      "expected": "preregistered directional/effect-size criterion",
+      "observed": {
+        "baseline_mean_neighbor_cosine": 0.3668729920866186,
+        "injected_mean_neighbor_cosine": 0.6738740257641723,
+        "delta": 0.3070010336775537,
+        "passed": true
+      },
+      "result": "pass"
+    },
+    {
+      "name": "cell_size_bias",
+      "expected": "preregistered directional/effect-size criterion",
+      "observed": {
+        "baseline_spearman": 0.7884956504816625,
+        "injected_spearman": 0.9894797175100387,
+        "delta": 0.20098406702837623,
+        "threshold": 0.2,
+        "passed": true
+      },
+      "result": "pass"
+    },
+    {
+      "name": "transcript_density_bias",
+      "expected": "preregistered directional/effect-size criterion",
+      "observed": {
+        "baseline_spearman": -0.2852150519417895,
+        "injected_spearman": 0.6012544955197201,
+        "delta": 0.8864695474615096,
+        "threshold": 0.2,
+        "passed": true
+      },
+      "result": "pass"
+    },
+    {
+      "name": "coordinate_permutation",
+      "expected": "preregistered directional/effect-size criterion",
+      "observed": {
+        "coordinate_sha256_changed": true,
+        "expression_sha256_preserved": true,
+        "passed": true
+      },
+      "result": "pass"
+    },
+    {
+      "name": "fov_confounding",
+      "expected": "preregistered directional/effect-size criterion",
+      "observed": {
+        "observed_fovs": [
+          "Y2",
+          "Z2"
+        ],
+        "cramers_v": 1.0,
+        "threshold": 1.0,
+        "passed": true
+      },
+      "result": "pass"
+    },
+    {
+      "name": "radius_sensitivity_claim_ceiling",
+      "expected": "FRAGILE when radius sweep is unexecuted",
+      "observed": "FRAGILE",
+      "result": "pass"
+    }
+  ],
+  "limitations": [
+    "Authentic 10x Xenium XOA v4 bytes were executed and the official archive MD5 was verified.",
+    "The vendor states this tiny three-patch/two-FOV dataset is for format testing and not biological conclusions.",
+    "BN-SP-IV-001 retained a negative result because the cell-size-bias effect did not meet its locked threshold."
+  ],
+  "timestamp": "2026-09-06T15:34:16.005725+00:00",
+  "evidence_files": [
+    "validation\\spatial\\studies\\BN-SP-IV-001\\evidence\\cell_diagnostics.csv",
+    "validation\\spatial\\studies\\BN-SP-IV-001\\PREREGISTRATION.json",
+    "validation\\spatial\\studies\\BN-SP-IV-001\\PREREGISTRATION_LOCK.json",
+    "validation\\spatial\\studies\\BN-SP-IV-001\\REPORT.json"
+  ],
+  "status": "pass"
+}

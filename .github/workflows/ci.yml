@@ -33,10 +33,11 @@ jobs:
         run: |
           python scripts/registry_compiler.py --check
           python scripts/registry_compiler.py --validate-endpoints
-      - name: Check Flagship Rollup Provenance Drift
+      - name: Verify Historical Bytes Without Rebinding Execution
         run: |
           python scripts/sync_flagship_reports.py
           git diff --exit-code -- validation
+          python scripts/check_release_contract.py
 
   reliability-quality:
     name: Core Types, Branch Coverage & DE Requirement Evidence
@@ -204,6 +205,13 @@ jobs:
           python scripts/run_flagship_validation.py
           python scripts/verify_validation_artifacts.py
           pytest tests/unit/test_validation_verifier.py -v
+      - name: Preserve New and Historical Validation Run Capsules
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-run-capsules
+          path: validation/runs/
+          if-no-files-found: error
       - name: Run Strict Full Benchmark Eval (Skips Turn Red)
         env:
           BIONEXUS_EVAL_STRICT: "1"

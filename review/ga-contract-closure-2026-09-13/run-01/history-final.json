@@ -1,0 +1,76 @@
+{
+  "schema": "bionexus.validation-history-assessment.v1",
+  "archive_integrity": "VERIFIED",
+  "errors": [],
+  "records": [
+    {
+      "path": "validation/pseudobulk/REPORT.json",
+      "archived_sha256": "b9ba7d90f0afa17aab194483b7b574757622b9422dc6effeaa8b7adfaaab0dd4",
+      "current_sha256": "b9ba7d90f0afa17aab194483b7b574757622b9422dc6effeaa8b7adfaaab0dd4",
+      "relationship": "PRESERVED_LEGACY"
+    },
+    {
+      "path": "validation/pseudobulk/INFERENTIAL_STRESS_REPORT.json",
+      "archived_sha256": "a0fe80fdd825f01480307f01cfeea0d60f7dc7fc6e9d2fb18a9d2472e8dd0071",
+      "current_sha256": "a0fe80fdd825f01480307f01cfeea0d60f7dc7fc6e9d2fb18a9d2472e8dd0071",
+      "relationship": "PRESERVED_LEGACY"
+    },
+    {
+      "path": "validation/pseudobulk/CERTIFICATION.json",
+      "archived_sha256": "4d2250f3d94d73c33e9e4cfd6586cbbc01661f40706ef40d4b47e6ac918c5192",
+      "current_sha256": "4d2250f3d94d73c33e9e4cfd6586cbbc01661f40706ef40d4b47e6ac918c5192",
+      "relationship": "PRESERVED_LEGACY"
+    },
+    {
+      "path": "validation/annotation/REPORT.json",
+      "archived_sha256": "33b39b33b8bae29aedd450ae3bd230655578c2d4ccf93fd38691562edfcf4878",
+      "current_sha256": "33b39b33b8bae29aedd450ae3bd230655578c2d4ccf93fd38691562edfcf4878",
+      "relationship": "PRESERVED_LEGACY"
+    },
+    {
+      "path": "validation/annotation/INFERENTIAL_STRESS_REPORT.json",
+      "archived_sha256": "a75dfe662986007e002484dc738a0b54b07c4a08ad09069182f599390697bc01",
+      "current_sha256": "a75dfe662986007e002484dc738a0b54b07c4a08ad09069182f599390697bc01",
+      "relationship": "PRESERVED_LEGACY"
+    },
+    {
+      "path": "validation/annotation/CERTIFICATION.json",
+      "archived_sha256": "e312172c1b3bb670e6829a25e10df490338e060c2a6411e5ee4bd27cb941f0cb",
+      "current_sha256": "e312172c1b3bb670e6829a25e10df490338e060c2a6411e5ee4bd27cb941f0cb",
+      "relationship": "PRESERVED_LEGACY"
+    },
+    {
+      "path": "validation/spatial/REPORT.json",
+      "archived_sha256": "c8c8f842ffe86b4302b6ebe493e4b0c830c1eca5f1f03e0e2a8a0974bcf46f14",
+      "current_sha256": "c8c8f842ffe86b4302b6ebe493e4b0c830c1eca5f1f03e0e2a8a0974bcf46f14",
+      "relationship": "PRESERVED_LEGACY"
+    },
+    {
+      "path": "validation/spatial/INFERENTIAL_STRESS_REPORT.json",
+      "archived_sha256": "621aefedfbd516582bc452e137574b4e130b85372cae88a24b0ec77a8822a03a",
+      "current_sha256": "621aefedfbd516582bc452e137574b4e130b85372cae88a24b0ec77a8822a03a",
+      "relationship": "PRESERVED_LEGACY"
+    },
+    {
+      "path": "validation/spatial/CERTIFICATION.json",
+      "archived_sha256": "07cd0bbf685822db4fe5fddcc00c3d62f809f63d5f48f9d36773d0ed86d0c27b",
+      "current_sha256": "07cd0bbf685822db4fe5fddcc00c3d62f809f63d5f48f9d36773d0ed86d0c27b",
+      "relationship": "PRESERVED_LEGACY"
+    },
+    {
+      "path": "validation/annotation/FLAGSHIP_REPORT.json",
+      "archived_sha256": "397e2e70d570ad5ca0162a5ff5fa723cd1b8a61a224c55ec1cb031f18b611905",
+      "current_sha256": "397e2e70d570ad5ca0162a5ff5fa723cd1b8a61a224c55ec1cb031f18b611905",
+      "relationship": "PRESERVED_LEGACY"
+    },
+    {
+      "path": "validation/spatial/FLAGSHIP_REPORT.json",
+      "archived_sha256": "90f369cb8ea6447bef74f23471e25d27d8db887e2a003393b3fdaf30f6fead03",
+      "current_sha256": "90f369cb8ea6447bef74f23471e25d27d8db887e2a003393b3fdaf30f6fead03",
+      "relationship": "PRESERVED_LEGACY"
+    }
+  ],
+  "original_execution_authenticity": "NOT_ESTABLISHED",
+  "current_execution_verification": "NOT_PERFORMED",
+  "scientific_authorization": "NONE"
+}

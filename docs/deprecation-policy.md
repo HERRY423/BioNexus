@@ -2,6 +2,13 @@
 
 This document formalizes the **Deprecation Lifecycle**, **Sunset Timelines**, and **Removal Rules** for skills, capabilities, APIs, and client configurations in BioNexus.
 
+For Core 1.0, the [frozen supported surface](../src/bionexus/data/core-support.v1.json)
+defines which interfaces receive stable support. [MAINTENANCE.md](../MAINTENANCE.md)
+controls the 12-month support window and 90-day prior-minor critical backports.
+The six-month deprecation notice below is a compatibility/removal requirement,
+not a six-month backport promise or an extension past the published EOL.
+The skill inventory below is not a list of GA-certified capabilities.
+
 ---
 
 ## 🏛️ 1. The 3-Phase Deprecation Lifecycle

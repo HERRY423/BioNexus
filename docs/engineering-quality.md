@@ -2,6 +2,8 @@
 
 本轮维护按三个阶段推进：建立实测门禁、按职责拆分 CLI、为受支持的 DE 核心要求补齐可执行映射。它不改变 BNS 规范的成熟度，也不授予科学认证或替代具名科学负责人的判断。
 
+Core GA 前补充门禁见 [GA_CRITERIA.md](../GA_CRITERIA.md)：报告历史只读核验、维护激活校验，以及声明异常、复合声明、重复基因行、缺失方向效应值和总体外推的反例回归。历史记录与新执行的关系见 [validation-history.md](validation-history.md)。
+
 ## 1. 核心类型与覆盖率
 
 从仓库根目录执行：
@@ -13,7 +15,7 @@ python scripts/run_core_quality.py --output .quality/local-01
 
 输出目录必须是新目录；再次运行使用 `local-02` 等新路径。所需开发依赖在 `pyproject.toml` 的 `dev` extra 中。
 
-`mypy.ini` 对 18 个模块启用函数签名和函数体检查：contracts、evidence_model、warrant、claim_semantics、de_audit、de_bundle、integrity、lab_policy、research_purpose、rule_classification、rule_provenance、researcher_override、pseudobulk_warrant、de_pilot、pilot_costs、spec_registry、contract_traceability、de_audit_extract。内部导入会被跟踪，但只有显式列入模块的诊断构成门禁；第三方库实现和未列入的内部模块不在完整检查承诺内。`no_site_packages` 使 Python 3.10 目标检查不受本机较新科学库语法影响，代价是未校验第三方库的类型契约。这里没有用全局忽略内部错误来通过检查。
+`mypy.ini` 对 21 个模块启用函数签名和函数体检查：contracts、evidence_model、warrant、claim_semantics、de_audit、de_bundle、integrity、lab_policy、research_purpose、rule_classification、rule_provenance、researcher_override、pseudobulk_warrant、de_pilot、pilot_costs、spec_registry、contract_traceability、de_audit_extract，以及本轮新增的 validation_history、validation_runs、release_contract。内部导入会被跟踪，但只有显式列入模块的诊断构成门禁；第三方库实现和未列入的内部模块不在完整检查承诺内。`no_site_packages` 使 Python 3.10 目标检查不受本机较新科学库语法影响，代价是未校验第三方库的类型契约。这里没有用全局忽略内部错误来通过检查。
 
 覆盖率测试清单在 `quality/core-tests.json`，固定 Hypothesis 随机种子为 20260911。该配置只依赖核心运行时，不要求安装 scVI、Scanpy 等可选科学后端。完整测试矩阵仍独立保留。
 

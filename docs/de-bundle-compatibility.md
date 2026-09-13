@@ -3,8 +3,9 @@
 This is the bounded consumer contract for the first DE shadow-review product.
 It covers file transport and interpretation, not scientific validity. The
 project remains a release candidate; this contract does not declare GA status.
-The integrity reader and additive writer fields are currently Unreleased in the
-development checkout, not features already shipped in the public rc.5 artifact.
+The integrity reader and additive writer fields are included in the rc7 line.
+Core 1.0 support activation follows the frozen scope and GA criteria; an RC
+reader passing its checks does not activate that support commitment.
 
 ## Supported entry points
 
@@ -20,6 +21,13 @@ Existing `audit-de` flags/aliases and exit codes remain: 0 means the audit engin
 returned ROBUST_PASS; 1 means a non-pass or execution error. Those are not
 scientific authorization. Internal Python APIs, rule wording and thresholds
 remain subject to scientific correction, with changes disclosed in release notes.
+
+The current correction preserves ROBUST_PASS and exit 0 as the legacy bounded
+audit result. It no longer promotes receipt consistency to ROBUST_POPULATION:
+the human-facing boundary is EXPLORATORY_COHORT, and additive authority fields
+state scientific_authorization=NONE, producer_authentication=NOT_ESTABLISHED,
+analysis_execution_verification=NOT_PERFORMED. Old bundles remain unchanged;
+consumers must not interpret their legacy wording as newly validated evidence.
 
 ## Reader status and exit codes
 

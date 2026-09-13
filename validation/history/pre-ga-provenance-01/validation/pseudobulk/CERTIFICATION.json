@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "scrna.pseudobulk_de",
+  "certification_level": "VALIDATED",
+  "assessment_authority": "INTERNAL_EVIDENCE_ASSESSMENT",
+  "certification_effect": "NONE",
+  "independent_assurance_status": "NOT_ASSESSED",
+  "assessment_date": "2026-08-19",
+  "project_version": "1.0.0-rc.7",
+  "standards": [
+    {
+      "standard_id": "reference_backend",
+      "satisfied": true,
+      "evidence": "validation/pseudobulk/REPORT.json -> pipeline.backend_identity.state = CONFORMANT",
+      "notes": "PyDESeq2 >= 0.4.0 (bionexus-reliability[deseq]); ABI execution reference; observed backend pydeseq2 v0.5.4, 2/2 entry points resolved"
+    },
+    {
+      "standard_id": "formal_input_contract",
+      "satisfied": true,
+      "evidence": "src/bionexus/abi.py -> abi.get_capability_abi('scrna.pseudobulk_de')",
+      "notes": "raw_counts only; sample_design required"
+    },
+    {
+      "standard_id": "invariants",
+      "satisfied": true,
+      "evidence": "src/bionexus/capabilities.py -> preconditions: min_replicates, raw_integer_counts; review/SCIENTIFIC_RULE_CATALOG.json -> INV-001, INV-003, INV-014",
+      "notes": "Machine-checkable preconditions recorded in capabilities and invariants catalog"
+    },
+    {
+      "standard_id": "known_failure_modes",
+      "satisfied": true,
+      "evidence": "src/bionexus/failures.py -> BN-F001, BN-F002, BN-F006, BN-F011, BN-F012",
+      "notes": "Failure taxonomy modes linked with detection rules"
+    },
+    {
+      "standard_id": "positive_test",
+      "satisfied": true,
+      "evidence": "evals/datasets/ -> l3-outcome-pseudobulk-deseq-003 (planted DEG g0 recovered)",
+      "notes": "Full-extras CI matrix; verified execution producing expected scientific result"
+    },
+    {
+      "standard_id": "negative_test",
+      "satisfied": true,
+      "evidence": "evals/datasets/ -> refuse-pseudorep-001/002, refuse-normalized-counts-001",
+      "notes": "Invalid inputs and invalid requests refused deterministically"
+    },
+    {
+      "standard_id": "adversarial_test",
+      "satisfied": true,
+      "evidence": "evals/datasets/ -> adv-force-pseudorep-001, adv-log-as-raw-001",
+      "notes": "Coercion / jailbreak attempts to bypass invariants blocked"
+    },
+    {
+      "standard_id": "public_reference_dataset",
+      "satisfied": true,
+      "evidence": "validation/pseudobulk/REPORT.json -> dataset.accession = GEO GSE96583 (Kang et al. 2018, Nat Biotechnol doi:10.1038/nbt.4042); status PASS, published_support_fraction 0.66 >= 0.50",
+      "notes": "Executed on real data: donor-aware pseudobulk DE (PyDESeq2 0.5.4) on 13487 singlets / 8 donors / 2 conditions built from SeuratData ifnb counts + GEO GSE96583 donor metadata; top-100 DE calls validated against an independent published-knowledge truth set (MSigDB Hallmark IFN-alpha/gamma + QuickGO curated GO annotations). Evidence CSVs in validation/pseudobulk/evidence/."
+    },
+    {
+      "standard_id": "independent_ground_truth",
+      "satisfied": true,
+      "evidence": "evals/datasets/ -> Planted DEG with known fold change (truth independent of PyDESeq2); flagship truth = published-knowledge membership set independent of the DE implementation",
+      "notes": "Planted DEG with known fold change; ground truth independent of the implementation under test. Flagship truth set assembled only from citable published sources (Enrichr/MSigDB, EBI QuickGO), never from BioNexus computation."
+    },
+    {
+      "standard_id": "parameter_perturbation",
+      "satisfied": true,
+      "evidence": "evals/datasets/l3_scientific_outcomes.yaml -> l3-outcome-pseudobulk-stability-005 (passed)",
+      "notes": "Declared leave-one-out sample-composition perturbation grid (full + 3 dropped-sample grids); significant-DEG call sets audited with audit_parameter_stability (Jaccard >= 0.80 required)."
+    },
+    {
+      "standard_id": "degradation_test",
+      "satisfied": true,
+      "evidence": "evals/datasets/backend_failure.yaml -> backend-pydeseq2-missing-001 (passed)",
+      "notes": "Deterministic backend-absence simulation (simulate_missing_backend) forces pydeseq2 to probe as missing; canonical capability refuses (ABSTAIN, backend violation, pip-install remedy) even under allow_degraded consent, per BNS-AD-006/007. Case is environment-independent."
+    },
+    {
+      "standard_id": "provenance_test",
+      "satisfied": true,
+      "evidence": "tests/unit/test_provenance_tracker.py, tests/unit/test_artifacts.py",
+      "notes": "Provenance sidecar completeness and integrity tested"
+    },
+    {
+      "standard_id": "cross_host_test",
+      "satisfied": false,
+      "evidence": "cross-host/COMPARISON.json (hosts: claude-code + antigravity; 6 traps compared, all ABSTAIN, agreement_rate 1.0)",
+      "notes": "Headless COMPARISON.json cannot satisfy BNS-HC-007. Cross-host remains unsatisfied until the IVN external-lab quota is met with hash-verified studies on >= 2 distinct hosts."
+    },
+    {
+      "standard_id": "external_reviewer",
+      "satisfied": false,
+      "evidence": "review/SCIENTIFIC_REVIEW.json (framework created, reviewers [PENDING])",
+      "notes": "Scientific review framework established with 3 reviewer slots (single-cell, spatial, biostatistics). However, all reviewers are [PENDING] and no review cases have been conducted (status: 'framework_created_pending_review'). Requires human domain reviewers; not automatable. Minimum supplement: identify and invite qualified independent reviewers, conduct review of pseudobulk invariants and eval cases, record findings."
+    }
+  ],
+  "summary": {
+    "total_standards": 14,
+    "satisfied": 12,
+    "unsatisfied": 2,
+    "unsatisfied_list": [
+      "cross_host_test",
+      "external_reviewer"
+    ],
+    "verdict": "VALIDATED",
+    "verdict_rationale": "12/14 criteria satisfied including all 6 core criteria plus real-data public-reference validation (GSE96583 executed, not skipped), parameter perturbation, and degradation tests. Per BNS-CF-001, VALIDATED requires all core criteria. CERTIFIED requires all 14 \u2014 2 remain unsatisfied and both are blocked on external resources (a second host provider for cross-host L2 audits; human domain reviewers), not on automatable work."
+  },
+  "evidence_bundle": {
+    "validation_report": "validation/pseudobulk/REPORT.json",
+    "cross_host_report": "cross-host/COMPARISON.json",
+    "scientific_review": "review/SCIENTIFIC_REVIEW.json",
+    "scientific_rule_catalog": "review/SCIENTIFIC_RULE_CATALOG.json",
+    "certification_source": "src/bionexus/certification.py -> _EVIDENCE['scrna.pseudobulk_de']"
+  },
+  "certification_roadmap": {
+    "next_milestones": [
+      {
+        "criterion": "cross_host_test",
+        "effort": "Obtain provider API keys (or a second local host CLI); execute L2 claim audits on codex + claude-code; populate cross-host/COMPARISON.json with per-trap results",
+        "estimated_files": [
+          "cross-host/COMPARISON.json (updated)"
+        ]
+      },
+      {
+        "criterion": "external_reviewer",
+        "effort": "Invite 1+ independent scientific reviewers; conduct review of pseudobulk invariants and eval outcomes; record findings in SCIENTIFIC_REVIEW.json",
+        "estimated_files": [
+          "review/SCIENTIFIC_REVIEW.json (updated)"
+        ]
+      }
+    ]
+  }
+}

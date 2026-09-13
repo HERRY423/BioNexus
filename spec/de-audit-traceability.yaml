@@ -101,6 +101,8 @@ requirements:
     - tests/unit/test_de_audit.py::test_deseq2_with_verified_execution_record_achieves_pass
     - tests/unit/test_rc6_p0_boundaries.py::test_complete_receipt_has_bounded_consistency_summary
     - tests/unit/test_rc6_p0_boundaries.py::test_honest_negative_or_scoped_limitation_remains_usable
+    - tests/unit/test_ga_semantic_boundaries.py::test_supported_clauses_remain_usable
+    - tests/unit/test_ga_semantic_boundaries.py::test_successful_consistency_audit_does_not_upgrade_evidence
     negative_tests:
     - tests/unit/test_de_audit.py::test_no_input_is_not_assessed
     - tests/unit/test_de_audit.py::test_de_table_format_recognized_requires_execution_binding_for_pass
@@ -111,6 +113,11 @@ requirements:
     - tests/unit/test_rc6_p0_boundaries.py::test_disclaimer_does_not_license_other_propositions
     - tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result
     - tests/unit/test_rc6_p0_boundaries.py::test_global_negative_does_not_treat_missing_tests_as_nonsignificant
+    - tests/unit/test_ga_semantic_boundaries.py::test_false_second_or_ambiguous_assertion_cannot_pass
+    - tests/unit/test_ga_semantic_boundaries.py::test_direction_needs_finite_nonzero_effect
+    - tests/unit/test_ga_semantic_boundaries.py::test_duplicate_gene_rows_are_ambiguous
+    - tests/unit/test_ga_semantic_boundaries.py::test_warrant_failure_is_explicit_and_fail_closed
+    - tests/unit/test_ga_semantic_boundaries.py::test_population_transport_not_inferred_from_donor_count
     evidence:
     - kind: implementation
       target: src/bionexus/de_audit.py::DEAuditEngine._compute_overall_status
@@ -140,6 +147,20 @@ requirements:
       target: tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result
     - kind: test
       target: tests/unit/test_rc6_p0_boundaries.py::test_global_negative_does_not_treat_missing_tests_as_nonsignificant
+    - kind: test
+      target: tests/unit/test_ga_semantic_boundaries.py::test_supported_clauses_remain_usable
+    - kind: test
+      target: tests/unit/test_ga_semantic_boundaries.py::test_successful_consistency_audit_does_not_upgrade_evidence
+    - kind: test
+      target: tests/unit/test_ga_semantic_boundaries.py::test_false_second_or_ambiguous_assertion_cannot_pass
+    - kind: test
+      target: tests/unit/test_ga_semantic_boundaries.py::test_direction_needs_finite_nonzero_effect
+    - kind: test
+      target: tests/unit/test_ga_semantic_boundaries.py::test_duplicate_gene_rows_are_ambiguous
+    - kind: test
+      target: tests/unit/test_ga_semantic_boundaries.py::test_warrant_failure_is_explicit_and_fail_closed
+    - kind: test
+      target: tests/unit/test_ga_semantic_boundaries.py::test_population_transport_not_inferred_from_donor_count
   BNS-PV-008:
     scope_note: Consumer hash consistency only; a rewritten manifest requires an external expected hash to detect,
       and no producer/scientific authority is granted.

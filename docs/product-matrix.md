@@ -1,5 +1,11 @@
 # BioNexus Product Matrix & Scope Boundaries
 
+For Core 1.0 release/support decisions, the enumerated
+[frozen surface](../src/bionexus/data/core-support.v1.json) and
+[GA criteria](../GA_CRITERIA.md) are authoritative. The broader architecture and
+three-flagship certification programme below are separate development tracks;
+experimental capabilities do not inherit Core GA support.
+
 ## First laboratory product
 
 **Pre-submission shadow review of multi-donor single-cell differential expression.**
@@ -146,3 +152,6 @@ assessment with evidence-capped claims — better than a broad catalog of
 uncertified capabilities. Existing frontier packs remain opt-in reference
 implementations; the freeze governs *new* capability surface, not maintenance
 or certification of what already exists.
+
+See [Core vs Capability Gate Mapping Matrix](releases/core-vs-capability-gates.md)
+for the item-by-item gate taxonomy and independent release criteria.

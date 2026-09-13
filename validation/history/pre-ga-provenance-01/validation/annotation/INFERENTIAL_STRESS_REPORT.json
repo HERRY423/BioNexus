@@ -1,0 +1,157 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "scrna.annotation_evidence",
+  "test_suite": "10_dimensional_annotation_evidence_synthetic_benchmark",
+  "dataset_track": "synthetic_technical_acceptance",
+  "dataset_checksum_sha256": "d3ecbf0e65a40e783c1c80ef4e9c21872cf0d8b8544de48ec5c9f7c32fa24bed",
+  "provenance": {
+    "data_source": "synthetic_generator (in-silico generated multimodal fixture)",
+    "download_date": "2026-09-11T16:08:25.797723+00:00",
+    "commit_sha": "11c8132a1eb820fe4e80854131e111ecf5e9eb53",
+    "git_dirty": false,
+    "environment_lockfile_hashes": {
+      "pyproject.toml": "a982dafc951265a0c133d599ef9ff627cb30badc1ac9387af359a3e591468943",
+      "requirements-dev.txt": "d5697d2689c87167f554b3b9c35086f7f8696d7c5a3b23c20507c39a474f82d4",
+      "requirements.txt": "8fa95b3e0de8230cca2932263ddb088403e5e9e878eeb97b8ee94f038fffc4d4"
+    },
+    "command": [
+      "evals/annotation_stress_test.py"
+    ],
+    "command_str": "evals/annotation_stress_test.py",
+    "generator_version": "1.0.0-rc.7",
+    "python_version": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "timestamp": "2026-09-11T16:08:25.926731+00:00",
+    "extra_metadata": {
+      "dataset_track": "synthetic_technical_acceptance",
+      "n_cells": 1200,
+      "n_genes": 300,
+      "calibration_registry": {
+        "registry_version": "synthetic-technical-acceptance-v1",
+        "registry_sha256": "09af04897fc2c094ced41e58f4523bce7459e08386414a6f7bfed6c9e8ba5352",
+        "profile_count": 6,
+        "status_counts": {
+          "LEGACY_UNCALIBRATED": 0,
+          "CANDIDATE": 0,
+          "APPROVED": 6,
+          "RETIRED": 0
+        },
+        "invalid_profiles": {},
+        "metadata": {
+          "dataset_track": "synthetic_technical_acceptance",
+          "scientific_claim": "none",
+          "packaged_runtime_registry": false
+        }
+      },
+      "packaged_runtime_registry_eligible": false
+    },
+    "repository_dirty_at_execution": false,
+    "validation_source_dirty": false,
+    "source_snapshot_sha256": "fd57efc235ac92a128a8c0738e5477f38de03ec13f9df350f765c16b5c1634b3"
+  },
+  "timestamp": "2026-09-11T16:08:26.093387+00:00",
+  "elapsed_seconds": 0.37,
+  "overall_status": "PASS",
+  "dimensions": {
+    "dim1_1_synthetic_technical_acceptance_baseline": {
+      "dimension": "1_synthetic_technical_acceptance_baseline",
+      "dataset_track": "synthetic_technical_acceptance",
+      "n_cells": 1200,
+      "n_genes": 300,
+      "protein_channels": 6,
+      "passed": true
+    },
+    "dim2_2_circular_marker_reasoning_trap": {
+      "dimension": "2_circular_marker_reasoning_trap",
+      "verdict": "TENTATIVE",
+      "missing_evidence": [
+        "reference atlas mapping",
+        "cross-method annotation agreement",
+        "calibrated independent identity source (reference mapping or cross-method agreement)"
+      ],
+      "passed": true
+    },
+    "dim3_3_negative_marker_violation": {
+      "dimension": "3_negative_marker_violation",
+      "verdict": "TENTATIVE",
+      "reasons": [
+        "contradicting or below-profile evidence: negative_marker_violation 0.450 <= 0.200 under synthetic.contract.negative_marker_violation.v1@1.0.0"
+      ],
+      "passed": true
+    },
+    "dim4_4_independent_reference_mapping": {
+      "dimension": "4_independent_reference_mapping",
+      "verdict": "SUPPORTED",
+      "reasons": [
+        "marker_consistency 0.850 >= 0.600 under synthetic.contract.marker_consistency.v1@1.0.0",
+        "negative_marker_violation 0.080 <= 0.200 under synthetic.contract.negative_marker_violation.v1@1.0.0",
+        "reference_mapping 0.880 >= 0.700 under synthetic.contract.reference_mapping.v1@1.0.0",
+        "doublet_rate 0.040 <= 0.150 under synthetic.contract.doublet_rate.v1@1.0.0"
+      ],
+      "passed": true
+    },
+    "dim5_5_orthogonal_surface_protein_robust": {
+      "dimension": "5_orthogonal_surface_protein_robust",
+      "verdict": "ROBUST",
+      "reasons": [
+        "marker_consistency 0.900 >= 0.600 under synthetic.contract.marker_consistency.v1@1.0.0",
+        "negative_marker_violation 0.050 <= 0.200 under synthetic.contract.negative_marker_violation.v1@1.0.0",
+        "reference_mapping 0.920 >= 0.700 under synthetic.contract.reference_mapping.v1@1.0.0",
+        "doublet_rate 0.020 <= 0.150 under synthetic.contract.doublet_rate.v1@1.0.0",
+        "orthogonal_protein 0.950 >= 0.750 under synthetic.contract.orthogonal_protein.v1@1.0.0"
+      ],
+      "passed": true
+    },
+    "dim6_6_discordant_protein_conflicted": {
+      "dimension": "6_discordant_protein_conflicted",
+      "verdict": "CONFLICTED",
+      "reasons": [
+        "Orthogonal surface-protein evidence contradicts RNA marker expression; the disagreement must be resolved."
+      ],
+      "passed": true
+    },
+    "dim7_7_open_set_novel_population_gating": {
+      "dimension": "7_open_set_novel_population_gating",
+      "verdict": "ABSTAIN",
+      "reasons": [
+        "Open-set population: no forced nearest-known label is warranted regardless of top score (BN-F003)."
+      ],
+      "passed": true
+    },
+    "dim8_8_doublet_artifact_gate": {
+      "dimension": "8_doublet_artifact_gate",
+      "verdict": "TENTATIVE",
+      "reasons": [
+        "contradicting or below-profile evidence: doublet_rate 0.280 <= 0.150 under synthetic.contract.doublet_rate.v1@1.0.0"
+      ],
+      "passed": true
+    },
+    "dim9_9_clustering_resolution_perturbation": {
+      "dimension": "9_clustering_resolution_perturbation",
+      "resolutions_tested": [
+        0.2,
+        0.5,
+        0.8,
+        1.2,
+        1.5
+      ],
+      "ari_stability_scores": [
+        0.95,
+        0.92,
+        0.88,
+        0.84,
+        0.81
+      ],
+      "mean_ari": 0.88,
+      "passed": true
+    },
+    "dim10_10_adversarial_claim_interception": {
+      "dimension": "10_adversarial_claim_interception",
+      "prohibited_claim_intercepted": true,
+      "violations": [
+        "CAUSAL_TREATMENT_DE_OVERCLAIM"
+      ],
+      "passed": true
+    }
+  }
+}

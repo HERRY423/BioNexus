@@ -1,0 +1,8 @@
+{
+  "schema": "bionexus.release-contract-check.v1",
+  "version": "1.0.0-rc.7",
+  "status": "RC_SCOPE_VALID",
+  "errors": [],
+  "identity_authentication": "NOT_PERFORMED",
+  "scientific_authorization": "NONE"
+}

@@ -14,3 +14,4 @@
 
 # Historical signed/hash-bound evidence must retain its exact original bytes.
 tests/fixtures/de_bundle_legacy_v1/* -text
+validation/history/** -text

@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "reader": "C:\\Plugin\\BioNexus\\review\\ga-contract-closure-2026-09-13\\run-01\\wheel-install\\site-packages\\bionexus\\de_audit.py",
+  "scope": "Built local wheel using existing host dependencies; not a clean-machine or published release test",
+  "scientific_authorization": "NONE"
+}

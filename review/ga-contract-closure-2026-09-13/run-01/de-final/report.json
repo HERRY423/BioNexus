@@ -1,0 +1,1514 @@
+{
+  "scope": "Bounded DE input, warrant, audit-status and bundle-consumer engineering profile. Passing mapped tests is not whole-BNS conformance, independent validation or certification.",
+  "scientific_authorization": "NONE",
+  "receipt_trust": "LOCAL_SELF_RECORDED_NOT_INDEPENDENT_ATTESTATION",
+  "test_execution": "PASSED",
+  "pytest_exit_code": 0,
+  "errors": [],
+  "source_sha256": {
+    "scripts/check_de_traceability.py": "1ec71806d08234ff59106a26f698174758fe2b91e801361539fe126740a2126a",
+    "spec/BNS-001-capability-contract.md": "6e54d957097423c27bde260b96c1650cc71de7a9bf427b692a13dfee20b7eac2",
+    "spec/BNS-002-input-invariants.md": "283dd38615d0b57968dbe804bdcdfd0ad35ac17a2d227ebe365874ee0d9affe2",
+    "spec/BNS-003-execution-fidelity.md": "e85212a9b8baf48e23db2b567d2e9e534afff13e722cc451de182cf6ee6513fa",
+    "spec/BNS-004-evidence-maturity.md": "5dca125a91ebe9ab5e4e71e6061b213d738f4d5f0d64738ed359abb1a1e8e8ad",
+    "spec/BNS-005-abstention-and-degradation.md": "fdca9dcfdad067fa5c2746ff5bd064c5907d03ba63dca307e7c967ba9639949f",
+    "spec/BNS-006-provenance.md": "609af88489e017e00a9dd788c0efacf938a072c49a6f5a59f2a1d814d0592ded",
+    "spec/BNS-007-cross-method-validation.md": "a02884a4b9e0cbbbc716bcdbe137631328ae216813423489758473abfa4795aa",
+    "spec/BNS-008-host-conformance.md": "fe2e47d5e87d383cd0787ad8ffe35c4cbbae00945d1f19b7da60810c1a885fc3",
+    "spec/BNS-009-capability-lifecycle.md": "3a7d2e7cefc7bdfd271f29c2bc14ba3b51600a585f1cd810f55bab86442cc4f1",
+    "spec/BNS-010-capability-certification.md": "7695289e5fcc47a1e8e9ae33adfccacd0abc6b743267e95767289591c5ccc2f4",
+    "spec/BNS-011-failure-taxonomy.md": "bbeca8c1bdce747a15d20c56e1e2ba1a742d27386945d53f94f8dbb58ea5fd14",
+    "spec/BNS-012-claim-evidence-ledger.md": "c7b73404c24ce86a8deb1e7388773325cab96f0a0c5001ed19d99e0a00816005",
+    "spec/BNS-013-scientific-assertion-firewall.md": "3bd6bb542a86ec00b39ab982f9075a9dc633447a0ebf9dfac01b83ab114d6daf",
+    "spec/BNS-014-biofailurebench.md": "54c87f324fdced13a6f0349b90f3f5a67cf400d6cdebcfe88e44656093634c31",
+    "spec/BNS-015-flagship-certification.md": "df43e8a6429a9fefbeb8d913e17d7b6c21413f12f22d529076b28265bb8aa41e",
+    "spec/BNS-016-standards-interop.md": "2ff1c6bba4d18b17bffc73bbaf43d872e1bbc7d141350b3bbf10cc06c93ed08d",
+    "spec/BNS-017-claim-semantics-ir.md": "7e702d31bd6219e39eb4533dd12c525d5a6ceb6ea1d5fbe04db5c644c2dfeda4",
+    "spec/BNS-018-rule-calibration-and-challenge-network.md": "7ae7b800669f311e43fa6ee1eb7a7b23aed33857d9cbe0bbc0d603759570e80c",
+    "spec/BNS-019-scientific-semantic-conventions.md": "8d46f2a5395d170cf277e7f2dbf828b2c1128e62d1a47621e70a810868382fce",
+    "spec/BNS-020-conformance-test-kit.md": "5007f56acb11493d8cb8d648ed03880affc107c580338013019241c4458a1386",
+    "spec/BNS-021-evidence-debt.md": "1b158c2a030072efa3a02e94cf47afa600ad549f0e922c7a8ad0d6e88dc4c76c",
+    "spec/BNS-022-scientific-semantics-neutral-governance.md": "76fdc8510d3444ab997331f6cdd1b51b29196a54ee2182bbe344f0e6e014cc24",
+    "spec/BNS-023-independent-validation-network.md": "977e0ded38ee8c3ecc01c649ca21e27d3a36729b9b6315406c9f201246e6d47f",
+    "spec/BNS-024-validation-transparency-network.md": "256ad1df9dd2414d6124cb1eef6448bd474a2cb1734da98eb1b9a9e6e28a350b",
+    "spec/BNS-025-external-scientific-capability-receipt-and-connector-profile.md": "d99a24e1d410bf32886296efc51ac2e039724a15f369f7daf6f652bcc2dc2477",
+    "spec/de-audit-traceability.yaml": "85d86db565828e5bcb80faceb5287c75b6bcfa0ed06321fc284bb7919d58a74d",
+    "src/bionexus/__init__.py": "3b17e45bd9ce05c3837fb66b47ffaaa94a701cacee310fe7c433ef7a64aab577",
+    "src/bionexus/abi.py": "361acaa8ee1903fe0e2f41e35fed80ae6bf3a1bbceaa91fb8373a79ee5d799c6",
+    "src/bionexus/agent_routing.py": "bd8bf505fa178adb4a530cef3946af8d07b26da01324e62a38f56e3f3a4d2d55",
+    "src/bionexus/airgap_guard.py": "6a51474bcd169f0d03044b89301fc95a0640e1a4ffdc0f53d83718392c1c521a",
+    "src/bionexus/analysis_audit.py": "ac55dfcbcb63d19ecabed715295c8192a1179f9132ace8c27449b7548ca7f3d9",
+    "src/bionexus/annotation_evidence.py": "064648598962aee7477583dfb8fdfcc6dbcccb2b0c7b914094ea453fceda543c",
+    "src/bionexus/artifacts.py": "cd3a908265ccd1da4eadf9789102483f92102d631a3ee6c264b0815ccb5ca5ec",
+    "src/bionexus/attestation_authority.py": "f7ccf0f398a12864fccc6d30045b5da3301be2b708da414c71a67fddf4fc1ea1",
+    "src/bionexus/backend_conformance.py": "e98ef2ca50c4c2719c39d985853f21ba1563e4f7f2d11ee5befddcf68a2290f4",
+    "src/bionexus/backends.py": "f30487d9fbdbf6660c6eb5a379baf22c77ab1e3a3b666cea0d2ba4d07d8de100",
+    "src/bionexus/bctk/__init__.py": "b5f2c2080490ba2705bbba795a96a167b20a5d458bdd49157eb6b2b4397ca97a",
+    "src/bionexus/bctk/cli.py": "f413e91b1cdf002ac9eb837a017f021629abd302ea7f377e628b68b9a064a3ef",
+    "src/bionexus/bctk/dimensions/__init__.py": "f4514d07ce3c6adf14302b9282220f556af01492ab53fc93ec0b27f25a87c9a9",
+    "src/bionexus/bctk/dimensions/_unassessed.py": "8e1b41573cd744945e919a77824d20556964e28f5661e49936ed916af1a1d98c",
+    "src/bionexus/bctk/dimensions/abstention.py": "bfe64cedd260e62d15cb9dbcbb7567e1a535ffa1fd9a7928e99de6d80457856a",
+    "src/bionexus/bctk/dimensions/backend_identity.py": "ff81dd83a7bbd7d999acb5ea37830343aa76abc605dda86eca3498f2b5d84fc9",
+    "src/bionexus/bctk/dimensions/biological_semantics.py": "97bb9b589ab017739c7ef3fb5e87ba2bee5f634a0f56eae7af60428feb9ea6bd",
+    "src/bionexus/bctk/dimensions/claim_warrant.py": "c850362e6740bb11b22f3de4b3054a6d8437ee883c5115e43b246cc770564077",
+    "src/bionexus/bctk/dimensions/cross_host.py": "795d1625d4258c2012cf25e1c669b02f35ca362e8c10fbbba1135a57d70df9af",
+    "src/bionexus/bctk/dimensions/failure_handling.py": "7acbc6481cdf35d9f7faed2eba691309cd6925964177f54d2abf7ff4612d5ac9",
+    "src/bionexus/bctk/dimensions/input_honesty.py": "9cb1d7f456e344dcfb7f22205b1e8f5bb8ca6d5e69b700d58491fe25a45c7147",
+    "src/bionexus/bctk/dimensions/provenance.py": "f1d6244412de2fe9b30e7ce46bf1117ffbf9c507d6ee81de0abc3c62eaa1a728",
+    "src/bionexus/bctk/engine.py": "b05de9877c593b891d6d91556366118a2df3adde1e4fbbae87aa7716016bdfde",
+    "src/bionexus/bctk/profiles.py": "0925a005518fcf4feaa787b49f7cdf545f94b3441f8b48dba41227ffc8cba901",
+    "src/bionexus/bctk/reporters.py": "179cfa9f1c5918157ace1363b7e636443c669fd0561d672f5507377562083247",
+    "src/bionexus/bctk/spec.py": "17d4b7f529f1aac7335eae38bcbaffa1ea7917dbc0395e7fca0f2cdc12075efb",
+    "src/bionexus/bctk/targets.py": "ecf5b6090d3e222f59f2e1e3976b366464761cf8a44cc4c7723dfa62bb972de6",
+    "src/bionexus/bigdata.py": "fc1e4e2ad570ec946e7a78398b1de5e83eb0f6751e4c779e91cf208fd13f9c1e",
+    "src/bionexus/calibration_freeze.py": "e16c93decfc7ac7a57994df015815f95fa7215b5f500871b7d96b91d95cec8d2",
+    "src/bionexus/capabilities.py": "e30453b75cef23748f9da024f5c276a7e277b54a90f65d2a5dd03d84ff08c73a",
+    "src/bionexus/causal_dag.py": "afe9112c8e51caf3a89cfa9033a1f98da207aa8ef718dd8b1c83c403c76425f4",
+    "src/bionexus/certification.py": "ca935d861b11165aa9309ab89e093fad4bc5272ed2423be97f7c290518799102",
+    "src/bionexus/claim_checker.py": "6bf6c739ca712ea8ed18735e09d8dfc5aa5167c6627d1dda63c827f652174fd2",
+    "src/bionexus/claim_semantics.py": "548be081893edb72bb13efabb616a01dd9f8c1b6cff062299eb4c7a35015b7aa",
+    "src/bionexus/cli.py": "9e9a26523df10fce12ea9f7163733be7fbbdc90ca3f089661502f2ec2b82b5dd",
+    "src/bionexus/closed_loop.py": "db781995363e764d69df3bc0d18448041ad7eeab6be43e3f78e13909577d5060",
+    "src/bionexus/cluster.py": "7e6b4447a7bc5dca26333adbec04ace6b79c0c4392fd717d55db44c467748116",
+    "src/bionexus/clustering_stability.py": "14c30cec651764cb49562c931461adc23f8977177da84e9fd4d9fceedc2f52a3",
+    "src/bionexus/commands/__init__.py": "80fcd873385f6233eef4720cf8e0cd77aba4fe722883fea183135dc7cb4dc1f4",
+    "src/bionexus/commands/claims.py": "00c74b35398f77d998e907474cecca116f1acf656fef162ba31a47b947ec9e9d",
+    "src/bionexus/commands/de.py": "e85d8676090e5ed3cf7c22c2c57a97d1f86a18bd64526f42bdf17e5b699c8785",
+    "src/bionexus/commands/diagnostics.py": "ab15e1dddac2c8e3989a313d4506148d670ba4b2a052db6b96dbf7c4978d96c4",
+    "src/bionexus/commands/execution.py": "0a7e0b3db88cf19841046497a1141b027a13f9b858546d1d65457448d1fb3b90",
+    "src/bionexus/commands/experimental.py": "2cc5322651fa82cd2fea3c596fa54899f2d8a16fa9f92cc25f1c753c0fc61d71",
+    "src/bionexus/commands/ivn.py": "3a738dd8a1a21b1c1a3f433e7639786a5a83fa22174c40e680bfde72d2c1febf",
+    "src/bionexus/commands/lab.py": "5993606a63e70ed25b579c35ec132c24889487fa9579ebf3f317372852fc0585",
+    "src/bionexus/commands/scaffold.py": "f13925cb1f2350bea92c449e71671a01aba805ad141480019260462ffb805a73",
+    "src/bionexus/commands/security.py": "00cd4acf3afa64e6d694f01e413e0e1b15232642a8cfb21e9a50e030499a895e",
+    "src/bionexus/commands/standards.py": "5c1bb6f27343ca28b712f67bb138be2519bd0303cf60645d318df2f9185c4767",
+    "src/bionexus/commands/validation.py": "c5ab7f813c6a1df342f725df30a97aad8a44e7118199d9f4c690ccffa7e56f07",
+    "src/bionexus/compliance_ledger.py": "21b12aaaf51efb0d80adf7a073464439e6387d855499ce203cd294b0344cad3d",
+    "src/bionexus/connector_profile.py": "f75296d620a4db3816fbfdf58e7d6d243ef56929aea5f8f5b736c1734ef16912",
+    "src/bionexus/contract_traceability.py": "04ed78ad861a0100fa584fbd650ca51a6f523fafa3d40992f5ef0b96a237664f",
+    "src/bionexus/contracts.py": "5c3d9fa504bb09934f76b9748763ff76d506e5f217ae8e1720e09d60640cda68",
+    "src/bionexus/cryptographic_verifier.py": "c399f110101cfa792ae1f1c79f7241a627bf420e9ad93927dbe7a031e1a8545c",
+    "src/bionexus/data/__init__.py": "b4c59fbe4227f4de70031ea95b502587f0e04aad6b64fee68ea333f9242c346a",
+    "src/bionexus/de_audit.py": "d6f7545cc2f6c37aafa02495f3e554ddbd13b133d1b6636106c5d3b4f1b7d4bc",
+    "src/bionexus/de_audit_extract.py": "82a3befef8468f1dc3a6e4f0e1d6a4c564987c368df95f0a7a9132a1fbdb933f",
+    "src/bionexus/de_bundle.py": "908c3cbc192a8cf60ab43591b04365dc9e6441a0fcdc115912cf998acca7ed57",
+    "src/bionexus/de_external_study.py": "bbf82faf0af1507ece1c4183233d8854714c6675bf23cae62d5b228aeaf6a43a",
+    "src/bionexus/de_pilot.py": "c5172817dced05f1834d801782f63c143bb713666c7cb9ee8a516a2b1028b781",
+    "src/bionexus/debt.py": "fec9b04c20ee6ac35e53f2d7b7e5d1a54f20e0067e79baa2dcb8a9915016fd8b",
+    "src/bionexus/doctor.py": "63bef3e836adbde2bd7da8ee0b7bcc950d3b436e8b35ab523a566a87377c7820",
+    "src/bionexus/ecosystem_claim.py": "21e6aa977a6bd7384177c5d051c8990b3264179863a98290b1769d2a0d257928",
+    "src/bionexus/ecosystem_intake.py": "77335ff7485b6fb0d6557a5fa59acd209e678958c7f5b1832ff7f400a0ab4bbf",
+    "src/bionexus/egress_guard.py": "b92ddf2b7ae1a4a195db5d7968681bb63a54859ba97b7ca6db721a549ec8ad07",
+    "src/bionexus/empirical_warrant.py": "7c61d6f2bf380046caf15ba2540ebe099d016c908ea92c4924c5d80fb356f17a",
+    "src/bionexus/epistemic_lineage.py": "d57134278de2be2f691abdcc2188cd37495392b3e9dd0179eac9be158ced9893",
+    "src/bionexus/eval_receipt.py": "8396317cb506a5e484651f2831feb82915278e7bbca46296537ba7cdcebeabac",
+    "src/bionexus/evaluation_contract.py": "24110ad46b0da4f75d3346e41da8cd6c144b034b860b898b5fe6d5ac9d2f1615",
+    "src/bionexus/evidence_index.py": "93e1cbeb78d1289c616ee00a6b92b98290223a755913900f61d33b7eb1258f51",
+    "src/bionexus/evidence_model.py": "4539f698cf69a7afb031f1423e72f4cf9e921412e7ca9df633ae1b4cc52362d0",
+    "src/bionexus/failclosed.py": "6588c6cea30b37be3823fd9bada3d4050b8dbb045a2b05fd756779a758db601c",
+    "src/bionexus/failures.py": "cb821171ee49cef6a142cd47daa561cf39e5da8bab8b8a6f56ad483ab30b0d06",
+    "src/bionexus/ga4gh.py": "de3724ee37caddea5148b9b20927d81219bd24a737f99d0de681ff6fb52d4759",
+    "src/bionexus/gate.py": "76525101360cbdb79498b558adada5b2015ee3a0698cbfa173807389674ae884",
+    "src/bionexus/guard.py": "abbb4822915d70d7239cc10b65e38fdd54fe5abd0aa3d1d4c1393e3b978da40f",
+    "src/bionexus/human_adjudication.py": "fc2f5141845d6cc3ef8e930e25f7d7e48532f742d4ac0638e5258f67735d6c2e",
+    "src/bionexus/independent_pseudobulk.py": "36f9bfa300997557dc466e10928f92e5b6d891bd5214d994e461bdffe936be29",
+    "src/bionexus/instrument_gateway.py": "a3381c12e3a4f065f55628fd78174e8a0769114a82ab5829cd5e9fc6635f597b",
+    "src/bionexus/integrity.py": "b9c40f9cb860693f5f7be34f807c93aa3edf8527b97967e6729a888c4116aa6c",
+    "src/bionexus/intent_router.py": "55c397d9d2175d0cccadb93ebcee10814ae8fa9126f624640e449fb73652b675",
+    "src/bionexus/interop.py": "69f8093dfba36080716c36ec33457c96c71d2c512ecb1a932ad59478e068e2ff",
+    "src/bionexus/inventory.py": "a360ea2e77e634e13e50c78b5f00d8d031ce3d4d1bcdf17832d3879673644906",
+    "src/bionexus/io.py": "311492daee94d086bb6282437590953e5b3d797f6307cf89bd349195f4507435",
+    "src/bionexus/ivn.py": "c2a08475b55d4671d006b8294c64450d0ae649e2610ca78066c2dae382762c0e",
+    "src/bionexus/ivn_ledger_page.py": "0b78654c525b3b215840a0b66c0910e0a1de68d66c93cfcc5d337473b9ada216",
+    "src/bionexus/lab_policy.py": "221da6d4484865f5298cc3d49b4a9232859ef410bd180f9ff16a28e77eecb8dd",
+    "src/bionexus/ledger.py": "42c7a9734134af307022804a14481c76978199a9471b744565dd7ef5785e7440",
+    "src/bionexus/lims_hub.py": "fd3a47265f34e488deaa10cfe6787523fe2943edcd4789d4833659f31fcbe16e",
+    "src/bionexus/local_cache.py": "d0a2f1f72ba1c32b19e7dd4806fe8cdc132535f94a0453631d0cd63e55523c2c",
+    "src/bionexus/mcp_host_audit.py": "3e029aa80c83226011226431ec90ebf24106dff06dd2b29f571626d675e83a78",
+    "src/bionexus/mcp_server.py": "41585c4a5cb9e9f9f168c7be1a20d214c14be1248e9e42cd69be079ece4975e9",
+    "src/bionexus/nextflow_bridge.py": "f2b5c36df193b8a0759640e71c81c684c12db2a5fbb7cf5fc2a7f14f54836298",
+    "src/bionexus/pilot_costs.py": "f480fa6f6d473224f1eb2c94b6a2531cb460725afa81fed0ccf52e2654ec479d",
+    "src/bionexus/pipeline_config.py": "2796476db4800dd142a40da7413dde35fb7fe575ba6aec91a793fb77eb169d6a",
+    "src/bionexus/preflight.py": "e010f1d70a7949d98c374f6527110742efa0788d8a66ccca6759e8456645dc3d",
+    "src/bionexus/private_llm_provider.py": "b6f35c9528adfef6fde798bb7be0d264cba097fc1f5889bc45baf56773cc7f0f",
+    "src/bionexus/provenance.py": "8bc8f443f455194b1609f647d7f9da56e5e0fe4de029a7904339c149cd877985",
+    "src/bionexus/pseudobulk_warrant.py": "9a979b69658164c8b0610a69d7f3671894109e71a944f6895a966f1a1293179d",
+    "src/bionexus/registry.py": "5e9cb3ef4eb516fdfe1740c9e610eda06dc4d50bdb7e851b3b2b580b6636842e",
+    "src/bionexus/release_contract.py": "6eeaa5bd522cb567e070cbd4251bcac8554b8c5e7e8a1709ed23a71a12a9061c",
+    "src/bionexus/remediation.py": "abd5e2950c70d1f968f102658e994e32473a2606883af39f6cf7dabf0c78baaf",
+    "src/bionexus/research_purpose.py": "b66abf02cff89688c1ed41c5331a8a86de490d190a410477ee9efb3c781b6443",
+    "src/bionexus/research_snapshot.py": "ab7c8e711c7e1c115ac468ae76e6e7f61cc6e9ced59c0061c2357d193d0293dc",
+    "src/bionexus/researcher_override.py": "59763e7dc3e1b46bc7b54331050a01d894aa807fe0085b9fa007686603843d02",
+    "src/bionexus/rosalind_adapter.py": "ef2d32c994d287af89feeba6e0daefbd4e6e5df2475b69f37082ece54711e364",
+    "src/bionexus/rule_calibration.py": "711fff88933d9d3a8762714ea4fd7320fbe7b9f977e1330df12c0f7e1a8466e6",
+    "src/bionexus/rule_classification.py": "870defd1337fdd3230326d0a7dfce72020d803b95036001e2dce0ab3ab12f505",
+    "src/bionexus/rule_impact.py": "8833593186e4a31886ee686673bec521f00ff5364f238298629efb546c7b5a33",
+    "src/bionexus/rule_provenance.py": "7aed07b80cd1a5fdd0c4213ba094b2be2c22ecae2044e0cc1c5364d156a3a50f",
+    "src/bionexus/scfm.py": "88daea09fc5952a3ba780dbcd9a46356dd805d616ffaea58b685f5f49c8b8439",
+    "src/bionexus/scientific_semantics.py": "24740dde0d61a3de49327bbbf50dbcd7a264f41f319ff1cf66d770d7ca76dc15",
+    "src/bionexus/semantic_consistency.py": "31dc80005b8753f8d82eaea9a4b13b67615de5926475e1b80f6fc6730aa68037",
+    "src/bionexus/semantic_router.py": "35d3216f7582c26b3d29d812f8a20f5240bf4da9614707828e07c014ef6eaebe",
+    "src/bionexus/skill_runtime.py": "500f48aa157be5021d48d2e2d2af4c118abce7b5fe7c887ceeab80b4c2bd60f4",
+    "src/bionexus/spatial_alternative_battery.py": "f968840e664eb61dfe6001656fc9f65327f99502c51de339b422288364b29782",
+    "src/bionexus/spatial_empirical_gold.py": "3ff90578cbe9b5ae50fee75f5b3c8efc1ae07e8d69a7ef886e9674153855d118",
+    "src/bionexus/spatial_gold_cli.py": "b18149fc2ea1a905b6e6f2e07a7698e377943101a2f0304eeeb8c35cc7afe5e2",
+    "src/bionexus/spatial_inference.py": "c78eda62dda94114fa1ead648e59bc4e0dc72e2ef727606e6fc2f404bb5e961f",
+    "src/bionexus/spec_registry.py": "b363aa590d95cbbdd68e36f668598f16f439483e20eee45f547e42bc97598e77",
+    "src/bionexus/standards.py": "b16b244d38f7d564a85a7844cb35d59f669901217f25ae417ee18ec385adcfdd",
+    "src/bionexus/statistical_rules.py": "3145b30fe36a5cb8b5e327973c82a5c3608d76898a56cd4e85d1dbcc5cc253dd",
+    "src/bionexus/tangram.py": "df1bc7a77cd15edc11c5f3c594e28a5be9defe4b27c485f356249c3a50c72525",
+    "src/bionexus/tool_receipt.py": "43f62ff2cba902db862460518332848e4c4301eb1eb637531a2926aa744d57d8",
+    "src/bionexus/trust_cli.py": "a1db44c1d31d6a5030bb86a134bea30622cc4e945970b3ef5474ebfb74b434f4",
+    "src/bionexus/trust_evidence.py": "5f350ea109b15a0800e0b474a9a67994d8b2e89c0c48a80b7cd7b5777d0e768c",
+    "src/bionexus/validation_history.py": "a460c42e5fba7a7d5501eaf5793fc7950b18fdda7374c448a7039539a2361ac1",
+    "src/bionexus/validation_network.py": "6505f7e38e512bc6fb3e09ae896d548ba2c11c5429464427bdccce1e67b3f093",
+    "src/bionexus/validation_runs.py": "f1156fc9aa4111af094844e3e6a1b157e431ea1bb0e2a95457f7594a6c079456",
+    "src/bionexus/validation_verifier.py": "d5bd4702a4dd224cc5baa5ad2c8a9877dbe51a58c5c8c072c4d16750e96fcaee",
+    "src/bionexus/verification.py": "dd94999b9d68929574c003399c57ea2cb831ce1898f8dd56f1cd0a99d3a9f7b4",
+    "src/bionexus/versions.py": "1534cbe4280bdb819280948b9e00a3cf484fc4c6607c3513716e9df01d18d1fb",
+    "src/bionexus/warrant.py": "a0ccec06c3de61cbfc5fb6788cf48f49c7ae0f6088da4a194fd09d9e606f9271",
+    "tests/conftest.py": "f17b274847c11b8d6014f2c8ad1856d2f53bf7375b6e407377f8297f23698293",
+    "tests/unit/test_de_audit.py": "9c88c5c1cf02a7f27b8250c1acaf9032de64f9fd17c131d2bd36be7a90f5f9cc",
+    "tests/unit/test_de_bundle.py": "fd14063669b2728bb0bdc646b32bab19d1e708de9e989abd3ed6a8703682287b",
+    "tests/unit/test_de_input_boundaries.py": "34d2b08d21908b9d18e348f3c7e16a9cbcd5eeb60215a919ca8666f952bec0cb",
+    "tests/unit/test_de_requirement_boundaries.py": "acd1bc4f21fef134e643adc1fd88c23cccc614027c031947b11e95a950a9fccc",
+    "tests/unit/test_evidence_card.py": "aa8f19f479f1bf99754e7082334758a28c26c91d02df81bc61eadd386c4a99a2",
+    "tests/unit/test_ga_semantic_boundaries.py": "039103e1c43cf40b30e5c48b2c8aff0e6552151908f7b4647baaff6b1a505d0d",
+    "tests/unit/test_pseudobulk_inferential_warrant.py": "6d7d51779d0b42974b5ac795909b8af9886225f791f9eb0f858f4baf5e85ced4",
+    "tests/unit/test_rc6_p0_boundaries.py": "13f27049764da1dfb07fc61a57c67e99dd8357b0d6c5185e59188d6034434871"
+  },
+  "pytest_arguments": [
+    "-v",
+    "--tb=short",
+    "tests/unit/test_de_audit.py::test_de_table_format_recognized_requires_execution_binding_for_pass",
+    "tests/unit/test_de_audit.py::test_deseq2_with_verified_execution_record_achieves_pass",
+    "tests/unit/test_de_audit.py::test_failed_fit_status_blocks_and_issues_bfa013b",
+    "tests/unit/test_de_audit.py::test_no_input_is_not_assessed",
+    "tests/unit/test_de_bundle.py::test_any_changed_immutable_file_rejected",
+    "tests/unit/test_de_bundle.py::test_new_writer_and_old_reader_contract",
+    "tests/unit/test_de_bundle.py::test_rewriting_hashes_requires_external_anchor_to_detect",
+    "tests/unit/test_de_bundle.py::test_unknown_or_contradictory_audit_is_not_success",
+    "tests/unit/test_de_input_boundaries.py::test_invalid_explicit_counts_do_not_fall_back_to_integer_x",
+    "tests/unit/test_de_input_boundaries.py::test_invalid_value_after_diagnostic_sample_is_never_a_pass",
+    "tests/unit/test_de_input_boundaries.py::test_layer_name_does_not_prove_valid_counts",
+    "tests/unit/test_de_input_boundaries.py::test_valid_counts_layer_is_identified_without_claiming_analysis_used_it",
+    "tests/unit/test_de_requirement_boundaries.py::test_actual_counts_accept_integer_valued_float_and_sparse_inputs",
+    "tests/unit/test_de_requirement_boundaries.py::test_actual_counts_reject_negative_nonfinite_and_transformed_values",
+    "tests/unit/test_de_requirement_boundaries.py::test_explicit_counts_layer_is_returned_without_substitution",
+    "tests/unit/test_de_requirement_boundaries.py::test_missing_counts_layer_never_substitutes_even_integer_x",
+    "tests/unit/test_evidence_card.py::test_evidence_card_defaults_and_serialization",
+    "tests/unit/test_evidence_card.py::test_layer2_untested_vs_conflicted_distinction",
+    "tests/unit/test_ga_semantic_boundaries.py::test_direction_needs_finite_nonzero_effect",
+    "tests/unit/test_ga_semantic_boundaries.py::test_duplicate_gene_rows_are_ambiguous",
+    "tests/unit/test_ga_semantic_boundaries.py::test_false_second_or_ambiguous_assertion_cannot_pass",
+    "tests/unit/test_ga_semantic_boundaries.py::test_population_transport_not_inferred_from_donor_count",
+    "tests/unit/test_ga_semantic_boundaries.py::test_successful_consistency_audit_does_not_upgrade_evidence",
+    "tests/unit/test_ga_semantic_boundaries.py::test_supported_clauses_remain_usable",
+    "tests/unit/test_ga_semantic_boundaries.py::test_warrant_failure_is_explicit_and_fail_closed",
+    "tests/unit/test_pseudobulk_inferential_warrant.py::test_abstain_confounded_design",
+    "tests/unit/test_pseudobulk_inferential_warrant.py::test_abstain_unreplicated_regime",
+    "tests/unit/test_pseudobulk_inferential_warrant.py::test_population_inference_regime",
+    "tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance",
+    "tests/unit/test_rc6_p0_boundaries.py::test_complete_receipt_has_bounded_consistency_summary",
+    "tests/unit/test_rc6_p0_boundaries.py::test_disclaimer_does_not_license_other_propositions",
+    "tests/unit/test_rc6_p0_boundaries.py::test_each_missing_binding_field_prevents_pass",
+    "tests/unit/test_rc6_p0_boundaries.py::test_global_negative_does_not_treat_missing_tests_as_nonsignificant",
+    "tests/unit/test_rc6_p0_boundaries.py::test_honest_negative_or_scoped_limitation_remains_usable",
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass",
+    "tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp",
+    "C:\\Plugin\\BioNexus\\review\\ga-contract-closure-2026-09-13\\run-01\\de-final\\tmp",
+    "--junitxml=C:\\Plugin\\BioNexus\\review\\ga-contract-closure-2026-09-13\\run-01\\de-final\\tests.xml"
+  ],
+  "test_outcomes": {
+    "tests/unit/test_de_audit.py::test_de_table_format_recognized_requires_execution_binding_for_pass": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_audit.py::test_deseq2_with_verified_execution_record_achieves_pass": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_audit.py::test_failed_fit_status_blocks_and_issues_bfa013b": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_audit.py::test_no_input_is_not_assessed": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_bundle.py::test_any_changed_immutable_file_rejected[audit.json]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_bundle.py::test_any_changed_immutable_file_rejected[audit-full.md]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_bundle.py::test_any_changed_immutable_file_rejected[REVIEW.md]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_bundle.py::test_new_writer_and_old_reader_contract": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_bundle.py::test_rewriting_hashes_requires_external_anchor_to_detect": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_bundle.py::test_unknown_or_contradictory_audit_is_not_success[FUTURE_SUCCESS-True]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_bundle.py::test_unknown_or_contradictory_audit_is_not_success[NEEDS_DATA-True]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_bundle.py::test_unknown_or_contradictory_audit_is_not_success[ROBUST_PASS-1]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_input_boundaries.py::test_invalid_explicit_counts_do_not_fall_back_to_integer_x": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_input_boundaries.py::test_invalid_value_after_diagnostic_sample_is_never_a_pass[False--1.0]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_input_boundaries.py::test_invalid_value_after_diagnostic_sample_is_never_a_pass[False-0.25]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_input_boundaries.py::test_invalid_value_after_diagnostic_sample_is_never_a_pass[False-nan]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_input_boundaries.py::test_invalid_value_after_diagnostic_sample_is_never_a_pass[False-inf]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_input_boundaries.py::test_invalid_value_after_diagnostic_sample_is_never_a_pass[True--1.0]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_input_boundaries.py::test_invalid_value_after_diagnostic_sample_is_never_a_pass[True-0.25]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_input_boundaries.py::test_invalid_value_after_diagnostic_sample_is_never_a_pass[True-nan]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_input_boundaries.py::test_invalid_value_after_diagnostic_sample_is_never_a_pass[True-inf]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_input_boundaries.py::test_layer_name_does_not_prove_valid_counts[counts]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_input_boundaries.py::test_layer_name_does_not_prove_valid_counts[raw_layer]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_input_boundaries.py::test_layer_name_does_not_prove_valid_counts[raw]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_input_boundaries.py::test_valid_counts_layer_is_identified_without_claiming_analysis_used_it": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_requirement_boundaries.py::test_actual_counts_accept_integer_valued_float_and_sparse_inputs": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_requirement_boundaries.py::test_actual_counts_reject_negative_nonfinite_and_transformed_values": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_requirement_boundaries.py::test_explicit_counts_layer_is_returned_without_substitution": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_de_requirement_boundaries.py::test_missing_counts_layer_never_substitutes_even_integer_x": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_evidence_card.py::test_evidence_card_defaults_and_serialization": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_evidence_card.py::test_layer2_untested_vs_conflicted_distinction": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_direction_needs_finite_nonzero_effect[missing]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_direction_needs_finite_nonzero_effect[effects1]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_direction_needs_finite_nonzero_effect[effects2]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_direction_needs_finite_nonzero_effect[effects3]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_direction_needs_finite_nonzero_effect[effects4]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_duplicate_gene_rows_are_ambiguous": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_false_second_or_ambiguous_assertion_cannot_pass[POS1 is significant; NEG1 is significant.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_false_second_or_ambiguous_assertion_cannot_pass[POS1 is significant. NEG1 is significant.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_false_second_or_ambiguous_assertion_cannot_pass[POS1 is significant and NEG1 is significant.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_false_second_or_ambiguous_assertion_cannot_pass[POS1 is upregulated; NEG1 is upregulated.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_false_second_or_ambiguous_assertion_cannot_pass[POS1 is significant; MISSING1 is significant.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_false_second_or_ambiguous_assertion_cannot_pass[POS1 is significant, MISSING1 is significant.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_false_second_or_ambiguous_assertion_cannot_pass[NEG1 was significant.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_false_second_or_ambiguous_assertion_cannot_pass[POS1 and NEG1 are significant.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_population_transport_not_inferred_from_donor_count": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_successful_consistency_audit_does_not_upgrade_evidence": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_supported_clauses_remain_usable[POS1 is significant; NEG1 was not significant.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_supported_clauses_remain_usable[POS1 is upregulated. NEG1 is downregulated.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_supported_clauses_remain_usable[POS1 is significant and NEG1 was not significant.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_supported_clauses_remain_usable[POS1 is upregulated and significant in the supplied table.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_supported_clauses_remain_usable[The supplied table contains a result for POS1.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_supported_clauses_remain_usable[We cannot prove that POS1 causes disease.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_ga_semantic_boundaries.py::test_warrant_failure_is_explicit_and_fail_closed": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_pseudobulk_inferential_warrant.py::test_abstain_confounded_design": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_pseudobulk_inferential_warrant.py::test_abstain_unreplicated_regime": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_pseudobulk_inferential_warrant.py::test_population_inference_regime": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance[NEG1 does not cause disease.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance[NEG1 does not affect disease.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance[NEG1 is not associated with disease.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance[Treatment has no effect on NEG1.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance[Treatment has zero effect on NEG1.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance[There is no difference in NEG1.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance[The treatments are equivalent for NEG1.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance[The treatment is non-inferior for NEG1.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance[Noninferiority was established for NEG1.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance[\\u836f\\u7269\\u4e0d\\u5f71\\u54cd NEG1\\u3002]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance[\\u4e24\\u7ec4\\u6ca1\\u6709\\u5dee\\u5f02\\u3002]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance[\\u836f\\u7269\\u65e0\\u6548\\u5e94\\u3002]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance[\\u6cbb\\u7597\\u7b49\\u6548\\u3002]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance[\\u6cbb\\u7597\\u5177\\u6709\\u975e\\u52a3\\u6548\\u6027\\u3002]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_complete_receipt_has_bounded_consistency_summary": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_disclaimer_does_not_license_other_propositions[We cannot prove X causes Y; treatment has no effect.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_disclaimer_does_not_license_other_propositions[We cannot prove X causes Y. Z causes disease.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_disclaimer_does_not_license_other_propositions[We cannot prove X causes Y but Z causes disease.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_disclaimer_does_not_license_other_propositions[We cannot prove X causes Y and Z is clinically validated.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_disclaimer_does_not_license_other_propositions[We cannot prove X causes Y, Z causes disease.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_disclaimer_does_not_license_other_propositions[Z causes disease, we cannot prove X causes Y.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_disclaimer_does_not_license_other_propositions[\\u672c\\u7814\\u7a76\\u4e0d\\u80fd\\u8bc1\\u660e\\u56e0\\u679c\\u673a\\u5236\\uff0c\\u4f46\\u836f\\u7269\\u6ca1\\u6709\\u5dee\\u5f02\\u3002]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_each_missing_binding_field_prevents_pass[statistical_unit]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_each_missing_binding_field_prevents_pass[method]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_each_missing_binding_field_prevents_pass[fit_status]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_each_missing_binding_field_prevents_pass[design]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_each_missing_binding_field_prevents_pass[design_matrix_columns]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_each_missing_binding_field_prevents_pass[n_donors]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_each_missing_binding_field_prevents_pass[donor_ids]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_each_missing_binding_field_prevents_pass[result_sha256]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_global_negative_does_not_treat_missing_tests_as_nonsignificant": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_honest_negative_or_scoped_limitation_remains_usable[NEG1 was not significant after FDR correction in the supplied result.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_honest_negative_or_scoped_limitation_remains_usable[No genes were significant in the supplied table.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_honest_negative_or_scoped_limitation_remains_usable[We cannot prove that NEG1 causes disease.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates0]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates1]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates2]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates3]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates4]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates5]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates6]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates7]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates8]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates9]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates10]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates11]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates12]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates13]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates14]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates15]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates16]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates17]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates18]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates19]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates20]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates21]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates22]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates23]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates24]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates25]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates26]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates27]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates28]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates29]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass[updates30]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result[0.8-True-There was no significant effect on NEG1.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result[0.8-True-NEG1 was not statistically significant.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result[0.8-True-NEG1 was non-significant.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result[0.8-True-NEG1 \\u672a\\u89c1\\u663e\\u8457\\u5dee\\u5f02\\u3002]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result[0.001-False-There was no significant effect on NEG1.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result[0.001-False-NEG1 was not statistically significant.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result[0.001-False-NEG1 was non-significant.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result[0.001-False-NEG1 \\u672a\\u89c1\\u663e\\u8457\\u5dee\\u5f02\\u3002]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result[None-False-There was no significant effect on NEG1.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result[None-False-NEG1 was not statistically significant.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result[None-False-NEG1 was non-significant.]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result[None-False-NEG1 \\u672a\\u89c1\\u663e\\u8457\\u5dee\\u5f02\\u3002]": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    }
+  },
+  "requirements": [
+    {
+      "requirement": {
+        "requirement_id": "BNS-II-001",
+        "document": "BNS-002-input-invariants.md",
+        "line": 17,
+        "normative_level": "MUST",
+        "text": "- **BNS-II-001** For single-cell differential expression, an implementation MUST verify whether the matrix represents **raw counts** or **transformed expression** (log-normalized, scaled, z-scored) before model selection."
+      },
+      "state": "tested",
+      "evidence": [
+        {
+          "kind": "implementation",
+          "target": "src/bionexus/integrity.py::require_raw_count_matrix",
+          "note": "",
+          "reference_valid": true,
+          "executed": false,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "implementation",
+          "target": "src/bionexus/de_audit.py::DEAuditEngine._audit_expression_matrix",
+          "note": "",
+          "reference_valid": true,
+          "executed": false,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_input_boundaries.py::test_valid_counts_layer_is_identified_without_claiming_analysis_used_it",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_input_boundaries.py::test_layer_name_does_not_prove_valid_counts",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_requirement_boundaries.py::test_actual_counts_accept_integer_valued_float_and_sparse_inputs",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_requirement_boundaries.py::test_actual_counts_reject_negative_nonfinite_and_transformed_values",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        }
+      ],
+      "profile_scope_note": "Numeric gate only; integer-likeness cannot authenticate biological raw-count provenance.",
+      "acknowledged_limitation": null,
+      "positive_tests": [
+        "tests/unit/test_de_requirement_boundaries.py::test_actual_counts_accept_integer_valued_float_and_sparse_inputs",
+        "tests/unit/test_de_input_boundaries.py::test_valid_counts_layer_is_identified_without_claiming_analysis_used_it"
+      ],
+      "negative_tests": [
+        "tests/unit/test_de_requirement_boundaries.py::test_actual_counts_reject_negative_nonfinite_and_transformed_values",
+        "tests/unit/test_de_input_boundaries.py::test_layer_name_does_not_prove_valid_counts"
+      ]
+    },
+    {
+      "requirement": {
+        "requirement_id": "BNS-II-002",
+        "document": "BNS-002-input-invariants.md",
+        "line": 20,
+        "normative_level": "MUST NOT",
+        "text": "- **BNS-II-002** A negative-binomial count model (PyDESeq2 pseudobulk, scVI/totalVI generative likelihoods) MUST NOT be executed on log-normalized values without an explicit, recorded justification. In strict mode this is a deterministic refusal (`normalized_matrix_only` / `normalized_input`), with the remedy pointing at `adata.raw.X` or a `counts` layer."
+      },
+      "state": "tested",
+      "evidence": [
+        {
+          "kind": "implementation",
+          "target": "src/bionexus/integrity.py::require_counts_layer",
+          "note": "",
+          "reference_valid": true,
+          "executed": false,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "implementation",
+          "target": "src/bionexus/de_audit.py::DEAuditEngine._audit_expression_matrix",
+          "note": "",
+          "reference_valid": true,
+          "executed": false,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_input_boundaries.py::test_invalid_explicit_counts_do_not_fall_back_to_integer_x",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_requirement_boundaries.py::test_explicit_counts_layer_is_returned_without_substitution",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_requirement_boundaries.py::test_missing_counts_layer_never_substitutes_even_integer_x",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_requirement_boundaries.py::test_actual_counts_reject_negative_nonfinite_and_transformed_values",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        }
+      ],
+      "profile_scope_note": "Strict raw-count input gate; no model is executed by these tests, and no automatic raw/X substitution is allowed.",
+      "acknowledged_limitation": null,
+      "positive_tests": [
+        "tests/unit/test_de_requirement_boundaries.py::test_explicit_counts_layer_is_returned_without_substitution"
+      ],
+      "negative_tests": [
+        "tests/unit/test_de_requirement_boundaries.py::test_missing_counts_layer_never_substitutes_even_integer_x",
+        "tests/unit/test_de_input_boundaries.py::test_invalid_explicit_counts_do_not_fall_back_to_integer_x",
+        "tests/unit/test_de_requirement_boundaries.py::test_actual_counts_reject_negative_nonfinite_and_transformed_values"
+      ]
+    },
+    {
+      "requirement": {
+        "requirement_id": "BNS-II-003",
+        "document": "BNS-002-input-invariants.md",
+        "line": 25,
+        "normative_level": "MUST",
+        "text": "- **BNS-II-003** Integer-likeness checks MUST be performed on the actual matrix values (`audit_expression_matrix`), not inferred from file suffixes or user claims. A matrix of floats whose values are all integral MAY be accepted as counts; a matrix containing negative values MUST be refused as count input."
+      },
+      "state": "tested",
+      "evidence": [
+        {
+          "kind": "implementation",
+          "target": "src/bionexus/integrity.py::require_raw_count_matrix",
+          "note": "",
+          "reference_valid": true,
+          "executed": false,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "implementation",
+          "target": "src/bionexus/de_audit.py::DEAuditEngine._audit_expression_matrix",
+          "note": "",
+          "reference_valid": true,
+          "executed": false,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_input_boundaries.py::test_invalid_value_after_diagnostic_sample_is_never_a_pass",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_requirement_boundaries.py::test_actual_counts_accept_integer_valued_float_and_sparse_inputs",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_requirement_boundaries.py::test_actual_counts_reject_negative_nonfinite_and_transformed_values",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        }
+      ],
+      "profile_scope_note": "Dense and sparse actual values including invalid values at the final position; not filename or metadata inference.",
+      "acknowledged_limitation": null,
+      "positive_tests": [
+        "tests/unit/test_de_requirement_boundaries.py::test_actual_counts_accept_integer_valued_float_and_sparse_inputs"
+      ],
+      "negative_tests": [
+        "tests/unit/test_de_requirement_boundaries.py::test_actual_counts_reject_negative_nonfinite_and_transformed_values",
+        "tests/unit/test_de_input_boundaries.py::test_invalid_value_after_diagnostic_sample_is_never_a_pass"
+      ]
+    },
+    {
+      "requirement": {
+        "requirement_id": "BNS-II-010",
+        "document": "BNS-002-input-invariants.md",
+        "line": 63,
+        "normative_level": "MUST NOT",
+        "text": "- **BNS-II-010** Cell-level and sample-level experimental units MUST NOT be conflated. Condition inference on single cells without replicate aggregation is pseudoreplication and MUST be refused (BNS-005, `missing_replicates`)."
+      },
+      "state": "tested",
+      "evidence": [
+        {
+          "kind": "implementation",
+          "target": "src/bionexus/pseudobulk_warrant.py::evaluate_pseudobulk_inferential_warrant",
+          "note": "",
+          "reference_valid": true,
+          "executed": false,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_pseudobulk_inferential_warrant.py::test_population_inference_regime",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_pseudobulk_inferential_warrant.py::test_abstain_unreplicated_regime",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_pseudobulk_inferential_warrant.py::test_abstain_confounded_design",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        }
+      ],
+      "profile_scope_note": "Bounded warrant checks consume declared donor metadata; they do not independently authenticate donor identity.",
+      "acknowledged_limitation": null,
+      "positive_tests": [
+        "tests/unit/test_pseudobulk_inferential_warrant.py::test_population_inference_regime"
+      ],
+      "negative_tests": [
+        "tests/unit/test_pseudobulk_inferential_warrant.py::test_abstain_unreplicated_regime",
+        "tests/unit/test_pseudobulk_inferential_warrant.py::test_abstain_confounded_design"
+      ]
+    },
+    {
+      "requirement": {
+        "requirement_id": "BNS-EM-003",
+        "document": "BNS-004-evidence-maturity.md",
+        "line": 27,
+        "normative_level": "MUST NOT",
+        "text": "- **BNS-EM-003** `UNTESTED` MUST NOT be conflated with `GRADE_C`: untested means the dimension was not evaluated; Grade C means it was evaluated and found weak."
+      },
+      "state": "tested",
+      "evidence": [
+        {
+          "kind": "implementation",
+          "target": "src/bionexus/contracts.py::synthesize_conclusion_maturity",
+          "note": "",
+          "reference_valid": true,
+          "executed": false,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_evidence_card.py::test_evidence_card_defaults_and_serialization",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_evidence_card.py::test_layer2_untested_vs_conflicted_distinction",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        }
+      ],
+      "profile_scope_note": "EvidenceCard core: untested stays distinct from tested fragile or conflicted evidence.",
+      "acknowledged_limitation": null,
+      "positive_tests": [
+        "tests/unit/test_evidence_card.py::test_evidence_card_defaults_and_serialization"
+      ],
+      "negative_tests": [
+        "tests/unit/test_evidence_card.py::test_layer2_untested_vs_conflicted_distinction"
+      ]
+    },
+    {
+      "requirement": {
+        "requirement_id": "BNS-EM-007",
+        "document": "BNS-004-evidence-maturity.md",
+        "line": 57,
+        "normative_level": "MUST",
+        "text": "- **BNS-EM-007** Reported maturity is a *prediction* of epistemic warrant. It MUST be evaluated against expected warrant on benchmark cases, not merely checked for internal consistency. The platform MUST report: exact accuracy, overconfidence rate (asserted rank > warranted rank), underconfidence rate, ordinal calibration error (OCE), Brier calibration score, and macro-F1 across maturity classes (`evals/metrics.compute_epistemic_calibration`)."
+      },
+      "state": "acknowledged_gap",
+      "evidence": [
+        {
+          "kind": "gap",
+          "target": "NOT_ESTABLISHED",
+          "note": "Independent calibration of DE audit outcomes is not established by these synthetic/local tests.",
+          "reference_valid": true,
+          "executed": false,
+          "reason": "explicitly acknowledged gap"
+        }
+      ],
+      "profile_scope_note": null,
+      "acknowledged_limitation": "Independent calibration of DE audit outcomes is not established by these synthetic/local tests.",
+      "positive_tests": [],
+      "negative_tests": []
+    },
+    {
+      "requirement": {
+        "requirement_id": "BNS-PV-008",
+        "document": "BNS-006-provenance.md",
+        "line": 41,
+        "normative_level": "MUST",
+        "text": "- **BNS-PV-008** Consumers of an artifact MUST be able to verify the artifact against its recorded hash; mismatch MUST be surfaced as an integrity violation, not a warning."
+      },
+      "state": "tested",
+      "evidence": [
+        {
+          "kind": "implementation",
+          "target": "src/bionexus/de_bundle.py::verify_de_bundle",
+          "note": "",
+          "reference_valid": true,
+          "executed": false,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_bundle.py::test_new_writer_and_old_reader_contract",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_bundle.py::test_any_changed_immutable_file_rejected",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_bundle.py::test_rewriting_hashes_requires_external_anchor_to_detect",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_bundle.py::test_unknown_or_contradictory_audit_is_not_success",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        }
+      ],
+      "profile_scope_note": "Consumer hash consistency only; a rewritten manifest requires an external expected hash to detect, and no producer/scientific authority is granted.",
+      "acknowledged_limitation": null,
+      "positive_tests": [
+        "tests/unit/test_de_bundle.py::test_new_writer_and_old_reader_contract"
+      ],
+      "negative_tests": [
+        "tests/unit/test_de_bundle.py::test_any_changed_immutable_file_rejected",
+        "tests/unit/test_de_bundle.py::test_rewriting_hashes_requires_external_anchor_to_detect",
+        "tests/unit/test_de_bundle.py::test_unknown_or_contradictory_audit_is_not_success"
+      ]
+    },
+    {
+      "requirement": {
+        "requirement_id": "BNS-PV-009",
+        "document": "BNS-006-provenance.md",
+        "line": 44,
+        "normative_level": "MUST NOT",
+        "text": "- **BNS-PV-009** Provenance records MUST NOT be mutable after emission; corrections are new records superseding old ones (append-only audit semantics)."
+      },
+      "state": "acknowledged_gap",
+      "evidence": [
+        {
+          "kind": "gap",
+          "target": "NOT_ESTABLISHED",
+          "note": "Readers detect byte mismatch and preserve prior bundles, but filesystem-enforced immutable storage and independently anchored append-only provenance are not established by this profile.",
+          "reference_valid": true,
+          "executed": false,
+          "reason": "explicitly acknowledged gap"
+        }
+      ],
+      "profile_scope_note": null,
+      "acknowledged_limitation": "Readers detect byte mismatch and preserve prior bundles, but filesystem-enforced immutable storage and independently anchored append-only provenance are not established by this profile.",
+      "positive_tests": [],
+      "negative_tests": []
+    },
+    {
+      "requirement": {
+        "requirement_id": "BNS-FW-008",
+        "document": "BNS-013-scientific-assertion-firewall.md",
+        "line": 50,
+        "normative_level": "MUST",
+        "text": "- **BNS-FW-008** Data-state checks that cannot be verified in the current environment MUST be rendered distinctly from checks that failed; an unverifiable state MUST NOT be displayed as a pass."
+      },
+      "state": "tested",
+      "evidence": [
+        {
+          "kind": "implementation",
+          "target": "src/bionexus/de_audit.py::DEAuditEngine._compute_overall_status",
+          "note": "",
+          "reference_valid": true,
+          "executed": false,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "implementation",
+          "target": "src/bionexus/de_audit.py::DEAuditEngine._verify_execution_binding",
+          "note": "",
+          "reference_valid": true,
+          "executed": false,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_audit.py::test_deseq2_with_verified_execution_record_achieves_pass",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_audit.py::test_no_input_is_not_assessed",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_audit.py::test_de_table_format_recognized_requires_execution_binding_for_pass",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_de_audit.py::test_failed_fit_status_blocks_and_issues_bfa013b",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_rc6_p0_boundaries.py::test_complete_receipt_has_bounded_consistency_summary",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_rc6_p0_boundaries.py::test_honest_negative_or_scoped_limitation_remains_usable",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_rc6_p0_boundaries.py::test_each_missing_binding_field_prevents_pass",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_rc6_p0_boundaries.py::test_disclaimer_does_not_license_other_propositions",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_rc6_p0_boundaries.py::test_global_negative_does_not_treat_missing_tests_as_nonsignificant",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_ga_semantic_boundaries.py::test_supported_clauses_remain_usable",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_ga_semantic_boundaries.py::test_successful_consistency_audit_does_not_upgrade_evidence",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_ga_semantic_boundaries.py::test_false_second_or_ambiguous_assertion_cannot_pass",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_ga_semantic_boundaries.py::test_direction_needs_finite_nonzero_effect",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_ga_semantic_boundaries.py::test_duplicate_gene_rows_are_ambiguous",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_ga_semantic_boundaries.py::test_warrant_failure_is_explicit_and_fail_closed",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        },
+        {
+          "kind": "test",
+          "target": "tests/unit/test_ga_semantic_boundaries.py::test_population_transport_not_inferred_from_donor_count",
+          "note": "",
+          "reference_valid": true,
+          "executed": true,
+          "reason": "reference resolves"
+        }
+      ],
+      "profile_scope_note": "Passive DE audit status boundary only. The positive test uses synthetic self-declared execution metadata; ROBUST_PASS is the legacy audit status, not verified producer identity or independent scientific warrant.",
+      "acknowledged_limitation": null,
+      "positive_tests": [
+        "tests/unit/test_de_audit.py::test_deseq2_with_verified_execution_record_achieves_pass",
+        "tests/unit/test_rc6_p0_boundaries.py::test_complete_receipt_has_bounded_consistency_summary",
+        "tests/unit/test_rc6_p0_boundaries.py::test_honest_negative_or_scoped_limitation_remains_usable",
+        "tests/unit/test_ga_semantic_boundaries.py::test_supported_clauses_remain_usable",
+        "tests/unit/test_ga_semantic_boundaries.py::test_successful_consistency_audit_does_not_upgrade_evidence"
+      ],
+      "negative_tests": [
+        "tests/unit/test_de_audit.py::test_no_input_is_not_assessed",
+        "tests/unit/test_de_audit.py::test_de_table_format_recognized_requires_execution_binding_for_pass",
+        "tests/unit/test_de_audit.py::test_failed_fit_status_blocks_and_issues_bfa013b",
+        "tests/unit/test_rc6_p0_boundaries.py::test_each_missing_binding_field_prevents_pass",
+        "tests/unit/test_rc6_p0_boundaries.py::test_malformed_or_contradictory_binding_cannot_pass",
+        "tests/unit/test_rc6_p0_boundaries.py::test_absence_and_equivalence_are_not_ordinary_nonsignificance",
+        "tests/unit/test_rc6_p0_boundaries.py::test_disclaimer_does_not_license_other_propositions",
+        "tests/unit/test_rc6_p0_boundaries.py::test_nonsignificance_requires_an_actual_valid_negative_result",
+        "tests/unit/test_rc6_p0_boundaries.py::test_global_negative_does_not_treat_missing_tests_as_nonsignificant",
+        "tests/unit/test_ga_semantic_boundaries.py::test_false_second_or_ambiguous_assertion_cannot_pass",
+        "tests/unit/test_ga_semantic_boundaries.py::test_direction_needs_finite_nonzero_effect",
+        "tests/unit/test_ga_semantic_boundaries.py::test_duplicate_gene_rows_are_ambiguous",
+        "tests/unit/test_ga_semantic_boundaries.py::test_warrant_failure_is_explicit_and_fail_closed",
+        "tests/unit/test_ga_semantic_boundaries.py::test_population_transport_not_inferred_from_donor_count"
+      ]
+    }
+  ],
+  "outside_profile_requirements": 283
+}

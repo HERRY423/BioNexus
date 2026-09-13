@@ -1,0 +1,228 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "scrna.pseudobulk_de",
+  "test_suite": "7_dimensional_inferential_stress_test",
+  "dataset_checksum_sha256": {
+    "pbmc_ifnb_counts.h5ad": "46122ba4e196561a781123614d856fed7d1ca05743d39a1d117597fd6d0bb993",
+    "published_de_truth.csv": "ded3bb9b1e4606da34f5142ab129c5f97b619e0d23e30eade49b2b7be14b3d30"
+  },
+  "provenance": {
+    "data_source": "GEO GSE96583 (Kang et al. 2018, Nat Biotechnol doi:10.1038/nbt.4042)",
+    "download_date": "2026-08-19T00:00:00+00:00",
+    "commit_sha": "11c8132a1eb820fe4e80854131e111ecf5e9eb53",
+    "git_dirty": false,
+    "environment_lockfile_hashes": {
+      "pyproject.toml": "a982dafc951265a0c133d599ef9ff627cb30badc1ac9387af359a3e591468943",
+      "requirements-dev.txt": "d5697d2689c87167f554b3b9c35086f7f8696d7c5a3b23c20507c39a474f82d4",
+      "requirements.txt": "8fa95b3e0de8230cca2932263ddb088403e5e9e878eeb97b8ee94f038fffc4d4"
+    },
+    "command": [
+      "evals/pseudobulk_stress_test.py"
+    ],
+    "command_str": "evals/pseudobulk_stress_test.py",
+    "generator_version": "1.0.0-rc.7",
+    "python_version": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "timestamp": "2026-09-11T16:07:14.366074+00:00",
+    "extra_metadata": {
+      "n_cells": 13487,
+      "n_donors": 8
+    },
+    "repository_dirty_at_execution": false,
+    "validation_source_dirty": false,
+    "source_snapshot_sha256": "fd57efc235ac92a128a8c0738e5477f38de03ec13f9df350f765c16b5c1634b3"
+  },
+  "timestamp": "2026-09-11T16:07:59.719747+00:00",
+  "elapsed_seconds": 45.61,
+  "overall_status": "PASS",
+  "dimensions": {
+    "dim1_public_reference": {
+      "dimension": "1_public_reference_dataset",
+      "dataset": "GEO GSE96583 (Kang et al. 2018)",
+      "n_cells": 13487,
+      "n_donors": 8,
+      "n_samples": 16,
+      "top100_truth_overlap": 0.66,
+      "threshold_required": 0.5,
+      "warrant_regime": "POPULATION_INFERENCE",
+      "maturity_ceiling": "SUPPORTED",
+      "passed": true
+    },
+    "dim2_cell_downsampling": {
+      "dimension": "2_cell_downsampling_grid",
+      "grid": [
+        {
+          "cell_fraction": 1.0,
+          "total_cells": 13487,
+          "min_cells_per_sample": 272,
+          "jaccard_vs_baseline_top100": 1.0,
+          "warrant_regime": "POPULATION_INFERENCE",
+          "warnings": []
+        },
+        {
+          "cell_fraction": 0.5,
+          "total_cells": 6743,
+          "min_cells_per_sample": 135,
+          "jaccard_vs_baseline_top100": 0.7857,
+          "warrant_regime": "POPULATION_INFERENCE",
+          "warnings": []
+        },
+        {
+          "cell_fraction": 0.2,
+          "total_cells": 2697,
+          "min_cells_per_sample": 61,
+          "jaccard_vs_baseline_top100": 0.6,
+          "warrant_regime": "POPULATION_INFERENCE",
+          "warnings": []
+        },
+        {
+          "cell_fraction": 0.05,
+          "total_cells": 674,
+          "min_cells_per_sample": 10,
+          "jaccard_vs_baseline_top100": 0.5152,
+          "warrant_regime": "POPULATION_INFERENCE",
+          "warnings": []
+        }
+      ],
+      "passed": true
+    },
+    "dim3_donor_perturbation_phase_transition": {
+      "dimension": "3_donor_number_perturbation_phase_transition",
+      "grid": [
+        {
+          "donor_subset": "8_donors",
+          "n_donors": 8,
+          "regime": "POPULATION_INFERENCE",
+          "maturity_ceiling": "SUPPORTED",
+          "population_claims_allowed": true,
+          "permitted": true,
+          "regime_correct": true
+        },
+        {
+          "donor_subset": "6_donors",
+          "n_donors": 6,
+          "regime": "POPULATION_INFERENCE",
+          "maturity_ceiling": "SUPPORTED",
+          "population_claims_allowed": true,
+          "permitted": true,
+          "regime_correct": true
+        },
+        {
+          "donor_subset": "4_donors",
+          "n_donors": 4,
+          "regime": "POPULATION_INFERENCE",
+          "maturity_ceiling": "SUPPORTED",
+          "population_claims_allowed": true,
+          "permitted": true,
+          "regime_correct": true
+        },
+        {
+          "donor_subset": "3_donors",
+          "n_donors": 3,
+          "regime": "POPULATION_INFERENCE",
+          "maturity_ceiling": "SUPPORTED",
+          "population_claims_allowed": true,
+          "permitted": true,
+          "regime_correct": true
+        },
+        {
+          "donor_subset": "2_donors",
+          "n_donors": 2,
+          "regime": "DESCRIPTIVE_ONLY",
+          "maturity_ceiling": "PRELIMINARY",
+          "population_claims_allowed": false,
+          "permitted": true,
+          "regime_correct": true
+        },
+        {
+          "donor_subset": "1_donor",
+          "n_donors": 1,
+          "regime": "ABSTAIN_UNREPLICATED",
+          "maturity_ceiling": "ABSTAIN",
+          "population_claims_allowed": false,
+          "permitted": false,
+          "regime_correct": true
+        }
+      ],
+      "phase_transitions_verified": true,
+      "passed": true
+    },
+    "dim4_effect_size_sensitivity": {
+      "dimension": "4_effect_size_sensitivity_power_curve",
+      "grid": [
+        {
+          "injected_log2fc": 0.5,
+          "n_spike_genes": 10,
+          "recovered_sig_padj_05": 5,
+          "statistical_power": 0.5
+        },
+        {
+          "injected_log2fc": 1.0,
+          "n_spike_genes": 10,
+          "recovered_sig_padj_05": 4,
+          "statistical_power": 0.4
+        },
+        {
+          "injected_log2fc": 2.0,
+          "n_spike_genes": 10,
+          "recovered_sig_padj_05": 9,
+          "statistical_power": 0.9
+        },
+        {
+          "injected_log2fc": 4.0,
+          "n_spike_genes": 10,
+          "recovered_sig_padj_05": 10,
+          "statistical_power": 1.0
+        }
+      ],
+      "passed": true
+    },
+    "dim5_permutation_null_fdr": {
+      "dimension": "5_permutation_null_fdr_control",
+      "n_genes_tested": 14053,
+      "n_false_positive_degs_padj_05": 0,
+      "empirical_false_positive_rate": 0.0,
+      "fdr_controlled": true,
+      "passed": true
+    },
+    "dim6_backend_degradation": {
+      "dimension": "6_backend_degradation_simulation",
+      "simulated_state": "NOT_INSTALLED",
+      "conformant": false,
+      "action_taken": "REFUSE_EXECUTION (ABSTAIN with pip-install remedy)",
+      "zero_silent_substitution_enforced": true,
+      "passed": true
+    },
+    "dim7_claim_interception": {
+      "dimension": "7_host_variation_claim_interception",
+      "test_cases": [
+        {
+          "test_id": "causal_treatment_claim",
+          "expected_violation": true,
+          "detected_violation": true,
+          "correct": true
+        },
+        {
+          "test_id": "unverified_cell_type_claim",
+          "expected_violation": true,
+          "detected_violation": true,
+          "correct": true
+        },
+        {
+          "test_id": "prohibited_causal_mechanism",
+          "expected_violation": true,
+          "detected_violation": true,
+          "correct": true
+        },
+        {
+          "test_id": "compliant_associational_claim",
+          "expected_violation": false,
+          "detected_violation": false,
+          "correct": true
+        }
+      ],
+      "interception_accuracy": 1.0,
+      "passed": true
+    }
+  }
+}

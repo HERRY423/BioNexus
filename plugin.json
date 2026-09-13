@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "bionexus-reliability",
-  "version": "1.0.0-rc.7",
+  "version": "1.0.0-rc.8",
   "description": "Scientific Reliability Layer for AI-Assisted Biology. Know what your evidence actually warrants: pre-submission shadow review of multi-donor single-cell differential expression, evidence gap location, and human scientific review support.",
   "author": {
     "name": "BioNexus Team"

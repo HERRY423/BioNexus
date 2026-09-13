@@ -1,6 +1,6 @@
 {
   "name": "bionexus-reliability",
-  "version": "1.0.0-rc.7",
+  "version": "1.0.0-rc.8",
   "provider": "BioNexus",
   "mcpServers": {
     "bionexus-local-mcp": {

@@ -1,0 +1,138 @@
+{
+  "capability": "scrna.annotation_evidence",
+  "dataset": {
+    "name": "citeseq_pbmc_sorted",
+    "version": "BN-ANN-IV-001",
+    "dataset_track": "real_public_processed_citeseq",
+    "accession": "YosefLab/scVI-data processed public 10x PBMC 10k and PBMC 5k CITE-seq datasets used by the official scvi-tools totalVI tutorials",
+    "checksum_sha256": {
+      "DATASET_MANIFEST.json": "a210c7c795e6e4d933e9c32575439206c3c58ba49556198ab48e643257c8fdcb",
+      "pbmc_10k_protein_v3.h5ad": "5f08b8575febf9e04b209b94eb43f6335f1e33b0985cdcf44adf7320f6243c69",
+      "pbmc_5k_protein_v3.h5ad": "a1bf51e070d24b39627ea4de9b3e489a4637ff795e1061e0733e26c3baec8847"
+    }
+  },
+  "pipeline": {
+    "version": "1.0.0-rc.7",
+    "backend_identity": {
+      "capability_id": "scrna.annotation_evidence",
+      "track": "canonical",
+      "claimed_backend": "local deterministic evidence combiner",
+      "observed_backend": "bionexus",
+      "entry_points_declared": [
+        "bionexus.annotation_evidence"
+      ],
+      "entry_points_resolved": [
+        "bionexus.annotation_evidence"
+      ],
+      "entry_points_missing": [],
+      "version": "1.0.0-rc.5",
+      "execution_fingerprint": "78354fc922c3d902",
+      "fallback": false,
+      "state": "CONFORMANT",
+      "action": "RUN PERMITTED (identity)",
+      "failure_mode_ids": [],
+      "reason": "declared_backend == observed_backend: 'local deterministic evidence combiner' (distribution 'bionexus', version 1.0.0-rc.7, entry points 1/1 resolved, fallback False)."
+    },
+    "provenance": {
+      "data_source": "YosefLab/scVI-data processed public 10x PBMC 10k and PBMC 5k CITE-seq datasets used by the official scvi-tools totalVI tutorials",
+      "download_date": "2026-08-28",
+      "commit_sha": "11c8132a1eb820fe4e80854131e111ecf5e9eb53",
+      "git_dirty": false,
+      "environment_lockfile_hashes": {
+        "pyproject.toml": "156d1e950587d37ad1612d2ac721f9947e3e30d310fb0bd4c21c473a834f9a25",
+        "requirements-dev.txt": "5b507f416d3a9ac24d783861993ec2f7cd7ada6e5a861d67ce00f237ba270422",
+        "requirements.txt": "d3b44ce04f0dfd377849e04ea1b66927ee70067e8926023f4fabc56614735cea"
+      },
+      "command": [
+        "scripts/run_flagship_validation.py"
+      ],
+      "command_str": "scripts/run_flagship_validation.py",
+      "generator_version": "1.0.0-rc.7",
+      "python_version": "3.13.9",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "timestamp": "2026-09-06T15:34:13.259491+00:00",
+      "extra_metadata": {
+        "capability": "scrna.annotation_evidence",
+        "dataset_id": "citeseq_pbmc_sorted",
+        "present": true
+      },
+      "repository_dirty_at_execution": false,
+      "validation_source_dirty": false,
+      "source_snapshot_sha256": "fd57efc235ac92a128a8c0738e5477f38de03ec13f9df350f765c16b5c1634b3"
+    }
+  },
+  "metrics": [
+    {
+      "name": "precision_wilson_lower_95",
+      "expected": 0.9,
+      "observed": {
+        "observed": 0.9311232144983851,
+        "threshold": 0.9,
+        "passed": true
+      },
+      "result": "pass"
+    },
+    {
+      "name": "coverage",
+      "expected": 0.1,
+      "observed": {
+        "observed": 1.0,
+        "threshold": 0.1,
+        "passed": true
+      },
+      "result": "pass"
+    },
+    {
+      "name": "accepted_lineages",
+      "expected": 3,
+      "observed": {
+        "observed": 4,
+        "threshold": 3,
+        "passed": true
+      },
+      "result": "pass"
+    },
+    {
+      "name": "accuracy_enrichment",
+      "expected": "preregistered criterion",
+      "observed": {
+        "accepted": 0.9390967741935484,
+        "ungated": 0.9390967741935484,
+        "passed": true
+      },
+      "result": "pass"
+    },
+    {
+      "name": "nondegenerate_correctness_enrichment",
+      "expected": "gate is selective and improves held-out accuracy",
+      "observed": {
+        "preregistered_endpoint": false,
+        "degenerate_nonselective_gate": true,
+        "claim_target_supported": false,
+        "reason": "The fitted gate accepted the full held-out anchor set or did not improve accuracy; the preregistered numeric endpoints were met but correctness enrichment was not demonstrated."
+      },
+      "result": "fail"
+    }
+  ],
+  "limitations": [
+    "Two real public processed 10x CITE-seq datasets were executed with calibration/holdout separation.",
+    "Paired ADT anchors are orthogonal evidence but not independent expert ground truth.",
+    "BN-ANN-IV-001 met its numeric endpoints with a zero threshold and 100% coverage; the post-run scientific audit therefore classifies the gate as non-selective and inconclusive.",
+    "BN-ANN-IV-002 retained an input-ineligible non-evaluation because X was normalized; the separately locked BN-ANN-IV-003 raw-count successor met its endpoints but was not blinded to label distributions and is capped at CANDIDATE_EXTERNAL_REFERENCE_NONBLINDED."
+  ],
+  "timestamp": "2026-09-06T15:34:13.415150+00:00",
+  "evidence_files": [
+    "validation\\annotation\\studies\\BN-ANN-IV-001\\evidence\\holdout_cell_decisions.csv",
+    "validation\\annotation\\studies\\BN-ANN-IV-001\\PREREGISTRATION.json",
+    "validation\\annotation\\studies\\BN-ANN-IV-001\\PREREGISTRATION_LOCK.json",
+    "validation\\annotation\\studies\\BN-ANN-IV-001\\REPORT.json",
+    "validation\\annotation\\studies\\BN-ANN-IV-002\\PREREGISTRATION.json",
+    "validation\\annotation\\studies\\BN-ANN-IV-002\\PREREGISTRATION_LOCK.json",
+    "validation\\annotation\\studies\\BN-ANN-IV-002\\REPORT.json",
+    "validation\\annotation\\studies\\BN-ANN-IV-003\\evidence\\external_holdout_cell_decisions.csv.gz",
+    "validation\\annotation\\studies\\BN-ANN-IV-003\\PREREGISTRATION.json",
+    "validation\\annotation\\studies\\BN-ANN-IV-003\\PREREGISTRATION_LOCK.json",
+    "validation\\annotation\\studies\\BN-ANN-IV-003\\REPORT.json"
+  ],
+  "status": "pass"
+}

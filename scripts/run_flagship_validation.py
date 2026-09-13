@@ -28,6 +28,7 @@ if str(REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from bionexus.provenance import capture_execution_provenance
+from bionexus.validation_runs import record_validation_run
 from bionexus.validation_verifier import bind_validation_source_provenance
 from bionexus.versions import VERSION
 from evals.flagship_validation import (
@@ -392,6 +393,7 @@ def write_report(artifact: ValidationArtifact) -> Path:
 
 
 
+@record_validation_run(REPO_ROOT)
 def main() -> int:
     print("=" * 70)
     print("BioNexus Flagship Validation Runner")

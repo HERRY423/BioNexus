@@ -204,7 +204,7 @@ class ClaimScopeBoundary:
 
 @dataclass
 class DEAuditResult:
-    """The complete, lab-ready audit verdict for multi-donor single-cell DE."""
+    """Bounded artifact audit; a passing status never grants scientific authority."""
     overall_status: str  # BLOCKER_DETECTED / NEEDS_REVISION / NEEDS_DATA / NOT_ASSESSED / ROBUST_PASS
     findings: List[DEFinding] = field(default_factory=list)
     checks: List[CheckRecord] = field(default_factory=list)
@@ -234,6 +234,9 @@ class DEAuditResult:
         return {
             "overall_status": self.overall_status,
             "passed": self.passed,
+            "scientific_authorization": "NONE",
+            "producer_authentication": "NOT_ESTABLISHED",
+            "analysis_execution_verification": "NOT_PERFORMED",
             "summary_counts": {
                 "blocker": self.blocker_count,
                 "high_impact": self.high_impact_count,
@@ -779,7 +782,8 @@ class DEAuditEngine:
                     observational_data=has_observational,
                     biological_replicates_count=reps_count,
                     pseudobulk_aggregated=is_donor_execution_verified,
-                    confound_controls=["donor"] if reps_count >= 3 else [],
+                    # A donor count is not evidence that confounding was controlled.
+                    confound_controls=[],
                     perturbation=False,
                     clinical_ground_truth=False,
                     regulatory_certification=False,
@@ -787,6 +791,12 @@ class DEAuditEngine:
                 )
 
                 warrant_res = DeterministicWarrantEngine.evaluate(claim_ir, ev_profile)
+                if claim_ir.generalization_scope.value == "population_general":
+                    checks.append(CheckRecord(
+                        check_id="claim_population_transport", title="总体外推证据",
+                        status=CheckStatus.MISSING_EVIDENCE, required_for_pass=True,
+                        summary="供体数与 DE 结果不能证明目标总体代表性；总体外推需要独立的抽样与适用域审阅。",
+                    ))
                 if warrant_res.is_fully_warranted:
                     checks.append(
                         CheckRecord(
@@ -827,6 +837,11 @@ class DEAuditEngine:
                     )
             except Exception as exc:
                 logger.warning("Targeted claim audit encountered exception: %s", exc)
+                checks.append(CheckRecord(
+                    check_id="claim_targeted_warrant", title="科学声明定向审计",
+                    status=CheckStatus.PARSE_FAILED, required_for_pass=True,
+                    summary="声明审阅失败，无法判定证据是否支持该声明；必须复核，不能按通过处理。",
+                ))
 
         claim_boundary = self._determine_claim_boundary(
             findings, cohort_summary, claim_text, checks, execution
@@ -1999,6 +2014,7 @@ class DEAuditEngine:
         )
         return True
 
+
     def _audit_claim_vs_table_facts(
         self,
         claim_text: str,
@@ -2018,6 +2034,39 @@ class DEAuditEngine:
             return False
 
         text = str(claim_text).strip()
+        # Evaluate complete clauses independently. A correct first assertion
+        # must not license a second gene or a contradictory second sentence.
+        clauses = [part.strip() for part in re.split(
+            r"[;；。]|\.(?=\s+[A-Za-z])|(?:,\s*|，\s*)(?=[A-Za-z0-9_.-]+\s*(?:(?:is|are|was|were)\b|显著|不显著|未|非|上调|下调|表达|是|为)|在|该|其)|\b(?:and|but|whereas|while)\s+(?=[A-Za-z0-9_.-]+\s+(?:is|are|was|were)\b)",
+            text, flags=re.I,
+        ) if part.strip()]
+        if len(clauses) > 1:
+            outcomes = [self._audit_claim_vs_table_facts(part, de_df, findings, checks) for part in clauses]
+            return all(outcomes)
+        # Only a single, unambiguous subject/predicate binding is supported.
+        # Negating a direction is not equivalent to asserting the same direction;
+        # an unparsed second assertion cannot borrow the first assertion's row.
+        statistic = r"\bsignifican(?:t|tly)\b|显著"
+        direction = r"\b(?:up-?regulated|down-?regulated)\b|上调|下调|高表达|低表达"
+        negated_direction = re.search(
+            r"\b(?:not|never|no|neither)\b[^.;]{0,40}\b(?:up-?regulated|down-?regulated)\b|(?:不|未|无|非)[^，。；]{0,12}(?:上调|下调|高表达|低表达)",
+            text, re.I,
+        )
+        repeated_predicate = len(re.findall(statistic, text, re.I)) > 1 or len(re.findall(direction, text, re.I)) > 1
+        # A conjunction between two predicates is safe only for the explicitly
+        # supported same-subject form, e.g. "POS1 is upregulated and significant".
+        conjunctions = list(re.finditer(r"[,，]|\b(?:and|but|whereas|while|or)\b|[且并]", text, re.I))
+        unbound_conjunction = any(
+            not re.match(r"(?:and|且|并且)\s*(?:is\s+)?(?:significant\b|up-?regulated\b|down-?regulated\b|显著|上调|下调)", text[m.start():], re.I)
+            for m in conjunctions
+        )
+        if negated_direction or repeated_predicate or (unbound_conjunction and re.search(f"{statistic}|{direction}", text, re.I)):
+            checks.append(CheckRecord(
+                check_id="claim_fact_concordance", title="声明微观事实核查",
+                status=CheckStatus.MISSING_EVIDENCE, required_for_pass=True,
+                summary="否定方向、矛盾断言或未解析的复合声明无法唯一绑定检验；需要拆分声明并复核，不得按通过处理。",
+            ))
+            return False
         stopwords = {
             "this", "the", "these", "those", "our", "for", "in", "no", "none", "all", "each",
             "both", "result", "results", "analysis", "data", "table", "method", "genes", "degs",
@@ -2093,31 +2142,51 @@ class DEAuditEngine:
                 return False
 
         # 2. Extract focal gene
+        mentioned = [gene for gene in table_genes if re.search(r"(?<![\w.-])" + re.escape(gene) + r"(?![\w.-])", text, re.I)]
         focal_gene = None
-        gene_patterns = [
-            r"\b(?:contains\s+a\s+result\s+for|result\s+for)\s+([A-Za-z0-9_.-]+)",
-            r"\bprove\s+that\s+([A-Za-z0-9_.-]+)\b",
-            r"\b([A-Za-z0-9_.-]+)\s+(?:is|are|was|were)\s+(?:significantly\s+)?(up-?regulated|down-?regulated)\b",
-            r"\b([A-Za-z0-9_.-]+)\s+(?:is|are|was|were)\s+(not\s+significant|significant)\b",
-            r"\b([A-Za-z0-9_.-]+)\s+(?:causes|drives|is\s+a\s+clinically\s+validated)\b",
-        ]
-        for pat in gene_patterns:
-            m = re.search(pat, text, re.I)
-            if m:
-                cand = m.group(1).strip().rstrip(". ,;:")
-                if cand.lower() not in stopwords and len(cand) >= 2:
-                    focal_gene = cand
-                    break
+        if len(mentioned) == 1:
+            focal_gene = table_genes[mentioned[0]]
+        elif len(mentioned) > 1:
+            checks.append(CheckRecord(
+                check_id="claim_fact_concordance", title="声明微观事实核查",
+                status=CheckStatus.MISSING_EVIDENCE, required_for_pass=True,
+                summary="声明包含多个基因或基因对应多行检验，无法唯一绑定；请按基因和比较组拆分审阅。",
+            ))
+            return False
+        else:
+            gene_patterns = [
+                r"\b(?:contains\s+a\s+result\s+for|result\s+for)\s+([A-Za-z0-9_.-]+)",
+                r"\bprove\s+that\s+([A-Za-z0-9_.-]+)\b",
+                r"\b([A-Za-z0-9_.-]+)\s*(?:基因)?\s*(?:表达)?\s*(?:显著)?\s*(?:上调|下调|高表达|低表达)",
+                r"\b([A-Za-z0-9_.-]+)\s*(?:基因)?\s*(?:表达)?\s*(?:是|为)?\s*(?:不显著|显著)",
+                r"\b([A-Za-z0-9_.-]+)\s+(?:is|are|was|were)\s+(?:significantly\s+)?(up-?regulated|down-?regulated)\b",
+                r"\b([A-Za-z0-9_.-]+)\s+(?:is|are|was|were)\s+(not\s+significant|significant)\b",
+                r"\b([A-Za-z0-9_.-]+)\s+(?:causes|drives|is\s+a\s+clinically\s+validated)\b",
+            ]
+            for pat in gene_patterns:
+                m = re.search(pat, text, re.I)
+                if m:
+                    cand = m.group(1).strip().rstrip(". ,;:")
+                    if cand.lower() not in stopwords and len(cand) >= 2:
+                        focal_gene = cand
+                        break
+
+            if not focal_gene:
+                # Fallback scan: check if any uppercase token in text matches or resembles a gene
+                tokens = [t.strip(". ,;:") for t in text.split()]
+                for t in tokens:
+                    if t.upper() in table_genes and t.lower() not in stopwords:
+                        focal_gene = t
+                        break
 
         if not focal_gene:
-            # Fallback scan: check if any uppercase token in text matches or resembles a gene
-            tokens = [t.strip(". ,;:") for t in text.split()]
-            for t in tokens:
-                if t.upper() in table_genes and t.lower() not in stopwords:
-                    focal_gene = t
-                    break
-
-        if not focal_gene:
+            if not has_global_null_claim and re.search(r"\bsignifican(?:t|tly)\b|up-?regulated|down-?regulated|显著|上调|下调", text, re.I):
+                checks.append(CheckRecord(
+                    check_id="claim_fact_concordance", title="声明微观事实核查",
+                    status=CheckStatus.MISSING_EVIDENCE, required_for_pass=True,
+                    summary="无法把该统计或方向声明唯一绑定到结果表；请提供独立、明确的单基因声明。",
+                ))
+                return False
             return True
 
         focal_upper = focal_gene.upper()
@@ -2152,16 +2221,29 @@ class DEAuditEngine:
         else:
             rows = de_df[de_df.index.astype(str) == actual_gene]
 
-        if rows.empty:
-            return True
+        if len(rows) != 1:
+            checks.append(CheckRecord(
+                check_id="claim_fact_concordance", title="声明微观事实核查",
+                status=CheckStatus.MISSING_EVIDENCE, required_for_pass=True,
+                summary="声明包含多个基因或基因对应多行检验，无法唯一绑定；请按基因和比较组拆分审阅。",
+            ))
+            return False
 
         row = rows.iloc[0]
         has_issue = False
 
         # Direction check
-        lfc_val = float(row[lfc_col]) if lfc_col and pd.notna(row.get(lfc_col)) else None
+        lfc_val = pd.to_numeric(row.get(lfc_col), errors="coerce") if lfc_col else None
+        directional = bool(re.search(r"\b(?:up-?regulated|down-?regulated)\b|上调|下调|高表达|低表达", text, re.I))
+        if directional and (lfc_val is None or not np.isfinite(lfc_val)):
+            checks.append(CheckRecord(
+                check_id="claim_fact_concordance", title="声明微观事实核查",
+                status=CheckStatus.MISSING_EVIDENCE, required_for_pass=True,
+                summary="方向声明缺少有限的效应值，不能验证上调或下调。",
+            ))
+            return False
         if lfc_val is not None:
-            if re.search(r"\bup-?regulated\b|上调|高表达", text, re.I) and lfc_val < 0:
+            if re.search(r"\bup-?regulated\b|上调|高表达", text, re.I) and lfc_val <= 0:
                 has_issue = True
                 findings.append(
                     DEFinding(
@@ -2169,13 +2251,13 @@ class DEAuditEngine:
                         severity=FindingSeverity.HIGH_IMPACT,
                         category=FindingCategory.CLAIM_BOUNDARY,
                         title=f"基因表达差异方向与声明相反 (Wrong Direction Assertion: {actual_gene})",
-                        impact_on_conclusion=f"声明声称基因 '{actual_gene}' 上调表达 (upregulated)，但结果表中估计的 log2FC 为负数 ({lfc_val:.4f})，实际为下调表达。",
+                        impact_on_conclusion=f"声明声称基因 '{actual_gene}' 上调表达 (upregulated)，但结果表中估计的 log2FC 非正 ({lfc_val:.4f})，不支持上调。",
                         step_or_location=f"claim_text vs de_table.{lfc_col}",
-                        minimal_fix=f"核对组别对比方向，基因 '{actual_gene}' 的 log2FC 为负值，应修正为下调表达。",
+                        minimal_fix=f"核对组别对比方向及效应值，修正基因 '{actual_gene}' 的上调声明；零效应不支持任一方向。",
                         evidence_data={"gene": actual_gene, "log2FoldChange": lfc_val},
                     )
                 )
-            elif re.search(r"\bdown-?regulated\b|下调|低表达", text, re.I) and lfc_val > 0:
+            elif re.search(r"\bdown-?regulated\b|下调|低表达", text, re.I) and lfc_val >= 0:
                 has_issue = True
                 findings.append(
                     DEFinding(
@@ -2183,9 +2265,9 @@ class DEAuditEngine:
                         severity=FindingSeverity.HIGH_IMPACT,
                         category=FindingCategory.CLAIM_BOUNDARY,
                         title=f"基因表达差异方向与声明相反 (Wrong Direction Assertion: {actual_gene})",
-                        impact_on_conclusion=f"声明声称基因 '{actual_gene}' 下调表达 (downregulated)，但结果表中估计的 log2FC 为正数 ({lfc_val:.4f})，实际为上调表达。",
+                        impact_on_conclusion=f"声明声称基因 '{actual_gene}' 下调表达 (downregulated)，但结果表中估计的 log2FC 非负 ({lfc_val:.4f})，不支持下调。",
                         step_or_location=f"claim_text vs de_table.{lfc_col}",
-                        minimal_fix=f"核对组别对比方向，基因 '{actual_gene}' 的 log2FC 为正值，应修正为上调表达。",
+                        minimal_fix=f"核对组别对比方向及效应值，修正基因 '{actual_gene}' 的下调声明；零效应不支持任一方向。",
                         evidence_data={"gene": actual_gene, "log2FoldChange": lfc_val},
                     )
                 )
@@ -2195,7 +2277,7 @@ class DEAuditEngine:
             r"\b(?:not\s+(?:statistically\s+)?significant|no\s+(?:statistically\s+)?significant|non[- ]significant)\b|不显著|未达显著|无显著|未见显著|未发现显著",
             text, re.I,
         ))
-        is_positive_sig = bool(re.search(r"\b(?:is\s+significant|significantly)\b|显著", text, re.I)) and not is_negated_sig
+        is_positive_sig = bool(re.search(r"\b(?:significant|significantly)\b|显著", text, re.I)) and not is_negated_sig
         padj_val = pd.to_numeric(row.get(padj_col), errors="coerce") if padj_col else None
         if (is_negated_sig or is_positive_sig) and (padj_val is None or not np.isfinite(padj_val)):
             checks.append(CheckRecord(
@@ -2370,15 +2452,15 @@ class DEAuditEngine:
             maturity = "EXPLORATORY_COHORT"
         elif donor_level:
             allowed = (
-                f"在已检查的供体级结果与样本设计下，可陈述该队列的群体级别统计推断。"
+                f"可陈述所提供结果表中的队列内观察性关联；执行记录的一致性不证明真实拟合或总体代表性。"
                 f"{f' N={n_donors} 独立生物学重复。' if n_donors else ''}"
             )
-            prohibited = "严禁将观察性转录组差异直接陈述为因果驱动机制。"
+            prohibited = "不得由记录一致性升级为总体外推、真实执行认证或因果驱动机制。"
             results = (
-                "Donor-level count-model results were inspected and, together with the sample design, "
-                "support population-level association language (not causation)."
+                "The supplied table and donor-level execution metadata were inspected for consistency. "
+                "Describe within-cohort associations; actual fitting and population transport were not verified."
             )
-            maturity = "ROBUST_POPULATION"
+            maturity = "EXPLORATORY_COHORT"
         else:
             allowed = "已检查提供的结果表与设计，但没有供体级执行记录，不能授权群体推断。"
             prohibited = "严禁把细胞级 rank_genes_groups 或来源不明的 p 值写成 NB GLM / Wald / BH 已执行。"

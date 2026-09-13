@@ -77,6 +77,9 @@ jobs:
           pip install -r requirements-dev.txt
           pip install -e ".[dev,goldchain,deseq,spatial]"
 
+      - name: Validate Frozen Scope and Named GA Support Activation
+        run: python scripts/check_release_contract.py --version "${RELEASE_TAG#v}"
+
       # -------------------------------------------------------------------
       # Gate 1: static analysis (source tree)
       # -------------------------------------------------------------------
@@ -111,9 +114,18 @@ jobs:
           python evals/pseudobulk_stress_test.py
           python evals/annotation_stress_test.py
           python evals/spatial_stress_test.py
+          python scripts/run_flagship_validation.py
           python scripts/verify_validation_artifacts.py
           python scripts/check_evidence_index.py --check
           pytest tests/unit/test_validation_verifier.py tests/unit/test_validation_artifacts.py tests/unit/test_certification.py tests/unit/test_evidence_index.py -q
+
+      - name: Preserve Validation Run Capsules
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-validation-run-capsules
+          path: validation/runs/
+          if-no-files-found: warn
 
 
       # -------------------------------------------------------------------

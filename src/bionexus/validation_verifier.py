@@ -23,6 +23,7 @@ from typing import Any, Dict, List, Optional, Union
 from bionexus.certification import _EVIDENCE, certify_capability
 from bionexus.provenance import get_git_info, sha256_file
 from bionexus.semantic_consistency import verify_semantic_consistency
+from bionexus.validation_history import has_current_run_receipt, is_quarantined_history
 from bionexus.versions import VERSION
 
 FLAGSHIP_CAPABILITIES = (
@@ -324,6 +325,15 @@ def verify_validation_artifacts(
             errors.append(f"Missing required artifact: {cap_id} INFERENTIAL_STRESS_REPORT.json")
 
         # Version checks
+        for historical_path, historical_document in ((report_path, report_data), (stress_path, stress_data)):
+            if historical_document is not None:
+                try:
+                    if is_quarantined_history(root, historical_path.relative_to(root).as_posix(), historical_document):
+                        errors.append(f"{historical_path.name}: HISTORICAL_PROVENANCE_UNVERIFIED; requires a new execution")
+                    if not has_current_run_receipt(root, historical_path.relative_to(root).as_posix(), current_source_snapshot):
+                        errors.append(f"{historical_path.name}: CURRENT_EXECUTION_RECEIPT_MISSING; metadata changes are not execution")
+                except (OSError, ValueError, TypeError):
+                    errors.append("Invalid historical provenance archive")
         pipeline_ver = report_data.get("pipeline", {}).get("version")
         if pipeline_ver != expected_version:
             errors.append(

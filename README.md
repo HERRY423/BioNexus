@@ -3,19 +3,23 @@
 
 <div align="center">
 
-[![Release](https://img.shields.io/badge/Release-v1.0.0--rc.7-blue.svg?style=flat-square)](https://github.com/HERRY423/BioNexus/releases/tag/v1.0.0-rc.7)
+[![Release](https://img.shields.io/badge/Release-v1.0.0--rc.8-blue.svg?style=flat-square)](https://github.com/HERRY423/BioNexus/releases/tag/v1.0.0-rc.8)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg?style=flat-square)](https://www.python.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
 [![CI](https://github.com/HERRY423/BioNexus/actions/workflows/ci.yml/badge.svg)](https://github.com/HERRY423/BioNexus/actions/workflows/ci.yml)
 [![Status: RUO](https://img.shields.io/badge/Status-Research%20Use%20Only-yellow.svg?style=flat-square)](#-regulatory-notice--compliance)
 
-*v1.0.0-rc.7: GA Closure Candidate (software/API closure, not scientific validation)*
+*v1.0.0-rc.8: GA Closure Candidate (software/API closure, not scientific validation)*
 
 </div>
 
 > **Know what your evidence actually warrants.**
 
 BioNexus is a warrant-first reliability layer between AI-assisted analysis and scientific claims.
+
+Core 1.0's [supported surface and acceptance criteria](GA_CRITERIA.md) are frozen.
+Support remains unactivated; [historical validation reports](docs/validation-history.md)
+are kept separate from new execution evidence.
 
 ### Current first laboratory workflow:
 **Start here: review multi-donor single-cell differential expression before submission.**
