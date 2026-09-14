@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Recompiled `validation/EVIDENCE_INDEX.json` from scratch with live source snapshots and report hashes, eliminating stale bindings without hash manipulation.
 - **Enhanced GA Acceptance Gating (`release_contract.py`)**:
   - Implemented automated verification of required acceptance categories completeness (`core_quality`, `de_contract`, `installed_wheel`, `static_checks`, `validation_history`, `evidence_index`).
-  - Added strict pass status verification and candidate parity validation (commit SHA, version, source snapshot).
+  - Added strict pass status verification, referenced evidence record hash integrity, and candidate version matching.
   - Preserved explicit human sign-off responsibility: `identity_authentication: "NOT_PERFORMED"`, `maintainer_signoff_verification: "MANUAL_INSPECTION_REQUIRED"`.
 - **Legacy Bundle Backward Compatibility**:
   - Confirmed legacy DE bundle reader stability (`LEGACY_LIMITED` status for historical v1 bundles), ensuring zero regressions for downstream consumers.
