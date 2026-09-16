@@ -1,0 +1,11 @@
+{
+  "reviewer_id": null,
+  "label": null,
+  "rationale": null,
+  "evidence_sha256": null,
+  "packet_sha256": null,
+  "reviewed_at": null,
+  "blinded_to_arms": null,
+  "independent_of_development": null,
+  "qualification_record_held_by_custodian": null
+}

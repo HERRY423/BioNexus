@@ -1,0 +1,117 @@
+{
+  "activity_name": "freeze_external_de_pilot_launch_package",
+  "method": "local file hashing and template validation",
+  "backend": "bionexus.de_external_study.validate_plan",
+  "parameters": {
+    "actual_external_tasks": 0,
+    "scientific_authorization": "NONE"
+  },
+  "input_files": [
+    {
+      "file_name": "SUMMARY.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\de-scope-repair-pilot-2026-09-15\\attempt-02\\SUMMARY.json",
+      "role": "input",
+      "sha256": "584675a9af9237ac67855cd5f1ad538d6329541d8fa85fa2f9b7ee489b1633e6"
+    },
+    {
+      "file_name": "REGISTRY.json",
+      "path": "C:\\Plugin\\BioNexus\\validation\\ivn\\REGISTRY.json",
+      "role": "input",
+      "sha256": "fe578fe0596571b52dcf426c248ca2b1969e716e0edd71650b940d722d41b890"
+    },
+    {
+      "file_name": "PROTOCOL.zh-CN.md",
+      "path": "C:\\Plugin\\BioNexus\\review\\de-scope-repair-pilot-2026-09-15\\external-pilot\\PROTOCOL.zh-CN.md",
+      "role": "input",
+      "sha256": "0c7a9b135e1323c5cc4129da667a57132e097bd140c1c82c4e52565d45d79951"
+    },
+    {
+      "file_name": "README.zh-CN.md",
+      "path": "C:\\Plugin\\BioNexus\\review\\de-scope-repair-pilot-2026-09-15\\external-pilot\\README.zh-CN.md",
+      "role": "input",
+      "sha256": "f5cb364a8fd15cafddf0a19a6bdc3e2ecceeaa564889146c37e7df342d41d844"
+    },
+    {
+      "file_name": "TASK_INTAKE_TEMPLATE.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\de-scope-repair-pilot-2026-09-15\\external-pilot\\TASK_INTAKE_TEMPLATE.json",
+      "role": "input",
+      "sha256": "39c786503b92ffc2f45112a7a17757131eec54c1664459f0d4d0012bce84adb2"
+    },
+    {
+      "file_name": "REFERENCE_REVIEW_TEMPLATE.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\de-scope-repair-pilot-2026-09-15\\external-pilot\\REFERENCE_REVIEW_TEMPLATE.json",
+      "role": "input",
+      "sha256": "883c2d4bac70ecfece7232558378318b8b1328d1cf18fe0974316cc8d29f218c"
+    },
+    {
+      "file_name": "ARM_OUTPUT_TEMPLATE.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\de-scope-repair-pilot-2026-09-15\\external-pilot\\ARM_OUTPUT_TEMPLATE.json",
+      "role": "input",
+      "sha256": "397ab53b661ee523d5db9001edf7df5acecccae4298896444935a915a6d5a20f"
+    },
+    {
+      "file_name": "COST_LOG_TEMPLATE.csv",
+      "path": "C:\\Plugin\\BioNexus\\review\\de-scope-repair-pilot-2026-09-15\\external-pilot\\COST_LOG_TEMPLATE.csv",
+      "role": "input",
+      "sha256": "1e5924988742b152543942f343dcd6f91fedf3e1551d859542f0597593f04cca"
+    },
+    {
+      "file_name": "PLAN_TEMPLATE.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\de-scope-repair-pilot-2026-09-15\\external-pilot\\PLAN_TEMPLATE.json",
+      "role": "input",
+      "sha256": "c2702475004f29842cde1ecf7b60b2e91fec3d6cb439e4c59f577baacdd50314"
+    },
+    {
+      "file_name": "PILOT_STATUS.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\de-scope-repair-pilot-2026-09-15\\external-pilot\\PILOT_STATUS.json",
+      "role": "input",
+      "sha256": "be4377b5b154c94ca4e3261f48842b86ca32d7f03e5b7817f11e6b4187220fc8"
+    }
+  ],
+  "output_files": [
+    {
+      "file_name": "SHA256SUMS.json",
+      "path": "C:\\Plugin\\BioNexus\\review\\de-scope-repair-pilot-2026-09-15\\external-pilot\\SHA256SUMS.json",
+      "role": "output",
+      "sha256": "6e8ace766a5af8b6f57fa8130862ca033fccdfdc163b17b48b35821395740363"
+    }
+  ],
+  "environment_snapshot": {
+    "os_name": "Windows",
+    "os_release": "11",
+    "os_version": "10.0.26200",
+    "architecture": "AMD64",
+    "python_version": "3.13.9",
+    "python_executable": "C:\\Users\\13264\\anaconda3\\python.exe",
+    "packages": {
+      "numpy": "2.3.5",
+      "scipy": "1.16.3",
+      "pandas": "2.3.3",
+      "scanpy": "1.12.2",
+      "anndata": "0.13.1",
+      "torch": "2.13.0+cpu",
+      "squidpy": "1.8.3",
+      "pydeseq2": "0.5.4",
+      "scikit-learn": "1.7.2"
+    },
+    "captured_at": "2026-09-15T11:23:50.582924+00:00",
+    "cuda_available": false
+  },
+  "execution_provenance": {
+    "data_source": "unknown",
+    "download_date": "2026-09-15T11:23:53.750327+00:00",
+    "commit_sha": "6e81739de788c34dcc4ca907fa7f69719540a59c",
+    "git_dirty": true,
+    "environment_lockfile_hashes": {},
+    "command": [
+      "review/de-scope-repair-pilot-2026-09-15/external-pilot/freeze_launch.py"
+    ],
+    "command_str": "review/de-scope-repair-pilot-2026-09-15/external-pilot/freeze_launch.py",
+    "generator_version": "1.0.0-rc.8",
+    "python_version": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "timestamp": "2026-09-15T11:23:53.750327+00:00",
+    "extra_metadata": {}
+  },
+  "compliance_note": "SHA-256 + package versions for reproducibility. This is not 21 CFR Part 11, GxP, ALCOA+, or CLIA audit evidence."
+}

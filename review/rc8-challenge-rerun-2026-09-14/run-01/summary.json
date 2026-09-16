@@ -1,0 +1,365 @@
+{
+  "status": "COMPLETE",
+  "n_cases": 54,
+  "n_families": 18,
+  "engine_commit": "fffd792fcd3949805debeee5c421feee8fbba921",
+  "independent_expert_labels": false,
+  "live_llm_baselines": "NOT_RUN",
+  "human_review_minutes": null,
+  "scientific_authorization": "NONE",
+  "arms": [
+    {
+      "arm": "accept_all",
+      "invalid_cases": 42,
+      "valid_cases": 12,
+      "invalid_accepted": 42,
+      "valid_retained": 12,
+      "invalid_issue_identified": 0,
+      "invalid_abstained": 0,
+      "valid_abstained": 0,
+      "unsupported_acceptance_rate": 1.0,
+      "valid_retention": 1.0,
+      "median_machine_seconds": 2.600019797682762e-06
+    },
+    {
+      "arm": "bionexus_full",
+      "invalid_cases": 42,
+      "valid_cases": 12,
+      "invalid_accepted": 0,
+      "valid_retained": 0,
+      "invalid_issue_identified": 42,
+      "invalid_abstained": 0,
+      "valid_abstained": 0,
+      "unsupported_acceptance_rate": 0.0,
+      "valid_retention": 0.0,
+      "median_machine_seconds": 0.10796570000820793
+    },
+    {
+      "arm": "bionexus_full_fitstatus_synonym",
+      "invalid_cases": 42,
+      "valid_cases": 12,
+      "invalid_accepted": 0,
+      "valid_retained": 0,
+      "invalid_issue_identified": 42,
+      "invalid_abstained": 0,
+      "valid_abstained": 0,
+      "unsupported_acceptance_rate": 0.0,
+      "valid_retention": 0.0,
+      "median_machine_seconds": 0.1084981500171125
+    },
+    {
+      "arm": "deterministic_checklist",
+      "invalid_cases": 42,
+      "valid_cases": 12,
+      "invalid_accepted": 33,
+      "valid_retained": 12,
+      "invalid_issue_identified": 9,
+      "invalid_abstained": 0,
+      "valid_abstained": 0,
+      "unsupported_acceptance_rate": 0.7857142857142857,
+      "valid_retention": 1.0,
+      "median_machine_seconds": 0.0010553000029176474
+    },
+    {
+      "arm": "reject_all",
+      "invalid_cases": 42,
+      "valid_cases": 12,
+      "invalid_accepted": 0,
+      "valid_retained": 0,
+      "invalid_issue_identified": 42,
+      "invalid_abstained": 0,
+      "valid_abstained": 0,
+      "unsupported_acceptance_rate": 0.0,
+      "valid_retention": 0.0,
+      "median_machine_seconds": 8.499773684889078e-07
+    },
+    {
+      "arm": "without_claim_text",
+      "invalid_cases": 42,
+      "valid_cases": 12,
+      "invalid_accepted": 0,
+      "valid_retained": 0,
+      "invalid_issue_identified": 42,
+      "invalid_abstained": 0,
+      "valid_abstained": 0,
+      "unsupported_acceptance_rate": 0.0,
+      "valid_retention": 0.0,
+      "median_machine_seconds": 0.01410715002566576
+    },
+    {
+      "arm": "without_execution_metadata",
+      "invalid_cases": 42,
+      "valid_cases": 12,
+      "invalid_accepted": 0,
+      "valid_retained": 0,
+      "invalid_issue_identified": 42,
+      "invalid_abstained": 0,
+      "valid_abstained": 0,
+      "unsupported_acceptance_rate": 0.0,
+      "valid_retention": 0.0,
+      "median_machine_seconds": 0.10273645000415854
+    }
+  ],
+  "primary_comparison": {
+    "endpoint": "joint valid-retention increase without false-pass increase",
+    "original_bionexus_full": {
+      "invalid_accepted": 0,
+      "invalid_total": 42,
+      "valid_retained": 0,
+      "valid_total": 12
+    },
+    "rc8_bionexus_full": {
+      "invalid_accepted": 0,
+      "invalid_total": 42,
+      "valid_retained": 0,
+      "valid_total": 12
+    },
+    "rc8_fitstatus_synonym_exploratory": {
+      "invalid_accepted": 0,
+      "invalid_total": 42,
+      "valid_retained": 0,
+      "valid_total": 12
+    },
+    "valid_retention_improved": false,
+    "false_pass_not_worse": true,
+    "joint_improvement": false,
+    "false_pass_increased": false
+  },
+  "family_comparison_bionexus_full": [
+    {
+      "family": "absent_gene",
+      "invalid": true,
+      "n": 3,
+      "original_accepted": 0,
+      "rc8_accepted": 0,
+      "original_statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rc8_statuses": [
+        "NEEDS_REVISION"
+      ]
+    },
+    {
+      "family": "causal_overclaim",
+      "invalid": true,
+      "n": 3,
+      "original_accepted": 0,
+      "rc8_accepted": 0,
+      "original_statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rc8_statuses": [
+        "NEEDS_REVISION"
+      ]
+    },
+    {
+      "family": "changed_result",
+      "invalid": true,
+      "n": 3,
+      "original_accepted": 0,
+      "rc8_accepted": 0,
+      "original_statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rc8_statuses": [
+        "BLOCKER_DETECTED"
+      ]
+    },
+    {
+      "family": "clinical_overclaim",
+      "invalid": true,
+      "n": 3,
+      "original_accepted": 0,
+      "rc8_accepted": 0,
+      "original_statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rc8_statuses": [
+        "NEEDS_REVISION"
+      ]
+    },
+    {
+      "family": "failed_fit",
+      "invalid": true,
+      "n": 3,
+      "original_accepted": 0,
+      "rc8_accepted": 0,
+      "original_statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rc8_statuses": [
+        "BLOCKER_DETECTED"
+      ]
+    },
+    {
+      "family": "false_global_null",
+      "invalid": true,
+      "n": 3,
+      "original_accepted": 0,
+      "rc8_accepted": 0,
+      "original_statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rc8_statuses": [
+        "NEEDS_REVISION"
+      ]
+    },
+    {
+      "family": "false_negative",
+      "invalid": true,
+      "n": 3,
+      "original_accepted": 0,
+      "rc8_accepted": 0,
+      "original_statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rc8_statuses": [
+        "NEEDS_REVISION"
+      ]
+    },
+    {
+      "family": "false_significance",
+      "invalid": true,
+      "n": 3,
+      "original_accepted": 0,
+      "rc8_accepted": 0,
+      "original_statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rc8_statuses": [
+        "NEEDS_REVISION"
+      ]
+    },
+    {
+      "family": "invalid_probability",
+      "invalid": true,
+      "n": 3,
+      "original_accepted": 0,
+      "rc8_accepted": 0,
+      "original_statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rc8_statuses": [
+        "BLOCKER_DETECTED"
+      ]
+    },
+    {
+      "family": "missing_fdr",
+      "invalid": true,
+      "n": 3,
+      "original_accepted": 0,
+      "rc8_accepted": 0,
+      "original_statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rc8_statuses": [
+        "BLOCKER_DETECTED"
+      ]
+    },
+    {
+      "family": "missing_receipt",
+      "invalid": true,
+      "n": 3,
+      "original_accepted": 0,
+      "rc8_accepted": 0,
+      "original_statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rc8_statuses": [
+        "NEEDS_REVISION"
+      ]
+    },
+    {
+      "family": "valid_limited",
+      "invalid": false,
+      "n": 3,
+      "original_accepted": 0,
+      "rc8_accepted": 0,
+      "original_statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rc8_statuses": [
+        "NEEDS_REVISION"
+      ]
+    },
+    {
+      "family": "valid_negative",
+      "invalid": false,
+      "n": 3,
+      "original_accepted": 0,
+      "rc8_accepted": 0,
+      "original_statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rc8_statuses": [
+        "NEEDS_REVISION"
+      ]
+    },
+    {
+      "family": "valid_positive",
+      "invalid": false,
+      "n": 3,
+      "original_accepted": 0,
+      "rc8_accepted": 0,
+      "original_statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rc8_statuses": [
+        "NEEDS_REVISION"
+      ]
+    },
+    {
+      "family": "valid_table_presence",
+      "invalid": false,
+      "n": 3,
+      "original_accepted": 0,
+      "rc8_accepted": 0,
+      "original_statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rc8_statuses": [
+        "NEEDS_REVISION"
+      ]
+    },
+    {
+      "family": "wrong_design",
+      "invalid": true,
+      "n": 3,
+      "original_accepted": 0,
+      "rc8_accepted": 0,
+      "original_statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rc8_statuses": [
+        "BLOCKER_DETECTED"
+      ]
+    },
+    {
+      "family": "wrong_direction",
+      "invalid": true,
+      "n": 3,
+      "original_accepted": 0,
+      "rc8_accepted": 0,
+      "original_statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rc8_statuses": [
+        "NEEDS_REVISION"
+      ]
+    },
+    {
+      "family": "wrong_result_hash",
+      "invalid": true,
+      "n": 3,
+      "original_accepted": 0,
+      "rc8_accepted": 0,
+      "original_statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rc8_statuses": [
+        "BLOCKER_DETECTED"
+      ]
+    }
+  ],
+  "warning": "Issue identification is any high-impact or blocker finding, not necessarily correct localization. The fit-status synonym arm is exploratory."
+}

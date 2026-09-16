@@ -1,0 +1,271 @@
+{
+  "status": "PASS",
+  "study_id": "BN-DE-RETENTION-GUARD-20260914-ATTEMPT-02",
+  "candidate_source_tree_sha256": "c91e465433fa4106a8ea5eea012b27669bbd9e7f846066bffc5fa8cdaff47617",
+  "input_manifest_sha256": "86452af17fdd59f8f9d97b59780f7404f24d9f768e09af00a24b94623c73097b",
+  "n_cases": 54,
+  "valid_total": 12,
+  "valid_retained": 12,
+  "invalid_total": 42,
+  "invalid_accepted": 0,
+  "invalid_high_or_blocker": 42,
+  "predefined_gate": {
+    "valid_retained_required": 12,
+    "invalid_accepted_max": 0,
+    "invalid_high_or_blocker_required": 42
+  },
+  "families": [
+    {
+      "family": "absent_gene",
+      "invalid": true,
+      "n": 3,
+      "accepted": 0,
+      "high_or_blocker": 3,
+      "statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rule_ids": [
+        "BFA-001c",
+        "BFA-014"
+      ]
+    },
+    {
+      "family": "causal_overclaim",
+      "invalid": true,
+      "n": 3,
+      "accepted": 0,
+      "high_or_blocker": 3,
+      "statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rule_ids": [
+        "BFA-001c",
+        "BFA-008"
+      ]
+    },
+    {
+      "family": "changed_result",
+      "invalid": true,
+      "n": 3,
+      "accepted": 0,
+      "high_or_blocker": 3,
+      "statuses": [
+        "BLOCKER_DETECTED"
+      ],
+      "rule_ids": [
+        "BFA-001c",
+        "BFA-013a"
+      ]
+    },
+    {
+      "family": "clinical_overclaim",
+      "invalid": true,
+      "n": 3,
+      "accepted": 0,
+      "high_or_blocker": 3,
+      "statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rule_ids": [
+        "BFA-001c",
+        "BFA-008"
+      ]
+    },
+    {
+      "family": "failed_fit",
+      "invalid": true,
+      "n": 3,
+      "accepted": 0,
+      "high_or_blocker": 3,
+      "statuses": [
+        "BLOCKER_DETECTED"
+      ],
+      "rule_ids": [
+        "BFA-001c",
+        "BFA-013b"
+      ]
+    },
+    {
+      "family": "false_global_null",
+      "invalid": true,
+      "n": 3,
+      "accepted": 0,
+      "high_or_blocker": 3,
+      "statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rule_ids": [
+        "BFA-001c",
+        "BFA-015c"
+      ]
+    },
+    {
+      "family": "false_negative",
+      "invalid": true,
+      "n": 3,
+      "accepted": 0,
+      "high_or_blocker": 3,
+      "statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rule_ids": [
+        "BFA-001c",
+        "BFA-015b"
+      ]
+    },
+    {
+      "family": "false_significance",
+      "invalid": true,
+      "n": 3,
+      "accepted": 0,
+      "high_or_blocker": 3,
+      "statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rule_ids": [
+        "BFA-001c",
+        "BFA-015a"
+      ]
+    },
+    {
+      "family": "invalid_probability",
+      "invalid": true,
+      "n": 3,
+      "accepted": 0,
+      "high_or_blocker": 3,
+      "statuses": [
+        "BLOCKER_DETECTED"
+      ],
+      "rule_ids": [
+        "BFA-001c",
+        "BFA-003c",
+        "BFA-013a"
+      ]
+    },
+    {
+      "family": "missing_fdr",
+      "invalid": true,
+      "n": 3,
+      "accepted": 0,
+      "high_or_blocker": 3,
+      "statuses": [
+        "BLOCKER_DETECTED"
+      ],
+      "rule_ids": [
+        "BFA-001c",
+        "BFA-003",
+        "BFA-013a"
+      ]
+    },
+    {
+      "family": "missing_receipt",
+      "invalid": true,
+      "n": 3,
+      "accepted": 0,
+      "high_or_blocker": 3,
+      "statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rule_ids": [
+        "BFA-001c"
+      ]
+    },
+    {
+      "family": "valid_limited",
+      "invalid": false,
+      "n": 3,
+      "accepted": 3,
+      "high_or_blocker": 0,
+      "statuses": [
+        "ROBUST_PASS"
+      ],
+      "rule_ids": [
+        "BFA-001c"
+      ]
+    },
+    {
+      "family": "valid_negative",
+      "invalid": false,
+      "n": 3,
+      "accepted": 3,
+      "high_or_blocker": 0,
+      "statuses": [
+        "ROBUST_PASS"
+      ],
+      "rule_ids": [
+        "BFA-001c"
+      ]
+    },
+    {
+      "family": "valid_positive",
+      "invalid": false,
+      "n": 3,
+      "accepted": 3,
+      "high_or_blocker": 0,
+      "statuses": [
+        "ROBUST_PASS"
+      ],
+      "rule_ids": [
+        "BFA-001c"
+      ]
+    },
+    {
+      "family": "valid_table_presence",
+      "invalid": false,
+      "n": 3,
+      "accepted": 3,
+      "high_or_blocker": 0,
+      "statuses": [
+        "ROBUST_PASS"
+      ],
+      "rule_ids": [
+        "BFA-001c"
+      ]
+    },
+    {
+      "family": "wrong_design",
+      "invalid": true,
+      "n": 3,
+      "accepted": 0,
+      "high_or_blocker": 3,
+      "statuses": [
+        "BLOCKER_DETECTED"
+      ],
+      "rule_ids": [
+        "BFA-001c",
+        "BFA-013c"
+      ]
+    },
+    {
+      "family": "wrong_direction",
+      "invalid": true,
+      "n": 3,
+      "accepted": 0,
+      "high_or_blocker": 3,
+      "statuses": [
+        "NEEDS_REVISION"
+      ],
+      "rule_ids": [
+        "BFA-001c",
+        "BFA-015d"
+      ]
+    },
+    {
+      "family": "wrong_result_hash",
+      "invalid": true,
+      "n": 3,
+      "accepted": 0,
+      "high_or_blocker": 3,
+      "statuses": [
+        "BLOCKER_DETECTED"
+      ],
+      "rule_ids": [
+        "BFA-001c",
+        "BFA-013a"
+      ]
+    }
+  ],
+  "elapsed_seconds": 4.833495200029574,
+  "evidence_ceiling": "LOCAL_DEVELOPER_LABELLED_REGRESSION_ONLY",
+  "scientific_authorization": "NONE"
+}

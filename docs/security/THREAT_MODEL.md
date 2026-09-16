@@ -39,7 +39,7 @@ The primary objective of this threat model is to identify and mitigate risks rel
 - **Attack Vector**: An agent analyzing a local single-cell `.h5ad` file transmits raw expression matrices or patient metadata in an MCP tool call to a remote literature search service.
 - **BioNexus Mitigation**:
   - `DataGovernanceGuard` inspects outgoing payloads for matrix signatures, PHI identifiers, and payload size bounds (>1MB blocked in `ALLOWLIST` mode).
-  - `OFFLINE_STRICT` mode guarantees zero external socket creation for air-gapped environments.
+  - `OFFLINE_STRICT` blocks external requests routed through BioNexus guarded interfaces; host-level network isolation requires OS/container controls.
   - All transmissions produce cryptographic SHA-256 audit entries.
 
 ### 4.2 Adversarial Prompt Injection & Scientific Overclaiming

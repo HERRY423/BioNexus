@@ -41,6 +41,74 @@ def test_complete_receipt_has_bounded_consistency_summary(bound_inputs):
     assert "不证明真实模型执行" in binding(result).summary
 
 
+def test_complete_fit_status_synonym_is_accepted(bound_inputs):
+    _, path, samples, record = bound_inputs
+    record["fit_status"] = "COMPLETE"
+    result = audit_differential_expression(de_table=path, sample_metadata=samples, execution_record=record)
+    assert result.passed
+    assert binding(result).status == CheckStatus.ASSESSED
+
+
+def test_legacy_receipt_derives_donors_only_from_hash_bound_metadata_file(bound_inputs, tmp_path):
+    _, path, samples, record = bound_inputs
+    metadata_path = tmp_path / "samples.csv"
+    samples.to_csv(metadata_path, index=False)
+    record.pop("donor_ids")
+    record["sample_metadata_sha256"] = hashlib.sha256(metadata_path.read_bytes()).hexdigest()
+    result = audit_differential_expression(
+        de_table=path,
+        sample_metadata=metadata_path,
+        execution_record=record,
+    )
+    assert result.passed
+    assert binding(result).status == CheckStatus.ASSESSED
+    assert "sample_metadata_sha256" in binding(result).summary
+
+
+def test_legacy_receipt_cannot_derive_donors_from_in_memory_metadata(bound_inputs, tmp_path):
+    _, path, samples, record = bound_inputs
+    metadata_path = tmp_path / "samples.csv"
+    samples.to_csv(metadata_path, index=False)
+    record.pop("donor_ids")
+    record["sample_metadata_sha256"] = hashlib.sha256(metadata_path.read_bytes()).hexdigest()
+    result = audit_differential_expression(de_table=path, sample_metadata=samples, execution_record=record)
+    assert not result.passed
+    assert binding(result).status == CheckStatus.MISSING_EVIDENCE
+
+
+def test_legacy_receipt_metadata_hash_mismatch_is_blocked(bound_inputs, tmp_path):
+    _, path, samples, record = bound_inputs
+    metadata_path = tmp_path / "samples.csv"
+    samples.to_csv(metadata_path, index=False)
+    record.pop("donor_ids")
+    record["sample_metadata_sha256"] = "f" * 64
+    result = audit_differential_expression(
+        de_table=path,
+        sample_metadata=metadata_path,
+        execution_record=record,
+    )
+    assert not result.passed
+    assert result.overall_status == "BLOCKER_DETECTED"
+    assert binding(result).status == CheckStatus.ISSUE_FOUND
+    assert any(f.rule_id == "BFA-013e" for f in result.findings)
+
+
+@pytest.mark.parametrize("bad_donor_ids", [[], "D0", [1], ["other"]])
+def test_malformed_donor_ids_are_not_rescued_by_metadata_hash(bound_inputs, tmp_path, bad_donor_ids):
+    _, path, samples, record = bound_inputs
+    metadata_path = tmp_path / "samples.csv"
+    samples.to_csv(metadata_path, index=False)
+    record["donor_ids"] = bad_donor_ids
+    record["sample_metadata_sha256"] = hashlib.sha256(metadata_path.read_bytes()).hexdigest()
+    result = audit_differential_expression(
+        de_table=path,
+        sample_metadata=metadata_path,
+        execution_record=record,
+    )
+    assert not result.passed
+    assert binding(result).status == CheckStatus.ISSUE_FOUND
+
+
 @pytest.mark.parametrize("field", ["statistical_unit", "method", "fit_status", "design", "design_matrix_columns", "n_donors", "donor_ids", "result_sha256"])
 def test_each_missing_binding_field_prevents_pass(bound_inputs, field):
     _, path, samples, record = bound_inputs
@@ -150,6 +218,8 @@ def test_absence_and_equivalence_are_not_ordinary_nonsignificance(bound_inputs, 
     "NEG1 was not significant after FDR correction in the supplied result.",
     "No genes were significant in the supplied table.",
     "We cannot prove that NEG1 causes disease.",
+    "For this completed analysis, these differential-expression results do not establish causality or clinical efficacy.",
+    "Our reported conclusion is: These differential-expression results do not establish causality or clinical efficacy.",
 ])
 def test_honest_negative_or_scoped_limitation_remains_usable(bound_inputs, claim):
     _, path, samples, record = bound_inputs
@@ -167,6 +237,15 @@ def test_honest_negative_or_scoped_limitation_remains_usable(bound_inputs, claim
     "本研究不能证明因果机制，但药物没有差异。",
 ])
 def test_disclaimer_does_not_license_other_propositions(claim):
+    ir = DeterministicClaimParser.parse(claim)
+    assert not DeterministicWarrantEngine.evaluate(ir, EvidenceProfile(observational_data=True)).is_fully_warranted
+
+
+@pytest.mark.parametrize("claim", [
+    "For this completed analysis, treatment has no effect.",
+    "Our reported conclusion is: these results do not establish causality, but treatment cures disease.",
+])
+def test_reporting_preamble_does_not_license_negative_or_compound_assertions(claim):
     ir = DeterministicClaimParser.parse(claim)
     assert not DeterministicWarrantEngine.evaluate(ir, EvidenceProfile(observational_data=True)).is_fully_warranted
 
@@ -210,6 +289,26 @@ def test_nonsignificance_requires_an_actual_valid_negative_result(bound_inputs, 
         assert any(f.rule_id == "BFA-015b" for f in result.findings)
     if padj is None:
         assert any(c.check_id == "claim_fact_concordance" and c.status == CheckStatus.MISSING_EVIDENCE for c in result.checks)
+
+
+@pytest.mark.parametrize("claim", [
+    "No genes were significant after FDR correction in the supplied result.",
+    "For this completed analysis, no genes were significant after FDR correction in the supplied result.",
+    "Our reported conclusion is: No genes were significant after FDR correction in the supplied result.",
+])
+def test_reporting_preambles_do_not_hide_false_global_null(bound_inputs, claim):
+    frame, path, samples, record = bound_inputs
+    frame.loc[0, "padj"] = 0.001
+    frame.to_csv(path, index=False)
+    record["result_sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+    result = audit_differential_expression(
+        de_table=path,
+        sample_metadata=samples,
+        execution_record=record,
+        claim_text=claim,
+    )
+    assert not result.passed
+    assert any(f.rule_id == "BFA-015c" for f in result.findings)
 
 
 def test_global_negative_does_not_treat_missing_tests_as_nonsignificant(bound_inputs):

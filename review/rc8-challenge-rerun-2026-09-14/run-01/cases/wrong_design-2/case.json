@@ -1,0 +1,10 @@
+{
+  "case_id": "wrong_design-2",
+  "family": "wrong_design",
+  "paraphrase": 2,
+  "invalid": true,
+  "claim": "Our reported conclusion is: The recorded donor-adjusted model formula agrees with the fitted design matrix.",
+  "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+  "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+  "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+}

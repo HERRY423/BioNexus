@@ -1,0 +1,182 @@
+[
+  {
+    "family": "absent_gene",
+    "developer_label": "INVALID",
+    "related_paraphrases": 3,
+    "rc8_accepted": 0,
+    "candidate_accepted": 0,
+    "mechanism_matches": 3,
+    "root_cause": "Claim names a gene absent from the supplied DE table.",
+    "action": "Fail closed through BFA-014."
+  },
+  {
+    "family": "causal_overclaim",
+    "developer_label": "INVALID",
+    "related_paraphrases": 3,
+    "rc8_accepted": 0,
+    "candidate_accepted": 0,
+    "mechanism_matches": 3,
+    "root_cause": "Associational DE evidence is promoted to a causal claim.",
+    "action": "Fail closed through BFA-008."
+  },
+  {
+    "family": "changed_result",
+    "developer_label": "INVALID",
+    "related_paraphrases": 3,
+    "rc8_accepted": 0,
+    "candidate_accepted": 0,
+    "mechanism_matches": 3,
+    "root_cause": "The supplied result bytes no longer match the receipt hash.",
+    "action": "Fail closed through BFA-013a."
+  },
+  {
+    "family": "clinical_overclaim",
+    "developer_label": "INVALID",
+    "related_paraphrases": 3,
+    "rc8_accepted": 0,
+    "candidate_accepted": 0,
+    "mechanism_matches": 3,
+    "root_cause": "DE evidence is promoted to a clinical efficacy claim.",
+    "action": "Fail closed through BFA-008."
+  },
+  {
+    "family": "failed_fit",
+    "developer_label": "INVALID",
+    "related_paraphrases": 3,
+    "rc8_accepted": 0,
+    "candidate_accepted": 0,
+    "mechanism_matches": 3,
+    "root_cause": "The receipt records a failed model fit.",
+    "action": "Fail closed through BFA-013b."
+  },
+  {
+    "family": "false_global_null",
+    "developer_label": "INVALID",
+    "related_paraphrases": 3,
+    "rc8_accepted": 0,
+    "candidate_accepted": 0,
+    "mechanism_matches": 3,
+    "root_cause": "The claim says no genes are significant although the table contains significant genes.",
+    "action": "Fail closed through BFA-015c."
+  },
+  {
+    "family": "false_negative",
+    "developer_label": "INVALID",
+    "related_paraphrases": 3,
+    "rc8_accepted": 0,
+    "candidate_accepted": 0,
+    "mechanism_matches": 3,
+    "root_cause": "A gene-level nonsignificance claim conflicts with the table.",
+    "action": "Fail closed through BFA-015b."
+  },
+  {
+    "family": "false_significance",
+    "developer_label": "INVALID",
+    "related_paraphrases": 3,
+    "rc8_accepted": 0,
+    "candidate_accepted": 0,
+    "mechanism_matches": 3,
+    "root_cause": "A significance claim conflicts with the adjusted p value.",
+    "action": "Fail closed through BFA-015a."
+  },
+  {
+    "family": "invalid_probability",
+    "developer_label": "INVALID",
+    "related_paraphrases": 3,
+    "rc8_accepted": 0,
+    "candidate_accepted": 0,
+    "mechanism_matches": 3,
+    "root_cause": "The result contains invalid probability values and changed bytes.",
+    "action": "Fail closed through BFA-003c."
+  },
+  {
+    "family": "missing_fdr",
+    "developer_label": "INVALID",
+    "related_paraphrases": 3,
+    "rc8_accepted": 0,
+    "candidate_accepted": 0,
+    "mechanism_matches": 3,
+    "root_cause": "The result lacks an adjusted-p/FDR field and changed bytes.",
+    "action": "Fail closed through BFA-003."
+  },
+  {
+    "family": "missing_receipt",
+    "developer_label": "INVALID",
+    "related_paraphrases": 3,
+    "rc8_accepted": 0,
+    "candidate_accepted": 0,
+    "mechanism_matches": 3,
+    "root_cause": "No execution receipt binds the statistical unit, design, fit, and result.",
+    "action": "Fail closed through analysis_execution_binding=MISSING_EVIDENCE."
+  },
+  {
+    "family": "valid_limited",
+    "developer_label": "VALID",
+    "related_paraphrases": 3,
+    "rc8_accepted": 0,
+    "candidate_accepted": 3,
+    "mechanism_matches": 3,
+    "root_cause": "rc.8 treated fit_status=COMPLETE as unconfirmed and could not use the receipt's hash-bound original metadata when donor_ids was absent. The reporting-prefix parser also preserves the scoped limitation.",
+    "action": "Accept the documented COMPLETE synonym; derive donor identity only from an original metadata file whose SHA-256 exactly matches the receipt."
+  },
+  {
+    "family": "valid_negative",
+    "developer_label": "VALID",
+    "related_paraphrases": 3,
+    "rc8_accepted": 0,
+    "candidate_accepted": 3,
+    "mechanism_matches": 3,
+    "root_cause": "rc.8 treated fit_status=COMPLETE as unconfirmed and could not use the receipt's hash-bound original metadata when donor_ids was absent.",
+    "action": "Accept the documented COMPLETE synonym; derive donor identity only from an original metadata file whose SHA-256 exactly matches the receipt."
+  },
+  {
+    "family": "valid_positive",
+    "developer_label": "VALID",
+    "related_paraphrases": 3,
+    "rc8_accepted": 0,
+    "candidate_accepted": 3,
+    "mechanism_matches": 3,
+    "root_cause": "rc.8 treated fit_status=COMPLETE as unconfirmed and could not use the receipt's hash-bound original metadata when donor_ids was absent.",
+    "action": "Accept the documented COMPLETE synonym; derive donor identity only from an original metadata file whose SHA-256 exactly matches the receipt."
+  },
+  {
+    "family": "valid_table_presence",
+    "developer_label": "VALID",
+    "related_paraphrases": 3,
+    "rc8_accepted": 0,
+    "candidate_accepted": 3,
+    "mechanism_matches": 3,
+    "root_cause": "rc.8 treated fit_status=COMPLETE as unconfirmed and could not use the receipt's hash-bound original metadata when donor_ids was absent.",
+    "action": "Accept the documented COMPLETE synonym; derive donor identity only from an original metadata file whose SHA-256 exactly matches the receipt."
+  },
+  {
+    "family": "wrong_design",
+    "developer_label": "INVALID",
+    "related_paraphrases": 3,
+    "rc8_accepted": 0,
+    "candidate_accepted": 0,
+    "mechanism_matches": 3,
+    "root_cause": "The claimed formula conflicts with design-matrix columns.",
+    "action": "Fail closed through BFA-013c."
+  },
+  {
+    "family": "wrong_direction",
+    "developer_label": "INVALID",
+    "related_paraphrases": 3,
+    "rc8_accepted": 0,
+    "candidate_accepted": 0,
+    "mechanism_matches": 3,
+    "root_cause": "The claimed effect direction conflicts with the result.",
+    "action": "Fail closed through BFA-015d."
+  },
+  {
+    "family": "wrong_result_hash",
+    "developer_label": "INVALID",
+    "related_paraphrases": 3,
+    "rc8_accepted": 0,
+    "candidate_accepted": 0,
+    "mechanism_matches": 3,
+    "root_cause": "The receipt result digest is malformed or all-zero.",
+    "action": "Fail closed through BFA-013a."
+  }
+]

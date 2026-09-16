@@ -1,0 +1,15 @@
+{
+  "schema": "bionexus.de-external-plan.v1",
+  "study_id": "BN-DE-EXTERNAL-PILOT-PENDING-CUSTODIAN",
+  "intended_use": "Feasibility pilot for descriptive paired error and person-time estimation; not confirmatory validation.",
+  "source_sha256": "433f82897e3cebcb122e312112864851004d674a0ee961ac55607efcb52700e6",
+  "frozen_at": "2026-09-15T11:29:34.269770+00:00",
+  "developer_ids": [
+    "HERRY423",
+    "Zhang1178"
+  ],
+  "development_dataset_sha256": [
+    "5fbef52972513998e7b758e4fed9352f7cd848fb2192fd1f03e6e684742c4d2c"
+  ],
+  "cases": []
+}

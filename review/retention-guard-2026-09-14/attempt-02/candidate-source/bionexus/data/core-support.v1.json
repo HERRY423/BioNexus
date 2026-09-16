@@ -1,0 +1,20 @@
+{
+  "schema": "bionexus.core-support.v1",
+  "contract_id": "bionexus.core-1-supported-surface.v1",
+  "status": "FROZEN_SCOPE_SUPPORT_NOT_ACTIVATED",
+  "supported_cli": ["audit-de", "audit-de-verify", "audit-de-summary"],
+  "supported_python": ["bionexus.de_audit.audit_differential_expression", "bionexus.de_bundle.verify_de_bundle", "bionexus.warrant.WarrantAssessment", "bionexus.warrant.PolicyDecision", "bionexus.contracts.EvidenceCard"],
+  "supported_schemas": ["bionexus.de-shadow-bundle.v1", "bionexus.de-shadow-integrity.v1"],
+  "intended_use": "Passive review of completed multi-donor DE artifacts; bounded evidence and warrant records, not scientific authorization",
+  "claim_support": "Single-gene table assertions, separately evaluated clauses and scoped limitations; ambiguous prose requires review",
+  "experimental": ["annotation", "spatial", "model_backends", "capability_execution", "certification", "external_host_conformance"],
+  "non_goals": ["autonomous_planning", "scheduling", "hosted_compute", "clinical_authorization"],
+  "support_months": 12,
+  "previous_minor_critical_backport_days": 90,
+  "eol_notice_days": 90,
+  "api_removal_minimum_minor_releases": 2,
+  "api_removal_minimum_months": 6,
+  "fix_policy": "Latest supported 1.x minor; earlier-minor critical backports within 90 days and never beyond published EOL",
+  "rule_change_policy": "Corrections retain rule IDs, counterexamples, affected contexts and reassessment notices; breaking meanings require a new contract identifier and migration",
+  "scientific_authorization": "NONE"
+}

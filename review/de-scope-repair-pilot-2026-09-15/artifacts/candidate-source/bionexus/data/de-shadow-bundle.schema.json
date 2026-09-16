@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DE shadow bundle v1 with additive integrity profile",
+  "type": "object",
+  "required": ["schema", "audit_sha256", "data_origin", "scientific_authorization"],
+  "properties": {
+    "schema": {"const": "bionexus.de-shadow-bundle.v1"},
+    "audit_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "data_origin": {"enum": ["SYNTHETIC_DEMO", "USER_SUPPLIED_UNVERIFIED"]},
+    "scientific_authorization": {"const": "NONE"},
+    "integrity_profile": {"const": "bionexus.de-shadow-integrity.v1"},
+    "immutable_artifacts": {
+      "type": "object",
+      "required": ["audit.json", "audit-full.md", "REVIEW.md"],
+      "properties": {
+        "audit.json": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "audit-full.md": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "REVIEW.md": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "dependentRequired": {"integrity_profile": ["immutable_artifacts"], "immutable_artifacts": ["integrity_profile"]},
+  "additionalProperties": true
+}

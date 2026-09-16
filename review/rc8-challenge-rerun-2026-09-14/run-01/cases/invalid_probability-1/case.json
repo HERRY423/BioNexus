@@ -1,0 +1,10 @@
+{
+  "case_id": "invalid_probability-1",
+  "family": "invalid_probability",
+  "paraphrase": 1,
+  "invalid": true,
+  "claim": "For this completed analysis, iL1RN is significant after FDR correction in the supplied result.",
+  "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+  "result_sha256": "8863eedc6c51375b3a7af5c859f1186aa5a90f17dc8b28a3ad9399495cf17d4d",
+  "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+}

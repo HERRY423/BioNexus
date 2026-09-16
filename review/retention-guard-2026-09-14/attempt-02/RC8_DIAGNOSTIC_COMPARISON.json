@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "scope": "POST_OUTCOME_DESCRIPTIVE_MECHANISM_COMPARISON",
+  "rc8_matches": 41,
+  "rc8_total": 42,
+  "candidate_matches": 42,
+  "candidate_total": 42,
+  "rc8_misses": [
+    {
+      "case_id": "false_global_null-1",
+      "family": "false_global_null",
+      "expected": "BFA-015c",
+      "match": false
+    }
+  ],
+  "candidate_misses": []
+}

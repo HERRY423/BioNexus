@@ -1,0 +1,22 @@
+{
+  "schema": "bionexus.de-remediation-verification.v1",
+  "status": "PASS",
+  "checks": {
+    "source_tree_hash_matches": true,
+    "fifty_four_rows": true,
+    "fifty_four_case_payloads": true,
+    "local_gate_pass": true,
+    "valid_retention": true,
+    "invalid_acceptance": true,
+    "mechanism_mapping": true,
+    "control_gate_pass": true,
+    "external_plan_valid_zero_case_template": true,
+    "external_plan_hash_matches": true,
+    "external_status_honest_zero": true,
+    "external_validation_not_established": true,
+    "external_manifest_matches": true,
+    "external_zip_members_match": true
+  },
+  "scientific_authorization": "NONE",
+  "external_validation": "NOT_ESTABLISHED"
+}

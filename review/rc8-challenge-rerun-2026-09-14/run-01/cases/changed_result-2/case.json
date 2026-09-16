@@ -1,0 +1,10 @@
+{
+  "case_id": "changed_result-2",
+  "family": "changed_result",
+  "paraphrase": 2,
+  "invalid": true,
+  "claim": "Our reported conclusion is: The supplied result table is unchanged from the recorded execution output.",
+  "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+  "result_sha256": "f708dbcab64a1e16ebe4db90af0d69f4a6536d315d96e310062cb7717e102f4c",
+  "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+}

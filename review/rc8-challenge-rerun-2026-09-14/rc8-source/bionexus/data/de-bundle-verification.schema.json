@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DE bundle verification result v1",
+  "type": "object",
+  "required": ["schema", "status", "bundle_schema", "integrity_profile", "manifest_sha256", "manifest_anchor", "checked_artifacts", "audit_status", "issues", "scientific_authorization", "analysis_execution_verification", "input_content_verification", "producer_authentication", "mutable_reviews"],
+  "properties": {
+    "schema": {"const": "bionexus.de-bundle-verification.v1"},
+    "status": {"enum": ["CONSISTENT", "INVALID", "UNSUPPORTED_SCHEMA", "LEGACY_LIMITED"]},
+    "bundle_schema": {"type": ["string", "null"]},
+    "integrity_profile": {"type": ["string", "null"]},
+    "manifest_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "manifest_anchor": {"enum": ["NOT_PROVIDED", "MATCHED", "MISMATCH"]},
+    "checked_artifacts": {"type": "array", "uniqueItems": true, "items": {"enum": ["audit.json", "audit-full.md", "REVIEW.md"]}},
+    "audit_status": {"enum": [null, "ROBUST_PASS", "NEEDS_DATA", "NOT_ASSESSED", "NEEDS_REVISION", "BLOCKER_DETECTED"]},
+    "issues": {"type": "array", "items": {
+      "type": "object", "required": ["code", "artifact", "message"],
+      "properties": {"code": {"type": "string"}, "artifact": {"type": "string"}, "message": {"type": "string"}},
+      "additionalProperties": false
+    }},
+    "scientific_authorization": {"const": "NONE"},
+    "analysis_execution_verification": {"const": "NOT_PERFORMED"},
+    "input_content_verification": {"const": "NOT_PERFORMED"},
+    "producer_authentication": {"const": "NOT_ESTABLISHED"},
+    "mutable_reviews": {"const": "NOT_VERIFIED"}
+  },
+  "additionalProperties": true
+}

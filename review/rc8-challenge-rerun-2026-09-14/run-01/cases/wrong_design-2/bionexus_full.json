@@ -1,0 +1,193 @@
+{
+  "overall_status": "BLOCKER_DETECTED",
+  "passed": false,
+  "scientific_authorization": "NONE",
+  "producer_authentication": "NOT_ESTABLISHED",
+  "analysis_execution_verification": "NOT_PERFORMED",
+  "summary_counts": {
+    "blocker": 1,
+    "high_impact": 1,
+    "advisory": 0
+  },
+  "cohort_summary": {
+    "condition_key": "condition",
+    "n_cells": 16,
+    "n_donors": 8,
+    "donors": [
+      "101",
+      "107",
+      "1015",
+      "1016",
+      "1039",
+      "1244",
+      "1256",
+      "1488"
+    ],
+    "conditions": {
+      "control": 8,
+      "treated": 8
+    }
+  },
+  "metadata_columns_used": {
+    "donor": "donor",
+    "condition": "condition"
+  },
+  "checks": [
+    {
+      "check_id": "donor_replicates",
+      "title": "供体/生物学重复设计",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "已检查样本设计：control N=8, treated N=8。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "donor_imbalance",
+      "title": "供体细胞贡献失衡",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供细胞类型列，供体失衡未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "batch_confounding",
+      "title": "批次与组别混杂",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供批次列，混杂未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "input_count_type",
+      "title": "原始整数计数层",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供表达矩阵，计数层未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "de_results",
+      "title": "差异表达结果表",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "已读取 2000 行差异表达结果（来源: de_table）。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "fdr_and_testing",
+      "title": "FDR / 多重检验",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "已检查 DE 表：存在调整 p 值列 `padj`。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "analysis_code",
+      "title": "分析脚本/笔记本",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供分析脚本，静态方法学调用未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "analysis_execution_binding",
+      "title": "分析事实与执行记录绑定",
+      "status": "ISSUE_FOUND",
+      "status_zh": "发现问题",
+      "summary": "已核查执行记录：发现破坏或矛盾（未确认成功拟合状态 (COMPLETE)；设计公式项与设计矩阵列不一致；设计公式与设计矩阵列冲突）。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "claim_targeted_warrant",
+      "title": "科学声明定向审计",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "声明符合当前证据支持边界：Claim 'CLAIM-USER-DE' Epistemic Evaluation: Warranted tiers: [association_claim]; Unwarranted tiers: [none]. Not requested: [population_claim, mechanistic_claim, causal_claim, cell_identity_claim, clinical_claim, structural_conformation_claim, bioactive_binding_claim]. Max warranted class: 'descriptive', ceiling: 'SUPPORTED'.",
+      "required_for_pass": false
+    }
+  ],
+  "execution_record": {
+    "source": "execution_record",
+    "method": "pydeseq2",
+    "fdr_method": "BH_on_all_finite_raw_pvalues",
+    "aggregation": "donor_pseudobulk",
+    "cell_level_condition_test": false,
+    "facts": [
+      "Supplied execution metadata (not authenticated): method='pydeseq2', statistical_unit='donor', design='~ condition'.",
+      "DE table columns match count-model format markers (['basemean', 'lfcse']); format recognized, but table headers alone do not verify execution binding.",
+      "An adjusted p-value / FDR column is present in the supplied DE table."
+    ]
+  },
+  "findings": [
+    {
+      "rule_id": "BFA-001c",
+      "severity": "HIGH_IMPACT",
+      "category": "PSEUDOREPLICATION",
+      "title": "极小 P 值诊断信号：提示需核验统计单位，非方法学无效充分条件 (Extreme P-value Diagnostic Signal)",
+      "impact_on_conclusion": "检测到 18 个基因的 p 值低于 1e-100（最小 p=1.8571412410296082e-200）。极小 P 值为诊断信号（diagnostic signal），提示需核验分析是否在单细胞级别直接检验（存在伪重复方差膨胀），而非方法学无效（methodological invalidity）的充分条件。在缺乏供体级执行凭证时提示核验；若供体级聚合已验证且无 p=0 极端截断，反映强生物学效应，降为 ADVISORY 审阅提示。",
+      "sample_or_donor": null,
+      "step_or_location": "DE table p-value column",
+      "claim_affected": null,
+      "minimal_fix": "# extreme P 是诊断信号，不是方法学无效的充分条件：\n# 1. 若实际已按供体级 Pseudobulk 分析，提供执行记录（execution_record）进行供体级凭证绑定，规则将降为 ADVISORY 审阅提示；\n# 2. 若实际检验直接在细胞级别（如 cell-level Wilcoxon/t-test）进行，则存在伪重复膨胀，应改用供体级 Pseudobulk + PyDESeq2。",
+      "evidence_data": {
+        "tiny_p_count": 18,
+        "min_p": 1.8571412410296082e-200
+      }
+    },
+    {
+      "rule_id": "BFA-013c",
+      "severity": "BLOCKER",
+      "category": "PSEUDOREPLICATION",
+      "title": "模型设计公式与设计矩阵列冲突 (Formula Conflicts with Design Matrix Columns)",
+      "impact_on_conclusion": "声明的模型公式 '~ condition'（供体控制: False）与拟合设计矩阵列（包含供体列: True）存在冲突。无法证实实际拟合的模型是否对供体效应进行了控制。",
+      "sample_or_donor": null,
+      "step_or_location": "execution_record.design vs design_matrix_columns",
+      "claim_affected": null,
+      "minimal_fix": "核对拟合脚本中的模型公式，确保公式与实际输入模型的设计矩阵保持一致（如 ~ donor + condition）。",
+      "evidence_data": {
+        "formula": "~ condition",
+        "matrix_columns": [
+          "Intercept",
+          "donor[T.1015]",
+          "donor[T.1016]",
+          "donor[T.1039]",
+          "donor[T.107]",
+          "donor[T.1244]",
+          "donor[T.1256]",
+          "donor[T.1488]",
+          "condition[T.treated]"
+        ]
+      }
+    }
+  ],
+  "claim_boundary": {
+    "allowed_scope": "仅限作为该批次样本的初步技术描述 (Technical descriptive observation only)，不得外推至生物学总体。",
+    "prohibited_scope": "严禁声称任何疾病关联、生物标志物 (Biomarkers)、群体差异或因果治疗靶点。",
+    "recommended_methods_text": "Recommended analysis, not recorded as performed: aggregate raw integer counts to donor-level pseudobulks per cell type (Squair et al., 2021), then test condition effects with a negative binomial GLM, Wald tests, and Benjamini-Hochberg FDR. Do not treat cell-level rank_genes_groups p-values as population inference.",
+    "recommended_results_text": "Inspected artifacts do not support population-level differential-expression claims; formal inference is withheld.",
+    "overall_maturity": "UNWARRANTED",
+    "executed_methods_text": "Supplied execution metadata (not authenticated): method='pydeseq2', statistical_unit='donor', design='~ condition'. DE table columns match count-model format markers (['basemean', 'lfcse']); format recognized, but table headers alone do not verify execution binding. An adjusted p-value / FDR column is present in the supplied DE table."
+  },
+  "pi_decisions": [],
+  "_replay_compact": {
+    "overall_status": "BLOCKER_DETECTED",
+    "passed": false,
+    "blocker_count": 1,
+    "high_impact_count": 1,
+    "advisory_count": 0,
+    "finding_rule_ids": [
+      "BFA-001c",
+      "BFA-013c"
+    ],
+    "finding_severities": [
+      "HIGH_IMPACT",
+      "BLOCKER"
+    ],
+    "required_check_statuses": {
+      "donor_replicates": "ASSESSED",
+      "de_results": "ASSESSED",
+      "fdr_and_testing": "ASSESSED",
+      "analysis_execution_binding": "ISSUE_FOUND"
+    }
+  }
+}

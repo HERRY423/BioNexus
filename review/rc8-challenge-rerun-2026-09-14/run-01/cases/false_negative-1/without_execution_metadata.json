@@ -1,0 +1,191 @@
+{
+  "overall_status": "NEEDS_REVISION",
+  "passed": false,
+  "scientific_authorization": "NONE",
+  "producer_authentication": "NOT_ESTABLISHED",
+  "analysis_execution_verification": "NOT_PERFORMED",
+  "summary_counts": {
+    "blocker": 0,
+    "high_impact": 2,
+    "advisory": 0
+  },
+  "cohort_summary": {
+    "condition_key": "condition",
+    "n_cells": 16,
+    "n_donors": 8,
+    "donors": [
+      "101",
+      "107",
+      "1015",
+      "1016",
+      "1039",
+      "1244",
+      "1256",
+      "1488"
+    ],
+    "conditions": {
+      "control": 8,
+      "treated": 8
+    }
+  },
+  "metadata_columns_used": {
+    "donor": "donor",
+    "condition": "condition"
+  },
+  "checks": [
+    {
+      "check_id": "donor_replicates",
+      "title": "供体/生物学重复设计",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "已检查样本设计：control N=8, treated N=8。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "donor_imbalance",
+      "title": "供体细胞贡献失衡",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供细胞类型列，供体失衡未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "batch_confounding",
+      "title": "批次与组别混杂",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供批次列，混杂未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "input_count_type",
+      "title": "原始整数计数层",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供表达矩阵，计数层未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "de_results",
+      "title": "差异表达结果表",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "已读取 2000 行差异表达结果（来源: de_table）。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "fdr_and_testing",
+      "title": "FDR / 多重检验",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "已检查 DE 表：存在调整 p 值列 `padj`。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "analysis_code",
+      "title": "分析脚本/笔记本",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供分析脚本，静态方法学调用未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "analysis_execution_binding",
+      "title": "分析事实与执行记录绑定",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供经核查的供体级执行记录（统计单位、设计矩阵、拟合状态未绑定）。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "claim_fact_concordance",
+      "title": "声明微观事实核查",
+      "status": "ISSUE_FOUND",
+      "status_zh": "发现问题",
+      "summary": "声明中对基因 'IL1RN' 的方向或显著性断言与结果表矛盾。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "claim_targeted_warrant",
+      "title": "科学声明定向审计",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "声明符合当前证据支持边界：Claim 'CLAIM-USER-DE' Epistemic Evaluation: Warranted tiers: [association_claim]; Unwarranted tiers: [none]. Not requested: [population_claim, mechanistic_claim, causal_claim, cell_identity_claim, clinical_claim, structural_conformation_claim, bioactive_binding_claim]. Max warranted class: 'descriptive', ceiling: 'SUPPORTED'.",
+      "required_for_pass": false
+    }
+  ],
+  "execution_record": {
+    "source": "de_table",
+    "method": null,
+    "fdr_method": "adjusted_p_present",
+    "aggregation": null,
+    "cell_level_condition_test": false,
+    "facts": [
+      "DE table columns match count-model format markers (['basemean', 'lfcse']); format recognized, but table headers alone do not verify execution binding.",
+      "An adjusted p-value / FDR column is present in the supplied DE table."
+    ]
+  },
+  "findings": [
+    {
+      "rule_id": "BFA-001c",
+      "severity": "HIGH_IMPACT",
+      "category": "PSEUDOREPLICATION",
+      "title": "极小 P 值诊断信号：提示需核验统计单位，非方法学无效充分条件 (Extreme P-value Diagnostic Signal)",
+      "impact_on_conclusion": "检测到 18 个基因的 p 值低于 1e-100（最小 p=1.8571412410296082e-200）。极小 P 值为诊断信号（diagnostic signal），提示需核验分析是否在单细胞级别直接检验（存在伪重复方差膨胀），而非方法学无效（methodological invalidity）的充分条件。在缺乏供体级执行凭证时提示核验；若供体级聚合已验证且无 p=0 极端截断，反映强生物学效应，降为 ADVISORY 审阅提示。",
+      "sample_or_donor": null,
+      "step_or_location": "DE table p-value column",
+      "claim_affected": null,
+      "minimal_fix": "# extreme P 是诊断信号，不是方法学无效的充分条件：\n# 1. 若实际已按供体级 Pseudobulk 分析，提供执行记录（execution_record）进行供体级凭证绑定，规则将降为 ADVISORY 审阅提示；\n# 2. 若实际检验直接在细胞级别（如 cell-level Wilcoxon/t-test）进行，则存在伪重复膨胀，应改用供体级 Pseudobulk + PyDESeq2。",
+      "evidence_data": {
+        "tiny_p_count": 18,
+        "min_p": 1.8571412410296082e-200
+      }
+    },
+    {
+      "rule_id": "BFA-015b",
+      "severity": "HIGH_IMPACT",
+      "category": "CLAIM_BOUNDARY",
+      "title": "错误否定真实显著基因 (False Negative Assertion: IL1RN)",
+      "impact_on_conclusion": "声明声称基因 'IL1RN' 不显著，但结果表中实际 padj=3.7143e-197 < 0.05，已达到统计显著标准。",
+      "sample_or_donor": null,
+      "step_or_location": "claim_text vs de_table.padj",
+      "claim_affected": null,
+      "minimal_fix": "核对分析结果，基因 'IL1RN' 已达到显著标准，避免陈述为不显著。",
+      "evidence_data": {
+        "gene": "IL1RN",
+        "padj": 3.7142824820592166e-197
+      }
+    }
+  ],
+  "claim_boundary": {
+    "allowed_scope": "只能确认已检查的输入（8 donors; condition counts control=8, treated=8）。缺少差异表达执行记录或结果时，不得陈述已完成的群体差异表达。",
+    "prohibited_scope": "严禁把未提供的矩阵、模型或 DE 结果写成已经执行的 NB GLM、Wald 或 BH 校正。",
+    "recommended_methods_text": "Recommended analysis, not recorded as performed: aggregate raw integer counts to donor-level pseudobulks per cell type (Squair et al., 2021), then test condition effects with a negative binomial GLM, Wald tests, and Benjamini-Hochberg FDR. Do not treat cell-level rank_genes_groups p-values as population inference.",
+    "recommended_results_text": "Only inspected design or partial artifacts are described; differential-expression execution was not confirmed.",
+    "overall_maturity": "NOT_ASSESSED",
+    "executed_methods_text": "DE table columns match count-model format markers (['basemean', 'lfcse']); format recognized, but table headers alone do not verify execution binding. An adjusted p-value / FDR column is present in the supplied DE table."
+  },
+  "pi_decisions": [],
+  "_replay_compact": {
+    "overall_status": "NEEDS_REVISION",
+    "passed": false,
+    "blocker_count": 0,
+    "high_impact_count": 2,
+    "advisory_count": 0,
+    "finding_rule_ids": [
+      "BFA-001c",
+      "BFA-015b"
+    ],
+    "finding_severities": [
+      "HIGH_IMPACT",
+      "HIGH_IMPACT"
+    ],
+    "required_check_statuses": {
+      "donor_replicates": "ASSESSED",
+      "de_results": "ASSESSED",
+      "fdr_and_testing": "ASSESSED",
+      "analysis_execution_binding": "MISSING_EVIDENCE",
+      "claim_fact_concordance": "ISSUE_FOUND"
+    }
+  }
+}

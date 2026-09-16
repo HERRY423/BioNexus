@@ -1,0 +1,29 @@
+{
+  "status": "FAIL",
+  "checks": {
+    "source_file_hashes_match_identity": false,
+    "source_tree_hash_matches_identity": false,
+    "candidate_patch_hash_matches_identity": true,
+    "protocol_hash_matches_identity": true,
+    "runner_hash_matches_identity": true,
+    "all_frozen_input_hashes_match_manifest": true,
+    "input_aggregate_matches_manifest": true,
+    "case_row_count_is_54": true,
+    "case_output_count_is_54": true,
+    "case_payloads_match_outcome_rows": true,
+    "valid_retained_is_12_of_12": true,
+    "invalid_accepted_is_0_of_42": true,
+    "invalid_high_or_blocker_is_42_of_42": true,
+    "summary_counts_match_recomputation": true,
+    "execution_end_binds_summary": true,
+    "summary_and_execution_end_report_pass": true,
+    "evidence_ceiling_is_bounded": true
+  },
+  "recomputed": {
+    "valid_retained": 12,
+    "valid_total": 12,
+    "invalid_accepted": 0,
+    "invalid_total": 42,
+    "invalid_high_or_blocker": 42
+  }
+}

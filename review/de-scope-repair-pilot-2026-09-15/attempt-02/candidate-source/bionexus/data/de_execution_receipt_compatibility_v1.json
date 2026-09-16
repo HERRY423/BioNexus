@@ -1,0 +1,69 @@
+{
+  "schema": "bionexus.de-execution-receipt-compatibility.v1",
+  "status": "ACTIVE_LOCAL_CONTRACT",
+  "scope": "Completed multi-donor differential-expression audit input consistency",
+  "required_common_fields": [
+    "statistical_unit",
+    "method",
+    "fit_status",
+    "design",
+    "design_matrix_columns",
+    "n_donors",
+    "result_sha256"
+  ],
+  "fit_status": {
+    "accepted_success_values": [
+      "SUCCESS",
+      "SUCCEEDED",
+      "CONVERGED",
+      "COMPLETE",
+      "COMPLETED",
+      "PASS",
+      "PASSED",
+      "OK"
+    ],
+    "comparison": "case_insensitive_after_trim",
+    "unknown_or_missing": "MISSING_OR_ISSUE_NO_PASS",
+    "explicit_failure": "BFA-013b_BLOCKER"
+  },
+  "donor_binding_modes": [
+    {
+      "mode": "EXPLICIT_DONOR_IDS",
+      "requirements": [
+        "donor_ids is a nonempty list of unique nonempty strings",
+        "donor_ids set exactly matches donors parsed from supplied metadata",
+        "n_donors exactly matches parsed donor count"
+      ]
+    },
+    {
+      "mode": "LEGACY_HASH_BOUND_SAMPLE_METADATA",
+      "requirements": [
+        "donor_ids key is absent rather than malformed",
+        "sample_metadata is a readable CSV or TSV file path",
+        "sample_metadata_sha256 is a nonzero lowercase 64-hex digest",
+        "digest exactly matches original sample metadata file bytes",
+        "the table parsed from those bytes equals the table audited",
+        "n_donors exactly matches parsed donor count"
+      ]
+    }
+  ],
+  "forbidden_fallbacks": [
+    "derive donor binding from an in-memory DataFrame",
+    "repair a present but malformed donor_ids value",
+    "accept a missing, malformed, all-zero or mismatched sample_metadata_sha256",
+    "replace or rewrite a historical receipt",
+    "treat matching hashes as proof that the model ran or that the producer is authentic"
+  ],
+  "metadata_hash_failure": {
+    "rule_id": "BFA-013e",
+    "severity": "BLOCKER"
+  },
+  "pass_meaning": "Bounded input-consistency verification only",
+  "evidence_ceiling": {
+    "model_execution_authenticated": false,
+    "producer_identity_authenticated": false,
+    "scientific_validity_established": false,
+    "clinical_or_regulatory_fitness_established": false,
+    "scientific_authorization": "NONE"
+  }
+}

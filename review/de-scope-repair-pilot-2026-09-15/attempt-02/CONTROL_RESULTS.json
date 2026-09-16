@@ -1,0 +1,134 @@
+{
+  "schema": "bionexus.de-compatibility-control-results.v1",
+  "status": "PASS",
+  "candidate_source": "attempt-02/candidate-source",
+  "controls": [
+    {
+      "control_id": "LEGIT-001",
+      "category": "legitimate_positive",
+      "expected": "ROBUST_PASS",
+      "observed_status": "ROBUST_PASS",
+      "observed_passed": true,
+      "binding_status": "ASSESSED",
+      "rule_ids": [
+        "BFA-001c"
+      ],
+      "control_passed": true
+    },
+    {
+      "control_id": "LEGIT-002",
+      "category": "legitimate_nonsignificant_conclusion",
+      "expected": "ROBUST_PASS",
+      "observed_status": "ROBUST_PASS",
+      "observed_passed": true,
+      "binding_status": "ASSESSED",
+      "rule_ids": [
+        "BFA-001c"
+      ],
+      "control_passed": true
+    },
+    {
+      "control_id": "LEGIT-003",
+      "category": "legitimate_limitation",
+      "expected": "ROBUST_PASS",
+      "observed_status": "ROBUST_PASS",
+      "observed_passed": true,
+      "binding_status": "ASSESSED",
+      "rule_ids": [
+        "BFA-001c"
+      ],
+      "control_passed": true
+    },
+    {
+      "control_id": "NEG-001",
+      "category": "negative_control",
+      "expected": "MISSING_EVIDENCE",
+      "observed_status": "NEEDS_REVISION",
+      "observed_passed": false,
+      "binding_status": "MISSING_EVIDENCE",
+      "rule_ids": [
+        "BFA-001c"
+      ],
+      "control_passed": true
+    },
+    {
+      "control_id": "NEG-002",
+      "category": "negative_control",
+      "expected": "BFA-013e BLOCKER for zero/malformed/mismatch",
+      "observed_status": "BLOCKER_DETECTED",
+      "observed_passed": false,
+      "binding_status": "ISSUE_FOUND",
+      "rule_ids": [
+        "BFA-001c",
+        "BFA-013e"
+      ],
+      "control_passed": true
+    },
+    {
+      "control_id": "NEG-003",
+      "category": "negative_control",
+      "expected": "reject malformed donor_ids without legacy fallback",
+      "observed_status": "NEEDS_REVISION",
+      "observed_passed": false,
+      "binding_status": "ISSUE_FOUND",
+      "rule_ids": [
+        "BFA-001c"
+      ],
+      "control_passed": true
+    },
+    {
+      "control_id": "NEG-004",
+      "category": "negative_control",
+      "expected": "reject through BFA-013b",
+      "observed_status": "BLOCKER_DETECTED",
+      "observed_passed": false,
+      "binding_status": "ISSUE_FOUND",
+      "rule_ids": [
+        "BFA-001c",
+        "BFA-013b"
+      ],
+      "control_passed": true
+    },
+    {
+      "control_id": "NEG-005",
+      "category": "negative_control",
+      "expected": "reject through BFA-013c",
+      "observed_status": "BLOCKER_DETECTED",
+      "observed_passed": false,
+      "binding_status": "ISSUE_FOUND",
+      "rule_ids": [
+        "BFA-001c",
+        "BFA-013c"
+      ],
+      "control_passed": true
+    },
+    {
+      "control_id": "NEG-006",
+      "category": "negative_control",
+      "expected": "reject through BFA-015c",
+      "observed_status": "NEEDS_REVISION",
+      "observed_passed": false,
+      "binding_status": "ASSESSED",
+      "rule_ids": [
+        "BFA-001c",
+        "BFA-015c"
+      ],
+      "control_passed": true
+    },
+    {
+      "control_id": "NEG-007",
+      "category": "negative_control",
+      "expected": "reject through BFA-008",
+      "observed_status": "NEEDS_REVISION",
+      "observed_passed": false,
+      "binding_status": "ASSESSED",
+      "rule_ids": [
+        "BFA-001c",
+        "BFA-008"
+      ],
+      "control_passed": true
+    }
+  ],
+  "evidence_ceiling": "LOCAL_CONTRACT_AND_DEVELOPER_REGRESSION_CONTROLS",
+  "scientific_authorization": "NONE"
+}

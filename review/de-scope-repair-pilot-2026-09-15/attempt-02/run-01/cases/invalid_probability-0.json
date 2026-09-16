@@ -1,0 +1,186 @@
+{
+  "overall_status": "BLOCKER_DETECTED",
+  "passed": false,
+  "scientific_authorization": "NONE",
+  "producer_authentication": "NOT_ESTABLISHED",
+  "analysis_execution_verification": "NOT_PERFORMED",
+  "summary_counts": {
+    "blocker": 1,
+    "high_impact": 2,
+    "advisory": 0
+  },
+  "cohort_summary": {
+    "condition_key": "condition",
+    "n_cells": 16,
+    "n_donors": 8,
+    "donors": [
+      101,
+      107,
+      1015,
+      1016,
+      1039,
+      1244,
+      1256,
+      1488
+    ],
+    "conditions": {
+      "control": 8,
+      "treated": 8
+    }
+  },
+  "metadata_columns_used": {
+    "donor": "donor",
+    "condition": "condition"
+  },
+  "checks": [
+    {
+      "check_id": "donor_replicates",
+      "title": "供体/生物学重复设计",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "已检查样本设计：control N=8, treated N=8。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "donor_imbalance",
+      "title": "供体细胞贡献失衡",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供细胞类型列，供体失衡未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "batch_confounding",
+      "title": "批次与组别混杂",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供批次列，混杂未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "input_count_type",
+      "title": "原始整数计数层",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供表达矩阵，计数层未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "de_results",
+      "title": "差异表达结果表",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "已读取 2000 行差异表达结果（来源: de_table）。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "fdr_and_testing",
+      "title": "FDR / 多重检验",
+      "status": "ISSUE_FOUND",
+      "status_zh": "发现问题",
+      "summary": "已检查 DE 表：缺失、非法或未使用 FDR 校正。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "analysis_code",
+      "title": "分析脚本/笔记本",
+      "status": "MISSING_EVIDENCE",
+      "status_zh": "缺少证据",
+      "summary": "未提供分析脚本，静态方法学调用未评估。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "analysis_execution_binding",
+      "title": "分析事实与执行记录绑定",
+      "status": "ISSUE_FOUND",
+      "status_zh": "发现问题",
+      "summary": "已核查执行记录：发现破坏或矛盾（结果表哈希不匹配 (预期 b4876ba8..., 实际 8863eedc...)）。",
+      "required_for_pass": true
+    },
+    {
+      "check_id": "claim_fact_concordance",
+      "title": "声明微观事实核查",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "已核查声明对基因 'IL1RN' 的断言：方向与显著性与结果表一致。",
+      "required_for_pass": false
+    },
+    {
+      "check_id": "claim_targeted_warrant",
+      "title": "科学声明定向审计",
+      "status": "ASSESSED",
+      "status_zh": "已检查",
+      "summary": "声明符合当前证据支持边界：Claim 'CLAIM-USER-DE' Epistemic Evaluation: Warranted tiers: [association_claim]; Unwarranted tiers: [none]. Not requested: [population_claim, mechanistic_claim, causal_claim, cell_identity_claim, clinical_claim, structural_conformation_claim, bioactive_binding_claim]. Max warranted class: 'descriptive', ceiling: 'SUPPORTED'.",
+      "required_for_pass": false
+    }
+  ],
+  "execution_record": {
+    "source": "execution_record",
+    "method": "pydeseq2",
+    "fdr_method": "BH_on_all_finite_raw_pvalues",
+    "aggregation": "donor_pseudobulk",
+    "cell_level_condition_test": false,
+    "facts": [
+      "Supplied execution metadata (not authenticated): method='pydeseq2', statistical_unit='donor', design='~ donor + condition'.",
+      "DE table columns match count-model format markers (['basemean', 'lfcse']); format recognized, but table headers alone do not verify execution binding.",
+      "An adjusted p-value / FDR column is present in the supplied DE table."
+    ]
+  },
+  "findings": [
+    {
+      "rule_id": "BFA-003c",
+      "severity": "HIGH_IMPACT",
+      "category": "FDR_AND_TESTING",
+      "title": "统计量数值非法：FDR/调整 P 值超出有效概率区间 [0, 1] (Invalid Adjusted P-value Range)",
+      "impact_on_conclusion": "检测到调整后 P 值超出 [0, 1] 范围（最小 padj=3.714282482059217e-197, 最大 padj=1.2）。多重检验校正后的 q/padj 必须在 [0, 1] 区间内，负数或非法值表明校正程序故障。",
+      "sample_or_donor": null,
+      "step_or_location": "DE table column 'padj'",
+      "claim_affected": null,
+      "minimal_fix": "核查多重检验校正步骤（如 Benjamini-Hochberg），确保校正值落在 [0, 1] 闭区间。",
+      "evidence_data": {
+        "column": "padj",
+        "min_padj": 3.714282482059217e-197,
+        "max_padj": 1.2
+      }
+    },
+    {
+      "rule_id": "BFA-001c",
+      "severity": "HIGH_IMPACT",
+      "category": "PSEUDOREPLICATION",
+      "title": "极小 P 值诊断信号：提示需核验统计单位，非方法学无效充分条件 (Extreme P-value Diagnostic Signal)",
+      "impact_on_conclusion": "检测到 18 个基因的 p 值低于 1e-100（最小 p=1.857141241029608e-200）。极小 P 值为诊断信号（diagnostic signal），提示需核验分析是否在单细胞级别直接检验（存在伪重复方差膨胀），而非方法学无效（methodological invalidity）的充分条件。在缺乏供体级执行凭证时提示核验；若供体级聚合已验证且无 p=0 极端截断，反映强生物学效应，降为 ADVISORY 审阅提示。",
+      "sample_or_donor": null,
+      "step_or_location": "DE table p-value column",
+      "claim_affected": null,
+      "minimal_fix": "# extreme P 是诊断信号，不是方法学无效的充分条件：\n# 1. 若实际已按供体级 Pseudobulk 分析，提供执行记录（execution_record）进行供体级凭证绑定，规则将降为 ADVISORY 审阅提示；\n# 2. 若实际检验直接在细胞级别（如 cell-level Wilcoxon/t-test）进行，则存在伪重复膨胀，应改用供体级 Pseudobulk + PyDESeq2。",
+      "evidence_data": {
+        "tiny_p_count": 18,
+        "min_p": 1.857141241029608e-200
+      }
+    },
+    {
+      "rule_id": "BFA-013a",
+      "severity": "BLOCKER",
+      "category": "FDR_AND_TESTING",
+      "title": "结果表内容与执行记录哈希不匹配 (Result Table Hash Mismatch)",
+      "impact_on_conclusion": "结果表实际 SHA-256 (8863eedc6c51375b...) 与执行记录预期哈希 (b4876ba88e366e33...) 不一致，存在产物篡改、未记录变更或版本脱节。",
+      "sample_or_donor": null,
+      "step_or_location": "execution_record.result_sha256 vs de_table",
+      "claim_affected": null,
+      "minimal_fix": "核验结果表版本并重新绑定与实际检验产物一致的执行记录。",
+      "evidence_data": {
+        "observed_sha256": "8863eedc6c51375b3a7af5c859f1186aa5a90f17dc8b28a3ad9399495cf17d4d",
+        "expected_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+      }
+    }
+  ],
+  "claim_boundary": {
+    "allowed_scope": "仅限作为该批次样本的初步技术描述 (Technical descriptive observation only)，不得外推至生物学总体。",
+    "prohibited_scope": "严禁声称任何疾病关联、生物标志物 (Biomarkers)、群体差异或因果治疗靶点。",
+    "recommended_methods_text": "Recommended analysis, not recorded as performed: aggregate raw integer counts to donor-level pseudobulks per cell type (Squair et al., 2021), then test condition effects with a negative binomial GLM, Wald tests, and Benjamini-Hochberg FDR. Do not treat cell-level rank_genes_groups p-values as population inference.",
+    "recommended_results_text": "Inspected artifacts do not support population-level differential-expression claims; formal inference is withheld.",
+    "overall_maturity": "UNWARRANTED",
+    "executed_methods_text": "Supplied execution metadata (not authenticated): method='pydeseq2', statistical_unit='donor', design='~ donor + condition'. DE table columns match count-model format markers (['basemean', 'lfcse']); format recognized, but table headers alone do not verify execution binding. An adjusted p-value / FDR column is present in the supplied DE table."
+  },
+  "pi_decisions": []
+}

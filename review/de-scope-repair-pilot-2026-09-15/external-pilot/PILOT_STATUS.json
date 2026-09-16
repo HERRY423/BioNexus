@@ -1,0 +1,23 @@
+{
+  "schema": "bionexus.de-external-pilot-status.v1",
+  "status": "LAUNCH_PACKAGE_READY_AWAITING_EXTERNAL_INPUT",
+  "generated_at": "2026-09-15T11:23:50.442167+00:00",
+  "candidate_source_sha256": "433f82897e3cebcb122e312112864851004d674a0ee961ac55607efcb52700e6",
+  "plan_template_sha256": "fde8aa37f75a4e7f872eef04c68ad3820e216a4efcdf335d758ab28111ae2d6f",
+  "actual_external_tasks": 0,
+  "actual_external_sites": 0,
+  "tasks_with_two_eligible_blinded_reviews": 0,
+  "fully_costed_tasks": 0,
+  "registry_external_lab_studies": 0,
+  "registry_non_author_reviews": 0,
+  "pilot_executed": false,
+  "external_validation": "NOT_ESTABLISHED",
+  "net_benefit": "NOT_ESTABLISHED",
+  "scientific_authorization": "NONE",
+  "next_state_requires": [
+    "custodian-frozen real external task packets",
+    "two independent arm-blinded reference reviews per task before arm outputs",
+    "baseline and assisted outputs",
+    "complete five-category person-time records or explicit missingness"
+  ]
+}

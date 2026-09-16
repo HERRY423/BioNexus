@@ -1,0 +1,10 @@
+{
+  "case_id": "valid_positive-2",
+  "family": "valid_positive",
+  "paraphrase": 2,
+  "invalid": false,
+  "claim": "Our reported conclusion is: IL1RN is upregulated and significant after FDR correction in the supplied treated-versus-control result.",
+  "oracle": "Developer-authored table/receipt consistency or claim-boundary label; not independent human judgment",
+  "result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136",
+  "receipt_result_sha256": "b4876ba88e366e333e48ed80f4d20541dcbee7dc88b054ab56d2f288a52eb136"
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "bionexus.de-external-task-intake.v1",
+  "case_id": null,
+  "task_family": null,
+  "site_id": null,
+  "external_custodian_id": null,
+  "data_origin": "REAL_TASK",
+  "not_used_in_development": null,
+  "dataset_sha256": null,
+  "packet_sha256": null,
+  "permission_to_use": null,
+  "contains_direct_identifiers": null,
+  "de_table_path_in_packet": null,
+  "sample_metadata_path_in_packet": null,
+  "execution_receipt_path_in_packet": null,
+  "claim_path_in_packet": null,
+  "notes": null
+}

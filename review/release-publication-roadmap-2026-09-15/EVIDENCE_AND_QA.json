@@ -1,0 +1,67 @@
+{
+  "created_utc": "2026-09-16T01:45:31.250659+00:00",
+  "type": "READ_ONLY_ROUTE_ANALYSIS_NOT_RELEASE_OR_EXTERNAL_VALIDATION",
+  "head": "6e81739de788c34dcc4ca907fa7f69719540a59c",
+  "current_source_tree_sha256": "433f82897e3cebcb122e312112864851004d674a0ee961ac55607efcb52700e6",
+  "matches_prior_repair_snapshot": true,
+  "files": {
+    "GA_CRITERIA.md": "31ed83dcfa21df8fca66c1c8b9e9aab3b92106babc4a5fd9057565a6e0cc8a61",
+    "release/GA_ACTIVATION.json": "a818e684f6d644168e2a171d6fabbfa7d519a4b5096c33b44778a63853ce00c9",
+    "src/bionexus/data/core-support.v1.json": "3d0cd159f165d4e4c418f812a42958b0018d8c312f310dd073bc69e5dcefcdca",
+    "src/bionexus/release_contract.py": "f74a5dabd67abb41f6e9afd0bbd250166625613846b4d2e915e9eb2e9de1f179",
+    "src/bionexus/de_external_study.py": "bbf82faf0af1507ece1c4183233d8854714c6675bf23cae62d5b228aeaf6a43a",
+    "src/bionexus/de_audit.py": "56a4ef7f42a4647e91bc3c385543e78ee99fe903fc3f758401fd19d51d743ddb",
+    "src/bionexus/claim_semantics.py": "bed33f2fe6be35ba0e1d71227aa5437e450bd3f9d4c0d06613d8f31baaf2b4d5",
+    "scripts/sync_version.py": "968e654cd7dce53ff0f0da707d0f824ccbcfd524d990848c163fe45b834ac0f0",
+    ".github/workflows/release.yml": "17236ea8d1ae225dfdda754219f169cf65ae6097eb76dc1391003983fd465cc8",
+    "review/rc8-challenge-rerun-2026-09-14/run_replay.py": "5ef057e6344dc6cb86e3a675a40f201668814e21bb01c0d26e01b7c98ee1a921",
+    "review/de-scope-repair-pilot-2026-09-15/build_local_evidence.py": "45428bb8253dbf618722ff5811a63d3c8098eba56f5f446a5bed532d996eb517",
+    "review/de-scope-repair-pilot-2026-09-15/verify_outputs.py": "ff04aeaf76ded48be7a0a1c2f15cdf3e2dabfe7ab279c8418f1c30d3f3ef1606",
+    "review/de-scope-repair-pilot-2026-09-15/attempt-02/SUMMARY.json": "d99d8857d4809815fbb9f8cfa867533ff379e32e968da908467c9b3d1b4cfdb0",
+    "review/de-scope-repair-pilot-2026-09-15/external-pilot/attempt-03/README.zh-CN.md": "cb35d31936fcf2d6c7c55455223a4484e93973a89e0167b453c9622b39ffc792",
+    "review/de-scope-repair-pilot-2026-09-15/external-pilot/attempt-03/PLAN_TEMPLATE.json": "71b77699ff9e0d738c3d61e1bc099650ae2359fac1863413c6e74a86d4d89e66",
+    "review/de-scope-repair-pilot-2026-09-15/external-pilot/attempt-03/PILOT_STATUS.json": "ec9cb9400d27272e467abbfa03df7d2b07e30422afe82db319e6d0e23f1c3c11"
+  },
+  "hypothetical_version_scope_checks": {
+    "1.0.0-rc.9": {
+      "exit_code": 0,
+      "result": {
+        "schema": "bionexus.release-contract-check.v1",
+        "version": "1.0.0-rc.9",
+        "status": "RC_SCOPE_VALID",
+        "errors": [],
+        "identity_authentication": "NOT_PERFORMED",
+        "maintainer_signoff_verification": "MANUAL_INSPECTION_REQUIRED",
+        "scientific_authorization": "NONE"
+      }
+    },
+    "1.0.0": {
+      "exit_code": 1,
+      "result": {
+        "schema": "bionexus.release-contract-check.v1",
+        "version": "1.0.0",
+        "status": "BLOCKED",
+        "errors": [
+          "GA support has not been activated by named maintainers"
+        ],
+        "identity_authentication": "NOT_PERFORMED",
+        "maintainer_signoff_verification": "MANUAL_INSPECTION_REQUIRED",
+        "scientific_authorization": "NONE"
+      }
+    }
+  },
+  "action_rows": 19,
+  "unique_action_ids": true,
+  "report_sha256": "9ac213daf46cd1c872b2b7d38ebd6241446fbaff0d5b5b5ef9639d414067bd49",
+  "checklist_sha256": "896d3b8296c82bca9fa9aebb4e117a3bdd9ef04b532bbcd802c48b7e502ac21d",
+  "remote_checks_observed_this_turn": {
+    "method": "GitHub API through gh; summarized from observed responses",
+    "latest_github_prerelease": "v1.0.0-rc.7",
+    "published_at": "2026-09-12T14:30:56Z",
+    "head_check_run_records": 83,
+    "latest_per_name_count": 29,
+    "latest_per_name_all_success": true,
+    "pypi_latest": "NOT_CHECKED"
+  },
+  "scope": "Evidence identification and planning; no new product performance study executed"
+}

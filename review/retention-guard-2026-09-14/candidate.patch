@@ -1,0 +1,318 @@
+diff --git a/docs/rc6-p0-closure.md b/docs/rc6-p0-closure.md
+index fe47786..d669c32 100644
+--- a/docs/rc6-p0-closure.md
++++ b/docs/rc6-p0-closure.md
+@@ -38,10 +38,10 @@ produce `ROBUST_PASS`. The required execution-binding check now needs:
+ |---|---|
+ | `statistical_unit` (or `unit`) | Explicit `donor`, `sample` or `biological_replicate`; an aggregation substring cannot override a cell unit |
+ | `method` | Nonempty method; a recognized cell-ranking method cannot acquire donor-level status from metadata |
+-| `fit_status` | Explicit success (`SUCCESS`, `SUCCEEDED`, `CONVERGED`, `COMPLETED`, `PASS`, `PASSED`, `OK`); missing/unknown/failed states do not pass |
++| `fit_status` | Explicit success (`SUCCESS`, `SUCCEEDED`, `CONVERGED`, `COMPLETE`, `COMPLETED`, `PASS`, `PASSED`, `OK`); missing/unknown/failed states do not pass |
+ | `design` (or `formula`) | Bounded additive formula such as `~ condition` or `~ donor + condition`; unsupported complex formulas remain unverified |
+ | `design_matrix_columns` | Nonempty unique column names consistent with formula factors and the audited condition; numeric matrix rank and actual backend fitting are not authenticated here |
+-| `n_donors`, `donor_ids` | Positive integer and unique string IDs matching the observed donor metadata; this checks labels, not real human identity |
++| `n_donors`, donor binding | Positive integer plus either unique string `donor_ids` matching observed metadata, or a readable original sample-metadata file whose SHA-256 exactly matches `sample_metadata_sha256`; a DataFrame cannot substitute for the original bytes |
+ | `result_sha256` (or `receipt_result_sha256`) | Exactly 64 hex characters, nonzero, equal to the actual result file bytes; those same bytes must parse to the table being audited |
+ | Result input | A readable CSV/TSV result file; a DataFrame has no original-file bytes and cannot satisfy a file hash check |
+ 
+@@ -52,6 +52,12 @@ inputs remain `NEEDS_DATA`; contradictions remain visible and require revision.
+ DataFrame and ExecutionRecord object inputs are still accepted for inspection,
+ but missing file/receipt evidence is not silently synthesized.
+ 
++Legacy receipts that use `fit_status=COMPLETE` are treated as a success-status
++synonym. A legacy receipt without `donor_ids` can bind donors only from the exact
++sample sheet named by its `sample_metadata_sha256`; hash mismatch is a blocker.
++This compatibility path derives labels from already-bound bytes and does not add
++an execution attestation or raise the scientific evidence ceiling.
++
+ `ROBUST_PASS` is the existing local audit status. The execution summary now
+ explicitly limits success to input consistency. The receipt producer, real
+ model execution, selected count layer, full statistical design and scientific
+diff --git a/src/bionexus/claim_semantics.py b/src/bionexus/claim_semantics.py
+index 09622f6..e6cc977 100644
+--- a/src/bionexus/claim_semantics.py
++++ b/src/bionexus/claim_semantics.py
+@@ -446,6 +446,17 @@ class DeterministicClaimParser:
+ 
+     _NEGATION_PATTERNS = _ABSENCE_OF_EVIDENCE_PATTERNS + _EVIDENCE_OF_ABSENCE_PATTERNS
+ 
++    @classmethod
++    def strip_reporting_preamble(cls, text: str) -> str:
++        """Remove a bounded non-scientific reporting/context preamble."""
++        return re.sub(
++            r"^\s*(?:(?:in|for)\s+(?:our|this|the)\s+(?:completed\s+)?(?:cohort|study|analysis)"
++            r"|(?:our|the)\s+reported\s+conclusion\s+is|本研究中)[,，:]\s*",
++            "",
++            text,
++            flags=re.I,
++        )
++
+     @classmethod
+     def is_scoped_disclaimer(cls, text: str) -> bool:
+         """Bounded disclaimer recognition; a limitation cannot license another clause.
+@@ -453,8 +464,10 @@ class DeterministicClaimParser:
+         Ambiguous compound prose requires separate review. This checks language,
+         not the truth of a literature-wide assertion that no evidence exists.
+         """
+-        # Allow a short context preamble, but not an asserted clause before a comma.
+-        text = re.sub(r"^\s*(?:in (?:our|this|the) (?:cohort|study|analysis)|本研究中)[,，]\s*", "", text, flags=re.I)
++        # Allow bounded reporting/context preambles that do not assert an
++        # additional scientific proposition.  Other clauses before punctuation
++        # still force separate review.
++        text = cls.strip_reporting_preamble(text)
+         clauses = [c.strip() for c in re.split(
+             r"[,，;；。!?！？\n\r:]|\.(?:\s+|$)|\b(?:but|however|yet|and|therefore|thus|although|whereas|because)\b|但(?:是)?|然而|并且|因此|所以|尽管",
+             text, flags=re.I,
+diff --git a/src/bionexus/de_audit.py b/src/bionexus/de_audit.py
+index 6d8a94c..be3e943 100644
+--- a/src/bionexus/de_audit.py
++++ b/src/bionexus/de_audit.py
+@@ -743,6 +743,7 @@ class DEAuditEngine:
+             cohort_summary=cohort_summary,
+             findings=findings,
+             checks=checks,
++            sample_metadata_source=sample_metadata,
+         )
+ 
+         # Decouple BFA-001c when donor execution binding is verified and p > 0
+@@ -1728,6 +1729,7 @@ class DEAuditEngine:
+         cohort_summary: Dict[str, Any],
+         findings: List[DEFinding],
+         checks: List[CheckRecord],
++        sample_metadata_source: Optional[Union[pd.DataFrame, str, Path]] = None,
+     ) -> bool:
+         if supplied_execution is None:
+             checks.append(
+@@ -1819,7 +1821,7 @@ class DEAuditEngine:
+         fit_status = str(exec_dict.get("fit_status") or "").upper().strip()
+         if not fit_status:
+             missing.append("fit_status")
+-        elif fit_status not in ("SUCCESS", "SUCCEEDED", "CONVERGED", "COMPLETED", "PASS", "PASSED", "OK"):
++        elif fit_status not in ("SUCCESS", "SUCCEEDED", "CONVERGED", "COMPLETE", "COMPLETED", "PASS", "PASSED", "OK"):
+             binding_issues.append(f"未确认成功拟合状态 ({fit_status})")
+         if fit_status:
+             if fit_status in ("FAILED", "ERROR", "DIVERGED", "NON_CONVERGED", "FAIL"):
+@@ -1961,8 +1963,62 @@ class DEAuditEngine:
+         if obs_df is None or obs_donors is None:
+             missing.append("可核查的供体元数据")
+         donor_ids = exec_dict.get("donor_ids")
+-        if not isinstance(donor_ids, list) or not donor_ids or not all(isinstance(d, str) and d.strip() for d in donor_ids):
+-            missing.append("donor_ids (非空供体标识列表)")
++        donor_ids_bound_from_metadata = False
++        if "donor_ids" not in exec_dict:
++            # Legacy receipts may bind the exact sample sheet rather than duplicate
++            # its donor identifiers.  Accept that representation only when the
++            # original file bytes are available and match the receipt digest.  An
++            # in-memory DataFrame cannot take this path because it has no stable
++            # source bytes to bind.
++            expected_metadata_hash = str(exec_dict.get("sample_metadata_sha256") or "").strip().lower()
++            metadata_path = None
++            if isinstance(sample_metadata_source, (str, Path)):
++                candidate = Path(sample_metadata_source)
++                if candidate.is_file():
++                    metadata_path = candidate
++            if not expected_metadata_hash:
++                missing.append("donor_ids 或 sample_metadata_sha256 绑定的原始样本表")
++            elif set(expected_metadata_hash) == {"0"} or not re.fullmatch(r"[0-9a-f]{64}", expected_metadata_hash):
++                binding_issues.append("样本元数据 SHA-256 无效")
++            elif metadata_path is None:
++                missing.append("donor_ids（仅有样本表哈希时必须提供可读取的原始样本表文件）")
++            else:
++                try:
++                    metadata_bytes = metadata_path.read_bytes()
++                    actual_metadata_hash = hashlib.sha256(metadata_bytes).hexdigest().lower()
++                    sep = "\t" if metadata_path.suffix.lower() in (".tsv", ".txt") else ","
++                    bound_metadata = pd.read_csv(io.BytesIO(metadata_bytes), sep=sep)
++                    if actual_metadata_hash != expected_metadata_hash:
++                        findings.append(
++                            DEFinding(
++                                rule_id="BFA-013e",
++                                severity=FindingSeverity.BLOCKER,
++                                category=FindingCategory.DONOR_IMBALANCE,
++                                title="样本元数据与执行记录哈希不匹配 (Sample Metadata Hash Mismatch)",
++                                impact_on_conclusion=(
++                                    f"样本表实际 SHA-256 ({actual_metadata_hash[:16]}...) 与执行记录预期哈希 "
++                                    f"({expected_metadata_hash[:16]}...) 不一致，不能从该文件恢复供体绑定。"
++                                ),
++                                step_or_location="execution_record.sample_metadata_sha256 vs sample_metadata",
++                                minimal_fix="提供执行时使用且 SHA-256 与收据一致的原始样本元数据文件，或提供明确的 donor_ids。",
++                                evidence_data={
++                                    "observed_sha256": actual_metadata_hash,
++                                    "expected_sha256": expected_metadata_hash,
++                                },
++                            )
++                        )
++                        binding_issues.append("样本元数据哈希不匹配")
++                    elif obs_df is None or not bound_metadata.equals(obs_df):
++                        binding_issues.append("哈希对应样本元数据与本次已读取的表格不一致")
++                    elif not cohort_summary.get("donors"):
++                        missing.append("可从绑定样本表解析的供体标识")
++                    else:
++                        donor_ids_bound_from_metadata = True
++                except Exception as exc:
++                    logger.warning("Failed to bind sample metadata from %s: %s", metadata_path, exc)
++                    missing.append("可读取并解析的原始样本表文件")
++        elif not isinstance(donor_ids, list) or not donor_ids or not all(isinstance(d, str) and d.strip() for d in donor_ids):
++            binding_issues.append("donor_ids 必须为非空且仅含非空字符串的列表")
+         elif (len(set(donor_ids)) != len(donor_ids)
+               or set(donor_ids) != {str(d) for d in cohort_summary.get("donors", [])}):
+             binding_issues.append("执行记录供体标识与元数据不一致或重复")
+@@ -2008,7 +2064,14 @@ class DEAuditEngine:
+                 check_id="analysis_execution_binding",
+                 title="分析事实与执行记录绑定",
+                 status=CheckStatus.ASSESSED,
+-                summary="记录声明供体级成功拟合；设计公式/列名及供体数量一致，结果文件 SHA-256 匹配。此为输入一致性核查，不证明真实模型执行、生产者身份或科学有效性。",
++                summary=(
++                    "记录声明供体级成功拟合；设计公式/列名及供体数量一致，结果文件 SHA-256 匹配。"
++                    + (
++                        "旧版收据未重复列出 donor_ids；供体标识来自与 sample_metadata_sha256 完全匹配的原始样本表文件。"
++                        if donor_ids_bound_from_metadata else "执行记录 donor_ids 与样本表一致。"
++                    )
++                    + "此为输入一致性核查，不证明真实模型执行、生产者身份或科学有效性。"
++                ),
+                 required_for_pass=True,
+             )
+         )
+@@ -2034,6 +2097,11 @@ class DEAuditEngine:
+             return False
+ 
+         text = str(claim_text).strip()
++        # Reporting/context preambles carry no table fact of their own. Remove
++        # only the bounded forms shared with the claim parser so their comma or
++        # colon cannot hide the actual assertion from table concordance checks.
++        from bionexus.claim_semantics import DeterministicClaimParser
++        text = DeterministicClaimParser.strip_reporting_preamble(text)
+         # Evaluate complete clauses independently. A correct first assertion
+         # must not license a second gene or a contradictory second sentence.
+         clauses = [part.strip() for part in re.split(
+diff --git a/tests/unit/test_rc6_p0_boundaries.py b/tests/unit/test_rc6_p0_boundaries.py
+index 7be14bc..68b31c7 100644
+--- a/tests/unit/test_rc6_p0_boundaries.py
++++ b/tests/unit/test_rc6_p0_boundaries.py
+@@ -41,6 +41,74 @@ def test_complete_receipt_has_bounded_consistency_summary(bound_inputs):
+     assert "不证明真实模型执行" in binding(result).summary
+ 
+ 
++def test_complete_fit_status_synonym_is_accepted(bound_inputs):
++    _, path, samples, record = bound_inputs
++    record["fit_status"] = "COMPLETE"
++    result = audit_differential_expression(de_table=path, sample_metadata=samples, execution_record=record)
++    assert result.passed
++    assert binding(result).status == CheckStatus.ASSESSED
++
++
++def test_legacy_receipt_derives_donors_only_from_hash_bound_metadata_file(bound_inputs, tmp_path):
++    _, path, samples, record = bound_inputs
++    metadata_path = tmp_path / "samples.csv"
++    samples.to_csv(metadata_path, index=False)
++    record.pop("donor_ids")
++    record["sample_metadata_sha256"] = hashlib.sha256(metadata_path.read_bytes()).hexdigest()
++    result = audit_differential_expression(
++        de_table=path,
++        sample_metadata=metadata_path,
++        execution_record=record,
++    )
++    assert result.passed
++    assert binding(result).status == CheckStatus.ASSESSED
++    assert "sample_metadata_sha256" in binding(result).summary
++
++
++def test_legacy_receipt_cannot_derive_donors_from_in_memory_metadata(bound_inputs, tmp_path):
++    _, path, samples, record = bound_inputs
++    metadata_path = tmp_path / "samples.csv"
++    samples.to_csv(metadata_path, index=False)
++    record.pop("donor_ids")
++    record["sample_metadata_sha256"] = hashlib.sha256(metadata_path.read_bytes()).hexdigest()
++    result = audit_differential_expression(de_table=path, sample_metadata=samples, execution_record=record)
++    assert not result.passed
++    assert binding(result).status == CheckStatus.MISSING_EVIDENCE
++
++
++def test_legacy_receipt_metadata_hash_mismatch_is_blocked(bound_inputs, tmp_path):
++    _, path, samples, record = bound_inputs
++    metadata_path = tmp_path / "samples.csv"
++    samples.to_csv(metadata_path, index=False)
++    record.pop("donor_ids")
++    record["sample_metadata_sha256"] = "f" * 64
++    result = audit_differential_expression(
++        de_table=path,
++        sample_metadata=metadata_path,
++        execution_record=record,
++    )
++    assert not result.passed
++    assert result.overall_status == "BLOCKER_DETECTED"
++    assert binding(result).status == CheckStatus.ISSUE_FOUND
++    assert any(f.rule_id == "BFA-013e" for f in result.findings)
++
++
++@pytest.mark.parametrize("bad_donor_ids", [[], "D0", [1], ["other"]])
++def test_malformed_donor_ids_are_not_rescued_by_metadata_hash(bound_inputs, tmp_path, bad_donor_ids):
++    _, path, samples, record = bound_inputs
++    metadata_path = tmp_path / "samples.csv"
++    samples.to_csv(metadata_path, index=False)
++    record["donor_ids"] = bad_donor_ids
++    record["sample_metadata_sha256"] = hashlib.sha256(metadata_path.read_bytes()).hexdigest()
++    result = audit_differential_expression(
++        de_table=path,
++        sample_metadata=metadata_path,
++        execution_record=record,
++    )
++    assert not result.passed
++    assert binding(result).status == CheckStatus.ISSUE_FOUND
++
++
+ @pytest.mark.parametrize("field", ["statistical_unit", "method", "fit_status", "design", "design_matrix_columns", "n_donors", "donor_ids", "result_sha256"])
+ def test_each_missing_binding_field_prevents_pass(bound_inputs, field):
+     _, path, samples, record = bound_inputs
+@@ -150,6 +218,8 @@ def test_absence_and_equivalence_are_not_ordinary_nonsignificance(bound_inputs,
+     "NEG1 was not significant after FDR correction in the supplied result.",
+     "No genes were significant in the supplied table.",
+     "We cannot prove that NEG1 causes disease.",
++    "For this completed analysis, these differential-expression results do not establish causality or clinical efficacy.",
++    "Our reported conclusion is: These differential-expression results do not establish causality or clinical efficacy.",
+ ])
+ def test_honest_negative_or_scoped_limitation_remains_usable(bound_inputs, claim):
+     _, path, samples, record = bound_inputs
+@@ -171,6 +241,15 @@ def test_disclaimer_does_not_license_other_propositions(claim):
+     assert not DeterministicWarrantEngine.evaluate(ir, EvidenceProfile(observational_data=True)).is_fully_warranted
+ 
+ 
++@pytest.mark.parametrize("claim", [
++    "For this completed analysis, treatment has no effect.",
++    "Our reported conclusion is: these results do not establish causality, but treatment cures disease.",
++])
++def test_reporting_preamble_does_not_license_negative_or_compound_assertions(claim):
++    ir = DeterministicClaimParser.parse(claim)
++    assert not DeterministicWarrantEngine.evaluate(ir, EvidenceProfile(observational_data=True)).is_fully_warranted
++
++
+ def test_legacy_negated_bit_cannot_grant_warrant():
+     ir = DeterministicClaimParser.parse("X causes disease.")
+     ir.negated = True
+@@ -212,6 +291,26 @@ def test_nonsignificance_requires_an_actual_valid_negative_result(bound_inputs,
+         assert any(c.check_id == "claim_fact_concordance" and c.status == CheckStatus.MISSING_EVIDENCE for c in result.checks)
+ 
+ 
++@pytest.mark.parametrize("claim", [
++    "No genes were significant after FDR correction in the supplied result.",
++    "For this completed analysis, no genes were significant after FDR correction in the supplied result.",
++    "Our reported conclusion is: No genes were significant after FDR correction in the supplied result.",
++])
++def test_reporting_preambles_do_not_hide_false_global_null(bound_inputs, claim):
++    frame, path, samples, record = bound_inputs
++    frame.loc[0, "padj"] = 0.001
++    frame.to_csv(path, index=False)
++    record["result_sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
++    result = audit_differential_expression(
++        de_table=path,
++        sample_metadata=samples,
++        execution_record=record,
++        claim_text=claim,
++    )
++    assert not result.passed
++    assert any(f.rule_id == "BFA-015c" for f in result.findings)
++
++
+ def test_global_negative_does_not_treat_missing_tests_as_nonsignificant(bound_inputs):
+     frame, path, samples, record = bound_inputs
+     frame.loc[0, "padj"] = float("nan")

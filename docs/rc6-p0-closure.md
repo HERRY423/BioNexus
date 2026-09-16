@@ -38,10 +38,10 @@ produce `ROBUST_PASS`. The required execution-binding check now needs:
 |---|---|
 | `statistical_unit` (or `unit`) | Explicit `donor`, `sample` or `biological_replicate`; an aggregation substring cannot override a cell unit |
 | `method` | Nonempty method; a recognized cell-ranking method cannot acquire donor-level status from metadata |
-| `fit_status` | Explicit success (`SUCCESS`, `SUCCEEDED`, `CONVERGED`, `COMPLETED`, `PASS`, `PASSED`, `OK`); missing/unknown/failed states do not pass |
+| `fit_status` | Explicit success (`SUCCESS`, `SUCCEEDED`, `CONVERGED`, `COMPLETE`, `COMPLETED`, `PASS`, `PASSED`, `OK`); missing/unknown/failed states do not pass |
 | `design` (or `formula`) | Bounded additive formula such as `~ condition` or `~ donor + condition`; unsupported complex formulas remain unverified |
 | `design_matrix_columns` | Nonempty unique column names consistent with formula factors and the audited condition; numeric matrix rank and actual backend fitting are not authenticated here |
-| `n_donors`, `donor_ids` | Positive integer and unique string IDs matching the observed donor metadata; this checks labels, not real human identity |
+| `n_donors`, donor binding | Positive integer plus either unique string `donor_ids` matching observed metadata, or a readable original sample-metadata file whose SHA-256 exactly matches `sample_metadata_sha256`; a DataFrame cannot substitute for the original bytes |
 | `result_sha256` (or `receipt_result_sha256`) | Exactly 64 hex characters, nonzero, equal to the actual result file bytes; those same bytes must parse to the table being audited |
 | Result input | A readable CSV/TSV result file; a DataFrame has no original-file bytes and cannot satisfy a file hash check |
 
@@ -51,6 +51,12 @@ prevents overall success even without a separate high-severity finding. Missing
 inputs remain `NEEDS_DATA`; contradictions remain visible and require revision.
 DataFrame and ExecutionRecord object inputs are still accepted for inspection,
 but missing file/receipt evidence is not silently synthesized.
+
+Legacy receipts that use `fit_status=COMPLETE` are treated as a success-status
+synonym. A legacy receipt without `donor_ids` can bind donors only from the exact
+sample sheet named by its `sample_metadata_sha256`; hash mismatch is a blocker.
+This compatibility path derives labels from already-bound bytes and does not add
+an execution attestation or raise the scientific evidence ceiling.
 
 `ROBUST_PASS` is the existing local audit status. The execution summary now
 explicitly limits success to input consistency. The receipt producer, real
