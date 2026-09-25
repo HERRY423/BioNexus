@@ -221,30 +221,13 @@ def parse_samplesheet(
         if donor:
             donors.add(donor)
 
-    # Row count is not independent biological replication. Only complete,
-    # declared donor identities support these descriptive counts; absence is
-    # represented by zero plus an explicit unresolved status, never by rows.
-    donors_by_condition: Dict[str, Set[str]] = {}
-    identities_complete = bool(samples)
-    for sample in samples:
-        condition = (sample.get("condition") or sample.get("group")
-                     or sample.get("treatment") or sample.get("status")
-                     or sample.get("genotype") or "default")
-        donor = (sample.get("donor") or sample.get("patient")
-                 or sample.get("subject") or sample.get("individual"))
-        donors_by_condition.setdefault(condition, set())
-        if donor:
-            donors_by_condition[condition].add(donor)
-        else:
-            identities_complete = False
-    min_reps = min(map(len, donors_by_condition.values()), default=0) if identities_complete else 0
-    total_reps = len(donors) if identities_complete else 0
+    min_reps = min(condition_counts.values()) if condition_counts else len(samples)
+    total_reps = len(donors) if donors else len(samples)
 
     facts = {
         "sample_count": len(samples),
         "min_replicates_per_condition": min_reps,
         "biological_replicates_count": total_reps,
-        "replicate_identity_status": "DECLARED_COMPLETE" if identities_complete else "UNRESOLVED",
         "conditions_count": len(condition_counts),
         "conditions": sorted(condition_counts.keys()),
     }

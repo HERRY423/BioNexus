@@ -1,0 +1,12 @@
+{
+  "status": "AWAITING_ACTUAL_MAINTAINER_REVIEW",
+  "adopted": null,
+  "reviewer": null,
+  "relationship_to_submitter": null,
+  "review_minutes": null,
+  "retest_minutes": null,
+  "rebuttal": null,
+  "rejected_diagnoses": null,
+  "applied_commit": null,
+  "note": "Do not fill with agent guesses; author and reviewer may share ownership."
+}

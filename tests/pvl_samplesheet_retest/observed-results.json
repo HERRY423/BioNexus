@@ -1,0 +1,249 @@
+{
+  "before": {
+    "format": "pvl-upstream-retest-1",
+    "component": "bionexus",
+    "source_sha256": "f2b5c36df193b8a0759640e71c81c684c12db2a5fbb7cf5fc2a7f14f54836298",
+    "protocol_sha256": "009542c5e45fbec0ab4ab5d52adf40cdd6926a196f745545a67b99c5a83fc7e6",
+    "passed": 2,
+    "total": 5,
+    "cases": [
+      {
+        "id": "technical_rows",
+        "passed": false,
+        "observed": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 2,
+          "biological_replicates_count": 2,
+          "conditions_count": 2,
+          "conditions": [
+            "control",
+            "treated"
+          ]
+        },
+        "expected": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 1,
+          "biological_replicates_count": 2
+        },
+        "seconds": 0.010899300003075041,
+        "input_sha256": "93eb2644679befcd2af72c5480986a73a2151dc9d75a0348669e6c10d88894c3"
+      },
+      {
+        "id": "independent_donors",
+        "passed": true,
+        "observed": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 2,
+          "biological_replicates_count": 4,
+          "conditions_count": 2,
+          "conditions": [
+            "control",
+            "treated"
+          ]
+        },
+        "expected": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 2,
+          "biological_replicates_count": 4
+        },
+        "seconds": 0.01096450000477489,
+        "input_sha256": "110e628a85751091e05f6c31fc158a7f618bca28868b3dc17b2346c98da81a40"
+      },
+      {
+        "id": "paired_donors",
+        "passed": true,
+        "observed": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 2,
+          "biological_replicates_count": 2,
+          "conditions_count": 2,
+          "conditions": [
+            "control",
+            "treated"
+          ]
+        },
+        "expected": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 2,
+          "biological_replicates_count": 2
+        },
+        "seconds": 0.01139089999924181,
+        "input_sha256": "9dc99000e461e9291d058eec88390b6d4b393a115eaf89c2e802d601042c1fed"
+      },
+      {
+        "id": "missing_donors",
+        "passed": false,
+        "observed": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 2,
+          "biological_replicates_count": 4,
+          "conditions_count": 2,
+          "conditions": [
+            "control",
+            "treated"
+          ]
+        },
+        "expected": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 0,
+          "biological_replicates_count": 0,
+          "replicate_identity_status": "UNRESOLVED"
+        },
+        "seconds": 0.013046899999608286,
+        "input_sha256": "0a206da94831f6899861c70ce56f298c930368362cef0842a3b95bdf375d3096"
+      },
+      {
+        "id": "partial_donors",
+        "passed": false,
+        "observed": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 2,
+          "biological_replicates_count": 2,
+          "conditions_count": 2,
+          "conditions": [
+            "control",
+            "treated"
+          ]
+        },
+        "expected": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 0,
+          "biological_replicates_count": 0,
+          "replicate_identity_status": "UNRESOLVED"
+        },
+        "seconds": 0.009735399995406624,
+        "input_sha256": "bd3a64541968b5e8721e19f2c284e64da511a1821c2ff0590892e96a3971aa27"
+      }
+    ],
+    "scope": "Real public source executed on disclosed synthetic inputs; exact samplesheet helper AST, not the harvest path. No model or independent scientific validation.",
+    "model_calls": 0,
+    "maintainer_adoption": null,
+    "human_minutes": null
+  },
+  "after": {
+    "format": "pvl-upstream-retest-1",
+    "component": "bionexus",
+    "source_sha256": "4f91ad5b698ffddf1982fa5b4737ef9fc745a900bc15f4bad05447a2fe0da25b",
+    "protocol_sha256": "009542c5e45fbec0ab4ab5d52adf40cdd6926a196f745545a67b99c5a83fc7e6",
+    "passed": 5,
+    "total": 5,
+    "cases": [
+      {
+        "id": "technical_rows",
+        "passed": true,
+        "observed": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 1,
+          "biological_replicates_count": 2,
+          "replicate_identity_status": "DECLARED_COMPLETE",
+          "conditions_count": 2,
+          "conditions": [
+            "control",
+            "treated"
+          ]
+        },
+        "expected": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 1,
+          "biological_replicates_count": 2
+        },
+        "seconds": 0.004429599997820333,
+        "input_sha256": "93eb2644679befcd2af72c5480986a73a2151dc9d75a0348669e6c10d88894c3"
+      },
+      {
+        "id": "independent_donors",
+        "passed": true,
+        "observed": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 2,
+          "biological_replicates_count": 4,
+          "replicate_identity_status": "DECLARED_COMPLETE",
+          "conditions_count": 2,
+          "conditions": [
+            "control",
+            "treated"
+          ]
+        },
+        "expected": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 2,
+          "biological_replicates_count": 4
+        },
+        "seconds": 0.004017500003101304,
+        "input_sha256": "110e628a85751091e05f6c31fc158a7f618bca28868b3dc17b2346c98da81a40"
+      },
+      {
+        "id": "paired_donors",
+        "passed": true,
+        "observed": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 2,
+          "biological_replicates_count": 2,
+          "replicate_identity_status": "DECLARED_COMPLETE",
+          "conditions_count": 2,
+          "conditions": [
+            "control",
+            "treated"
+          ]
+        },
+        "expected": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 2,
+          "biological_replicates_count": 2
+        },
+        "seconds": 0.006316699997114483,
+        "input_sha256": "9dc99000e461e9291d058eec88390b6d4b393a115eaf89c2e802d601042c1fed"
+      },
+      {
+        "id": "missing_donors",
+        "passed": true,
+        "observed": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 0,
+          "biological_replicates_count": 0,
+          "replicate_identity_status": "UNRESOLVED",
+          "conditions_count": 2,
+          "conditions": [
+            "control",
+            "treated"
+          ]
+        },
+        "expected": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 0,
+          "biological_replicates_count": 0,
+          "replicate_identity_status": "UNRESOLVED"
+        },
+        "seconds": 0.006433900001866277,
+        "input_sha256": "0a206da94831f6899861c70ce56f298c930368362cef0842a3b95bdf375d3096"
+      },
+      {
+        "id": "partial_donors",
+        "passed": true,
+        "observed": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 0,
+          "biological_replicates_count": 0,
+          "replicate_identity_status": "UNRESOLVED",
+          "conditions_count": 2,
+          "conditions": [
+            "control",
+            "treated"
+          ]
+        },
+        "expected": {
+          "sample_count": 4,
+          "min_replicates_per_condition": 0,
+          "biological_replicates_count": 0,
+          "replicate_identity_status": "UNRESOLVED"
+        },
+        "seconds": 0.004069499998877291,
+        "input_sha256": "bd3a64541968b5e8721e19f2c284e64da511a1821c2ff0590892e96a3971aa27"
+      }
+    ],
+    "scope": "Real public source executed on disclosed synthetic inputs; exact samplesheet helper AST, not the harvest path. No model or independent scientific validation.",
+    "model_calls": 0,
+    "maintainer_adoption": null,
+    "human_minutes": null
+  }
+}
