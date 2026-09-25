@@ -1,7 +1,19 @@
 """Frozen PVL component retest; standard library only; no model/network calls."""
+import argparse
+import ast
+import csv
+import hashlib
+import json
+import subprocess
+import sys
+import time
 from pathlib import Path
-import argparse, ast, csv, hashlib, json, subprocess, sys, time
 from typing import Any, Dict, List, Set, Tuple, Union
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -11,7 +23,6 @@ def main():
     root = Path(__file__).resolve().parent
     protocol = json.loads((root/'protocol.json').read_text(encoding='utf-8'))
     manifest = json.loads((root/'manifest.json').read_text(encoding='utf-8'))
-    digest = lambda data: hashlib.sha256(data).hexdigest()
     assert digest((root/'protocol.json').read_bytes()) == manifest['protocol_sha256'], 'Protocol changed'
     source = Path(args.source).resolve()
     code = source.read_bytes()

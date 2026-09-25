@@ -12,5 +12,7 @@
     "after": "4f91ad5b698ffddf1982fa5b4737ef9fc745a900bc15f4bad05447a2fe0da25b"
   },
   "source_identity_rule": "UTF-8 source with CRLF normalized to LF for cross-platform checkout comparison; original raw hashes retained above and execution raw hash recorded per run.",
-  "retest_runner_sha256": "9347ae79e540f0ca0643f1fbc99fdb702bf32509b60a00ecfe98e2c0060f1588"
+  "retest_runner_sha256": "3cbb1096f5fdd6f855569c7341184ef55f30c6c91886044904239b7399bb0623",
+  "previous_runner_sha256": "9347ae79e540f0ca0643f1fbc99fdb702bf32509b60a00ecfe98e2c0060f1588",
+  "runner_revision_reason": "Import formatting and named digest helper for upstream Ruff; frozen protocol and before/after source hashes unchanged."
 }
