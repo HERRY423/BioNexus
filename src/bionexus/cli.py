@@ -15,6 +15,7 @@ Commands:
   bionexus inventory     Alias for list-skills
   bionexus registry      Compile and validate multi-platform registry manifests
   bionexus ivn           Register and verify independent-validation evidence
+  bionexus deploy        Lab import/export acceptance, compatibility matrix, schema migration, failure reports
 """
 
 from __future__ import annotations
@@ -27,6 +28,7 @@ from typing import Optional
 from bionexus.commands import (
     claims,
     de,
+    deploy,
     diagnostics,
     execution,
     experimental,
@@ -48,6 +50,7 @@ from bionexus.commands.de import handle_audit as handle_audit
 from bionexus.commands.de import handle_audit_de as handle_audit_de
 from bionexus.commands.de import handle_audit_de_summary as handle_audit_de_summary
 from bionexus.commands.de import handle_audit_de_verify as handle_audit_de_verify
+from bionexus.commands.deploy import handle_deploy as handle_deploy
 from bionexus.commands.diagnostics import handle_backend_identity as handle_backend_identity
 from bionexus.commands.diagnostics import handle_doctor as handle_doctor
 from bionexus.commands.diagnostics import handle_list_skills as handle_list_skills
@@ -173,6 +176,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_comp = lab.register_compliance_arguments(subparsers)
     p_nextflow = lab.register_nextflow_arguments(subparsers)
     p_ga4gh = lab.register_ga4gh_arguments(subparsers)
+    p_deploy = deploy.register_deploy_arguments(subparsers)
 
     args = parser.parse_args(argv)
 
@@ -203,6 +207,8 @@ def main(argv: Optional[list[str]] = None) -> int:
         return handle_audit(args)
     elif args.command in ("audit-de", "de-audit"):
         return handle_audit_de(args)
+    elif args.command == "de-alternatives-plan":
+        return de.handle_de_alternatives_plan(args)
     elif args.command == "audit-de-summary":
         return handle_audit_de_summary(args)
     elif args.command == "audit-de-verify":
@@ -347,7 +353,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             p_comp.print_help()
             return 0
         return handle_compliance(args)
-    elif args.command == "nextflow":
+    elif args.command in ("nextflow", "nf"):
         if not getattr(args, "nextflow_action", None):
             p_nextflow.print_help()
             return 0
@@ -363,6 +369,11 @@ def main(argv: Optional[list[str]] = None) -> int:
             p_ga4gh.print_help()
             return 0
         return handle_ga4gh(args)
+    elif args.command == "deploy":
+        if not getattr(args, "deploy_action", None):
+            p_deploy.print_help()
+            return 0
+        return handle_deploy(args)
 
     return 0
 

@@ -1,0 +1,2726 @@
+{
+  "schema": "bionexus.positive-output-surfaces.v1",
+  "status": "CANDIDATE_NOT_GA_ACTIVATED",
+  "unknown_surface": "UNACCEPTED",
+  "scientific_authorization": "NONE",
+  "surfaces": [
+    {
+      "surface": "cli:abi",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:airgap",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:audit",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:audit-claims",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:audit-de",
+      "status": "CANDIDATE_CORE",
+      "assessment_kind": "ARTIFACT_REVIEW",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "cli:audit-de-summary",
+      "status": "CANDIDATE_CORE",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "cli:audit-de-verify",
+      "status": "CANDIDATE_CORE",
+      "assessment_kind": "BUNDLE_INTEGRITY",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "cli:backend-identity",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:bench",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:bigdata",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:cache",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:capability",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:causal",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:certification",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:closed-loop",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:closed_loop",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:cluster",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:compliance",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:conformance",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:create-plugin",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:create-skill",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:de-alternatives-plan",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:de-audit",
+      "status": "CANDIDATE_CORE",
+      "assessment_kind": "ARTIFACT_REVIEW",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "cli:debt",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:deploy",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:doctor",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:eval",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:eval-audit",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:failures",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:ga4gh",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:guard",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:instrument",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:interop",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:inventory",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:ivn",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:ledger",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:lims",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:list-skills",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:nextflow",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:nf",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:parse-claim",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:preflight",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:prevent",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:registry",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:remediate",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:route",
+      "status": "EXPERIMENTAL",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "cli:rule",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:run",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:scfm",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:security",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:standards",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:verify",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:verify-artifacts",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:verify_validation_artifacts",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "cli:warrant-claim",
+      "status": "EXPERIMENTAL",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "mcp:bionexus_host_probe",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "mcp:bionexus_warrant_check",
+      "status": "EXPERIMENTAL",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "mcp:get_gene_expression",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "mcp:get_pubmed_article",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "mcp:search_alphafold",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "mcp:search_biorxiv",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "mcp:search_chembl",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "mcp:search_clinical_trials",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "mcp:search_cosmic",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "mcp:search_ensembl",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "mcp:search_geo",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "mcp:search_gnomad",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "mcp:search_opentargets",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "mcp:search_pdb",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "mcp:search_pubmed",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "mcp:search_reactome",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "mcp:search_string",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "mcp:search_uniprot",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ABSTAIN",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ALIGNMENTS",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.AnalysisAuditResult",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.AnalysisDocument",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.AnnotationEvidence",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.AnnotationVerdict",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ApplicableRegime",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ArtifactBinding",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.AssociationType",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.AttestationVerification",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.AuditFinding",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.BackendRequirement",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.BackendUnavailable",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.BioLocalCache",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.BioNexusGuard",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.BundleVerificationResult",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CANONICAL_ALTERNATIVES",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CANONICAL_CAPABILITIES",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CANONICAL_SCIENTIFIC_RULES",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CATEGORY_TO_EPISTEMIC_KIND",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CLAIM_REQUIREMENTS",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CalibratedRule",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CalibrationContext",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CalibrationError",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CalibrationFitReceipt",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CalibrationObservation",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CalibrationProfile",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CalibrationRegistry",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CalibrationResolution",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CalibrationResolutionStatus",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CalibrationReviewStatus",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CapabilityContract",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CapabilityEvaluationResult",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CausalDAG",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CausalEdge",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CausalNode",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CausalStrength",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CausalViolationType",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CausalWarrantResult",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ChallengeNetwork",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ChallengeStatus",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ChallengeType",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CheckRecord",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CheckStatus",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.CitationRef",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ClaimAuditResult",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ClaimClass",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ClaimContext",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ClaimRelationshipType",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ClaimScopeBoundary",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ClaimVerification",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ClaimViolation",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ClaimViolationType",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ClinicalActionability",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ComparisonDirection",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ConclusionMaturity",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ConclusionStatus",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ConsensusLevel",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ControlResult",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DEAuditEngine",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DEAuditResult",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DEFAULT_LAB_POLICY",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DEFAULT_SEMANTIC_ENVELOPE_SCHEMA_PATH",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DEFAULT_SEMANTIC_REGISTRY_PATH",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DEFAULT_SEMANTIC_STANDARD_ROOT",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DEFAULT_SKILLS",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DEFAULT_SPATIAL_GOLD_ROOT",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DEFinding",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DISCOVERY_LAB",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DOCUMENTABLE_EXTRAS",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DatasetCalibration",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DebtKind",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DebtSeverity",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DeterministicClaimParser",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DeterministicWarrantEngine",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DimensionGrade",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.Directionality",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DoctorGateError",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.DownstreamSuggestion",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ENFORCED_LAB",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.EmpiricalEvidence",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.EnforcementLevel",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.EnforcementMode",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.EpistemicKind",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.EvidenceAssessment",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.EvidenceAttestation",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.EvidenceCard",
+      "status": "CANDIDATE_CORE",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.EvidenceDebtAuditReport",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.EvidenceDebtEngine",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.EvidenceDebtItem",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.EvidenceFactor",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.EvidenceGrade",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.EvidenceProfile",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.EvidenceReference",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.EvidenceRequirement",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.EvidenceSubject",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ExecutionRecord",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ExecutionState",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.FACTOR_SUPPORT_LADDER",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.FigureArtifact",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.FindingCategory",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.FindingSeverity",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.GRADE_A",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.GRADE_B",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.GRADE_C",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.GeneralizationScope",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.GuardStatus",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.GuardVerdict",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.HUMAN_ADJUDICATION_SCHEMA_VERSION",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.HoldoutEvaluationResult",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.HumanAdjudicationResult",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.HumanScientificAdjudication",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.HumanScientificDecision",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.HybridClaimParser",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.INTENT_ALIASES",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ImagingSpatialPlatform",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.InferentialRegime",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.InputArtifact",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.InputSpecification",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.KnownCounterexample",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.LAB_POLICY_PROFILES",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.LEGACY_SKILLS",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.LabPolicyProfile",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.MechanismDepth",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.MetricAssessment",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.NextflowExecutionSummary",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.NodeType",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.OVERRIDABLE_PURPOSES",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.OutputArtifact",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.OverrideDenied",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.OverrideRecord",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.PIDecisionItem",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.PINS",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.PITFALLS",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.PLUGIN_VERSION",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.PURPOSE_EVIDENCE_CEILING",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.PURPOSE_EVIDENCE_REQUIREMENT",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.PURPOSE_EXTRA_REQUIREMENTS",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.PlatformCalibration",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.PolicyAction",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.PolicyComparisonSummary",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.PolicyDecision",
+      "status": "CANDIDATE_CORE",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.PolicyEvaluationRecord",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.PowerCalculationResult",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.Precondition",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.PreflightCheck",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.PreflightReport",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.PreflightRisk",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.PseudobulkWarrantVerdict",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.PurposeContext",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RESEARCH_USE_ONLY",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RefusalTrigger",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RemediationPrescription",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RemediationPriority",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RemediationRecipe",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RemediationStrategy",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ResearchPurpose",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ReviewerApproval",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ReviewerAttestation",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RoutingDecision",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RoutingStatus",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RuleBasisEntry",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RuleCategory",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RuleChallenge",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RuleClassification",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RuleDualTrackSemantics",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RuleEmpiricalMetrics",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RuleEvaluationTruthPair",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RuleHoldoutEvaluator",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RuleProvenance",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RuleRegistryError",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RuleSourceKind",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RuleVersionEntry",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.RunBundle",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SEMANTIC_STANDARD_ROOT_ENV",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SHADOW_AUDIT",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SKILLS",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SPATIAL_CONTROL_METRICS",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SPATIAL_GOLD_PLATFORMS",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SPATIAL_GOLD_PROGRAM_VERSION",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SPATIAL_GOLD_ROOT_ENV",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.STANDARDS_DISCLAIMER",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ScientificClaimIR",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ScientificClaimParser",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ScientificEntity",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ScientificIntentRequest",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ScientificProposition",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ScientificRuleObject",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ScientificSemanticEnvelope",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ScientificSemanticError",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ScientificSemanticRegistry",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SemanticCompatibilityReport",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SemanticInputType",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SemanticStandardRelease",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SemanticValidationMode",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SemanticValidationReport",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SensitivityAnalysis",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SignedRevocation",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SpatialArtifactVerificationReceipt",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SpatialGoldError",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SpatialGoldFitReceipt",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SpatialGoldObservation",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SpatialGoldObservationSet",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SpatialGoldPartition",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SpatialGoldProfileAuthorization",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SpatialGoldProgram",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SpatialGoldRuntimeEvidence",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SpatialGoldStudyManifest",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SpatialInferenceVerdict",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.StandardAlignment",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SufficiencyAssessment",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.SufficiencyVerdict",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.TrustDecision",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.TrustKey",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.TrustRegistry",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.UseRequirement",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.VERSION",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.VerificationReport",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.WarrantAssessment",
+      "status": "CANDIDATE_CORE",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.WarrantEvaluationResult",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.WarrantTierStatus",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.WarrantTierVerdict",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.active_skills",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.adjudicate_ecosystem_claim",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.alignments_report",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.as_markdown_table",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.assess_annotation_evidence",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.assess_evidence",
+      "status": "CANDIDATE_CORE",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.assess_spatial_inference",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.assess_warrant",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.assessment_sha256",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.attach_meta",
+      "status": "EXPERIMENTAL",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.audit_analysis",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.audit_claim_semantics",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.audit_de",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.audit_differential_expression",
+      "status": "CANDIDATE_CORE",
+      "assessment_kind": "ARTIFACT_REVIEW",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.audit_expression_matrix",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.audit_parameter_stability",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.audit_prohibited_claims",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.audit_spatial_coordinates",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.audit_statistical_significance",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.calculate_pseudobulk_power",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.calculate_required_replicates",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.canonical_skills",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.cap_conclusion_by_purpose",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.capture_environment",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.claim_semantics.DeterministicWarrantEngine.evaluate",
+      "status": "EXPERIMENTAL",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.claims.engine.DeterministicWarrantEngine.evaluate",
+      "status": "EXPERIMENTAL",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.classify_condition",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.compute_cohens_kappa",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.compute_confusion_matrix",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.compute_empirical_metrics",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.compute_expected_calibration_error",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.compute_fpr_fnr",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.contracts.EvidenceCard",
+      "status": "CANDIDATE_CORE",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.contracts.attach_meta",
+      "status": "EXPERIMENTAL",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.core_skills",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.create_attestation",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.create_nextflow_tool_receipt",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.create_override_record",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.create_revocation",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.create_tool_receipt",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.de_audit.audit_differential_expression",
+      "status": "CANDIDATE_CORE",
+      "assessment_kind": "ARTIFACT_REVIEW",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.de_bundle.verify_de_bundle",
+      "status": "CANDIDATE_CORE",
+      "assessment_kind": "BUNDLE_INTEGRITY",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.de_pilot.summarize_reviews",
+      "status": "CANDIDATE_CORE",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.decide_policy",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.decompose_compound_claim",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.default_calibration_registry",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.default_guard",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.default_local_cache",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.default_provenance_for_condition_id",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.default_scientific_semantic_registry",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.discoverable_skill_names",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ecosystem_claim.assess_ecosystem_claim",
+      "status": "EXPERIMENTAL",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.evaluate_capability_preconditions",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.evaluate_ladder_policy",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.evaluate_pseudobulk_inferential_warrant",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.evaluate_single_case",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.evaluate_static_policy",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.evaluate_sufficiency",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.evidence_model.assess_evidence",
+      "status": "CANDIDATE_CORE",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.export_bco",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.export_ro_crate",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.extract_evidence_factors",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.extract_evidence_factors_from_receipt",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.extract_evidence_factors_from_receipt_log",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.extract_scientific_capability",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.find_capabilities_by_intent",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.fit_candidate_profile",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.fit_spatial_candidate_profile",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.generate_counterfactual_warrant_advice",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.generate_prescription_for_violation",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.get_canonical_rule_objects",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.get_capability",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.get_lab_policy",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.get_rule_object",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.get_scientific_claim_ir_schema",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.get_skill",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.harvest_nextflow_run",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.infer_research_purpose",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.inspect_code",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.inspect_command",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.inspect_data_state",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.intent_router.route_scientific_intent",
+      "status": "EXPERIMENTAL",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.is_available",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.is_default_skill",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.is_override_permitted",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.is_spatial_gold_platform",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.ledger_to_ro_crate",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.list_capabilities",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.list_registry_rules",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.load_analysis_document",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.load_pipeline_config",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.load_rule_registry",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.load_run_bundle",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.locate_ledger",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.matrix_state_from_legacy",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.merge_config",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.parse_samplesheet",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.parse_trace_file",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.parse_versions_file",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.policy_from_string",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.probe",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.probe_all",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.public_key_id",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.purpose_from_string",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.refuse",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.registry_stats",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.render_alignments",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.render_analysis_audit",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.render_markdown_debt_report",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.render_preflight",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.render_terminal_debt_report",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.render_verification",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.require",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.require_doctor",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.resolve_intent",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.resolve_semantic_standard_root",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.resolve_spatial_gold_root",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.rosalind_adapter.evaluate_rosalind_warrant",
+      "status": "EXPERIMENTAL",
+      "assessment_kind": "EXTERNAL_REVIEW",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.route_scientific_intent",
+      "status": "EXPERIMENTAL",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.run_bundle_to_bco",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.run_bundle_to_ro_crate",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.run_doctor",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.run_ladder_vs_static_comparison",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.run_preflight",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.scientific_consequences_for",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.sha256_file",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.sidecar",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.skills_by_status",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.skills_by_tier",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.spatial_alternative_battery",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.spatial_battery_semantic_envelope",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.synthesize_conclusion_maturity",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.synthesize_conclusion_status",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.use_requirement_for",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.validate_bco",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.validate_ro_crate",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.verify_attestation",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.verify_ledger",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.verify_receipt_log_chain",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.verify_results",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.verify_run_bundle",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.verify_spatial_gold_artifacts",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.verify_spatial_gold_profile_authorization",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.verify_tool_receipt",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.warrant.PolicyDecision",
+      "status": "CANDIDATE_CORE",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.warrant.WarrantAssessment",
+      "status": "CANDIDATE_CORE",
+      "assessment_kind": "CONDITIONAL",
+      "regression_tests": [
+        "tests/unit/test_positive_output_contract.py"
+      ]
+    },
+    {
+      "surface": "python:bionexus.warrant_semantics_from_maturity",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.write_doctor_report",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    },
+    {
+      "surface": "python:bionexus.write_example_ledger",
+      "status": "UNACCEPTED",
+      "assessment_kind": "UNACCEPTED",
+      "regression_tests": []
+    }
+  ]
+}

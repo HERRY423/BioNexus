@@ -1,0 +1,169 @@
+{
+  "sample_size": 12,
+  "static_fpr": 0.5,
+  "ladder_fpr": 0.0,
+  "static_fnr": 1.0,
+  "ladder_fnr": 0.0,
+  "static_accuracy": 0.1667,
+  "ladder_accuracy": 1.0,
+  "static_f1": 0.0,
+  "ladder_f1": 1.0,
+  "fpr_reduction_relative": 1.0,
+  "fnr_reduction_relative": 1.0,
+  "net_benefit_static": {
+    "pt_0.1": -0.0185,
+    "pt_0.2": -0.0417,
+    "pt_0.3": -0.0714,
+    "pt_0.4": -0.1111,
+    "pt_0.5": -0.1667,
+    "pt_0.6": -0.25,
+    "pt_0.7": -0.3889,
+    "pt_0.8": -0.6667,
+    "pt_0.9": -1.5
+  },
+  "net_benefit_ladder": {
+    "pt_0.1": 0.6667,
+    "pt_0.2": 0.6667,
+    "pt_0.3": 0.6667,
+    "pt_0.4": 0.6667,
+    "pt_0.5": 0.6667,
+    "pt_0.6": 0.6667,
+    "pt_0.7": 0.6667,
+    "pt_0.8": 0.6667,
+    "pt_0.9": 0.6667
+  },
+  "case_comparisons": [
+    {
+      "case_id": "case_01_gse96583_clean_pb",
+      "title": "GSE96583 Kang 2018 PBMC IFN-beta Clean Pseudobulk DE",
+      "n_donors": 8,
+      "expert_confirmed_flaw": false,
+      "static_decision": "PASS",
+      "static_correct": true,
+      "ladder_decision": "PASS",
+      "ladder_correct": true,
+      "ladder_advantage": false
+    },
+    {
+      "case_id": "case_02_gse96583_naive_cell_wilcoxon",
+      "title": "GSE96583 Naive Cell-Level Wilcoxon Pseudoreplication",
+      "n_donors": 8,
+      "expert_confirmed_flaw": true,
+      "static_decision": "PASS",
+      "static_correct": false,
+      "ladder_decision": "BLOCK",
+      "ladder_correct": true,
+      "ladder_advantage": true
+    },
+    {
+      "case_id": "case_03_rare_disease_n2_exploratory",
+      "title": "Rare Pediatric Channelopathy N=2 Exploratory Pilot Study",
+      "n_donors": 2,
+      "expert_confirmed_flaw": false,
+      "static_decision": "BLOCK",
+      "static_correct": false,
+      "ladder_decision": "EXPLORATORY_ALLOW",
+      "ladder_correct": true,
+      "ladder_advantage": true
+    },
+    {
+      "case_id": "case_04_n4_complete_batch_confounding",
+      "title": "N=4 Cohort with 100% Technical Batch / Flowcell Confounding",
+      "n_donors": 4,
+      "expert_confirmed_flaw": true,
+      "static_decision": "PASS",
+      "static_correct": false,
+      "ladder_decision": "BLOCK",
+      "ladder_correct": true,
+      "ladder_advantage": true
+    },
+    {
+      "case_id": "case_05_extreme_donor_dominance",
+      "title": "N=3 Subpopulation Analysis with 94% Single Donor Dominance",
+      "n_donors": 3,
+      "expert_confirmed_flaw": true,
+      "static_decision": "PASS",
+      "static_correct": false,
+      "ladder_decision": "BLOCK",
+      "ladder_correct": true,
+      "ladder_advantage": true
+    },
+    {
+      "case_id": "case_06_honest_null_freeze",
+      "title": "Negative Biological Result with Explicit Honest Null Reporting",
+      "n_donors": 4,
+      "expert_confirmed_flaw": false,
+      "static_decision": "PASS",
+      "static_correct": true,
+      "ladder_decision": "PASS",
+      "ladder_correct": true,
+      "ladder_advantage": false
+    },
+    {
+      "case_id": "case_07_p_hacking_raw_p_reporting",
+      "title": "Selective Reporting P-Hacking with Unadjusted P-values",
+      "n_donors": 4,
+      "expert_confirmed_flaw": true,
+      "static_decision": "PASS",
+      "static_correct": false,
+      "ladder_decision": "BLOCK",
+      "ladder_correct": true,
+      "ladder_advantage": true
+    },
+    {
+      "case_id": "case_08_log_counts_fed_to_deseq2",
+      "title": "Log-Transformed Continuous Values Passed to Count Likelihood GLM",
+      "n_donors": 5,
+      "expert_confirmed_flaw": true,
+      "static_decision": "PASS",
+      "static_correct": false,
+      "ladder_decision": "BLOCK",
+      "ladder_correct": true,
+      "ladder_advantage": true
+    },
+    {
+      "case_id": "case_09_causal_overclaim_on_observational",
+      "title": "Unwarranted Causal Mechanism Claim on Pure Observational Atlas",
+      "n_donors": 6,
+      "expert_confirmed_flaw": true,
+      "static_decision": "PASS",
+      "static_correct": false,
+      "ladder_decision": "BLOCK",
+      "ladder_correct": true,
+      "ladder_advantage": true
+    },
+    {
+      "case_id": "case_10_cite_seq_surface_protein_truth",
+      "title": "CITE-seq Cell Classification Validated by Physical Surface Protein FACS",
+      "n_donors": 1,
+      "expert_confirmed_flaw": false,
+      "static_decision": "BLOCK",
+      "static_correct": false,
+      "ladder_decision": "PASS",
+      "ladder_correct": true,
+      "ladder_advantage": true
+    },
+    {
+      "case_id": "case_11_subtle_effect_underpowered_n3",
+      "title": "Underpowered Subtle Polygenic Effect at N=3 Sample Size",
+      "n_donors": 3,
+      "expert_confirmed_flaw": true,
+      "static_decision": "PASS",
+      "static_correct": false,
+      "ladder_decision": "BLOCK",
+      "ladder_correct": true,
+      "ladder_advantage": true
+    },
+    {
+      "case_id": "case_12_execution_fact_hallucination",
+      "title": "Execution Trace Contradiction: Stated NB GLM but Ran Seurat Wilcoxon",
+      "n_donors": 6,
+      "expert_confirmed_flaw": true,
+      "static_decision": "PASS",
+      "static_correct": false,
+      "ladder_decision": "BLOCK",
+      "ladder_correct": true,
+      "ladder_advantage": true
+    }
+  ]
+}

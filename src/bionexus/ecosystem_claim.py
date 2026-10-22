@@ -169,6 +169,11 @@ class EcosystemClaimAssessment:
     def to_dict(self) -> Dict[str, Any]:
         data = asdict(self)
         data["audit"] = self.audit.to_dict()
+        from bionexus.evidence_contract import conditional_contract
+        data["evidence_contract"] = conditional_contract(
+            self.audit.status == "PASS" and self.conclusion_maturity in {"PRELIMINARY", "SUPPORTED", "ROBUST", "REPLICATED"},
+            scope="Envelope and adjudication declarations; evidence-to-claim relationships and independence are not authenticated.",
+            support="EXPERIMENTAL")
         return data
 
 

@@ -21,10 +21,11 @@ def main(argv: list[str] | None = None) -> int:
     tests = json.loads((ROOT / "quality/core-tests.json").read_text(encoding="utf-8"))
     env = os.environ.copy()
     env["COVERAGE_FILE"] = str(output / ".coverage")
-    env["NUMBA_CACHE_DIR"] = str(ROOT / ".numba-cache")
+    env.setdefault("NUMBA_CACHE_DIR", str(output / ".numba-cache"))
+    env["PYTHONUTF8"] = "1"
     command = [sys.executable, "-m", "pytest", *tests, "-q", "-p", "no:cacheprovider",
                "--hypothesis-seed=20260911",
-               "--basetemp", str(output / "tmp"), "--cov=src/bionexus", "--cov-branch",
+               "--basetemp", str(output / ".tmp"), "--cov=src/bionexus", "--cov-branch",
                f"--cov-report=json:{output / 'coverage.json'}", "--cov-report=term:skip-covered",
                f"--junitxml={output / 'tests.xml'}"]
     (output / "command.json").write_text(json.dumps(command, indent=2), encoding="utf-8")

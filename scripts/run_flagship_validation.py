@@ -84,7 +84,7 @@ def _build_metrics_for_skip(capability: str, dataset_id: str) -> List[Dict[str, 
     """Build the expected metrics list for a skipped run (honest N/A records)."""
     metric_defs: Dict[str, List[Dict[str, str]]] = {
         "scrna.pseudobulk_de": [
-            {"name": "fdr_control", "expected": "<=0.05"},
+            {"name": "multiple_testing_method_applied", "expected": "PyDESeq2 adjusted p-values available"},
             {"name": "top100_overlap", "expected": ">=0.50"},
             {"name": "donor_design_concordance", "expected": ">=0.80"},
         ],
@@ -111,9 +111,16 @@ def _build_metrics_for_skip(capability: str, dataset_id: str) -> List[Dict[str, 
 
 
 def _build_metrics_for_pseudobulk_run(observed: Dict[str, Any]) -> List[Dict[str, Any]]:
-    """Build metrics from an actually-executed pseudobulk external-truth run."""
+    """Describe execution and proxy agreement without inferring FDR control."""
     frac = observed.get("published_support_fraction")
     required = observed.get("published_support_required", 0.5)
+    adjustment = observed.get("adjusted_pvalue_method", {})
+    method_applied = (
+        adjustment.get("backend") == "pydeseq2"
+        and adjustment.get("method") == "pydeseq2.DeseqStats"
+        and adjustment.get("n_available_adjusted_pvalues", 0) > 0
+        and adjustment.get("values_in_unit_interval") is True
+    )
     return [
         {
             "name": "published_support_fraction",
@@ -123,19 +130,26 @@ def _build_metrics_for_pseudobulk_run(observed: Dict[str, Any]) -> List[Dict[str
         },
         {
             "name": "donor_aware_design",
-            "expected": "donor x condition pseudobulk, >=4 samples",
+            "expected": "paired ~ donor + condition model, >=4 pseudobulk samples",
             "observed": (
                 f"{observed.get('n_donors')} donors, "
                 f"{observed.get('n_pseudobulk_samples')} pseudobulk samples, "
-                f"{observed.get('n_cells')} cells, {observed.get('n_genes_tested')} genes tested"
+                f"{observed.get('n_cells')} cells, {observed.get('n_genes_tested')} genes tested; "
+                f"model {observed.get('design_formula')}"
             ),
-            "result": "pass" if (observed.get("n_pseudobulk_samples") or 0) >= 4 else "fail",
+            "result": "pass" if (
+                (observed.get("n_pseudobulk_samples") or 0) >= 4
+                and observed.get("paired") is True
+                and observed.get("design_formula") == "~ donor + condition"
+            ) else "fail",
         },
         {
-            "name": "fdr_control",
-            "expected": "<=0.05",
-            "observed": "BH-adjusted padj from pydeseq2 used for top-N selection",
-            "result": "pass",
+            "name": "multiple_testing_method_applied",
+            "expected": "PyDESeq2 adjusted p-values available and in [0, 1]",
+            "observed": adjustment,
+            "result": "pass" if method_applied else "fail",
+            "interpretation": "Method application does not establish empirical FDR or FWER control",
+            "replaces_deprecated_metric": "fdr_control",
         },
     ]
 
@@ -220,6 +234,8 @@ def _build_limitations(capability: str, dataset_id: str, present: bool) -> List[
             "Counts derive from SeuratData 'ifnb' with donor identities joined "
             "from GEO GSE96583 per-cell metadata (demuxlet 'ind' column); "
             "singlets only.",
+            "A paired ~ donor + condition model was requested. Adjusted p-values are a method output; "
+            "this proxy overlap benchmark does not estimate FDR or FWER control.",
         ]
     if capability == "scrna.annotation_evidence":
         return [
@@ -235,7 +251,8 @@ def _build_limitations(capability: str, dataset_id: str, present: bool) -> List[
         return [
             "Authentic 10x Xenium XOA v4 bytes were executed and the official archive MD5 was verified.",
             "The vendor states this tiny three-patch/two-FOV dataset is for format testing and not biological conclusions.",
-            "BN-SP-IV-001 retained a negative result because the cell-size-bias effect did not meet its locked threshold.",
+            "Current technical endpoint outcomes are reported in metrics. Historical run outcomes are retained separately; "
+            "passing these technical controls does not establish independent biological validity.",
         ]
     return ["Dataset present; see manifest notes for truth semantics."]
 
@@ -339,6 +356,8 @@ def run_single_capability(
         metrics = _build_metrics_for_spatial_run(run_results)
     else:
         metrics = _build_metrics_for_skip(capability, dataset_id)
+    if any(metric.get("result") == "fail" for metric in metrics):
+        status = "fail"
     limitations = _build_limitations(capability, dataset_id, present)
 
     # Evidence files

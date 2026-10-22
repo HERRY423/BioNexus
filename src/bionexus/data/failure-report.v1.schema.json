@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bionexus.dev/schemas/failure-report.v1",
+  "title": "BioNexus anonymous failure report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "report_id",
+    "created_at",
+    "bionexus_version",
+    "python_version",
+    "platform",
+    "exception_type",
+    "sanitized_traceback",
+    "command",
+    "egress_mode",
+    "data_classification",
+    "contains_phi",
+    "transmit_eligible"
+  ],
+  "properties": {
+    "schema_version": {"const": "bionexus.failure-report.v1"},
+    "report_id": {"type": "string", "minLength": 8},
+    "created_at": {"type": "string", "minLength": 1},
+    "bionexus_version": {"type": "string", "minLength": 1},
+    "python_version": {"type": "string", "minLength": 1},
+    "platform": {"type": "string", "minLength": 1},
+    "exception_type": {"type": "string", "minLength": 1},
+    "sanitized_traceback": {"type": "string"},
+    "command": {"type": ["string", "null"]},
+    "capability_id": {"type": ["string", "null"]},
+    "egress_mode": {"type": "string", "minLength": 1},
+    "data_classification": {"enum": ["UNKNOWN", "PUBLIC_BENCHMARK", "PROPRIETARY_UNPUBLISHED", "CONTROLLED_ACCESS_GENOMIC", "RESTRICTED_CLINICAL_PHI"]},
+    "contains_phi": {"type": "boolean"},
+    "transmit_eligible": {"type": "boolean"},
+    "notes": {"type": "string"}
+  }
+}

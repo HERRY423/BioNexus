@@ -108,7 +108,12 @@ class RoutingDecision:
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert decision to dictionary."""
+        from bionexus.evidence_contract import conditional_contract
         d = {
+            "evidence_contract": conditional_contract(self.status in {
+                RoutingStatus.PERMITTED, RoutingStatus.PERMITTED_WITH_LIMITS, RoutingStatus.DEGRADED_ADVISORY},
+                scope="Routing feasibility under supplied metadata; no execution or scientific fact verification.",
+                support="EXPERIMENTAL"),
             "status": self.status.value,
             "matched_capability_id": self.matched_capability.id if self.matched_capability else None,
             "target_skill": self.target_skill,
@@ -1348,7 +1353,7 @@ def route_scientific_intent(
         )
 
     # 5. PERMITTED (Fully scientifically valid execution path)
-    rationale = f"Scientific preconditions, input semantics, and backend for '{cap.id}' are fully satisfied."
+    rationale = f"Preflight rule conditions for '{cap.id}' are satisfied under supplied metadata; scientific premises and execution remain unverified."
     if is_frontier:
         rationale += (
             " FRONTIER/EXPERIMENTAL capability executed under explicit opt-in: conclusions are "

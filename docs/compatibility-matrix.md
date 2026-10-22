@@ -49,6 +49,31 @@ BioNexus routes analytical intents exclusively to official community gold standa
 
 ---
 
+## 5. Laboratory analysis-product compatibility (import/export)
+
+Host-agent and Python-runtime rows above do **not** prove that a lab can hand
+over Seurat, Cell Ranger, or nf-core artifacts. The machine-readable contract
+is [`src/bionexus/data/compatibility-matrix.v1.json`](../src/bionexus/data/compatibility-matrix.v1.json).
+Inspect it with `bionexus deploy matrix --json`. Status values are closed
+vocabulary; they are not vendor certification.
+
+| Product | Native in BioNexus Python runtime | Verified input | Status |
+|---|---|---|---|
+| **Scanpy / AnnData** | Yes (optional `goldchain` extra for `.h5ad` parse) | `.h5ad` or `counts.tsv`+`obs.tsv` | `FIXTURE_VERIFIED` |
+| **Seurat 4.x/5.x** | No | MTX + `features.tsv`/`genes.tsv` + `barcodes.tsv` + `metadata.csv` | `EXPORTED_ARTIFACT_VERIFIED` |
+| **DESeq2 / PyDESeq2** | PyDESeq2 optional; DESeq2 R not executed | results `.csv`/`.tsv` (`log2FoldChange\|log2FC`, `padj\|FDR\|p.adj`) | `FIXTURE_VERIFIED` |
+| **edgeR** | No | results `.tsv`/`.csv` (`logFC`, `FDR\|PValue`) | `FIXTURE_VERIFIED` |
+| **Cell Ranger 7.x/8.x** | No | `outs/metrics_summary.csv` + `filtered_feature_bc_matrix/` | `FIXTURE_VERIFIED` |
+| **nf-core** (`rnaseq`, `scrnaseq`, `differentialabundance`) | No | `samplesheet.csv` + `pipeline_info/` | `FIXTURE_VERIFIED` (live Nextflow binary remains unverified in CI) |
+
+Native Seurat `.rds`/`.qs` objects are **unsupported**. Export first
+(SeuratDisk, sceasy, or `Write10X`). Workflow success is not scientific warrant.
+
+Round-trip proof: `bionexus deploy accept <source> -o <dir>` and
+[`docs/deployment-surface.md`](deployment-surface.md).
+
+---
+
 ## 📜 4. Client Manifest Schema Compatibility
 
 BioNexus single-source compiler compiles from `bionexus.registry.yaml` to standard client targets:

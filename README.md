@@ -3,13 +3,13 @@
 
 <div align="center">
 
-[![Release](https://img.shields.io/badge/Release-v1.0.0--rc.8-blue.svg?style=flat-square)](https://github.com/HERRY423/BioNexus/releases/tag/v1.0.0-rc.8)
+[![Release](https://img.shields.io/badge/Release-v1.0.0--rc.9-blue.svg?style=flat-square)](https://github.com/HERRY423/BioNexus/releases/tag/v1.0.0-rc.9)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg?style=flat-square)](https://www.python.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
 [![CI](https://github.com/HERRY423/BioNexus/actions/workflows/ci.yml/badge.svg)](https://github.com/HERRY423/BioNexus/actions/workflows/ci.yml)
 [![Status: RUO](https://img.shields.io/badge/Status-Research%20Use%20Only-yellow.svg?style=flat-square)](#-regulatory-notice--compliance)
 
-*v1.0.0-rc.8: GA Closure Candidate (software/API closure, not scientific validation)*
+*v1.0.0-rc.9: Evidence-contract and MCP transport corrections (engineering prerelease)*
 
 </div>
 
@@ -20,6 +20,16 @@ BioNexus is a warrant-first reliability layer between AI-assisted analysis and s
 Core 1.0's [supported surface and acceptance criteria](GA_CRITERIA.md) are frozen.
 Support remains unactivated; [historical validation reports](docs/validation-history.md)
 are kept separate from new execution evidence.
+
+This release includes a [trust-chain correction](docs/trust-restoration.md).
+Generated reviewer approvals, a simulated second host, and the BN-PB-IV-006,
+BN-ANN-IV-004 and BN-SP-IV-002 independent-validation claims have been withdrawn.
+Their original bytes remain archived. Local engineering verification does not
+establish independent scientific validation or activate GA support.
+
+See the [rc.9 release and reassessment notes](docs/releases/rc9-release-notes.md).
+Conditional positive outputs do not authenticate caller-declared scientific premises.
+Desktop plugin binding acceptance remains separate from package and transport tests.
 
 ### Current first laboratory workflow:
 **Start here: review multi-donor single-cell differential expression before submission.**
@@ -51,6 +61,22 @@ The development checkout also provides [frozen external-task comparisons, full
 laboratory time accounting and rule-revision impact review](docs/external-gain-and-correctable-governance.zh-CN.md).
 These retain missing outcomes, false refusals, expert dissent and negative time savings;
 they do not establish external validation or laboratory benefit.
+
+For exact multi-donor DE claims, the development checkout adds
+[`audit-de --claim-contract`: executable claim prerequisites](docs/executable-claim-conditions.zh-CN.md).
+It checks supplied design matrices, contrasts, donor structure, artifact bindings,
+effect direction and reported uncertainty, and retains narrower supported statements.
+These are bounded artifact checks; missing population or causal premises remain unassessed.
+
+The development checkout also supports [frozen DE alternative-analysis review](docs/de-alternative-analysis.zh-CN.md):
+`de-alternatives-plan` defines donor omissions and justified alternatives; `audit-de --alternative-plan`
+checks returned artifacts and distinguishes direction changes, lost significance, wider intervals,
+and non-estimable designs. Missing branches remain visible; shared-data analyses are not independent votes.
+
+The development checkout adds [analysis-choice history review](docs/de-selection-history.zh-CN.md):
+`audit-de --selection-history` checks scoped host exports of plans, result exposures,
+discarded branches and holdout use. Identical numerical results can retain different
+confirmatory-use limits. Missing history stays unassessed; consistent logs are not authenticated preregistration.
 
 ---
 
@@ -457,6 +483,7 @@ Run Capsule           ─────────────────┴─�
 - **Workflow Run RO-Crate**: Ingestible by Galaxy, DNAnexus, Seven Bridges, and WorkflowHub. Exports are deterministic, offline, and fail-closed (validated against official `roc-validator` profile chains before write).
 - **Zero-Touch Sidecar**: Respects workflow engine boundaries without modifying pipeline code. Ingests native Nextflow / `nf-prov` run crates and audits artifacts individually by SHA-256 hash.
 - **Standards Engagement**: BioNexus tracks and aligns with open community specifications (GA4GH, RO-Crate, Bioschemas, ELIXIR, scverse). See [standards engagement](docs/standards-engagement.md) and [BNS-016](spec/BNS-016-standards-interop.md).
+- **Lab deployment surface**: `bionexus deploy accept|matrix|migrate` covers Cell Ranger / Scanpy / Seurat exports / DESeq2 / edgeR / nf-core fixtures, versioned envelopes, and opt-in local failure reports. See [deployment surface](docs/deployment-surface.md) and the [compatibility matrix](docs/compatibility-matrix.md). Native Seurat `.rds` objects are unsupported.
 
 ---
 

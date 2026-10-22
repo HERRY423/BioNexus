@@ -28,6 +28,7 @@ sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 sys.path.insert(0, str(PROJECT_ROOT / "skills" / "single-cell-rna-qc" / "scripts"))
 sys.path.insert(0, str(PROJECT_ROOT / "skills" / "scvi-tools" / "scripts"))
 sys.path.insert(0, str(PROJECT_ROOT / "skills" / "nextflow-development" / "scripts"))
+sys.path.insert(0, str(PROJECT_ROOT / "tests" / "unit"))
 sys.path.insert(0, str(PROJECT_ROOT / "skills" / "instrument-data-to-allotrope" / "scripts"))
 
 

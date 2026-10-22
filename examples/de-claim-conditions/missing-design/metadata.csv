@@ -1,0 +1,7 @@
+sample,donor,condition,batch
+s0,d0,control,a
+s1,d1,control,b
+s2,d2,control,a
+s3,d3,disease,b
+s4,d4,disease,a
+s5,d5,disease,b

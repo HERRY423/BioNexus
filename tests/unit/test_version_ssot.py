@@ -32,7 +32,7 @@ from bionexus.versions import PLUGIN_VERSION, VERSION
 def test_bionexus_module_version_matches_ssot():
     """bionexus.__version__ and versions.VERSION MUST match SSOT."""
     assert bionexus.__version__ == VERSION
-    assert VERSION == "1.0.0-rc.8"
+    assert VERSION == "1.0.0-rc.9"
     assert PLUGIN_VERSION == VERSION
 
 
@@ -88,3 +88,20 @@ def test_sync_version_cli_check():
     in_sync, diffs = check_version_ssot(_REPO_ROOT, VERSION)
     assert in_sync is True, f"Drift detected in check_version_ssot: {diffs}"
     assert len(diffs) == 0
+
+
+def test_version_bump_preserves_historical_review_bytes(tmp_path, monkeypatch):
+    from scripts import sync_version
+
+    review = tmp_path / "review" / "SCIENTIFIC_REVIEW.json"
+    review.parent.mkdir()
+    original = b'{"project_version":"1.0.0-rc.8","status":"PENDING"}\r\n'
+    review.write_bytes(original)
+    registry = tmp_path / "bionexus.registry.yaml"
+    registry.write_text('package:\n  version: "1.0.0-rc.8"\n', encoding="utf-8")
+    monkeypatch.setattr(sync_version, "load_canonical_registry", lambda path: {"package": {}})
+    monkeypatch.setattr(sync_version, "compile_and_write_all", lambda *args: None)
+    monkeypatch.setattr(sync_version, "sync_mirror_trees", lambda *args: None)
+    sync_version.set_version_ssot(tmp_path, "1.0.0-rc.9")
+    assert review.read_bytes() == original
+    assert sync_version.check_version_ssot(tmp_path, "1.0.0-rc.9") == (True, [])

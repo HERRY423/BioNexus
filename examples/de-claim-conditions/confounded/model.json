@@ -1,0 +1,40 @@
+{
+  "schema_version": "bionexus.de-model-record.v1",
+  "artifact_sha256": {
+    "results": "64abcd19ed7e8eebe2a070cdf31372bf83f110ccdacebf5addeac6da1dc62b5a",
+    "metadata": "5a9e3b6fee8e3b94c07eeeb71f0682415c15faa007f13445eecaac6341177649",
+    "design": "8136757132cb4ae1fc5e06514cd966ed860233622d75695cd2e9635c62ea9db9"
+  },
+  "cell_type": "T",
+  "numerator": "disease",
+  "denominator": "control",
+  "effect_measure": "log2_fold_change",
+  "fit_status": "converged",
+  "formula": "~ 1 + condition + batch",
+  "statistical_unit": "independent_donor",
+  "design_columns": [
+    "Intercept",
+    "disease",
+    "batch_b"
+  ],
+  "encodings": {
+    "Intercept": {
+      "kind": "intercept"
+    },
+    "disease": {
+      "kind": "categorical",
+      "column": "condition",
+      "level": "disease"
+    },
+    "batch_b": {
+      "kind": "categorical",
+      "column": "batch",
+      "level": "b"
+    }
+  },
+  "contrast": {
+    "Intercept": 0,
+    "disease": 1,
+    "batch_b": 0
+  }
+}

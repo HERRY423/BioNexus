@@ -31,6 +31,11 @@ def handle_audit_de(args: argparse.Namespace) -> int:
     code_path = getattr(args, "script", None) or getattr(args, "notebook", None)
     execution_record = getattr(args, "execution", None) or getattr(args, "execution_record", None)
     claim_text = getattr(args, "claim", None) or getattr(args, "statement", None)
+    claim_contract = getattr(args, "claim_contract", None)
+    alternative_plan = getattr(args, "alternative_plan", None)
+    alternative_runs = getattr(args, "alternative_runs", None)
+    selection_history = getattr(args, "selection_history", None)
+    selection_expected_head = getattr(args, "selection_expected_head", None)
 
     donor_col = getattr(args, "donor_col", None)
     condition_col = getattr(args, "condition_col", None)
@@ -46,7 +51,9 @@ def handle_audit_de(args: argparse.Namespace) -> int:
         bundle = getattr(args, "bundle", None)
         demo = getattr(args, "demo", False)
         supplied_files = {"anndata": adata_path, "de_table": de_table, "sample_sheet": sample_sheet,
-                          "analysis_code": code_path, "execution_record": execution_record}
+                          "analysis_code": code_path, "execution_record": execution_record,
+                          "claim_contract": claim_contract, "alternative_plan": alternative_plan,
+                          "alternative_runs": alternative_runs, "selection_history": selection_history}
         if bundle and (Path(bundle).exists() or out_path):
             raise ValueError("--bundle requires a new directory and cannot be combined with --out")
         if demo and (any(supplied_files.values()) or claim_text or not bundle):
@@ -65,6 +72,11 @@ def handle_audit_de(args: argparse.Namespace) -> int:
             condition_col=condition_col,
             cell_type_col=cell_type_col,
             batch_col=batch_col,
+            claim_contract=claim_contract,
+            alternative_plan=alternative_plan,
+            alternative_runs=alternative_runs,
+            selection_history=selection_history,
+            selection_expected_head=selection_expected_head,
         )
         if demo:
             audit_kwargs.update(demo_inputs())
@@ -72,7 +84,8 @@ def handle_audit_de(args: argparse.Namespace) -> int:
         if bundle:
             if snapshot_inputs(supplied_files) != fingerprints:
                 raise ValueError("Input files changed during audit; rerun into a new directory")
-            write_bundle(result, bundle, inputs=fingerprints, claim=audit_kwargs.get("claim_text"), synthetic=demo)
+            synthetic = demo or bool((result.alternative_analysis or {}).get("synthetic")) or bool((result.selection_history or {}).get("synthetic"))
+            write_bundle(result, bundle, inputs=fingerprints, claim=audit_kwargs.get("claim_text"), synthetic=synthetic)
     except Exception as e:
         print(f"[ERROR] Differential expression evidence audit failed: {e}", file=sys.stderr)
         return 1
@@ -81,7 +94,7 @@ def handle_audit_de(args: argparse.Namespace) -> int:
         print((Path(bundle) / "audit.json").read_text(encoding="utf-8") if bundle
               else json.dumps(result.to_dict(), indent=2, ensure_ascii=False))
     elif bundle:
-        print(render_review(result.to_dict(), Path(bundle).name, demo, audit_kwargs.get("claim_text")))
+        print(render_review(result.to_dict(), Path(bundle).name, synthetic, audit_kwargs.get("claim_text")))
         print(f"[OK] Review bundle saved to {Path(bundle) / 'REVIEW.md'}")
     else:
         print(result.summary_text(use_color=True))
@@ -92,7 +105,7 @@ def handle_audit_de(args: argparse.Namespace) -> int:
             out_p.write_text(json.dumps(result.to_dict(), indent=2, ensure_ascii=False), encoding="utf-8")
         else:
             out_p.write_text(result.to_markdown(), encoding="utf-8")
-        print(f"[OK] Audit report saved to {out_p}")
+        print(f"[OK] Audit report saved to {out_p}", file=sys.stderr if as_json else sys.stdout)
 
     return 0 if result.passed else 1
 
@@ -199,6 +212,12 @@ def register_audit_de_arguments(subparsers: argparse._SubParsersAction) -> None:
     p_audit_de.add_argument("--script", "--notebook", dest="script", default=None, help="Path to analysis script (.py/.R) or notebook (.ipynb)")
     p_audit_de.add_argument("--execution", "--execution-record", dest="execution", default=None, help="Path to execution record JSON or verification bundle")
     p_audit_de.add_argument("--claim", "--statement", dest="claim", default=None, help="Free-text scientific claim statement to verify")
+    p_audit_de.add_argument("--claim-contract", default=None,
+                           help="Artifact-bound structured DE claims and executable prerequisites (JSON)")
+    p_audit_de.add_argument("--alternative-plan", default=None, help="Frozen, bounded DE alternative analysis plan")
+    p_audit_de.add_argument("--alternative-runs", default=None, help="Returned run manifest bound to the alternative plan")
+    p_audit_de.add_argument("--selection-history", default=None, help="Scoped analysis choice and result exposure history (JSON)")
+    p_audit_de.add_argument("--selection-expected-head", default=None, help="History head retained independently by the caller")
     p_audit_de.add_argument("--donor-col", dest="donor_col", default=None, help="Column name for biological donors (auto-detected if omitted)")
     p_audit_de.add_argument("--condition-col", dest="condition_col", default=None, help="Column name for experimental conditions (auto-detected if omitted)")
     p_audit_de.add_argument("--cell-type-col", dest="cell_type_col", default=None, help="Column name for cell types/clusters (auto-detected if omitted)")
@@ -216,3 +235,22 @@ def register_audit_de_arguments(subparsers: argparse._SubParsersAction) -> None:
     p_de_verify = subparsers.add_parser("audit-de-verify", help="Read-only DE bundle file verification; never scientific approval")
     p_de_verify.add_argument("bundle", help="Existing DE shadow-review directory")
     p_de_verify.add_argument("--expected-manifest-sha256", default=None, help="Manifest digest retained independently by the caller")
+
+    p_alternatives = subparsers.add_parser("de-alternatives-plan", help="Freeze donor influence and justified DE alternatives; does not execute analyses")
+    p_alternatives.add_argument("baseline", help="Baseline run-record JSON with contract, counts and cell membership")
+    p_alternatives.add_argument("--out", required=True, help="New plan JSON; baseline must be inside its directory")
+    p_alternatives.add_argument("--specifications", default=None, help="JSON array of justified method/filter specifications")
+
+
+def handle_de_alternatives_plan(args: argparse.Namespace) -> int:
+    from bionexus.de.alternatives import create_alternative_plan
+    from bionexus.de.conditions import _object
+
+    try:
+        specifications = json.loads(Path(args.specifications).read_text(encoding="utf-8"), object_pairs_hook=_object) if args.specifications else None
+        plan = create_alternative_plan(args.baseline, args.out, specifications=specifications)
+        print(json.dumps(plan, ensure_ascii=False, indent=2, allow_nan=False))
+        return 0
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        print(f"[ERROR] Alternative plan could not be created: {exc}", file=sys.stderr)
+        return 1

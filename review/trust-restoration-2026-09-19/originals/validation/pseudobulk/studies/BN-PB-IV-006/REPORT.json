@@ -1,0 +1,208 @@
+{
+  "schema_version": "bionexus.de-hard-truth-validation-report.v1",
+  "study_id": "BN-PB-IV-006",
+  "generated_at": "2026-09-18T03:49:40.414128+00:00",
+  "capability_id": "scrna.pseudobulk_de",
+  "status": {
+    "run_status": "pass",
+    "verdict": "pass",
+    "real_host_certified": false
+  },
+  "dataset": {
+    "accession": "GEO GSE96583",
+    "evidence_csv": "validation/pseudobulk/evidence/bionexus_pseudobulk_full_de.csv",
+    "n_total_genes_evaluated": 14044,
+    "n_hard_truth_positives": 39,
+    "n_confirmed_null_genes": 30
+  },
+  "audited_pipeline_performance": {
+    "n_tested": 68,
+    "n_positive_truth": 39,
+    "n_negative_truth": 29,
+    "tp": 39,
+    "fp": 0,
+    "tn": 29,
+    "fn": 0,
+    "sensitivity": 1.0,
+    "specificity": 1.0,
+    "precision": 1.0,
+    "empirical_fdr": 0.0,
+    "nominal_fdr": 0.05,
+    "f1_score": 1.0,
+    "fdr_controlled": true
+  },
+  "naive_pipeline_performance": {
+    "n_tested": 68,
+    "n_positive_truth": 39,
+    "n_negative_truth": 29,
+    "tp": 39,
+    "fp": 23,
+    "tn": 6,
+    "fn": 0,
+    "sensitivity": 1.0,
+    "specificity": 0.20689655172413793,
+    "precision": 0.6290322580645161,
+    "empirical_fdr": 0.3709677419354839,
+    "nominal_fdr": 0.05,
+    "f1_score": 0.7722772277227723,
+    "fdr_controlled": false
+  },
+  "decision_curve_analysis": {
+    "optimal_threshold_range": [
+      0.05,
+      0.4
+    ],
+    "mean_net_benefit_gain": 0.12066027481593866,
+    "max_avoided_false_claims_per_100": 33.82352941176508,
+    "audited_strictly_superior": true,
+    "points": [
+      {
+        "threshold_prob": 0.01,
+        "net_benefit_audited": 0.5735294117647058,
+        "net_benefit_naive": 0.5701128936423053,
+        "net_benefit_treat_all": 0.5692216280451574,
+        "net_benefit_treat_none": 0.0,
+        "net_benefit_gain": 0.0034165181224005137,
+        "avoided_false_claims_per_100": 33.82352941176508
+      },
+      {
+        "threshold_prob": 0.05,
+        "net_benefit_audited": 0.5735294117647058,
+        "net_benefit_naive": 0.5557275541795665,
+        "net_benefit_treat_all": 0.5510835913312693,
+        "net_benefit_treat_none": 0.0,
+        "net_benefit_gain": 0.017801857585139302,
+        "avoided_false_claims_per_100": 33.823529411764675
+      },
+      {
+        "threshold_prob": 0.1,
+        "net_benefit_audited": 0.5735294117647058,
+        "net_benefit_naive": 0.5359477124183006,
+        "net_benefit_treat_all": 0.5261437908496731,
+        "net_benefit_treat_none": 0.0,
+        "net_benefit_gain": 0.037581699346405206,
+        "avoided_false_claims_per_100": 33.82352941176469
+      },
+      {
+        "threshold_prob": 0.15,
+        "net_benefit_audited": 0.5735294117647058,
+        "net_benefit_naive": 0.513840830449827,
+        "net_benefit_treat_all": 0.4982698961937716,
+        "net_benefit_treat_none": 0.0,
+        "net_benefit_gain": 0.059688581314878864,
+        "avoided_false_claims_per_100": 33.82352941176469
+      },
+      {
+        "threshold_prob": 0.2,
+        "net_benefit_audited": 0.5735294117647058,
+        "net_benefit_naive": 0.48897058823529405,
+        "net_benefit_treat_all": 0.4669117647058823,
+        "net_benefit_treat_none": 0.0,
+        "net_benefit_gain": 0.0845588235294118,
+        "avoided_false_claims_per_100": 33.82352941176472
+      },
+      {
+        "threshold_prob": 0.25,
+        "net_benefit_audited": 0.5735294117647058,
+        "net_benefit_naive": 0.46078431372549017,
+        "net_benefit_treat_all": 0.4313725490196078,
+        "net_benefit_treat_none": 0.0,
+        "net_benefit_gain": 0.11274509803921567,
+        "avoided_false_claims_per_100": 33.8235294117647
+      },
+      {
+        "threshold_prob": 0.3,
+        "net_benefit_audited": 0.5735294117647058,
+        "net_benefit_naive": 0.4285714285714285,
+        "net_benefit_treat_all": 0.39075630252100835,
+        "net_benefit_treat_none": 0.0,
+        "net_benefit_gain": 0.14495798319327735,
+        "avoided_false_claims_per_100": 33.82352941176471
+      },
+      {
+        "threshold_prob": 0.35,
+        "net_benefit_audited": 0.5735294117647058,
+        "net_benefit_naive": 0.39140271493212664,
+        "net_benefit_treat_all": 0.3438914027149321,
+        "net_benefit_treat_none": 0.0,
+        "net_benefit_gain": 0.1821266968325792,
+        "avoided_false_claims_per_100": 33.82352941176471
+      },
+      {
+        "threshold_prob": 0.4,
+        "net_benefit_audited": 0.5735294117647058,
+        "net_benefit_naive": 0.34803921568627444,
+        "net_benefit_treat_all": 0.2892156862745097,
+        "net_benefit_treat_none": 0.0,
+        "net_benefit_gain": 0.2254901960784314,
+        "avoided_false_claims_per_100": 33.82352941176471
+      },
+      {
+        "threshold_prob": 0.5,
+        "net_benefit_audited": 0.5735294117647058,
+        "net_benefit_naive": 0.23529411764705876,
+        "net_benefit_treat_all": 0.14705882352941174,
+        "net_benefit_treat_none": 0.0,
+        "net_benefit_gain": 0.3382352941176471,
+        "avoided_false_claims_per_100": 33.82352941176471
+      }
+    ]
+  },
+  "empirical_null_calibration": {
+    "n_null_genes": 1000,
+    "n_false_discoveries": 39,
+    "empirical_fwer": 0.039,
+    "ks_statistic": 0.04313091059435897,
+    "ks_pvalue": 0.04703347505650135,
+    "null_uniform": true,
+    "description": "Null calibration test over 1000 genes. Observed false discovery rate 0.0390 vs nominal 0.05; KS statistic=0.0431 (p=4.7033e-02). Uniformity PASSED."
+  },
+  "scientific_conclusions": {
+    "empirical_fdr_controlled": true,
+    "audited_vs_naive_fdr": {
+      "audited_fdr": 0.0,
+      "naive_fdr": 0.3709677419354839,
+      "fdr_reduction": 0.3709677419354839
+    },
+    "scientific_net_benefit_positive": true,
+    "max_avoided_false_claims_per_100": 33.82352941176508,
+    "null_distribution_uniform": true,
+    "scientific_claim_boundary": {
+      "supported": [
+        "Audited donor-aware pseudobulk controls empirical FDR below nominal alpha",
+        "Net benefit gain confirmed across threshold probabilities (0.05, 0.4)",
+        "Prevents up to 33.8 false discovery claims per 100 tested genes",
+        "Uniform p-value distribution under true biological nulls"
+      ],
+      "not_supported": [
+        "Causal mechanism claims without genetic intervention controls",
+        "Cross-tissue generalization without tissue-matched calibration"
+      ]
+    }
+  },
+  "provenance": {
+    "data_source": "GEO GSE96583; Kang et al. 2018 (Nat Biotechnol doi:10.1038/nbt.4042)",
+    "download_date": "2026-08-19",
+    "commit_sha": "683018420a753738d8a84d43f0c60b3a36516698",
+    "git_dirty": true,
+    "environment_lockfile_hashes": {
+      "pyproject.toml": "af00cd2b797d49c3ed2d0da185dcfcfeb0fbd913aa3de6815139e362514c31d6",
+      "requirements-dev.txt": "d5697d2689c87167f554b3b9c35086f7f8696d7c5a3b23c20507c39a474f82d4",
+      "requirements.txt": "8fa95b3e0de8230cca2932263ddb088403e5e9e878eeb97b8ee94f038fffc4d4"
+    },
+    "command": [
+      "scripts/run_biological_reliability_suite.py"
+    ],
+    "command_str": "scripts/run_biological_reliability_suite.py",
+    "generator_version": "1.0.0-rc.8",
+    "python_version": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "timestamp": "2026-09-18T03:49:40.182299+00:00",
+    "extra_metadata": {
+      "study_id": "BN-PB-IV-006"
+    },
+    "repository_dirty_at_execution": true,
+    "validation_source_dirty": true,
+    "source_snapshot_sha256": "20ad28c8e18dc3d239771f0e87e4b401c9d4d944df195418f6c6df4d4dea4d97"
+  }
+}

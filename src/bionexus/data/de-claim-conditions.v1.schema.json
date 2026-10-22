@@ -1,0 +1,357 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Bounded executable DE claim contract",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "bionexus.de-claim-conditions.v1"
+    },
+    "analysis": {
+      "type": "object",
+      "properties": {
+        "cell_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "numerator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "denominator": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "cell_type",
+        "numerator",
+        "denominator"
+      ],
+      "additionalProperties": false
+    },
+    "metadata_columns": {
+      "type": "object",
+      "properties": {
+        "sample": {
+          "type": "string",
+          "minLength": 1
+        },
+        "donor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "condition": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "sample",
+        "donor",
+        "condition"
+      ],
+      "additionalProperties": false
+    },
+    "artifacts": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "additionalProperties": false
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "additionalProperties": false
+        },
+        "design": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "additionalProperties": false
+        },
+        "model": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "claim_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "gene": {
+            "type": "string",
+            "minLength": 1
+          },
+          "direction": {
+            "enum": [
+              "up",
+              "down"
+            ]
+          },
+          "scope": {
+            "enum": [
+              "table_observation",
+              "cohort_association",
+              "population_effect",
+              "causal_effect"
+            ]
+          },
+          "alpha": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "exclusiveMaximum": 1
+          }
+        },
+        "required": [
+          "claim_id",
+          "gene",
+          "direction",
+          "scope",
+          "alpha"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "declarations": {
+      "type": "object",
+      "properties": {
+        "population_transport": {
+          "type": "string",
+          "minLength": 1
+        },
+        "causal_identification": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "analysis",
+    "metadata_columns",
+    "artifacts",
+    "claims"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "model": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "bionexus.de-model-record.v1"
+        },
+        "artifact_sha256": {
+          "type": "object",
+          "properties": {
+            "results": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "metadata": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "design": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "results",
+            "metadata",
+            "design"
+          ],
+          "additionalProperties": false
+        },
+        "cell_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "numerator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "denominator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "effect_measure": {
+          "const": "log2_fold_change"
+        },
+        "fit_status": {
+          "enum": [
+            "converged",
+            "failed",
+            "unknown"
+          ]
+        },
+        "formula": {
+          "type": "string",
+          "minLength": 1
+        },
+        "statistical_unit": {
+          "enum": [
+            "independent_donor",
+            "paired_donor_fixed_effect"
+          ]
+        },
+        "design_columns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "encodings": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "const": "intercept"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "const": "numeric"
+                  },
+                  "column": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "kind",
+                  "column"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "const": "categorical"
+                  },
+                  "column": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "level": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "kind",
+                  "column",
+                  "level"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "contrast": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "number"
+          }
+        }
+      },
+      "required": [
+        "schema_version",
+        "artifact_sha256",
+        "cell_type",
+        "numerator",
+        "denominator",
+        "effect_measure",
+        "fit_status",
+        "formula",
+        "statistical_unit",
+        "design_columns",
+        "encodings",
+        "contrast"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

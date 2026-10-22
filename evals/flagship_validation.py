@@ -5,7 +5,7 @@ The flagship program concentrates external validation on exactly THREE
 capabilities — not a benchmark of twenty:
 
     A. scrna.pseudobulk_de         real PBMC perturbation data with a donor
-                                   design and published DE truth
+                                   paired design and curated knowledge proxies
     B. scrna.annotation_evidence   FACS / CITE-seq / sorted-population data;
                                    the benchmark is whether BioNexus knows
                                    when an annotation is NOT worth believing
@@ -376,7 +376,7 @@ def _suite_pseudobulk_external_truth(case, meta: Dict[str, Any]) -> Dict[str, An
     )
 
     reference = meta.get("reference_condition", "ctrl")
-    table, _contract = run_pydeseq2(counts, design, condition="condition", reference=reference, contrast_level=meta.get("contrast_level", "stim"))
+    table, contract = run_pydeseq2(counts, design, condition="condition", donor="donor", reference=reference, contrast_level=meta.get("contrast_level", "stim"))
 
     min_overlap = float(meta.get("min_truth_overlap", 0.5))
     top_n = int(meta.get("top_n", 100))
@@ -403,6 +403,18 @@ def _suite_pseudobulk_external_truth(case, meta: Dict[str, Any]) -> Dict[str, An
         "n_donors": int(adata.obs["donor"].nunique()),
         "n_pseudobulk_samples": int(counts.shape[0]),
         "n_genes_tested": int(len(table)),
+        "paired": contract.get("paired") is True,
+        "design_formula": contract.get("design_formula"),
+        "adjusted_pvalue_method": {
+            "backend": contract.get("backend"),
+            "method": contract.get("method"),
+            "adjustment": "PyDESeq2 default Benjamini-Hochberg",
+            "n_available_adjusted_pvalues": int(table["padj"].notna().sum()),
+            "values_in_unit_interval": bool(table["padj"].dropna().between(0, 1).all()),
+            "error_rate_control_established": False,
+        },
+        "independent_ground_truth": False,
+        "reference_type": "CURATED_PUBLISHED_KNOWLEDGE_PROXY",
     }
 
     if failure_reasons:

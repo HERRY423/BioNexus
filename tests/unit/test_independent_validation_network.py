@@ -213,8 +213,9 @@ def test_seed_registry_network_is_incomplete_and_honest():
     pseudobulk = network["capabilities"]["scrna.pseudobulk_de"]
     assert pseudobulk["counted_datasets"] == ["BN-PB-IV-002"]
     # Executed author-associated studies remain preserved but cannot count as independent.
-    assert {item["dataset_id"] for item in pseudobulk["excluded_datasets"]} == {"BN-PB-IV-004", "BN-PB-IV-005"}
-    assert all("author_associated" in item["reason"] for item in pseudobulk["excluded_datasets"])
+    assert {item["dataset_id"] for item in pseudobulk["excluded_datasets"]} == {"BN-PB-IV-004", "BN-PB-IV-005", "BN-PB-IV-006"}
+    assert all("author_associated" in item["reason"] for item in pseudobulk["excluded_datasets"] if item["dataset_id"] != "BN-PB-IV-006")
+    assert any(item["dataset_id"] == "BN-PB-IV-006" and "retracted" in item["reason"].lower() for item in pseudobulk["excluded_datasets"])
     assert pseudobulk["counted_lab_studies"] == []
     assert pseudobulk["counted_reviews"] == []
 

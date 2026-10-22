@@ -1,0 +1,16 @@
+{
+  "schema_version": "bionexus.withdrawn-research-artifact.v1",
+  "status": "WITHDRAWN_UNSUPPORTED_CALIBRATION",
+  "corrected_at": "2026-09-19T05:29:01.724478+00:00",
+  "scientific_authorization": "NONE",
+  "evidence_kind": "DEVELOPER_CASE_FIXTURE",
+  "independent_validation_status": "NOT_ESTABLISHED",
+  "historical_execution_rewritten": false,
+  "correction": {
+    "authority": "LOCAL_IMPLEMENTATION_CORRECTION",
+    "original_archive": "review/trust-restoration-2026-09-19/originals/validation/rules/CALIBRATION_CARD.json",
+    "original_sha256": "712051ddfe8351efba427714932a86000c6c0f13620cb341c92d88c58a8ca717",
+    "reason": "No independently adjudicated holdout, measured rule probabilities, production audit execution, or competitive comparator supports the prior calibration/superiority claims."
+  },
+  "new_rehearsal_directory": "review/trust-restoration-2026-09-19/rules-rehearsal"
+}

@@ -148,12 +148,18 @@ class EvidenceAssessment:
     def to_dict(self) -> Dict[str, Any]:
         return {
             "evidence_maturity": self.evidence_maturity,
+            "evidence_contract": self.evidence_contract,
             "satisfied_factors": self.satisfied_factors,
             "caps_applied": self.caps_applied,
             "rationale": self.rationale,
             "purpose_independent": True,
             "policy_independent": True,
         }
+
+    @property
+    def evidence_contract(self) -> Dict[str, Any]:
+        from bionexus.evidence_contract import conditional_contract
+        return conditional_contract(self.evidence_maturity in {"PRELIMINARY", "SUPPORTED", "ROBUST", "REPLICATED"})
 
 
 def _factor_set(factors: Sequence[Union[str, EvidenceFactor]]) -> Set[EvidenceFactor]:

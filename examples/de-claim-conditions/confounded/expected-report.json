@@ -1,0 +1,657 @@
+{
+  "schema_version": "bionexus.de-claim-conditions.v1",
+  "contract_sha256": "67184f174a05cfbd20a092a642d23a1ae162deb3978633971151db9925b63eed",
+  "analysis": {
+    "cell_type": "T",
+    "numerator": "disease",
+    "denominator": "control"
+  },
+  "verifier": {
+    "implementation_sha256": "86621986e960c3eb2109cf01f82de1c7456b480d302b4542e933dfc3cc3ef956",
+    "schema_sha256": "9e7fe35513018e5023e807a3fd3c89a3b730e58e387dfeee16d818e34a454256",
+    "numpy_version": "2.3.5"
+  },
+  "status": "UNSATISFIED",
+  "claims": [
+    {
+      "claim": {
+        "claim_id": "X-T",
+        "gene": "X",
+        "direction": "up",
+        "scope": "cohort_association",
+        "alpha": 0.05
+      },
+      "canonical_statement": "Under the supplied model, X / T / disease versus control has a upward association in the analyzed cohort.",
+      "status": "UNSATISFIED",
+      "conditions": [
+        {
+          "condition_id": "artifact_results",
+          "requirement": "Supply and bind the exact results artifact bytes.",
+          "source": "EXTERNAL_RECORD_CHECKED",
+          "status": "SATISFIED",
+          "method": "SHA-256 and parse exact bytes",
+          "evidence_refs": [
+            {
+              "artifact": "results",
+              "path": "results.csv",
+              "sha256": "64abcd19ed7e8eebe2a070cdf31372bf83f110ccdacebf5addeac6da1dc62b5a"
+            }
+          ],
+          "observed": {
+            "sha256": "64abcd19ed7e8eebe2a070cdf31372bf83f110ccdacebf5addeac6da1dc62b5a"
+          },
+          "coverage": "Byte identity only; producer and execution unauthenticated.",
+          "repair": ""
+        },
+        {
+          "condition_id": "artifact_metadata",
+          "requirement": "Supply and bind the exact metadata artifact bytes.",
+          "source": "EXTERNAL_RECORD_CHECKED",
+          "status": "SATISFIED",
+          "method": "SHA-256 and parse exact bytes",
+          "evidence_refs": [
+            {
+              "artifact": "metadata",
+              "path": "metadata.csv",
+              "sha256": "5a9e3b6fee8e3b94c07eeeb71f0682415c15faa007f13445eecaac6341177649"
+            }
+          ],
+          "observed": {
+            "sha256": "5a9e3b6fee8e3b94c07eeeb71f0682415c15faa007f13445eecaac6341177649"
+          },
+          "coverage": "Byte identity only; producer and execution unauthenticated.",
+          "repair": ""
+        },
+        {
+          "condition_id": "artifact_design",
+          "requirement": "Supply and bind the exact design artifact bytes.",
+          "source": "EXTERNAL_RECORD_CHECKED",
+          "status": "SATISFIED",
+          "method": "SHA-256 and parse exact bytes",
+          "evidence_refs": [
+            {
+              "artifact": "design",
+              "path": "design.csv",
+              "sha256": "8136757132cb4ae1fc5e06514cd966ed860233622d75695cd2e9635c62ea9db9"
+            }
+          ],
+          "observed": {
+            "sha256": "8136757132cb4ae1fc5e06514cd966ed860233622d75695cd2e9635c62ea9db9"
+          },
+          "coverage": "Byte identity only; producer and execution unauthenticated.",
+          "repair": ""
+        },
+        {
+          "condition_id": "artifact_model",
+          "requirement": "Supply and bind the exact model artifact bytes.",
+          "source": "EXTERNAL_RECORD_CHECKED",
+          "status": "SATISFIED",
+          "method": "SHA-256 and parse exact bytes",
+          "evidence_refs": [
+            {
+              "artifact": "model",
+              "path": "model.json",
+              "sha256": "dc5c52fefe6d63430295555a40595ba537524bbd938e77137e6f07c75bbaf8c3"
+            }
+          ],
+          "observed": {
+            "sha256": "dc5c52fefe6d63430295555a40595ba537524bbd938e77137e6f07c75bbaf8c3"
+          },
+          "coverage": "Byte identity only; producer and execution unauthenticated.",
+          "repair": ""
+        },
+        {
+          "condition_id": "model_binding",
+          "requirement": "Model record binds result, metadata, design, formula, cell set and contrast.",
+          "source": "EXTERNAL_RECORD_CHECKED",
+          "status": "SATISFIED",
+          "method": "cross-check model record and artifact digests",
+          "evidence_refs": [
+            {
+              "artifact": "results",
+              "path": "results.csv",
+              "sha256": "64abcd19ed7e8eebe2a070cdf31372bf83f110ccdacebf5addeac6da1dc62b5a"
+            },
+            {
+              "artifact": "metadata",
+              "path": "metadata.csv",
+              "sha256": "5a9e3b6fee8e3b94c07eeeb71f0682415c15faa007f13445eecaac6341177649"
+            },
+            {
+              "artifact": "design",
+              "path": "design.csv",
+              "sha256": "8136757132cb4ae1fc5e06514cd966ed860233622d75695cd2e9635c62ea9db9"
+            },
+            {
+              "artifact": "model",
+              "path": "model.json",
+              "sha256": "dc5c52fefe6d63430295555a40595ba537524bbd938e77137e6f07c75bbaf8c3"
+            }
+          ],
+          "observed": {
+            "formula": "~ 1 + condition + batch",
+            "fit_status": "converged",
+            "cell_type": "T",
+            "numerator": "disease",
+            "denominator": "control"
+          },
+          "coverage": "Supplied artifacts only.",
+          "repair": "Resolve record/claim mismatches; a declared successful fit alone cannot validate results."
+        },
+        {
+          "condition_id": "sample_alignment",
+          "requirement": "Every model row maps uniquely to the declared sample and donor.",
+          "source": "ARTIFACT_EXTRACTED",
+          "status": "SATISFIED",
+          "method": "sample-ID bijection; align by ID, never by row position",
+          "evidence_refs": [
+            {
+              "artifact": "results",
+              "path": "results.csv",
+              "sha256": "64abcd19ed7e8eebe2a070cdf31372bf83f110ccdacebf5addeac6da1dc62b5a"
+            },
+            {
+              "artifact": "metadata",
+              "path": "metadata.csv",
+              "sha256": "5a9e3b6fee8e3b94c07eeeb71f0682415c15faa007f13445eecaac6341177649"
+            },
+            {
+              "artifact": "design",
+              "path": "design.csv",
+              "sha256": "8136757132cb4ae1fc5e06514cd966ed860233622d75695cd2e9635c62ea9db9"
+            },
+            {
+              "artifact": "model",
+              "path": "model.json",
+              "sha256": "dc5c52fefe6d63430295555a40595ba537524bbd938e77137e6f07c75bbaf8c3"
+            }
+          ],
+          "observed": {
+            "metadata_rows": 6,
+            "design_rows": 6
+          },
+          "coverage": "Supplied artifacts only.",
+          "repair": "Resolve duplicate, missing or extra sample IDs."
+        },
+        {
+          "condition_id": "design_encoding",
+          "requirement": "Actual matrix equals the declared additive model encoded from sample metadata.",
+          "source": "ARTIFACT_EXTRACTED",
+          "status": "SATISFIED",
+          "method": "rebuild supported additive treatment coding from metadata",
+          "evidence_refs": [
+            {
+              "artifact": "results",
+              "path": "results.csv",
+              "sha256": "64abcd19ed7e8eebe2a070cdf31372bf83f110ccdacebf5addeac6da1dc62b5a"
+            },
+            {
+              "artifact": "metadata",
+              "path": "metadata.csv",
+              "sha256": "5a9e3b6fee8e3b94c07eeeb71f0682415c15faa007f13445eecaac6341177649"
+            },
+            {
+              "artifact": "design",
+              "path": "design.csv",
+              "sha256": "8136757132cb4ae1fc5e06514cd966ed860233622d75695cd2e9635c62ea9db9"
+            },
+            {
+              "artifact": "model",
+              "path": "model.json",
+              "sha256": "dc5c52fefe6d63430295555a40595ba537524bbd938e77137e6f07c75bbaf8c3"
+            }
+          ],
+          "observed": {
+            "formula": "~ 1 + condition + batch",
+            "supported_formula_shape": "~1+batch+condition"
+          },
+          "coverage": "Supplied artifacts only.",
+          "repair": "Export explicit intercept plus additive numeric/categorical encodings; interactions and random effects need an adapter."
+        },
+        {
+          "condition_id": "contrast_identity",
+          "requirement": "Numeric contrast estimates numerator minus denominator, with nuisance terms zero.",
+          "source": "ARTIFACT_EXTRACTED",
+          "status": "SATISFIED",
+          "method": "derive condition contrast from factor encoding",
+          "evidence_refs": [
+            {
+              "artifact": "results",
+              "path": "results.csv",
+              "sha256": "64abcd19ed7e8eebe2a070cdf31372bf83f110ccdacebf5addeac6da1dc62b5a"
+            },
+            {
+              "artifact": "metadata",
+              "path": "metadata.csv",
+              "sha256": "5a9e3b6fee8e3b94c07eeeb71f0682415c15faa007f13445eecaac6341177649"
+            },
+            {
+              "artifact": "design",
+              "path": "design.csv",
+              "sha256": "8136757132cb4ae1fc5e06514cd966ed860233622d75695cd2e9635c62ea9db9"
+            },
+            {
+              "artifact": "model",
+              "path": "model.json",
+              "sha256": "dc5c52fefe6d63430295555a40595ba537524bbd938e77137e6f07c75bbaf8c3"
+            }
+          ],
+          "observed": {
+            "recorded": [
+              0.0,
+              1.0,
+              0.0
+            ],
+            "expected": [
+              0.0,
+              1.0,
+              0.0
+            ]
+          },
+          "coverage": "Supplied artifacts only.",
+          "repair": "Use the requested numerator-minus-denominator contrast with zero nuisance weights."
+        },
+        {
+          "condition_id": "contrast_estimability",
+          "requirement": "Target contrast lies in the row space of the actual design matrix.",
+          "source": "ARTIFACT_EXTRACTED",
+          "status": "UNSATISFIED",
+          "method": "SVD row-space projection",
+          "evidence_refs": [
+            {
+              "artifact": "results",
+              "path": "results.csv",
+              "sha256": "64abcd19ed7e8eebe2a070cdf31372bf83f110ccdacebf5addeac6da1dc62b5a"
+            },
+            {
+              "artifact": "metadata",
+              "path": "metadata.csv",
+              "sha256": "5a9e3b6fee8e3b94c07eeeb71f0682415c15faa007f13445eecaac6341177649"
+            },
+            {
+              "artifact": "design",
+              "path": "design.csv",
+              "sha256": "8136757132cb4ae1fc5e06514cd966ed860233622d75695cd2e9635c62ea9db9"
+            },
+            {
+              "artifact": "model",
+              "path": "model.json",
+              "sha256": "dc5c52fefe6d63430295555a40595ba537524bbd938e77137e6f07c75bbaf8c3"
+            }
+          ],
+          "observed": {
+            "rank": 2,
+            "columns": 3,
+            "rows": 6,
+            "residual_df": 4,
+            "full_rank": false,
+            "estimable": false,
+            "projection_residual": 0.7071067811865476,
+            "estimability_tolerance": 1e-08,
+            "rank_tolerance": 2.155654306723458e-15,
+            "column_scaling": "L2 norm"
+          },
+          "coverage": "Supplied artifacts only.",
+          "repair": "Redesign the confounded comparison or narrow the estimand; flags cannot repair non-estimability."
+        },
+        {
+          "condition_id": "model_rank",
+          "requirement": "Supported fixed-effect model is full rank with positive residual degrees of freedom.",
+          "source": "ARTIFACT_EXTRACTED",
+          "status": "UNSATISFIED",
+          "method": "SVD rank and n-rank(X)",
+          "evidence_refs": [
+            {
+              "artifact": "results",
+              "path": "results.csv",
+              "sha256": "64abcd19ed7e8eebe2a070cdf31372bf83f110ccdacebf5addeac6da1dc62b5a"
+            },
+            {
+              "artifact": "metadata",
+              "path": "metadata.csv",
+              "sha256": "5a9e3b6fee8e3b94c07eeeb71f0682415c15faa007f13445eecaac6341177649"
+            },
+            {
+              "artifact": "design",
+              "path": "design.csv",
+              "sha256": "8136757132cb4ae1fc5e06514cd966ed860233622d75695cd2e9635c62ea9db9"
+            },
+            {
+              "artifact": "model",
+              "path": "model.json",
+              "sha256": "dc5c52fefe6d63430295555a40595ba537524bbd938e77137e6f07c75bbaf8c3"
+            }
+          ],
+          "observed": {
+            "rank": 2,
+            "columns": 3,
+            "rows": 6,
+            "residual_df": 4,
+            "full_rank": false,
+            "estimable": false,
+            "projection_residual": 0.7071067811865476,
+            "estimability_tolerance": 1e-08,
+            "rank_tolerance": 2.155654306723458e-15,
+            "column_scaling": "L2 norm"
+          },
+          "coverage": "Supplied artifacts only.",
+          "repair": "Resolve aliased columns or lack of residual degrees of freedom."
+        },
+        {
+          "condition_id": "statistical_unit",
+          "requirement": "Model rows account for donor repetition under the supported design.",
+          "source": "ARTIFACT_EXTRACTED",
+          "status": "SATISFIED",
+          "method": "donor multiplicity, complete pairs and donor fixed-effect coding",
+          "evidence_refs": [
+            {
+              "artifact": "results",
+              "path": "results.csv",
+              "sha256": "64abcd19ed7e8eebe2a070cdf31372bf83f110ccdacebf5addeac6da1dc62b5a"
+            },
+            {
+              "artifact": "metadata",
+              "path": "metadata.csv",
+              "sha256": "5a9e3b6fee8e3b94c07eeeb71f0682415c15faa007f13445eecaac6341177649"
+            },
+            {
+              "artifact": "design",
+              "path": "design.csv",
+              "sha256": "8136757132cb4ae1fc5e06514cd966ed860233622d75695cd2e9635c62ea9db9"
+            },
+            {
+              "artifact": "model",
+              "path": "model.json",
+              "sha256": "dc5c52fefe6d63430295555a40595ba537524bbd938e77137e6f07c75bbaf8c3"
+            }
+          ],
+          "observed": {
+            "unit": "independent_donor",
+            "unique_donors": 6,
+            "repeated_donors": false
+          },
+          "coverage": "Supplied artifacts only.",
+          "repair": "Aggregate technical repeats or export a supported paired donor model; general repeated measures require an adapter."
+        },
+        {
+          "condition_id": "result_identity",
+          "requirement": "Exactly one result row matches gene, cell set and ordered comparison.",
+          "source": "ARTIFACT_EXTRACTED",
+          "status": "SATISFIED",
+          "method": "exact row selection",
+          "evidence_refs": [
+            {
+              "artifact": "results",
+              "path": "results.csv",
+              "sha256": "64abcd19ed7e8eebe2a070cdf31372bf83f110ccdacebf5addeac6da1dc62b5a"
+            },
+            {
+              "artifact": "metadata",
+              "path": "metadata.csv",
+              "sha256": "5a9e3b6fee8e3b94c07eeeb71f0682415c15faa007f13445eecaac6341177649"
+            },
+            {
+              "artifact": "design",
+              "path": "design.csv",
+              "sha256": "8136757132cb4ae1fc5e06514cd966ed860233622d75695cd2e9635c62ea9db9"
+            },
+            {
+              "artifact": "model",
+              "path": "model.json",
+              "sha256": "dc5c52fefe6d63430295555a40595ba537524bbd938e77137e6f07c75bbaf8c3"
+            }
+          ],
+          "observed": {
+            "matching_rows": 1,
+            "selector": {
+              "gene": "X",
+              "cell_type": "T",
+              "numerator": "disease",
+              "denominator": "control"
+            }
+          },
+          "coverage": "",
+          "repair": "Export one uniquely identified row for this gene and ordered comparison."
+        },
+        {
+          "condition_id": "effect_direction",
+          "requirement": "Finite log2 fold change agrees with the requested direction.",
+          "source": "ARTIFACT_EXTRACTED",
+          "status": "SATISFIED",
+          "method": "signed effect, numerator minus denominator",
+          "evidence_refs": [
+            {
+              "artifact": "results",
+              "path": "results.csv",
+              "sha256": "64abcd19ed7e8eebe2a070cdf31372bf83f110ccdacebf5addeac6da1dc62b5a"
+            },
+            {
+              "artifact": "metadata",
+              "path": "metadata.csv",
+              "sha256": "5a9e3b6fee8e3b94c07eeeb71f0682415c15faa007f13445eecaac6341177649"
+            },
+            {
+              "artifact": "design",
+              "path": "design.csv",
+              "sha256": "8136757132cb4ae1fc5e06514cd966ed860233622d75695cd2e9635c62ea9db9"
+            },
+            {
+              "artifact": "model",
+              "path": "model.json",
+              "sha256": "dc5c52fefe6d63430295555a40595ba537524bbd938e77137e6f07c75bbaf8c3"
+            }
+          ],
+          "observed": {
+            "effect": 1.2
+          },
+          "coverage": "",
+          "repair": "Correct the wording or the contrast; do not silently reverse a comparison."
+        },
+        {
+          "condition_id": "effect_uncertainty",
+          "requirement": "Reported interval at the requested level excludes zero in the claimed direction.",
+          "source": "ARTIFACT_EXTRACTED",
+          "status": "SATISFIED",
+          "method": "interval bounds, level and direction",
+          "evidence_refs": [
+            {
+              "artifact": "results",
+              "path": "results.csv",
+              "sha256": "64abcd19ed7e8eebe2a070cdf31372bf83f110ccdacebf5addeac6da1dc62b5a"
+            },
+            {
+              "artifact": "metadata",
+              "path": "metadata.csv",
+              "sha256": "5a9e3b6fee8e3b94c07eeeb71f0682415c15faa007f13445eecaac6341177649"
+            },
+            {
+              "artifact": "design",
+              "path": "design.csv",
+              "sha256": "8136757132cb4ae1fc5e06514cd966ed860233622d75695cd2e9635c62ea9db9"
+            },
+            {
+              "artifact": "model",
+              "path": "model.json",
+              "sha256": "dc5c52fefe6d63430295555a40595ba537524bbd938e77137e6f07c75bbaf8c3"
+            }
+          ],
+          "observed": {
+            "ci_lower": 0.4,
+            "ci_upper": 2.0,
+            "ci_level": 0.95
+          },
+          "coverage": "Reported interval checked; interval construction and coverage not recomputed.",
+          "repair": "Export compatible effect and confidence interval; nonsignificance is not absence."
+        },
+        {
+          "condition_id": "adjusted_significance",
+          "requirement": "Reported adjusted p-value meets the explicit claim threshold.",
+          "source": "ARTIFACT_EXTRACTED",
+          "status": "SATISFIED",
+          "method": "0 <= padj <= alpha <= 1",
+          "evidence_refs": [
+            {
+              "artifact": "results",
+              "path": "results.csv",
+              "sha256": "64abcd19ed7e8eebe2a070cdf31372bf83f110ccdacebf5addeac6da1dc62b5a"
+            },
+            {
+              "artifact": "metadata",
+              "path": "metadata.csv",
+              "sha256": "5a9e3b6fee8e3b94c07eeeb71f0682415c15faa007f13445eecaac6341177649"
+            },
+            {
+              "artifact": "design",
+              "path": "design.csv",
+              "sha256": "8136757132cb4ae1fc5e06514cd966ed860233622d75695cd2e9635c62ea9db9"
+            },
+            {
+              "artifact": "model",
+              "path": "model.json",
+              "sha256": "dc5c52fefe6d63430295555a40595ba537524bbd938e77137e6f07c75bbaf8c3"
+            }
+          ],
+          "observed": {
+            "padj": 0.01,
+            "alpha": 0.05
+          },
+          "coverage": "Multiplicity procedure not recomputed.",
+          "repair": "Narrow to the observed estimate or supply the appropriate adjusted result."
+        },
+        {
+          "condition_id": "population_transport",
+          "requirement": "Sampling and target-population transport assumptions need review.",
+          "source": "MISSING",
+          "status": "NOT_ASSESSED",
+          "method": "no executable adapter for this premise",
+          "evidence_refs": [],
+          "observed": null,
+          "coverage": "",
+          "repair": "Provide claim-specific evidence for scientific review; declarations cannot satisfy this check."
+        },
+        {
+          "condition_id": "causal_identification",
+          "requirement": "Intervention, confounding and identification assumptions need review.",
+          "source": "MISSING",
+          "status": "NOT_ASSESSED",
+          "method": "no executable adapter for this premise",
+          "evidence_refs": [],
+          "observed": null,
+          "coverage": "",
+          "repair": "Provide claim-specific evidence for scientific review; declarations cannot satisfy this check."
+        }
+      ],
+      "scope_assessments": [
+        {
+          "scope": "table_observation",
+          "statement": "The supplied table reports X / T / disease versus control: log2 fold change 1.2.",
+          "status": "SATISFIED",
+          "supported_within_checked_scope": true,
+          "required_conditions": [
+            "artifact_results",
+            "result_identity",
+            "effect_direction"
+          ],
+          "unmet_conditions": []
+        },
+        {
+          "scope": "cohort_association",
+          "statement": "Under the supplied model, X / T / disease versus control has a upward association in the analyzed cohort.",
+          "status": "UNSATISFIED",
+          "supported_within_checked_scope": false,
+          "required_conditions": [
+            "artifact_results",
+            "artifact_metadata",
+            "artifact_design",
+            "artifact_model",
+            "model_binding",
+            "sample_alignment",
+            "design_encoding",
+            "contrast_identity",
+            "contrast_estimability",
+            "model_rank",
+            "statistical_unit",
+            "result_identity",
+            "effect_direction",
+            "effect_uncertainty",
+            "adjusted_significance"
+          ],
+          "unmet_conditions": [
+            "contrast_estimability",
+            "model_rank"
+          ]
+        },
+        {
+          "scope": "population_effect",
+          "statement": "X / T / disease versus control has a upward effect in the target population.",
+          "status": "UNSATISFIED",
+          "supported_within_checked_scope": false,
+          "required_conditions": [
+            "artifact_results",
+            "artifact_metadata",
+            "artifact_design",
+            "artifact_model",
+            "model_binding",
+            "sample_alignment",
+            "design_encoding",
+            "contrast_identity",
+            "contrast_estimability",
+            "model_rank",
+            "statistical_unit",
+            "result_identity",
+            "effect_direction",
+            "effect_uncertainty",
+            "adjusted_significance",
+            "population_transport"
+          ],
+          "unmet_conditions": [
+            "contrast_estimability",
+            "model_rank",
+            "population_transport"
+          ]
+        },
+        {
+          "scope": "causal_effect",
+          "statement": "The condition causes a upward change in X / T / disease versus control.",
+          "status": "UNSATISFIED",
+          "supported_within_checked_scope": false,
+          "required_conditions": [
+            "artifact_results",
+            "artifact_metadata",
+            "artifact_design",
+            "artifact_model",
+            "model_binding",
+            "sample_alignment",
+            "design_encoding",
+            "contrast_identity",
+            "contrast_estimability",
+            "model_rank",
+            "statistical_unit",
+            "result_identity",
+            "effect_direction",
+            "effect_uncertainty",
+            "adjusted_significance",
+            "causal_identification"
+          ],
+          "unmet_conditions": [
+            "contrast_estimability",
+            "model_rank",
+            "causal_identification"
+          ]
+        }
+      ],
+      "supported_statements": [
+        "The supplied table reports X / T / disease versus control: log2 fold change 1.2."
+      ]
+    }
+  ],
+  "scientific_authorization": "NONE",
+  "producer_authentication": "NOT_ESTABLISHED",
+  "analysis_execution_verification": "NOT_PERFORMED",
+  "limitations": [
+    "Necessary conditions over supplied artifacts only; no biological validity or sufficiency proof.",
+    "Raw-count aggregation, fit, p-values and intervals are not recomputed.",
+    "Donor identity, model adequacy, sampling and causal assumptions need scientific review.",
+    "Structured canonical claims only; free prose is assessed separately."
+  ]
+}

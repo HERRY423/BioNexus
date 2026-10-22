@@ -1,5 +1,5 @@
 {
-  "scope": "Fixed core-dependency profile in quality/core-tests.json; not whole-package coverage",
+  "scope": "Fixed core profile; split implementations retain original weighted line/branch floors; facade branches are not evidence.",
   "measurement": "review/engineering-hardening-2026-09-11/run-02/core-measure/coverage.json",
   "policy": "Ratchet each floor upward from measured line/branch percentages rounded down to two decimals; never lower an existing floor to accommodate a regression.",
   "files": {
@@ -14,14 +14,6 @@
     "src/bionexus/warrant.py": {
       "line": 95.96,
       "branch": 80.55
-    },
-    "src/bionexus/claim_semantics.py": {
-      "line": 85.76,
-      "branch": 71.09
-    },
-    "src/bionexus/de_audit.py": {
-      "line": 71.63,
-      "branch": 63.1
     },
     "src/bionexus/de_bundle.py": {
       "line": 87.5,
@@ -38,6 +30,45 @@
     "src/bionexus/spec_registry.py": {
       "line": 85.57,
       "branch": 78.33
+    }
+  },
+  "groups": {
+    "claims_implementation": {
+      "line": 85.76,
+      "branch": 71.09,
+      "migrated_from": "src/bionexus/claim_semantics.py",
+      "prefix": "src/bionexus/claims/",
+      "members": [
+        "src/bionexus/claims/__init__.py",
+        "src/bionexus/claims/advisory.py",
+        "src/bionexus/claims/engine.py",
+        "src/bionexus/claims/models.py",
+        "src/bionexus/claims/parser.py",
+        "src/bionexus/claims/policy.py"
+      ]
+    },
+    "de_implementation": {
+      "line": 71.63,
+      "branch": 63.1,
+      "migrated_from": "src/bionexus/de_audit.py",
+      "prefix": "src/bionexus/de/",
+      "members": [
+        "src/bionexus/de/__init__.py",
+        "src/bionexus/de/binding.py",
+        "src/bionexus/de/engine.py",
+        "src/bionexus/de/models.py",
+        "src/bionexus/de/parsers.py",
+        "src/bionexus/de/policy.py",
+        "src/bionexus/de/renderer.py",
+        "src/bionexus/de/rules/__init__.py",
+        "src/bionexus/de/rules/code_rules.py",
+        "src/bionexus/de/rules/matrix_rules.py",
+        "src/bionexus/de/rules/metadata_rules.py",
+        "src/bionexus/de/rules/table_rules.py",
+        "src/bionexus/de/conditions.py",
+        "src/bionexus/de/alternatives.py",
+        "src/bionexus/de/selection.py"
+      ]
     }
   }
 }

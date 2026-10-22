@@ -2,6 +2,12 @@
   "schema_version": "1.0",
   "capability_id": "scrna.pseudobulk_de",
   "test_suite": "7_dimensional_inferential_stress_test",
+  "evidence_scope": "LOCAL_REAL_DATA_PERTURBATIONS_AND_POLICY_FIXTURES",
+  "scientific_authorization": "NONE",
+  "independent_ground_truth": false,
+  "deprecated_fields": {
+    "dimensions.dim5_permutation_null_fdr": "Compatibility key only; observed rejection diagnostic does not validate FDR"
+  },
   "dataset_checksum_sha256": {
     "pbmc_ifnb_counts.h5ad": "46122ba4e196561a781123614d856fed7d1ca05743d39a1d117597fd6d0bb993",
     "published_de_truth.csv": "ded3bb9b1e4606da34f5142ab129c5f97b619e0d23e30eade49b2b7be14b3d30"
@@ -9,8 +15,8 @@
   "provenance": {
     "data_source": "GEO GSE96583 (Kang et al. 2018, Nat Biotechnol doi:10.1038/nbt.4042)",
     "download_date": "2026-08-19T00:00:00+00:00",
-    "commit_sha": "fffd792fcd3949805debeee5c421feee8fbba921",
-    "git_dirty": false,
+    "commit_sha": "683018420a753738d8a84d43f0c60b3a36516698",
+    "git_dirty": true,
     "environment_lockfile_hashes": {
       "pyproject.toml": "af00cd2b797d49c3ed2d0da185dcfcfeb0fbd913aa3de6815139e362514c31d6",
       "requirements-dev.txt": "d5697d2689c87167f554b3b9c35086f7f8696d7c5a3b23c20507c39a474f82d4",
@@ -23,17 +29,17 @@
     "generator_version": "1.0.0-rc.8",
     "python_version": "3.13.9",
     "platform": "Windows-11-10.0.26200-SP0",
-    "timestamp": "2026-09-13T14:57:55.839072+00:00",
+    "timestamp": "2026-09-19T05:53:55.819594+00:00",
     "extra_metadata": {
       "n_cells": 13487,
       "n_donors": 8
     },
     "repository_dirty_at_execution": true,
-    "validation_source_dirty": false,
-    "source_snapshot_sha256": "1dc420be0e48d26fdef0ecdd48544cc073085aa89faeca04e9b5f0722e1038d9"
+    "validation_source_dirty": true,
+    "source_snapshot_sha256": "ff5d25c561f5258fc522a4b8e8924e6c7f39ef3adef17eea78a77f6ba410448a"
   },
-  "timestamp": "2026-09-13T14:59:41.206229+00:00",
-  "elapsed_seconds": 105.86,
+  "timestamp": "2026-09-19T05:54:55.903979+00:00",
+  "elapsed_seconds": 60.38,
   "overall_status": "PASS",
   "dimensions": {
     "dim1_public_reference": {
@@ -42,7 +48,10 @@
       "n_cells": 13487,
       "n_donors": 8,
       "n_samples": 16,
-      "top100_truth_overlap": 0.66,
+      "top100_truth_overlap": 0.5,
+      "reference_type": "CURATED_PUBLISHED_KNOWLEDGE_PROXY",
+      "independent_ground_truth": false,
+      "model_design": "~ donor + condition",
       "threshold_required": 0.5,
       "warrant_regime": "POPULATION_INFERENCE",
       "maturity_ceiling": "SUPPORTED",
@@ -63,7 +72,7 @@
           "cell_fraction": 0.5,
           "total_cells": 6743,
           "min_cells_per_sample": 135,
-          "jaccard_vs_baseline_top100": 0.7857,
+          "jaccard_vs_baseline_top100": 0.7094,
           "warrant_regime": "POPULATION_INFERENCE",
           "warnings": []
         },
@@ -71,7 +80,7 @@
           "cell_fraction": 0.2,
           "total_cells": 2697,
           "min_cells_per_sample": 61,
-          "jaccard_vs_baseline_top100": 0.6,
+          "jaccard_vs_baseline_top100": 0.5625,
           "warrant_regime": "POPULATION_INFERENCE",
           "warnings": []
         },
@@ -79,7 +88,7 @@
           "cell_fraction": 0.05,
           "total_cells": 674,
           "min_cells_per_sample": 10,
-          "jaccard_vs_baseline_top100": 0.5152,
+          "jaccard_vs_baseline_top100": 0.5504,
           "warrant_regime": "POPULATION_INFERENCE",
           "warnings": []
         }
@@ -145,16 +154,18 @@
         }
       ],
       "phase_transitions_verified": true,
+      "evidence_scope": "DETERMINISTIC_POLICY_CONTRACT_ONLY; donor subsets were not fitted",
       "passed": true
     },
     "dim4_effect_size_sensitivity": {
       "dimension": "4_effect_size_sensitivity_power_curve",
+      "evidence_scope": "Single spike-in realization per effect size on already perturbed biological counts; descriptive recovery, not repeated-experiment power",
       "grid": [
         {
           "injected_log2fc": 0.5,
           "n_spike_genes": 10,
-          "recovered_sig_padj_05": 5,
-          "statistical_power": 0.5
+          "recovered_sig_padj_05": 7,
+          "statistical_power": 0.7
         },
         {
           "injected_log2fc": 1.0,
@@ -178,11 +189,26 @@
       "passed": true
     },
     "dim5_permutation_null_fdr": {
-      "dimension": "5_permutation_null_fdr_control",
-      "n_genes_tested": 14053,
-      "n_false_positive_degs_padj_05": 0,
-      "empirical_false_positive_rate": 0.0,
-      "fdr_controlled": true,
+      "dimension": "5_single_permutation_rejection_fraction",
+      "n_result_rows": 14053,
+      "n_genes_tested": 4242,
+      "n_unavailable_adjusted_pvalues": 9811,
+      "n_rejected_padj_05": 44,
+      "observed_global_null_rejection_fraction": 0.010372465818010372,
+      "global_null_truth_established": false,
+      "permutation_unit": "within_donor_condition_labels",
+      "n_permutations": 1,
+      "model_design": "~ donor + condition",
+      "threshold_required": 0.05,
+      "fdr_controlled": null,
+      "empirical_false_positive_rate": null,
+      "n_false_positive_degs_padj_05": null,
+      "deprecated_fields": {
+        "fdr_controlled": "Not estimable from one permutation",
+        "empirical_false_positive_rate": "Use observed_global_null_rejection_fraction; biological null truth is not established",
+        "n_false_positive_degs_padj_05": "Use n_rejected_padj_05; rejected hypotheses have no independently known null labels"
+      },
+      "evidence_scope": "ONE_PAIRED_PERMUTATION_DIAGNOSTIC; neither FDR nor FWER control established",
       "passed": true
     },
     "dim6_backend_degradation": {
@@ -195,6 +221,7 @@
     },
     "dim7_claim_interception": {
       "dimension": "7_host_variation_claim_interception",
+      "evidence_scope": "LOCAL_CLAIM_CHECKER_FIXTURE; no host comparison executed",
       "test_cases": [
         {
           "test_id": "causal_treatment_claim",

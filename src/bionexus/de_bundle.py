@@ -11,7 +11,12 @@ import json
 import math
 import re
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING or __package__:
+    from .evidence_contract import evidence_contract, validate_evidence_contract
+else:  # Standalone passive reader: python -S path/to/de_bundle.py
+    from evidence_contract import evidence_contract, validate_evidence_contract
 
 BUNDLE_SCHEMA = "bionexus.de-shadow-bundle.v1"
 INTEGRITY_PROFILE = "bionexus.de-shadow-integrity.v1"
@@ -99,6 +104,8 @@ source/trustworthiness remains the caller's responsibility.
         "scientific_authorization": "NONE", "analysis_execution_verification": "NOT_PERFORMED",
         "input_content_verification": "NOT_PERFORMED", "producer_authentication": "NOT_ESTABLISHED",
         "mutable_reviews": "NOT_VERIFIED",
+        "evidence_contract": evidence_contract("BUNDLE_INTEGRITY", support="CANDIDATE_CORE",
+            scope="File consistency only; the stored audit is a producer assertion and does not become independently verified."),
     }
     try:
         root = Path(directory).resolve()
@@ -128,11 +135,23 @@ source/trustworthiness remains the caller's responsibility.
         if _digest(audit_bytes) != manifest["audit_sha256"]:
             raise BundleError("ARTIFACT_HASH_MISMATCH", "audit.json", "Audit bytes differ from the manifest")
         audit = _parse(audit_bytes, "audit.json")
+        if "evidence_contract" in audit:
+            try:
+                contract = validate_evidence_contract(audit["evidence_contract"])
+            except ValueError as exc:
+                raise BundleError("UNSUPPORTED_SCHEMA", "audit.json", str(exc)) from exc
+            if contract["assessment_kind"] != "ARTIFACT_REVIEW":
+                raise BundleError("INVALID_CONTRACT", "audit.json", "A DE audit requires an artifact-review contract")
+            report["stored_audit_contract"] = contract
+        else:
+            report["stored_audit_contract"] = evidence_contract(scope="Legacy audit has no accepted evidence-state contract.")
         status = audit.get("overall_status")
         if not isinstance(status, str) or status not in AUDIT_STATUSES:
             raise BundleError("UNSUPPORTED_SCHEMA", "audit.json", "Audit status is unknown; do not infer success")
         if type(audit.get("passed")) is not bool or audit["passed"] != (status == "ROBUST_PASS"):
             raise BundleError("INCONSISTENT_STATUS", "audit.json", "passed must agree with the declared audit status")
+        if audit.get("evidence_contract", {}).get("outcome") == "POSITIVE" and status != "ROBUST_PASS":
+            raise BundleError("INCONSISTENT_CONTRACT", "audit.json", "Restricted audit cannot carry a positive contract")
         if not isinstance(audit.get("findings"), list) or not isinstance(audit.get("checks"), list):
             raise BundleError("INVALID_AUDIT_SHAPE", "audit.json", "Audit findings and checks must be arrays")
         report["audit_status"] = status
@@ -160,6 +179,9 @@ source/trustworthiness remains the caller's responsibility.
             if name != "audit.json":
                 report["checked_artifacts"].append(name)
         report["status"] = "CONSISTENT"
+        report["evidence_contract"] = evidence_contract("BUNDLE_INTEGRITY", positive=True,
+            observations=list(report["checked_artifacts"]), input_integrity="CHECKED", support="CANDIDATE_CORE",
+            scope="File consistency only; the stored audit is a producer assertion and does not become independently verified.")
     except BundleError as exc:
         report["status"] = "UNSUPPORTED_SCHEMA" if exc.code == "UNSUPPORTED_SCHEMA" else "INVALID"
         report["issues"].append({"code": exc.code, "artifact": exc.artifact, "message": str(exc)})

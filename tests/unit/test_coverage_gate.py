@@ -47,3 +47,28 @@ def test_invalid_floor_is_not_a_bypass(floor):
 
 def test_empty_baseline_fails():
     assert check_coverage(measurement(), {"files": {}})
+
+
+def test_split_core_uses_weighted_counts_and_retains_inventory():
+    report = measurement()
+    report["files"]["src/impl/large.py"] = report["files"].pop("src/core.py")
+    report["files"]["src/impl/__init__.py"] = {"summary": {
+        "covered_lines": 1, "num_statements": 1, "covered_branches": 0, "num_branches": 0,
+    }}
+    baseline = {"groups": {"core": {"prefix": "src/impl/",
+        "members": ["src/impl/large.py", "src/impl/__init__.py"], "line": 90, "branch": 75}}}
+    assert check_coverage(report, baseline) == []
+    report["files"]["src/impl/large.py"]["summary"]["covered_branches"] = 2
+    assert any("branch 50.00%" in e for e in check_coverage(report, baseline))
+    report["files"]["src/impl/unlisted.py"] = report["files"]["src/impl/__init__.py"]
+    assert any("inventory drift" in e for e in check_coverage(report, baseline))
+
+
+def test_split_core_missing_or_fabricated_member_fails():
+    baseline = {"groups": {"core": {"prefix": "src/", "members": ["src/core.py", "src/missing.py"],
+                                    "line": 90, "branch": 75}}}
+    assert any("Missing coverage" in e for e in check_coverage(measurement(), baseline))
+    baseline["groups"]["core"]["members"] = ["src/core.py"]
+    report = measurement()
+    report["files"]["src/core.py"]["summary"]["num_branches"] = -1
+    assert any("Invalid group" in e for e in check_coverage(report, baseline))

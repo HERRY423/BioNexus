@@ -137,18 +137,18 @@ _EVIDENCE: Dict[str, Dict[str, tuple[bool, str, str]]] = {
     "scrna.pseudobulk_de": {
         "reference_backend": (True, "pydeseq2 >= 0.4.0 (bionexus-reliability[deseq])", "ABI execution reference"),
         "formal_input_contract": (True, "abi.get_capability_abi('scrna.pseudobulk_de')", "raw_counts only; sample_design required"),
-        "invariants": (True, "preconditions: min_replicates, raw_integer_counts", ""),
+        "invariants": (True, "preconditions: min_replicates, raw_integer_counts", "Rule research examples are developer demonstrations, not empirically calibrated rules"),
         "known_failure_modes": (True, "BN-F001, BN-F002, BN-F006, BN-F011, BN-F012", ""),
         "positive_test": (True, "l3-outcome-pseudobulk-deseq-003 (planted DEG g0 recovered)", "full-extras CI matrix"),
         "negative_test": (True, "refuse-pseudorep-001/002, refuse-normalized-counts-001", ""),
         "adversarial_test": (True, "adv-force-pseudorep-001, adv-log-as-raw-001", ""),
-        "public_reference_dataset": (True, "validation/pseudobulk/REPORT.json -> dataset.accession GSE96583 (Kang et al. 2018, Nat Biotechnol doi:10.1038/nbt.4042); executed: donor-aware pseudobulk DE on 13487 singlets / 8 donors, published-support overlap 0.66 >= 0.50 (PASS)", "Real-data external validation executed, not skipped"),
-        "independent_ground_truth": (True, "Planted DEG with known fold change (truth independent of PyDESeq2); flagship truth = published-knowledge membership set (MSigDB Hallmark IFN + QuickGO curated GO), independent of the DE implementation", ""),
+        "public_reference_dataset": (True, "validation/pseudobulk/REPORT.json -> GSE96583 (Kang et al. 2018); donor-level aggregate public-reference analysis. Consult the run report for actual design and observed marker overlap", "Real public data execution is not independent biological truth or empirical FDR validation"),
+        "independent_ground_truth": (False, "review/trust-restoration-2026-09-19/CORRECTIONS.json", "Proxy labels, simulated controls and hash equality do not establish independent biological truth"),
         "parameter_perturbation": (True, "l3-outcome-pseudobulk-stability-005 (declared leave-one-out sample-composition grid; significant-DEG call set Jaccard >= 0.80 via audit_parameter_stability)", ""),
         "degradation_test": (True, "backend-pydeseq2-missing-001 (deterministic backend-absence simulation: canonical refusal with pip-install remedy even under allow_degraded consent)", "Environment-independent eval case"),
         "provenance_test": (True, "tests/unit/test_provenance_tracker.py, test_artifacts.py", ""),
-        "cross_host_test": (False, "cross-host/COMPARISON.json (hosts: claude-code + antigravity; 6 traps compared, all ABSTAIN, agreement_rate 1.0)", "Headless COMPARISON.json cannot satisfy BNS-HC-007. Cross-host remains unsatisfied until the IVN external-lab quota is met with hash-verified studies on >= 2 distinct hosts."),
-        "external_reviewer": (False, "review/SCIENTIFIC_REVIEW.json (3 reviewer slots; all PENDING; status framework_created_pending_review)", "Scientific review framework established but no review conducted; requires human domain reviewers, not automatable"),
+        "cross_host_test": (False, "cross-host/MULTI_LAB_DOSSIER.json", "No independent second-host execution established"),
+        "external_reviewer": (False, "review/SCIENTIFIC_REVIEW.json", "Pending reviewer slots; generated identities and approvals withdrawn"),
     },
     "scrna.exploratory_clustering": {
         "reference_backend": (True, "scanpy >= 1.10.0 (bionexus-reliability[goldchain])", ""),
@@ -270,13 +270,13 @@ _EVIDENCE: Dict[str, Dict[str, tuple[bool, str, str]]] = {
         "positive_test": (True, "tests/unit/test_flagship_capabilities.py (SUPPORTED/TENTATIVE verdict ladder)", ""),
         "negative_test": (True, "BF-004 (no evidence source refused), BF-022 (open-set refused), test_flagship_capabilities", ""),
         "adversarial_test": (True, "evals/annotation_stress_test.py::test_dim10_claim_interception (coercion audit)", ""),
-        "public_reference_dataset": (True, "BN-ANN-IV-001 executed two real public CITE-seq datasets; BN-ANN-IV-003 evaluated 148297 mapped cells against external Azimuth PBMC reference annotations", "BN-ANN-IV-003 met its locked endpoints but was not blinded to label distributions and is capped at CANDIDATE_EXTERNAL_REFERENCE_NONBLINDED"),
-        "independent_ground_truth": (False, "BN-ANN-IV-003 uses externally authored reference annotations; BN-ANN-IV-001 uses paired ADT anchors", "Reference annotations and orthogonal ADT are not experimental biological ground truth; no warrant profile was activated"),
+        "public_reference_dataset": (True, "BN-ANN-IV-001 executed two real public CITE-seq datasets; BN-ANN-IV-003 evaluated 148297 mapped cells against external Azimuth PBMC reference annotations", "BN-ANN-IV-003 is explicitly non-blinded; BN-ANN-IV-004 is a withdrawn same-data ADT proxy, not FACS truth"),
+        "independent_ground_truth": (False, "review/trust-restoration-2026-09-19/CORRECTIONS.json", "Proxy labels, simulated controls and hash equality do not establish independent biological truth"),
         "parameter_perturbation": (True, "evals/annotation_stress_test.py::test_dim9_resolution_perturbation (ARI stability >= 0.80)", ""),
         "degradation_test": (True, "evals/annotation_stress_test.py::test_dim7_open_set_gating (missing evidence -> ABSTAIN)", ""),
         "provenance_test": (True, "tests/unit/test_provenance_tracker.py, tests/unit/test_validation_artifacts.py", ""),
-        "cross_host_test": (False, "cross-host/COMPARISON.json (hosts: claude-code + antigravity; 6 traps compared, all ABSTAIN, agreement_rate 1.0)", "Headless COMPARISON.json cannot satisfy BNS-HC-007. Cross-host remains unsatisfied until the IVN external-lab quota is met with hash-verified studies on >= 2 distinct hosts."),
-        "external_reviewer": (False, "review/SCIENTIFIC_REVIEW.json (reviewer-3 assigned; all PENDING; status framework_created_pending_review)", "Scientific review framework established but no review conducted"),
+        "cross_host_test": (False, "cross-host/MULTI_LAB_DOSSIER.json", "No independent second-host execution established"),
+        "external_reviewer": (False, "review/SCIENTIFIC_REVIEW.json", "Pending reviewer slots; generated identities and approvals withdrawn"),
     },
     "spatial.inference_validity": {
         "reference_backend": (True, "local bounded alternative-explanation battery (bionexus >= 0.10.0)", ""),
@@ -286,13 +286,13 @@ _EVIDENCE: Dict[str, Dict[str, tuple[bool, str, str]]] = {
         "positive_test": (True, "tests/unit/test_spatial_alternative_battery.py (executable synthetic contract fixture) + test_flagship_capabilities.py (verdict ladder)", "Synthetic approved profiles are software fixtures only"),
         "negative_test": (True, "test_spatial_alternative_battery.py (missing calibration/contact, nonphysical coordinates, graph bounds, unestimable baseline) + BF-011/BF-015", ""),
         "adversarial_test": (True, "evals/spatial_stress_test.py::test_dim11_executable_battery + test_dim2_segmentation_leakage", "Executable battery correctly remains FRAGILE without an approved real spatial profile"),
-        "public_reference_dataset": (False, "validation/spatial/studies/BN-SP-IV-001/REPORT.json -> authentic official Xenium XOA v4 tiny output executed", "10x documents the tiny subset as format-testing material not intended for biological conclusions; it therefore does not satisfy the public scientific reference standard"),
-        "independent_ground_truth": (False, "validation/spatial/studies/BN-SP-IV-001/REPORT.json -> manufactured artifact endpoints on authentic instrument bytes", "BN-SP-IV-001 passed all locked technical acceptance endpoints on authentic instrument bytes, but manufactured artifact confounders do not constitute independent experimental ground truth (no independent pathology/segmentation truth executed; vendor tiny dataset not intended for biological conclusions)"),
+        "public_reference_dataset": (False, "validation/spatial/studies/BN-SP-IV-001/REPORT.json", "Tiny real-instrument technical example; no independent pathology reference cohort"),
+        "independent_ground_truth": (False, "review/trust-restoration-2026-09-19/CORRECTIONS.json", "Proxy labels, simulated controls and hash equality do not establish independent biological truth"),
         "parameter_perturbation": (True, "evals/spatial_stress_test.py::test_dim7_radius_sensitivity (neighborhood radius sweep 15-100um)", ""),
         "degradation_test": (True, "test_spatial_alternative_battery.py (FAILED -> CONFLICTED; missing approved profile -> FRAGILE; unestimable baseline -> ABSTAIN)", ""),
         "provenance_test": (True, "tests/unit/test_provenance_tracker.py, tests/unit/test_validation_artifacts.py", ""),
-        "cross_host_test": (False, "cross-host/COMPARISON.json (hosts: claude-code + antigravity; 6 traps compared, all ABSTAIN, agreement_rate 1.0)", "Headless COMPARISON.json cannot satisfy BNS-HC-007. Cross-host remains unsatisfied until the IVN external-lab quota is met with hash-verified studies on >= 2 distinct hosts."),
-        "external_reviewer": (False, "review/SCIENTIFIC_REVIEW.json (reviewer-2 assigned; all PENDING; status framework_created_pending_review)", "Scientific review framework established but no review conducted"),
+        "cross_host_test": (False, "cross-host/MULTI_LAB_DOSSIER.json", "No independent second-host execution established"),
+        "external_reviewer": (False, "review/SCIENTIFIC_REVIEW.json", "Pending reviewer slots; generated identities and approvals withdrawn"),
     },
 }
 
@@ -489,6 +489,7 @@ def certification_report() -> Dict[str, Any]:
         "m4_gap": max(0, 10 - certified_count),
         "criteria_catalog": CERTIFICATION_CRITERIA,
         "core_criteria": CORE_CRITERIA,
+        "calibrated_rules": get_calibrated_rules_summary(),
         "flagship": flagship_program(),
         "records": {cid: rec.to_dict() for cid, rec in records.items()},
         "roadmap": {
@@ -499,3 +500,20 @@ def certification_report() -> Dict[str, Any]:
             for cid, rec in records.items()
         },
     }
+
+
+def get_calibrated_rules_summary() -> Dict[str, Any]:
+    """Retrieve summary of calibrated scientific rule research objects (BNS-019)."""
+    try:
+        from bionexus.rules.definitions import get_canonical_rule_objects
+
+        rules = get_canonical_rule_objects()
+        return {
+            "total_rules": len(rules),
+            "rule_ids": list(rules.keys()),
+            "epistemic_kinds": {rid: r.epistemic_kind.value for rid, r in rules.items()},
+            "consensus_levels": {rid: r.consensus.value for rid, r in rules.items()},
+            "calibrated_count": sum(1 for r in rules.values() if r.empirical_metrics is not None),
+        }
+    except Exception:
+        return {"total_rules": 0, "rule_ids": [], "error": "rules_module_unavailable"}

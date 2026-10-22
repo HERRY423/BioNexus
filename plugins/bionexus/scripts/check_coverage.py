@@ -16,9 +16,40 @@ def check_coverage(report: dict[str, Any], baseline: dict[str, Any]) -> list[str
     if report.get("meta", {}).get("branch_coverage") is not True:
         errors.append("Branch coverage was not collected")
     files = {name.replace("\\", "/"): data for name, data in report.get("files", {}).items()}
-    floors = baseline.get("files", {})
-    if not floors:
+    floors = dict(baseline.get("files", {}))
+    groups = baseline.get("groups", {})
+    if not floors and not groups:
         return errors + ["Coverage baseline has no guarded files"]
+    # A module split must retain its original weighted floor. Averaging file
+    # percentages would let tiny facades dilute untested implementation code.
+    for name, group in groups.items():
+        members = group.get("members", [])
+        if not members or len(members) != len(set(members)):
+            errors.append(f"Invalid coverage group members for {name}")
+            continue
+        prefix = group.get("prefix", "")
+        measured = {key for key in files if prefix and key.startswith(prefix)}
+        if measured != set(members):
+            errors.append(f"Coverage group inventory drift for {name}: {sorted(measured ^ set(members))}")
+        summary = {key: 0 for key in ("covered_lines", "num_statements", "covered_branches", "num_branches")}
+        valid = True
+        for member in members:
+            if member not in files:
+                errors.append(f"Missing coverage for {member}")
+                valid = False
+                continue
+            data = files[member].get("summary", {})
+            for covered_key, total_key in (("covered_lines", "num_statements"), ("covered_branches", "num_branches")):
+                covered, total = data.get(covered_key), data.get(total_key)
+                if type(covered) is not int or type(total) is not int or not 0 <= covered <= total:
+                    errors.append(f"Invalid group measurement for {member}: {covered_key}")
+                    valid = False
+                    continue
+                summary[covered_key] += covered
+                summary[total_key] += total
+        if valid:
+            files[name] = {"summary": summary}
+            floors[name] = group
     for name, limits in floors.items():
         if name not in files:
             errors.append(f"Missing coverage for {name}")

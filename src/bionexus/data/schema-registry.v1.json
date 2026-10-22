@@ -1,0 +1,54 @@
+{
+  "schema_version": "bionexus.schema-registry.v1",
+  "families": {
+    "lab-acceptance-receipt": {
+      "current": "v1",
+      "id_prefix": "bionexus.lab-acceptance-receipt.",
+      "versions": {
+        "v1": {
+          "schema_file": "lab-acceptance-receipt.v1.schema.json",
+          "document_id": "bionexus.lab-acceptance-receipt.v1",
+          "next": null
+        }
+      }
+    },
+    "lab-exchange-envelope": {
+      "current": "v2",
+      "id_prefix": "bionexus.lab-exchange-envelope.",
+      "versions": {
+        "v1": {
+          "schema_file": "lab-exchange-envelope.v1.schema.json",
+          "document_id": "bionexus.lab-exchange-envelope.v1",
+          "next": "v2"
+        },
+        "v2": {
+          "schema_file": "lab-exchange-envelope.v2.schema.json",
+          "document_id": "bionexus.lab-exchange-envelope.v2",
+          "next": null
+        }
+      }
+    },
+    "compatibility-matrix": {
+      "current": "v1",
+      "id_prefix": "bionexus.compatibility-matrix.",
+      "versions": {
+        "v1": {
+          "schema_file": "compatibility-matrix.v1.schema.json",
+          "document_id": "bionexus.compatibility-matrix.v1",
+          "next": null
+        }
+      }
+    },
+    "failure-report": {
+      "current": "v1",
+      "id_prefix": "bionexus.failure-report.",
+      "versions": {
+        "v1": {
+          "schema_file": "failure-report.v1.schema.json",
+          "document_id": "bionexus.failure-report.v1",
+          "next": null
+        }
+      }
+    }
+  }
+}

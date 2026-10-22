@@ -1,0 +1,19 @@
+{
+  "schema_version": "bionexus.evidence-withdrawal.v1",
+  "status": "WITHDRAWN_UNSUPPORTED_AUTHORITY",
+  "evidence_class": "DEVELOPMENT_MATERIAL_ONLY",
+  "reason": "Same-dataset ADT quantile gating; self-hashed labels do not establish independent blinding, FACS adjudication or held-out calibration.",
+  "scientific_authorization": "NONE",
+  "independent_validation": false,
+  "standard_13_satisfied": false,
+  "standard_14_satisfied": false,
+  "original_artifact": {
+    "path": "validation/annotation/studies/BN-ANN-IV-004/PREREGISTRATION.json",
+    "archive_path": "review/trust-restoration-2026-09-19/originals/validation/annotation/studies/BN-ANN-IV-004/PREREGISTRATION.json",
+    "sha256": "d8da74e6547a0358b351f22cc03d54dfa5e27a1bd29335b8e9e9813a998766fa",
+    "bytes": 1526
+  },
+  "correction_kind": "EVIDENCE_AUTHORITY_WITHDRAWAL_NOT_A_NEW_EXECUTION",
+  "correction_record": "review/trust-restoration-2026-09-19/CORRECTIONS.json",
+  "preregistration_status": "NOT_ESTABLISHED_AS_PROSPECTIVELY_LOCKED"
+}

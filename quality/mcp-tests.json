@@ -1,0 +1,8 @@
+[
+  "tests/unit/test_mcp_transport_contract.py",
+  "tests/unit/test_mcp_server.py",
+  "tests/unit/test_mcp_server_extended.py",
+  "tests/unit/test_mcp_warrant_gate.py",
+  "tests/unit/test_mcp_host_audit.py",
+  "tests/unit/test_positive_output_contract.py"
+]

@@ -115,9 +115,15 @@ class WarrantAssessment:
     rule_basis: List[RuleBasisEntry] = field(default_factory=list)
     purpose: str = ""
 
+    @property
+    def evidence_contract(self) -> Dict[str, Any]:
+        from bionexus.evidence_contract import conditional_contract
+        return conditional_contract(self.claim_maturity in {"PRELIMINARY", "SUPPORTED", "ROBUST", "REPLICATED"})
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "claim_maturity": self.claim_maturity,
+            "evidence_contract": self.evidence_contract,
             "evidence_ceiling": self.evidence_ceiling,
             "unsupported_claims": self.unsupported_claims,
             "residual_uncertainty": self.residual_uncertainty,
@@ -160,6 +166,8 @@ class PolicyDecision:
         }[self.action]
         return {
             "action": self.action.value,
+            "evidence_contract": self.warrant.evidence_contract,
+            "action_scope": "Deployment intervention only; ALLOW never authenticates evidence or grants scientific authority.",
             "policy_name": self.policy_name,
             "friction_level": friction_level,
             "requires_user_action": self.action

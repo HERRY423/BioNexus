@@ -197,7 +197,7 @@ def handle_airgap(args: argparse.Namespace) -> int:
 
 def handle_compliance(args: argparse.Namespace) -> int:
     """Create or verify local hash records without asserting regulatory compliance."""
-    from bionexus.compliance_ledger import ComplianceAuditLedger, ElectronicSignature
+    from bionexus.compliance_ledger import ComplianceAuditLedger
 
     ledger = ComplianceAuditLedger()
     if args.compliance_action == "sign":
@@ -234,14 +234,14 @@ def handle_compliance(args: argparse.Namespace) -> int:
             }
             _emit_cli_payload(result, args.json)
             return 1
-        signature = ElectronicSignature(**json.loads(signature_path.read_text(encoding="utf-8")))
-        verified, reason = ledger.verify_signature(signature, target)
-        result = {
-            "status": "VERIFIED_HASH_BINDING" if verified else "ABSTAIN",
-            "verified": verified,
-            "reason": reason,
-            "regulatory_compliance": "NOT_ASSESSED",
-        }
+        try:
+            signature = json.loads(signature_path.read_text(encoding="utf-8"))
+            result = ledger.verify_signature_assessment(signature, target)
+        except (OSError, ValueError, TypeError) as exc:
+            result = {"status": "ABSTAIN", "verified": False, "reason": str(exc)}
+        verified = result.get("valid") is True
+        result["verified"] = verified
+        result["regulatory_compliance"] = "NOT_ASSESSED"
         _emit_cli_payload(result, args.json)
         return 0 if verified else 1
 
@@ -257,8 +257,78 @@ def handle_compliance(args: argparse.Namespace) -> int:
 
 def handle_nextflow(args: argparse.Namespace) -> int:
     from bionexus.nextflow_bridge import create_nextflow_tool_receipt, harvest_nextflow_run
+    from bionexus.nf_runtime import (
+        admit_nextflow_run,
+        render_admit,
+        render_warrant,
+        run_nextflow_gated,
+        warrant_nextflow_run,
+    )
 
     action = getattr(args, "nextflow_action", "inspect")
+    if action == "admit":
+        result = admit_nextflow_run(
+            samplesheet=getattr(args, "samplesheet", None),
+            intent=getattr(args, "intent", None),
+            data_path=getattr(args, "data", None),
+            metadata_path=getattr(args, "metadata", None),
+            claimed_maturity=getattr(args, "claim_maturity", None),
+            allow_degraded=bool(getattr(args, "allow_degraded", False)),
+        )
+        if getattr(args, "json", False):
+            print(json.dumps(result.to_dict(), indent=2, ensure_ascii=False, default=str))
+        else:
+            print(render_admit(result))
+        return int(result.exit_code)
+
+    if action == "warrant":
+        result = warrant_nextflow_run(
+            getattr(args, "run_dir"),
+            crate_path=getattr(args, "crate", None),
+            ledger_path=getattr(args, "ledger", None),
+            pipeline_name=getattr(args, "pipeline_name", None),
+            samplesheet_path=getattr(args, "samplesheet", None),
+        )
+        if getattr(args, "json", False):
+            print(json.dumps(result.to_dict(), indent=2, ensure_ascii=False, default=str))
+        else:
+            print(render_warrant(result))
+        return int(result.exit_code)
+
+    if action == "run":
+        outcome = run_nextflow_gated(
+            pipeline=args.pipeline,
+            samplesheet=args.samplesheet,
+            outdir=args.outdir,
+            intent=getattr(args, "intent", None),
+            profile=getattr(args, "profile", "docker"),
+            metadata_path=getattr(args, "metadata", None),
+            data_path=getattr(args, "data", None),
+            ledger_path=getattr(args, "ledger", None),
+            dry_run=bool(getattr(args, "dry_run", False)),
+            skip_scientific_preflight=bool(getattr(args, "skip_scientific_preflight", False)),
+            claimed_maturity=getattr(args, "claim_maturity", None),
+            allow_degraded=bool(getattr(args, "allow_degraded", False)),
+        )
+        if getattr(args, "json", False):
+            print(json.dumps(outcome, indent=2, ensure_ascii=False, default=str))
+        else:
+            admit = outcome.get("admit") or {}
+            print("=== BioNexus Nextflow run ===")
+            print(f"admit.allowed: {admit.get('allowed')}")
+            print(f"admit.scientific_admission: {admit.get('scientific_admission')}")
+            print(f"nextflow_started: {outcome.get('nextflow_started')}")
+            if outcome.get("command"):
+                print("command: " + " ".join(str(p) for p in outcome["command"]))
+            if outcome.get("error"):
+                print(f"error: {outcome['error']}")
+            warrant = outcome.get("warrant")
+            if warrant:
+                print(f"warrant_status: {warrant.get('warrant_status')}")
+                print(f"provenance_source: {warrant.get('provenance_source')}")
+            print(f"exit_code: {outcome.get('exit_code')}")
+        return int(outcome["exit_code"])
+
     if action == "ingest":
         run_dir = getattr(args, "run_dir", None)
         if not run_dir:
@@ -296,6 +366,9 @@ def handle_nextflow(args: argparse.Namespace) -> int:
                 print(f"Nextflow Execution Summary: {summary.pipeline_name}")
                 print("=" * 60)
                 print(f"Status: {summary.execution_status}")
+                print(f"Provenance source: {summary.provenance_source}")
+                print(f"Crate: {summary.crate_path or '(none)'}")
+                print(f"Official validation: {summary.official_validation_status}")
                 print(
                     f"Processes: {summary.succeeded_processes}/{summary.total_processes} succeeded "
                     f"({summary.failed_processes} failed, {summary.cached_processes} cached)"
@@ -434,11 +507,68 @@ def register_compliance_arguments(subparsers: argparse._SubParsersAction) -> arg
 
 
 def register_nextflow_arguments(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
-    # 27. nextflow (execution provenance and explicit launch preparation)
+    # 27. nextflow (crate-first provenance + admission control)
     p_nextflow = subparsers.add_parser(
-        "nextflow", help="Passive Nextflow execution-provenance harvester and launch preparation (BNS-021)"
+        "nextflow",
+        aliases=["nf"],
+        help="Nextflow admission control and crate-first provenance (BNS-021)",
     )
     nf_subs = p_nextflow.add_subparsers(dest="nextflow_action", help="Nextflow actions")
+
+    p_nf_admit = nf_subs.add_parser(
+        "admit", help="Decide BEFORE nextflow starts; refusal never launches the engine"
+    )
+    p_nf_admit.add_argument("--samplesheet", "-s", default=None, help="Path to samplesheet.csv")
+    p_nf_admit.add_argument("--intent", default=None, help="Scientific intent alias (e.g. differential-expression)")
+    p_nf_admit.add_argument("--data", default=None, help="Optional data file for scientific preflight")
+    p_nf_admit.add_argument("--metadata", default=None, help="Optional metadata JSON for scientific preflight")
+    p_nf_admit.add_argument("--claim-maturity", default=None, help="Maturity the host intends to claim")
+    p_nf_admit.add_argument("--allow-degraded", action="store_true", help="Consent to Grade C degradation")
+    p_nf_admit.add_argument("--json", action="store_true", help="Output JSON")
+
+    p_nf_warrant = nf_subs.add_parser(
+        "warrant",
+        help="Ingest nf-prov WRROC (trace fallback) and verify claims; exit 3 = pipeline OK, claims refused",
+    )
+    p_nf_warrant.add_argument("run_dir", help="Path to Nextflow execution / outdir")
+    p_nf_warrant.add_argument("--crate", default=None, help="Explicit ro-crate-metadata.json path")
+    p_nf_warrant.add_argument("--ledger", default=None, help="Claim-Evidence Ledger to verify")
+    p_nf_warrant.add_argument("--pipeline-name", "-p", default=None, help="Pipeline name override")
+    p_nf_warrant.add_argument("--samplesheet", "-s", default=None, help="Optional descriptive samplesheet path")
+    p_nf_warrant.add_argument("--json", action="store_true", help="Output JSON")
+
+    p_nf_run = nf_subs.add_parser(
+        "run", help="Admit, then nextflow run with nf-prov enabled, then warrant"
+    )
+    p_nf_run.add_argument(
+        "--pipeline",
+        required=True,
+        choices=[
+            "rnaseq",
+            "scrnaseq",
+            "differentialabundance",
+            "sarek",
+            "spatialtranscriptomics",
+            "ampliseq",
+        ],
+        help="nf-core pipeline name",
+    )
+    p_nf_run.add_argument("--samplesheet", "-s", required=True, help="Path to input samplesheet.csv")
+    p_nf_run.add_argument("--outdir", default="results", help="Pipeline output directory")
+    p_nf_run.add_argument("--intent", default=None, help="Scientific intent alias used by admit")
+    p_nf_run.add_argument("--profile", default="docker", help="Execution profile")
+    p_nf_run.add_argument("--metadata", default=None, help="Optional metadata JSON for admit")
+    p_nf_run.add_argument("--data", default=None, help="Optional data file for admit")
+    p_nf_run.add_argument("--ledger", default=None, help="Optional ledger for post-run warrant")
+    p_nf_run.add_argument("--dry-run", action="store_true", help="Admit and print command; do not start nextflow")
+    p_nf_run.add_argument(
+        "--skip-scientific-preflight",
+        action="store_true",
+        help="Launch without scientific preflight (samplesheet path check only)",
+    )
+    p_nf_run.add_argument("--claim-maturity", default=None, help="Maturity the host intends to claim")
+    p_nf_run.add_argument("--allow-degraded", action="store_true", help="Consent to Grade C degradation")
+    p_nf_run.add_argument("--json", action="store_true", help="Output JSON")
 
     p_nf_ingest = nf_subs.add_parser(
         "ingest", help="Harvest a run directory and emit a hash-bound provenance-only receipt"

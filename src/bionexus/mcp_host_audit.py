@@ -149,6 +149,7 @@ def append_host_probe(
     server_version: str,
     tool_catalog: Iterable[Dict[str, Any]],
     repo_root: Optional[Path] = None,
+    runtime_identity: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Append one server-side host acceptance receipt and return it."""
     host_name = host_name.strip().lower()
@@ -200,6 +201,10 @@ def append_host_probe(
             "tool_catalog_sha256": sha256_json(list(tool_catalog)),
             "previous_event_hash": previous_hash,
         }
+        if runtime_identity is not None:
+            event['runtime_identity'] = dict(runtime_identity)
+            event['host_identity_source'] = 'DECLARED'
+            event['approval_source'] = 'DECLARED'
         event["event_hash"] = _event_hash(event)
         with audit_path.open("a", encoding="utf-8", newline="\n") as handle:
             handle.write(canonical_json(event) + "\n")

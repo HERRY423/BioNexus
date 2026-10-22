@@ -52,5 +52,9 @@
   "disagreements": [],
   "false_refusals": [],
   "changes_made": [],
-  "status": "framework_created_pending_review"
+  "status": "framework_created_pending_review",
+  "correction_record": "review/trust-restoration-2026-09-19/CORRECTIONS.json",
+  "standard_14_satisfied": false,
+  "independent_reviews_completed": 0,
+  "scientific_authorization": "NONE"
 }

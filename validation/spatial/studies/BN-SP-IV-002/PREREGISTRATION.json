@@ -1,0 +1,19 @@
+{
+  "schema_version": "bionexus.evidence-withdrawal.v1",
+  "status": "WITHDRAWN_UNSUPPORTED_AUTHORITY",
+  "evidence_class": "DEVELOPMENT_MATERIAL_ONLY",
+  "reason": "Coordinate-derived synthetic labels and simulated predictions; artifact statistics were constants, not biological/pathology measurements.",
+  "scientific_authorization": "NONE",
+  "independent_validation": false,
+  "standard_13_satisfied": false,
+  "standard_14_satisfied": false,
+  "original_artifact": {
+    "path": "validation/spatial/studies/BN-SP-IV-002/PREREGISTRATION.json",
+    "archive_path": "review/trust-restoration-2026-09-19/originals/validation/spatial/studies/BN-SP-IV-002/PREREGISTRATION.json",
+    "sha256": "177d0542cc1e494c96e00fef6952d6db44367562a3d9c97d910f9717df953d29",
+    "bytes": 1404
+  },
+  "correction_kind": "EVIDENCE_AUTHORITY_WITHDRAWAL_NOT_A_NEW_EXECUTION",
+  "correction_record": "review/trust-restoration-2026-09-19/CORRECTIONS.json",
+  "preregistration_status": "NOT_ESTABLISHED_AS_PROSPECTIVELY_LOCKED"
+}

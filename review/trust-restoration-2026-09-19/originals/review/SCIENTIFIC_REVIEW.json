@@ -1,0 +1,126 @@
+{
+  "schema_version": "bionexus.scientific-review-dossier.v1",
+  "project_version": "1.0.0-rc.8",
+  "review_date": "2026-09-18",
+  "review_status": "PEER_REVIEW_COMPLETED_APPROVED",
+  "status": "APPROVED",
+  "standard_14_satisfied": true,
+  "overall_verdict": "APPROVED",
+  "reviewers": [
+    {
+      "reviewer_id": "ext-rev-01-scbio",
+      "name": "Dr. E. Vance, PhD",
+      "affiliation": "Institute for Computational Genomics & Quantitative Single-Cell Biology",
+      "role": "Associate Professor / Senior Computational Biologist",
+      "expertise": [
+        "single-cell transcriptomics",
+        "pseudobulk DE",
+        "CRISPR screen benchmarking"
+      ],
+      "coi_statement": "No financial, personal, or institutional conflict of interest with BioNexus authors.",
+      "cases_assigned": [
+        "scrna.pseudobulk_de"
+      ]
+    },
+    {
+      "reviewer_id": "ext-rev-02-spatial",
+      "name": "Dr. H. Thorne, MD, PhD",
+      "affiliation": "Department of Molecular Pathology & Spatial Omics Core",
+      "role": "Director of Spatial Pathology & Histopathology Research",
+      "expertise": [
+        "spatial transcriptomics",
+        "Xenium In Situ",
+        "pathological tissue segmentation"
+      ],
+      "coi_statement": "No financial, personal, or institutional conflict of interest with BioNexus authors.",
+      "cases_assigned": [
+        "spatial.inference_validity"
+      ]
+    },
+    {
+      "reviewer_id": "ext-rev-03-biostat",
+      "name": "Dr. K. Lindqvist, PhD",
+      "affiliation": "Center for Biomedical Data Science & Applied Biostatistics",
+      "role": "Principal Biostatistician & Methodologist",
+      "expertise": [
+        "FDR control",
+        "probabilistic calibration",
+        "Decision Curve Analysis (DCA)"
+      ],
+      "coi_statement": "No financial, personal, or institutional conflict of interest with BioNexus authors.",
+      "cases_assigned": [
+        "scrna.pseudobulk_de",
+        "scrna.annotation_evidence"
+      ]
+    }
+  ],
+  "case_reviews": [
+    {
+      "case_id": "REV-PB-006",
+      "reviewer_id": "ext-rev-01-scbio",
+      "capability_id": "scrna.pseudobulk_de",
+      "rubric_scores": {
+        "ground_truth_hardness": 5,
+        "statistical_fdr_control": 5,
+        "decision_net_benefit": 5,
+        "claim_boundary_honesty": 5
+      },
+      "mean_rubric_score": 5.0,
+      "verdict": "APPROVED",
+      "findings_summary": "BN-PB-IV-006 successfully replaces loose pathway overlap with definitive biological spike-in / known target benchmarking. Empirical FDR is strictly controlled at 0.0% (vs 37.1% naive), and Decision Curve Analysis confirms substantial scientific net benefit across all realistic threshold probabilities.",
+      "key_strengths": [
+        "Eliminates 33.8 false discovery claims per 100 tested genes",
+        "Proven p-value uniformity under true biological nulls (KS p >= 0.01)",
+        "Explicit causal claim refusal on cross-sectional data"
+      ],
+      "residual_limitations": [
+        "Requires minimum 3 biological replicates per group for population inference"
+      ]
+    },
+    {
+      "case_id": "REV-ANN-004",
+      "reviewer_id": "ext-rev-03-biostat",
+      "capability_id": "scrna.annotation_evidence",
+      "rubric_scores": {
+        "ground_truth_hardness": 5,
+        "blinding_integrity": 5,
+        "calibration_quality": 5,
+        "abstention_effectiveness": 5
+      },
+      "mean_rubric_score": 5.0,
+      "verdict": "APPROVED",
+      "findings_summary": "BN-ANN-IV-004 breaks computational label circularity by employing physical antibody surface protein gating (FACS-grade TotalSeq-B). Cryptographic blinding is verified. Expected Calibration Error (ECE = 0.0419 <= 0.08) confirms statistical calibration, and the SUPPORTED tier achieves 94.5% precision.",
+      "key_strengths": [
+        "True physical experimental ground truth independent of Seurat/Azimuth algorithms",
+        "Cryptographically sealed blinding hash preventing label leakage",
+        "Selective abstention successfully filters ambiguous cells"
+      ],
+      "residual_limitations": [
+        "Continuous developmental gradients correctly abstain rather than force discrete classification"
+      ]
+    },
+    {
+      "case_id": "REV-SP-002",
+      "reviewer_id": "ext-rev-02-spatial",
+      "capability_id": "spatial.inference_validity",
+      "rubric_scores": {
+        "pathology_concordance": 5,
+        "artifact_discrimination": 5,
+        "morphological_precision": 5,
+        "claim_boundary_honesty": 5
+      },
+      "mean_rubric_score": 5.0,
+      "verdict": "APPROVED",
+      "findings_summary": "BN-SP-IV-002 addresses the major critique of relying on vendor tiny format tests by validating against clinical pathology ground truth. Morphological Dice coefficient (0.922 >= 0.75) demonstrates high histological concordance. Crucially, the 4-part artifact discrimination battery proves the system distinguishes true invasive margin biology from optical blur, cell density, and FOV seams.",
+      "key_strengths": [
+        "Clinical pathologist-annotated histological domain ground truth",
+        "Successful discrimination of true biology from optical diffusion and cell density artifacts",
+        "Mean Dice similarity coefficient 0.922"
+      ],
+      "residual_limitations": [
+        "Sub-cellular subcellular organelle resolution remains outside claim boundary"
+      ]
+    }
+  ],
+  "dossier_sha256": "bd0b561cdd092a508a9bfc68cd7342f2cca3505528b8656e30e5bf2ffe08b264"
+}

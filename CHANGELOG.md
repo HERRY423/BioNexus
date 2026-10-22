@@ -5,6 +5,36 @@ All notable changes to **BioNexus** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [1.0.0-rc.9] - 2026-10-22
+
+### Evidence contracts and transport corrections
+- Reject DE false-positive admission, prevent failed Rosalind executions from being promoted to accepted evidence, and preserve ledger continuation across reopening.
+- Unify positive-output evidence contracts across CLI, Python and MCP entry points. Declared premises remain unverified; valid narrow conditional conclusions remain available.
+- Apply the same strict argument validation, failure states and text/structured projections to FastMCP SDK and legacy stdio. Preserve FAILED, UNKNOWN/NEEDS_DATA and refusal states instead of upgrading them to success.
+- Include startup package digests in MCP results and host receipts. These identify local package bytes, not remote attestation or scientific truth.
+- Preserve original scientific-review versions during release version synchronization; add a regression against historical evidence rebinding.
+- Add transport, evidence-contract, execution-integrity and ledger regression coverage. See [release notes](docs/releases/rc9-release-notes.md) for validation scope and reassessment guidance.
+
+### Release boundaries
+- Engineering prerelease / research use only. No GA support activation, independent biological validation, human scientific sign-off, or real laboratory pilot is established by this release.
+- Earlier frozen rc.8 working-candidate evidence retains its original identity. Publishing rc.9 does not retroactively rebind those results or complete pending desktop plugin reload acceptance.
+
+### Trust-chain correction
+- Withdraw generated expert approvals, simulated cross-host concordance, and unsupported independent-truth claims for BN-PB-IV-006, BN-ANN-IV-004 and BN-SP-IV-002. Preserve original bytes and historical negative results; retracted registry references retain their original digests and point to the preserved originals.
+- Reject signature downgrade, invalid ledger seals, failed or unbound Nextflow runs, mutated export files and invented migration hashes. Unspecified laboratory data classification is UNKNOWN and cannot authorize transmission.
+- Keep real execution separate from developer demonstrations. Generators default to read-only and write only new outputs; independently reviewed or calibrated science cannot be created by a local success flag.
+- Restore backend-probe compatibility and MCP network entry points; enforce original coverage floors over the split implementations and expand the explicit type-check boundary.
+
+### Added
+- Bounded DE selection-history review (`audit-de --selection-history`, optional independently retained `--selection-expected-head`): explicit plan revisions, result exposures, retained/discarded/missing branches and holdout overlap/reuse. Preserve original numerical claims while separately restricting confirmatory use; self-declared logs never certify preregistration, complete capture or selective-inference validity. Includes synthetic same-result/different-history examples and adversarial contract tests.
+- Nextflow P0 admission control: `bionexus nextflow admit|warrant|run` (`nf` alias). nf-prov Workflow Run RO-Crate is the authoritative execution record; `execution_trace.txt` is fallback only. Preflight refusal never starts Nextflow. Warrant exit code 3 means pipeline provenance was harvested but claims are not warranted.
+- `bionexus.wrroc` crate ingest and `bionexus.roc_validator` wrapper around the pinned `rocrate-validator` CLI. Handwritten RO-Crate JSON checks are labeled structural precheck only (`STRUCTURAL_PRECHECK_ONLY`).
+- Real-lab deployment surface (`bionexus deploy`): end-to-end import/export acceptance for Cell Ranger `outs/`, Scanpy tables, Seurat MTX exports, DESeq2/edgeR result tables, and nf-core results; machine-readable compatibility matrix; versioned lab-exchange schemas with v1→v2 migration and historical fixtures; opt-in local-first failure reports (default off, no vendor backend, air-gap/PHI never transmit). See `docs/deployment-surface.md`.
+
+---
+
 ## [1.0.0-rc.8] - 2026-09-13
 
 ### 🎯 Deliverable Release Candidate (Traceable Evidence, Strict Verification & False Rejection Closure)

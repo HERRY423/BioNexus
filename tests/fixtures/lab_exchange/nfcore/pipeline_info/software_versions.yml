@@ -1,0 +1,5 @@
+STAR: 2.7.11b
+Salmon: 1.10.3
+MultiQC: 1.21
+Nextflow: 24.04.4
+nf-core/rnaseq: 3.14.0

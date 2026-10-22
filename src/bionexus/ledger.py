@@ -19,12 +19,26 @@ its supporting evidence, clamped by the capability's ABI evidence ceiling.
 
 from __future__ import annotations
 
+import base64
+import hashlib
 import json
 from dataclasses import asdict, dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
+
+from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import ed25519
 
 from bionexus.abi import enforce_evidence_ceiling
+from bionexus.attestation_authority import (
+    canonical_json_bytes,
+    canonical_json_sha256,
+    generate_tsa_timestamp_token,
+    load_private_key_from_env,
+    verify_tsa_timestamp_token,
+)
 from bionexus.contracts import ConclusionMaturity
 
 MATURITY_RANKS = {
@@ -191,6 +205,7 @@ class ClaimLedger:
     def __init__(self) -> None:
         self.evidence: Dict[str, EvidenceRef] = {}
         self.claims: Dict[str, ClaimRecord] = {}
+        self.cryptographic_seal: Optional[Dict[str, Any]] = None
 
     # -- construction ------------------------------------------------------
 
@@ -308,21 +323,210 @@ class ClaimLedger:
         claim.evidence_status = min_maturity
         return claim.evidence_status
 
+    # -- cryptographic seal (BNS-012/BNS-024) --------------------------------
+
+    def compute_canonical_payload_sha256(self) -> str:
+        """Calculate canonical SHA-256 digest of the claims and evidence in this ledger."""
+        data = {
+            "evidence": {rid: asdict(ref) for rid, ref in sorted(self.evidence.items())},
+            "claims": {cid: c.to_dict() for cid, c in sorted(self.claims.items())},
+        }
+        return canonical_json_sha256(data)
+
+    def seal(
+        self,
+        signer_name: str,
+        signer_email: str,
+        signing_reason: str = "SEAL_CLAIM_EVIDENCE_LEDGER",
+        private_key: Optional[ed25519.Ed25519PrivateKey | str] = None,
+        include_tsa_token: bool = True,
+        tsa_private_key: Optional[ed25519.Ed25519PrivateKey] = None,
+    ) -> Dict[str, Any]:
+        """
+        Seal content with Ed25519 and an optional local timestamp-shaped fixture.
+        The embedded key and declared signer are not external identity evidence.
+        """
+        payload_sha256 = self.compute_canonical_payload_sha256()
+
+        priv: ed25519.Ed25519PrivateKey
+        is_ephemeral = False
+        if isinstance(private_key, ed25519.Ed25519PrivateKey):
+            priv = private_key
+        elif isinstance(private_key, str) and private_key.strip():
+            loaded = load_private_key_from_env(private_key)
+            if loaded is None:
+                try:
+                    loaded = serialization.load_pem_private_key(private_key.encode("ascii"), password=None)
+                except Exception:
+                    pass
+            if isinstance(loaded, ed25519.Ed25519PrivateKey):
+                priv = loaded
+            else:
+                priv = ed25519.Ed25519PrivateKey.generate()
+                is_ephemeral = True
+        else:
+            env_key = load_private_key_from_env("BIONEXUS_SIGNING_KEY")
+            if env_key is not None:
+                priv = env_key
+            else:
+                priv = ed25519.Ed25519PrivateKey.generate()
+                is_ephemeral = True
+
+        pub = priv.public_key()
+        pub_pem = pub.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo,
+        ).decode("ascii")
+        key_id = f"sha256:{hashlib.sha256(pub_pem.encode('ascii')).hexdigest()}"
+
+        timestamp_iso = datetime.now(timezone.utc).isoformat()
+        seal_id = f"seal_{abs(hash(payload_sha256)) % 1000000:06d}"
+
+        seal_payload = canonical_json_bytes({
+            "schema_version": "bionexus.claim-ledger-seal.v1",
+            "seal_id": seal_id,
+            "ledger_payload_sha256": payload_sha256,
+            "signer_name": signer_name,
+            "signer_email": signer_email,
+            "signing_reason": signing_reason,
+            "timestamp_utc": timestamp_iso,
+            "public_key_pem": pub_pem,
+            "key_id": key_id,
+        })
+        raw_sig = priv.sign(seal_payload)
+        sig_b64 = base64.b64encode(raw_sig).decode("ascii")
+
+        tsa_token = None
+        if include_tsa_token:
+            try:
+                tsa_token = generate_tsa_timestamp_token(
+                    study_id=seal_id,
+                    raw_signature=raw_sig,
+                    tsa_private_key=tsa_private_key,
+                    timestamp_iso=timestamp_iso,
+                )
+            except Exception:
+                tsa_token = None
+
+        seal_dict = {
+            "schema_version": "bionexus.claim-ledger-seal.v1",
+            "seal_id": seal_id,
+            "ledger_payload_sha256": payload_sha256,
+            "signer_name": signer_name,
+            "signer_email": signer_email,
+            "signing_reason": signing_reason,
+            "timestamp_utc": timestamp_iso,
+            "public_key_pem": pub_pem,
+            "key_id": key_id,
+            "signature_algorithm": "ed25519",
+            "signature_bytes_b64": sig_b64,
+            "tsa_timestamp_token": tsa_token,
+            "is_ephemeral_key": is_ephemeral,
+        }
+        self.cryptographic_seal = seal_dict
+        return seal_dict
+
+    def verify_seal(
+        self,
+        expected_public_key_pem: Optional[str] = None,
+        tsa_public_key_pem: Optional[str] = None,
+        *,
+        require_tsa_token: bool = False,
+    ) -> Tuple[bool, Optional[str]]:
+        """Verify the cryptographic seal against current ledger contents."""
+        if self.cryptographic_seal is None:
+            return False, "Ledger has not been sealed with a cryptographic signature"
+
+        seal = self.cryptographic_seal
+        if not isinstance(seal, dict):
+            return False, "Invalid ledger seal record"
+        if seal.get("schema_version") != "bionexus.claim-ledger-seal.v1":
+            return False, "Unsupported or missing ledger seal schema_version"
+        if seal.get("signature_algorithm") != "ed25519":
+            return False, "Unsupported or missing seal signature_algorithm"
+        for name in ("seal_id", "ledger_payload_sha256", "signer_name", "signer_email",
+                     "signing_reason", "timestamp_utc", "public_key_pem", "key_id", "signature_bytes_b64"):
+            if not isinstance(seal.get(name), str) or not seal[name].strip():
+                return False, f"Seal missing required field: {name}"
+        try:
+            if datetime.fromisoformat(seal["timestamp_utc"].replace("Z", "+00:00")).tzinfo is None:
+                return False, "Seal timestamp must include a timezone"
+        except ValueError:
+            return False, "Invalid seal timestamp"
+        current_hash = self.compute_canonical_payload_sha256()
+        if seal.get("ledger_payload_sha256") != current_hash:
+            return False, f"Ledger content modified after sealing: expected {seal.get('ledger_payload_sha256')}, actual {current_hash}"
+
+        pub_pem = seal.get("public_key_pem", "")
+        if not pub_pem:
+            return False, "Seal missing public_key_pem"
+
+        if expected_public_key_pem is not None and pub_pem.strip() != expected_public_key_pem.strip():
+            return False, "Seal signer public key mismatch"
+        if seal["key_id"] != "sha256:" + hashlib.sha256(pub_pem.encode("utf-8")).hexdigest():
+            return False, "Seal key_id does not match public key"
+
+        try:
+            pubkey = serialization.load_pem_public_key(pub_pem.encode("ascii"))
+            if not isinstance(pubkey, ed25519.Ed25519PublicKey):
+                return False, f"Unsupported seal key type: {type(pubkey).__name__}"
+
+            raw_sig = base64.b64decode(seal.get("signature_bytes_b64", ""), validate=True)
+            seal_payload = canonical_json_bytes({
+                "schema_version": seal.get("schema_version"),
+                "seal_id": seal.get("seal_id"),
+                "ledger_payload_sha256": seal.get("ledger_payload_sha256"),
+                "signer_name": seal.get("signer_name"),
+                "signer_email": seal.get("signer_email"),
+                "signing_reason": seal.get("signing_reason"),
+                "timestamp_utc": seal.get("timestamp_utc"),
+                "public_key_pem": pub_pem,
+                "key_id": seal.get("key_id"),
+            })
+            pubkey.verify(raw_sig, seal_payload)
+        except InvalidSignature:
+            return False, "Invalid seal digital signature: payload was tampered"
+        except Exception as ex:
+            return False, f"Seal verification error: {str(ex)}"
+
+        if tsa_public_key_pem is not None or require_tsa_token:
+            if not isinstance(seal.get("tsa_timestamp_token"), dict) or not seal["tsa_timestamp_token"]:
+                return False, "Required TSA timestamp token is missing"
+            if not tsa_public_key_pem:
+                return False, "Required TSA verification needs an explicit public key"
+            valid_tsa, tsa_errs = verify_tsa_timestamp_token(
+                token=seal["tsa_timestamp_token"],
+                raw_signature=raw_sig,
+                tsa_public_key_pem=tsa_public_key_pem,
+            )
+            if not valid_tsa:
+                return False, f"TSA timestamp verification failed: {'; '.join(tsa_errs)}"
+
+        return True, None
+
     # -- serialization -------------------------------------------------------
 
     def to_dict(self) -> Dict[str, Any]:
-        return {
+        data: Dict[str, Any] = {
             "evidence": {rid: asdict(ref) for rid, ref in self.evidence.items()},
             "claims": {cid: c.to_dict() for cid, c in self.claims.items()},
         }
+        if self.cryptographic_seal is not None:
+            data["cryptographic_seal"] = self.cryptographic_seal
+        return data
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "ClaimLedger":
         ledger = cls()
         for rid, ref in data.get("evidence", {}).items():
+            if ref.get("ref_id") != rid:
+                raise ValueError("Evidence dictionary key does not match ref_id")
             ledger.evidence[rid] = EvidenceRef(**ref)
         for cid, c in data.get("claims", {}).items():
+            if c.get("claim_id") != cid:
+                raise ValueError("Claim dictionary key does not match claim_id")
             ledger.claims[cid] = ClaimRecord(**c)
+        ledger.cryptographic_seal = data.get("cryptographic_seal")
         return ledger
 
     def save(self, path: str | Path) -> Path:
@@ -332,7 +536,17 @@ class ClaimLedger:
 
     @classmethod
     def load(cls, path: str | Path) -> "ClaimLedger":
-        return cls.from_dict(json.loads(Path(path).read_text(encoding="utf-8")))
+        def unique_object(pairs: List[Tuple[str, Any]]) -> Dict[str, Any]:
+            obj: Dict[str, Any] = {}
+            for key, value in pairs:
+                if key in obj:
+                    raise ValueError(f"Duplicate ledger JSON key: {key}")
+                obj[key] = value
+            return obj
+
+        return cls.from_dict(json.loads(
+            Path(path).read_text(encoding="utf-8"), object_pairs_hook=unique_object,
+        ))
 
     def to_jsonld(self) -> Dict[str, Any]:
         """

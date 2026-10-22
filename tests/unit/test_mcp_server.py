@@ -154,8 +154,8 @@ def test_mcp_unknown_method():
 
     resp = asyncio.run(_run())
     assert resp is not None
-    assert "error" in resp
-    assert resp["error"]["code"] == -32601
+    assert 'error' in resp
+    assert resp['error']['code'] == -32601
 
 
 def test_mcp_unknown_tool():
@@ -172,8 +172,8 @@ def test_mcp_unknown_tool():
 
     resp = asyncio.run(_run())
     assert resp is not None
-    assert "error" in resp
-    assert resp["error"]["code"] == -32601
+    assert resp['result']['isError'] is True
+    assert 'UNKNOWN_TOOL' in resp['result']['content'][0]['text']
 
 
 def test_mcp_notification_no_response():
@@ -290,7 +290,7 @@ def test_mcp_host_probe_fails_closed_without_audit_log(monkeypatch):
 
     resp = asyncio.run(_run())
     assert resp["result"]["isError"] is True
-    assert "BIONEXUS_MCP_AUDIT_LOG" in resp["result"]["content"][0]["text"]
+    assert 'TOOL_EXECUTION_FAILED' in resp['result']['content'][0]['text']
 
 
 def test_mcp_warrant_check_propagates_governing_refusal_into_tiers():
@@ -354,11 +354,8 @@ def test_mcp_warrant_check_does_not_treat_string_false_as_evidence():
 
     resp = asyncio.run(_run())
     payload = json.loads(resp["result"]["content"][0]["text"])
-    clinical = payload["claim_warrant_evaluation"]["tier_verdicts"]["clinical_claim"]
-
-    assert clinical["status"] == "NOT_WARRANTED"
-    assert set(clinical["missing_evidence"]) == {
-        "clia_cap_fda_certification",
-        "clinical_ground_truth",
-        "independent_validation",
-    }
+    assert resp['result']['isError'] is True
+    assert payload['status'] == 'FAILED'
+    assert payload['error']['code'] == 'INVALID_ARGUMENTS'
+    assert payload['evidence_contract']['positive_basis'] == 'NONE'
+    assert 'claim_warrant_evaluation' not in payload

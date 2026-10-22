@@ -1,0 +1,11 @@
+{
+  "schema_version": "bionexus.lab-exchange-envelope.v1",
+  "tool": "deseq2",
+  "tool_version": "1.40.2",
+  "files": [
+    {
+      "path": "results.csv",
+      "hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ]
+}

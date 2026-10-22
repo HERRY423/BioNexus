@@ -156,7 +156,7 @@ jobs:
           WHL=$(ls dist/bionexus_reliability-*.whl | head -n1)
           python -m venv wheelcheck
           wheelcheck/bin/pip install --upgrade pip
-          wheelcheck/bin/pip install "${WHL}[goldchain,deseq,spatial]"
+          wheelcheck/bin/pip install "${WHL}[goldchain,deseq,spatial,mcp]"
 
           rm -rf .wheelws
           mkdir .wheelws
@@ -166,6 +166,10 @@ jobs:
           cd .wheelws
 
           ../wheelcheck/bin/python scripts/check_de_bundle_contract.py --installed
+
+          PACKAGE_ROOT=$(../wheelcheck/bin/python -c "import pathlib,bionexus; print(pathlib.Path(bionexus.__file__).parent.parent)")
+          ../wheelcheck/bin/python scripts/mcp_acceptance.py --mode sdk --package-root "$PACKAGE_ROOT" --out ../.quality/wheel-mcp-sdk
+          ../wheelcheck/bin/python scripts/mcp_acceptance.py --mode legacy --package-root "$PACKAGE_ROOT" --out ../.quality/wheel-mcp-legacy
 
           echo "--- Gate 6: bionexus doctor (wheel) ---"
           ../wheelcheck/bin/bionexus doctor
@@ -209,6 +213,13 @@ jobs:
           cd dist
           sha256sum * > SHA256SUMS.txt
           cat SHA256SUMS.txt
+
+      - name: Preserve installed-wheel transport evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-wheel-mcp-transport
+          path: .quality/wheel-mcp-*/
 
       - name: Generate GitHub Artifact Attestation (Sigstore Provenance)
         uses: actions/attest-build-provenance@v2

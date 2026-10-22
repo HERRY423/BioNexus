@@ -26,6 +26,7 @@ evidence class cannot warrant.
 from __future__ import annotations
 
 import re
+from copy import deepcopy
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -97,10 +98,14 @@ class VerificationReport:
 
     ledger_path: str
     claims: List[ClaimVerification] = field(default_factory=list)
+    seal_status: str = "UNSEALED"
+    integrity_errors: List[str] = field(default_factory=list)
+    signer_key_binding: str = "NOT_ESTABLISHED"
+    timestamp_status: str = "NOT_VERIFIED"
 
     @property
     def passed(self) -> bool:
-        return bool(self.claims) and all(c.ok for c in self.claims)
+        return not self.integrity_errors and bool(self.claims) and all(c.ok for c in self.claims)
 
     @property
     def exit_code(self) -> int:
@@ -113,6 +118,13 @@ class VerificationReport:
             "ledger_path": self.ledger_path,
             "passed": self.passed,
             "claims": [c.to_dict() for c in self.claims],
+            "seal_status": self.seal_status,
+            "integrity_errors": list(self.integrity_errors),
+            "signer_key_binding": self.signer_key_binding,
+            "timestamp_status": self.timestamp_status,
+            "external_identity_trust": "NOT_ESTABLISHED",
+            "verification_scope": "LEDGER_CONSISTENCY_ONLY",
+            "scientific_authorization": "NONE",
         }
 
 
@@ -125,7 +137,12 @@ def _evidence_symbol(maturity: str) -> str:
     return "[X]"
 
 
-def verify_ledger(ledger: ClaimLedger, ledger_path: str = "<ledger>") -> VerificationReport:
+def verify_ledger(
+    ledger: ClaimLedger, ledger_path: str = "<ledger>", *,
+    expected_public_key_pem: Optional[str] = None,
+    tsa_public_key_pem: Optional[str] = None,
+    require_seal: bool = False,
+) -> VerificationReport:
     """
     Verify every claim in a Claim–Evidence ledger (fail-closed re-resolution).
 
@@ -134,6 +151,23 @@ def verify_ledger(ledger: ClaimLedger, ledger_path: str = "<ledger>") -> Verific
     when its statement matches the capability's forbidden-claim catalog.
     """
     report = VerificationReport(ledger_path=ledger_path)
+    # Verify the stored bytes' logical payload before resolution can modify it.
+    if ledger.cryptographic_seal is not None:
+        valid, reason = ledger.verify_seal(expected_public_key_pem, tsa_public_key_pem)
+        if not valid:
+            report.seal_status = "INVALID"
+            report.integrity_errors.append(reason or "Invalid ledger seal")
+            return report
+        report.seal_status = "VALID_EXPECTED_KEY" if expected_public_key_pem else "VALID_UNTRUSTED_KEY"
+        if expected_public_key_pem:
+            report.signer_key_binding = "EXPECTED_KEY_MATCHED"
+        if tsa_public_key_pem:
+            report.timestamp_status = "EXPLICIT_KEY_VERIFIED"
+    elif require_seal or expected_public_key_pem is not None or tsa_public_key_pem is not None:
+        report.integrity_errors.append("A required ledger seal is missing")
+        return report
+    # Re-resolution is read-only with respect to the caller's sealed ledger.
+    ledger = ClaimLedger.from_dict(deepcopy(ledger.to_dict()))
 
     for claim_id, claim in ledger.claims.items():
         status = ledger.resolve_status(claim_id)
@@ -195,18 +229,20 @@ def verify_ledger(ledger: ClaimLedger, ledger_path: str = "<ledger>") -> Verific
                 abi = get_capability_abi(claim.capability_id)
                 ceiling = abi.evidence_ceiling.without_external_validation
                 has_ext = any(
-                    (ledger.evidence[r].kind in ("database", "cross_method"))
+                    ledger.evidence[r].qualifies_as_external_validation
                     for r in claim.supported_by
                     if r in ledger.evidence
                 )
                 rank = MATURITY_RANKS.get(status, 0)
                 if rank > MATURITY_RANKS.get(ceiling, 3) and not has_ext:
                     flags.append(f"status '{status}' exceeds ceiling '{ceiling}' without external validation")
+                    ok = False
                 for fcid in abi.forbidden_claims:
                     entry = FORBIDDEN_CLAIM_CATALOG[fcid]
                     not_warranted.append(f'"{entry.description}" (forbidden: {fcid})')
             except KeyError:
                 flags.append(f"unknown capability_id '{claim.capability_id}'")
+                ok = False
 
         causal_hit = detect_assertive_causal_language(claim.statement)
         if causal_hit:
@@ -231,20 +267,31 @@ def verify_ledger(ledger: ClaimLedger, ledger_path: str = "<ledger>") -> Verific
     return report
 
 
-def verify_results(path: str | Path) -> VerificationReport:
+def verify_results(
+    path: str | Path, *, expected_public_key_pem: Optional[str] = None,
+    tsa_public_key_pem: Optional[str] = None, require_seal: bool = False,
+) -> VerificationReport:
     """Locate and verify the ledger behind a results file or directory."""
     ledger_path = locate_ledger(path)
     ledger = ClaimLedger.load(ledger_path)
-    return verify_ledger(ledger, ledger_path=str(ledger_path))
+    return verify_ledger(
+        ledger, ledger_path=str(ledger_path), expected_public_key_pem=expected_public_key_pem,
+        tsa_public_key_pem=tsa_public_key_pem, require_seal=require_seal,
+    )
 
 
 def render_verification(report: VerificationReport) -> str:
     """Render the verification block in the BNS-013 output contract."""
     lines: List[str] = []
     lines.append(f"=== BioNexus Result Verification: {report.ledger_path} ===")
+    lines.append(f"Seal: {report.seal_status}; external identity trust: NOT_ESTABLISHED")
+    lines.append("Scope: ledger consistency only; scientific authorization: NONE")
+    for error in report.integrity_errors:
+        lines.append(f"[!!] {error}")
     lines.append("")
     if not report.claims:
         lines.append("No claims recorded in the ledger.")
+        lines.append("OVERALL: VERIFICATION FAILED")
         lines.append("")
         return "\n".join(lines)
     for c in report.claims:

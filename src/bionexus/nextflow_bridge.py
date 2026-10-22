@@ -1,11 +1,7 @@
-"""Passive Nextflow execution-provenance harvester (BNS-021).
+"""Nextflow execution-provenance harvest (BNS-021).
 
-Provides:
-1. Parsing of Nextflow execution directories (execution_trace.txt, software_versions.yml,
-   samplesheet.csv, output artifact digests).
-2. Production of cryptographic tool execution receipts (bionexus.tool-execution-receipt.v1).
-3. Optional descriptive parsing of a samplesheet only when the caller supplies
-   its path explicitly.
+Primary path: ingest an nf-prov Workflow Run RO-Crate (see ``bionexus.wrroc``).
+Fallback: read-only parse of ``execution_trace.txt`` when no crate is present.
 
 This module does not implement the generic BNS-019 workflow boundary. It never
 turns workflow success, samplesheet shape, filenames, or software names into
@@ -33,7 +29,7 @@ class NextflowExecutionSummary:
     pipeline_name: str
     pipeline_version: Optional[str] = None
     nextflow_version: Optional[str] = None
-    execution_status: str = "SUCCESS"  # "SUCCESS" | "FAILED" | "INCOMPLETE"
+    execution_status: str = "UNKNOWN"  # "SUCCESS" | "FAILED" | "INCOMPLETE" | "UNKNOWN"
     run_dir: str = ""
     samplesheet_path: Optional[str] = None
     sample_count: int = 0
@@ -50,6 +46,15 @@ class NextflowExecutionSummary:
     software_versions: Dict[str, str] = field(default_factory=dict)
     primary_outputs: Dict[str, str] = field(default_factory=dict)  # filename -> sha256
     derived_evidence_factors: List[str] = field(default_factory=list)
+    provenance_source: str = "MISSING"  # WRROC | TRACE_FALLBACK | MISSING
+    crate_path: Optional[str] = None
+    official_validation_status: str = "NOT_RUN"
+    workflow_run_id: Optional[str] = None
+    workflow_id: Optional[str] = None
+    crate_sha256: str = ""
+    primary_inputs: Dict[str, str] = field(default_factory=dict)
+    artifact_integrity_status: str = "NOT_ASSESSED"
+    artifact_integrity: List[Dict[str, str]] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -240,11 +245,38 @@ def harvest_nextflow_run(
     pipeline_name: Optional[str] = None,
     samplesheet_path: Optional[Union[str, Path]] = None,
 ) -> NextflowExecutionSummary:
-    """Inspect and harvest a Nextflow pipeline execution directory into a NextflowExecutionSummary."""
+    """Inspect a Nextflow run directory.
+
+    Prefers an nf-prov Workflow Run RO-Crate. ``execution_trace.txt`` is a
+    fallback used only when no crate is present.
+    """
     rdir = Path(run_dir)
     if not rdir.exists():
         raise FileNotFoundError(f"Nextflow run directory does not exist: {rdir}")
 
+    from bionexus.wrroc import ingest_wrroc_crate, locate_wrroc_crate
+
+    crate = locate_wrroc_crate(rdir)
+    if crate is not None:
+        return ingest_wrroc_crate(
+            crate,
+            pipeline_name=pipeline_name,
+            samplesheet_path=samplesheet_path,
+            run_dir=rdir,
+            official_validation="auto",
+        )
+    return _harvest_from_trace(
+        rdir, pipeline_name=pipeline_name, samplesheet_path=samplesheet_path
+    )
+
+
+def _harvest_from_trace(
+    rdir: Path,
+    *,
+    pipeline_name: Optional[str] = None,
+    samplesheet_path: Optional[Union[str, Path]] = None,
+) -> NextflowExecutionSummary:
+    """Fallback harvest from Nextflow ``execution_trace.txt`` (not authoritative)."""
     # 1. Locate trace file
     trace_candidates = [
         rdir / "pipeline_info" / "execution_trace.txt",
@@ -282,25 +314,11 @@ def harvest_nextflow_run(
 
     versions = parse_versions_file(versions_file) if versions_file else {}
 
-    # 3. A generic run has no authoritative samplesheet shape. Parse one only
-    # when a caller explicitly supplies a domain-specific path.
+    # 3. Record an explicit samplesheet path only. Never parse it into
+    # experimental-design statistics (those are not execution provenance).
     sheet_file = Path(samplesheet_path) if samplesheet_path else None
     if sheet_file is not None and not sheet_file.is_file():
         raise FileNotFoundError(f"Explicit samplesheet does not exist: {sheet_file}")
-
-    samples, design_facts = (
-        parse_samplesheet(sheet_file)
-        if sheet_file
-        else (
-            [],
-            {
-                "sample_count": 0,
-                "min_replicates_per_condition": 0,
-                "biological_replicates_count": 0,
-                "conditions_count": 0,
-            },
-        )
-    )
 
     # 4. Infer pipeline name & version
     p_name = pipeline_name or "nf-core/pipeline"
@@ -325,7 +343,6 @@ def harvest_nextflow_run(
 
     # 6. Execution provenance never creates scientific evidence factors.
     derived_factors: List[str] = []
-    min_reps = design_facts.get("min_replicates_per_condition", 0)
 
     return NextflowExecutionSummary(
         pipeline_name=p_name,
@@ -334,11 +351,11 @@ def harvest_nextflow_run(
         execution_status=trace_stats["execution_status"],
         run_dir=str(rdir),
         samplesheet_path=str(sheet_file) if sheet_file else None,
-        sample_count=design_facts.get("sample_count", len(samples)),
-        samples=samples,
-        biological_replicates_count=design_facts.get("biological_replicates_count", len(samples)),
-        min_replicates_per_condition=min_reps,
-        conditions_count=design_facts.get("conditions_count", 0),
+        sample_count=0,
+        samples=[],
+        biological_replicates_count=0,
+        min_replicates_per_condition=0,
+        conditions_count=0,
         total_processes=trace_stats["total_processes"],
         succeeded_processes=trace_stats["succeeded_processes"],
         failed_processes=trace_stats["failed_processes"],
@@ -348,6 +365,9 @@ def harvest_nextflow_run(
         software_versions=versions,
         primary_outputs=primary_outputs,
         derived_evidence_factors=sorted(set(derived_factors)),
+        provenance_source="TRACE_FALLBACK" if trace_stats.get("total_processes", 0) else "MISSING",
+        crate_path=None,
+        official_validation_status="NOT_RUN",
     )
 
 
@@ -358,6 +378,7 @@ def create_nextflow_tool_receipt(
     samplesheet_path: Optional[Union[str, Path]] = None,
     plugin_version: Optional[str] = None,
     extra_metadata: Optional[Dict[str, Any]] = None,
+    summary: Optional[NextflowExecutionSummary] = None,
 ) -> Dict[str, Any]:
     """Generate a tamper-evident provenance receipt for one Nextflow run.
 
@@ -365,7 +386,10 @@ def create_nextflow_tool_receipt(
     identity nor scientific design, replication, confound control, sensitivity,
     external validation, or warrant.
     """
-    summary = harvest_nextflow_run(run_dir, pipeline_name=pipeline_name, samplesheet_path=samplesheet_path)
+    if summary is None:
+        summary = harvest_nextflow_run(
+            run_dir, pipeline_name=pipeline_name, samplesheet_path=samplesheet_path
+        )
     p_ver = plugin_version or VERSION
 
     request_payload = {
@@ -382,6 +406,8 @@ def create_nextflow_tool_receipt(
         "failed_processes": summary.failed_processes,
         "total_cpu_hours": summary.total_cpu_hours,
         "software_versions": summary.software_versions,
+        "artifact_integrity_status": summary.artifact_integrity_status,
+        "artifact_integrity": summary.artifact_integrity,
     }
 
     meta = {
@@ -391,6 +417,15 @@ def create_nextflow_tool_receipt(
         "provenance_only": True,
         "scientific_evidence_effect": "NONE",
         "semantic_inference": "DISABLED",
+        "provenance_source": summary.provenance_source,
+        "crate_path": summary.crate_path,
+        "official_validation_status": summary.official_validation_status,
+        "workflow_run_id": summary.workflow_run_id,
+        "workflow_id": summary.workflow_id,
+        "crate_sha256": summary.crate_sha256,
+        "primary_inputs": summary.primary_inputs,
+        "artifact_integrity_status": summary.artifact_integrity_status,
+        "producer_identity": "NOT_VERIFIED",
     }
     if extra_metadata:
         forbidden = {
@@ -411,6 +446,7 @@ def create_nextflow_tool_receipt(
             "external_validation",
             "independent_validation",
         }
+        forbidden.update(meta)
         overlap = forbidden.intersection(extra_metadata)
         if overlap:
             raise ValueError(
@@ -430,8 +466,13 @@ def create_nextflow_tool_receipt(
         receipt_level=ToolReceiptLevel.LEVEL_2_PROVIDER_ATTESTED.value,
         attestation={
             "attested_by": "bionexus-nextflow",
-            "attestation_type": "execution_trace_harvest",
+            "attestation_type": (
+                "wrroc_ingest"
+                if summary.provenance_source == "WRROC"
+                else "execution_trace_harvest"
+            ),
             "nextflow_version": summary.nextflow_version,
+            "provenance_source": summary.provenance_source,
         },
     )
 
@@ -539,4 +580,3 @@ def generate_nextflow_elastic_config(
     ])
 
     return "\n".join(lines) + "\n"
-

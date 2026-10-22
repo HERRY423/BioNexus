@@ -1,7 +1,7 @@
 {
   "schema_version": "bionexus.evidence-index.v1",
   "project_version": "1.0.0-rc.8",
-  "total_conclusions": 8,
+  "total_conclusions": 13,
   "conclusions": {
     "BNC-SP-001-TECH-ACCEPTANCE": {
       "conclusion_id": "BNC-SP-001-TECH-ACCEPTANCE",
@@ -24,7 +24,7 @@
       },
       "source_files": {
         "evals/spatial_instrument_validation.py": "d0bf507af0a065c2e91cea701be10ddc7a69ff851aa9ac3406132e91c53fbd7a",
-        "src/bionexus/capabilities.py": "e30453b75cef23748f9da024f5c276a7e277b54a90f65d2a5dd03d84ff08c73a",
+        "src/bionexus/capabilities.py": "2ca5c0635a6d8db075bdc0d03d13130748c43c5a34a4686988bd0a3fc9418fa2",
         "src/bionexus/abi.py": "361acaa8ee1903fe0e2f41e35fed80ae6bf3a1bbceaa91fb8373a79ee5d799c6"
       },
       "rules": [
@@ -46,7 +46,8 @@
         "vendor_disclaimer": "The vendor documents the tiny dataset as format-testing material not intended for biological conclusions.",
         "files": {
           "Xenium_V1_Protein_Human_Kidney_tiny_outs.zip": "abd7e8f7fd047dcc6afdb1e9eece90d4533d3ead053c6f05c482be050bdf79d2"
-        }
+        },
+        "scientific_authorization": "NONE"
       },
       "host": {
         "platform": "Windows-11-10.0.26200-SP0",
@@ -56,7 +57,8 @@
       "report_version": {
         "report_path": "validation/spatial/studies/BN-SP-IV-001/REPORT.json",
         "schema_version": "bionexus.spatial-real-instrument-validation-report.v1",
-        "project_version": "1.0.0-rc.4"
+        "project_version": "1.0.0-rc.4",
+        "report_sha256": "2ffd0f9282dd22450327530bf77504da766baf62d5d982e538d4d9442494603a"
       },
       "upstream_nodes": [
         "DATA-XENIUM-TINY",
@@ -70,13 +72,12 @@
     "BNC-SPATIAL-CAPABILITY-VALIDATED": {
       "conclusion_id": "BNC-SPATIAL-CAPABILITY-VALIDATED",
       "capability_id": "spatial.inference_validity",
-      "statement": "spatial.inference_validity satisfies 10/14 certification criteria and achieves VALIDATED tier. Biological ground truth, public reference dataset, cross-host claim audit, and external review remain unsatisfied.",
+      "statement": "spatial.inference_validity: 10/14 internal criteria; VALIDATED. Independent biological truth, external host and review requirements remain unestablished; scientific authorization NONE.",
       "verdict": "VALIDATED",
       "claim_boundary": {
         "supported": [
-          "6/6 core software criteria satisfied",
-          "Technical acceptance on authentic XOA bytes passed",
-          "Neighborhood radius perturbation sensitivity passed (15um-100um sweep)"
+          "Internal criteria assessment: 10/14",
+          "Report-specific scientific outcomes retain their own limitations and failures"
         ],
         "not_supported": [
           "CERTIFIED tier (requires 14/14)",
@@ -86,8 +87,8 @@
         ]
       },
       "source_files": {
-        "src/bionexus/certification.py": "ca935d861b11165aa9309ab89e093fad4bc5272ed2423be97f7c290518799102",
-        "src/bionexus/capabilities.py": "e30453b75cef23748f9da024f5c276a7e277b54a90f65d2a5dd03d84ff08c73a",
+        "src/bionexus/certification.py": "5004a962222b10286df93a8e44c9ccda00cca5e2f8def534297e5db59ac33d0a",
+        "src/bionexus/capabilities.py": "2ca5c0635a6d8db075bdc0d03d13130748c43c5a34a4686988bd0a3fc9418fa2",
         "evals/spatial_stress_test.py": "b8a6e1a31584eec6c22ea7c77329b0c872441400fead53bbd31aeceb9a532d73"
       },
       "rules": [
@@ -107,7 +108,8 @@
         ],
         "stress_reports": [
           "validation/spatial/INFERENTIAL_STRESS_REPORT.json"
-        ]
+        ],
+        "scientific_authorization": "NONE"
       },
       "host": {
         "platform": "Windows-11-10.0.26200-SP0",
@@ -117,7 +119,8 @@
       "report_version": {
         "report_path": "validation/spatial/CERTIFICATION.json",
         "schema_version": "1.0",
-        "project_version": "1.0.0-rc.8"
+        "project_version": "1.0.0-rc.8",
+        "report_sha256": "c761ead85028b0ec804742b57515d0fabdb21ce08c2096d075c5c8c8a4ea4f79"
       },
       "upstream_nodes": [
         "BNC-SP-001-TECH-ACCEPTANCE",
@@ -129,13 +132,13 @@
     "BNC-PSEUDOBULK-GSE96583": {
       "conclusion_id": "BNC-PSEUDOBULK-GSE96583",
       "capability_id": "scrna.pseudobulk_de",
-      "statement": "Kang et al. 2018 (GEO GSE96583) donor-aware pseudobulk differential expression with PyDESeq2 recovers known IFN-stimulated genes with 0.66 published-support overlap >= 0.50 threshold.",
+      "statement": "Kang et al. 2018 (GEO GSE96583) donor-aware pseudobulk differential expression with PyDESeq2 reports 0.5 published-support overlap against a 0.50 threshold; report status PASS.",
       "verdict": "PASS",
       "claim_boundary": {
         "supported": [
           "Donor-aware pseudobulk DE on 13487 singlets / 8 donors / 2 conditions",
-          "Published-support overlap fraction 0.66 >= 0.50",
-          "Top-100 DE calls validated against independent MSigDB Hallmark IFN + QuickGO truth sets"
+          "Descriptive published-support overlap fraction: 0.5",
+          "Descriptive concordance with selected published IFN marker proxies; not independent biological ground truth"
         ],
         "not_supported": [
           "CERTIFIED tier",
@@ -144,7 +147,7 @@
         ]
       },
       "source_files": {
-        "evals/flagship_validation.py": "9b928ce139e5fb78d33b56156969e906a249e56af1be347a05bd6d2cc855d5de",
+        "evals/flagship_validation.py": "6c68bf0ea0f4bb9fcb77642c9ac9cdbd3f64651c17ec98105b2b17a87083997a",
         "src/bionexus/pseudobulk_warrant.py": "9a979b69658164c8b0610a69d7f3671894109e71a944f6895a966f1a1293179d",
         "src/bionexus/abi.py": "361acaa8ee1903fe0e2f41e35fed80ae6bf3a1bbceaa91fb8373a79ee5d799c6"
       },
@@ -164,7 +167,8 @@
         "files": {
           "pbmc_ifnb_counts.h5ad": "46122ba4e196561a781123614d856fed7d1ca05743d39a1d117597fd6d0bb993",
           "published_de_truth.csv": "ded3bb9b1e4606da34f5142ab129c5f97b619e0d23e30eade49b2b7be14b3d30"
-        }
+        },
+        "scientific_authorization": "NONE"
       },
       "host": {
         "platform": "Windows-11-10.0.26200-SP0",
@@ -174,7 +178,8 @@
       "report_version": {
         "report_path": "validation/pseudobulk/REPORT.json",
         "schema_version": "bionexus.flagship-validation-report.v1",
-        "project_version": "1.0.0-rc.8"
+        "project_version": "1.0.0-rc.8",
+        "report_sha256": "071c3602cb065a9afcc7a28c659f1ba0f6b43813b1e701cf0677b059bca7b091"
       },
       "upstream_nodes": [
         "DATA-GSE96583",
@@ -212,7 +217,8 @@
         "pydeseq2": ">=0.4.0"
       },
       "data": {
-        "dataset_track": "independent_replication_attempt"
+        "dataset_track": "independent_replication_attempt",
+        "scientific_authorization": "NONE"
       },
       "host": {
         "platform": "Windows-11-10.0.26200-SP0",
@@ -221,7 +227,8 @@
       "report_version": {
         "report_path": "validation/pseudobulk/independent/REPORT.json",
         "schema_version": "bionexus.pseudobulk-independent-report.v1",
-        "project_version": "1.0.0-rc.8"
+        "project_version": "1.0.0-rc.8",
+        "report_sha256": "2907afbf989a68ee1d2c404c4812c24745b32afab1275908a922abbde706e275"
       },
       "upstream_nodes": [
         "SRC-PYDESEQ2-WRAPPER"
@@ -233,13 +240,12 @@
     "BNC-PSEUDOBULK-CAPABILITY-VALIDATED": {
       "conclusion_id": "BNC-PSEUDOBULK-CAPABILITY-VALIDATED",
       "capability_id": "scrna.pseudobulk_de",
-      "statement": "scrna.pseudobulk_de satisfies 12/14 certification criteria and achieves VALIDATED tier. Cross-host testing and external review remain unsatisfied.",
+      "statement": "scrna.pseudobulk_de: 11/14 internal criteria; VALIDATED. Independent biological truth, external host and review requirements remain unestablished; scientific authorization NONE.",
       "verdict": "VALIDATED",
       "claim_boundary": {
         "supported": [
-          "All 6 core software criteria satisfied",
-          "Real-data public reference validation passed (GSE96583 overlap 0.66)",
-          "Stability (Jaccard >= 0.80) and missing-backend degradation tests passed"
+          "Internal criteria assessment: 11/14",
+          "Report-specific scientific outcomes retain their own limitations and failures"
         ],
         "not_supported": [
           "CERTIFIED tier (requires 14/14)",
@@ -248,8 +254,8 @@
         ]
       },
       "source_files": {
-        "src/bionexus/certification.py": "ca935d861b11165aa9309ab89e093fad4bc5272ed2423be97f7c290518799102",
-        "evals/pseudobulk_stress_test.py": "dd03106c9d806a78dd93f2731efc46a8e9627bc1e26064b26cc4c4871d34ce53"
+        "src/bionexus/certification.py": "5004a962222b10286df93a8e44c9ccda00cca5e2f8def534297e5db59ac33d0a",
+        "evals/pseudobulk_stress_test.py": "8d762676fee238d13cc26bedd3fc3ad73ec3a220ece2fe117bd40a73bddd1204"
       },
       "rules": [
         "BNS-010",
@@ -264,7 +270,8 @@
       },
       "data": {
         "validation_report": "validation/pseudobulk/REPORT.json",
-        "stress_report": "validation/pseudobulk/INFERENTIAL_STRESS_REPORT.json"
+        "stress_report": "validation/pseudobulk/INFERENTIAL_STRESS_REPORT.json",
+        "scientific_authorization": "NONE"
       },
       "host": {
         "platform": "Windows-11-10.0.26200-SP0",
@@ -274,7 +281,8 @@
       "report_version": {
         "report_path": "validation/pseudobulk/CERTIFICATION.json",
         "schema_version": "1.0",
-        "project_version": "1.0.0-rc.8"
+        "project_version": "1.0.0-rc.8",
+        "report_sha256": "4d0c4859ceef01c6c15928aa082effd81c121ed7d308b3a15d92ed1835ec0896"
       },
       "upstream_nodes": [
         "BNC-PSEUDOBULK-GSE96583",
@@ -322,7 +330,8 @@
         "dataset_track": "real_public_processed_citeseq",
         "files": {
           "pbmc_10k_protein_v3.h5ad": "473347c617b8f972bdfa6797f1f0a1496b998cfb62a43bfa99351faef8a25cbb"
-        }
+        },
+        "scientific_authorization": "NONE"
       },
       "host": {
         "platform": "Windows-11-10.0.26200-SP0",
@@ -332,7 +341,8 @@
       "report_version": {
         "report_path": "validation/annotation/studies/BN-ANN-IV-003/REPORT.json",
         "schema_version": "bionexus.annotation-external-reference-validation-report.v1",
-        "project_version": "1.0.0-rc.2"
+        "project_version": "1.0.0-rc.2",
+        "report_sha256": "3fd63582933d772b70441226cce694eb48bb7e189977741278e6de6baeeded8a"
       },
       "upstream_nodes": [
         "DATA-CITESEQ-10K",
@@ -345,13 +355,12 @@
     "BNC-ANNOTATION-CAPABILITY-VALIDATED": {
       "conclusion_id": "BNC-ANNOTATION-CAPABILITY-VALIDATED",
       "capability_id": "scrna.annotation_evidence",
-      "statement": "scrna.annotation_evidence satisfies 11/14 certification criteria and achieves VALIDATED tier. Independent biological ground truth, cross-host testing, and external review remain unsatisfied.",
+      "statement": "scrna.annotation_evidence: 11/14 internal criteria; VALIDATED. Independent biological truth, external host and review requirements remain unestablished; scientific authorization NONE.",
       "verdict": "VALIDATED",
       "claim_boundary": {
         "supported": [
-          "All 6 core software criteria satisfied",
-          "Public reference evaluation met locked endpoints",
-          "Parameter perturbation (ARI >= 0.80) & claim interception passed"
+          "Internal criteria assessment: 11/14",
+          "Report-specific scientific outcomes retain their own limitations and failures"
         ],
         "not_supported": [
           "CERTIFIED tier (requires 14/14)",
@@ -361,7 +370,7 @@
         ]
       },
       "source_files": {
-        "src/bionexus/certification.py": "ca935d861b11165aa9309ab89e093fad4bc5272ed2423be97f7c290518799102",
+        "src/bionexus/certification.py": "5004a962222b10286df93a8e44c9ccda00cca5e2f8def534297e5db59ac33d0a",
         "evals/annotation_stress_test.py": "6c67131d368670929192d56a37722baf8b1cb434777bea81e7fb745098982b78"
       },
       "rules": [
@@ -376,7 +385,8 @@
       },
       "data": {
         "validation_report": "validation/annotation/REPORT.json",
-        "stress_report": "validation/annotation/INFERENTIAL_STRESS_REPORT.json"
+        "stress_report": "validation/annotation/INFERENTIAL_STRESS_REPORT.json",
+        "scientific_authorization": "NONE"
       },
       "host": {
         "platform": "Windows-11-10.0.26200-SP0",
@@ -386,7 +396,8 @@
       "report_version": {
         "report_path": "validation/annotation/CERTIFICATION.json",
         "schema_version": "1.0",
-        "project_version": "1.0.0-rc.8"
+        "project_version": "1.0.0-rc.8",
+        "report_sha256": "a162b86e9b3b5d98e0980e64417e9961cd9ec4775614979cf4143e06c2ec4e47"
       },
       "upstream_nodes": [
         "BNC-ANNOTATION-AZIMUTH-003",
@@ -432,7 +443,8 @@
           "BF-004",
           "BF-005",
           "BF-006"
-        ]
+        ],
+        "scientific_authorization": "NONE"
       },
       "host": {
         "hosts": [
@@ -445,7 +457,8 @@
       "report_version": {
         "report_path": "cross-host/COMPARISON.json",
         "schema_version": "1.0",
-        "project_version": "1.0.0-rc.4"
+        "project_version": "1.0.0-rc.4",
+        "report_sha256": "bf7b604afca2a3d8abad7a0422de6fd1b8c8ad665647334204c3113a6277ec94"
       },
       "upstream_nodes": [
         "RULE-BNS-HC-007"
@@ -455,6 +468,221 @@
         "BNC-PSEUDOBULK-CAPABILITY-VALIDATED",
         "BNC-ANNOTATION-CAPABILITY-VALIDATED"
       ]
+    },
+    "BNC-PSEUDOBULK-HARD-TRUTH-DCA": {
+      "conclusion_id": "BNC-PSEUDOBULK-HARD-TRUTH-DCA",
+      "capability_id": "scrna.pseudobulk_de",
+      "statement": "Selected IFN marker proxy on historical GSE96583 output; comparator and null p-values were simulated.",
+      "verdict": "DESCRIPTIVE_PROXY_WITH_SYNTHETIC_CONTROLS",
+      "claim_boundary": {
+        "supported": [
+          "Local development material subject to the stated evidence ceiling"
+        ],
+        "not_supported": [
+          "Independent biological ground truth",
+          "Empirical FDR control",
+          "Causal net benefit over a real comparator",
+          "Scientific authorization",
+          "Independent certification"
+        ]
+      },
+      "source_files": {
+        "src/bionexus/evidence_index.py": "17f9b68d0fa368fe4796c404f7e94e0ecd9c64dc99d91b9dafaa6feaff2c7e9b"
+      },
+      "rules": [
+        "BNS-010",
+        "BNS-015"
+      ],
+      "dependencies": {},
+      "data": {
+        "evidence_class": "DESCRIPTIVE_PROXY_WITH_SYNTHETIC_CONTROLS",
+        "scientific_authorization": "NONE",
+        "correction_record": "review/trust-restoration-2026-09-19/CORRECTIONS.json"
+      },
+      "host": {
+        "real_host_certified": false,
+        "execution_mode": "development_material"
+      },
+      "report_version": {
+        "report_path": "validation/pseudobulk/studies/BN-PB-IV-006/REPORT.json",
+        "report_sha256": "a5b15473ae8bc439f5827cba990f69d7a374de8b4f48d00eeca004f3d7b3e49a",
+        "schema_version": "bionexus.evidence-withdrawal.v1",
+        "project_version": "1.0.0-rc.8"
+      },
+      "upstream_nodes": [],
+      "downstream_nodes": []
+    },
+    "BNC-ANNOTATION-FACS-BLINDED": {
+      "conclusion_id": "BNC-ANNOTATION-FACS-BLINDED",
+      "capability_id": "scrna.annotation_evidence",
+      "statement": "Same-dataset antibody gating proxy; a matching label hash does not establish independent blinding.",
+      "verdict": "ADT_PROXY_NOT_INDEPENDENT",
+      "claim_boundary": {
+        "supported": [
+          "Local development material subject to the stated evidence ceiling"
+        ],
+        "not_supported": [
+          "FACS adjudicated truth",
+          "Verified independent blinding",
+          "Held-out probability calibration",
+          "Scientific authorization",
+          "Independent certification"
+        ]
+      },
+      "source_files": {
+        "src/bionexus/evidence_index.py": "17f9b68d0fa368fe4796c404f7e94e0ecd9c64dc99d91b9dafaa6feaff2c7e9b"
+      },
+      "rules": [
+        "BNS-010",
+        "BNS-015"
+      ],
+      "dependencies": {},
+      "data": {
+        "evidence_class": "ADT_PROXY_NOT_INDEPENDENT",
+        "scientific_authorization": "NONE",
+        "correction_record": "review/trust-restoration-2026-09-19/CORRECTIONS.json"
+      },
+      "host": {
+        "real_host_certified": false,
+        "execution_mode": "development_material"
+      },
+      "report_version": {
+        "report_path": "validation/annotation/studies/BN-ANN-IV-004/REPORT.json",
+        "report_sha256": "012b93656ea5ccd3aa6e9f466278bcd318b3edb0c56cede3a60feb7ecaa7097f",
+        "schema_version": "bionexus.evidence-withdrawal.v1",
+        "project_version": "1.0.0-rc.8"
+      },
+      "upstream_nodes": [],
+      "downstream_nodes": []
+    },
+    "BNC-SPATIAL-PATHOLOGY-VALIDITY": {
+      "conclusion_id": "BNC-SPATIAL-PATHOLOGY-VALIDITY",
+      "capability_id": "spatial.inference_validity",
+      "statement": "Coordinate-derived labels and simulated predictions on a tiny instrument example; prior artifact statistics were constants.",
+      "verdict": "SYNTHETIC_DEMONSTRATION_ONLY",
+      "claim_boundary": {
+        "supported": [
+          "Local development material subject to the stated evidence ceiling"
+        ],
+        "not_supported": [
+          "Pathologist adjudicated truth",
+          "Biological artifact discrimination",
+          "Clinical validity",
+          "Scientific authorization",
+          "Independent certification"
+        ]
+      },
+      "source_files": {
+        "src/bionexus/evidence_index.py": "17f9b68d0fa368fe4796c404f7e94e0ecd9c64dc99d91b9dafaa6feaff2c7e9b"
+      },
+      "rules": [
+        "BNS-010",
+        "BNS-015"
+      ],
+      "dependencies": {},
+      "data": {
+        "evidence_class": "SYNTHETIC_DEMONSTRATION_ONLY",
+        "scientific_authorization": "NONE",
+        "correction_record": "review/trust-restoration-2026-09-19/CORRECTIONS.json"
+      },
+      "host": {
+        "real_host_certified": false,
+        "execution_mode": "development_material"
+      },
+      "report_version": {
+        "report_path": "validation/spatial/studies/BN-SP-IV-002/REPORT.json",
+        "report_sha256": "edabf8fbecc298c8acae2501d5a944b443a5aa958bff2ebc2f16b4e75b1c2520",
+        "schema_version": "bionexus.evidence-withdrawal.v1",
+        "project_version": "1.0.0-rc.8"
+      },
+      "upstream_nodes": [],
+      "downstream_nodes": []
+    },
+    "BNC-CROSS-HOST-MULTI-LAB": {
+      "conclusion_id": "BNC-CROSS-HOST-MULTI-LAB",
+      "capability_id": "cross-host.multi_lab",
+      "statement": "No independently executed second-host receipt is established by the generated dossier.",
+      "verdict": "NOT_INDEPENDENTLY_VERIFIED",
+      "claim_boundary": {
+        "supported": [
+          "Local development material subject to the stated evidence ceiling"
+        ],
+        "not_supported": [
+          "External laboratory adoption",
+          "Independent cross-host concordance",
+          "Standard 13 satisfied",
+          "Scientific authorization",
+          "Independent certification"
+        ]
+      },
+      "source_files": {
+        "src/bionexus/evidence_index.py": "17f9b68d0fa368fe4796c404f7e94e0ecd9c64dc99d91b9dafaa6feaff2c7e9b"
+      },
+      "rules": [
+        "BNS-010",
+        "BNS-015"
+      ],
+      "dependencies": {},
+      "data": {
+        "evidence_class": "NOT_INDEPENDENTLY_VERIFIED",
+        "scientific_authorization": "NONE",
+        "correction_record": "review/trust-restoration-2026-09-19/CORRECTIONS.json"
+      },
+      "host": {
+        "real_host_certified": false,
+        "execution_mode": "development_material"
+      },
+      "report_version": {
+        "report_path": "cross-host/MULTI_LAB_DOSSIER.json",
+        "report_sha256": "a97f656c8cc33d70428590bd5e4a3ae7c43c73b34230d8734f9ec9c7ed27a553",
+        "schema_version": "bionexus.evidence-withdrawal.v1",
+        "project_version": "1.0.0-rc.8"
+      },
+      "upstream_nodes": [],
+      "downstream_nodes": []
+    },
+    "BNC-INDEPENDENT-PEER-REVIEW": {
+      "conclusion_id": "BNC-INDEPENDENT-PEER-REVIEW",
+      "capability_id": "governance.independent_review",
+      "statement": "Reviewer slots are pending; programmatically generated identities and scores have been withdrawn.",
+      "verdict": "PENDING_INDEPENDENT_REVIEW",
+      "claim_boundary": {
+        "supported": [
+          "Local development material subject to the stated evidence ceiling"
+        ],
+        "not_supported": [
+          "Completed non-author review",
+          "Verified reviewer identity",
+          "Standard 14 satisfied",
+          "Scientific authorization",
+          "Independent certification"
+        ]
+      },
+      "source_files": {
+        "src/bionexus/evidence_index.py": "17f9b68d0fa368fe4796c404f7e94e0ecd9c64dc99d91b9dafaa6feaff2c7e9b"
+      },
+      "rules": [
+        "BNS-010",
+        "BNS-015"
+      ],
+      "dependencies": {},
+      "data": {
+        "evidence_class": "PENDING_INDEPENDENT_REVIEW",
+        "scientific_authorization": "NONE",
+        "correction_record": "review/trust-restoration-2026-09-19/CORRECTIONS.json"
+      },
+      "host": {
+        "real_host_certified": false,
+        "execution_mode": "development_material"
+      },
+      "report_version": {
+        "report_path": "review/SCIENTIFIC_REVIEW.json",
+        "report_sha256": "196a18ab063960bd4209f58a992058a2f3d93d094f2b48d350ed69946ac0284d",
+        "schema_version": "1.0",
+        "project_version": "1.0.0-rc.8"
+      },
+      "upstream_nodes": [],
+      "downstream_nodes": []
     }
   }
 }

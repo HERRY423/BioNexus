@@ -44,7 +44,7 @@ def handle_interop(args: argparse.Namespace) -> int:
                         if kind == "ledger"
                         else run_bundle_to_ro_crate(manifest, siblings)
                     )
-                    errors = validate_ro_crate(doc)
+                    errors = validate_ro_crate(doc)  # structural precheck only
                 else:
                     if kind != "run":
                         print(
@@ -91,7 +91,8 @@ def handle_interop(args: argparse.Namespace) -> int:
             report = result.to_dict()
             print(f"[OK] Workflow Run RO-Crate written to: {result.crate_dir}")
             print(f"     files copied: {report['files_copied']}; steps projected: {report['steps_projected']}; ledger embedded: {report['ledger_included']}")
-            print(f"     post-write verification: {'PASS' if report['verified'] else 'FAIL'}")
+            print(f"     structural precheck: {'PASS' if report['verified'] else 'FAIL'}")
+            print(f"     official_validation_status: {report.get('official_validation_status')}")
             if result.zip_path:
                 print(f"     zip archive: {result.zip_path}")
             return 0 if report["verified"] else 1
@@ -130,10 +131,13 @@ def handle_interop(args: argparse.Namespace) -> int:
                 )
                 wfrun_errors = validate_workflow_run_crate(wfrun_doc)
             print(f"=== Interop check: {args.path} (source kind: {kind}) ===")
-            print(f"RO-Crate 1.1 structural validation: {'PASS' if not crate_errors else 'FAIL'}")
+            print(
+                f"RO-Crate 1.1 structural precheck: {'PASS' if not crate_errors else 'FAIL'} "
+                "(not official profile compliance)"
+            )
             for e in crate_errors:
                 print(f"  - {e}")
-            print(f"IEEE 2791-2020 BCO structural validation: {'PASS' if not bco_errors else 'FAIL'}")
+            print(f"IEEE 2791-2020 BCO structural precheck: {'PASS' if not bco_errors else 'FAIL'}")
             for e in bco_errors:
                 print(f"  - {e}")
             print(

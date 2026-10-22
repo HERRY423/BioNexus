@@ -1,0 +1,1392 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Bounded declared DE selection history",
+  "$defs": {
+    "plan": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "bionexus.de-selection-plan.v1"
+        },
+        "analysis": {
+          "type": "object",
+          "properties": {
+            "cell_type": {
+              "type": "string",
+              "minLength": 1
+            },
+            "numerator": {
+              "type": "string",
+              "minLength": 1
+            },
+            "denominator": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "cell_type",
+            "numerator",
+            "denominator"
+          ],
+          "additionalProperties": false
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "claim_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "gene": {
+                "type": "string",
+                "minLength": 1
+              },
+              "direction": {
+                "enum": [
+                  "up",
+                  "down"
+                ]
+              },
+              "scope": {
+                "enum": [
+                  "table_observation",
+                  "cohort_association",
+                  "population_effect",
+                  "causal_effect"
+                ]
+              },
+              "alpha": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1
+              }
+            },
+            "required": [
+              "claim_id",
+              "gene",
+              "direction",
+              "scope",
+              "alpha"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "metadata_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "model": {
+          "type": "object",
+          "properties": {
+            "formula": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "statistical_unit": {
+              "enum": [
+                "independent_donor",
+                "paired_donor_fixed_effect"
+              ]
+            },
+            "effect_measure": {
+              "const": "log2_fold_change"
+            }
+          },
+          "required": [
+            "formula",
+            "statistical_unit",
+            "effect_measure"
+          ],
+          "additionalProperties": false
+        },
+        "selection_rule": {
+          "const": "report_all_planned_claims"
+        }
+      },
+      "required": [
+        "schema_version",
+        "analysis",
+        "claims",
+        "metadata_sha256",
+        "model",
+        "selection_rule"
+      ],
+      "additionalProperties": false
+    },
+    "manifest": {
+      "type": "object",
+      "properties": {
+        "scope_id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "actor_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "session_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "branch_inventory": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "capture_mode": {
+          "enum": [
+            "prospective",
+            "retrospective",
+            "unknown"
+          ]
+        },
+        "coverage": {
+          "enum": [
+            "complete_declared",
+            "partial",
+            "unknown"
+          ]
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 0,
+          "uniqueItems": false
+        },
+        "datasets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "dataset_id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "role": {
+                "enum": [
+                  "discovery",
+                  "holdout"
+                ]
+              },
+              "identity_namespace": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "manifest": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "path",
+                  "sha256"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "dataset_id",
+              "role",
+              "identity_namespace",
+              "manifest"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0,
+          "uniqueItems": false
+        },
+        "synthetic": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "scope_id",
+        "actor_ids",
+        "session_ids",
+        "branch_inventory",
+        "capture_mode",
+        "coverage",
+        "gaps",
+        "datasets",
+        "synthetic"
+      ],
+      "additionalProperties": false
+    },
+    "event": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "actor_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "session_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "kind": {
+              "const": "branch_planned"
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "branch_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "role": {
+                  "enum": [
+                    "candidate",
+                    "sensitivity"
+                  ]
+                },
+                "plan": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "\\S"
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "sha256"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "branch_id",
+                "role",
+                "plan"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "actor_id",
+            "session_id",
+            "kind",
+            "payload"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "actor_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "session_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "kind": {
+              "const": "plan_revised"
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "branch_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "plan": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "\\S"
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "sha256"
+                  ],
+                  "additionalProperties": false
+                },
+                "parent_sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": [
+                "branch_id",
+                "plan",
+                "parent_sha256",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "actor_id",
+            "session_id",
+            "kind",
+            "payload"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "actor_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "session_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "kind": {
+              "const": "result_available"
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "branch_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "contract": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "\\S"
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "sha256"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "branch_id",
+                "contract"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "actor_id",
+            "session_id",
+            "kind",
+            "payload"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "actor_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "session_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "kind": {
+              "const": "result_viewed"
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "branch_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": [
+                "branch_id"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "actor_id",
+            "session_id",
+            "kind",
+            "payload"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "actor_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "session_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "kind": {
+              "const": "branch_discarded"
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "branch_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "decision_basis": {
+                  "enum": [
+                    "result_informed",
+                    "operational",
+                    "predeclared"
+                  ]
+                }
+              },
+              "required": [
+                "branch_id",
+                "reason",
+                "decision_basis"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "actor_id",
+            "session_id",
+            "kind",
+            "payload"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "actor_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "session_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "kind": {
+              "const": "result_selected"
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "branch_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "decision_basis": {
+                  "enum": [
+                    "result_informed",
+                    "predeclared",
+                    "operational"
+                  ]
+                }
+              },
+              "required": [
+                "branch_id",
+                "reason",
+                "decision_basis"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "actor_id",
+            "session_id",
+            "kind",
+            "payload"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "actor_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "session_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "kind": {
+              "const": "data_accessed"
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "dataset_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "access": {
+                  "enum": [
+                    "metadata",
+                    "outcomes"
+                  ]
+                }
+              },
+              "required": [
+                "dataset_id",
+                "access"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "actor_id",
+            "session_id",
+            "kind",
+            "payload"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "actor_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "session_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "kind": {
+              "const": "holdout_evaluated"
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "dataset_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "branch_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": [
+                "dataset_id",
+                "branch_id"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "actor_id",
+            "session_id",
+            "kind",
+            "payload"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "actor_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "session_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "kind": {
+              "const": "alternative_plan_frozen"
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "plan": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "\\S"
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "sha256"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "plan"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "actor_id",
+            "session_id",
+            "kind",
+            "payload"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "history": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "bionexus.de-selection-history.v1"
+        },
+        "manifest": {
+          "$ref": "#/$defs/manifest"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "actor_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "session_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "kind": {
+                    "const": "branch_planned"
+                  },
+                  "payload": {
+                    "type": "object",
+                    "properties": {
+                      "branch_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "\\S"
+                      },
+                      "role": {
+                        "enum": [
+                          "candidate",
+                          "sensitivity"
+                        ]
+                      },
+                      "plan": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "minLength": 1,
+                            "pattern": "\\S"
+                          },
+                          "sha256": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{64}$"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "sha256"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "branch_id",
+                      "role",
+                      "plan"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "seq": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "previous_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "event_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "actor_id",
+                  "session_id",
+                  "kind",
+                  "payload",
+                  "seq",
+                  "previous_sha256",
+                  "event_sha256"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "actor_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "session_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "kind": {
+                    "const": "plan_revised"
+                  },
+                  "payload": {
+                    "type": "object",
+                    "properties": {
+                      "branch_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "\\S"
+                      },
+                      "plan": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "minLength": 1,
+                            "pattern": "\\S"
+                          },
+                          "sha256": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{64}$"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "sha256"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "parent_sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "\\S"
+                      }
+                    },
+                    "required": [
+                      "branch_id",
+                      "plan",
+                      "parent_sha256",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "seq": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "previous_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "event_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "actor_id",
+                  "session_id",
+                  "kind",
+                  "payload",
+                  "seq",
+                  "previous_sha256",
+                  "event_sha256"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "actor_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "session_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "kind": {
+                    "const": "result_available"
+                  },
+                  "payload": {
+                    "type": "object",
+                    "properties": {
+                      "branch_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "\\S"
+                      },
+                      "contract": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "minLength": 1,
+                            "pattern": "\\S"
+                          },
+                          "sha256": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{64}$"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "sha256"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "branch_id",
+                      "contract"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "seq": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "previous_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "event_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "actor_id",
+                  "session_id",
+                  "kind",
+                  "payload",
+                  "seq",
+                  "previous_sha256",
+                  "event_sha256"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "actor_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "session_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "kind": {
+                    "const": "result_viewed"
+                  },
+                  "payload": {
+                    "type": "object",
+                    "properties": {
+                      "branch_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "\\S"
+                      }
+                    },
+                    "required": [
+                      "branch_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "seq": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "previous_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "event_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "actor_id",
+                  "session_id",
+                  "kind",
+                  "payload",
+                  "seq",
+                  "previous_sha256",
+                  "event_sha256"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "actor_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "session_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "kind": {
+                    "const": "branch_discarded"
+                  },
+                  "payload": {
+                    "type": "object",
+                    "properties": {
+                      "branch_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "\\S"
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "\\S"
+                      },
+                      "decision_basis": {
+                        "enum": [
+                          "result_informed",
+                          "operational",
+                          "predeclared"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "branch_id",
+                      "reason",
+                      "decision_basis"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "seq": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "previous_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "event_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "actor_id",
+                  "session_id",
+                  "kind",
+                  "payload",
+                  "seq",
+                  "previous_sha256",
+                  "event_sha256"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "actor_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "session_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "kind": {
+                    "const": "result_selected"
+                  },
+                  "payload": {
+                    "type": "object",
+                    "properties": {
+                      "branch_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "\\S"
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "\\S"
+                      },
+                      "decision_basis": {
+                        "enum": [
+                          "result_informed",
+                          "predeclared",
+                          "operational"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "branch_id",
+                      "reason",
+                      "decision_basis"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "seq": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "previous_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "event_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "actor_id",
+                  "session_id",
+                  "kind",
+                  "payload",
+                  "seq",
+                  "previous_sha256",
+                  "event_sha256"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "actor_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "session_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "kind": {
+                    "const": "data_accessed"
+                  },
+                  "payload": {
+                    "type": "object",
+                    "properties": {
+                      "dataset_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "\\S"
+                      },
+                      "access": {
+                        "enum": [
+                          "metadata",
+                          "outcomes"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "dataset_id",
+                      "access"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "seq": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "previous_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "event_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "actor_id",
+                  "session_id",
+                  "kind",
+                  "payload",
+                  "seq",
+                  "previous_sha256",
+                  "event_sha256"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "actor_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "session_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "kind": {
+                    "const": "holdout_evaluated"
+                  },
+                  "payload": {
+                    "type": "object",
+                    "properties": {
+                      "dataset_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "\\S"
+                      },
+                      "branch_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "\\S"
+                      }
+                    },
+                    "required": [
+                      "dataset_id",
+                      "branch_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "seq": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "previous_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "event_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "actor_id",
+                  "session_id",
+                  "kind",
+                  "payload",
+                  "seq",
+                  "previous_sha256",
+                  "event_sha256"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "actor_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "session_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "kind": {
+                    "const": "alternative_plan_frozen"
+                  },
+                  "payload": {
+                    "type": "object",
+                    "properties": {
+                      "plan": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "minLength": 1,
+                            "pattern": "\\S"
+                          },
+                          "sha256": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{64}$"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "sha256"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "plan"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "seq": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "previous_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "event_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "actor_id",
+                  "session_id",
+                  "kind",
+                  "payload",
+                  "seq",
+                  "previous_sha256",
+                  "event_sha256"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "minItems": 0,
+          "uniqueItems": false
+        },
+        "head_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "schema_version",
+        "manifest",
+        "events",
+        "head_sha256"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$ref": "#/$defs/history"
+}

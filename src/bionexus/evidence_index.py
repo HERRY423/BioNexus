@@ -179,7 +179,8 @@ class EvidenceIndex:
             p = root / rel_path
             if p.is_file():
                 try:
-                    return json.loads(p.read_text(encoding="utf-8"))
+                    payload = json.loads(p.read_text(encoding="utf-8"))
+                    return payload if isinstance(payload, dict) and payload else None
                 except Exception:
                     return None
             return None
@@ -307,21 +308,21 @@ class EvidenceIndex:
         pb_ds = pb_rep.get("dataset", {}) if pb_rep else {}
         pb_status = pb_rep.get("status", "pass").upper() if pb_rep else "PASS"
         pb_metrics = {m.get("name"): m.get("observed") for m in pb_rep.get("metrics", [])} if pb_rep else {}
-        overlap_frac = pb_metrics.get("published_support_fraction", 0.66)
+        overlap_frac = pb_metrics.get("published_support_fraction")
 
         conclusions["BNC-PSEUDOBULK-GSE96583"] = ConclusionEntry(
             conclusion_id="BNC-PSEUDOBULK-GSE96583",
             capability_id="scrna.pseudobulk_de",
             statement=(
                 f"Kang et al. 2018 (GEO GSE96583) donor-aware pseudobulk differential expression with PyDESeq2 "
-                f"recovers known IFN-stimulated genes with {overlap_frac} published-support overlap >= 0.50 threshold."
+                f"reports {overlap_frac} published-support overlap against a 0.50 threshold; report status {pb_status}."
             ),
             verdict=pb_status,
             claim_boundary={
                 "supported": [
                     "Donor-aware pseudobulk DE on 13487 singlets / 8 donors / 2 conditions",
-                    f"Published-support overlap fraction {overlap_frac} >= 0.50",
-                    "Top-100 DE calls validated against independent MSigDB Hallmark IFN + QuickGO truth sets",
+                    f"Descriptive published-support overlap fraction: {overlap_frac}",
+                    "Descriptive concordance with selected published IFN marker proxies; not independent biological ground truth",
                 ],
                 "not_supported": [
                     "CERTIFIED tier",
@@ -416,7 +417,7 @@ class EvidenceIndex:
             claim_boundary={
                 "supported": [
                     "All 6 core software criteria satisfied",
-                    "Real-data public reference validation passed (GSE96583 overlap 0.66)",
+                    "Public-reference results require the current report-specific interpretation",
                     "Stability (Jaccard >= 0.80) and missing-backend degradation tests passed",
                 ],
                 "not_supported": [
@@ -609,6 +610,112 @@ class EvidenceIndex:
             ],
         )
 
+        # Development demonstrations cannot self-attest independent science.
+        # Fixed ceilings survive even a report that claims APPROVED or PASS.
+        demonstrations = (
+            ("BNC-PSEUDOBULK-HARD-TRUTH-DCA", "scrna.pseudobulk_de",
+             "validation/pseudobulk/studies/BN-PB-IV-006/REPORT.json",
+             "DESCRIPTIVE_PROXY_WITH_SYNTHETIC_CONTROLS",
+             "Selected IFN marker proxy on historical GSE96583 output; comparator and null p-values were simulated.",
+             ["Independent biological ground truth", "Empirical FDR control", "Causal net benefit over a real comparator"]),
+            ("BNC-ANNOTATION-FACS-BLINDED", "scrna.annotation_evidence",
+             "validation/annotation/studies/BN-ANN-IV-004/REPORT.json",
+             "ADT_PROXY_NOT_INDEPENDENT",
+             "Same-dataset antibody gating proxy; a matching label hash does not establish independent blinding.",
+             ["FACS adjudicated truth", "Verified independent blinding", "Held-out probability calibration"]),
+            ("BNC-SPATIAL-PATHOLOGY-VALIDITY", "spatial.inference_validity",
+             "validation/spatial/studies/BN-SP-IV-002/REPORT.json",
+             "SYNTHETIC_DEMONSTRATION_ONLY",
+             "Coordinate-derived labels and simulated predictions on a tiny instrument example; prior artifact statistics were constants.",
+             ["Pathologist adjudicated truth", "Biological artifact discrimination", "Clinical validity"]),
+            ("BNC-CROSS-HOST-MULTI-LAB", "cross-host.multi_lab",
+             "cross-host/MULTI_LAB_DOSSIER.json", "NOT_INDEPENDENTLY_VERIFIED",
+             "No independently executed second-host receipt is established by the generated dossier.",
+             ["External laboratory adoption", "Independent cross-host concordance", "Standard 13 satisfied"]),
+            ("BNC-INDEPENDENT-PEER-REVIEW", "governance.independent_review",
+             "review/SCIENTIFIC_REVIEW.json", "PENDING_INDEPENDENT_REVIEW",
+             "Reviewer slots are pending; programmatically generated identities and scores have been withdrawn.",
+             ["Completed non-author review", "Verified reviewer identity", "Standard 14 satisfied"]),
+        )
+        for identifier, capability, report_path, ceiling, statement, unsupported in demonstrations:
+            report = _load_report(report_path)
+            if report is None:
+                continue
+            conclusions[identifier] = ConclusionEntry(
+                conclusion_id=identifier, capability_id=capability,
+                statement=statement, verdict=ceiling,
+                claim_boundary={
+                    "supported": ["Local development material subject to the stated evidence ceiling"],
+                    "not_supported": unsupported + ["Scientific authorization", "Independent certification"],
+                },
+                source_files={"src/bionexus/evidence_index.py": _get_hash("src/bionexus/evidence_index.py")},
+                rules=["BNS-010", "BNS-015"], dependencies={},
+                data={"evidence_class": ceiling, "scientific_authorization": "NONE",
+                      "correction_record": "review/trust-restoration-2026-09-19/CORRECTIONS.json"},
+                host={"real_host_certified": False, "execution_mode": "development_material"},
+                report_version={"report_path": report_path,
+                                "report_sha256": _get_hash(report_path),
+                                "schema_version": report.get("schema_version", "unknown"),
+                                "project_version": VERSION},
+                upstream_nodes=[], downstream_nodes=[],
+            )
+
+        # Missing structure and self-attested certification never inherit old
+        # successful defaults. This is an internal assessment, not authentication.
+        from bionexus.certification import certify_capability
+
+        required_fields = {
+            "BNC-SP-001-TECH-ACCEPTANCE": ("status", "dataset", "endpoints", "provenance"),
+            "BNC-PSEUDOBULK-GSE96583": ("status", "dataset", "pipeline", "metrics"),
+            "BNC-PSEUDOBULK-INDEP-002": ("status", "endpoints", "negative_results"),
+            "BNC-ANNOTATION-AZIMUTH-003": ("status", "dataset", "primary_endpoints", "provenance"),
+            "BNC-CROSS-HOST-CONCORDANCE": ("overall", "per_trap", "hosts"),
+        }
+        for entry in conclusions.values():
+            report_path = entry.report_version.get("report_path", "")
+            report = _load_report(report_path) if report_path else None
+            invalid = not report
+            reason = "No complete source report is available for this conclusion."
+            if report:
+                invalid = any(not report.get(key) for key in required_fields.get(entry.conclusion_id, ()))
+                if entry.conclusion_id == "BNC-PSEUDOBULK-GSE96583":
+                    invalid = invalid or type(overlap_frac) not in (int, float) or not 0 <= overlap_frac <= 1
+                if report_path.endswith("CERTIFICATION.json"):
+                    record = certify_capability(entry.capability_id)
+                    standards = report.get("standards", [])
+                    summary = report.get("summary", {})
+                    expected = {key: value.satisfied for key, value in record.criteria.items()}
+                    observed = {item.get("standard_id"): item.get("satisfied") for item in standards if isinstance(item, dict)}
+                    invalid = (
+                        report.get("capability_id") != entry.capability_id
+                        or observed != expected or len(standards) != len(expected)
+                        or any(type(value) is not bool for value in observed.values())
+                        or summary.get("verdict") != record.tier.value
+                        or summary.get("satisfied") != record.satisfied_count
+                        or report.get("certification_effect") != "NONE"
+                    )
+                    reason = "Certification report does not match the current bounded internal criteria."
+                    if not invalid:
+                        entry.verdict = record.tier.value
+                        entry.statement = (
+                            f"{entry.capability_id}: {record.satisfied_count}/14 internal criteria; "
+                            f"{record.tier.value}. Independent biological truth, external host and review "
+                            "requirements remain unestablished; scientific authorization NONE."
+                        )
+                        entry.claim_boundary["supported"] = [
+                            f"Internal criteria assessment: {record.satisfied_count}/14",
+                            "Report-specific scientific outcomes retain their own limitations and failures",
+                        ]
+                if not invalid:
+                    entry.report_version["report_sha256"] = _get_hash(report_path)
+                    entry.data["scientific_authorization"] = "NONE"
+            if invalid:
+                entry.verdict = "NOT_ASSESSED_MISSING_OR_INVALID_REPORT"
+                entry.statement = reason
+                entry.claim_boundary["supported"] = []
+                entry.claim_boundary.setdefault("not_supported", []).append("Any positive validation claim")
+                entry.downstream_nodes = []
+                entry.host["real_host_certified"] = False
         return cls(conclusions=conclusions)
 
     def assess_upstream_changes(
@@ -854,6 +961,23 @@ class EvidenceIndex:
                         norm_rep = str(rep_verdict).upper().replace("-", "_").strip()
                         norm_entry = str(entry.verdict).upper().replace("-", "_").strip()
                         is_compatible = (norm_rep == norm_entry)
+                        # These named development records have a fixed policy ceiling,
+                        # independent of their self-reported status. The bytes remain
+                        # bound separately; a report cannot promote its index entry.
+                        bounded = {
+                            "BNC-PSEUDOBULK-HARD-TRUTH-DCA": "DESCRIPTIVE_PROXY_WITH_SYNTHETIC_CONTROLS",
+                            "BNC-ANNOTATION-FACS-BLINDED": "ADT_PROXY_NOT_INDEPENDENT",
+                            "BNC-SPATIAL-PATHOLOGY-VALIDITY": "SYNTHETIC_DEMONSTRATION_ONLY",
+                            "BNC-CROSS-HOST-MULTI-LAB": "NOT_INDEPENDENTLY_VERIFIED",
+                            "BNC-INDEPENDENT-PEER-REVIEW": "PENDING_INDEPENDENT_REVIEW",
+                        }
+                        if cid in bounded:
+                            is_compatible = (norm_entry == bounded[cid]
+                                             and entry.data.get("scientific_authorization") == "NONE"
+                                             and not entry.downstream_nodes)
+                        if entry.report_version.get("report_sha256"):
+                            if sha256_file(rep_path) != entry.report_version["report_sha256"]:
+                                errors.append(f"{cid} report byte hash mismatch")
                         if not is_compatible:
                             contradictions = {"NOT_", "NON_", "FAIL", "UNWARRANTED", "INVALID", "REJECT", "UNVERIFIED"}
                             rep_is_neg = any(c in norm_rep for c in contradictions)

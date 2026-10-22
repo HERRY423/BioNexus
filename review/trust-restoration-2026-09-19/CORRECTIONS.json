@@ -1,0 +1,178 @@
+{
+  "schema": "bionexus.evidence-corrections.v1",
+  "created_at": "2026-09-19T05:24:57.397923+00:00",
+  "authority": "LOCAL_IMPLEMENTATION_CORRECTION",
+  "scientific_authorization": "NONE",
+  "records": [
+    {
+      "path": "CHANGELOG.md",
+      "reason": "Correct public descriptions of scientific evidence, laboratory readiness and certification boundaries; retain the prior text in the byte-preserved archive.",
+      "original_sha256": "5b2bd3ab2160ee186258d7219c1eb5315c6669b3b8fb201847ba7573ee0b7d4a",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/CHANGELOG.md",
+      "effect": "CORRECT_DOCUMENTED_CLAIMS_ONLY",
+      "corrected_sha256": "2879cd4f4590b7f02d13cb59f098b7f8d321ea04799cc6508b1de41da982b90c"
+    },
+    {
+      "path": "README.md",
+      "reason": "Correct public descriptions of scientific evidence, laboratory readiness and certification boundaries; retain the prior text in the byte-preserved archive.",
+      "original_sha256": "1aa4e44b83a0f6f82a587700f2dfad1050c8c04a977faec59a9a701934e33fba",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/README.md",
+      "effect": "CORRECT_DOCUMENTED_CLAIMS_ONLY",
+      "corrected_sha256": "ee1d68532c1a95d502532c2fecdb4e0017f076b3afa10462cc1b23e896ae0cc3"
+    },
+    {
+      "path": "cross-host/MULTI_LAB_DOSSIER.json",
+      "reason": "The second host and equal output digest were generated without independently executed receipts.",
+      "original_sha256": "0a81c8a04b76153c685b3a15bc51cb36ed7ad2c71c78c160e3c82d39517a79a5",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/cross-host/MULTI_LAB_DOSSIER.json",
+      "corrected_sha256": "2f08f09ee3f2064e37e300be1a6312ba9a637465d28d8d604b978abe387147fe",
+      "effect": "WITHDRAW_AUTHORITY_ONLY"
+    },
+    {
+      "path": "review/SCIENTIFIC_REVIEW.json",
+      "reason": "Withdraw generated external authority and remove unverified study quota eligibility; retain pending framework and historical records.",
+      "original_sha256": "0f9e97cdd3c8866a354ea1b6e889eb3549459807e9e5a8417512f2422d3fc06b",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/review/SCIENTIFIC_REVIEW.json",
+      "corrected_sha256": "d4b626bd0be1565f6043a331a518fdf4d785a9e3520050b0a2704363a17ed045",
+      "effect": "WITHDRAW_AUTHORITY_ONLY"
+    },
+    {
+      "path": "validation/EVIDENCE_INDEX.json",
+      "reason": "Apply proxy, synthetic and pending evidence ceilings and remove unsupported downstream promotion. Index metadata does not establish new execution or independent authority.",
+      "original_sha256": "f61e78e4ffb70cdd2eab06cb5fe3ec7711eb151ac8f34a868ba960063ee57597",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/validation/EVIDENCE_INDEX.json",
+      "effect": "CORRECT_DERIVED_EVIDENCE_CEILINGS_ONLY",
+      "corrected_sha256": "918416de9916e50e27d90248ad56d45b7fcb6ed44c7c86dcd955915f92027745",
+      "refresh_status": "FINAL_INDEX_REBUILT_AFTER_CANDIDATE_03_EXECUTIONS"
+    },
+    {
+      "path": "validation/annotation/CERTIFICATION.json",
+      "reason": "Synchronize the computed internal certification criteria, evidence notes and blocked requirements after withdrawing unsupported biological truth, host and reviewer claims; this is not new validation execution.",
+      "original_sha256": "0de758487ae3fb30ea41b313b25c53765d75cf08309638b7bdec8058d923cc8c",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/validation/annotation/CERTIFICATION.json",
+      "effect": "CORRECT_INTERNAL_ASSESSMENT_METADATA_ONLY",
+      "corrected_sha256": "016c1fb599bf796c9f027f57317262840b166fc5342afeadeb6d1d4962d2081a"
+    },
+    {
+      "path": "validation/annotation/studies/BN-ANN-IV-004/PREREGISTRATION.json",
+      "reason": "Same-dataset ADT quantile gating; self-hashed labels do not establish independent blinding, FACS adjudication or held-out calibration.",
+      "original_sha256": "d8da74e6547a0358b351f22cc03d54dfa5e27a1bd29335b8e9e9813a998766fa",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/validation/annotation/studies/BN-ANN-IV-004/PREREGISTRATION.json",
+      "corrected_sha256": "46f659f07e982e6066f7562b3c3258819c53b2f37f901cb19e42c6c300955908",
+      "effect": "WITHDRAW_AUTHORITY_ONLY"
+    },
+    {
+      "path": "validation/annotation/studies/BN-ANN-IV-004/REPORT.json",
+      "reason": "Same-dataset ADT quantile gating; self-hashed labels do not establish independent blinding, FACS adjudication or held-out calibration.",
+      "original_sha256": "3c79faff7f707110aceaf8f1b8ccf69ebc028f1f2b9fbdda69724ec075604628",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/validation/annotation/studies/BN-ANN-IV-004/REPORT.json",
+      "corrected_sha256": "d66af1d1b6a4bed2c1f71cc4eaa7ad873d7ec56000e3a5bf172a0f0e599358d9",
+      "effect": "WITHDRAW_AUTHORITY_ONLY"
+    },
+    {
+      "path": "validation/ivn/REGISTRY.json",
+      "reason": "Withdraw generated external authority and remove unverified study quota eligibility; retain pending framework and historical records.",
+      "original_sha256": "c04b885f906ab84be596e6421d25b9ccec01ef4230a421f7f59aeecfd095aac5",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/validation/ivn/REGISTRY.json",
+      "corrected_sha256": "80fec7eadef3a74ed2592956810da3878906e3ef9c166335b0f744d774925973",
+      "effect": "WITHDRAW_AUTHORITY_ONLY"
+    },
+    {
+      "path": "validation/pseudobulk/CERTIFICATION.json",
+      "reason": "Synchronize the computed internal certification criteria, evidence notes and blocked requirements after withdrawing unsupported biological truth, host and reviewer claims; this is not new validation execution.",
+      "original_sha256": "95aa2362ba4ee74c372c8ec959d5285e1a3b5394adbe6d4696a672fd55b164f8",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/validation/pseudobulk/CERTIFICATION.json",
+      "effect": "CORRECT_INTERNAL_ASSESSMENT_METADATA_ONLY",
+      "corrected_sha256": "5c2f344cd6934f64da1e8599ffde705c95d5285880efc398876af88fce9a778e"
+    },
+    {
+      "path": "validation/pseudobulk/studies/BN-PB-IV-006/PREREGISTRATION.json",
+      "reason": "Selected gene proxy plus synthetic comparator and uniform p-values; no independent hard truth, empirical FDR demonstration or real comparator net benefit.",
+      "original_sha256": "30c819ed008716ae8cce6b38c67af73dd4c6d7a813390e727699effec479fbec",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/validation/pseudobulk/studies/BN-PB-IV-006/PREREGISTRATION.json",
+      "corrected_sha256": "b4a398b6af0c6bd327fced403f2f90eaf411b66ffbab03e2f1733811d73b6120",
+      "effect": "WITHDRAW_AUTHORITY_ONLY"
+    },
+    {
+      "path": "validation/pseudobulk/studies/BN-PB-IV-006/REPORT.json",
+      "reason": "Selected gene proxy plus synthetic comparator and uniform p-values; no independent hard truth, empirical FDR demonstration or real comparator net benefit.",
+      "original_sha256": "47794d0b1ae4796576a4c994976d1b44ab3ebd811f0b207ee34973083a3ae943",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/validation/pseudobulk/studies/BN-PB-IV-006/REPORT.json",
+      "corrected_sha256": "99b8f01b7e93d696822c494300bdf0eba3e13a3620115e619b720cef90cff66f",
+      "effect": "WITHDRAW_AUTHORITY_ONLY"
+    },
+    {
+      "path": "validation/rules/CALIBRATION_CARD.json",
+      "reason": "Withdraw prior calibration and ladder-superiority claims; link the retained original bytes and separately generated, explicitly limited developer-fixture results.",
+      "original_sha256": "712051ddfe8351efba427714932a86000c6c0f13620cb341c92d88c58a8ca717",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/validation/rules/CALIBRATION_CARD.json",
+      "effect": "WITHDRAW_AUTHORITY_ONLY",
+      "corrected_sha256": "7507aede471d6ad5bb9d2be66e8a3e251205f2578fb627a86584138a6fdfac04"
+    },
+    {
+      "path": "validation/rules/CALIBRATION_CARD.md",
+      "reason": "Withdraw prior calibration and ladder-superiority claims; link the retained original bytes and separately generated, explicitly limited developer-fixture results.",
+      "original_sha256": "1d4753b24081b655b5a156a9acd4be0955914bad8cb4d23873fbe30aebc76aaa",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/validation/rules/CALIBRATION_CARD.md",
+      "effect": "WITHDRAW_AUTHORITY_ONLY",
+      "corrected_sha256": "7e4a16c14b1017c9e214dcc193e52573f51e91e8d44a33c933e65e00de559aab"
+    },
+    {
+      "path": "validation/rules/LADDER_VS_STATIC_REPORT.json",
+      "reason": "Withdraw prior calibration and ladder-superiority claims; link the retained original bytes and separately generated, explicitly limited developer-fixture results.",
+      "original_sha256": "7bbbc8e169798527e5459e6e363812e6887fa32ef8720c65d3d44c3c47b29878",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/validation/rules/LADDER_VS_STATIC_REPORT.json",
+      "effect": "WITHDRAW_AUTHORITY_ONLY",
+      "corrected_sha256": "09d5b1a5783f11930efdd05fffa9bd28c2aa5f41fcb00a1e526720215192bfcd"
+    },
+    {
+      "path": "validation/rules/frozen_holdout_benchmark.json",
+      "reason": "Preserve the 12 developer cases while identifying their developer-assigned labels; neither an independently adjudicated holdout nor physical biological truth is established.",
+      "original_sha256": "8050d7e734899e82385e75f823b73e337c23899f1319571e65316acab61e7835",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/validation/rules/frozen_holdout_benchmark.json",
+      "effect": "RECLASSIFY_DEVELOPER_CASE_FIXTURE_ONLY",
+      "corrected_sha256": "c76757adfd50f8b1b6c31aecd5bdab6c9e0f27407938002f83d365c87659d6be"
+    },
+    {
+      "path": "validation/spatial/CERTIFICATION.json",
+      "reason": "Synchronize the computed internal certification criteria, evidence notes and blocked requirements after withdrawing unsupported biological truth, host and reviewer claims; this is not new validation execution.",
+      "original_sha256": "52096eeb7378b217668689d1cee634f7827696613ae36d6c1fba39b083b6f0b9",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/validation/spatial/CERTIFICATION.json",
+      "effect": "CORRECT_INTERNAL_ASSESSMENT_METADATA_ONLY",
+      "corrected_sha256": "45554833ff1fcc14bf7938af717700e36cfabacc2fac13faf34b601e1d061f99"
+    },
+    {
+      "path": "validation/spatial/studies/BN-SP-IV-002/PREREGISTRATION.json",
+      "reason": "Coordinate-derived synthetic labels and simulated predictions; artifact statistics were constants, not biological/pathology measurements.",
+      "original_sha256": "177d0542cc1e494c96e00fef6952d6db44367562a3d9c97d910f9717df953d29",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/validation/spatial/studies/BN-SP-IV-002/PREREGISTRATION.json",
+      "corrected_sha256": "cd369ee83f7aae51b9b13615e969a278a446f97758e4adc88983ea518ff97e26",
+      "effect": "WITHDRAW_AUTHORITY_ONLY"
+    },
+    {
+      "path": "validation/spatial/studies/BN-SP-IV-002/REPORT.json",
+      "reason": "Coordinate-derived synthetic labels and simulated predictions; artifact statistics were constants, not biological/pathology measurements.",
+      "original_sha256": "929dabbf01d8d1c09432c905a57a7a6688c1906da5d34c6d7ea14f0fd91ab74d",
+      "original_archive": "review/trust-restoration-2026-09-19/originals/validation/spatial/studies/BN-SP-IV-002/REPORT.json",
+      "corrected_sha256": "20f3ea7b330893e196d4303ae2c7356f962b691cbe5432943e3e3c14eae9c393",
+      "effect": "WITHDRAW_AUTHORITY_ONLY"
+    }
+  ],
+  "preserved_historical_negative_studies": [
+    "BN-PB-IV-002",
+    "BN-PB-IV-004",
+    "BN-PB-IV-005",
+    "BN-ANN-IV-001",
+    "BN-ANN-IV-002",
+    "BN-SP-IV-001"
+  ],
+  "notes": [
+    "Original bytes and hashes are preserved; corrected views are not new execution evidence.",
+    "Existing preregistration/report digests in retracted IVN entries were not rebound.",
+    "No external reviewer, laboratory, identity, biological validity or GA approval is established.",
+    "Certification rollups are computed internal metadata and do not attest a newly executed validation or external assurance.",
+    "Final derived index generated after actual candidate-03 executions; historical run provenance and original digests remain immutable."
+  ],
+  "metadata_last_updated_at": "2026-09-19T05:56:46.323439+00:00",
+  "index_refresh_status": "COMPLETED_AFTER_CANDIDATE_03_EXECUTIONS"
+}

@@ -13,7 +13,7 @@ requirements:
     - kind: implementation
       target: src/bionexus/integrity.py::require_raw_count_matrix
     - kind: implementation
-      target: src/bionexus/de_audit.py::DEAuditEngine._audit_expression_matrix
+      target: src/bionexus/de/engine.py::DEAuditEngine._audit_expression_matrix
     - kind: test
       target: tests/unit/test_de_input_boundaries.py::test_valid_counts_layer_is_identified_without_claiming_analysis_used_it
     - kind: test
@@ -35,7 +35,7 @@ requirements:
     - kind: implementation
       target: src/bionexus/integrity.py::require_counts_layer
     - kind: implementation
-      target: src/bionexus/de_audit.py::DEAuditEngine._audit_expression_matrix
+      target: src/bionexus/de/engine.py::DEAuditEngine._audit_expression_matrix
     - kind: test
       target: tests/unit/test_de_input_boundaries.py::test_invalid_explicit_counts_do_not_fall_back_to_integer_x
     - kind: test
@@ -56,7 +56,7 @@ requirements:
     - kind: implementation
       target: src/bionexus/integrity.py::require_raw_count_matrix
     - kind: implementation
-      target: src/bionexus/de_audit.py::DEAuditEngine._audit_expression_matrix
+      target: src/bionexus/de/engine.py::DEAuditEngine._audit_expression_matrix
     - kind: test
       target: tests/unit/test_de_input_boundaries.py::test_invalid_value_after_diagnostic_sample_is_never_a_pass
     - kind: test
@@ -120,9 +120,9 @@ requirements:
     - tests/unit/test_ga_semantic_boundaries.py::test_population_transport_not_inferred_from_donor_count
     evidence:
     - kind: implementation
-      target: src/bionexus/de_audit.py::DEAuditEngine._compute_overall_status
+      target: src/bionexus/de/engine.py::DEAuditEngine._compute_overall_status
     - kind: implementation
-      target: src/bionexus/de_audit.py::DEAuditEngine._verify_execution_binding
+      target: src/bionexus/de/engine.py::DEAuditEngine._verify_execution_binding
     - kind: test
       target: tests/unit/test_de_audit.py::test_deseq2_with_verified_execution_record_achieves_pass
     - kind: test

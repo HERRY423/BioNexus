@@ -15,3 +15,23 @@
 # Historical signed/hash-bound evidence must retain its exact original bytes.
 tests/fixtures/de_bundle_legacy_v1/* -text
 validation/history/** -text
+review/trust-restoration-2026-09-19/** -text
+review/SCIENTIFIC_REVIEW.json -text
+validation/**/CERTIFICATION.json -text
+validation/**/REPORT.json -text
+validation/**/INFERENTIAL_STRESS_REPORT.json -text
+validation/**/PREREGISTRATION.json -text
+validation/ivn/REGISTRY.json -text
+validation/rules/** -text
+cross-host/MULTI_LAB_DOSSIER.json -text
+validation/EVIDENCE_INDEX.json -text
+README.md -text
+CHANGELOG.md -text
+
+# Portable executable-claim examples bind exact CSV/JSON bytes by SHA-256.
+examples/de-claim-conditions/** -text
+# Executed synthetic sensitivity receipts bind exact CSV/JSON bytes.
+review/de-alternatives-2026-10-01/synthetic-executed/** -text
+# Synthetic choice-history fixtures bind exact artifact and history bytes.
+review/de-selection-2026-10-01/synthetic-examples/** -text
+review/de-selection-2026-10-01/synthetic-cli-review/** -text

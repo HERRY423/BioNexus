@@ -252,8 +252,8 @@ def test_interop_cli(tmp_path, capsys):
 
     assert cli_main(["interop", "check", str(run_dir)]) == 0
     out = capsys.readouterr().out
-    assert "RO-Crate 1.1 structural validation: PASS" in out
-    assert "IEEE 2791-2020 BCO structural validation: PASS" in out
+    assert "RO-Crate 1.1 structural precheck: PASS" in out
+    assert "IEEE 2791-2020 BCO structural precheck: PASS" in out
 
     assert cli_main(["interop", "ro-crate", str(run_dir)]) == 0
     doc = json.loads(capsys.readouterr().out)
@@ -295,7 +295,8 @@ def test_interop_cli(tmp_path, capsys):
     assert cli_main(["interop", "wfrun-crate", str(sealed_dir), "--out", str(tmp_path / "wfc")]) == 0
     out_wfc = capsys.readouterr().out
     assert "Workflow Run RO-Crate written to" in out_wfc
-    assert "post-write verification: PASS" in out_wfc
+    assert "structural precheck: PASS" in out_wfc
+    assert "official_validation_status:" in out_wfc
     assert (tmp_path / "wfc" / "ro-crate-metadata.json").is_file()
     assert (tmp_path / "wfc" / "data" / "inputs" / "counts").is_file()
     wfc_doc = json.loads((tmp_path / "wfc" / "ro-crate-metadata.json").read_text(encoding="utf-8"))

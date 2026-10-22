@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bionexus.dev/schemas/lab-exchange-envelope.v2",
+  "title": "BioNexus lab exchange envelope v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "producer",
+    "source",
+    "semantic_type",
+    "data_classification",
+    "scientific_authorization",
+    "imported_at",
+    "payload_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "bionexus.lab-exchange-envelope.v2"},
+    "producer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product", "bionexus_version"],
+      "properties": {
+        "product": {
+          "type": "string",
+          "enum": ["cellranger", "scanpy", "seurat", "deseq2", "edger", "nf-core"]
+        },
+        "product_version": {"type": ["string", "null"]},
+        "bionexus_version": {"type": "string", "minLength": 1}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "root_name", "files"],
+      "properties": {
+        "kind": {"type": "string", "minLength": 1},
+        "root_name": {"type": "string", "minLength": 1},
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["role", "relpath", "sha256", "size_bytes"],
+            "properties": {
+              "role": {"type": "string", "minLength": 1},
+              "relpath": {"type": "string", "minLength": 1},
+              "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "size_bytes": {"type": "integer", "minimum": 0},
+              "integrity_status": {"enum": ["BYTE_VERIFIED", "DECLARED_UNVERIFIED"]}
+            }
+          }
+        }
+      }
+    },
+    "semantic_type": {"type": "string", "minLength": 1},
+    "data_classification": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "PUBLIC_BENCHMARK",
+        "PROPRIETARY_UNPUBLISHED",
+        "CONTROLLED_ACCESS_GENOMIC",
+        "RESTRICTED_CLINICAL_PHI"
+      ]
+    },
+    "scientific_authorization": {"const": "NONE"},
+    "imported_at": {"type": "string", "minLength": 1},
+    "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "summary": {"type": "object"},
+    "warnings": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
+}

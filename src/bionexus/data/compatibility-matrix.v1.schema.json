@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bionexus.dev/schemas/compatibility-matrix.v1",
+  "title": "BioNexus analysis-product compatibility matrix v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "bionexus_version", "status_vocabulary", "products"],
+  "properties": {
+    "schema_version": {"const": "bionexus.compatibility-matrix.v1"},
+    "bionexus_version": {"type": "string", "minLength": 1},
+    "honesty_note": {"type": "string"},
+    "status_vocabulary": {
+      "type": "object",
+      "additionalProperties": {"type": "string"}
+    },
+    "products": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "family",
+          "native_runtime",
+          "versions",
+          "input_formats",
+          "export_formats",
+          "status",
+          "acceptance_id",
+          "limitations"
+        ],
+        "properties": {
+          "id": {"type": "string"},
+          "family": {"type": "string"},
+          "native_runtime": {"type": "boolean"},
+          "versions": {"type": "array", "items": {"type": "string"}},
+          "input_formats": {"type": "array", "items": {"type": "string"}},
+          "export_formats": {"type": "array", "items": {"type": "string"}},
+          "status": {
+            "type": "string",
+            "enum": [
+              "FIXTURE_VERIFIED",
+              "EXPORTED_ARTIFACT_VERIFIED",
+              "DECLARED",
+              "LIVE_VENDOR_UNVERIFIED",
+              "UNSUPPORTED"
+            ]
+          },
+          "acceptance_id": {"type": "string"},
+          "limitations": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    }
+  }
+}

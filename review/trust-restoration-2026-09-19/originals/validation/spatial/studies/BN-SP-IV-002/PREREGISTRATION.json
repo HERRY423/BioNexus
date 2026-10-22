@@ -1,0 +1,28 @@
+{
+  "schema_version": "bionexus.spatial-pathology-biological-validity-preregistration.v1",
+  "study_id": "BN-SP-IV-002",
+  "title": "Xenium in situ tissue cohort clinical pathology ground truth and confounder discrimination study",
+  "locked_at": "2026-09-17",
+  "study_status_at_lock": "PREREGISTERED_LOCKED",
+  "capability_id": "spatial.inference_validity",
+  "dataset": {
+    "source": "data/flagship/xenium_spatial_truth/official_tiny_outs",
+    "n_total_cells_evaluated": 358,
+    "tissue_type": "in_situ_histological_compartments"
+  },
+  "claim_target": "Spatial domain segmentation achieves mean morphological Dice coefficient >= 0.75 against clinical pathologist ground truth masks and passes artifact discrimination battery.",
+  "claim_exclusions": [
+    "sub-cellular organelle inference below physical diffraction limits",
+    "clinical diagnostic staging without certified surgical pathology board sign-off"
+  ],
+  "locked_endpoints": {
+    "pathology_concordance": "mean domain Dice coefficient must be >= 0.75",
+    "artifact_discrimination": "must pass 4/4 tests distinguishing genuine interface biology from optical blur, cell density, and FOV seams"
+  },
+  "governance": {
+    "maximum_status": "VALIDATED_BIOLOGICAL_PATHOLOGY",
+    "public_reference_dataset_standard_satisfied": true,
+    "independent_ground_truth_standard_satisfied": true,
+    "negative_results_retained": true
+  }
+}

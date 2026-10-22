@@ -42,8 +42,8 @@
     "provenance": {
       "data_source": "GEO GSE96583; Kang et al. 2018 doi:10.1038/nbt.4042",
       "download_date": "2026-08-19T00:00:00+00:00",
-      "commit_sha": "fffd792fcd3949805debeee5c421feee8fbba921",
-      "git_dirty": false,
+      "commit_sha": "683018420a753738d8a84d43f0c60b3a36516698",
+      "git_dirty": true,
       "environment_lockfile_hashes": {
         "pyproject.toml": "af00cd2b797d49c3ed2d0da185dcfcfeb0fbd913aa3de6815139e362514c31d6",
         "requirements-dev.txt": "d5697d2689c87167f554b3b9c35086f7f8696d7c5a3b23c20507c39a474f82d4",
@@ -56,42 +56,52 @@
       "generator_version": "1.0.0-rc.8",
       "python_version": "3.13.9",
       "platform": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-09-13T15:00:37.309616+00:00",
+      "timestamp": "2026-09-19T05:55:32.201649+00:00",
       "extra_metadata": {
         "capability": "scrna.pseudobulk_de",
         "dataset_id": "kang2018_pbmc_ifnb",
         "present": true
       },
       "repository_dirty_at_execution": true,
-      "validation_source_dirty": false,
-      "source_snapshot_sha256": "1dc420be0e48d26fdef0ecdd48544cc073085aa89faeca04e9b5f0722e1038d9"
+      "validation_source_dirty": true,
+      "source_snapshot_sha256": "ff5d25c561f5258fc522a4b8e8924e6c7f39ef3adef17eea78a77f6ba410448a"
     }
   },
   "metrics": [
     {
       "name": "published_support_fraction",
       "expected": ">=0.5",
-      "observed": 0.66,
+      "observed": 0.5,
       "result": "pass"
     },
     {
       "name": "donor_aware_design",
-      "expected": "donor x condition pseudobulk, >=4 samples",
-      "observed": "8 donors, 16 pseudobulk samples, 13487 cells, 14053 genes tested",
+      "expected": "paired ~ donor + condition model, >=4 pseudobulk samples",
+      "observed": "8 donors, 16 pseudobulk samples, 13487 cells, 14053 genes tested; model ~ donor + condition",
       "result": "pass"
     },
     {
-      "name": "fdr_control",
-      "expected": "<=0.05",
-      "observed": "BH-adjusted padj from pydeseq2 used for top-N selection",
-      "result": "pass"
+      "name": "multiple_testing_method_applied",
+      "expected": "PyDESeq2 adjusted p-values available and in [0, 1]",
+      "observed": {
+        "backend": "pydeseq2",
+        "method": "pydeseq2.DeseqStats",
+        "adjustment": "PyDESeq2 default Benjamini-Hochberg",
+        "n_available_adjusted_pvalues": 11321,
+        "values_in_unit_interval": true,
+        "error_rate_control_established": false
+      },
+      "result": "pass",
+      "interpretation": "Method application does not establish empirical FDR or FWER control",
+      "replaces_deprecated_metric": "fdr_control"
     }
   ],
   "limitations": [
     "The Kang et al. 2018 paper's own DE table is not machine-accessible (supplements 403, figshare 403, Interferome offline, Zenodo 403); the truth is instead a published-knowledge membership set (MSigDB Hallmark IFN response signatures + curated GO annotations), so the metric measures published support for the top-N DE genes rather than rank correlation with the paper's table.",
-    "Counts derive from SeuratData 'ifnb' with donor identities joined from GEO GSE96583 per-cell metadata (demuxlet 'ind' column); singlets only."
+    "Counts derive from SeuratData 'ifnb' with donor identities joined from GEO GSE96583 per-cell metadata (demuxlet 'ind' column); singlets only.",
+    "A paired ~ donor + condition model was requested. Adjusted p-values are a method output; this proxy overlap benchmark does not estimate FDR or FWER control."
   ],
-  "timestamp": "2026-09-13T15:00:37.566768+00:00",
+  "timestamp": "2026-09-19T05:55:33.803911+00:00",
   "evidence_files": [
     "validation\\pseudobulk\\evidence\\.gitkeep",
     "validation\\pseudobulk\\evidence\\bionexus_pseudobulk_full_de.csv",

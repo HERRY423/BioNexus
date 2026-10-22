@@ -1,0 +1,18 @@
+{
+  "schema_version": "bionexus.evidence-withdrawal.v1",
+  "status": "WITHDRAWN_UNSUPPORTED_AUTHORITY",
+  "evidence_class": "DEVELOPMENT_MATERIAL_ONLY",
+  "reason": "Selected gene proxy plus synthetic comparator and uniform p-values; no independent hard truth, empirical FDR demonstration or real comparator net benefit.",
+  "scientific_authorization": "NONE",
+  "independent_validation": false,
+  "standard_13_satisfied": false,
+  "standard_14_satisfied": false,
+  "original_artifact": {
+    "path": "validation/pseudobulk/studies/BN-PB-IV-006/REPORT.json",
+    "archive_path": "review/trust-restoration-2026-09-19/originals/validation/pseudobulk/studies/BN-PB-IV-006/REPORT.json",
+    "sha256": "47794d0b1ae4796576a4c994976d1b44ab3ebd811f0b207ee34973083a3ae943",
+    "bytes": 7668
+  },
+  "correction_kind": "EVIDENCE_AUTHORITY_WITHDRAWAL_NOT_A_NEW_EXECUTION",
+  "correction_record": "review/trust-restoration-2026-09-19/CORRECTIONS.json"
+}

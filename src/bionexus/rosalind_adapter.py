@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Union
 
@@ -30,6 +30,7 @@ from bionexus.ecosystem_intake import (
 from bionexus.tool_receipt import (
     create_host_observed_receipt,
     hash_canonical_payload,
+    verify_tool_receipt,
 )
 from bionexus.versions import VERSION
 
@@ -426,8 +427,56 @@ def evaluate_rosalind_warrant(
     receipts = [tr.receipt for tr in tool_results]
 
     # State 1: INTAKE_VALID
-    intake_valid = all(tr.audit.status == IntakeStatus.VALID.value for tr in tool_results)
-    invalid_envelopes = [tr for tr in tool_results if tr.audit.status != IntakeStatus.VALID.value]
+    # The dataclass and its nested dictionaries can change after intake. Never
+    # trust a cached audit when evaluating a claim.
+    current_audits = [audit_external_evidence(tr.envelope) for tr in tool_results]
+    intake_valid = bool(tool_results) and all(a.status == IntakeStatus.VALID.value for a in current_audits)
+    invalid_envelopes = [a for a in current_audits if a.status != IntakeStatus.VALID.value]
+    execution_checks = []
+    for tr in tool_results:
+        env = tr.envelope
+        valid, errors = verify_tool_receipt(
+            tr.receipt, expected_request=tr.arguments, expected_response=tr.raw_result,
+            expected_plugin_id=env.producer.plugin_id,
+            expected_plugin_version=env.producer.plugin_version,
+            expected_tool_name=tr.tool_name,
+        )
+        errors = list(errors)
+        receipt = tr.receipt if isinstance(tr.receipt, dict) else {}
+        if receipt.get("execution_status") != "SUCCESS":
+            errors.append("Execution status must be SUCCESS to support a claim.")
+        # Check null responses explicitly (the receipt verifier uses None to
+        # mean that no expected response was supplied).
+        if receipt.get("response_sha256") != hash_canonical_payload(tr.raw_result):
+            errors.append("Response binding mismatch.")
+        payload = tr.raw_result if isinstance(tr.raw_result, dict) else {"result": tr.raw_result}
+        if hash_canonical_payload(payload) != env.payload_sha256:
+            errors.append("Envelope does not bind the supplied tool response.")
+        if env.request_sha256 != hash_canonical_payload(tr.arguments):
+            errors.append("Envelope does not bind the supplied tool request.")
+        if env.producer.tool_name != tr.tool_name:
+            errors.append("Envelope tool name mismatch.")
+        for key, expected in (("request_sha256", hash_canonical_payload(tr.arguments)),
+                              ("response_sha256", hash_canonical_payload(tr.raw_result))):
+            if env.source_context.get(key) != expected:
+                errors.append(f"Source context {key} binding mismatch.")
+        if isinstance(tr.raw_result, dict):
+            result = tr.raw_result
+            failure_states = {"FAILED", "FAILURE", "ERROR", "ABSTAIN", "REJECTED", "TIMEOUT", "TIMED_OUT",
+                              "CANCELLED", "CANCELED", "ABORTED", "INCOMPLETE", "PARTIAL", "PENDING",
+                              "RUNNING", "QUEUED", "NOT_RUN", "UNKNOWN"}
+            status = str(result.get("status", "")).strip().upper().replace("-", "_").replace(" ", "_")
+            execution_status = str(result.get("execution_status", "")).strip().upper()
+            if (result.get("error") or result.get("errors") or result.get("isError")
+                    or result.get("success") is False
+                    or status in failure_states
+                    or ("execution_status" in result and execution_status != "SUCCESS")):
+                errors.append("Tool response explicitly reports failure; it cannot support a claim.")
+        if tr.raw_result is None:
+            errors.append("Missing tool response cannot support a claim.")
+        execution_checks.append({"evidence_id": env.evidence_id,
+                                 "eligible_for_support": valid and not errors,
+                                 "errors": errors})
 
     # State 2: EVIDENCE_SUPPORTS_CLAIM
     # BioNexus does NOT automatically infer evidence->claim relationship.
@@ -447,12 +496,14 @@ def evaluate_rosalind_warrant(
                 )
             )
     else:
+        if len(adjudications) != len(envelopes):
+            raise ValueError("Exactly one adjudication per tool result is required; nothing may be silently truncated.")
         for env, item in zip(envelopes, adjudications):
             if isinstance(item, EvidenceAdjudication):
                 adjudication_objs.append(item)
             else:
                 rel = str(item).lower()
-                adj_author = adjudicator_id or "human_reviewer"
+                adj_author = adjudicator_id or ""
                 adjudication_objs.append(
                     EvidenceAdjudication(
                         evidence_id=env.evidence_id,
@@ -467,6 +518,17 @@ def evaluate_rosalind_warrant(
                     )
                 )
 
+    declared_adjudications = list(adjudication_objs)
+    ineligible_ids = {check["evidence_id"] for check in execution_checks if not check["eligible_for_support"]}
+    rejected_support = [adj.evidence_id for adj in adjudication_objs
+                        if adj.relationship == "supports" and adj.evidence_id in ineligible_ids]
+    # Preserve the reviewer input separately; failed executions remain visible
+    # as context and never enter the downstream evidence-support graph.
+    adjudication_objs = [replace(adj, relationship="context", maturity="UNASSESSED",
+                                validation_role="context_only",
+                                rationale="Execution or content binding failed; original adjudication retained separately.")
+                         if adj.evidence_id in rejected_support else adj
+                         for adj in adjudication_objs]
     supporting_count = sum(1 for adj in adjudication_objs if adj.relationship == "supports")
     evidence_supports_claim = supporting_count > 0
 
@@ -474,7 +536,7 @@ def evaluate_rosalind_warrant(
         schema_version=ECOSYSTEM_CLAIM_PACKET_VERSION,
         claim_id=claim_id,
         statement=target_claim,
-        decision_owner=adjudicator_id or "rosalind_user",
+        decision_owner=adjudicator_id or "",
         envelopes=tuple(envelopes),
         adjudications=tuple(adjudication_objs),
         claim_context={"scope": "preclinical_target_discovery"},
@@ -484,6 +546,10 @@ def evaluate_rosalind_warrant(
 
     adjusted_maturity = stated_maturity
     reasons: List[str] = list(assessment.audit.warnings) + list(assessment.audit.errors)
+    reasons.extend(f"{check['evidence_id']}: {error}"
+                   for check in execution_checks for error in check["errors"])
+    if rejected_support or assessment.audit.errors:
+        adjusted_maturity = ConclusionMaturity.FRAGILE.value
 
     # Enforce State 1 gating: incomplete / invalid intake caps maturity
     if not intake_valid:
@@ -569,12 +635,26 @@ def evaluate_rosalind_warrant(
     # State 3: CLAIM_WARRANTED
     claim_warranted = bool(
         intake_valid
+        and not rejected_support
         and evidence_supports_claim
         and adjusted_maturity == stated_maturity
         and len(assessment.audit.errors) == 0
     )
 
+    from bionexus.evidence_contract import evidence_contract
+    supporting_ids = {adj.evidence_id for adj in adjudication_objs if adj.relationship == "supports"}
+    bound_support = sorted({check["evidence_id"] for check in execution_checks
+                            if check["eligible_for_support"] and check["evidence_id"] in supporting_ids})
+    explicit_review = bool(adjudications) and any(
+        adj.adjudicator_id.strip() not in {"", "unassigned"} for adj in declared_adjudications)
+    contract = evidence_contract("EXTERNAL_REVIEW", positive=claim_warranted,
+        observations=bound_support, input_integrity="CHECKED" if intake_valid else "INVALID",
+        execution="SUCCESS_REPORTED_AND_BOUND" if bound_support and not rejected_support else "FAILED_OR_UNRESOLVED",
+        reviewed=explicit_review, support="EXPERIMENTAL",
+        scope="Bound successful tool responses with declared claim adjudication; neither reviewer identity nor scientific independence is authenticated.")
     return {
+        "evidence_contract": contract,
+        "legacy_field_semantics": "claim_warranted and is_warranted mean admissibility under declared review, not independently verified scientific truth.",
         "claim_id": claim_id,
         "target_claim": target_claim,
         "stated_maturity": stated_maturity,
@@ -584,6 +664,8 @@ def evaluate_rosalind_warrant(
         "claim_warranted": claim_warranted,
         "is_warranted": claim_warranted,
         "claim_packet": packet.to_dict(),
+        "declared_adjudications": [vars(adj) for adj in declared_adjudications],
+        "execution_checks": execution_checks,
         "assessment": assessment.to_dict(),
         "receipts": receipts,
         "downgrade_reasons": reasons,

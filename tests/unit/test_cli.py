@@ -38,6 +38,7 @@ def test_cli_help(capsys):
     assert "doctor" in captured.out
     assert "list-skills" in captured.out
     assert "registry" in captured.out
+    assert "deploy" in captured.out
 
 
 def test_cli_doctor(capsys):

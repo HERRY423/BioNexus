@@ -1,14 +1,14 @@
 """
 BioNexus 7-Dimensional Empirical Stress & Inferential Perturbation Test Suite for Pseudobulk DE.
 
-Proves the four inferential regimes on real GSE96583 single-cell data:
+Exercises local inferential contracts and perturbations on GSE96583 data:
 1. Public Reference Dataset (Kang 2018 PBMC IFN-beta full 8-donor baseline)
 2. Cell Downsampling Grid (100% -> 50% -> 20% -> 5% cell count per sample)
 3. Donor Number Perturbation Grid (8 -> 6 -> 4 -> 3 -> 2 -> 1 donors: phase transition)
 4. Effect-Size Sensitivity (Log2FC in [0.5, 1.0, 2.0, 4.0] spike-in recovery)
-5. Permutation Null / Empirical FDR Validation (Condition shuffle across donors)
+5. One within-donor permutation (descriptive rejection fraction, not FDR validation)
 6. Backend Degradation Simulation (Deterministic refusal on missing backend)
-7. Host Variation & Prohibited Claim Interception (100% causal & pseudorep interception)
+7. Local Prohibited Claim Interception (no independent host execution)
 
 Outputs:
     validation/pseudobulk/INFERENTIAL_STRESS_REPORT.json
@@ -56,7 +56,7 @@ from scrna_deseq import run_pydeseq2
 
 
 def load_gse96583_data() -> Tuple[ad.AnnData, pd.DataFrame]:
-    """Load real GSE96583 dataset and published ground truth."""
+    """Load GSE96583 counts and a curated published-knowledge reference set."""
     adata_path = DATA_DIR / "pbmc_ifnb_counts.h5ad"
     truth_path = DATA_DIR / "published_de_truth.csv"
     if not adata_path.is_file() or not truth_path.is_file():
@@ -94,7 +94,7 @@ def aggregate_pseudobulk(adata_sub: ad.AnnData) -> Tuple[pd.DataFrame, pd.DataFr
 def test_dim1_public_reference(adata: ad.AnnData, truth: pd.DataFrame) -> Dict[str, Any]:
     print("  [Dim 1] Running Public Reference Benchmark (GSE96583 8 donors)...")
     counts, design = aggregate_pseudobulk(adata)
-    table, _ = run_pydeseq2(counts, design, condition="condition", reference="ctrl", contrast_level="stim")
+    table, contract = run_pydeseq2(counts, design, condition="condition", donor="donor", reference="ctrl", contrast_level="stim")
     top_100 = set(table.sort_values("padj").head(100)["gene"].astype(str))
     truth_genes = set(truth.sort_values(truth.columns[-1])["gene"].astype(str))
     overlap_frac = len(top_100 & truth_genes) / 100.0
@@ -113,6 +113,9 @@ def test_dim1_public_reference(adata: ad.AnnData, truth: pd.DataFrame) -> Dict[s
         "n_donors": int(adata.obs["donor"].nunique()),
         "n_samples": int(counts.shape[0]),
         "top100_truth_overlap": round(overlap_frac, 4),
+        "reference_type": "CURATED_PUBLISHED_KNOWLEDGE_PROXY",
+        "independent_ground_truth": False,
+        "model_design": contract.get("design_formula"),
         "threshold_required": 0.50,
         "warrant_regime": verdict.regime.value,
         "maturity_ceiling": verdict.maturity_ceiling.value,
@@ -140,7 +143,7 @@ def test_dim2_cell_downsampling(adata: ad.AnnData, truth: pd.DataFrame, baseline
 
         min_cells = int(sub_adata.obs.groupby(["donor", "condition"]).size().min())
         counts, design = aggregate_pseudobulk(sub_adata)
-        table, _ = run_pydeseq2(counts, design, condition="condition", reference="ctrl", contrast_level="stim")
+        table, _ = run_pydeseq2(counts, design, condition="condition", donor="donor", reference="ctrl", contrast_level="stim")
         sub_top100 = set(table.sort_values("padj").head(100)["gene"].astype(str))
         jaccard = len(sub_top100 & baseline_top100) / len(sub_top100 | baseline_top100)
 
@@ -222,6 +225,7 @@ def test_dim3_donor_perturbation(adata: ad.AnnData) -> Dict[str, Any]:
         "dimension": "3_donor_number_perturbation_phase_transition",
         "grid": results,
         "phase_transitions_verified": all_correct,
+        "evidence_scope": "DETERMINISTIC_POLICY_CONTRACT_ONLY; donor subsets were not fitted",
         "passed": all_correct,
     }
 
@@ -253,7 +257,7 @@ def test_dim4_effect_size_sensitivity(adata: ad.AnnData) -> Dict[str, Any]:
         multiplier = 2.0 ** lfc
         mod_counts.loc[stim_samples, spike_genes] = np.round(mod_counts.loc[stim_samples, spike_genes] * multiplier)
 
-        table, _ = run_pydeseq2(mod_counts, design, condition="condition", reference="ctrl", contrast_level="stim")
+        table, _ = run_pydeseq2(mod_counts, design, condition="condition", donor="donor", reference="ctrl", contrast_level="stim")
         sig_degs = set(table.loc[table["padj"] < 0.05, "gene"].astype(str))
         recovered = len(set(spike_genes) & sig_degs)
         power = recovered / len(spike_genes)
@@ -269,36 +273,58 @@ def test_dim4_effect_size_sensitivity(adata: ad.AnnData) -> Dict[str, Any]:
     passed = spike_results[-1]["statistical_power"] >= 0.70
     return {
         "dimension": "4_effect_size_sensitivity_power_curve",
+        "evidence_scope": "Single spike-in realization per effect size on already perturbed biological counts; descriptive recovery, not repeated-experiment power",
         "grid": spike_results,
         "passed": passed,
     }
 
 
 # ==============================================================================
-# Dimension 5: Permutation Null / Empirical FDR Validation
+# Dimension 5: One within-donor permutation, descriptive rejection fraction
 # ==============================================================================
 
 def test_dim5_permutation_null(adata: ad.AnnData) -> Dict[str, Any]:
-    print("  [Dim 5] Running Permutation Null / Empirical FDR Validation...")
+    print("  [Dim 5] Running One Within-Donor Permutation Rejection-Fraction Check...")
     counts, design = aggregate_pseudobulk(adata)
     rng = np.random.default_rng(123)
     perm_design = design.copy()
-    # Permute condition labels across the 16 samples
-    perm_design["condition"] = rng.permutation(design["condition"].values)
+    # Preserve each donor's paired design; across-donor shuffling is not a
+    # valid exchangeability scheme for this paired model.
+    for indices in design.groupby("donor").groups.values():
+        perm_design.loc[indices, "condition"] = rng.permutation(design.loc[indices, "condition"].values)
 
-    table, _ = run_pydeseq2(perm_design_counts:=counts, perm_design, condition="condition", reference="ctrl", contrast_level="stim")
-    n_total = len(table)
-    n_sig = int((table["padj"] < 0.05).sum())
-    false_discovery_rate = n_sig / max(n_total, 1)
-
-    # Under null permutation, empirical false discovery proportion must be controlled (<= 0.05)
-    passed = false_discovery_rate <= 0.05
+    table, contract = run_pydeseq2(counts, perm_design, condition="condition", donor="donor", reference="ctrl", contrast_level="stim")
+    adjusted = pd.to_numeric(table["padj"], errors="raise")
+    available = adjusted.notna()
+    if not np.isfinite(adjusted[available]).all() or not adjusted[available].between(0, 1).all():
+        raise ValueError("Adjusted p-values must be finite probabilities or missing")
+    n_total = int(available.sum())
+    n_sig = int((adjusted[available] < 0.05).sum())
+    rejection_fraction = n_sig / n_total if n_total else None
+    # Keep the existing 0.05 diagnostic threshold without interpreting its
+    # success as empirical FDR, FWER, or a confirmed biological global null.
+    passed = rejection_fraction is not None and rejection_fraction <= 0.05
     return {
-        "dimension": "5_permutation_null_fdr_control",
+        "dimension": "5_single_permutation_rejection_fraction",
+        "n_result_rows": len(table),
         "n_genes_tested": n_total,
-        "n_false_positive_degs_padj_05": n_sig,
-        "empirical_false_positive_rate": round(false_discovery_rate, 5),
-        "fdr_controlled": passed,
+        "n_unavailable_adjusted_pvalues": int((~available).sum()),
+        "n_rejected_padj_05": n_sig,
+        "observed_global_null_rejection_fraction": rejection_fraction,
+        "global_null_truth_established": False,
+        "permutation_unit": "within_donor_condition_labels",
+        "n_permutations": 1,
+        "model_design": contract.get("design_formula"),
+        "threshold_required": 0.05,
+        "fdr_controlled": None,
+        "empirical_false_positive_rate": None,
+        "n_false_positive_degs_padj_05": None,
+        "deprecated_fields": {
+            "fdr_controlled": "Not estimable from one permutation",
+            "empirical_false_positive_rate": "Use observed_global_null_rejection_fraction; biological null truth is not established",
+            "n_false_positive_degs_padj_05": "Use n_rejected_padj_05; rejected hypotheses have no independently known null labels",
+        },
+        "evidence_scope": "ONE_PAIRED_PERMUTATION_DIAGNOSTIC; neither FDR nor FWER control established",
         "passed": passed,
     }
 
@@ -374,6 +400,7 @@ def test_dim7_claim_interception() -> Dict[str, Any]:
     all_correct = all(i["correct"] for i in intercepted)
     return {
         "dimension": "7_host_variation_claim_interception",
+        "evidence_scope": "LOCAL_CLAIM_CHECKER_FIXTURE; no host comparison executed",
         "test_cases": intercepted,
         "interception_accuracy": 1.0 if all_correct else 0.0,
         "passed": all_correct,
@@ -416,7 +443,7 @@ def main() -> int:
     # Run Dimension 1
     dim1 = test_dim1_public_reference(adata, truth)
     counts, design = aggregate_pseudobulk(adata)
-    table, _ = run_pydeseq2(counts, design, condition="condition", reference="ctrl", contrast_level="stim")
+    table, _ = run_pydeseq2(counts, design, condition="condition", donor="donor", reference="ctrl", contrast_level="stim")
     baseline_top100 = set(table.sort_values("padj").head(100)["gene"].astype(str))
 
     # Run Dimensions 2-7
@@ -434,6 +461,10 @@ def main() -> int:
         "schema_version": "1.0",
         "capability_id": "scrna.pseudobulk_de",
         "test_suite": "7_dimensional_inferential_stress_test",
+        "evidence_scope": "LOCAL_REAL_DATA_PERTURBATIONS_AND_POLICY_FIXTURES",
+        "scientific_authorization": "NONE",
+        "independent_ground_truth": False,
+        "deprecated_fields": {"dimensions.dim5_permutation_null_fdr": "Compatibility key only; observed rejection diagnostic does not validate FDR"},
         "dataset_checksum_sha256": {
             "pbmc_ifnb_counts.h5ad": h5ad_cs,
             "published_de_truth.csv": truth_cs,

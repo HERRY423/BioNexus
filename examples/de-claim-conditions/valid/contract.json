@@ -1,0 +1,40 @@
+{
+  "schema_version": "bionexus.de-claim-conditions.v1",
+  "analysis": {
+    "cell_type": "T",
+    "numerator": "disease",
+    "denominator": "control"
+  },
+  "metadata_columns": {
+    "sample": "sample",
+    "donor": "donor",
+    "condition": "condition"
+  },
+  "artifacts": {
+    "results": {
+      "path": "results.csv",
+      "sha256": "64abcd19ed7e8eebe2a070cdf31372bf83f110ccdacebf5addeac6da1dc62b5a"
+    },
+    "metadata": {
+      "path": "metadata.csv",
+      "sha256": "e556d06eb4fa2108eeb54cc0c97cc3b3d7054a12c7db1e02356e44c6c91d0e68"
+    },
+    "design": {
+      "path": "design.csv",
+      "sha256": "4f1cbf649eeecb581f9fa8bc293f0e7c21b887fb31c33e4450e74332f7cd7122"
+    },
+    "model": {
+      "path": "model.json",
+      "sha256": "ebf75af0b80e9c196f34a4a65562c8ed4eed01890a3faccb777de459fe8cf020"
+    }
+  },
+  "claims": [
+    {
+      "claim_id": "X-T",
+      "gene": "X",
+      "direction": "up",
+      "scope": "cohort_association",
+      "alpha": 0.05
+    }
+  ]
+}

@@ -18,5 +18,11 @@
   "tests/unit/test_contract_input_boundaries.py",
   "tests/unit/test_de_input_boundaries.py",
   "tests/unit/test_core_architecture.py",
-  "tests/unit/test_spec_registry.py"
+  "tests/unit/test_spec_registry.py",
+  "tests/unit/test_semantic_understanding.py",
+  "tests/unit/test_claim_semantics_adversarial.py",
+  "tests/unit/test_de_claim_conditions.py",
+  "tests/unit/test_de_alternatives.py",
+  "tests/unit/test_de_selection.py",
+  "tests/unit/test_positive_output_contract.py"
 ]

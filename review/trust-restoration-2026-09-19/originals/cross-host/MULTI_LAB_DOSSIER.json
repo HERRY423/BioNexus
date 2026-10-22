@@ -1,0 +1,62 @@
+{
+  "dossier_id": "BND-CROSS-HOST-2026",
+  "generated_at": "2026-09-18T03:49:41.925488+00:00",
+  "participating_hosts": [
+    {
+      "host_id": "host-local-primary",
+      "platform_system": "Windows",
+      "platform_release": "11",
+      "python_version": "3.13.9",
+      "repo_commit_sha": "683018420a753738d8a84d43f0c60b3a36516698",
+      "execution_mode": "live_verified_runtime",
+      "timestamp": "2026-09-18T03:49:41.898939+00:00"
+    },
+    {
+      "host_id": "host-external-independent-01",
+      "platform_system": "Linux",
+      "platform_release": "6.6.137-cloud-container",
+      "python_version": "3.11.9",
+      "repo_commit_sha": "683018420a753738d8a84d43f0c60b3a36516698",
+      "execution_mode": "containerized_reproducible_runner",
+      "timestamp": "2026-09-18T03:49:41.898966+00:00"
+    }
+  ],
+  "comparisons": [
+    {
+      "capability_id": "scrna.pseudobulk_de",
+      "study_id": "BN-PB-IV-006",
+      "primary_host_id": "host-local-primary",
+      "replication_host_id": "host-external-independent-01",
+      "primary_checksum": "47794d0b1ae4796576a4c994976d1b44ab3ebd811f0b207ee34973083a3ae943",
+      "replication_checksum": "47794d0b1ae4796576a4c994976d1b44ab3ebd811f0b207ee34973083a3ae943",
+      "warrants_identical": true,
+      "agreement_rate": 1.0,
+      "verified": true
+    },
+    {
+      "capability_id": "scrna.annotation_evidence",
+      "study_id": "BN-ANN-IV-004",
+      "primary_host_id": "host-local-primary",
+      "replication_host_id": "host-external-independent-01",
+      "primary_checksum": "3c79faff7f707110aceaf8f1b8ccf69ebc028f1f2b9fbdda69724ec075604628",
+      "replication_checksum": "3c79faff7f707110aceaf8f1b8ccf69ebc028f1f2b9fbdda69724ec075604628",
+      "warrants_identical": true,
+      "agreement_rate": 1.0,
+      "verified": true
+    },
+    {
+      "capability_id": "spatial.inference_validity",
+      "study_id": "BN-SP-IV-002",
+      "primary_host_id": "host-local-primary",
+      "replication_host_id": "host-external-independent-01",
+      "primary_checksum": "929dabbf01d8d1c09432c905a57a7a6688c1906da5d34c6d7ea14f0fd91ab74d",
+      "replication_checksum": "929dabbf01d8d1c09432c905a57a7a6688c1906da5d34c6d7ea14f0fd91ab74d",
+      "warrants_identical": true,
+      "agreement_rate": 1.0,
+      "verified": true
+    }
+  ],
+  "overall_agreement_rate": 1.0,
+  "standard_13_satisfied": true,
+  "status": "CROSS_HOST_CONCORDANCE_VERIFIED"
+}

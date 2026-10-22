@@ -397,15 +397,24 @@ def ledger_to_ro_crate(ledger: ClaimLedger) -> Dict[str, Any]:
     return {"@context": RO_CRATE_CONTEXT, "@graph": graph}
 
 
+def precheck_ro_crate(doc: Dict[str, Any]) -> List[str]:
+    """Structural RO-Crate skeleton precheck. Not profile compliance.
+
+    Official profile conformance is ``bionexus.roc_validator.run_rocrate_validator``.
+    """
+    return validate_ro_crate(doc)
+
+
 def validate_ro_crate(doc: Dict[str, Any]) -> List[str]:
     """
-    Structural RO-Crate 1.1 validation (offline, deterministic).
+    Structural RO-Crate 1.1 precheck (offline, deterministic).
 
-    Scope disclosure (BNS-IO-010): this checks the crate skeleton required by
-    the specification — context, metadata descriptor, root Dataset, profile
-    declarations, CreateAction wiring — NOT full JSON-LD expansion or the
-    complete profile validators (ro-crate-validator integration is tracked in
-    the standards registry).
+    Scope disclosure (BNS-IO-010): this is a handwritten skeleton check
+    (context, metadata descriptor, root Dataset, CreateAction wiring). It is
+    NOT JSON-LD expansion and NOT official profile compliance. Call
+    ``bionexus.roc_validator.run_rocrate_validator`` for the pinned
+    ``rocrate-validator`` CLI. A pass here MUST be reported as
+    ``STRUCTURAL_PRECHECK_ONLY``.
     """
     errors: List[str] = []
     graph = doc.get("@graph")
@@ -621,12 +630,13 @@ def export_ro_crate(path: str | Path, out_path: Optional[str | Path] = None) -> 
         doc = ledger_to_ro_crate(ClaimLedger.from_dict(manifest))
     else:
         doc = run_bundle_to_ro_crate(manifest, siblings)
-    errors = validate_ro_crate(doc)
+    errors = precheck_ro_crate(doc)
     if errors:
-        raise ValueError("RO-Crate projection failed structural validation: " + "; ".join(errors))
+        raise ValueError("RO-Crate projection failed structural precheck: " + "; ".join(errors))
     target = Path(out_path) if out_path else _default_out(path, "ro-crate-metadata.json")
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(json.dumps(doc, indent=2), encoding="utf-8")
+    _official_validate_crate(target.parent, mode="auto")
     return target, errors
 
 
@@ -699,6 +709,7 @@ class CrateExportResult:
     ledger_included: bool = False
     validation_errors: List[str] = field(default_factory=list)
     verified: bool = False
+    official_validation_status: str = "STRUCTURAL_PRECHECK_ONLY"
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -710,7 +721,28 @@ class CrateExportResult:
             "ledger_included": self.ledger_included,
             "validation_errors": list(self.validation_errors),
             "verified": self.verified,
+            "official_validation_status": self.official_validation_status,
+            "structural_precheck": "PASS" if self.verified and not self.validation_errors else "FAIL",
         }
+
+
+def _official_validate_crate(crate_dir: Path, *, mode: str = "auto") -> str:
+    """Run the official CLI when present. Handwritten precheck stays the write gate.
+
+    ``auto`` records VALIDATOR_UNAVAILABLE as STRUCTURAL_PRECHECK_ONLY and does
+    not fail the export. ``require`` raises if the CLI is missing or fails.
+    """
+    from bionexus.roc_validator import STATUS_NOT_RUN, run_rocrate_validator
+
+    if mode == "skip":
+        return STATUS_NOT_RUN
+    result = run_rocrate_validator(crate_dir)
+    if mode == "require" and not result.passed:
+        raise ValueError(
+            "Official rocrate-validator failed or is unavailable "
+            f"({result.status}): {result.log[:500]}"
+        )
+    return result.status
 
 
 def _safe_crate_name(name: str) -> str:
@@ -1622,6 +1654,7 @@ def export_workflow_run_crate(
                 "Exported crate failed post-write verification: " + "; ".join(post_errors)
             )
 
+        official_status = _official_validate_crate(crate_dir, mode="auto")
         zip_path: Optional[Path] = None
         if zip_archive:
             zip_path = _write_crate_zip(crate_dir)
@@ -1634,6 +1667,7 @@ def export_workflow_run_crate(
             ledger_included=ledger_doc is not None,
             validation_errors=[],
             verified=True,
+            official_validation_status=official_status,
         )
     except (OSError, ValueError):
         _cleanup()

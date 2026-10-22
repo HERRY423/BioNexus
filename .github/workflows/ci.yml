@@ -355,3 +355,13 @@ jobs:
           assert resp['result']['serverInfo']['name'] == 'bionexus-local-mcp'
           print('[OK] Local MCP Server legacy stdio protocol PASSED.')
           "
+      - name: Verify real SDK and legacy transport contracts
+        run: |
+          python scripts/mcp_acceptance.py --mode sdk --package-root src --out .quality/mcp-sdk
+          python scripts/mcp_acceptance.py --mode legacy --package-root src --out .quality/mcp-legacy
+      - name: Preserve MCP transport evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcp-transport-contracts
+          path: .quality/mcp-*/

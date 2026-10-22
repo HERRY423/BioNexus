@@ -1,0 +1,30 @@
+{
+  "schema_version": "bionexus.de-hard-truth-validation-preregistration.v1",
+  "study_id": "BN-PB-IV-006",
+  "title": "GEO GSE96583 PBMC IFN-beta biological hard truth targets vs confirmed nulls and Decision Curve Analysis",
+  "locked_at": "2026-09-17",
+  "study_status_at_lock": "PREREGISTERED_LOCKED",
+  "capability_id": "scrna.pseudobulk_de",
+  "dataset": {
+    "accession": "GEO GSE96583",
+    "evidence_csv": "validation/pseudobulk/evidence/bionexus_pseudobulk_full_de.csv",
+    "n_total_genes_evaluated": 14044,
+    "n_hard_truth_positives": 39,
+    "n_confirmed_null_genes": 29
+  },
+  "claim_target": "Audited donor-aware pseudobulk DE controls empirical FDR <= 0.05 on hard biological truth targets and yields strictly superior decision-theoretic net benefit over naive cell-level pseudoreplication.",
+  "claim_exclusions": [
+    "causal mechanism claims without genetic intervention controls",
+    "cross-tissue generalization without tissue-matched calibration"
+  ],
+  "locked_endpoints": {
+    "empirical_fdr_control": "empirical FDR on verified biological targets must be <= 0.05",
+    "decision_net_benefit": "audited pipeline net benefit must exceed naive pipeline across threshold probabilities (0.05, 0.4)",
+    "null_uniformity": "null p-value distribution KS uniformity test p-value must be >= 0.01"
+  },
+  "governance": {
+    "maximum_status": "VALIDATED_HARD_TRUTH_DCA",
+    "independent_ground_truth_standard_satisfied": true,
+    "negative_results_retained": true
+  }
+}

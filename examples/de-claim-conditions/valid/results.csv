@@ -1,0 +1,2 @@
+gene,cell_type,numerator,denominator,log2_fold_change,padj,ci_lower,ci_upper,ci_level
+X,T,disease,control,1.2,0.01,0.4,2.0,0.95

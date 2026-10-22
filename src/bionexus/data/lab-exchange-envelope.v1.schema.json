@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bionexus.dev/schemas/lab-exchange-envelope.v1",
+  "title": "BioNexus lab exchange envelope v1 (historical)",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schema_version", "tool", "files"],
+  "properties": {
+    "schema_version": {"const": "bionexus.lab-exchange-envelope.v1"},
+    "tool": {"type": "string", "minLength": 1},
+    "tool_version": {"type": ["string", "null"]},
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["path", "hash"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "hash": {"type": "string", "minLength": 8}
+        }
+      }
+    }
+  }
+}

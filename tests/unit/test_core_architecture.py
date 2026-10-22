@@ -7,16 +7,19 @@ import pytest
 SOURCE = Path(__file__).resolve().parents[2] / "src/bionexus"
 # Foundation modules stay independent of higher-level policy and command adapters.
 ALLOWED = {
-    "contracts": set(), "integrity": set(), "de_bundle": set(),
+    # The shared positive-output contract is a stdlib-only foundation, not a
+    # policy engine. It may not depend back on any assessment or adapter.
+    "evidence_contract": set(),
+    "contracts": {"evidence_contract"}, "integrity": set(), "de_bundle": {"evidence_contract"},
     "pilot_costs": set(), "rule_classification": set(),
     "research_purpose": {"contracts"},
     "lab_policy": {"rule_classification"},
     "rule_provenance": {"rule_classification"},
     "researcher_override": {"contracts", "research_purpose", "rule_provenance"},
-    "evidence_model": {"contracts", "research_purpose", "tool_receipt"},
+    "evidence_model": {"contracts", "research_purpose", "tool_receipt", "evidence_contract"},
     "warrant": {"contracts", "evidence_model", "lab_policy", "research_purpose",
-                "researcher_override", "rule_classification"},
-    "de_pilot": {"de_bundle", "pilot_costs", "versions"},
+                "researcher_override", "rule_classification", "evidence_contract"},
+    "de_pilot": {"de_bundle", "pilot_costs", "versions", "evidence_contract"},
 }
 
 

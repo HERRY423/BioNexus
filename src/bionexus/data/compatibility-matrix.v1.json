@@ -1,0 +1,99 @@
+{
+  "schema_version": "bionexus.compatibility-matrix.v1",
+  "bionexus_version": "1.0.0-rc.8",
+  "honesty_note": "Statuses describe BioNexus adapters and committed fixtures, not vendor certification, live cluster runs, or scientific warrant. Native R objects and live nf-core executions are out of the Python core runtime.",
+  "status_vocabulary": {
+    "FIXTURE_VERIFIED": "CI exercises committed lab-like fixtures through import, envelope validation, capsule export, and standards projection.",
+    "EXPORTED_ARTIFACT_VERIFIED": "Vendor runtime is not executed; BioNexus verifies the community export the lab actually hands over (MTX/TSV/h5ad/CSV).",
+    "DECLARED": "Adapter or detection exists; no committed fixture currently proves the path.",
+    "LIVE_VENDOR_UNVERIFIED": "A live vendor binary or pipeline run has not been executed in BioNexus CI.",
+    "UNSUPPORTED": "Explicitly out of scope. Import is refused."
+  },
+  "products": [
+    {
+      "id": "scanpy",
+      "family": "single-cell-python",
+      "native_runtime": true,
+      "versions": ["1.10.x", "1.11.x", "1.12.x"],
+      "input_formats": [".h5ad", "counts.tsv+obs.tsv"],
+      "export_formats": ["lab-exchange-envelope.v2", "run-capsule", "ro-crate", "bco"],
+      "status": "FIXTURE_VERIFIED",
+      "acceptance_id": "BN-LAB-SCANPY-001",
+      "limitations": [
+        "AnnData parse requires the goldchain extra; without anndata the .h5ad file is hashed, not opened.",
+        "rank_genes_groups tables are not condition DE."
+      ]
+    },
+    {
+      "id": "seurat",
+      "family": "single-cell-r",
+      "native_runtime": false,
+      "versions": ["4.x", "5.x"],
+      "input_formats": ["matrix.mtx+features.tsv+barcodes.tsv+metadata.csv"],
+      "export_formats": ["lab-exchange-envelope.v2", "run-capsule", "ro-crate", "bco"],
+      "status": "EXPORTED_ARTIFACT_VERIFIED",
+      "acceptance_id": "BN-LAB-SEURAT-001",
+      "limitations": [
+        "Native .rds/.qs Seurat objects are UNSUPPORTED in the Python runtime.",
+        "Labs must export MTX/TSV or h5ad (SeuratDisk/sceasy) before import."
+      ]
+    },
+    {
+      "id": "deseq2",
+      "family": "bulk-differential-expression",
+      "native_runtime": false,
+      "versions": ["DESeq2 1.40+", "PyDESeq2 0.4.x", "PyDESeq2 0.5.x"],
+      "input_formats": [".csv", ".tsv"],
+      "export_formats": ["lab-exchange-envelope.v2", "run-capsule", "ro-crate", "bco"],
+      "status": "FIXTURE_VERIFIED",
+      "acceptance_id": "BN-LAB-DESEQ2-001",
+      "limitations": [
+        "Imports result tables; does not re-run DESeq2 or PyDESeq2.",
+        "Accepted column aliases: log2FoldChange|log2FC, padj|FDR|p.adj."
+      ]
+    },
+    {
+      "id": "edger",
+      "family": "bulk-differential-expression",
+      "native_runtime": false,
+      "versions": ["3.x", "4.x"],
+      "input_formats": [".tsv", ".csv"],
+      "export_formats": ["lab-exchange-envelope.v2", "run-capsule", "ro-crate", "bco"],
+      "status": "FIXTURE_VERIFIED",
+      "acceptance_id": "BN-LAB-EDGER-001",
+      "limitations": [
+        "Imports result tables; does not execute edgeR in R.",
+        "Accepted column aliases: logFC, FDR|PValue."
+      ]
+    },
+    {
+      "id": "cellranger",
+      "family": "single-cell-counts",
+      "native_runtime": false,
+      "versions": ["7.x", "8.x"],
+      "input_formats": ["outs/metrics_summary.csv", "outs/filtered_feature_bc_matrix/{matrix.mtx,features.tsv,barcodes.tsv}"],
+      "export_formats": ["lab-exchange-envelope.v2", "run-capsule", "ro-crate", "bco"],
+      "status": "FIXTURE_VERIFIED",
+      "acceptance_id": "BN-LAB-CELLRANGER-001",
+      "limitations": [
+        "Does not invoke the Cell Ranger binary.",
+        "filtered_feature_bc_matrix.h5 is hashed when present; MTX is the required fixture path."
+      ]
+    },
+    {
+      "id": "nf-core",
+      "family": "workflow",
+      "native_runtime": false,
+      "versions": ["nf-core/rnaseq 3.x", "nf-core/scrnaseq 2.x", "nf-core/differentialabundance 1.x"],
+      "input_formats": ["samplesheet.csv", "pipeline_info/", "software_versions.yml"],
+      "export_formats": ["lab-exchange-envelope.v2", "run-capsule", "ro-crate", "bco"],
+      "status": "FIXTURE_VERIFIED",
+      "acceptance_id": "BN-LAB-NFCORE-001",
+      "limitations": [
+        "Import inspects results directories; it does not launch Nextflow.",
+        "Live nextflow/nf-core binaries remain LIVE_VENDOR_UNVERIFIED in CI.",
+        "Workflow success is not scientific warrant."
+      ]
+    }
+  ]
+}

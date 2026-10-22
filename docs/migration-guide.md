@@ -108,3 +108,21 @@ elif decision.status == RoutingStatus.ABSTAIN:
 | *(New in 0.8.0)* | `bionexus capability check <id>` | Pre-evaluate analytical viability before execution |
 | *(New in 0.8.0)* | `bionexus route "<query>"` | 6-stage scientific intent & invariant routing |
 | *(New in 0.8.0)* | `bionexus eval` | Run agent behavior benchmark across 8 reliability pillars |
+
+---
+
+## Lab-exchange envelope v1 → v2
+
+Historical envelopes declared `tool`, `tool_version`, and `files[].path/hash`.
+Current documents use `bionexus.lab-exchange-envelope.v2` with `producer`,
+`source.files[].relpath/sha256`, `scientific_authorization: NONE`, and
+`payload_sha256`. Unknown versions fail closed.
+
+```bash
+bionexus deploy migrate path/to/envelope.v1.json -o envelope.v2.json --json
+```
+
+The migrator rewrites structure only. It does not re-hash missing bytes, does
+not upgrade scientific maturity, and does not invent a product that was not
+mapped (`cellranger`, `scanpy`, `seurat`, `deseq2`, `edger`, `nf-core`).
+Regression fixtures live in `tests/fixtures/lab_exchange/history/`.

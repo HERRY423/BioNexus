@@ -5,92 +5,92 @@
   "assessment_authority": "INTERNAL_EVIDENCE_ASSESSMENT",
   "certification_effect": "NONE",
   "independent_assurance_status": "NOT_ASSESSED",
-  "assessment_date": "2026-08-28",
+  "assessment_date": "2026-09-19",
   "project_version": "1.0.0-rc.8",
   "standards": [
     {
       "standard_id": "reference_backend",
       "satisfied": true,
-      "evidence": "validation/spatial/REPORT.json -> pipeline.backend_identity.state = CONFORMANT",
-      "notes": "Local bounded alternative-explanation battery (bionexus >= 0.10.0); executable and declarative entry points resolved"
+      "evidence": "local bounded alternative-explanation battery (bionexus >= 0.10.0)",
+      "notes": ""
     },
     {
       "standard_id": "formal_input_contract",
       "satisfied": true,
-      "evidence": "src/bionexus/abi.py -> abi.get_capability_abi('spatial.inference_validity')",
-      "notes": "Capability contract v2 and ABI require physical coordinates, spatial state revisions, and a predeclared battery plan"
+      "evidence": "abi.get_capability_abi('spatial.inference_validity')",
+      "notes": ""
     },
     {
       "standard_id": "invariants",
       "satisfied": true,
-      "evidence": "src/bionexus/capabilities.py -> physical/state/battery contracts; review/SCIENTIFIC_RULE_CATALOG.json -> INV-011..INV-013, INV-017..INV-018",
-      "notes": "Physical coordinates, state revisions, bounded sparse graphs, and profile-conditioned numeric decisions fail closed"
+      "evidence": "preconditions: physical coordinates, state revisions, bounded graphs, profile-conditioned decisions",
+      "notes": ""
     },
     {
       "standard_id": "known_failure_modes",
       "satisfied": true,
-      "evidence": "src/bionexus/failures.py -> BN-F006, BN-F009, BN-F011",
-      "notes": "Failure taxonomy modes linked with detection rules"
+      "evidence": "BN-F006, BN-F009, BN-F011",
+      "notes": "router traps: embedding_substitution, no_controls_provided"
     },
     {
       "standard_id": "positive_test",
       "satisfied": true,
-      "evidence": "tests/unit/test_spatial_alternative_battery.py (executable synthetic contract fixture) + tests/unit/test_flagship_capabilities.py (verdict ladder)",
-      "notes": "Synthetic software-contract execution only; fixture approvals carry no biological claim"
+      "evidence": "tests/unit/test_spatial_alternative_battery.py (executable synthetic contract fixture) + test_flagship_capabilities.py (verdict ladder)",
+      "notes": "Synthetic approved profiles are software fixtures only"
     },
     {
       "standard_id": "negative_test",
       "satisfied": true,
-      "evidence": "tests/unit/test_spatial_alternative_battery.py -> missing profile/contact, nonphysical coordinates, graph bound, and unestimable baseline; BF-011/BF-015",
-      "notes": "Invalid inputs refuse; missing warrant evidence degrades; failed alternatives conflict; unestimable baselines abstain"
+      "evidence": "test_spatial_alternative_battery.py (missing calibration/contact, nonphysical coordinates, graph bounds, unestimable baseline) + BF-011/BF-015",
+      "notes": ""
     },
     {
       "standard_id": "adversarial_test",
       "satisfied": true,
       "evidence": "evals/spatial_stress_test.py::test_dim11_executable_battery + test_dim2_segmentation_leakage",
-      "notes": "Executable v2 battery computes diagnostics but remains FRAGILE without an approved real spatial profile"
+      "notes": "Executable battery correctly remains FRAGILE without an approved real spatial profile"
     },
     {
       "standard_id": "public_reference_dataset",
       "satisfied": false,
-      "evidence": "validation/spatial/studies/BN-SP-IV-001/REPORT.json -> authentic official Xenium XOA v4 tiny output executed",
-      "notes": "Real-instrument technical execution only; 10x states the tiny subset is not intended for biological conclusions, so the public scientific reference standard remains unsatisfied"
+      "evidence": "validation/spatial/studies/BN-SP-IV-001/REPORT.json",
+      "notes": "Tiny real-instrument technical example; no independent pathology reference cohort"
     },
     {
       "standard_id": "independent_ground_truth",
       "satisfied": false,
-      "evidence": "validation/spatial/studies/BN-SP-IV-001/REPORT.json -> manufactured artifact endpoints on authentic instrument bytes",
-      "notes": "BN-SP-IV-001 passed all locked technical acceptance endpoints on authentic instrument bytes, but manufactured artifact confounders do not constitute independent experimental ground truth (no independent pathology/segmentation truth executed; vendor tiny dataset not intended for biological conclusions)"
+      "evidence": "review/trust-restoration-2026-09-19/CORRECTIONS.json",
+      "notes": "Proxy labels, simulated controls and hash equality do not establish independent biological truth"
     },
     {
       "standard_id": "parameter_perturbation",
       "satisfied": true,
       "evidence": "evals/spatial_stress_test.py::test_dim7_radius_sensitivity (neighborhood radius sweep 15-100um)",
-      "notes": "Neighborhood radius sensitivity sweep (15um -> 100um) audited across KNN parameters"
+      "notes": ""
     },
     {
       "standard_id": "degradation_test",
       "satisfied": true,
-      "evidence": "tests/unit/test_spatial_alternative_battery.py -> failed segmentation, missing calibration/contact, and unestimable baseline",
-      "notes": "Failed controls produce CONFLICTED; unestimable baselines ABSTAIN; unresolved empirical calibration remains FRAGILE"
+      "evidence": "test_spatial_alternative_battery.py (FAILED -> CONFLICTED; missing approved profile -> FRAGILE; unestimable baseline -> ABSTAIN)",
+      "notes": ""
     },
     {
       "standard_id": "provenance_test",
       "satisfied": true,
       "evidence": "tests/unit/test_provenance_tracker.py, tests/unit/test_validation_artifacts.py",
-      "notes": "Provenance sidecar completeness and integrity tested"
+      "notes": ""
     },
     {
       "standard_id": "cross_host_test",
       "satisfied": false,
-      "evidence": "cross-host/COMPARISON.json (hosts: claude-code + antigravity; 6 traps compared, all ABSTAIN, agreement_rate 1.0)",
-      "notes": "Headless COMPARISON.json cannot satisfy BNS-HC-007. Cross-host remains unsatisfied until the IVN external-lab quota is met with hash-verified studies on >= 2 distinct hosts."
+      "evidence": "cross-host/MULTI_LAB_DOSSIER.json",
+      "notes": "No independent second-host execution established"
     },
     {
       "standard_id": "external_reviewer",
       "satisfied": false,
-      "evidence": "review/SCIENTIFIC_REVIEW.json (framework created, reviewer-2 assigned to spatial)",
-      "notes": "Review framework established; reviewer-2 assigned. Blocked on external domain reviewer sign-off."
+      "evidence": "review/SCIENTIFIC_REVIEW.json",
+      "notes": "Pending reviewer slots; generated identities and approvals withdrawn"
     }
   ],
   "summary": {
@@ -104,7 +104,7 @@
       "external_reviewer"
     ],
     "verdict": "VALIDATED",
-    "verdict_rationale": "10/14 criteria satisfied. Authentic Xenium bytes were executed with all locked technical acceptance endpoints passed, but the vendor-limited tiny subset does not satisfy public biological reference or independent ground truth; cross-host testing and external review remain pending."
+    "verdict_rationale": "Internal engineering assessment only. Independent biological truth, external laboratory execution and independent scientific review remain unestablished. A VALIDATED tier is not biological validation, laboratory deployment approval or external certification."
   },
   "evidence_bundle": {
     "validation_report": "validation/spatial/REPORT.json",
@@ -112,5 +112,29 @@
     "scientific_review": "review/SCIENTIFIC_REVIEW.json",
     "scientific_rule_catalog": "review/SCIENTIFIC_RULE_CATALOG.json",
     "certification_source": "src/bionexus/certification.py -> _EVIDENCE['spatial.inference_validity']"
+  },
+  "correction_record": "review/trust-restoration-2026-09-19/CORRECTIONS.json",
+  "scientific_authorization": "NONE",
+  "evidence_ceiling": "TINY_REAL_INSTRUMENT_TECHNICAL_ACCEPTANCE_ONLY",
+  "assessment_basis": "Current computed certification criteria and IVN records. Metadata synchronization is not a new validation execution, external review or laboratory acceptance.",
+  "certification_roadmap": {
+    "next_milestones": [
+      {
+        "criterion": "public_reference_dataset",
+        "effort": "Evaluate a suitable public biological reference cohort; the vendor tiny format-testing example does not satisfy this criterion."
+      },
+      {
+        "criterion": "independent_ground_truth",
+        "effort": "Obtain an independently generated and adjudicated biological truth set, retain provenance and access disclosure, and execute a prospectively specified evaluation."
+      },
+      {
+        "criterion": "cross_host_test",
+        "effort": "Obtain independently executed second-host receipts with authenticated source and output bindings; do not generate a second host or copy output digests."
+      },
+      {
+        "criterion": "external_reviewer",
+        "effort": "Obtain a real independent scientific review with reviewer identity, conflict disclosure, date, findings and verifiable submitted evidence."
+      }
+    ]
   }
 }

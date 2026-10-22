@@ -1,0 +1,146 @@
+{
+  "schema_version": "bionexus.annotation-facs-ground-truth-report.v1",
+  "study_id": "BN-ANN-IV-004",
+  "generated_at": "2026-09-18T03:49:41.467675+00:00",
+  "capability_id": "scrna.annotation_evidence",
+  "truth_modality": {
+    "kind": "physical_surface_antibody_gating",
+    "channels": [
+      "CD3_TotalSeqB",
+      "CD19_TotalSeqB",
+      "CD14_TotalSeqB",
+      "CD56_TotalSeqB"
+    ],
+    "independent_of_algorithms": true,
+    "blinded_key_sha256": "c86cbca1106a0a8a681c2c5e009f1503e0cdce92e5555e83382a74bed1154d7a",
+    "blinding_verified": true
+  },
+  "dataset": {
+    "source": "data/flagship/citeseq_pbmc_sorted/pbmc_5k_protein_v3.h5ad",
+    "n_total_cells_evaluated": 2813,
+    "physical_lineages": [
+      "B",
+      "MONOCYTE",
+      "NK",
+      "T"
+    ]
+  },
+  "overall_accuracy": 0.9065055101315321,
+  "supported_tier_precision": 0.9447104919460165,
+  "probabilistic_calibration": {
+    "n_samples": 2813,
+    "n_bins": 10,
+    "expected_calibration_error": 0.04193751893272262,
+    "maximum_calibration_error": 0.25,
+    "brier_score": 0.1677657861452837,
+    "is_well_calibrated": true,
+    "bin_accuracies": [
+      0.0,
+      0.0,
+      0.0,
+      0.2727272727272727,
+      0.5384615384615384,
+      0.5684210526315789,
+      0.7272727272727273,
+      0.8634146341463415,
+      0.9168443496801706,
+      0.9415515409139213
+    ],
+    "bin_confidences": [
+      0.0,
+      0.0,
+      0.25,
+      0.38006987320342955,
+      0.46971824080076563,
+      0.550848317843739,
+      0.6521215283800675,
+      0.7570369566167082,
+      0.8581374509698887,
+      0.970190479359074
+    ],
+    "bin_counts": [
+      0,
+      0,
+      4,
+      11,
+      26,
+      95,
+      121,
+      205,
+      469,
+      1882
+    ]
+  },
+  "selective_abstention_curve": [
+    {
+      "warrant_tier": "ALL_CALLS",
+      "n_accepted": 2813,
+      "n_abstained": 0,
+      "coverage_fraction": 1.0,
+      "accuracy_on_accepted": 0.9065055101315321,
+      "wilson_lower_95": 0.8951859485245054,
+      "abstention_effective": true
+    },
+    {
+      "warrant_tier": "NON_ABSTAIN",
+      "n_accepted": 2697,
+      "n_abstained": 116,
+      "coverage_fraction": 0.9587628865979382,
+      "accuracy_on_accepted": 0.9225064886911383,
+      "wilson_lower_95": 0.9118040513330304,
+      "abstention_effective": true
+    },
+    {
+      "warrant_tier": "SUPPORTED_ONLY",
+      "n_accepted": 2297,
+      "n_abstained": 516,
+      "coverage_fraction": 0.8165659438322076,
+      "accuracy_on_accepted": 0.9447104919460165,
+      "wilson_lower_95": 0.9346000735353078,
+      "abstention_effective": false
+    }
+  ],
+  "status": {
+    "run_status": "positive_validated_physical_truth",
+    "maximum_maturity": "VALIDATED_PHYSICAL_GROUND_TRUTH",
+    "independent_ground_truth_satisfied": true,
+    "blinding_satisfied": true
+  },
+  "claim_boundary": {
+    "supported": [
+      "Cell annotation verified against physical antibody surface-protein ground truth",
+      "Cryptographic blinding strictly enforced without label exposure",
+      "Expected Calibration Error 0.0419 <= 0.08",
+      "SUPPORTED tier precision 94.5% on physically gated cells"
+    ],
+    "not_supported": [
+      "Rare novel lineage discovery without custom reference markers",
+      "Continuous developmental trajectory discretizations without pseudotime warrant"
+    ]
+  },
+  "provenance": {
+    "data_source": "10x Genomics PBMC 5k CITE-seq (pbmc_5k_protein_v3.h5ad)",
+    "download_date": "2026-08-28",
+    "commit_sha": "683018420a753738d8a84d43f0c60b3a36516698",
+    "git_dirty": true,
+    "environment_lockfile_hashes": {
+      "pyproject.toml": "af00cd2b797d49c3ed2d0da185dcfcfeb0fbd913aa3de6815139e362514c31d6",
+      "requirements-dev.txt": "d5697d2689c87167f554b3b9c35086f7f8696d7c5a3b23c20507c39a474f82d4",
+      "requirements.txt": "8fa95b3e0de8230cca2932263ddb088403e5e9e878eeb97b8ee94f038fffc4d4"
+    },
+    "command": [
+      "scripts/run_biological_reliability_suite.py"
+    ],
+    "command_str": "scripts/run_biological_reliability_suite.py",
+    "generator_version": "1.0.0-rc.8",
+    "python_version": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "timestamp": "2026-09-18T03:49:41.278866+00:00",
+    "extra_metadata": {
+      "study_id": "BN-ANN-IV-004"
+    },
+    "repository_dirty_at_execution": true,
+    "validation_source_dirty": true,
+    "source_snapshot_sha256": "20ad28c8e18dc3d239771f0e87e4b401c9d4d944df195418f6c6df4d4dea4d97"
+  }
+}

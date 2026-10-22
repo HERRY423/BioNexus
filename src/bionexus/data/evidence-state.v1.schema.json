@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bionexus.evidence-state.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "assessment_kind",
+    "outcome",
+    "positive_basis",
+    "input_integrity",
+    "analysis_execution",
+    "premises",
+    "human_review",
+    "reviewer_identity",
+    "independence",
+    "support_status",
+    "schema",
+    "scientific_authorization",
+    "scientific_facts_verified",
+    "implementation_revision",
+    "rule_revision",
+    "scope",
+    "observations"
+  ],
+  "properties": {
+    "assessment_kind": {
+      "enum": [
+        "CONDITIONAL",
+        "ARTIFACT_REVIEW",
+        "BUNDLE_INTEGRITY",
+        "EXTERNAL_REVIEW",
+        "UNACCEPTED"
+      ]
+    },
+    "outcome": {
+      "enum": [
+        "POSITIVE",
+        "RESTRICTED",
+        "UNKNOWN"
+      ]
+    },
+    "positive_basis": {
+      "enum": [
+        "NONE",
+        "DECLARED_PREMISES",
+        "CHECKED_ARTIFACTS",
+        "CONSISTENT_BYTES",
+        "BOUND_RESPONSE_AND_DECLARED_REVIEW"
+      ]
+    },
+    "input_integrity": {
+      "enum": [
+        "UNKNOWN",
+        "CHECKED",
+        "INVALID"
+      ]
+    },
+    "analysis_execution": {
+      "enum": [
+        "UNKNOWN",
+        "SUCCESS_REPORTED_AND_BOUND",
+        "FAILED_OR_UNRESOLVED"
+      ]
+    },
+    "premises": {
+      "enum": [
+        "UNKNOWN",
+        "DECLARED",
+        "ARTIFACT_CHECKED_WITH_DECLARED_CONTEXT"
+      ]
+    },
+    "human_review": {
+      "enum": [
+        "UNKNOWN",
+        "RECORDED_UNAUTHENTICATED"
+      ]
+    },
+    "reviewer_identity": {
+      "enum": [
+        "UNKNOWN",
+        "DECLARED"
+      ]
+    },
+    "independence": {
+      "enum": [
+        "UNKNOWN"
+      ]
+    },
+    "support_status": {
+      "enum": [
+        "CANDIDATE_CORE",
+        "EXPERIMENTAL",
+        "UNACCEPTED"
+      ]
+    },
+    "schema": {
+      "const": "bionexus.evidence-state.v1"
+    },
+    "scientific_authorization": {
+      "const": "NONE"
+    },
+    "scientific_facts_verified": {
+      "const": false
+    },
+    "implementation_revision": {
+      "const": "p0a-1"
+    },
+    "rule_revision": {
+      "const": "positive-output-v1"
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    }
+  }
+}

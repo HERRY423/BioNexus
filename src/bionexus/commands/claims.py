@@ -148,6 +148,8 @@ def handle_route(args: argparse.Namespace) -> int:
         return 0 if decision.status == RoutingStatus.PERMITTED else 1
 
     print("\n=== BioNexus Scientific Intent Routing Decision ===")
+    from bionexus.evidence_contract import contract_text
+    print(contract_text(decision.to_dict()["evidence_contract"]))
     print(f'**Query**: "{args.query}"')
     print(f"**Routing Status**: `{decision.status.value}`")
     if decision.matched_capability:
@@ -158,7 +160,7 @@ def handle_route(args: argparse.Namespace) -> int:
     print(f"**Rationale**: {decision.rationale}\n")
 
     if decision.status == RoutingStatus.PERMITTED:
-        print("[PERMITTED] Analysis is scientifically valid.")
+        print("[PERMITTED] Preflight conditions satisfied under supplied metadata; scientific validity is not established.")
         if decision.recommended_script:
             print(f"  - Recommended Script: `{decision.recommended_script}`")
         if decision.recommended_command:
@@ -303,11 +305,13 @@ def handle_warrant_claim(args: argparse.Namespace) -> int:
         return 0 if res.is_fully_warranted else 1
 
     print("\n=== BioNexus Deterministic Warrant Engine (BNS-017) ===")
+    from bionexus.evidence_contract import contract_text
+    print(contract_text(res.evidence_contract))
     print(f"Claim:             \"{claim_ir.source_text}\"")
     print(f"Requested Class:   {res.requested_claim_class}")
     print(f"Warranted Class:   {res.warranted_claim_class}")
     print(f"Evidence Ceiling:  {res.evidence_ceiling}")
-    print(f"Overall Status:    {'[WARRANTED]' if res.is_fully_warranted else '[NOT FULLY WARRANTED]'}")
+    print(f"Overall Status:    {'[CONDITIONALLY WARRANTED]' if res.is_fully_warranted else '[NOT FULLY WARRANTED: CONDITIONS NOT SATISFIED]'}")
     print("\nTier-by-Tier Evaluation:")
     for tier_name, tier_verdict in res.tier_verdicts.items():
         status_tag = f"[{tier_verdict.status.value}]"
@@ -457,6 +461,86 @@ def handle_rule(args: argparse.Namespace) -> int:
         print()
         return 0
 
+    elif action == "research-objects":
+        from bionexus.rules.definitions import get_canonical_rule_objects, get_rule_object
+
+        rule_id = getattr(args, "rule_id", None)
+        if rule_id:
+            ro = get_rule_object(rule_id)
+            if not ro:
+                print(f"[ERROR] Research object for rule '{rule_id}' not found.")
+                return 1
+            if getattr(args, "card", False):
+                print(ro.to_markdown_card())
+                return 0
+            if getattr(args, "json", False):
+                print(json.dumps(ro.to_dict(), indent=2, ensure_ascii=False))
+                return 0
+            print(f"\n=== Scientific Rule Research Object: {ro.rule_id} ===")
+            print(f"Name:        {ro.name}")
+            print(f"Version:     {ro.version}")
+            print(f"Kind:        {ro.epistemic_kind.value}")
+            print(f"Consensus:   {ro.consensus.value}")
+            print(f"Benefit:     {ro.expected_benefit}")
+            print(f"Risk:        {ro.false_rejection_risk}")
+            print(f"Citations:   {len(ro.literature_citations)} authoritative papers")
+            return 0
+
+        rules = get_canonical_rule_objects()
+        if getattr(args, "json", False):
+            print(json.dumps([r.to_dict() for r in rules.values()], indent=2, ensure_ascii=False))
+            return 0
+
+        print("\n=== BioNexus Canonical Scientific Rule Research Objects (BNS-019) ===")
+        print(f"Total Research Objects: {len(rules)}\n")
+        print(f"{'Rule ID':<12} {'Version':<10} {'Kind':<26} {'Name'}")
+        print("-" * 80)
+        for rid, ro in rules.items():
+            print(f"{rid:<12} {ro.version:<10} {ro.epistemic_kind.value:<26} {ro.name}")
+        print("\nUse 'bionexus rule research-objects --rule-id <ID> --card' to view full Markdown specification card.\n")
+        return 0
+
+    elif action == "eval-holdout":
+        from bionexus.rules.holdout_evaluator import RuleHoldoutEvaluator
+
+        benchmark = getattr(args, "benchmark", None)
+        evaluator = RuleHoldoutEvaluator(benchmark)
+        res = evaluator.run_evaluation()
+
+        if getattr(args, "json", False):
+            print(json.dumps(res.to_dict(), indent=2, ensure_ascii=False))
+            return 0
+
+        om = res.overall_metrics
+        print("\n=== BioNexus Frozen Holdout Benchmark Evaluation (BNS-019) ===")
+        print(f"Holdout SHA-256:             {res.holdout_sha256}")
+        print(f"Cases Evaluated:             {res.total_cases}")
+        print(f"False Positive Rate (FPR):   {om.false_positive_rate:.2%}")
+        print(f"False Negative Rate (FNR):   {om.false_negative_rate:.2%}")
+        print(f"Expected Calibration Error:  {om.expected_calibration_error:.4f}")
+        print(f"Expert Concordance:          {om.expert_concordance:.2%}")
+        print(f"Cohen's Kappa (κ):           {om.cohens_kappa:.4f}\n")
+        return 0
+
+    elif action == "ladder-compare":
+        from bionexus.rules.ladder_comparison import run_ladder_vs_static_comparison
+
+        benchmark = getattr(args, "benchmark", None)
+        comp = run_ladder_vs_static_comparison(benchmark)
+
+        if getattr(args, "json", False):
+            print(json.dumps(comp.to_dict(), indent=2, ensure_ascii=False))
+            return 0
+
+        print("\n=== Epistemic Ladder vs Static N>=3 Dogma Comparison (BNS-019) ===")
+        print(f"{'Metric':<36} {'Static N>=3 Dogma':<20} {'Epistemic Ladder':<20} {'Advantage'}")
+        print("-" * 90)
+        print(f"{'False Positive Rate (False Alarm)':<36} {comp.static_fpr:<20.2%} {comp.ladder_fpr:<20.2%} {comp.fpr_reduction_relative:+.1%} lower FPR")
+        print(f"{'False Negative Rate (Miss Rate)':<36} {comp.static_fnr:<20.2%} {comp.ladder_fnr:<20.2%} {comp.fnr_reduction_relative:+.1%} lower FNR")
+        print(f"{'Overall Scientific Accuracy':<36} {comp.static_accuracy:<20.2%} {comp.ladder_accuracy:<20.2%} {comp.ladder_accuracy - comp.static_accuracy:+.2%}")
+        print(f"{'F1 Score':<36} {comp.static_f1:<20.4f} {comp.ladder_f1:<20.4f} {comp.ladder_f1 - comp.static_f1:+.4f}\n")
+        return 0
+
     return 0
 
 
@@ -597,4 +681,27 @@ def register_rule_arguments(subparsers: argparse._SubParsersAction) -> argparse.
     # rule list-challenges
     p_r_lchal = rule_subs.add_parser("list-challenges", help="List all recorded scientific challenges and statuses")
     p_r_lchal.add_argument("--json", action="store_true", help="Output challenges as JSON")
+
+    # rule research-objects
+    p_r_ro = rule_subs.add_parser(
+        "research-objects", help="List or inspect paper-grade scientific rule research objects (BNS-019)"
+    )
+    p_r_ro.add_argument("--rule-id", default=None, help="Specific canonical rule ID (e.g. BFA-001)")
+    p_r_ro.add_argument("--card", action="store_true", help="Output publication-ready Markdown Specification Card")
+    p_r_ro.add_argument("--json", action="store_true", help="Output research objects as JSON")
+
+    # rule eval-holdout
+    p_r_eh = rule_subs.add_parser(
+        "eval-holdout", help="Evaluate rules against frozen holdout benchmark dataset (BNS-019)"
+    )
+    p_r_eh.add_argument("--benchmark", default=None, help="Path to frozen holdout benchmark JSON")
+    p_r_eh.add_argument("--json", action="store_true", help="Output holdout evaluation metrics as JSON")
+
+    # rule ladder-compare
+    p_r_lc = rule_subs.add_parser(
+        "ladder-compare", help="Compare Epistemic Ladder vs Static N>=3 Dogma on holdout benchmark (BNS-019)"
+    )
+    p_r_lc.add_argument("--benchmark", default=None, help="Path to frozen holdout benchmark JSON")
+    p_r_lc.add_argument("--json", action="store_true", help="Output comparison summary as JSON")
+
     return p_rule

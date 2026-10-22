@@ -364,11 +364,13 @@ class TestCertificationBundles:
                 )
 
     def test_pseudobulk_is_validated(self) -> None:
-        """pseudobulk should be VALIDATED (12/14: core + adversarial + IGT + provenance + real-data public reference + parameter perturbation + degradation)."""
+        """Pseudobulk remains internally VALIDATED; selected proxies are not independent ground truth."""
         data = json.loads(_FLAGSHIP_CERT_FILES["scrna.pseudobulk_de"].read_text(encoding="utf-8"))
         assert data["certification_level"] == "VALIDATED"
-        assert data["summary"]["satisfied"] == 12
-        assert data["summary"]["unsatisfied"] == 2
+        assert data["summary"]["satisfied"] == 11
+        assert data["summary"]["unsatisfied"] == 3
+
+        assert "independent_ground_truth" in data["summary"]["unsatisfied_list"]
 
     def test_annotation_is_validated(self) -> None:
         """Annotation gains real public-data execution but not independent ground truth."""

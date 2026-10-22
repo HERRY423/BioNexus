@@ -12,7 +12,7 @@ Structured into three distinct hierarchical epistemic layers:
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
+from dataclasses import InitVar, asdict, dataclass, field
 from enum import Enum
 from typing import Any, Dict, Iterable, List, Optional
 
@@ -121,8 +121,9 @@ class EvidenceCard:
 
     # Backward compatibility field
     execution_fidelity: Optional[str] = None
+    evidence_contract: InitVar[Optional[Dict[str, Any]]] = None
 
-    def __post_init__(self) -> None:
+    def __post_init__(self, evidence_contract: Optional[Dict[str, Any]] = None) -> None:
         # Support legacy execution_fidelity initialization
         if self.execution_fidelity is not None and self.execution_state == ExecutionState.EXECUTED.value:
             fid_upper = str(self.execution_fidelity).upper()
@@ -143,10 +144,21 @@ class EvidenceCard:
                 self.execution_fidelity = GRADE_C
             elif self.execution_state in (ExecutionState.REFUSED.value, ExecutionState.FAILED.value):
                 self.execution_fidelity = ABSTAIN
+        if evidence_contract is not None:
+            from bionexus.evidence_contract import validate_evidence_contract
+            if validate_evidence_contract(evidence_contract) != self.positive_contract:
+                raise ValueError("EvidenceCard contract cannot upgrade caller-declared dimensions")
+
+    @property
+    def positive_contract(self) -> Dict[str, Any]:
+        from bionexus.evidence_contract import conditional_contract
+        return conditional_contract(self.synthesize_status() in {"PRELIMINARY", "SUPPORTED", "ROBUST", "REPLICATED"},
+            scope="EvidenceCard grades and execution labels are caller declarations; maturity is a conditional synthesis.")
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert EvidenceCard to dictionary."""
         d = asdict(self)
+        d["evidence_contract"] = self.positive_contract
         if not d.get("execution_fidelity"):
             d["execution_fidelity"] = GRADE_A if self.execution_state == ExecutionState.EXECUTED.value else GRADE_C
         # Strip empty purpose-aware fields for backward compatibility
@@ -165,6 +177,7 @@ class EvidenceCard:
         exec_st = self.execution_state
         lines = [
             "### BioNexus Evidence Card (v2.0)",
+            "Conditional evaluation of supplied grades; these labels do not authenticate scientific facts.",
             f"**Conclusion Maturity**: `{status}` | **Execution State**: `{exec_st}`",
             "",
             "#### Layer 1: Execution State",
@@ -173,9 +186,9 @@ class EvidenceCard:
             "#### Layer 2: Evidence Dimensions",
             "| Dimension | Status | Evaluation Notes |",
             "| :--- | :---: | :--- |",
-            f"| **Input Integrity** | `{self.input_integrity}` | {self.details.get('input_notes', 'Verified semantics')} |",
-            f"| **Assumption Validity** | `{self.assumption_validity}` | {self.details.get('assumption_notes', 'Distribution assumptions evaluated')} |",
-            f"| **Statistical Support** | `{self.statistical_support}` | {self.details.get('statistical_notes', 'Statistical tests evaluated')} |",
+            f"| **Input Integrity** | `{self.input_integrity}` | {self.details.get('input_notes', 'Declared grade; not authenticated')} |",
+            f"| **Assumption Validity** | `{self.assumption_validity}` | {self.details.get('assumption_notes', 'Declared grade; not authenticated')} |",
+            f"| **Statistical Support** | `{self.statistical_support}` | {self.details.get('statistical_notes', 'Declared grade; not authenticated')} |",
             f"| **Parameter Robustness** | `{self.parameter_robustness}` | {self.details.get('robustness_notes', 'Parameter sweep status')} |",
             f"| **Cross-method Concordance** | `{self.cross_method_concordance}` | {self.details.get('concordance_notes', 'Cross-algorithm concordance')} |",
             f"| **External Validation** | `{self.external_validation}` | {self.details.get('validation_notes', 'Orthogonal ground truth benchmark')} |",
@@ -184,7 +197,8 @@ class EvidenceCard:
             f"- **Maturity**: `{status}`",
             f"- **Assessment**: {self.details.get('conclusion_notes', 'Scientific epistemic evaluation synthesized across all dimensions.')}",
         ]
-        return "\n".join(lines)
+        from bionexus.evidence_contract import contract_text
+        return "\n".join(lines) + "\n\n" + contract_text(self.positive_contract)
 
 
 def synthesize_conclusion_maturity(card: EvidenceCard | Dict[str, Any], abstain: bool = False) -> str:
@@ -231,6 +245,10 @@ def synthesize_conclusion_maturity(card: EvidenceCard | Dict[str, Any], abstain:
 
     # Explicit invalid states must not inherit a legacy successful execution.
     if not isinstance(exec_state, str) or exec_state not in tuple(state.value for state in ExecutionState):
+        return ConclusionMaturity.ABSTAIN.value
+    known_grades = {grade.value for grade in DimensionGrade} | {ABSTAIN}
+    if any(not isinstance(grade, str) or grade not in known_grades
+           for grade in (inp_int, assump, stat_sup, param_rob, concord, ext_val)):
         return ConclusionMaturity.ABSTAIN.value
 
     # 1. Hard Abstention / Refusal / Failure
@@ -351,9 +369,25 @@ def attach_meta(
         card = EvidenceCard(**evidence_card)
 
     status = conclusion_maturity or conclusion_status or card.synthesize_status(abstain=abstain)
+    declared_status = status
+    states = {execution_state, card.execution_state}
+    if abstain or states & {ExecutionState.FAILED.value, ExecutionState.REFUSED.value}:
+        status = ConclusionMaturity.ABSTAIN.value
+    elif states & {ExecutionState.PERMITTED.value, ExecutionState.PERMITTED_WITH_LIMITS.value}:
+        status = ConclusionMaturity.UNASSESSED.value
+    elif status not in {m.value for m in ConclusionMaturity} or card.synthesize_status() == "ABSTAIN":
+        status = ConclusionMaturity.ABSTAIN.value
+    if status != declared_status:
+        out["declared_conclusion_maturity"] = declared_status
     out["evidence_card"] = card.to_dict()
     out["conclusion_maturity"] = status
     out["conclusion_status"] = status  # Maintain backward compatibility
+    from bionexus.evidence_contract import conditional_contract
+    out["evidence_contract"] = conditional_contract(
+        not abstain and status in {"PRELIMINARY", "SUPPORTED", "ROBUST", "REPLICATED"}
+        and card.positive_contract["outcome"] == "POSITIVE",
+        scope="Caller-supplied backend, grades and maturity; runtime execution is not independently authenticated.",
+        support="EXPERIMENTAL")
 
     if RESEARCH_USE_ONLY not in out["limitations"]:
         out["limitations"].append(RESEARCH_USE_ONLY)

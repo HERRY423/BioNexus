@@ -918,6 +918,66 @@
             {
               "kind": "_StoreAction",
               "options": [
+                "--claim-contract"
+              ],
+              "dest": "claim_contract",
+              "nargs": null,
+              "required": false,
+              "default": null,
+              "help": "Artifact-bound structured DE claims and executable prerequisites (JSON)",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [
+                "--alternative-plan"
+              ],
+              "dest": "alternative_plan",
+              "nargs": null,
+              "required": false,
+              "default": null,
+              "help": "Frozen, bounded DE alternative analysis plan",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [
+                "--alternative-runs"
+              ],
+              "dest": "alternative_runs",
+              "nargs": null,
+              "required": false,
+              "default": null,
+              "help": "Returned run manifest bound to the alternative plan",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [
+                "--selection-history"
+              ],
+              "dest": "selection_history",
+              "nargs": null,
+              "required": false,
+              "default": null,
+              "help": "Scoped analysis choice and result exposure history (JSON)",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [
+                "--selection-expected-head"
+              ],
+              "dest": "selection_expected_head",
+              "nargs": null,
+              "required": false,
+              "default": null,
+              "help": "History head retained independently by the caller",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [
                 "--donor-col"
               ],
               "dest": "donor_col",
@@ -1123,6 +1183,66 @@
             {
               "kind": "_StoreAction",
               "options": [
+                "--claim-contract"
+              ],
+              "dest": "claim_contract",
+              "nargs": null,
+              "required": false,
+              "default": null,
+              "help": "Artifact-bound structured DE claims and executable prerequisites (JSON)",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [
+                "--alternative-plan"
+              ],
+              "dest": "alternative_plan",
+              "nargs": null,
+              "required": false,
+              "default": null,
+              "help": "Frozen, bounded DE alternative analysis plan",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [
+                "--alternative-runs"
+              ],
+              "dest": "alternative_runs",
+              "nargs": null,
+              "required": false,
+              "default": null,
+              "help": "Returned run manifest bound to the alternative plan",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [
+                "--selection-history"
+              ],
+              "dest": "selection_history",
+              "nargs": null,
+              "required": false,
+              "default": null,
+              "help": "Scoped analysis choice and result exposure history (JSON)",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [
+                "--selection-expected-head"
+              ],
+              "dest": "selection_expected_head",
+              "nargs": null,
+              "required": false,
+              "default": null,
+              "help": "History head retained independently by the caller",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [
                 "--donor-col"
               ],
               "dest": "donor_col",
@@ -1311,6 +1431,59 @@
               "required": false,
               "default": null,
               "help": "Manifest digest retained independently by the caller",
+              "type": null
+            }
+          ]
+        },
+        "de-alternatives-plan": {
+          "prog": "bionexus de-alternatives-plan",
+          "description": null,
+          "actions": [
+            {
+              "kind": "_HelpAction",
+              "options": [
+                "-h",
+                "--help"
+              ],
+              "dest": "help",
+              "nargs": 0,
+              "required": false,
+              "default": "==SUPPRESS==",
+              "help": "show this help message and exit",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [],
+              "dest": "baseline",
+              "nargs": null,
+              "required": true,
+              "default": null,
+              "help": "Baseline run-record JSON with contract, counts and cell membership",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [
+                "--out"
+              ],
+              "dest": "out",
+              "nargs": null,
+              "required": true,
+              "default": null,
+              "help": "New plan JSON; baseline must be inside its directory",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [
+                "--specifications"
+              ],
+              "dest": "specifications",
+              "nargs": null,
+              "required": false,
+              "default": null,
+              "help": "JSON array of justified method/filter specifications",
               "type": null
             }
           ]
@@ -3602,6 +3775,147 @@
                       "required": false,
                       "default": false,
                       "help": "Output challenges as JSON",
+                      "type": null
+                    }
+                  ]
+                },
+                "research-objects": {
+                  "prog": "bionexus rule research-objects",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--rule-id"
+                      ],
+                      "dest": "rule_id",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Specific canonical rule ID (e.g. BFA-001)",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--card"
+                      ],
+                      "dest": "card",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Output publication-ready Markdown Specification Card",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--json"
+                      ],
+                      "dest": "json",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Output research objects as JSON",
+                      "type": null
+                    }
+                  ]
+                },
+                "eval-holdout": {
+                  "prog": "bionexus rule eval-holdout",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--benchmark"
+                      ],
+                      "dest": "benchmark",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Path to frozen holdout benchmark JSON",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--json"
+                      ],
+                      "dest": "json",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Output holdout evaluation metrics as JSON",
+                      "type": null
+                    }
+                  ]
+                },
+                "ladder-compare": {
+                  "prog": "bionexus rule ladder-compare",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--benchmark"
+                      ],
+                      "dest": "benchmark",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Path to frozen holdout benchmark JSON",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--json"
+                      ],
+                      "dest": "json",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Output comparison summary as JSON",
                       "type": null
                     }
                   ]
@@ -8810,6 +9124,1007 @@
               "help": "Nextflow actions",
               "type": null,
               "subcommands": {
+                "admit": {
+                  "prog": "bionexus nextflow admit",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--samplesheet",
+                        "-s"
+                      ],
+                      "dest": "samplesheet",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Path to samplesheet.csv",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--intent"
+                      ],
+                      "dest": "intent",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Scientific intent alias (e.g. differential-expression)",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--data"
+                      ],
+                      "dest": "data",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Optional data file for scientific preflight",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--metadata"
+                      ],
+                      "dest": "metadata",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Optional metadata JSON for scientific preflight",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--claim-maturity"
+                      ],
+                      "dest": "claim_maturity",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Maturity the host intends to claim",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--allow-degraded"
+                      ],
+                      "dest": "allow_degraded",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Consent to Grade C degradation",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--json"
+                      ],
+                      "dest": "json",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Output JSON",
+                      "type": null
+                    }
+                  ]
+                },
+                "warrant": {
+                  "prog": "bionexus nextflow warrant",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [],
+                      "dest": "run_dir",
+                      "nargs": null,
+                      "required": true,
+                      "default": null,
+                      "help": "Path to Nextflow execution / outdir",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--crate"
+                      ],
+                      "dest": "crate",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Explicit ro-crate-metadata.json path",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--ledger"
+                      ],
+                      "dest": "ledger",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Claim-Evidence Ledger to verify",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--pipeline-name",
+                        "-p"
+                      ],
+                      "dest": "pipeline_name",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Pipeline name override",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--samplesheet",
+                        "-s"
+                      ],
+                      "dest": "samplesheet",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Optional descriptive samplesheet path",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--json"
+                      ],
+                      "dest": "json",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Output JSON",
+                      "type": null
+                    }
+                  ]
+                },
+                "run": {
+                  "prog": "bionexus nextflow run",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--pipeline"
+                      ],
+                      "dest": "pipeline",
+                      "nargs": null,
+                      "required": true,
+                      "default": null,
+                      "help": "nf-core pipeline name",
+                      "type": null,
+                      "choices": [
+                        "rnaseq",
+                        "scrnaseq",
+                        "differentialabundance",
+                        "sarek",
+                        "spatialtranscriptomics",
+                        "ampliseq"
+                      ]
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--samplesheet",
+                        "-s"
+                      ],
+                      "dest": "samplesheet",
+                      "nargs": null,
+                      "required": true,
+                      "default": null,
+                      "help": "Path to input samplesheet.csv",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--outdir"
+                      ],
+                      "dest": "outdir",
+                      "nargs": null,
+                      "required": false,
+                      "default": "results",
+                      "help": "Pipeline output directory",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--intent"
+                      ],
+                      "dest": "intent",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Scientific intent alias used by admit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--profile"
+                      ],
+                      "dest": "profile",
+                      "nargs": null,
+                      "required": false,
+                      "default": "docker",
+                      "help": "Execution profile",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--metadata"
+                      ],
+                      "dest": "metadata",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Optional metadata JSON for admit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--data"
+                      ],
+                      "dest": "data",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Optional data file for admit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--ledger"
+                      ],
+                      "dest": "ledger",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Optional ledger for post-run warrant",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--dry-run"
+                      ],
+                      "dest": "dry_run",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Admit and print command; do not start nextflow",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--skip-scientific-preflight"
+                      ],
+                      "dest": "skip_scientific_preflight",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Launch without scientific preflight (samplesheet path check only)",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--claim-maturity"
+                      ],
+                      "dest": "claim_maturity",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Maturity the host intends to claim",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--allow-degraded"
+                      ],
+                      "dest": "allow_degraded",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Consent to Grade C degradation",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--json"
+                      ],
+                      "dest": "json",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Output JSON",
+                      "type": null
+                    }
+                  ]
+                },
+                "ingest": {
+                  "prog": "bionexus nextflow ingest",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--run-dir",
+                        "-r"
+                      ],
+                      "dest": "run_dir",
+                      "nargs": null,
+                      "required": true,
+                      "default": null,
+                      "help": "Path to Nextflow execution directory",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--pipeline-name",
+                        "-p"
+                      ],
+                      "dest": "pipeline_name",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Pipeline name (e.g. nf-core/rnaseq)",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--samplesheet",
+                        "-s"
+                      ],
+                      "dest": "samplesheet",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Optional explicit descriptive input; never creates scientific evidence factors",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "-o",
+                        "--output"
+                      ],
+                      "dest": "output",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Output path for receipt JSON",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--json"
+                      ],
+                      "dest": "json",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Output JSON receipt to stdout",
+                      "type": null
+                    }
+                  ]
+                },
+                "inspect": {
+                  "prog": "bionexus nextflow inspect",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [],
+                      "dest": "run_dir",
+                      "nargs": null,
+                      "required": true,
+                      "default": null,
+                      "help": "Path to Nextflow execution directory",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--json"
+                      ],
+                      "dest": "json",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Output execution summary as JSON",
+                      "type": null
+                    }
+                  ]
+                },
+                "launch": {
+                  "prog": "bionexus nextflow launch",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--pipeline"
+                      ],
+                      "dest": "pipeline",
+                      "nargs": null,
+                      "required": true,
+                      "default": null,
+                      "help": "nf-core pipeline name",
+                      "type": null,
+                      "choices": [
+                        "rnaseq",
+                        "scrnaseq",
+                        "differentialabundance",
+                        "sarek",
+                        "spatialtranscriptomics",
+                        "ampliseq"
+                      ]
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--samplesheet"
+                      ],
+                      "dest": "samplesheet",
+                      "nargs": null,
+                      "required": true,
+                      "default": null,
+                      "help": "Path to input samplesheet.csv",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--outdir"
+                      ],
+                      "dest": "outdir",
+                      "nargs": null,
+                      "required": false,
+                      "default": "results",
+                      "help": "Pipeline output directory",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "-o",
+                        "--output"
+                      ],
+                      "dest": "output",
+                      "nargs": null,
+                      "required": false,
+                      "default": "run.sh",
+                      "help": "Output path for run script",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--profile"
+                      ],
+                      "dest": "profile",
+                      "nargs": null,
+                      "required": false,
+                      "default": "docker",
+                      "help": "Execution profile (e.g. docker, singularity, slurm)",
+                      "type": null
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "nf": {
+          "prog": "bionexus nextflow",
+          "description": null,
+          "actions": [
+            {
+              "kind": "_HelpAction",
+              "options": [
+                "-h",
+                "--help"
+              ],
+              "dest": "help",
+              "nargs": 0,
+              "required": false,
+              "default": "==SUPPRESS==",
+              "help": "show this help message and exit",
+              "type": null
+            },
+            {
+              "kind": "_SubParsersAction",
+              "options": [],
+              "dest": "nextflow_action",
+              "nargs": "A...",
+              "required": false,
+              "default": null,
+              "help": "Nextflow actions",
+              "type": null,
+              "subcommands": {
+                "admit": {
+                  "prog": "bionexus nextflow admit",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--samplesheet",
+                        "-s"
+                      ],
+                      "dest": "samplesheet",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Path to samplesheet.csv",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--intent"
+                      ],
+                      "dest": "intent",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Scientific intent alias (e.g. differential-expression)",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--data"
+                      ],
+                      "dest": "data",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Optional data file for scientific preflight",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--metadata"
+                      ],
+                      "dest": "metadata",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Optional metadata JSON for scientific preflight",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--claim-maturity"
+                      ],
+                      "dest": "claim_maturity",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Maturity the host intends to claim",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--allow-degraded"
+                      ],
+                      "dest": "allow_degraded",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Consent to Grade C degradation",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--json"
+                      ],
+                      "dest": "json",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Output JSON",
+                      "type": null
+                    }
+                  ]
+                },
+                "warrant": {
+                  "prog": "bionexus nextflow warrant",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [],
+                      "dest": "run_dir",
+                      "nargs": null,
+                      "required": true,
+                      "default": null,
+                      "help": "Path to Nextflow execution / outdir",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--crate"
+                      ],
+                      "dest": "crate",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Explicit ro-crate-metadata.json path",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--ledger"
+                      ],
+                      "dest": "ledger",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Claim-Evidence Ledger to verify",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--pipeline-name",
+                        "-p"
+                      ],
+                      "dest": "pipeline_name",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Pipeline name override",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--samplesheet",
+                        "-s"
+                      ],
+                      "dest": "samplesheet",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Optional descriptive samplesheet path",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--json"
+                      ],
+                      "dest": "json",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Output JSON",
+                      "type": null
+                    }
+                  ]
+                },
+                "run": {
+                  "prog": "bionexus nextflow run",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--pipeline"
+                      ],
+                      "dest": "pipeline",
+                      "nargs": null,
+                      "required": true,
+                      "default": null,
+                      "help": "nf-core pipeline name",
+                      "type": null,
+                      "choices": [
+                        "rnaseq",
+                        "scrnaseq",
+                        "differentialabundance",
+                        "sarek",
+                        "spatialtranscriptomics",
+                        "ampliseq"
+                      ]
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--samplesheet",
+                        "-s"
+                      ],
+                      "dest": "samplesheet",
+                      "nargs": null,
+                      "required": true,
+                      "default": null,
+                      "help": "Path to input samplesheet.csv",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--outdir"
+                      ],
+                      "dest": "outdir",
+                      "nargs": null,
+                      "required": false,
+                      "default": "results",
+                      "help": "Pipeline output directory",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--intent"
+                      ],
+                      "dest": "intent",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Scientific intent alias used by admit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--profile"
+                      ],
+                      "dest": "profile",
+                      "nargs": null,
+                      "required": false,
+                      "default": "docker",
+                      "help": "Execution profile",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--metadata"
+                      ],
+                      "dest": "metadata",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Optional metadata JSON for admit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--data"
+                      ],
+                      "dest": "data",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Optional data file for admit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--ledger"
+                      ],
+                      "dest": "ledger",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Optional ledger for post-run warrant",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--dry-run"
+                      ],
+                      "dest": "dry_run",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Admit and print command; do not start nextflow",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--skip-scientific-preflight"
+                      ],
+                      "dest": "skip_scientific_preflight",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Launch without scientific preflight (samplesheet path check only)",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--claim-maturity"
+                      ],
+                      "dest": "claim_maturity",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Maturity the host intends to claim",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--allow-degraded"
+                      ],
+                      "dest": "allow_degraded",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Consent to Grade C degradation",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--json"
+                      ],
+                      "dest": "json",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Output JSON",
+                      "type": null
+                    }
+                  ]
+                },
                 "ingest": {
                   "prog": "bionexus nextflow ingest",
                   "description": null,
@@ -9223,6 +10538,623 @@
                       "default": false,
                       "help": "Output JSON phenopacket",
                       "type": null
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "deploy": {
+          "prog": "bionexus deploy",
+          "description": null,
+          "actions": [
+            {
+              "kind": "_HelpAction",
+              "options": [
+                "-h",
+                "--help"
+              ],
+              "dest": "help",
+              "nargs": 0,
+              "required": false,
+              "default": "==SUPPRESS==",
+              "help": "show this help message and exit",
+              "type": null
+            },
+            {
+              "kind": "_SubParsersAction",
+              "options": [],
+              "dest": "deploy_action",
+              "nargs": "A...",
+              "required": false,
+              "default": null,
+              "help": "Deployment actions",
+              "type": null,
+              "subcommands": {
+                "import": {
+                  "prog": "bionexus deploy import",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [],
+                      "dest": "path",
+                      "nargs": null,
+                      "required": true,
+                      "default": null,
+                      "help": "Cell Ranger outs/, Scanpy/Seurat export, DE table, or nf-core results",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "-o",
+                        "--output"
+                      ],
+                      "dest": "output",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Envelope JSON path",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--product"
+                      ],
+                      "dest": "product",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": null,
+                      "type": null,
+                      "choices": [
+                        "cellranger",
+                        "scanpy",
+                        "seurat",
+                        "deseq2",
+                        "edger",
+                        "nf-core"
+                      ]
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--json"
+                      ],
+                      "dest": "json",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "JSON output",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--data-classification"
+                      ],
+                      "dest": "data_classification",
+                      "nargs": null,
+                      "required": false,
+                      "default": "UNKNOWN",
+                      "help": "Operator-declared data classification; UNKNOWN remains local-only",
+                      "type": null,
+                      "choices": [
+                        "UNKNOWN",
+                        "PUBLIC_BENCHMARK",
+                        "PROPRIETARY_UNPUBLISHED",
+                        "CONTROLLED_ACCESS_GENOMIC",
+                        "RESTRICTED_CLINICAL_PHI"
+                      ]
+                    }
+                  ]
+                },
+                "export": {
+                  "prog": "bionexus deploy export",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [],
+                      "dest": "path",
+                      "nargs": null,
+                      "required": true,
+                      "default": null,
+                      "help": "Lab source path",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "-o",
+                        "--output"
+                      ],
+                      "dest": "output",
+                      "nargs": null,
+                      "required": true,
+                      "default": null,
+                      "help": "Destination capsule directory",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--product"
+                      ],
+                      "dest": "product",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": null,
+                      "type": null,
+                      "choices": [
+                        "cellranger",
+                        "scanpy",
+                        "seurat",
+                        "deseq2",
+                        "edger",
+                        "nf-core"
+                      ]
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--skip-ro-crate"
+                      ],
+                      "dest": "skip_ro_crate",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Skip RO-Crate projection",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--skip-bco"
+                      ],
+                      "dest": "skip_bco",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Skip BioCompute Object projection",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--json"
+                      ],
+                      "dest": "json",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "JSON output",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--data-classification"
+                      ],
+                      "dest": "data_classification",
+                      "nargs": null,
+                      "required": false,
+                      "default": "UNKNOWN",
+                      "help": "Operator-declared data classification; UNKNOWN remains local-only",
+                      "type": null,
+                      "choices": [
+                        "UNKNOWN",
+                        "PUBLIC_BENCHMARK",
+                        "PROPRIETARY_UNPUBLISHED",
+                        "CONTROLLED_ACCESS_GENOMIC",
+                        "RESTRICTED_CLINICAL_PHI"
+                      ]
+                    }
+                  ]
+                },
+                "accept": {
+                  "prog": "bionexus deploy accept",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [],
+                      "dest": "path",
+                      "nargs": null,
+                      "required": true,
+                      "default": null,
+                      "help": "Lab source path",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "-o",
+                        "--output"
+                      ],
+                      "dest": "output",
+                      "nargs": null,
+                      "required": true,
+                      "default": null,
+                      "help": "Acceptance output directory",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--product"
+                      ],
+                      "dest": "product",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": null,
+                      "type": null,
+                      "choices": [
+                        "cellranger",
+                        "scanpy",
+                        "seurat",
+                        "deseq2",
+                        "edger",
+                        "nf-core"
+                      ]
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--json"
+                      ],
+                      "dest": "json",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "JSON output",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--data-classification"
+                      ],
+                      "dest": "data_classification",
+                      "nargs": null,
+                      "required": false,
+                      "default": "UNKNOWN",
+                      "help": "Operator-declared data classification; UNKNOWN remains local-only",
+                      "type": null,
+                      "choices": [
+                        "UNKNOWN",
+                        "PUBLIC_BENCHMARK",
+                        "PROPRIETARY_UNPUBLISHED",
+                        "CONTROLLED_ACCESS_GENOMIC",
+                        "RESTRICTED_CLINICAL_PHI"
+                      ]
+                    }
+                  ]
+                },
+                "matrix": {
+                  "prog": "bionexus deploy matrix",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--product"
+                      ],
+                      "dest": "product",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": null,
+                      "type": null,
+                      "choices": [
+                        "cellranger",
+                        "scanpy",
+                        "seurat",
+                        "deseq2",
+                        "edger",
+                        "nf-core"
+                      ]
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--json"
+                      ],
+                      "dest": "json",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "JSON output",
+                      "type": null
+                    }
+                  ]
+                },
+                "migrate": {
+                  "prog": "bionexus deploy migrate",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [],
+                      "dest": "path",
+                      "nargs": null,
+                      "required": true,
+                      "default": null,
+                      "help": "JSON document with schema_version",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "-o",
+                        "--output"
+                      ],
+                      "dest": "output",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Write migrated JSON to this path",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--family"
+                      ],
+                      "dest": "family",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Optional schema family override",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--json"
+                      ],
+                      "dest": "json",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "JSON output",
+                      "type": null
+                    }
+                  ]
+                },
+                "telemetry": {
+                  "prog": "bionexus deploy telemetry",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--json"
+                      ],
+                      "dest": "json",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "JSON output",
+                      "type": null
+                    }
+                  ]
+                },
+                "report-failure": {
+                  "prog": "bionexus deploy report-failure",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--exception-type"
+                      ],
+                      "dest": "exception_type",
+                      "nargs": null,
+                      "required": true,
+                      "default": null,
+                      "help": "Exception class name only",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--message"
+                      ],
+                      "dest": "message",
+                      "nargs": null,
+                      "required": false,
+                      "default": "",
+                      "help": "Operator note; paths and PHI are redacted",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--traceback-file"
+                      ],
+                      "dest": "traceback_file",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Optional traceback text to sanitize",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--command-name"
+                      ],
+                      "dest": "command_name",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "CLI command name, not argv",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--capability-id"
+                      ],
+                      "dest": "capability_id",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Optional capability id",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "-o",
+                        "--output"
+                      ],
+                      "dest": "output",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Directory for the local JSON report",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--opt-in-transmit"
+                      ],
+                      "dest": "opt_in_transmit",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "Attempt lab-configured transmit (never default)",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreTrueAction",
+                      "options": [
+                        "--json"
+                      ],
+                      "dest": "json",
+                      "nargs": 0,
+                      "required": false,
+                      "default": false,
+                      "help": "JSON output",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--data-classification"
+                      ],
+                      "dest": "data_classification",
+                      "nargs": null,
+                      "required": false,
+                      "default": "UNKNOWN",
+                      "help": "Only explicit PUBLIC_BENCHMARK may be eligible for opt-in transmit",
+                      "type": null,
+                      "choices": [
+                        "UNKNOWN",
+                        "PUBLIC_BENCHMARK",
+                        "PROPRIETARY_UNPUBLISHED",
+                        "CONTROLLED_ACCESS_GENOMIC",
+                        "RESTRICTED_CLINICAL_PHI"
+                      ]
                     }
                   ]
                 }

@@ -113,12 +113,19 @@ def test_parse_samplesheet(mock_nextflow_run: Path):
 
 
 def test_harvest_nextflow_run_e2e_does_not_infer_samplesheet_or_scientific_evidence(mock_nextflow_run: Path):
-    summary = harvest_nextflow_run(mock_nextflow_run, pipeline_name="nf-core/rnaseq")
+    summary = harvest_nextflow_run(
+        mock_nextflow_run,
+        pipeline_name="nf-core/rnaseq",
+        samplesheet_path=mock_nextflow_run / "samplesheet.csv",
+    )
     assert isinstance(summary, NextflowExecutionSummary)
     assert summary.pipeline_name == "nf-core/rnaseq"
     assert summary.execution_status == "SUCCESS"
-    assert summary.samplesheet_path is None
+    assert summary.samplesheet_path is not None
     assert summary.sample_count == 0
+    assert summary.min_replicates_per_condition == 0
+    assert summary.conditions_count == 0
+    assert summary.samples == []
     assert summary.derived_evidence_factors == []
     assert "salmon.merged.gene_counts.tsv" in summary.primary_outputs
     assert "multiqc_report.html" in summary.primary_outputs
@@ -129,6 +136,8 @@ def test_harvest_missing_trace_stays_unknown(tmp_path: Path):
     summary = harvest_nextflow_run(tmp_path)
     assert summary.execution_status == "UNKNOWN"
     assert summary.total_processes == 0
+    assert summary.provenance_source == "MISSING"
+    assert summary.crate_path is None
 
 
 def test_create_nextflow_tool_receipt_and_cryptographic_verification(mock_nextflow_run: Path):

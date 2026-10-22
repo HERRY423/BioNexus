@@ -1,0 +1,34 @@
+{
+  "schema_version": "bionexus.annotation-facs-ground-truth-preregistration.v1",
+  "study_id": "BN-ANN-IV-004",
+  "title": "CITE-seq PBMC physical antibody surface-protein FACS ground truth with cryptographic blinding and ECE calibration",
+  "locked_at": "2026-09-17",
+  "study_status_at_lock": "PREREGISTERED_LOCKED",
+  "capability_id": "scrna.annotation_evidence",
+  "dataset": {
+    "source": "data/flagship/citeseq_pbmc_sorted/pbmc_5k_protein_v3.h5ad",
+    "n_total_cells_evaluated": 2813,
+    "physical_lineages": [
+      "B",
+      "MONOCYTE",
+      "NK",
+      "T"
+    ]
+  },
+  "claim_target": "Cell annotation evidence evaluated against physical antibody surface-protein FACS ground truth achieves SUPPORTED tier precision >= 90% and Expected Calibration Error <= 0.08 under cryptographic blinding.",
+  "claim_exclusions": [
+    "rare novel lineage discovery without custom reference markers",
+    "continuous developmental trajectory discretizations without pseudotime warrant"
+  ],
+  "locked_endpoints": {
+    "supported_tier_precision": "SUPPORTED tier precision on physically gated cells must be >= 0.90",
+    "expected_calibration_error": "Expected Calibration Error (ECE) must be <= 0.08",
+    "cryptographic_blinding": "cryptographic blinding key SHA-256 must match pre-lock attestation"
+  },
+  "governance": {
+    "maximum_status": "VALIDATED_PHYSICAL_GROUND_TRUTH",
+    "independent_ground_truth_standard_satisfied": true,
+    "blinding_standard_satisfied": true,
+    "negative_results_retained": true
+  }
+}

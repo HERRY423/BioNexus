@@ -1,0 +1,18 @@
+{
+  "schema_version": "bionexus.evidence-withdrawal.v1",
+  "status": "WITHDRAWN_UNSUPPORTED_AUTHORITY",
+  "evidence_class": "DEVELOPMENT_MATERIAL_ONLY",
+  "reason": "The second host and equal output digest were generated without independently executed receipts.",
+  "scientific_authorization": "NONE",
+  "independent_validation": false,
+  "standard_13_satisfied": false,
+  "standard_14_satisfied": false,
+  "original_artifact": {
+    "path": "cross-host/MULTI_LAB_DOSSIER.json",
+    "archive_path": "review/trust-restoration-2026-09-19/originals/cross-host/MULTI_LAB_DOSSIER.json",
+    "sha256": "0a81c8a04b76153c685b3a15bc51cb36ed7ad2c71c78c160e3c82d39517a79a5",
+    "bytes": 2469
+  },
+  "correction_kind": "EVIDENCE_AUTHORITY_WITHDRAWAL_NOT_A_NEW_EXECUTION",
+  "correction_record": "review/trust-restoration-2026-09-19/CORRECTIONS.json"
+}

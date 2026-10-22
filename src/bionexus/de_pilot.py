@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Protocol
 
 from bionexus.de_bundle import IMMUTABLE_ARTIFACTS, INTEGRITY_PROFILE, MAX_ARTIFACT_BYTES, verify_de_bundle
+from bionexus.evidence_contract import conditional_contract
 from bionexus.pilot_costs import empty_costs, summarize_costs
 from bionexus.versions import VERSION
 
@@ -70,12 +71,17 @@ def _finding_ids(audit: dict[str, Any]) -> list[str]:
 
 
 def render_review(audit: dict[str, Any], case_id: str, synthetic: bool, claim: str | None = None) -> str:
+    from bionexus.evidence_contract import contract_text, evidence_contract
     lines = [f"# 投稿前 DE 影子审阅 · {case_id}", "",
              "目标：定位可能影响声明的问题，供研究者复核；本报告不批准分析或投稿。",
              f"审计状态：`{audit['overall_status']}`。净收益：**尚未评估**。"]
+    lines += ["", contract_text(audit.get("evidence_contract", evidence_contract()))]
     if synthetic:
         lines += ["", "**合成教学示例：不是真实研究，不能计入实验室收益。**"]
-    lines += ["", f"待审声明：{claim or '未提供；当前仅审阅产物与证据缺口。'}"]
+    baseline_claims = audit.get("claim_conditions") or (audit.get("alternative_analysis") or {}).get("baseline_condition_review") or {}
+    contract_statements = [item["canonical_statement"] for item in baseline_claims.get("claims", [])]
+    display_claim = claim or "；".join(contract_statements) or "未提供；当前仅审阅产物与证据缺口。"
+    lines += ["", f"待审声明：{display_claim}"]
     lines += ["", "## 先处理这些问题", ""]
     priorities = {"BLOCKER": 0, "HIGH_IMPACT": 1, "ADVISORY": 2}
     findings = list(zip(_finding_ids(audit), audit["findings"]))
@@ -96,6 +102,27 @@ def render_review(audit: dict[str, Any], case_id: str, synthetic: bool, claim: s
         lines += ["## 还缺哪些证据", ""]
         lines += [f"- {c['title']}：{c['summary']}" for c in missing]
     boundary = audit.get("claim_boundary") or {}
+    selection = audit.get("selection_history")
+    if selection:
+        lines += ["", "## 分析选择历史", "",
+                  f"历史判断：{selection['status']}；确认性用途：{selection['confirmatory_use']}。",
+                  "数值事实仍按原条件报告。历史缺失不等于无选择偏差；日志一致不证明真实预注册。"]
+        lines += [f"- {b['branch_id']}：{b['disposition']}；{b['reason'] or '原因未记录'}" for b in selection["branches"]]
+        lines += [f"- {bid}：清单中存在，但缺少事件。" for bid in selection.get("missing_branch_ids", [])]
+        lines.append("事件顺序、验证集暴露与逐项发现见 [完整审计](audit-full.md)。")
+    condition_report = audit.get("claim_conditions")
+    alternatives = audit.get("alternative_analysis")
+    if alternatives:
+        lines += ["", "## 合理替代分析", "", "审计通过与替代分析稳健性是不同结论。"]
+        for item in alternatives["claims"]:
+            lines.append(f"- {item['claim_id']}：{item['status']}；已比较 {item['compared']} / {item['planned']}。")
+        lines.append("逐分支结果、供体依赖及未完成项见 [完整审计](audit-full.md)。")
+    if condition_report:
+        lines += ["", "## 逐项声明支持范围", "", "以下表述仅限已检查的产物范围，不构成科学授权。"]
+        for item in condition_report.get("claims", []):
+            lines += [f"- {item['claim']['claim_id']}: {item['status']} — {item['canonical_statement']}"]
+            lines += [f"  - 可保留：{text}" for text in item.get("supported_statements", [])]
+        lines += ["", "逐项前提、来源与修复要求见 [完整审计](audit-full.md)。"]
     lines += ["", "## 当前如何表述", "", boundary.get("allowed_scope", "未评估"), "",
               boundary.get("prohibited_scope", ""), "",
               "## 负责人需要复核", ""]
@@ -280,6 +307,8 @@ def summarize_reviews(paths: list[str | Path]) -> dict[str, Any]:
     fully_costed = [c for c in included if c["full_costs"]["minutes_saved"] is not None]
     return {
         "schema": "bionexus.de-pilot-summary.v2", "evidence_status": "REPORTED_OBSERVATIONS" if included else "NOT_ASSESSED",
+        "evidence_contract": conditional_contract(
+            bool(included), reviewed=bool(included), scope="Descriptive arithmetic on human-entered reviews; reviewer identity, independence and benefit remain unverified."),
         "net_benefit": "NOT_ESTABLISHED", "external_validation": "NOT_ESTABLISHED",
         "submitted_cases": len(cases), "included_cases": len(included),
         "reported_sites": len({c["site_id"] for c in included}), "paired_timing_cases": len(paired),
@@ -308,7 +337,9 @@ def summarize_reviews(paths: list[str | Path]) -> dict[str, Any]:
 
 
 def render_summary(summary: dict[str, Any]) -> str:
+    from bionexus.evidence_contract import contract_text, evidence_contract
     lines = ["# DE 影子审计试点观察", "", "净收益尚未确立；以下是人工填报的描述性观察。", "",
+             contract_text(summary.get("evidence_contract", evidence_contract())), "",
              f"提交 {summary['submitted_cases']} 例；纳入 {summary['included_cases']} 例；"
              f"填报实验室 {summary['reported_sites']} 个。", "",
              f"配对审阅用时：{summary['paired_timing_cases']} 例；平均节省分钟："

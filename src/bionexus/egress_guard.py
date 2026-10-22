@@ -112,20 +112,28 @@ def _endpoint_without_query(endpoint: str) -> str:
         return endpoint.split("?", 1)[0]
 
 
+def _inspectable_value(value: Any) -> Any:
+    """Decode transmitted strings without discarding repeated JSON/form fields."""
+    if isinstance(value, bytes):
+        value = value.decode("utf-8", errors="replace")
+    if isinstance(value, str):
+        try:
+            return json.loads(value, object_pairs_hook=list)
+        except (ValueError, TypeError):
+            if any(marker in value for marker in ("=", "&", "%")):
+                return parse_qsl(value, keep_blank_values=True) or value
+    return value
+
+
 def _request_payload(endpoint: str, body: Any = None) -> Dict[str, Any]:
     try:
-        query = dict(parse_qsl(urlsplit(endpoint).query, keep_blank_values=True))
+        # A dict would erase earlier repeated query fields before inspection.
+        query = parse_qsl(urlsplit(endpoint).query, keep_blank_values=True)
     except Exception:
-        query = {}
+        query = [("unparsed_endpoint", endpoint)]
     payload: Dict[str, Any] = {"query_parameters": query}
     if body is not None:
-        if isinstance(body, bytes):
-            try:
-                payload["body"] = json.loads(body.decode("utf-8"))
-            except Exception:
-                payload["body"] = body.decode("utf-8", errors="replace")
-        else:
-            payload["body"] = body
+        payload["body"] = _inspectable_value(body)
     return payload
 
 
@@ -229,11 +237,14 @@ class DataGovernanceGuard:
         domain = self.extract_domain(endpoint)
         audit_endpoint = _endpoint_without_query(endpoint)
         timestamp = datetime.now(timezone.utc).isoformat()
-        payload_bytes = json.dumps(payload, default=str).encode("utf-8") if payload is not None else b""
+        # Endpoint content remains subject to policy even when callers provide
+        # a separate payload description. The description cannot replace it.
+        inspected_payload = _request_payload(endpoint, payload)
+        payload_bytes = json.dumps(inspected_payload, default=str).encode("utf-8")
         payload_sha256 = hashlib.sha256(payload_bytes).hexdigest()
         record_id = hashlib.sha256(f"{timestamp}:{audit_endpoint}:{payload_sha256}".encode("utf-8")).hexdigest()[:16]
 
-        is_safe, fields_transmitted, violations = self.inspect_payload(payload)
+        is_safe, fields_transmitted, violations = self.inspect_payload(inspected_payload)
 
         # 1. OFFLINE_STRICT: strictly no external egress
         if self.mode == EgressMode.OFFLINE_STRICT:
@@ -434,7 +445,9 @@ def guarded_urlopen(
     active_guard = guard or get_egress_guard()
     endpoint = request.full_url if hasattr(request, "full_url") else str(request)
     body = getattr(request, "data", None)
-    inspected_payload = payload if payload is not None else _request_payload(endpoint, body)
+    inspected_payload = _request_payload(endpoint, body)
+    if payload is not None:
+        inspected_payload["declared_payload"] = _inspectable_value(payload)
     permitted, record = active_guard.evaluate_request(
         endpoint=endpoint,
         purpose=purpose,
@@ -459,7 +472,12 @@ def guarded_requests_get(
 ) -> Any:
     """Policy-check and audit a requests.get call."""
     active_guard = guard or get_egress_guard()
-    inspected_payload = payload if payload is not None else _request_payload(url)
+    inspected_payload = _request_payload(url)
+    for field in ("params", "data", "json"):
+        if kwargs.get(field) is not None:
+            inspected_payload[field] = _inspectable_value(kwargs[field])
+    if payload is not None:
+        inspected_payload["declared_payload"] = _inspectable_value(payload)
     permitted, record = active_guard.evaluate_request(
         endpoint=url,
         purpose=purpose,
