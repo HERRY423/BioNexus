@@ -30,4 +30,6 @@ No new real laboratory pilot was run. External scientific validity, real workflo
 
 Use the rc.9 wheel attached to this GitHub Release when preparing a runtime, with the `mcp` extra for SDK transport. Verify `bionexus --version` and the runtime package digest after restarting the host. Python metadata normalizes the version to `1.0.0rc9`; plugin manifests and Git use `1.0.0-rc.9` / `v1.0.0-rc.9`.
 
+The MCP extra pins SDK 1.28.1, the transport API verified for this candidate. MCP 2.x changed the server API and is not an accepted runtime for rc.9. The pinned dependency prevents a fresh installation from silently selecting that incompatible major version.
+
 Machine-local configuration backups, raw desktop logs, private paths and unpublished research materials are not release assets. They remain preserved locally. A GitHub prerelease is not a PyPI publication.

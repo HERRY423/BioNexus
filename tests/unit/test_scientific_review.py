@@ -64,13 +64,16 @@ class TestScientificReviewSchema:
         assert scientific_review["schema_version"] == "1.0"
 
     def test_project_metadata(self, scientific_review):
-        """Project name and version must be present."""
-        from bionexus.versions import VERSION
+        """Historical review identity must remain bound to its original candidate."""
+        import hashlib
 
         assert "project" in scientific_review
         assert scientific_review["project"] == "bionexus-reliability"
         assert "project_version" in scientific_review
-        assert scientific_review["project_version"] == VERSION
+        assert scientific_review["project_version"] == "1.0.0-rc.8"
+        correction = json.loads((REVIEW_DIR / "trust-restoration-2026-09-19/CORRECTIONS.json").read_text())
+        entry = next(row for row in correction["records"] if row["path"] == "review/SCIENTIFIC_REVIEW.json")
+        assert hashlib.sha256(SCIENTIFIC_REVIEW_PATH.read_bytes()).hexdigest() == entry["corrected_sha256"]
 
 
     def test_review_date_present(self, scientific_review):
