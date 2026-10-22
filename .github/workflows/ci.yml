@@ -203,6 +203,7 @@ jobs:
           python evals/spatial_stress_test.py
           python evals/annotation_stress_test.py
           python scripts/run_flagship_validation.py
+          python scripts/check_evidence_index.py --save
           python scripts/verify_validation_artifacts.py
           pytest tests/unit/test_validation_verifier.py -v
       - name: Preserve New and Historical Validation Run Capsules

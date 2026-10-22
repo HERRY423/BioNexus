@@ -23,7 +23,11 @@ from typing import Any, Dict, List, Optional, Union
 from bionexus.certification import _EVIDENCE, certify_capability
 from bionexus.provenance import get_git_info, sha256_file
 from bionexus.semantic_consistency import verify_semantic_consistency
-from bionexus.validation_history import has_current_run_receipt, is_quarantined_history
+from bionexus.validation_history import (
+    has_current_run_receipt,
+    is_preserved_internal_assessment,
+    is_quarantined_history,
+)
 from bionexus.versions import VERSION
 
 FLAGSHIP_CAPABILITIES = (
@@ -341,7 +345,11 @@ def verify_validation_artifacts(
             )
 
         cert_ver = cert_data.get("project_version")
-        if cert_ver != expected_version:
+        if is_preserved_internal_assessment(root, cert_path.relative_to(root).as_posix()):
+            cap_details["certification_applicability"] = "PRESERVED_INTERNAL_ASSESSMENT_ONLY"
+            cap_details["certification_project_version"] = cert_ver
+            cap_details["scientific_authorization"] = "NONE"
+        elif cert_ver != expected_version:
             errors.append(
                 f"{cap_id} CERTIFICATION.json project_version '{cert_ver}' != expected '{expected_version}'"
             )

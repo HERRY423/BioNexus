@@ -77,6 +77,26 @@ def is_quarantined_history(root: Path, relative: str, document: dict[str, Any]) 
     return archived.is_file() and document_digest(read_object(archived)) == document_digest(document)
 
 
+def is_preserved_internal_assessment(root: Path, relative: str) -> bool:
+    """Recognize byte-bound historical assessments, never current execution."""
+    if relative not in REPORTS or not relative.endswith("/CERTIFICATION.json"):
+        return False
+    try:
+        path = root / relative
+        document = read_object(path)
+        corrections = read_object(root / "review/trust-restoration-2026-09-19/CORRECTIONS.json")
+        matching = [item for item in corrections["records"] if item["path"] == relative]
+        return (
+            len(matching) == 1
+            and hashlib.sha256(path.read_bytes()).hexdigest() == matching[0]["corrected_sha256"]
+            and document.get("assessment_authority") == "INTERNAL_EVIDENCE_ASSESSMENT"
+            and document.get("certification_effect") == "NONE"
+            and document.get("independent_assurance_status") == "NOT_ASSESSED"
+        )
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
+
+
 def has_current_run_receipt(root: Path, relative: str, source_snapshot: str) -> bool:
     """Require matching changed output from a completed local run capsule.
 

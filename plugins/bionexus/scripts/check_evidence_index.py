@@ -18,6 +18,16 @@ if str(REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from bionexus.evidence_index import EvidenceIndex
+from bionexus.validation_runs import record_validation_run
+
+
+def save_current_index(root: Path) -> int:
+    """Refresh a derived index while preserving its prior bytes in a run capsule."""
+    @record_validation_run(root)
+    def save() -> int:
+        EvidenceIndex.build_current_index(root).save(root / "validation/EVIDENCE_INDEX.json")
+        return 0
+    return save()
 
 
 def main() -> int:
@@ -68,9 +78,8 @@ def main() -> int:
     index_file = root / "validation" / "EVIDENCE_INDEX.json"
 
     if args.save:
-        index = EvidenceIndex.build_current_index(root)
-        out_path = index.save(index_file)
-        print(f"Successfully generated and saved Evidence Index to: {out_path.relative_to(root)}")
+        save_current_index(root)
+        print("Saved Evidence Index with before/after run capsule: validation/EVIDENCE_INDEX.json")
         return 0
 
     if args.check:

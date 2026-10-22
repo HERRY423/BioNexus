@@ -166,8 +166,36 @@ def test_legacy_notification_cannot_execute_tool(monkeypatch):
 def test_real_stdio_subprocess_matrix(mode, tmp_path):
     if mode == 'sdk':
         pytest.importorskip('mcp')
+    from mcp_acceptance import JsonProcess, cases, check_result
     from mcp_acceptance import run as acceptance
-    report = acceptance(tmp_path / mode, Path(__file__).resolve().parents[2] / 'src', mode)
+
+    from bionexus.backends import probe
+    package = Path(__file__).resolve().parents[2] / 'src'
+    if not probe('pydeseq2').available:
+        # Core-only installations must refuse a missing canonical backend.
+        # The full-dependency CI job still requires the positive matrix below.
+        command = [sys.executable, '-B', '-m', 'bionexus.mcp_server']
+        if mode == 'legacy':
+            command.append('--legacy')
+        client = JsonProcess(command, tmp_path / mode,
+            dict(os.environ, PYTHONPATH=str(package), PYTHONIOENCODING='utf-8'), tmp_path)
+        try:
+            response = client.request('initialize', {'protocolVersion': '2024-11-05',
+                'capabilities': {}, 'clientInfo': {'name': 'core-only-test', 'version': '1'}})
+            assert 'result' in response
+            client.send({'jsonrpc': '2.0', 'method': 'notifications/initialized'})
+            for name, args, status, error in cases():
+                if name == 'positive':
+                    status = 'ABSTAIN'
+                response = client.request('tools/call', {
+                    'name': 'bionexus_warrant_check', 'arguments': args})
+                payload = check_result(response['result'], status, error)
+                if name == 'positive':
+                    assert payload['evidence_card_template']['details']['missing_backend'] == 'pydeseq2'
+        finally:
+            client.close()
+        return
+    report = acceptance(tmp_path / mode, package, mode)
     assert report['status'] == 'PASS'
 
 
