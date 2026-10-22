@@ -65,7 +65,7 @@ _SNAPSHOT_EXTENSIONS = {
     ".json", ".md", ".nf", ".py", ".sh", ".smk", ".toml", ".yaml", ".yml",
 }
 _SNAPSHOT_EXCLUDED_DIRS = {
-    ".git", ".mypy_cache", ".pytest_cache", ".ruff_cache", "__pycache__",
+    ".git", ".mypy_cache", ".pytest_cache", ".ruff_cache", ".quality", "__pycache__",
     ".venv", ".vendor", "build", "dist", "logs", "node_modules", "validation", "venv",
     "data", "interoperability", "runtime_lance", "runtime_wheels", "review",
 }
@@ -96,20 +96,19 @@ def snapshot_target(target: TargetDescriptor, *, max_files: int = 5000) -> Targe
         candidates = sorted({path.resolve() for path in explicit if path.is_file()}, key=str)
     elif target.root_path.is_dir():
         candidates = []
-        for path in target.root_path.rglob("*"):
-            if not path.is_file() or path.suffix.lower() not in _SNAPSHOT_EXTENSIONS:
-                continue
-            try:
-                relative = path.relative_to(target.root_path)
-            except ValueError:
-                continue
-            if any(
-                part in _SNAPSHOT_EXCLUDED_DIRS
-                or part.startswith(_SNAPSHOT_EXCLUDED_PREFIXES)
-                for part in relative.parts
-            ):
-                continue
-            candidates.append(path.resolve())
+        for directory, subdirs, files in os.walk(target.root_path):
+            # Prune generated environments and archives before traversing them.
+            subdirs[:] = [
+                name for name in subdirs
+                if name not in _SNAPSHOT_EXCLUDED_DIRS
+                and not name.startswith(_SNAPSHOT_EXCLUDED_PREFIXES)
+            ]
+            for name in files:
+                if name in _SNAPSHOT_EXCLUDED_DIRS or name.startswith(_SNAPSHOT_EXCLUDED_PREFIXES):
+                    continue
+                path = Path(directory) / name
+                if path.is_file() and path.suffix.lower() in _SNAPSHOT_EXTENSIONS:
+                    candidates.append(path.resolve())
         candidates.sort(key=lambda path: path.relative_to(target.root_path.resolve()).as_posix())
     else:
         return TargetSnapshot("", 0, "target path does not exist or is not readable")

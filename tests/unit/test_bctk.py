@@ -255,11 +255,12 @@ def test_target_content_change_invalidates_report_binding(tmp_path):
     assert first.cryptographic_fingerprint != second.cryptographic_fingerprint
 
 
-def test_target_snapshot_ignores_local_codex_workspaces(tmp_path):
+@pytest.mark.parametrize("runtime_dir", [".codex-review-probe", ".quality"])
+def test_target_snapshot_ignores_local_codex_workspaces(tmp_path, runtime_dir):
     target = tmp_path / "target.py"
     target.write_text("VALUE = 1\n", encoding="utf-8")
     baseline = run_conformance_test(tmp_path)
-    local_runtime = tmp_path / ".codex-review-probe"
+    local_runtime = tmp_path / runtime_dir
     local_runtime.mkdir()
     (local_runtime / "generated.py").write_text("LOCAL = True\n", encoding="utf-8")
     after = run_conformance_test(tmp_path)

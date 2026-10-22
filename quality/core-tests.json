@@ -24,5 +24,6 @@
   "tests/unit/test_de_claim_conditions.py",
   "tests/unit/test_de_alternatives.py",
   "tests/unit/test_de_selection.py",
-  "tests/unit/test_positive_output_contract.py"
+  "tests/unit/test_positive_output_contract.py",
+  "tests/unit/test_passive_reader_import.py"
 ]

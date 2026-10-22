@@ -1,8 +1,36 @@
 """The passive reader must load by filename without a package or sys.path edits."""
+import importlib.util
 import json
 import subprocess
 import sys
 from pathlib import Path
+
+import pytest
+
+
+def test_filename_import_in_process():
+    reader = Path(__file__).resolve().parents[2] / "src/bionexus/de_bundle.py"
+    spec = importlib.util.spec_from_file_location("passive_reader_coverage", reader)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    contract = module.evidence_contract("CONDITIONAL")
+    assert contract["scientific_facts_verified"] is False
+
+
+def test_filename_import_rejects_unloadable_sibling(monkeypatch):
+    reader = Path(__file__).resolve().parents[2] / "src/bionexus/de_bundle.py"
+    spec = importlib.util.spec_from_file_location("passive_reader_unloadable", reader)
+    module = importlib.util.module_from_spec(spec)
+    original = importlib.util.spec_from_file_location
+
+    def unavailable(name, location, *args, **kwargs):
+        if name == "_bionexus_passive_evidence_contract":
+            return None
+        return original(name, location, *args, **kwargs)
+
+    monkeypatch.setattr(importlib.util, "spec_from_file_location", unavailable)
+    with pytest.raises(ImportError, match="Cannot load sibling"):
+        spec.loader.exec_module(module)
 
 
 def test_filename_import_uses_sibling_contract_without_site_packages(tmp_path):
