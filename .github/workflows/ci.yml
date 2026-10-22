@@ -365,3 +365,5 @@ jobs:
         with:
           name: mcp-transport-contracts
           path: .quality/mcp-*/
+          include-hidden-files: true
+          if-no-files-found: error

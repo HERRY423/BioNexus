@@ -221,6 +221,8 @@ jobs:
         with:
           name: release-wheel-mcp-transport
           path: .quality/wheel-mcp-*/
+          include-hidden-files: true
+          if-no-files-found: error
 
       - name: Generate GitHub Artifact Attestation (Sigstore Provenance)
         uses: actions/attest-build-provenance@v2
