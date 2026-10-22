@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import math
 import re
@@ -15,8 +16,16 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING or __package__:
     from .evidence_contract import evidence_contract, validate_evidence_contract
-else:  # Standalone passive reader: python -S path/to/de_bundle.py
-    from evidence_contract import evidence_contract, validate_evidence_contract
+else:  # Direct execution or spec_from_file_location, without site-packages.
+    _contract_spec = importlib.util.spec_from_file_location(
+        "_bionexus_passive_evidence_contract", Path(__file__).with_name("evidence_contract.py")
+    )
+    if _contract_spec is None or _contract_spec.loader is None:
+        raise ImportError("Cannot load sibling evidence contract")
+    _contract_module = importlib.util.module_from_spec(_contract_spec)
+    _contract_spec.loader.exec_module(_contract_module)
+    evidence_contract = _contract_module.evidence_contract
+    validate_evidence_contract = _contract_module.validate_evidence_contract
 
 BUNDLE_SCHEMA = "bionexus.de-shadow-bundle.v1"
 INTEGRITY_PROFILE = "bionexus.de-shadow-integrity.v1"
