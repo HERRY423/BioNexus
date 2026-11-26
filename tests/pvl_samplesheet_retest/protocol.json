@@ -1,0 +1,55 @@
+{
+  "format": "pvl-frozen-component-retest-1",
+  "component": "bionexus",
+  "parent_protocol_sha256": "0282acf427180b42fb825e2281be4f25f577003541e365461c8b00839ac07745",
+  "cases": [
+    {
+      "id": "technical_rows",
+      "table": "sample,condition,donor\na,control,d1\nb,control,d1\nc,treated,d2\nd,treated,d2\n",
+      "expected": {
+        "sample_count": 4,
+        "min_replicates_per_condition": 1,
+        "biological_replicates_count": 2
+      }
+    },
+    {
+      "id": "independent_donors",
+      "table": "sample,condition,donor\na,control,d1\nb,control,d2\nc,treated,d3\nd,treated,d4\n",
+      "expected": {
+        "sample_count": 4,
+        "min_replicates_per_condition": 2,
+        "biological_replicates_count": 4
+      }
+    },
+    {
+      "id": "paired_donors",
+      "table": "sample,condition,donor\na,control,d1\nb,control,d2\nc,treated,d1\nd,treated,d2\n",
+      "expected": {
+        "sample_count": 4,
+        "min_replicates_per_condition": 2,
+        "biological_replicates_count": 2
+      }
+    },
+    {
+      "id": "missing_donors",
+      "table": "sample,condition\na,control\nb,control\nc,treated\nd,treated\n",
+      "expected": {
+        "sample_count": 4,
+        "min_replicates_per_condition": 0,
+        "biological_replicates_count": 0,
+        "replicate_identity_status": "UNRESOLVED"
+      }
+    },
+    {
+      "id": "partial_donors",
+      "table": "sample,condition,donor\na,control,d1\nb,control,\nc,treated,d2\nd,treated,d2\n",
+      "expected": {
+        "sample_count": 4,
+        "min_replicates_per_condition": 0,
+        "biological_replicates_count": 0,
+        "replicate_identity_status": "UNRESOLVED"
+      }
+    }
+  ],
+  "scope": "Real public source executed on disclosed synthetic inputs; exact samplesheet helper AST, not the harvest path. No model or independent scientific validation."
+}
