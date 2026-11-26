@@ -344,3 +344,23 @@ def test_single_section_battery_abstains_and_binds_actual_diagnostics() -> None:
     data.obs = data.obs.iloc[:-1]
     with pytest.raises(SpatialBatteryError, match="obs must align"):
         run_spatial_alternative_battery(observation, data, plan)
+
+def test_battery_input_fingerprint_covers_full_matrix_and_bound_covariates() -> None:
+    observation, data, plan = _fixture()
+    original = run_spatial_alternative_battery(observation, data, plan)
+    binding = original.verdict.input_sha256
+    assert binding == original.provenance["input_sha256"]
+    assert all(d.input_sha256 == binding for d in original.diagnostics.values())
+    assert original.verdict.control_evidence["spot_composition"].producer == original.to_dict()["schema_version"]
+    null_metadata = original.diagnostics["permutation_null"].permutation_metadata
+    assert null_metadata["random_seed"] == plan.random_seed
+    assert null_metadata["n_permutations"] <= plan.coordinate_permutations
+
+    changed = data.expression.copy()
+    changed[0, 1] += 1  # A different feature in the same expression matrix
+    assert run_spatial_alternative_battery(observation, replace(data, expression=changed), plan).verdict.input_sha256 != binding
+    changed_sizes = np.asarray(data.cell_size).copy()
+    changed_sizes[0] += 1
+    assert run_spatial_alternative_battery(observation, replace(data, cell_size=changed_sizes), plan).verdict.input_sha256 != binding
+    same = run_spatial_alternative_battery(observation, data, plan)
+    assert same.verdict.input_sha256 == binding

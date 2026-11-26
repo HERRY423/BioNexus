@@ -5,6 +5,7 @@ flagship certification program.
 """
 
 import hashlib
+import json
 import sys
 from pathlib import Path
 
@@ -34,6 +35,8 @@ from bionexus.cli import main as cli_main
 from bionexus.intent_router import RoutingStatus, route_scientific_intent
 from bionexus.spatial_inference import (
     CANONICAL_ALTERNATIVES,
+    SECTION_PROVENANCE_SCHEMA,
+    SPATIAL_CONTROL_SCHEMA,
     ControlResult,
     assess_spatial_inference,
 )
@@ -144,16 +147,32 @@ def test_spatial_untested_alternatives_fragile():
     assert "spot_composition" in verdict.untested
 
 
+_SPATIAL_INPUT = hashlib.sha256(b"fixture expression and tissue coordinates").hexdigest()
+
+
+def _control_artifact(name, **fields):
+    doc = {
+        "schema": SPATIAL_CONTROL_SCHEMA, "control": name, "input_sha256": _SPATIAL_INPUT,
+        "method": "fixture interval", "statistic": 1.0, "adjusted_effect_interval": [0.1, 1.9],
+        "baseline_effect_sign": 1,
+    }
+    if name == "permutation_null":
+        doc.update(n_permutations=999, random_seed=12, null_distribution_summary={"min": -1, "mean": 0.0, "max": 1})
+    doc.update(fields)
+    payload = json.dumps(doc).encode()
+    digest = hashlib.sha256(payload).hexdigest()
+    return ControlResult(name, "TESTED", artifact_sha256=digest), {digest: payload}
+
+
 def _bound_spatial_controls():
     controls = []
     artifacts = {}
     for name in CANONICAL_ALTERNATIVES:
         if name == "sample_level_replication":
             continue
-        payload = f"{name} synthetic diagnostic".encode()
-        digest = hashlib.sha256(payload).hexdigest()
-        artifacts[digest] = payload
-        controls.append(ControlResult(name, "TESTED", statistic=1.0, artifact_sha256=digest))
+        item, binding = _control_artifact(name)
+        artifacts.update(binding)
+        controls.append(item)
     return controls, artifacts
 
 
@@ -161,7 +180,7 @@ def test_spatial_all_core_controls_supported_without_null():
     controls, artifacts = _bound_spatial_controls()
     obs = pd.DataFrame({"donor": [1, 2, 3, 4], "condition": ["A", "A", "B", "B"]})
     verdict = assess_spatial_inference(
-        "Membrane enrichment", [c for c in controls if c.name != "permutation_null"], obs=obs, artifacts=artifacts,
+        "Membrane enrichment", [c for c in controls if c.name != "permutation_null"], obs=obs, input_sha256=_SPATIAL_INPUT, artifacts=artifacts,
     )
     assert verdict.verdict == "SUPPORTED"
     assert any("permutation null" in n.lower() for n in verdict.notes)
@@ -170,52 +189,122 @@ def test_spatial_all_core_controls_supported_without_null():
 def test_spatial_full_controls_with_null_robust():
     controls, artifacts = _bound_spatial_controls()
     obs = pd.DataFrame({"donor": [1, 2, 3, 4], "condition": ["A", "A", "B", "B"]})
-    verdict = assess_spatial_inference("Membrane enrichment", controls, obs=obs, artifacts=artifacts)
+    verdict = assess_spatial_inference("Membrane enrichment", controls, obs=obs, input_sha256=_SPATIAL_INPUT, artifacts=artifacts)
     assert verdict.verdict == "ROBUST"
     assert verdict.samples_per_group == {"A": 2, "B": 2}
     assert verdict.to_dict()["control_evidence"]["cell_size"]["statistic"] == 1.0
 
 
 def test_spatial_declarations_and_mismatched_artifacts_cap_verdict():
-    obs = pd.DataFrame({"section": ["s1", "s2"], "condition": ["A", "A"]})
+    obs = pd.DataFrame({"donor": ["d1", "d2"], "condition": ["A", "A"]})
     results = assess_spatial_inference("Enrichment", dict.fromkeys(CANONICAL_ALTERNATIVES, "TESTED"), obs=obs)
     assert results.verdict == "FRAGILE"
     assert set(results.declared) == set(CANONICAL_ALTERNATIVES) - {"sample_level_replication"}
     controls, artifacts = _bound_spatial_controls()
     artifacts[controls[0].artifact_sha256] = b"changed"
-    assert assess_spatial_inference("Enrichment", controls, obs=obs, artifacts=artifacts).declared == [controls[0].name]
+    assert assess_spatial_inference("Enrichment", controls, obs=obs, input_sha256=_SPATIAL_INPUT, artifacts=artifacts).declared == [controls[0].name]
 
 
 def test_spatial_counts_independent_units_and_ignores_replication_declaration():
     controls, artifacts = _bound_spatial_controls()
     controls.append(ControlResult("sample_level_replication", "CONTROLLED", artifact_sha256=controls[0].artifact_sha256))
-    verdict = assess_spatial_inference("Enrichment", controls, artifacts=artifacts)
+    verdict = assess_spatial_inference("Enrichment", controls, input_sha256=_SPATIAL_INPUT, artifacts=artifacts)
     assert verdict.verdict == "FRAGILE"
     assert "sample_level_replication" in verdict.untested
     obs = pd.DataFrame({"condition": ["A", "A", "B", "B"], "donor_id": [1, 2, 3, 3], "section": [1, 2, 3, 4]})
-    verdict = assess_spatial_inference("Enrichment", controls, obs=obs, artifacts=artifacts)
+    verdict = assess_spatial_inference("Enrichment", controls, obs=obs, input_sha256=_SPATIAL_INPUT, artifacts=artifacts)
     assert verdict.verdict == "ABSTAIN"
     assert verdict.samples_per_group == {"A": 2, "B": 1}
     only_section = pd.DataFrame({"section_id": ["s1"] * 100})
-    assert assess_spatial_inference("Enrichment", controls, obs=only_section, artifacts=artifacts).verdict == "ABSTAIN"
+    assert assess_spatial_inference("Enrichment", controls, obs=only_section, input_sha256=_SPATIAL_INPUT, artifacts=artifacts).verdict == "ABSTAIN"
 
 
 def test_tissue_edge_aliases_are_independent_of_contact_geometry(monkeypatch):
     from bionexus.spatial_inference import ALTERNATIVE_ALIASES
     monkeypatch.setitem(ALTERNATIVE_ALIASES, "tissue_edge", "edge_effect")
     for alias in ("edge_effects", "edge_effect", "tissue_edge"):
-        verdict = assess_spatial_inference("Enrichment", {alias: "FAILED", "contact_geometry": "TESTED"})
+        control, binding = _control_artifact(alias, adjusted_effect_interval=[-2, 0], statistic=-1)
+        verdict = assess_spatial_inference(
+            "Enrichment", [control, ControlResult("contact_geometry", "TESTED")],
+            artifacts=binding, input_sha256=_SPATIAL_INPUT,
+        )
         assert verdict.failed == ["edge_effects"]
         assert verdict.declared == ["contact_geometry"]
 
 
-def test_spatial_failed_control_is_conflicted():
+def test_legacy_spatial_report_remains_a_declaration():
+    # v3 archived free-text results can still appear in a v4 review.
+    payload = b"Microscopy report: effect remained positive after accounting for cell area."
+    digest = hashlib.sha256(payload).hexdigest()
+    control = ControlResult("cell_size", "TESTED", artifact_sha256=digest)
     verdict = assess_spatial_inference(
-        "Gene X enriches toward macrophage-facing membrane",
-        {"cell_size": "FAILED", "transcript_density": "TESTED", "segmentation_uncertainty": "TESTED"},
+        "Enrichment", [control], input_sha256=_SPATIAL_INPUT, artifacts={digest: payload},
     )
-    assert verdict.verdict == "CONFLICTED"
-    assert "cell_size" in verdict.failed
+    assert verdict.verdict == "FRAGILE"
+    assert verdict.declared == ["cell_size"]
+
+
+def test_spatial_interval_decides_conflict_and_wrong_input_stays_declared():
+    control, binding = _control_artifact("cell_size", adjusted_effect_interval=[-0.1, 0.6])
+    result = assess_spatial_inference("Enrichment", [control], artifacts=binding, input_sha256=_SPATIAL_INPUT)
+    assert result.verdict == "CONFLICTED"
+    assert result.failed == ["cell_size"]
+    assert result.control_evidence["cell_size"].p_or_interval == (-0.1, 0.6)
+    assert result.control_evidence["cell_size"].producer == "external_structured"
+    old_input = hashlib.sha256(b"prior input revision").hexdigest()
+    result = assess_spatial_inference("Enrichment", [control], artifacts=binding, input_sha256=old_input)
+    assert result.declared == ["cell_size"]
+
+
+def test_spatial_permutation_completion_and_common_direction():
+    control, binding = _control_artifact("permutation_null", n_permutations=99)
+    result = assess_spatial_inference("Enrichment", [control], artifacts=binding, input_sha256=_SPATIAL_INPUT)
+    assert result.declared == ["permutation_null"]
+    decrease, negative = _control_artifact("cell_size", baseline_effect_sign=-1, adjusted_effect_interval=[-2.0, -0.5])
+    increase, positive = _control_artifact("edge_effects")
+    result = assess_spatial_inference(
+        "Depletion", [decrease, increase], artifacts=negative | positive, input_sha256=_SPATIAL_INPUT,
+    )
+    assert result.declared == ["cell_size", "edge_effects"]
+    result = assess_spatial_inference(
+        "Depletion", [decrease], artifacts=negative, input_sha256=_SPATIAL_INPUT, baseline_effect_sign=-1,
+    )
+    assert result.controlled == ["cell_size"]
+
+
+def test_zero_inclusive_interval_remains_failed_with_mixed_baseline_signs_and_aliases():
+    directional, a = _control_artifact("edge_effects", adjusted_effect_interval=[-2.0, -0.5])
+    touches_zero, b = _control_artifact("edge_effect", adjusted_effect_interval=[0.0, 1.0])
+    other, c = _control_artifact("cell_size", baseline_effect_sign=-1, adjusted_effect_interval=[-2.0, -0.5])
+    artifacts = a | b | c
+    for controls in ([directional, touches_zero, other], [other, touches_zero, directional]):
+        report = assess_spatial_inference("Enrichment", controls, artifacts=artifacts, input_sha256=_SPATIAL_INPUT)
+        assert report.verdict == "CONFLICTED"
+        assert report.failed == ["edge_effects"]
+        assert report.control_evidence["edge_effects"].p_or_interval == (0.0, 1.0)
+        assert report.declared == ["cell_size"]
+    report = assess_spatial_inference(
+        "Depletion", [touches_zero, other], artifacts=artifacts, input_sha256=_SPATIAL_INPUT, baseline_effect_sign=-1,
+    )
+    assert report.failed == ["edge_effects"]
+    assert report.controlled == ["cell_size"]
+
+
+def test_spatial_replicate_sections_require_distinct_verified_donor_origins():
+    obs = pd.DataFrame({"section": list("abcd"), "condition": list("AABB")})
+    controls, artifacts = _bound_spatial_controls()
+    def assess(**kwargs):
+        return assess_spatial_inference("Enrichment", controls, obs=obs, artifacts=artifacts,
+                                        input_sha256=_SPATIAL_INPUT, **kwargs)
+    report = assess()
+    assert report.verdict == "FRAGILE"
+    assert report.samples_per_group == {"A": 2, "B": 2}
+    assert report.declared == ["sample_level_replication"]
+    for origins, expected in [(dict(zip("abcd", "1234")), "ROBUST"), (dict.fromkeys("abcd", "d1"), "FRAGILE")]:
+        payload = json.dumps({"schema": SECTION_PROVENANCE_SCHEMA, "section_to_donor": origins}).encode()
+        digest = hashlib.sha256(payload).hexdigest()
+        artifacts[digest] = payload
+        assert assess(sections_are_independent=True, section_provenance_sha256=digest).verdict == expected
 
 
 def test_control_result_validates_names_and_statuses():

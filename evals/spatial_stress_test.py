@@ -66,6 +66,9 @@ from bionexus.versions import VERSION
 SYNTHETIC_DATA_DIR = REPO_ROOT / "validation" / "spatial" / "evidence"
 SYNTHETIC_H5AD_PATH = SYNTHETIC_DATA_DIR / "spatial_synthetic_technical_acceptance.h5ad"
 OUTPUT_REPORT = REPO_ROOT / "validation" / "spatial" / "INFERENTIAL_STRESS_REPORT.json"
+EXPECTATIONS_PATH = REPO_ROOT / "evals" / "datasets" / "spatial-stress-expectations.v4.json"
+EXPECTATIONS = json.loads(EXPECTATIONS_PATH.read_text(encoding="utf-8"))
+
 
 
 def generate_synthetic_spatial_dataset(output_path: Path | None = None) -> ad.AnnData:
@@ -136,7 +139,7 @@ def test_dim1_baseline(adata: ad.AnnData) -> Dict[str, Any]:
 
     # Baseline with no controls evaluates to FRAGILE / ABSTAIN (honest default)
     verdict_uncontrolled = assess_spatial_inference("SVG_0 gradient across x-axis", controls=None)
-    passed = has_coords and verdict_uncontrolled.verdict == "ABSTAIN"
+    passed = has_coords and verdict_uncontrolled.verdict == EXPECTATIONS["absent_controls"]
 
     return {
         "dimension": "1_synthetic_technical_acceptance_baseline",
@@ -173,13 +176,14 @@ def test_dim2_segmentation_leakage(adata: ad.AnnData) -> Dict[str, Any]:
         controls={"segmentation_uncertainty": "FAILED", "cell_size": "TESTED", "transcript_density": "TESTED"},
     )
 
-    passed = verdict.verdict == "CONFLICTED" and "segmentation_uncertainty" in verdict.failed
+    passed = verdict.verdict == EXPECTATIONS["external_declarations"] and "segmentation_uncertainty" in verdict.declared
     return {
         "dimension": "2_segmentation_leakage_confounder",
         "mean_neighbor_correlation": round(float(np.mean(sims)), 4),
         "leakage_control_status": "FAILED",
         "warrant_verdict": verdict.verdict,
         "failed_controls": verdict.failed,
+        "declared_controls": verdict.declared,
         "passed": passed,
     }
 
@@ -197,7 +201,7 @@ def test_dim3_cell_density(adata: ad.AnnData) -> Dict[str, Any]:
         dists = np.linalg.norm(coords - coords[i], axis=1)
         densities.append(int(np.sum(dists < 50.0)))
 
-    # If density explains expression, control FAILED -> CONFLICTED
+    # External failure and pass labels both require an input-bound control result.
     verdict_confounded = assess_spatial_inference(
         "Niche enrichment",
         controls={"local_cell_density": "FAILED", "cell_size": "TESTED", "transcript_density": "TESTED", "segmentation_uncertainty": "TESTED"},
@@ -208,7 +212,7 @@ def test_dim3_cell_density(adata: ad.AnnData) -> Dict[str, Any]:
         controls={"local_cell_density": "TESTED", "cell_size": "TESTED", "transcript_density": "TESTED", "segmentation_uncertainty": "TESTED", "nuclear_eccentricity": "TESTED", "spot_composition": "TESTED", "spatial_autocorrelation": "TESTED", "batch_fov": "TESTED", "ligand_receptor_abundance": "TESTED", "contact_geometry": "TESTED", "neighborhood_radius": "TESTED", "edge_effects": "TESTED", "transcript_spillover": "TESTED", "label_uncertainty": "TESTED"},
     )
 
-    passed = verdict_confounded.verdict == "CONFLICTED" and verdict_controlled.verdict == "FRAGILE"
+    passed = verdict_confounded.verdict == EXPECTATIONS["external_declarations"] and verdict_controlled.verdict == EXPECTATIONS["external_declarations"]
     return {
         "dimension": "3_cell_density_confounding",
         "confounded_verdict": verdict_confounded.verdict,
@@ -234,7 +238,7 @@ def test_dim4_morphology_cell_size(adata: ad.AnnData) -> Dict[str, Any]:
         controls={"cell_size": status, "transcript_density": "TESTED", "segmentation_uncertainty": "TESTED"},
     )
 
-    passed = verdict.verdict in ("CONFLICTED", "FRAGILE", "SUPPORTED")
+    passed = verdict.verdict == EXPECTATIONS["external_declarations"]
     return {
         "dimension": "4_morphology_cell_size_bias",
         "area_count_correlation": round(r, 4),
@@ -258,7 +262,7 @@ def test_dim5_nuclear_eccentricity(adata: ad.AnnData) -> Dict[str, Any]:
         controls={"cell_size": "TESTED", "transcript_density": "TESTED", "segmentation_uncertainty": "TESTED", "nuclear_eccentricity": "UNTESTED"},
     )
 
-    passed = verdict_untested.verdict == "FRAGILE" and "nuclear_eccentricity" in verdict_untested.untested
+    passed = verdict_untested.verdict == EXPECTATIONS["untested_controls"] and "nuclear_eccentricity" in verdict_untested.untested
     return {
         "dimension": "5_nuclear_eccentricity_aspect_ratio",
         "mean_eccentricity": round(mean_ecc, 4),
@@ -283,7 +287,7 @@ def test_dim6_tissue_edge_effects(adata: ad.AnnData) -> Dict[str, Any]:
         controls={"edge_effects": "FAILED", "cell_size": "TESTED", "transcript_density": "TESTED", "segmentation_uncertainty": "TESTED"},
     )
 
-    passed = verdict_edge_failed.verdict == "CONFLICTED"
+    passed = verdict_edge_failed.verdict == EXPECTATIONS["external_declarations"] and "edge_effects" in verdict_edge_failed.declared
     return {
         "dimension": "6_tissue_edge_effects",
         "edge_cell_fraction": round(edge_fraction, 4),
@@ -312,7 +316,7 @@ def test_dim7_radius_sensitivity(adata: ad.AnnData) -> Dict[str, Any]:
         controls={"cell_size": "TESTED", "transcript_density": "TESTED", "segmentation_uncertainty": "TESTED", "neighborhood_radius": "UNTESTED"},
     )
 
-    passed = verdict_untested.verdict == "FRAGILE"
+    passed = verdict_untested.verdict == EXPECTATIONS["untested_controls"]
     return {
         "dimension": "7_neighborhood_radius_sensitivity_grid",
         "tested_radii_um": radii,
@@ -332,7 +336,7 @@ def test_dim8_transcript_spillover() -> Dict[str, Any]:
         "Subcellular localization",
         controls={"transcript_spillover": "FAILED", "cell_size": "TESTED", "transcript_density": "TESTED", "segmentation_uncertainty": "TESTED"},
     )
-    passed = verdict.verdict == "CONFLICTED"
+    passed = verdict.verdict == EXPECTATIONS["external_declarations"] and "transcript_leakage" in verdict.declared
     return {
         "dimension": "8_transcript_spillover_control",
         "spillover_failed_verdict": verdict.verdict,
@@ -351,7 +355,7 @@ def test_dim9_batch_fov_confounding(adata: ad.AnnData) -> Dict[str, Any]:
         "Condition spatial difference",
         controls={"batch_fov": "FAILED", "cell_size": "TESTED", "transcript_density": "TESTED", "segmentation_uncertainty": "TESTED"},
     )
-    passed = verdict_fov_confounded.verdict == "CONFLICTED"
+    passed = verdict_fov_confounded.verdict == EXPECTATIONS["external_declarations"] and "batch_fov" in verdict_fov_confounded.declared
     return {
         "dimension": "9_batch_fov_confounding",
         "fov_confounded_verdict": verdict_fov_confounded.verdict,
@@ -389,7 +393,7 @@ def test_dim10_permutation_null(adata: ad.AnnData) -> Dict[str, Any]:
     controls_no_null = {k: v for k, v in full_controls.items() if k != "permutation_null"}
     without_null = assess_spatial_inference("SVG_0 validated spatial gradient", controls=controls_no_null)
 
-    passed = with_null.verdict == "FRAGILE" and without_null.verdict == "FRAGILE"
+    passed = with_null.verdict == EXPECTATIONS["external_declarations"] and without_null.verdict == EXPECTATIONS["external_declarations"]
     return {
         "dimension": "10_coordinate_permutation_null_robustness",
         "with_permutation_null_verdict": with_null.verdict,
@@ -484,7 +488,7 @@ def test_dim11_executable_battery() -> Dict[str, Any]:
         if item.calibration and not item.calibration.get("structural_applicability")
     ]
     passed = (
-        result.verdict.verdict == "FRAGILE"
+        result.verdict.verdict == EXPECTATIONS["uncalibrated_battery"]
         and result.provenance["fallback_used"] is False
         and bool(numeric)
         and all(item.state == DiagnosticState.UNTESTED for item in numeric)
@@ -543,6 +547,8 @@ def main() -> int:
     report = {
         "schema_version": "1.0",
         "capability_id": "spatial.inference_validity",
+        "expectations_version": EXPECTATIONS["schema_version"],
+        "expectations_sha256": sha256_file(EXPECTATIONS_PATH),
         "test_suite": "11_dimensional_spatial_validity_synthetic_benchmark",
         "dataset_track": "synthetic_technical_acceptance",
         "dataset_checksum_sha256": dataset_checksum,

@@ -29,7 +29,7 @@ There is deliberately no fallback from these states to the former annotation val
 `0.60`, `0.20`, `0.70`, or `0.80`.
 
 The same resolver now governs every numeric diagnostic emitted by the
-`spatial.inference_validity` v3 alternative-explanation battery. A computed
+`spatial.inference_validity` v4 alternative-explanation battery. A computed
 retention score or permutation p-value without a matching approved spatial
 profile remains `UNTESTED`; computation alone is not empirical warrant.
 
