@@ -54,6 +54,7 @@ _VALIDATION_SOURCE_FILES = (
     "evals/annotation_external_validation.py",
     "evals/annotation_external_holdout_validation.py",
     "evals/spatial_stress_test.py",
+    "evals/datasets/spatial-stress-expectations.v4.json",
     "evals/spatial_instrument_validation.py",
     "evals/flagship_validation.py",
     "scripts/run_flagship_validation.py",
