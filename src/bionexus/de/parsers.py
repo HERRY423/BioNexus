@@ -23,13 +23,16 @@ logger = logging.getLogger(__name__)
 DONOR_KEYWORDS = [
     "donor",
     "donor_id",
-    "sample",
-    "sample_id",
     "patient",
     "patient_id",
     "subject",
     "mouse_id",
+    "subject_id",
+    "individual",
+    "participant_id",
     "specimen",
+    "sample",
+    "sample_id",
 ]
 CONDITION_KEYWORDS = [
     "condition",

@@ -757,7 +757,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
     # 10. Spatial Inference Validity Assessment (flagship capability C, BNS-013)
     "spatial.inference_validity": CapabilityContract(
         id="spatial.inference_validity",
-        version=2,
+        version=3,
         display_name="Spatial Alternative Explanation Battery",
         skill_name="spatial-transcriptomics",
         summary=(
@@ -790,7 +790,13 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
                 name="alternative_controls",
                 semantic_type=SemanticInputType.SAMPLE_METADATA.value,
                 required=False,
-                description="Status of each alternative-explanation control (TESTED / CONTROLLED / UNTESTED / FAILED).",
+                description="Per-control results and SHA-256-bound artifacts. Unbound positive declarations are DECLARED.",
+            ),
+            "sample_observations": InputSpecification(
+                name="sample_observations",
+                semantic_type=SemanticInputType.SAMPLE_METADATA.value,
+                required=False,
+                description="Claim-scoped rows with comparison groups and donor or tissue-section identifiers.",
             ),
             "battery_plan": InputSpecification(
                 name="battery_plan",
@@ -813,7 +819,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
                 id="core_confound_controls_tested",
                 rule=(
                     "cell_size, transcript_density, segmentation_uncertainty, transcript_leakage, and "
-                    "contact_geometry are TESTED or CONTROLLED"
+                    "contact_geometry have bound evidence and sample_level_replication is measured"
                 ),
                 description="The canonical spatial confound controls must be addressed before any validity verdict.",
                 fatal_if_violated=False,

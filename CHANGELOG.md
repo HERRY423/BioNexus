@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Scientific audit changes
+
+- Pseudobulk power now uses per-sample negative-binomial variance and normal quantiles. Reports identify the per-test alpha assumption. Many small cohorts previously classified as powered for moderate or subtle effects now support descriptive claims only. Strong-effect classification requires a shrunken effect and sufficient baseMean.
+- DE audits count eligible donors within cell type and condition, report exclusions, and check the estimability and residual degrees of freedom of the sample-level contrast. Unused categories no longer block an audit. Partial batch confounding, omitted donor pairing and within-condition donor dominance are reported.
+- Donor-aware mixed models and pseudobulk methods can supply donor-level execution evidence. A successful dispersion fit alone cannot establish a causal design. An underpowered contrast has a PRELIMINARY ceiling.
+- Evidence declarations alone now have a PRELIMINARY ceiling. DE reports list measured factors and conflicting declarations, and record planning power separately from artifact-review status. Post-result selection caps evidence at FRAGILE.
+- DE table review checks suspicious adjusted P values and compares the signs of large reported effects with donor-level raw-count differences for an ordered contrast. The sign check flags contrasts for review and does not authenticate the external fit.
+- Spatial inference contract v3 distinguishes tissue-edge effects from contact geometry, verifies submitted control artifacts and measures replication from observations. Declarations can support at most FRAGILE. A single independent donor or section in a group yields ABSTAIN.
+- The rule registry supplies shared effect and doublet thresholds. BioFailureBench reports precision and recall for INV-009 on labeled causal-language examples, including quoted and negated wording.
+
+Earlier reports retain their original contract and findings. Re-run the audit with the original inputs to obtain a new assessment under these rules.
+
 ## [1.0.0-rc.9] - 2026-10-22
 
 ### Evidence contracts and transport corrections

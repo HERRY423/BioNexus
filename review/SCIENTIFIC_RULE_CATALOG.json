@@ -1,5 +1,5 @@
 {
-  "catalog_version": "3.3",
+  "catalog_version": "3.4",
   "citation_audit_note": "v3.3 (2026-08-25): corrected INV-001 provenance after Crossref resolution audit. doi:10.12688/f1000research.10570.2 resolves to an unrelated education paper (Crusio et al. 2017) and was replaced; doi:10.1038/nmeth.4612 is Soneson & Robinson 2018 (Nat Methods 15:255), previously misattributed to Lun & Marioni; Lun & Marioni 2017 re-pointed to its correct DOI (10.1093/biostatistics/kxw055). Crowell et al. 2020 (muscat, Nat Commun 11:6077) added as the pseudobulk framework reference. INV-008 gained McGinnis et al. 2019 (DoubletFinder) for droplet doublet-rate context.",
   "supersedes": "INVARIANTS_CATALOG.json (v1.0)",
   "taxonomy_note": "Not every rule BioNexus encodes is an invariant. Each rule declares exactly one epistemic_kind: EXECUTION_INVARIANT, DATA_INTEGRITY_INVARIANT, WARRANT_CONSTRAINT, CALIBRATED_THRESHOLD, HEURISTIC_DETECTOR, or POLICY_DEFAULT. A CALIBRATED_THRESHOLD is resolved from an approved empirical profile conditioned on tissue, platform, reference, task, and evidence source. Missing or pending calibration fails closed and never falls back to a universal number. Legacy INV-xxx identifiers are preserved for certification traceability.",
@@ -19,8 +19,10 @@
         "observed_effect_size",
         "covariate_batch_adjustment"
       ],
+      "effect_regime_threshold": "src/bionexus/data/rule_registry.json#/statistical_thresholds/strong_effect_log2fc",
+      "expression_floor": "src/bionexus/data/rule_registry.json#/statistical_thresholds/effect_min_base_mean",
       "biological_exceptions": [
-        "Paired isogenic controls with large deterministic effect size (LFC > 5)",
+        "In a paired or isogenic experiment, a large shrunken effect above the registered baseMean floor can reduce concern about technical noise. Conclusions with limited replication remain descriptive within the assayed donors or cell line. Population inference still requires independent replication.",
         "Exploratory single-cell marker ranking (claim capped to DESCRIPTIVE)"
       ],
       "literature_provenance": [
@@ -162,14 +164,16 @@
       "current_value": {
         "resolver": "empirical_calibration_profile",
         "metric": "doublet_rate",
+        "screening_advisory": "src/bionexus/data/rule_registry.json#/statistical_thresholds/doublet_rate_advisory",
+        "loading_context": "cells_loaded per capture when a profile declares an inclusive cells_loaded_range",
         "required_context": ["tissue", "platform", "reference", "task", "evidence_source"],
-        "legacy_value": 0.15,
+        "historical_profile_id": "legacy.annotation.doublet_rate.v1",
         "legacy_status": "LEGACY_UNCALIBRATED",
         "fallback": "NO_POSITIVE_WARRANT"
       },
       "source_file": "src/bionexus/empirical_warrant.py",
       "source_line": 444,
-      "rationale": "Calibrated ceiling reflecting typical doublet rates of droplet platforms (~5-10% at standard loading). 0.15 is platform- and loading-dependent; populations above it MAY be doublet artifacts — the flag is a warning requiring investigation, not a verdict.",
+      "rationale": "Clustering screens use the development advisory in the rule registry. A positive annotation warrant requires a reviewed profile appropriate for the platform and cell loading. The legacy value identifies archived reports only.",
       "literature_provenance": [
         {"citation": "McGinnis et al. 2019 (DoubletFinder)", "doi": "10.1016/j.cels.2019.03.003"}
       ],
@@ -180,11 +184,15 @@
       "id": "INV-009",
       "name": "causal_language_pattern",
       "epistemic_kind": "HEURISTIC_DETECTOR",
-      "description": "Regex pattern detecting prohibited causal/mechanistic language in scientific claims",
-      "current_value": "\\b(?:drives?|causes?|caused|induces?|induced|proves?|proven|mechanism of action|is causal)\\b",
-      "source_file": "src/bionexus/verification.py",
-      "source_line": 37,
-      "rationale": "Pattern-based detector with known precision/recall limits: it implements the warrant constraint that causal language exceeds observational evidence classes, but lexical detection can both over-fire (quoted text, negation) and miss paraphrases. The detector is heuristic; the underlying warrant constraint is what carries the science.",
+      "description": "Heuristic used by verification to flag asserted causal language in observational claims",
+      "current_value": {
+        "resolver": "detect_assertive_causal_language",
+        "benchmark": "evals/datasets/biofailurebench.yaml",
+        "benchmark_cases": ["BF-051", "BF-052", "BF-053", "BF-054", "BF-055", "BF-056", "BF-057", "BF-058", "BF-059", "BF-060"]
+      },
+      "source_file": "src/bionexus/claims/parser.py",
+      "source_line": 760,
+      "rationale": "Causal wording exceeds the warrant of an observational association. CI measures precision and recall on fixed statements with negation, quotations and paraphrases, including known false positives and false negatives.",
       "sensitivity": "high",
       "review_status": "pending"
     },

@@ -72,6 +72,8 @@ def handle_audit_de(args: argparse.Namespace) -> int:
             condition_col=condition_col,
             cell_type_col=cell_type_col,
             batch_col=batch_col,
+            case=getattr(args, "case", None), reference=getattr(args, "reference", None),
+            cell_type=getattr(args, "cell_type", None),
             claim_contract=claim_contract,
             alternative_plan=alternative_plan,
             alternative_runs=alternative_runs,
@@ -221,6 +223,9 @@ def register_audit_de_arguments(subparsers: argparse._SubParsersAction) -> None:
     p_audit_de.add_argument("--donor-col", dest="donor_col", default=None, help="Column name for biological donors (auto-detected if omitted)")
     p_audit_de.add_argument("--condition-col", dest="condition_col", default=None, help="Column name for experimental conditions (auto-detected if omitted)")
     p_audit_de.add_argument("--cell-type-col", dest="cell_type_col", default=None, help="Column name for cell types/clusters (auto-detected if omitted)")
+    p_audit_de.add_argument("--case", help="Numerator condition level for the audited contrast")
+    p_audit_de.add_argument("--reference", help="Denominator condition level for the audited contrast")
+    p_audit_de.add_argument("--cell-type", help="Cell type label to audit within the selected contrast")
     p_audit_de.add_argument("--batch-col", dest="batch_col", default=None, help="Column name for technical batches (auto-detected if omitted)")
     p_audit_de.add_argument("-o", "--out", "--output", dest="out", default=None, help="Export audit report to Markdown (.md) or JSON (.json)")
     p_audit_de.add_argument("--json", action="store_true", help="Output audit result as JSON")

@@ -146,7 +146,7 @@ def _design_checks(contract: dict[str, Any], model: Any, metadata: Any, design: 
         "design_encoding": "Actual matrix equals the declared additive model encoded from sample metadata.",
         "contrast_identity": "Numeric contrast estimates numerator minus denominator, with nuisance terms zero.",
         "contrast_estimability": "Target contrast lies in the row space of the actual design matrix.",
-        "model_rank": "Supported fixed-effect model is full rank with positive residual degrees of freedom.",
+        "model_rank": "Supported fixed-effect model is full rank with positive residual degrees of freedom (at least two for paired inference).",
         "statistical_unit": "Model rows account for donor repetition under the supported design.",
     }
     checks = {key: _check(key, req, MISSING, UNKNOWN, "not run; dependencies missing", refs,
@@ -205,15 +205,39 @@ def _design_checks(contract: dict[str, Any], model: Any, metadata: Any, design: 
         return list(checks.values())
     put("contrast_estimability", SAT if diag["estimable"] else UNSAT, "SVD row-space projection", diag,
         "Redesign the confounded comparison or narrow the estimand; flags cannot repair non-estimability.")
-    put("model_rank", SAT if diag["full_rank"] and diag["residual_df"] > 0 else UNSAT,
-        "SVD rank and n-rank(X)", diag, "Resolve aliased columns or lack of residual degrees of freedom.")
+    unit = model["statistical_unit"]
+    random_intercept = unit == "paired_donor_random_intercept"
+    rank_ok = diag["full_rank"] and diag["residual_df"] >= (1 if unit == "independent_donor" else 2)
+    rank_report = dict(diag)
+    rank_method = "SVD rank and n-rank(X)"
+    groups_match = False
+    if random_intercept:
+        # A hash-bound export of the fitted grouping vector is keyed by sample ID.
+        grouping = model["random_intercept"]
+        groups_match = grouping["column"] == donor and grouping["sample_groups"] == dict(zip(metadata[sid], metadata[donor]))
+        # Blocking by donor measures the information in the *within-donor*
+        # comparison. This diagnostic is not a mixed-model denominator-df estimate.
+        indicators = pd.get_dummies(metadata[donor], drop_first=True, dtype=float).to_numpy()
+        within = contrast_diagnostics(np.column_stack((x, indicators)), np.pad(c, (0, indicators.shape[1])))
+        rank_ok = rank_ok and within["estimable"] and within["residual_df"] >= 2
+        rank_report.update(within_donor_residual_df=within["residual_df"], within_donor_estimable=within["estimable"])
+        rank_method = "Fixed-design SVD and within-donor contrast after blocking by the observed donor groups"
+    rank_status = SAT if rank_ok else UNSAT
+    if random_intercept and not groups_match:
+        rank_status = UNKNOWN
+    put("model_rank", rank_status, rank_method, rank_report,
+        "Reconcile sample grouping, aliased columns and available residual degrees of freedom.")
     # Only explicit additive treatment coding is supported. Formula strings are never evaluated.
     formula = model["formula"].replace(" ", "")
     fields = {e["column"] for e in encodings.values() if e["kind"] != "intercept"}
-    expected_formula = "~" + "+".join(["1", *sorted(fields)])
+    required_terms = ["1", *sorted(fields)]
+    if random_intercept:
+        required_terms.append(f"(1|{donor})")
+    expected_formula = "~" + "+".join(required_terms)
     formula_terms = formula[1:].split("+") if formula.startswith("~") else []
     supported = (len(formula_terms) == len(set(formula_terms))
-                 and set(formula_terms) == {"1", *fields} and set(encodings) == set(names)
+                 and set(formula_terms) == set(required_terms) and set(encodings) == set(names)
+                 and (not random_intercept or donor not in fields)
                  and sum(e["kind"] == "intercept" for e in encodings.values()) == 1
                  and set(model["contrast"]) == set(names))
     expected_cols, target = [], []
@@ -253,21 +277,29 @@ def _design_checks(contract: dict[str, Any], model: Any, metadata: Any, design: 
     put("design_encoding", (SAT if np.allclose(x, encoded, rtol=1e-10, atol=1e-12) else CONFLICT)
         if supported else UNKNOWN, "rebuild supported additive treatment coding from metadata",
         {"formula": model["formula"], "supported_formula_shape": expected_formula},
-        "Export explicit intercept plus additive numeric/categorical encodings; interactions and random effects need an adapter.")
+        "Export an intercept and additive encodings, with only the recorded donor random intercept when applicable.")
     target_ok = (supported and np.any(target) and np.allclose(c, target, rtol=0, atol=1e-12)
                  and set(metadata[condition]) == {analysis["numerator"], analysis["denominator"]})
     put("contrast_identity", SAT if target_ok else (CONFLICT if supported else UNKNOWN),
         "derive condition contrast from factor encoding", {"recorded": c.tolist(), "expected": target},
         "Use the requested numerator-minus-denominator contrast with zero nuisance weights.")
     repeated = metadata[donor].duplicated().any()
-    unit = model["statistical_unit"]
-    paired = metadata.groupby(donor)[condition].agg(list)
-    complete_pairs = all(len(v) == 2 and set(v) == {analysis["numerator"], analysis["denominator"]} for v in paired)
-    unit_ok = ((unit == "independent_donor" and not repeated)
-               or (unit == "paired_donor_fixed_effect" and complete_pairs and donor in fields and supported))
-    put("statistical_unit", SAT if unit_ok else UNSAT, "donor multiplicity, complete pairs and donor fixed-effect coding",
-        {"unit": unit, "unique_donors": int(metadata[donor].nunique()), "repeated_donors": bool(repeated)},
-        "Aggregate technical repeats or export a supported paired donor model; general repeated measures require an adapter.")
+    donors_per_condition = metadata.groupby(donor, observed=True)[condition].nunique()
+    paired = donors_per_condition[donors_per_condition > 1].index.tolist()
+    no_technical_repeats = not metadata.duplicated([donor, condition]).any()
+    if random_intercept:
+        unit_ok = groups_match and bool(paired) and no_technical_repeats and supported
+        unit_status = (SAT if unit_ok else UNSAT) if groups_match else CONFLICT
+        unit_method = "match every exported random-intercept group to the donor of its modeled sample"
+    else:
+        unit_ok = ((unit == "independent_donor" and not repeated)
+                   or (unit == "paired_donor_fixed_effect" and bool(paired) and no_technical_repeats and donor in fields and supported))
+        unit_status = SAT if unit_ok else UNSAT
+        unit_method = "donor multiplicity, paired conditions and donor fixed-effect coding"
+    put("statistical_unit", unit_status, unit_method,
+        {"unit": unit, "unique_donors": int(metadata[donor].nunique()), "repeated_donors": bool(repeated),
+         "paired_donors": paired},
+        "Aggregate technical repeats and export the fitted donor term or the sample-aligned donor random-intercept groups.")
     return list(checks.values())
 
 
@@ -391,6 +423,7 @@ def verify_de_claim_conditions(path: str | Path, *, de_table: Any = None,
                             conditions=checks, scope_assessments=variants,
                             supported_statements=[v["statement"] for v in variants if v["supported_within_checked_scope"]]))
     return dict(schema_version=VERSION, contract_sha256=_digest(data), analysis=analysis,
+                metadata_columns=contract["metadata_columns"],
                 verifier={"implementation_sha256": _digest(Path(__file__).read_bytes()),
                           "schema_sha256": _digest((Path(__file__).parents[1] / "data" /
                                                     "de-claim-conditions.v1.schema.json").read_bytes()),

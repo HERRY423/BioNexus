@@ -81,7 +81,7 @@ PURPOSE_EVIDENCE_REQUIREMENT: Dict[ResearchPurpose, ConclusionMaturity] = {
 PURPOSE_EVIDENCE_CEILING: Dict[ResearchPurpose, ConclusionMaturity] = PURPOSE_EVIDENCE_REQUIREMENT
 
 #: Non-maturity conditions an intended use additionally demands.  These are
-#: checked in evidence_model.evaluate_sufficiency against declared factors
+#: checked in evidence_model.evaluate_sufficiency against measured factors
 #: and documented extras.
 PURPOSE_EXTRA_REQUIREMENTS: Dict[ResearchPurpose, List[str]] = {
     ResearchPurpose.CAUSAL: ["causal_identification"],

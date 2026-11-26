@@ -18,7 +18,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List
 
-from evals.schema import EpistemicCalibrationReport, EvalResult
+from evals.schema import EpistemicCalibrationReport, EvalCategory, EvalResult
 
 ORDINAL_MATURITY_RANKS: Dict[str, int] = {
     "ABSTAIN": 0,
@@ -428,6 +428,39 @@ def compute_frontier_metrics(results: List[EvalResult]) -> Dict[str, Any]:
     }
 
 
+def compute_causal_language_metrics(results: List[EvalResult]) -> Dict[str, Any]:
+    """Score the fixed, labeled INV-009 statements, including known limitations."""
+    cases = [r for r in results if r.category == EvalCategory.CAUSAL_LANGUAGE.value]
+    if not cases:
+        return {}
+    counts = {(a, b): 0 for a in ("ABSTAIN", "PERMITTED") for b in ("ABSTAIN", "PERMITTED")}
+    unscored = []
+    errors = []
+    for case in cases:
+        labels = (case.expected_status, case.actual_status)
+        if case.skipped or labels not in counts:
+            unscored.append(case.case_id)
+            continue
+        counts[labels] += 1
+        if case.expected_status != case.actual_status:
+            errors.append(case.case_id)
+    tp = counts["ABSTAIN", "ABSTAIN"]
+    fp = counts["PERMITTED", "ABSTAIN"]
+    fn = counts["ABSTAIN", "PERMITTED"]
+    return {
+        "total": len(cases),
+        "evaluated": sum(counts.values()),
+        "unscored_cases": unscored,
+        "true_positives": tp,
+        "false_positives": fp,
+        "false_negatives": fn,
+        "true_negatives": counts["PERMITTED", "PERMITTED"],
+        "precision": tp / (tp + fp) if tp + fp else None,
+        "recall": tp / (tp + fn) if tp + fn else None,
+        "misclassified_cases": errors,
+    }
+
+
 def compute_cross_host_consistency(results: List[EvalResult]) -> Dict[str, Any]:
     """
     Compute cross-host consistency over L2 claim-audit results (BNS-HC-007).
@@ -436,7 +469,7 @@ def compute_cross_host_consistency(results: List[EvalResult]) -> Dict[str, Any]:
     agree on the claim-audit outcome. Single-host runs are reported as
     not evaluated rather than trivially consistent.
     """
-    l2 = [r for r in results if r.level == "L2"]
+    l2 = [r for r in results if r.level == "L2" and r.category != EvalCategory.CAUSAL_LANGUAGE.value]
     providers = sorted({r.provider for r in l2 if r.provider})
 
     if len(providers) < 2:

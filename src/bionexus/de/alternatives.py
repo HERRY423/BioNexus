@@ -238,6 +238,14 @@ def _compatible(base: dict[str, Any], alt: dict[str, Any], spec: dict[str, Any])
     if not _frame_equal(expected_meta, alt["metadata"], sid):
         return "UNPLANNED_CHANGE", ["Retained sample/donor/covariate records differ from the specified perturbation."], {}
     samples = set(expected_meta[sid])
+    if bm["statistical_unit"] == "paired_donor_random_intercept":
+        grouping = bm["random_intercept"]
+        expected_grouping = {
+            "column": grouping["column"],
+            "sample_groups": {sample: grouping["sample_groups"][sample] for sample in samples},
+        }
+        if am.get("random_intercept") != expected_grouping:
+            return "UNPLANNED_CHANGE", ["Random-intercept grouping differs for the retained samples."], {}
     expected_cells = base["cells"].loc[base["cells"]["sample_id"].isin(samples)]
     if not _frame_equal(expected_cells, alt["cells"], "cell_id"):
         return "QUESTION_CHANGED", ["Cell membership changed beyond the planned donor omission."], {}

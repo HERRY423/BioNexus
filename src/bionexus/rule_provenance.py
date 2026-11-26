@@ -36,7 +36,8 @@ import os
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from types import MappingProxyType
+from typing import Any, Dict, List, Mapping, Optional
 
 from bionexus.rule_classification import (
     EnforcementLevel,
@@ -255,6 +256,7 @@ except RuleRegistryError:
 # Alias index: condition_id (and every alias) -> canonical rule_id.
 _RULE_INDEX: Dict[str, str] = {}
 _registry_data = json.loads(_REGISTRY_FILENAME.read_text(encoding="utf-8"))
+STATISTICAL_THRESHOLDS: Mapping[str, float] = MappingProxyType(_registry_data["statistical_thresholds"])
 for _rule_id, _record in _registry_data.get("rules", {}).items():
     _RULE_INDEX[_rule_id] = _rule_id
     for _alias in _record.get("aliases", []):

@@ -143,7 +143,7 @@ will be added. The three flagship capabilities —
 |---|---|---|
 | Pseudobulk differential expression | `scrna.pseudobulk_de` | BNS-015 external validation vs published DE truth (Kang 2018) |
 | Annotation evidence assessment | `scrna.annotation_evidence` | BNS-015 distrust calibration on CITE-seq/FACS-sorted PBMC |
-| Spatial Alternative Explanation Battery | `spatial.inference_validity` v2 | BNS-015 segmentation/leakage/geometry/field/null/label challenges, followed by real platform-separated Xenium/CosMx/MERSCOPE calibration |
+| Spatial Alternative Explanation Battery | `spatial.inference_validity` v3 | BNS-015 segmentation/leakage/geometry/field/null/label challenges, followed by real platform-separated Xenium/CosMx/MERSCOPE calibration |
 
 — are the priority: they must reach genuinely **CERTIFIED** status (14/14
 evidence gates, Backend Identity CONFORMANT, external real-data validation).

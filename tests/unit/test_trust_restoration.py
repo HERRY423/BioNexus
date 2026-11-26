@@ -1,5 +1,6 @@
 """Regression checks for development evidence and reachable MCP transport."""
 import asyncio
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -30,6 +31,32 @@ def test_release_correction_rejects_mutated_predecessor(tmp_path):
                                  "scientific_authorization": "NONE", "records": []}))
     result = check(tmp_path, "review/corrections.json")
     assert "Prior correction record changed" in result["errors"]
+
+
+def test_release_correction_binds_every_predecessor(tmp_path):
+    from scripts.check_trust_restoration import check
+
+    def link(path):
+        return {"path": path.name, "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+
+    original = tmp_path / "original.json"
+    original.write_text("{}")
+    prior = tmp_path / "prior.json"
+    prior.write_text(json.dumps({"supersedes": link(original)}))
+    active = tmp_path / "active.json"
+    artifact = tmp_path / "document.md"
+    artifact.write_text("document")
+    checksum = link(artifact)["sha256"]
+    active.write_text(json.dumps({
+        "supersedes": link(prior),
+        "scientific_authorization": "NONE",
+        "records": [{"path": artifact.name, "original_archive": artifact.name,
+                     "original_sha256": checksum, "corrected_sha256": checksum}],
+    }))
+    (tmp_path / "original-evidence-manifest.json").write_text(json.dumps({"files": []}))
+    assert check(tmp_path, active.name)["status"] == "PASS"
+    original.write_text('{"modified": true}')
+    assert check(tmp_path, active.name)["errors"] == ["Prior correction record changed"]
 
 
 @pytest.mark.parametrize("text", [

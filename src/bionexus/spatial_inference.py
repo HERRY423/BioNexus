@@ -1,32 +1,25 @@
 """
 BioNexus Spatial Inference Validity Assessment (flagship capability C, BNS-013).
 
-Not a reimplementation of Squidpy. The question answered here is:
+The spatial verdict describes survival of alternative explanations for one
+observation. ROBUST requires measured sample replication and evidence-bound
+controls including a permutation null. Without the null the upper bound is
+SUPPORTED. Untested or declaration-only controls cap the verdict at FRAGILE.
+A failed alternative yields CONFLICTED. Insufficient observed sample units,
+an absent control matrix or an unestimable baseline yields ABSTAIN.
 
-    **Can this spatial biology conclusion survive its alternative explanations?**
-
-A spatial observation (e.g. "gene X enriches toward macrophage-facing
-membrane") is compatible with several non-biological explanations: cell size,
-transcript density, segmentation uncertainty, transcript leakage, nuclear
-eccentricity, local cell density, label uncertainty, spot composition, spatial
-autocorrelation, batch/FOV artifacts, ligand/receptor abundance, contact
-geometry, neighborhood-radius choice, and the absence of a permutation null.
-This module evaluates a declared control-status matrix and returns:
-
-    ROBUST      every canonical control TESTED-and-passing + permutation null
-    SUPPORTED   all provided controls pass; canonical set complete
-    FRAGILE     at least one alternative left UNTESTED (the honest default)
-    CONFLICTED  at least one tested alternative explains or overturns the effect
-    ABSTAIN     no controls were provided or the executable baseline is not estimable
-
-Deterministic; the canonical alternative registry below is part of the
-capability contract and may only change with a contract version bump.
+The canonical alternatives are part of the versioned capability contract.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+import hashlib
+import json
+from dataclasses import asdict, dataclass, field, replace
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional
+
+if TYPE_CHECKING:
+    from pandas import DataFrame
 
 # The canonical alternative-explanation base registry (contract-visible).
 CANONICAL_BASE_ALTERNATIVES: tuple = (
@@ -41,9 +34,11 @@ CANONICAL_BASE_ALTERNATIVES: tuple = (
     "batch_fov",
     "ligand_receptor_abundance",
     "contact_geometry",
+    "edge_effects",
     "neighborhood_radius",
     "permutation_null",
     "cell_label_perturbation",
+    "sample_level_replication",
 )
 
 # Canonical alias mapping for robust resolution
@@ -55,7 +50,6 @@ ALTERNATIVE_ALIASES: Dict[str, str] = {
     "morphology_confounding": "cell_size",
     "cell_density_confounding": "local_cell_density",
     "edge_effect": "edge_effects",
-    "edge_effects": "contact_geometry",
     "local_transcript_density": "transcript_density",
     "transcript_spillover": "transcript_leakage",
     "leakage_sensitivity": "transcript_leakage",
@@ -76,9 +70,10 @@ CORE_CONTROLS: tuple = (
     "segmentation_uncertainty",
     "transcript_leakage",
     "contact_geometry",
+    "sample_level_replication",
 )
 
-CONTROL_STATUSES = ("TESTED", "CONTROLLED", "UNTESTED", "FAILED")
+CONTROL_STATUSES = ("TESTED", "CONTROLLED", "DECLARED", "UNTESTED", "FAILED")
 
 VALIDITY_LADDER = ("ROBUST", "SUPPORTED", "FRAGILE", "CONFLICTED", "ABSTAIN")
 
@@ -90,10 +85,15 @@ class ControlResult:
     name: str
     status: str  # CONTROL_STATUSES
     note: str = ""
+    statistic: Optional[float] = None
+    p_or_interval: Optional[float | tuple[float, float]] = None
+    artifact_sha256: Optional[str] = None
 
     def __post_init__(self) -> None:
         if self.status not in CONTROL_STATUSES:
             raise ValueError(f"Control status '{self.status}' not in {CONTROL_STATUSES}")
+        if self.status in ("TESTED", "CONTROLLED") and not self.artifact_sha256:
+            self.status = "DECLARED"
         if self.name not in CANONICAL_ALTERNATIVES and self.name not in ALTERNATIVE_ALIASES:
             raise ValueError(
                 f"Unknown alternative-explanation control '{self.name}'. Canonical: {list(CANONICAL_ALTERNATIVES)}"
@@ -111,127 +111,137 @@ class SpatialInferenceVerdict:
     failed: List[str] = field(default_factory=list)
     notes: List[str] = field(default_factory=list)
 
+    declared: List[str] = field(default_factory=list)
+    control_evidence: Dict[str, ControlResult] = field(default_factory=dict)
+    samples_per_group: Dict[str, int] = field(default_factory=dict)
+
     def to_dict(self) -> Dict[str, Any]:
-        return {
-            "observation": self.observation,
-            "verdict": self.verdict,
-            "controlled": list(self.controlled),
-            "untested": list(self.untested),
-            "failed": list(self.failed),
-            "notes": list(self.notes),
-        }
+        return asdict(self)
+
+
+def _canonical(name: str) -> str:
+    seen = set()
+    while name in ALTERNATIVE_ALIASES:
+        if name in seen:
+            raise ValueError(f"Cyclic spatial control alias at {name!r}")
+        seen.add(name)
+        name = ALTERNATIVE_ALIASES[name]
+    return name
 
 
 def _normalize_controls(
     controls: Optional[List[ControlResult] | Dict[str, str]],
-) -> List[ControlResult]:
-    if controls is None:
-        return []
-    raw_list: List[ControlResult] = []
+    artifacts: Mapping[str, bytes],
+) -> Dict[str, ControlResult]:
     if isinstance(controls, dict):
-        raw_list = [ControlResult(name=k, status=v) for k, v in controls.items()]
+        controls = [ControlResult(name=k, status=v) for k, v in controls.items()]
+    normalized: Dict[str, ControlResult] = {}
+    # If aliases give conflicting results, retain the weaker status and its evidence.
+    priority = ("TESTED", "CONTROLLED", "DECLARED", "UNTESTED", "FAILED")
+    for item in controls or ():
+        name = _canonical(item.name)
+        if name == "sample_level_replication":
+            continue  # Always measured directly from observations.
+        status = item.status
+        if status in ("TESTED", "CONTROLLED"):
+            digest = (item.artifact_sha256 or "").lower()
+            artifact = artifacts.get(digest)
+            if not artifact or hashlib.sha256(artifact).hexdigest() != digest:
+                status = "DECLARED"
+        if name not in normalized or priority.index(status) > priority.index(normalized[name].status):
+            normalized[name] = replace(item, name=name, status=status)
+    return normalized
+
+
+def _sample_replication(
+    obs: Optional[DataFrame], donor_col: Optional[str], section_col: Optional[str], group_col: Optional[str]
+) -> tuple[ControlResult, Dict[str, int]]:
+    name = "sample_level_replication"
+    if obs is None or obs.empty:
+        return ControlResult(name, "UNTESTED", "Sample-level observations are missing."), {}
+    # Prefer the independent donor when sections are nested within donors.
+    candidates = (donor_col,) if donor_col is not None else ("donor", "donor_id")
+    candidates += (section_col,) if section_col is not None else ("section", "section_id", "slice", "slice_id")
+    unit = next((col for col in candidates if col in obs), None)
+    if unit is None:
+        return ControlResult(name, "UNTESTED", "Supply donor or tissue-section identifiers in obs."), {}
+
+    import pandas as pd
+
+    units = obs[unit].astype("string").str.strip().replace("", pd.NA)
+    grouped = group_col is not None and group_col in obs
+    groups = obs[group_col].astype("string").str.strip().replace("", pd.NA) if grouped else "all"
+    pairs = pd.DataFrame({"group": groups, "unit": units}).drop_duplicates()
+    counts = {str(k): int(v) for k, v in pairs.groupby("group", observed=True)["unit"].nunique().items()}
+    records = pairs.dropna().sort_values(["group", "unit"]).values.tolist()
+    digest = hashlib.sha256(json.dumps([unit, group_col, records], ensure_ascii=False).encode()).hexdigest()
+    if not counts or pairs.isna().any().any():
+        return ControlResult(name, "UNTESTED", "Group or sample identifiers are incomplete."), counts
+    minimum = min(counts.values())
+    if minimum < 2:
+        status = "FAILED"
+        note = f"Fewer than two {unit} units in a group. Limit the observation to a single-section or donor description."
+    elif group_col is not None and not grouped:
+        status = "UNTESTED"
+        note = f"Group column {group_col!r} is missing. Group-specific replication could not be assessed."
     else:
-        raw_list = list(controls)
-
-    # Resolve aliases and merge status (FAILED takes precedence over TESTED/CONTROLLED)
-    status_map: Dict[str, str] = {}
-    notes_map: Dict[str, str] = {}
-    for c in raw_list:
-        canon_name = ALTERNATIVE_ALIASES.get(c.name, c.name)
-        curr_status = status_map.get(canon_name)
-        if curr_status == "FAILED" or c.status == "FAILED":
-            status_map[canon_name] = "FAILED"
-        elif curr_status == "UNTESTED" or c.status == "UNTESTED":
-            status_map[canon_name] = "UNTESTED"
-        else:
-            status_map[canon_name] = c.status
-        if c.note:
-            notes_map[canon_name] = c.note
-
-    return [ControlResult(name=k, status=v, note=notes_map.get(k, "")) for k, v in status_map.items()]
+        status = "CONTROLLED"
+        note = f"Observed at least two distinct {unit} units per group."
+    return ControlResult(name, status, note, statistic=minimum, artifact_sha256=digest), counts
 
 
 def assess_spatial_inference(
     observation: str,
     controls: Optional[List[ControlResult] | Dict[str, str]] = None,
+    *,
+    obs: Optional[DataFrame] = None,
+    donor_col: Optional[str] = None,
+    section_col: Optional[str] = None,
+    group_col: Optional[str] = "condition",
+    artifacts: Optional[Mapping[str, bytes]] = None,
 ) -> SpatialInferenceVerdict:
+    """Assess one observation using control artifacts and sample-level replication.
+
+    Supply original artifact bytes keyed by their SHA-256 digest. The digest
+    identifies what was measured; interpretation of an external result remains
+    the responsibility of its reviewer. Supply claim-scoped obs rows, with
+    group_col=None for a single cohort. Cells, spots and FOVs are subsamples.
     """
-    Assess whether a spatial conclusion survives its alternative explanations.
+    results = _normalize_controls(controls, artifacts or {})
+    has_controls = bool(results)
+    replication, counts = _sample_replication(obs, donor_col, section_col, group_col)
+    results[replication.name] = replication
 
-    Fail-closed semantics:
-    - no controls at all              -> ABSTAIN (nothing was actually tested)
-    - any FAILED control              -> CONFLICTED (an alternative explains it)
-    - any canonical alternative left UNTESTED -> FRAGILE (names the gaps)
-    - core controls addressed + permutation null -> ROBUST; without the null
-      the verdict tops out at SUPPORTED.
-    """
-    results = _normalize_controls(controls)
-    if not results:
-        return SpatialInferenceVerdict(
-            observation=observation,
-            verdict="ABSTAIN",
-            notes=[
-                "No alternative-explanation controls were provided; the observation cannot be "
-                "certified or refuted (request the core confound controls first)."
-            ],
-        )
-
-    status_by_name = {c.name: c.status for c in results}
-    notes = [c.note for c in results if c.note]
-
-    failed = sorted(n for n, s in status_by_name.items() if s == "FAILED")
-    if failed:
-        return SpatialInferenceVerdict(
-            observation=observation,
-            verdict="CONFLICTED",
-            controlled=sorted(n for n, s in status_by_name.items() if s in ("TESTED", "CONTROLLED")),
-            untested=sorted(n for n, s in status_by_name.items() if s == "UNTESTED"),
-            failed=failed,
-            notes=notes
-            + [
-                "A tested alternative explanation explains or overturns the observation: evidence is "
-                "CONFLICTED until the confound is resolved or the claim is restated."
-            ],
-        )
-
-    controlled = sorted(n for n, s in status_by_name.items() if s in ("TESTED", "CONTROLLED"))
-    untested_declared = sorted(n for n, s in status_by_name.items() if s == "UNTESTED")
-    # Canonical base alternatives that were never declared count as untested, with
-    # one exception: an absent permutation_null is a cap (SUPPORTED at most),
-    # not a FRAGILE gap — only an explicitly UNTESTED null forces FRAGILE.
-    untested_canonical = sorted(
-        n for n in CANONICAL_BASE_ALTERNATIVES if n not in status_by_name and n != "permutation_null"
-    )
-    untested = sorted(set(untested_declared) | set(untested_canonical))
-
-    core_missing = [c for c in CORE_CONTROLS if c in untested]
-    if untested:
-        return SpatialInferenceVerdict(
-            observation=observation,
-            verdict="FRAGILE",
-            controlled=controlled,
-            untested=untested,
-            notes=notes
-            + (
-                [
-                    "Core confound controls not yet addressed: "
-                    + ", ".join(core_missing)
-                    + ". The observation may reflect measurement geometry rather than biology."
-                ]
-                if core_missing
-                else []
-            ),
-        )
-
-    has_null = status_by_name.get("permutation_null") in ("TESTED", "CONTROLLED")
-    return SpatialInferenceVerdict(
+    verdict = SpatialInferenceVerdict(
         observation=observation,
-        verdict="ROBUST" if has_null else "SUPPORTED",
-        controlled=controlled,
-        notes=notes
-        + (
-            []
-            if has_null
-            else ["No permutation null recorded: significance language stays capped at SUPPORTED."]
+        verdict="FRAGILE",
+        controlled=sorted(n for n, r in results.items() if r.status in ("TESTED", "CONTROLLED")),
+        untested=sorted(
+            n for n in CANONICAL_ALTERNATIVES
+            if (n not in results and n != "permutation_null") or (n in results and results[n].status == "UNTESTED")
         ),
+        failed=sorted(n for n, r in results.items() if r.status == "FAILED"),
+        declared=sorted(n for n, r in results.items() if r.status == "DECLARED"),
+        control_evidence=results,
+        samples_per_group=counts,
+        notes=[r.note for r in results.values() if r.note],
     )
+    if replication.status == "FAILED" or not has_controls:
+        verdict.verdict = "ABSTAIN"
+        if not has_controls:
+            verdict.notes.append("No alternative-explanation controls were provided.")
+    elif verdict.failed:
+        verdict.verdict = "CONFLICTED"
+        verdict.notes.append("A reported alternative explanation overturns the observation.")
+    elif verdict.untested or verdict.declared:
+        if verdict.declared:
+            verdict.notes.append("Control evidence bytes were absent or did not match the recorded SHA-256.")
+        core_missing = [name for name in CORE_CONTROLS if name not in verdict.controlled]
+        if core_missing:
+            verdict.notes.append("Core confound controls outstanding: " + ", ".join(core_missing))
+    elif "permutation_null" in verdict.controlled:
+        verdict.verdict = "ROBUST"
+    else:
+        verdict.verdict = "SUPPORTED"
+        verdict.notes.append("No permutation null recorded. Significance language stays capped at SUPPORTED.")
+    return verdict

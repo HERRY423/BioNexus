@@ -296,6 +296,7 @@ def test_explicit_result_informed_selection_and_engine_scope(study):
     r = run(study)
     assert "RESULT_INFORMED_SELECTION" in codes(r)
     audit = audit_differential_expression(selection_history=study[0] / "history.json")
+    assert audit.evidence_assessment["evidence_maturity"] == "FRAGILE"
     assert not audit.passed
     assert "探索性" in audit.claim_boundary.allowed_scope
     assert audit.selection_history["claims"][0]["condition_status"] == "SATISFIED"

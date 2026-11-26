@@ -10,6 +10,7 @@ from __future__ import annotations
 from dataclasses import replace
 
 import numpy as np
+import pandas as pd
 import pytest
 from scipy import sparse
 
@@ -325,3 +326,21 @@ def test_unestimable_baseline_abstains_instead_of_reporting_fragile_support() ->
     assert result.baseline_effect is None
     assert result.verdict.verdict == "ABSTAIN"
     assert "baseline_effect" in result.verdict.untested
+
+def test_single_section_battery_abstains_and_binds_actual_diagnostics() -> None:
+    import hashlib
+    import json
+
+    observation, data, plan = _fixture()
+    data.obs = pd.DataFrame({"section_id": ["section-1"] * len(data.cell_labels)})
+    result = run_spatial_alternative_battery(observation, data, plan)
+    assert result.verdict.verdict == "ABSTAIN"
+    assert result.verdict.samples_per_group == {"exposed": 1, "unexposed": 1}
+    assert "edge_effects" in result.verdict.untested
+    assert "spot_composition" in result.verdict.controlled
+    diagnostic = result.to_dict()["diagnostics"]["spot_composition"]
+    payload = json.dumps(diagnostic, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+    assert result.verdict.control_evidence["spot_composition"].artifact_sha256 == hashlib.sha256(payload).hexdigest()
+    data.obs = data.obs.iloc[:-1]
+    with pytest.raises(SpatialBatteryError, match="obs must align"):
+        run_spatial_alternative_battery(observation, data, plan)

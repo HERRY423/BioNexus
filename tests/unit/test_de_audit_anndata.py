@@ -292,7 +292,8 @@ def test_scanpy_structured_array_preserves_identifiers_and_values():
 
 def test_rank_genes_groups_parse_failure_is_reported():
     adata = _create_mock_anndata(
-        n_cells=60,
+        # Keep the count per donor/type above the eligibility floor to isolate the parse failure.
+        n_cells=1200,
         n_genes=3,
         donors=["D1", "D2", "D3", "D4", "D5", "D6"],
         conditions=["A", "A", "A", "B", "B", "B"],

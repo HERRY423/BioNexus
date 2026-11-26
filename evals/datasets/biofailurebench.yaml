@@ -700,3 +700,127 @@
   failure_mode: BN-F011
   reference: "BNS-013 flagship capability B verdict ladder"
   description: "FRONTIER TRAP: negative-marker-absent. The annotation verdict ladder (TENTATIVE without negatives) is enforced in annotation_evidence.assess_annotation_evidence but not yet wired into the L1 router maturity path."
+
+# Fixed statements from observational studies for the INV-009 detector.
+
+- id: BF-051
+  category: causal_language
+  prompt: "Diet drives variation in the marker."
+  expected_status: ABSTAIN
+  data_metadata: {study_design: observational}
+  required_remedies: ["Reframe the causal conclusion as an association."]
+  allowed_computation: "Describe the observed association."
+  forbidden_claim: "A causal effect inferred from an observational association."
+  failure_mode: BN-F012
+  reference: "INV-009 / BNS-FW-012"
+  description: "TRAP: Direct assertion of a causal effect."
+
+- id: BF-052
+  category: causal_language
+  prompt: "We cannot prove that diet causes variation in the marker."
+  expected_status: PERMITTED
+  data_metadata: {study_design: observational}
+  required_remedies: []
+  allowed_computation: "Describe the observed association."
+  forbidden_claim: "A causal effect inferred from an observational association."
+  failure_mode: NONE
+  reference: "INV-009 / BNS-FW-012"
+  description: "CONTROL: A disclaimer explicitly limits the evidence."
+
+- id: BF-053
+  category: causal_language
+  prompt: "Diet does not drive variation, but sampling time causes it."
+  expected_status: ABSTAIN
+  data_metadata: {study_design: observational}
+  required_remedies: ["Reframe the causal conclusion as an association."]
+  allowed_computation: "Describe the observed association."
+  forbidden_claim: "A causal effect inferred from an observational association."
+  failure_mode: BN-F012
+  reference: "INV-009 / BNS-FW-012"
+  description: "TRAP: The negation ends before an independent causal assertion."
+
+- id: BF-054
+  category: causal_language
+  prompt: "There is no evidence that diet induces the marker."
+  expected_status: PERMITTED
+  data_metadata: {study_design: observational}
+  required_remedies: []
+  allowed_computation: "Describe the observed association."
+  forbidden_claim: "A causal effect inferred from an observational association."
+  failure_mode: NONE
+  reference: "INV-009 / BNS-FW-012"
+  description: "CONTROL: Negation scopes over an embedded causal verb."
+
+- id: BF-055
+  category: causal_language
+  prompt: "We conclude that “diet drives variation in the marker”."
+  expected_status: ABSTAIN
+  data_metadata: {study_design: observational}
+  required_remedies: ["Reframe the causal conclusion as an association."]
+  allowed_computation: "Describe the observed association."
+  forbidden_claim: "A causal effect inferred from an observational association."
+  failure_mode: BN-F012
+  reference: "INV-009 / BNS-FW-012"
+  description: "TRAP: The authors endorse the quoted causal conclusion."
+
+- id: BF-056
+  category: causal_language
+  prompt: "We cannot endorse the claim “diet drives variation”."
+  expected_status: PERMITTED
+  data_metadata: {study_design: observational}
+  required_remedies: []
+  allowed_computation: "Describe the observed association."
+  forbidden_claim: "A causal effect inferred from an observational association."
+  failure_mode: NONE
+  reference: "INV-009 / BNS-FW-012"
+  description: "CONTROL: The authors explicitly withhold endorsement of the quoted claim."
+
+- id: BF-057
+  category: causal_language
+  prompt: "Variation in the marker is driven by sampling time."
+  expected_status: ABSTAIN
+  data_metadata: {study_design: observational}
+  required_remedies: ["Reframe the causal conclusion as an association."]
+  allowed_computation: "Describe the observed association."
+  forbidden_claim: "A causal effect inferred from an observational association."
+  failure_mode: BN-F012
+  reference: "INV-009 / BNS-FW-012"
+  description: "TRAP: Passive voice still attributes the change to a cause."
+
+- id: BF-058
+  category: causal_language
+  prompt: "Variation in the marker tracked differences in sampling time."
+  expected_status: PERMITTED
+  data_metadata: {study_design: observational}
+  required_remedies: []
+  allowed_computation: "Describe the observed association."
+  forbidden_claim: "A causal effect inferred from an observational association."
+  failure_mode: NONE
+  reference: "INV-009 / BNS-FW-012"
+  description: "CONTROL: An association is reported without asserting a cause."
+
+- id: BF-059
+  category: causal_language
+  prompt: "The change in the marker stems from differences in diet."
+  expected_status: ABSTAIN
+  data_metadata: {study_design: observational}
+  required_remedies: ["Reframe the causal conclusion as an association."]
+  allowed_computation: "Describe the observed association."
+  forbidden_claim: "A causal effect inferred from an observational association."
+  failure_mode: BN-F012
+  reference: "INV-009 / BNS-FW-012"
+  description: "FRONTIER TRAP: Indirect causal wording lacks a verb recognized by INV-009."
+  known_limitation: true
+
+- id: BF-060
+  category: causal_language
+  prompt: "The authors removed the sentence “diet drives variation” from the report."
+  expected_status: PERMITTED
+  data_metadata: {study_design: observational}
+  required_remedies: []
+  allowed_computation: "Describe the observed association."
+  forbidden_claim: "A causal effect inferred from an observational association."
+  failure_mode: NONE
+  reference: "INV-009 / BNS-FW-012"
+  description: "FRONTIER TRAP: The quoted claim is mentioned as deleted text."
+  known_limitation: true

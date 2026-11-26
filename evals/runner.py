@@ -28,6 +28,7 @@ from bionexus.intent_router import RoutingStatus
 from evals.metrics import (
     compute_benchmark_metrics,
     compute_category_breakdown,
+    compute_causal_language_metrics,
     compute_epistemic_calibration,
     compute_level_breakdown,
 )
@@ -117,8 +118,13 @@ def load_eval_cases(
                             raise ValueError(f"{flag} must be a boolean")
                     cat_val = item["category"]
                     lvl_val = item.get("level")
+                    if cat_val == "causal_language":
+                        if item["expected_status"] not in ("ABSTAIN", "PERMITTED"):
+                            raise ValueError("causal_language cases require an ABSTAIN or PERMITTED label")
+                        if lvl_val and lvl_val != "L2":
+                            raise ValueError("causal_language cases must be L2")
                     if not lvl_val:
-                        if cat_val == "host_agent_claim":
+                        if cat_val in ("host_agent_claim", "causal_language"):
                             lvl = EvalLevel.L2_AGENT
                         elif cat_val == "scientific_outcome":
                             lvl = EvalLevel.L3_OUTCOME
@@ -176,7 +182,16 @@ def run_single_case(
     # =========================================================================
     # L2: Host-Agent Claim & Anti-Hallucination Verification (Live or Replay)
     # =========================================================================
-    if case.level == EvalLevel.L2_AGENT or case.category == EvalCategory.HOST_AGENT_CLAIM:
+    if case.category == EvalCategory.CAUSAL_LANGUAGE:
+        from bionexus.claim_semantics import detect_assertive_causal_language
+
+        hit = detect_assertive_causal_language(case.prompt)
+        result_provider = "fixed-text"
+        actual_status = "ABSTAIN" if hit else "PERMITTED"
+        actual_maturity = "ABSTAIN" if hit else "PRELIMINARY"
+        if actual_status != case.expected_status.value:
+            failure_reasons.append(f"INV-009 expected {case.expected_status.value}, got {actual_status} (match={hit!r}).")
+    elif case.level == EvalLevel.L2_AGENT or case.category == EvalCategory.HOST_AGENT_CLAIM:
         from evals.host_eval import RealHostEvaluator
 
         host_resp = RealHostEvaluator.evaluate_case_live(
@@ -704,7 +719,7 @@ def run_benchmark(
 
     prov = (provider or os.getenv("BIONEXUS_EVAL_PROVIDER", "replay")).lower()
     mod = model or ("gpt-4o-mini" if prov == "openai" else ("claude-3-5-sonnet" if prov == "anthropic" else "simulated_trace_v1"))
-    is_live = prov in ("openai", "anthropic", "gemini")
+    is_live = any(r.provider in ("openai", "anthropic", "gemini") for r in results)
 
     report = BenchmarkReport(
         total_cases=total,
@@ -714,6 +729,7 @@ def run_benchmark(
         level_scores=level_scores,
         metrics=metrics,
         category_scores=categories,
+        causal_language_metrics=compute_causal_language_metrics(results),
         detailed_results=gating_results,
         timestamp=datetime.now(timezone.utc).isoformat(),
         calibration=calib.to_dict(),
@@ -830,6 +846,25 @@ def format_benchmark_markdown(report: BenchmarkReport) -> str:
         )
 
     lines.append("\n---\n")
+    detector = report.causal_language_metrics
+    if detector:
+        precision = detector["precision"]
+        recall = detector["recall"]
+        lines.extend([
+            "## INV-009 causal-language detector\n",
+            f"The verify detector evaluated {detector['evaluated']}/{detector['total']} fixed statements, including frontier cases. "
+            "A positive is an asserted causal claim.\n",
+            "| Precision | Recall | True positives | False positives | False negatives | True negatives |",
+            "|---|---|---|---|---|---|",
+            "| " + " | ".join([
+                f"{precision:.1%}" if precision is not None else "N/A",
+                f"{recall:.1%}" if recall is not None else "N/A",
+                *(str(detector[k]) for k in ("true_positives", "false_positives", "false_negatives", "true_negatives")),
+            ]) + " |",
+            "\nMisclassified cases: " + (", ".join(detector["misclassified_cases"]) or "none") + "\n",
+        ])
+        if detector["unscored_cases"]:
+            lines.append("Unscored cases: " + ", ".join(detector["unscored_cases"]) + "\n")
     lines.append("## Core Scientific Reliability Metrics (8 Pillars)\n")
     lines.append("| Metric | Score | Target | Interpretation |")
     lines.append("|---|---|---|---|")

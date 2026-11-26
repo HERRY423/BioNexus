@@ -194,7 +194,8 @@ def test_adversarial_designs(package, kind):
     assert run(package)["status"] != "SATISFIED"
 
 
-def test_paired_donor_fixed_effect_supported(package):
+@pytest.mark.parametrize("drop_last, expected_df", [(False, 2), (True, 1)])
+def test_paired_donor_fixed_effect_supported(package, drop_last, expected_df):
     change_table(package, "metadata.csv", lambda df: df.__setitem__("donor", ["d0", "d1", "d2"] * 2))
     change_table(package, "design.csv", lambda df: df.drop(columns=["batch_b"], inplace=True))
     design = pd.read_csv(package / "design.csv")
@@ -209,9 +210,70 @@ def test_paired_donor_fixed_effect_supported(package):
             m["encodings"][f"donor_{i}"] = dict(kind="categorical", column="donor", level=f"d{i}")
             m["contrast"][f"donor_{i}"] = 0
     change_json(package, "model.json", paired)
+    if drop_last:
+        for name in ("metadata.csv", "design.csv"):
+            change_table(package, name, lambda df: df.drop(index=df.index[-1], inplace=True))
     seal(package)
-    assert run(package)["status"] == "SATISFIED"
-    assert conditions(run(package))["statistical_unit"]["observed"]["unique_donors"] == 3
+    checks = conditions(run(package))
+    assert checks["statistical_unit"]["status"] == "SATISFIED"
+    assert checks["statistical_unit"]["observed"]["unique_donors"] == 3
+    assert checks["model_rank"]["observed"]["residual_df"] == expected_df
+    assert checks["model_rank"]["status"] == ("SATISFIED" if expected_df >= 2 else "UNSATISFIED")
+
+
+@pytest.mark.parametrize("change, expected_condition, expected", [
+    ("none", "statistical_unit", "SATISFIED"),
+    ("unpaired_row_removed", "model_rank", "UNSATISFIED"),
+    ("swapped_groups", "statistical_unit", "CONFLICT"),
+    ("wrong_group_column", "statistical_unit", "CONFLICT"),
+    ("missing_sample", "statistical_unit", "CONFLICT"),
+    ("extra_sample", "statistical_unit", "CONFLICT"),
+    ("missing_group_export", "model_binding", "NOT_ASSESSED"),
+    ("slope", "design_encoding", "NOT_ASSESSED"),
+    ("fixed_only", "design_encoding", "NOT_ASSESSED"),
+    ("technical_repeat", "statistical_unit", "UNSATISFIED"),
+])
+def test_bound_paired_random_intercept(package, change, expected_condition, expected):
+    meta = pd.read_csv(package / "metadata.csv").drop(columns="batch")
+    meta["donor"] = ["d0", "d1", "d2"] * 2
+    design = pd.read_csv(package / "design.csv").drop(columns="batch_b")
+    if change == "technical_repeat":
+        meta.loc[0, "donor"] = "d1"
+    if change == "unpaired_row_removed":
+        meta, design = meta.iloc[:-1], design.iloc[:-1]
+    meta.iloc[::-1].to_csv(package / "metadata.csv", index=False)
+    design.to_csv(package / "design.csv", index=False)
+    groups = dict(zip(meta["sample"], meta["donor"]))
+    model = json.loads((package / "model.json").read_text())
+    model.update(formula="~ 1 + condition + (1 | donor)", statistical_unit="paired_donor_random_intercept",
+                 design_columns=["Intercept", "disease"], random_intercept={"column": "donor", "sample_groups": groups})
+    del model["contrast"]["batch_b"]
+    del model["encodings"]["batch_b"]
+    if change == "swapped_groups":
+        groups["s0"], groups["s1"] = groups["s1"], groups["s0"]
+    elif change == "wrong_group_column":
+        model["random_intercept"]["column"] = "batch"
+    elif change == "extra_sample":
+        groups["extra"] = "d0"
+    elif change == "missing_sample":
+        groups.pop("s0")
+    elif change == "missing_group_export":
+        model.pop("random_intercept")
+    elif change == "slope":
+        model["formula"] = "~1+condition+(condition|donor)"
+    elif change == "fixed_only":
+        model["formula"] = "~1+condition"
+    write_json(package / "model.json", model)
+    seal(package)
+    report = run(package)
+    checks = conditions(report)
+    assert checks[expected_condition]["status"] == expected
+    if change == "none":
+        assert report["status"] == "SATISFIED"
+        assert checks["model_rank"]["observed"]["residual_df"] == 4
+        assert checks["model_rank"]["observed"]["within_donor_residual_df"] == 2
+    else:
+        assert report["status"] != "SATISFIED"
 
 
 def test_tampering_and_input_substitution_are_conflicts(package):

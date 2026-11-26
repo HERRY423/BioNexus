@@ -134,11 +134,13 @@ A common failure mode of automated validation systems is confusing empirical rul
 
 In real biological workflows, inferential validity is not a step function at an arbitrary sample size:
 
-- **Design Identifiability**: A paired or isogenic design (e.g., treated vs control within the same 2 donors or cell lines) can legitimately identify strong candidate signals with low within-donor dispersion.
+- **Paired designs.** Model the within-donor contrast with a donor term or a donor random effect. For the fixed-effect design `~ donor + condition`, check contrast estimability and at least two residual degrees of freedom before interpreting the dispersion estimate.
 
-- **Effect-Size Regime**: A deterministic monogenic knockout ($\text{Log2FC} > 6, \text{FDR} < 10^{-15}$) requires far less replication to rule out technical noise than subtle polygenic shifts ($\text{Log2FC} = 0.3$).
+- **Effect-size regime.** A large shrunken log2 fold change in an adequately expressed gene can reduce concern about technical noise in a paired or isogenic experiment. With limited replication, describe the effect within the assayed donors or cell line. Population inference requires independent biological replication. The rule registry defines `strong_effect_log2fc` and the normalized-count floor `effect_min_base_mean`. [Statistical thresholds](src/bionexus/data/rule_registry.json)
 
 - **Confounding vs Power**: Having $N=10$ donors with unmodeled batch confounding or extreme uncorrected dispersion does not justify population claims.
+
+- **Doublet screening.** The registry defines `doublet_rate_advisory` for clustering. An approved platform-specific profile can refine the threshold for a range of cells loaded per capture. The report records which threshold it applied. [Statistical thresholds](src/bionexus/data/rule_registry.json)
 
 BioNexus structures rule enforcement around a 6-stage **Context-Conditioned Epistemic Ladder**:
 
@@ -250,7 +252,7 @@ Three objects make this explicit:
 
 |---|---|---|
 
-| `EvidenceAssessment` | How strong **is** the evidence? | Evidence facts only (declared factors + active violations). Purpose- and policy-independent. |
+| `EvidenceAssessment` | How strong **is** the evidence? | Measured evidence factors and active rule violations. Declarations without measurement appear in `unverified_factors` and can reach at most PRELIMINARY. |
 
 | `ClaimContext` | What does the researcher want to claim? | Claim class: descriptive → association → population effect → mechanistic → causal → clinical actionability. |
 
@@ -270,11 +272,11 @@ from bionexus import (
 
 )
 
-# Evidence is what it is, whatever the purpose:
+# Pass outcomes of the artifact checks as measured_factors.
 
-evidence = assess_evidence(satisfied_factors=[
+evidence = assess_evidence(measured_factors=[
 
-    "sample_design", "confound_controls", "sensitivity_analysis",
+    "sample_design", "replication", "confound_controls", "sensitivity_analysis",
 
     "backend_fidelity", "provenance",
 
@@ -318,7 +320,7 @@ claims · residual_uncertainty · rule_basis            REQUIRE_OVERRIDE · BLOC
 
 ```
 
-The assessment answers *“what is this evidence worth?”* and is computed **only** from the evidence facts (declared factors, active violations) — purpose sets the use requirement, never the evidence value — so it is identical in every lab. The policy decision answers *“does BioNexus intervene, and how?”* For n=1 donor/condition, every lab sees the same science:
+The assessment answers *“what is this evidence worth?”* and is computed **only** from measured factors and active violations — purpose sets the use requirement, never the evidence value — so it is identical in every lab. The policy decision answers *“does BioNexus intervene, and how?”* For n=1 donor/condition, every lab sees the same science:
 
 ```text
 
@@ -440,12 +442,18 @@ tool registration when dedicated ecosystem plugins are installed.
 
 Functional plugins, prompt templates, and agent tool wrappers are easily duplicated. An **expert-annotated, ground-truth biological failure corpus with deterministic traps and fail-closed invariants** is a defensible scientific evaluation and data flywheel moat.
 
-BioNexus formalizes **Failure Taxonomy v1** (`bionexus.failure_taxonomy.v1`) across 12 core failure modes (`BN-F001` .. `BN-F012`) and links them to **38 canonical seed traps** (`BF-001` .. `BF-038`) across 4 categories:
+BioFailureBench contains **48 cases**. The 43 gating cases check expected behavior, and 5 frontier cases track known limitations. Failure Taxonomy v1 (`bionexus.failure_taxonomy.v1`) covers 12 modes across four categories.
 
 - **`DATA_INTEGRITY`**: Assay-state confusion (`BN-F001`), Identifier mismatches (`BN-F004`), Cross-database contradictions (`BN-F008`), Missing spatial provenance (`BN-F009`).
 - **`INFERENTIAL_DESIGN`**: Pseudoreplication (`BN-F002`), Missing FDR control (`BN-F005`), Invalid model assumptions (`BN-F006`), Parameter instability (`BN-F007`).
 - **`SEMANTIC_CLAIM`**: Unsupported annotations (`BN-F003`), Claim inflation (`BN-F011`), Unexecuted maturity claims (`BN-F012`).
 - **`SYSTEM_DEGRADATION`**: Backend masquerading (`BN-F010`).
+
+`BF-051` through `BF-060` test whether the INV-009 detector recognizes an asserted causal claim in a fixed observational-study statement. The cases cover negation, quotations and paraphrases. CI runs the following command and publishes precision, recall, confusion counts and misclassified case IDs for all ten statements in the job summary.
+
+```bash
+bionexus eval --suite biofailurebench --level L2 --provider replay
+```
 
 ### Open Community Flywheel & Validation
 

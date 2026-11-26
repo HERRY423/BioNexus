@@ -36,6 +36,7 @@ from bionexus.contracts import (
     EvidenceCard,
     ExecutionState,
 )
+from bionexus.empirical_warrant import CalibrationContext
 from bionexus.evidence_model import (
     ClaimClass,
     ClaimContext,
@@ -50,11 +51,7 @@ from bionexus.research_purpose import (
     purpose_from_string,
 )
 from bionexus.semantic_router import SemanticNomination, nominate_semantically, validate_nomination
-from bionexus.statistical_rules import (
-    DOUBLET_RATE_ADVISORY_THRESHOLD,
-    assess_doublet_risk,
-    assess_statistical_power,
-)
+from bionexus.statistical_rules import EffectSizeRegime, assess_doublet_risk, assess_statistical_power
 
 
 class RoutingStatus(str, Enum):
@@ -624,21 +621,39 @@ def _statistical_advisory_stage(
             )
 
         overclaims = bool(_POWER_OVERCLAIM_RE.search(query or ""))
-        if isinstance(min_reps, int) and min_reps == 2 and overclaims:
-            power = assess_statistical_power(
-                n_donors_per_group=min_reps,
-                observed_log2fc=meta.get("observed_log2fc"),
-                mean_count_per_cell=float(meta.get("mean_count_per_cell", 1.0)),
-                dispersion=float(meta.get("dispersion", 0.5)),
-                cells_per_sample=int(meta.get("cells_per_sample", 100)),
-            )
-            remedies = list(power.remedies)
-            regime_note = ""
-            if meta.get("observed_log2fc") is not None:
-                regime_note = (
-                    f" Observed effect-size regime: {power.powered_for_regime.value} "
-                    f"(MDE |log2FC| >= {power.mde_log2fc:.2f} at FDR={power.nominal_fdr})."
+        power = None
+        if isinstance(min_reps, int) and min_reps >= 2 and overclaims:
+            try:
+                power = assess_statistical_power(
+                    n_donors_per_group=min_reps,
+                    observed_log2fc=meta.get("observed_log2fc"),
+                    shrunk_log2fc=meta.get("shrunk_log2fc"),
+                    base_mean=meta.get("base_mean", meta.get("baseMean")),
+                    mean_count_per_cell=float(meta.get("mean_count_per_cell", 1.0)),
+                    dispersion=float(meta.get("dispersion", 0.5)),
+                    cells_per_sample=int(meta.get("cells_per_sample", 100)),
+                    target_power=float(meta.get("target_power", 0.80)),
+                    nominal_fdr=float(meta.get("nominal_fdr", 0.05)),
+                    n_tests=meta.get("n_tests"),
+                    n_true_effects=meta.get("n_true_effects"),
+                    sequencing_depth_factor=float(meta.get("sequencing_depth_factor", 1.0)),
                 )
+            except (TypeError, ValueError) as exc:
+                return RoutingDecision(
+                    status=RoutingStatus.NEEDS_DATA, matched_capability=cap, target_skill=cap.skill_name,
+                    rationale=f"Power inputs could not be evaluated: {exc}",
+                    recommended_script=None, recommended_command=None,
+                    missing_data_requests=["Provide valid depth, dispersion, power and multiple-testing assumptions."],
+                )
+        if power is not None and (
+            power.n_donors_per_group == 2
+            or (power.powered_for_regime == EffectSizeRegime.STRONG and power.observed_effect_regime != EffectSizeRegime.STRONG)
+            or (power.shrunk_log2fc is not None and abs(power.shrunk_log2fc) < power.mde_log2fc)
+        ):
+            remedies = list(power.remedies) or ["Report design power for the claimed effect or narrow the conclusion."]
+            regime_note = ""
+            if power.observed_effect_regime is not None:
+                regime_note = f" Observed shrunken effect-size regime: {power.observed_effect_regime.value}."
             return RoutingDecision(
                 status=RoutingStatus.DEGRADED_ADVISORY,
                 matched_capability=cap,
@@ -647,7 +662,8 @@ def _statistical_advisory_stage(
                 recommended_command="python skills/single-cell-rna-qc/scripts/scrna_deseq.py --help",
                 rationale=(
                     f"Pseudobulk DE with N={min_reps} donor(s)/group is a low-power design: the minimum "
-                    f"detectable effect is |log2FC| >= {power.mde_log2fc:.2f} at nominal FDR={power.nominal_fdr}. "
+                    f"detectable effect is |log2FC| >= {power.mde_log2fc:.2f} "
+                    f"(per-test alpha basis: {power.alpha_basis}). "
                     "Compute may proceed for candidate ranking, but robust population-level discovery-power "
                     f"claims are not warranted.{regime_note}"
                 ),
@@ -666,7 +682,19 @@ def _statistical_advisory_stage(
 
     # BN-F003: elevated doublet rate before clustering-based population claims.
     if cap_id == "scrna.exploratory_clustering":
-        doublet = assess_doublet_risk(meta.get("doublet_rate"))
+        context = meta.get("calibration_context")
+        try:
+            doublet = assess_doublet_risk(
+                meta.get("doublet_rate"),
+                calibration_context=CalibrationContext(**context) if isinstance(context, dict) else None,
+            )
+        except (TypeError, ValueError, AttributeError) as exc:
+            return RoutingDecision(
+                status=RoutingStatus.NEEDS_DATA, matched_capability=cap, target_skill=cap.skill_name,
+                rationale=f"Doublet screening inputs could not be evaluated: {exc}",
+                recommended_script=None, recommended_command=None,
+                missing_data_requests=["Provide a valid doublet proportion and calibration context."],
+            )
         if doublet is not None and doublet.exceeds_threshold:
             return RoutingDecision(
                 status=RoutingStatus.DEGRADED_ADVISORY,
@@ -676,8 +704,8 @@ def _statistical_advisory_stage(
                 recommended_command="python skills/single-cell-rna-qc/scripts/scrna_pipeline.py --help",
                 rationale=(
                     f"Clustering proceeds under a doublet-risk advisory: the declared doublet rate "
-                    f"({doublet.doublet_rate:.0%}) exceeds the {DOUBLET_RATE_ADVISORY_THRESHOLD:.0%} "
-                    "threshold, so cluster cleanliness cannot be taken as evidence of biological populations."
+                    f"({doublet.doublet_rate:.0%}) triggers the {doublet.threshold:.0%} "
+                    f"threshold ({doublet.threshold_basis}). Review doublet estimates before interpreting populations."
                 ),
                 violations=[],
                 remedies=list(doublet.remedies),
@@ -1217,9 +1245,10 @@ def route_scientific_intent(
     # 3.6 Statistical-level advisories (Epistemic Ladder stages 2 & 4):
     # power/MDE regime for pseudobulk DE, doublet-rate audit for clustering.
     stat_decision = _statistical_advisory_stage(cap, meta, query)
-    stability_advisory = stat_decision is not None and "clustering_stability" in stat_decision.evidence_card_template.details
-    if stat_decision is not None and not stability_advisory:
-        return _stamp(stat_decision)
+    if stat_decision is not None:
+        card = stat_decision.evidence_card_template
+        if card is None or "clustering_stability" not in card.details:
+            return _stamp(stat_decision)
 
     # 4. Scientific Validity + Availability Evaluation (purpose-aware).
     # `evaluate_viability_with_purpose` classifies refusals as hard BLOCK or
@@ -1237,7 +1266,7 @@ def route_scientific_intent(
         documented_extras=documented_extras or (),
         tool_receipts=tool_receipts or (),
     )
-    if stability_advisory and eval_result.permitted:
+    if stat_decision is not None and eval_result.permitted:
         # The advisory cannot bypass backend or input-integrity refusal.
         return _stamp(stat_decision)
 

@@ -65,12 +65,20 @@ def _collect_execution_record(
     aggregation = None
     source = "none"
     cell_level = False
-
-    if isinstance(supplied_execution, ExecutionRecord):
-        return supplied_execution
+    declared_factors: List[str] = []
 
     exec_dict: Dict[str, Any] = {}
-    if isinstance(supplied_execution, dict):
+    if isinstance(supplied_execution, ExecutionRecord):
+        # Typed summaries do not carry file binding. Preserve caller facts while
+        # independently checking any Scanpy parameters in the selected result.
+        facts.extend(supplied_execution.facts)
+        exec_dict = {
+            "method": supplied_execution.method, "fdr_method": supplied_execution.fdr_method,
+            "aggregation": supplied_execution.aggregation,
+            "cell_level_condition_test": supplied_execution.cell_level_condition_test,
+            "evidence_factors": supplied_execution.declared_factors,
+        }
+    elif isinstance(supplied_execution, dict):
         exec_dict = supplied_execution
     elif isinstance(supplied_execution, (str, Path)):
         p = Path(supplied_execution)
@@ -85,6 +93,10 @@ def _collect_execution_record(
         source = "execution_record"
         method = exec_dict.get("method")
         fdr_method = exec_dict.get("fdr_method") or exec_dict.get("corr_method")
+        for field in ("evidence_factors", "satisfied_factors"):
+            values = exec_dict.get(field)
+            if isinstance(values, list):
+                declared_factors.extend(f for f in values if isinstance(f, str))
         stat_unit = str(exec_dict.get("statistical_unit") or exec_dict.get("unit") or "").lower()
         agg = str(exec_dict.get("aggregation") or "").lower()
         if stat_unit in ("donor", "sample", "biological_replicate"):
@@ -92,7 +104,8 @@ def _collect_execution_record(
         elif agg:
             aggregation = agg
 
-        if exec_dict.get("cell_level_condition_test"):
+        method_key = str(method or "").strip().lower().replace("_", "-")
+        if exec_dict.get("cell_level_condition_test") or method_key in {m.replace("_", "-") for m in CELL_LEVEL_DE_METHODS}:
             cell_level = True
             aggregation = "cell"
 
@@ -104,7 +117,7 @@ def _collect_execution_record(
 
     if rgg_params:
         source = source if source != "none" else "rank_genes_groups"
-        method = method or rgg_params.get("method")
+        method = rgg_params.get("method") or method
         fdr_method = fdr_method or rgg_params.get("corr_method")
         groupby = str(rgg_params.get("groupby") or "")
         facts.append(
@@ -155,7 +168,34 @@ def _collect_execution_record(
         aggregation=aggregation,
         cell_level_condition_test=cell_level,
         facts=facts,
+        declared_factors=sorted(set(declared_factors)),
     )
+
+
+_PSEUDOBULK_METHODS = {
+    "deseq2", "pydeseq2", "pydeseq2.deseqstats", "edger", "limma-voom", "limma voom", "limma::voom",
+}
+_MIXED_METHODS = {"dream", "variancepartition", "variancepartition::dream", "dream/variancepartition", "nebula", "nebula::nebula"}
+
+
+def _design_terms(formula: str) -> tuple[set[str], set[str]] | None:
+    """Recognize additive fixed effects and random intercepts with explicit grouping columns."""
+    if not formula.startswith("~"):
+        return None
+    fixed: set[str] = set()
+    random: set[str] = set()
+    for term in formula[1:].split("+"):
+        term = term.strip()
+        if term in {"0", "1"}:
+            continue
+        if re.fullmatch(r"[A-Za-z_]\w*", term):
+            fixed.add(term)
+            continue
+        match = re.fullmatch(r"\(\s*1\s*\|\s*([A-Za-z_]\w*)\s*\)", term)
+        if match is None:
+            return None
+        random.add(match.group(1))
+    return fixed, random
 
 
 def _verify_execution_binding(
@@ -236,25 +276,44 @@ def _verify_execution_binding(
         if primary in exec_dict and alias in exec_dict and exec_dict[primary] != exec_dict[alias]:
             binding_issues.append(f"执行记录别名冲突: {primary}/{alias}")
 
-    # 1. Statistical unit check
+    strata = cohort_summary.get("replicate_strata", [])
+    scope = cohort_summary.get("replicate_scope", {})
+    donor_set = {str(d) for d in cohort_summary.get("donors", [])}
+    obs_donors = cohort_summary.get("n_donors")
+    if len(strata) == 1 and (scope.get("case") is not None or scope.get("cell_type") is not None):
+        stratum = strata[0]
+        if scope.get("cell_type") is not None and stratum.get("cell_type") != scope["cell_type"]:
+            missing.append("能绑定所请求细胞类型的元数据")
+        else:
+            donor_set = set(stratum["eligible_donors"])
+            obs_donors = len(donor_set)
+
+    # 1. Statistical unit and supported method family
+    method = exec_dict.get("method")
+    method_key = method.strip().lower().replace("_", "-") if isinstance(method, str) else ""
+    mixed = method_key in _MIXED_METHODS
     stat_unit = str(exec_dict.get("statistical_unit") or exec_dict.get("unit") or "").lower()
     agg = str(exec_dict.get("aggregation") or "").lower()
     if not stat_unit:
         missing.append("statistical_unit")
-    elif stat_unit not in ("donor", "sample", "biological_replicate"):
+    elif stat_unit not in ("donor", "sample", "biological_replicate") and not (mixed and stat_unit == "cell"):
         binding_issues.append("统计单位未明确为生物学重复单位")
-    if agg and agg not in ("donor_pseudobulk", "pseudobulk", "donor", "sample", "biological_replicate"):
+    allowed_aggregations = {"donor_pseudobulk", "pseudobulk", "donor", "sample", "biological_replicate"}
+    if mixed:
+        allowed_aggregations.update({"none", "cell", "donor_mixed_model"})
+    if agg and agg not in allowed_aggregations:
         binding_issues.append("aggregation 与供体级统计单位不一致或不受支持")
     cell_flag = exec_dict.get("cell_level_condition_test", False)
     if not isinstance(cell_flag, bool):
         binding_issues.append("cell_level_condition_test 必须为布尔值")
     if cell_flag or execution.cell_level_condition_test:
         binding_issues.append("执行记录包含细胞级条件检验")
-    method = exec_dict.get("method")
-    if not isinstance(method, str) or not method.strip():
+    if not method_key:
         missing.append("method")
-    elif method.lower().replace("_", "-") in {m.replace("_", "-") for m in CELL_LEVEL_DE_METHODS}:
+    elif method_key in {m.replace("_", "-") for m in CELL_LEVEL_DE_METHODS}:
         binding_issues.append("method 是细胞级排名方法，不能凭 donor 标签认证为供体模型")
+    elif not mixed and method_key not in _PSEUDOBULK_METHODS:
+        missing.append(f"可核查的供体感知分析方法（{method!r} 需额外审阅）")
 
     # 2. Fit status check
     fit_status = str(exec_dict.get("fit_status") or "").upper().strip()
@@ -351,51 +410,68 @@ def _verify_execution_binding(
     )
     if not valid_columns:
         missing.append("design_matrix_columns (非空字符串列表)")
+    fixed: set[str] = set()
+    random: set[str] = set()
+    donor_col = cohort_summary.get("donor_key")
     if design_formula and valid_columns and isinstance(matrix_cols, list):
         if len(set(matrix_cols)) != len(matrix_cols):
             binding_issues.append("设计矩阵列重复")
-        rhs = design_formula.removeprefix("~").strip()
-        terms = [t.strip() for t in rhs.split("+")]
-        if not design_formula.startswith("~") or any(not re.fullmatch(r"[A-Za-z_]\w*|[01]", t) for t in terms):
-            missing.append("支持的加法设计公式（复杂设计需外部审阅）")
+        terms = _design_terms(design_formula)
+        if terms is None:
+            missing.append("支持的加法或随机截距公式（复杂设计需外部审阅）")
         else:
-            factors = set(terms) - {"0", "1"}
-            column_factors = {re.split(r"[\[.]", c)[0] for c in matrix_cols if c != "Intercept"}
-            if not factors or factors != column_factors:
+            fixed, random = terms
+            if method_key in {"nebula", "nebula::nebula"} and "id_col" in exec_dict:
+                id_col = exec_dict["id_col"]
+                if isinstance(id_col, str) and id_col == donor_col and (not random or random == {id_col}):
+                    random.add(id_col)
+                else:
+                    binding_issues.append("NEBULA id_col 未绑定到供体列或与随机截距冲突")
+            if random and not mixed:
+                binding_issues.append("所记录的供体汇总方法不支持随机效应项")
+            if mixed and donor_col not in random:
+                binding_issues.append("混合模型缺少与元数据供体列匹配的随机截距或 NEBULA id_col")
+            # Translate R's model.matrix factor/level names as well as bracket-coded columns.
+            r_columns = {}
+            if obs_df is not None:
+                for factor in fixed.intersection(obs_df.columns):
+                    for level in obs_df[factor].dropna().unique():
+                        r_columns[f"{factor}{level}"] = factor
+            column_factors = {
+                r_columns.get(c, re.split(r"[\[.]", c)[0])
+                for c in matrix_cols if c not in {"Intercept", "(Intercept)"}
+            }
+            if not fixed or fixed != column_factors:
                 binding_issues.append("设计公式项与设计矩阵列不一致")
-            condition_col = cohort_summary.get("condition_key")
-            if condition_col and condition_col not in factors:
-                binding_issues.append("设计公式未包含所审核条件")
-        formula_has_donor = any(
-            k in design_formula.lower()
-            for k in ("donor", "replicate", "patient", "subject", "individual")
-        )
-        matrix_has_donor = any(
-            ("donor" in c.lower() or "replicate" in c.lower() or "subject" in c.lower() or "patient" in c.lower())
-            for c in matrix_cols
-        )
-        if formula_has_donor != matrix_has_donor:
-            findings.append(
-                DEFinding(
-                    rule_id="BFA-013c",
-                    severity=FindingSeverity.BLOCKER,
+            mismatched_factors = fixed ^ column_factors
+            if any(f == donor_col or re.fullmatch(r"(donor|replicate|patient|subject|individual)(_?id)?", f, re.I)
+                   for f in mismatched_factors):
+                findings.append(DEFinding(
+                    rule_id="BFA-013c", severity=FindingSeverity.BLOCKER,
                     category=FindingCategory.PSEUDOREPLICATION,
-                    title="模型设计公式与设计矩阵列冲突 (Formula Conflicts with Design Matrix Columns)",
-                    impact_on_conclusion=(
-                        f"声明的模型公式 '{design_formula}'（供体控制: {formula_has_donor}）"
-                        f"与拟合设计矩阵列（包含供体列: {matrix_has_donor}）存在冲突。"
-                        "无法证实实际拟合的模型是否对供体效应进行了控制。"
-                    ),
+                    title="模型固定效应与设计矩阵列冲突 (Formula Conflicts with Design Matrix Columns)",
+                    impact_on_conclusion="设计公式的固定效应与记录的拟合设计列不匹配，无法核查该模型。",
                     step_or_location="execution_record.design vs design_matrix_columns",
-                    minimal_fix="核对拟合脚本中的模型公式，确保公式与实际输入模型的设计矩阵保持一致（如 ~ donor + condition）。",
+                    minimal_fix="导出实际固定效应设计矩阵的列名及拟合公式。",
                     evidence_data={"formula": design_formula, "matrix_columns": matrix_cols},
-                )
-            )
-            binding_issues.append("设计公式与设计矩阵列冲突")
+                ))
+            if donor_col in fixed and obs_df is not None and donor_col in obs_df:
+                column_names = set(matrix_cols)
+                donor_levels_in_matrix = {
+                    donor for donor in donor_set
+                    if any(c in column_names for c in (
+                        f"{donor_col}{donor}", f"{donor_col}[T.{donor}]", f"{donor_col}[{donor}]",
+                        f"{donor_col}.{donor}",
+                    ))
+                }
+                if len(donor_set - donor_levels_in_matrix) > 1:
+                    binding_issues.append("设计矩阵缺少观测供体水平对应的分类变量列")
+            condition_col = cohort_summary.get("condition_key")
+            if condition_col and condition_col not in fixed:
+                binding_issues.append("设计公式未包含所审核条件")
 
     # 5. Cohort Sample / Donor Count Consistency
     rec_donors = exec_dict.get("n_donors")
-    obs_donors = cohort_summary.get("n_donors")
     valid_donors = isinstance(rec_donors, int) and not isinstance(rec_donors, bool) and rec_donors > 0
     if not valid_donors:
         missing.append("n_donors (正整数)")
@@ -460,7 +536,7 @@ def _verify_execution_binding(
                         binding_issues.append("样本元数据哈希不匹配")
                     elif obs_df is None or not bound_metadata.equals(obs_df):
                         binding_issues.append("哈希对应样本元数据与本次已读取的表格不一致")
-                    elif not cohort_summary.get("donors"):
+                    elif not donor_set:
                         missing.append("可从绑定样本表解析的供体标识")
                     else:
                         donor_ids_bound_from_metadata = True
@@ -470,7 +546,7 @@ def _verify_execution_binding(
     elif not isinstance(donor_ids, list) or not donor_ids or not all(isinstance(d, str) and d.strip() for d in donor_ids):
         binding_issues.append("donor_ids 必须为非空且仅含非空字符串的列表")
     elif (len(set(donor_ids)) != len(donor_ids)
-          or set(donor_ids) != {str(d) for d in cohort_summary.get("donors", [])}):
+          or set(donor_ids) != donor_set):
         binding_issues.append("执行记录供体标识与元数据不一致或重复")
     if valid_donors and obs_donors is not None and rec_donors != obs_donors:
         findings.append(
@@ -479,7 +555,7 @@ def _verify_execution_binding(
                 severity=FindingSeverity.BLOCKER,
                 category=FindingCategory.DONOR_IMBALANCE,
                 title="执行记录供体数与元数据样本表不一致 (Cohort Donor Count Mismatch)",
-                impact_on_conclusion=f"执行记录记录了 {rec_donors} 个供体，但提供的样本表仅包含 {obs_donors} 个供体。",
+                impact_on_conclusion=f"执行记录记录了 {rec_donors} 个供体，但本次审核的样本范围内有 {obs_donors} 个合格供体。",
                 step_or_location="execution_record.n_donors vs sample_metadata",
                 minimal_fix="提供与执行记录严格对应的样本元数据表。",
                 evidence_data={"recorded_donors": rec_donors, "observed_donors": obs_donors},
@@ -508,6 +584,24 @@ def _verify_execution_binding(
             required_for_pass=True,
         ))
         return False
+
+    execution.design_factors = sorted(fixed)
+    execution.random_effects = sorted(random)
+    execution.aggregation = "donor_mixed_model" if mixed else "donor_pseudobulk"
+    paired = sorted({
+        donor for stratum in cohort_summary.get("replicate_strata", [])
+        for donor in stratum["design"]["paired_donors"]
+    })
+    if paired and donor_col not in (fixed | random):
+        findings.append(DEFinding(
+            rule_id="BFA-001d", severity=FindingSeverity.HIGH_IMPACT,
+            category=FindingCategory.PSEUDOREPLICATION,
+            title="配对供体未纳入模型 (Paired donors omitted from design)",
+            impact_on_conclusion="同一供体出现在对比两侧，记录的模型没有利用供体内配对。",
+            step_or_location="execution_record.design vs biological replicates",
+            minimal_fix=f"将 {donor_col} 加入固定效应设计，或使用含供体随机截距的混合模型。",
+            evidence_data={"paired_donors": paired, "formula": design_formula},
+        ))
 
     checks.append(
         CheckRecord(

@@ -7,7 +7,10 @@ Audits probability validity, pseudoreplication p-value signatures, and FDR contr
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, List, Optional
+import re
+from typing import TYPE_CHECKING, List, Optional, Sequence
+
+import numpy as np
 
 from bionexus.de.models import (
     CheckRecord,
@@ -30,6 +33,72 @@ else:
 logger = logging.getLogger(__name__)
 
 
+_GENE_COLUMNS = ("gene", "symbol", "names", "gene_name", "gene_id", "id")
+
+
+def _reports_global_null(de_df: pd.DataFrame, claim_text: Optional[str],
+                         structured_claims: Optional[Sequence[dict]]) -> bool:
+    # The v1 contract only supports directional claims about named genes.
+    # A structured claim takes precedence over isolated cues in the manuscript.
+    if structured_claims is not None or not claim_text:
+        return False
+    global_null = re.search(
+        r"\b(?:no genes were significant|no significant (?:genes?|degs?)|"
+        r"(?:zero|0) significant (?:genes?|degs?)|none of the genes were significant)\b"
+        r"|(?:无|未见|未发现|未检测到|没有)显著(?:差异)?基因|(?:校正后|全表|fdr\s*后)无显著",
+        claim_text, re.I,
+    )
+    if not global_null or re.search(r"\b(?:but|however|whereas|upregulated|downregulated)\b|但|上调|下调", claim_text, re.I):
+        return False
+    # ASCII gene tokens may touch Chinese prose. Avoid substring matches for
+    # symbols such as IN or C in longer English words.
+    words = re.findall(r"[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*", claim_text)
+    # A named gene can also be absent from the audited table. Keep the
+    # free-text shortcut conservative when other identifier-like tokens occur.
+    allowed_abbreviations = {"BH", "FDR", "FWER", "DE", "DEG", "DEGS", "RNA", "RNA-SEQ"}
+    if any(re.fullmatch(r"[A-Z][A-Z0-9_.-]+", word) and word not in allowed_abbreviations for word in words):
+        return False
+    tokens = {word.casefold() for word in words}
+    gene_col = next((col for col in de_df if str(col).lower() in _GENE_COLUMNS), None)
+    if gene_col is None and isinstance(de_df.index, pd.RangeIndex):
+        return True
+    genes = de_df[gene_col] if gene_col is not None else de_df.index
+    return not any(str(gene).casefold() in tokens for gene in genes if pd.notna(gene))
+
+
+def _audit_adjusted_pairs(de_df: pd.DataFrame, p_col: str, padj_col: str,
+                          findings: List[DEFinding], adjustment_method: Optional[str]) -> None:
+    valid = de_df[p_col].between(0, 1) & de_df[padj_col].between(0, 1)
+    raw = de_df.loc[valid, p_col].to_numpy(dtype=float)
+    adj = de_df.loc[valid, padj_col].to_numpy(dtype=float)
+    if len(raw) < 50:
+        return
+    # Constant p values (including all ones) can legitimately equal their BH
+    # adjustment. Use exact equality here: tiny but distinct probabilities matter.
+    copied = np.unique(raw[raw > 0]).size > 1 and np.array_equal(raw, adj)
+    method = str(adjustment_method or "").casefold()
+    ordinary_padj = method in {"bh", "fdr_bh", "benjamini-hochberg", "bonferroni"}
+    if method in {"", "adjusted_p_present", "unknown"}:
+        # Storey q-values and weighted procedures may legitimately be below p.
+        ordinary_padj = not str(padj_col).lower().startswith("q")
+    below = int(np.count_nonzero(adj < raw - 1e-12)) if ordinary_padj else 0
+    if not (copied or below):
+        return
+    reason = (f"{len(raw)} 对有值的原始与调整 p 值完全相同，需核对是否复制了原始列。"
+              if copied else f"{below} 个调整值低于原始 p 值，与普通 BH / Bonferroni 校正不符。")
+    findings.append(DEFinding(
+        rule_id="BFA-003d",
+        severity=FindingSeverity.HIGH_IMPACT,
+        category=FindingCategory.FDR_AND_TESTING,
+        title="原始与调整概率列关系可疑 (Check multiple-testing adjustment)",
+        impact_on_conclusion=reason,
+        step_or_location=f"DE table columns '{p_col}', '{padj_col}'",
+        minimal_fix="核验并报告完整检验集合、校正方法和独立过滤规则，重新导出原始及调整列。",
+        evidence_data={"paired_rows": len(raw), "identical": bool(copied), "adjusted_below_raw": below,
+                       "adjustment_method": adjustment_method or "unspecified"},
+    ))
+
+
 def _audit_de_table(
     de_df: pd.DataFrame,
     findings: List[DEFinding],
@@ -37,10 +106,15 @@ def _audit_de_table(
     checks: List[CheckRecord],
     fdr_threshold: float = 0.05,
     claim_text: Optional[str] = None,
+    structured_claims: Optional[Sequence[dict]] = None,
+    adjustment_method: Optional[str] = None,
 ) -> None:
     """Audit DE results table for probability validity, pseudoreplication p-value signatures, and FDR control."""
     p_col = _match_column(de_df.columns, ["pvalue", "p_val", "pval", "p.value", "pvals"])
     padj_col = _match_column(de_df.columns, ["padj", "p_val_adj", "qval", "p.adjusted", "fdr", "pvals_adj"])
+
+    if p_col == padj_col:
+        p_col = None
 
     # Missing estimates are not negative results. Validate before any comparisons,
     # and use the same numeric view throughout without mutating the input table.
@@ -145,45 +219,26 @@ def _audit_de_table(
             )
         )
     elif padj_col and p_col:
+        _audit_adjusted_pairs(de_df, p_col, padj_col, findings, adjustment_method)
         # Check for excessive uncorrected reporting vs honest negative finding
         try:
             sig_raw = (de_df[p_col] < 0.05).sum()
             sig_adj = (de_df[padj_col] < fdr_threshold).sum()
             if sig_raw > 100 and sig_adj == 0:
-                is_honest_null = False
-                if claim_text:
-                    txt = claim_text.lower()
-                    null_cues = [
-                        "no genes were significant",
-                        "no significant",
-                        "zero significant",
-                        "0 significant",
-                        "none significant",
-                        "not significant",
-                        "无显著",
-                        "未发现显著",
-                        "未检测到显著",
-                        "fdr后无显著",
-                        "fdr 后无显著",
-                        "校正后无显著",
-                        "全表无显著",
-                    ]
-                    if any(cue in txt for cue in null_cues):
-                        is_honest_null = True
-
-                if not is_honest_null:
+                complete_adjusted = de_df[padj_col].between(0, 1).fillna(False).all()
+                if not (complete_adjusted and _reports_global_null(de_df, claim_text, structured_claims)):
                     findings.append(
                         DEFinding(
                             rule_id="BFA-003b",
                             severity=FindingSeverity.HIGH_IMPACT,
                             category=FindingCategory.FDR_AND_TESTING,
                             title="FDR 校正后无显著基因 (Zero DEGs Surviving Multiple Testing Correction)",
-                            impact_on_conclusion=f"原始 p < 0.05 有 {sig_raw} 个基因，但 FDR < {fdr_threshold} 存活基因数为 0。若在文稿中仅依据原始 p 值报告差异基因，属于学术不端隐患（Selective Reporting / P-hacking）。",
+                            impact_on_conclusion=f"原始 p < 0.05 的行有 {sig_raw} 个；可估计的调整值中，达到 FDR < {fdr_threshold} 的行数为 0。仅凭原始 p 值不足以支持差异基因声明。",
                             step_or_location="Significance Filtering",
                             minimal_fix=(
-                                "# 严禁仅汇报 raw p < 0.05 的基因！最小修复：\n"
-                                "# 1. 诚实报告在当前样本量下未检测到达到全转录组 FDR < 0.05 的显著基因；\n"
-                                "# 2. 或适当放宽至 FDR < 0.10 并结合 |log2FC| > 1.0 作为「待验证候选」明确声明。"
+                                f"报告在预先指定的 FDR < {fdr_threshold} 下达到阈值的基因数和缺失调整值数。"
+                                "候选排序沿用预先登记的阈值。观察结果后的任何阈值调整应记录到 selection-history，"
+                                "按探索性结果披露，声明上限为 FRAGILE。"
                             ),
                         )
                     )
@@ -222,7 +277,7 @@ def _audit_de_table(
                         minimal_fix=(
                             "# extreme P 是诊断信号，不是方法学无效的充分条件：\n"
                             "# 1. 若实际已按供体级 Pseudobulk 分析，提供执行记录（execution_record）进行供体级凭证绑定，规则将降为 ADVISORY 审阅提示；\n"
-                            "# 2. 若实际检验直接在细胞级别（如 cell-level Wilcoxon/t-test）进行，则存在伪重复膨胀，应改用供体级 Pseudobulk + PyDESeq2。"
+                            "# 2. 若实际检验直接在细胞级别（如 cell-level Wilcoxon/t-test）进行，则存在伪重复膨胀，应按供体聚合计数，或采用包含供体随机效应的模型。"
                         ),
                         evidence_data={"tiny_p_count": int(zero_or_tiny_p), "min_p": float(min_p)},
                     )
@@ -239,7 +294,7 @@ def _audit_de_table(
                 )
             )
 
-    padj_finding = any(f.rule_id in {"BFA-003", "BFA-003b", "BFA-003c"} for f in findings)
+    padj_finding = any(f.rule_id in {"BFA-003", "BFA-003b", "BFA-003c", "BFA-003d"} for f in findings)
     if padj_finding:
         checks.append(
             CheckRecord(
@@ -256,7 +311,8 @@ def _audit_de_table(
                 check_id="fdr_and_testing",
                 title="FDR / 多重检验",
                 status=CheckStatus.ASSESSED,
-                summary=f"已检查 DE 表：调整 p 值列 `{padj_col}` 含可估计值。" + "; ".join(probability_details),
+                summary=(f"已检查 DE 表：调整 p 值列 `{padj_col}` 含可估计值。"
+                         "原始检验全集及筛选前的校正范围仍需由执行记录核验。" + "; ".join(probability_details)),
                 required_for_pass=True,
             )
         )

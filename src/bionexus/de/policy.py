@@ -50,10 +50,7 @@ def _compute_overall_status(
         return "NEEDS_REVISION"
     if any(c.status != CheckStatus.ASSESSED for c in required):
         return "NEEDS_DATA"
-    donor_level = (
-        execution.aggregation in ("donor_pseudobulk", "pseudobulk")
-        and not execution.cell_level_condition_test
-    )
+    donor_level = execution.is_donor_aware
     replicate = next((c for c in checks if c.check_id == "donor_replicates"), None)
     if replicate is None or replicate.status != CheckStatus.ASSESSED:
         return "NEEDS_DATA"
@@ -80,16 +77,13 @@ def _determine_claim_boundary(
         c.required_for_pass and c.status != CheckStatus.ASSESSED
         for c in checks
     )
-    donor_level = (
-        execution.aggregation in ("donor_pseudobulk", "pseudobulk")
-        and not execution.cell_level_condition_test
-    )
+    donor_level = execution.is_donor_aware
 
     recommended_methods = (
         "Recommended analysis, not recorded as performed: aggregate raw integer counts to donor-level "
-        "pseudobulks per cell type (Squair et al., 2021), then test condition effects with a negative "
-        "binomial GLM, Wald tests, and Benjamini-Hochberg FDR. Do not treat cell-level "
-        "rank_genes_groups p-values as population inference."
+        "pseudobulks per cell type (Squair et al., 2021) for DESeq2, edgeR or limma-voom, or fit a "
+        "mixed model with a donor random intercept (dream or NEBULA). Account for paired donors "
+        "in within-donor contrasts and adjust for multiple testing."
     )
     executed_methods = " ".join(execution.facts)
 

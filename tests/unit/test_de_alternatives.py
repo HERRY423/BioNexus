@@ -70,6 +70,9 @@ def add_run(root, spec, *, effect=1.2, padj=0.01, low=0.4, high=2.):
             frame = pd.read_csv(target / "design.csv").drop(columns=list(remove))
             frame.to_csv(target / "design.csv", index=False)
             write_json(target / "model.json", model)
+        elif model["statistical_unit"] == "paired_donor_random_intercept":
+            model["random_intercept"]["sample_groups"] = dict(zip(meta["sample"], meta["donor"]))
+            write_json(target / "model.json", model)
     elif spec["kind"] == "method":
         change_json(target, "run.json", lambda r: r.update(analysis_spec=spec["analysis_spec"]))
     elif spec["kind"] == "gene_filter":
@@ -118,6 +121,9 @@ def test_complete_comparison_is_neither_voting_nor_scientific_authority(study):
     plan = make_plan(study)
     results(study, [add_run(study, s) for s in plan["specifications"]])
     report = run(study)
+    from bionexus.de.engine import audit_de
+    audit = audit_de(alternative_plan=study / "plan.json", alternative_runs=study / "runs.json")
+    assert "sensitivity_analysis" in audit.evidence_assessment["satisfied_factors"]
     assert report["claims"][0]["status"] == "DIRECTION_AND_THRESHOLDS_RETAINED_WITHIN_PLAN"
     assert report["complete"]
     assert report["scientific_authorization"] == "NONE"
@@ -130,6 +136,11 @@ def test_direction_flip_identifies_specific_donor_even_with_other_runs_missing(s
     results(study, [add_run(study, plan["specifications"][0], effect=-0.4, padj=0.2, low=-1., high=0.2)])
     report = run(study)
     summary = report["claims"][0]
+    from bionexus.de.engine import audit_de
+    audit = audit_de(alternative_plan=study / "plan.json", alternative_runs=study / "runs.json",
+                     declared_factors=["sensitivity_analysis"])
+    assert audit.evidence_assessment["measurement_results"]["sensitivity_analysis"] is False
+    assert any(f.rule_id == "BFA-017" for f in audit.findings)
     assert summary["status"] == "DIRECTION_SENSITIVE"
     assert not summary["complete"] and summary["planned"] == 6 and summary["compared"] == 1
     assert summary["dependencies"][0]["donor_id"] == "d0"
@@ -282,27 +293,93 @@ def test_bad_artifacts_are_retained_as_unresolved_slots(study, case):
     assert report["claims"][0]["planned"] == 6
 
 
-def test_paired_donor_omission_retains_pairs_and_valid_reference_recoding(study):
+def set_up_paired_study(study, n_donors, unit):
     base = study / "baseline"
-    change_table(base, "metadata.csv", lambda df: df.__setitem__("donor", ["d0", "d1", "d2"] * 2))
-    frame = pd.read_csv(base / "design.csv").drop(columns=["batch_b"])
-    frame["donor_1"], frame["donor_2"] = [0, 1, 0] * 2, [0, 0, 1] * 2
-    frame.to_csv(base / "design.csv", index=False)
+    # Each donor contributes one control and one disease sample. After an omission
+    # the paired model has n_donors - 2 biological residual degrees of freedom.
+    donors = [f"d{i}" for i in range(n_donors)]
+    samples = [f"s{i}" for i in range(2 * n_donors)]
+    metadata = pd.DataFrame(dict(sample=samples, donor=donors * 2,
+                                 condition=["control"] * n_donors + ["disease"] * n_donors,
+                                 batch=["a"] * (2 * n_donors)))
+    metadata.to_csv(base / "metadata.csv", index=False)
+    pd.DataFrame(dict(sample_id=samples, X=list(range(10, 10 + len(samples))), Y=0)).to_csv(
+        base / "counts.csv", index=False)
+    pd.DataFrame([dict(sample_id=s, cell_id=f"{s}-c{i}") for s in samples for i in range(2)]).to_csv(
+        base / "cells.csv", index=False)
+    design = pd.DataFrame(dict(sample_id=samples, Intercept=1, disease=(metadata.condition == "disease").astype(int)))
+    fixed_intercept = unit == "paired_donor_fixed_effect"
+    if fixed_intercept:
+        for i in range(1, n_donors):
+            design[f"donor_{i}"] = (metadata.donor == donors[i]).astype(int)
+    else:
+        change_json(base, "run.json", lambda r: r["analysis_spec"].update(method="dream"))
+    design.to_csv(base / "design.csv", index=False)
+
     def paired(m):
-        m.update(formula="~1+condition+donor", statistical_unit="paired_donor_fixed_effect",
-                 design_columns=["Intercept", "disease", "donor_1", "donor_2"])
+        m.update(formula="~1+condition+donor" if fixed_intercept else "~1+condition+(1|donor)",
+                 statistical_unit=unit, design_columns=list(design.columns[1:]))
         del m["encodings"]["batch_b"]
         del m["contrast"]["batch_b"]
-        for i in (1, 2):
-            m["encodings"][f"donor_{i}"] = dict(kind="categorical", column="donor", level=f"d{i}")
-            m["contrast"][f"donor_{i}"] = 0
+        if fixed_intercept:
+            for i in range(1, n_donors):
+                m["encodings"][f"donor_{i}"] = dict(kind="categorical", column="donor", level=donors[i])
+                m["contrast"][f"donor_{i}"] = 0
+        else:
+            m["random_intercept"] = {"column": "donor", "sample_groups": dict(zip(samples, metadata.donor))}
+
     change_json(base, "model.json", paired)
     reseal(base)
+
+
+@pytest.mark.parametrize("unit", ["paired_donor_fixed_effect", "paired_donor_random_intercept"])
+@pytest.mark.parametrize("n_donors, enough_df", [(4, True), (3, False)])
+def test_paired_donor_omission_preserves_design_and_checks_df(study, n_donors, enough_df, unit):
+    set_up_paired_study(study, n_donors, unit)
     plan = make_plan(study)
-    results(study, [add_run(study, s) for s in plan["specifications"]])
+    results(study, [add_run(study, spec) for spec in plan["specifications"]])
     report = run(study)
-    assert len(report["branches"]) == 3 and report["complete"]
-    assert all(b["comparison"]["retained_samples"] == 4 for b in report["branches"])
+    assert len(report["branches"]) == n_donors and report["complete"] is enough_df
+    for branch in report["branches"]:
+        assert branch["status"] == "COMPARABLE"
+        assert branch["comparison"]["retained_samples"] == 2 * (n_donors - 1)
+        claim, = branch["claims"]
+        assert claim["status"] == ("COMPARED" if enough_df else "INVALID_DESIGN")
+        assert claim["unmet_conditions"] == ([] if enough_df else ["model_rank"])
+
+
+@pytest.mark.parametrize("kind, change", [
+    ("leave_one_donor_out", "retained_group"),
+    ("leave_one_donor_out", "omitted_sample"),
+    ("method", "column"),
+])
+def test_alternative_rejects_unplanned_random_intercept_grouping(study, kind, change):
+    set_up_paired_study(study, 4, "paired_donor_random_intercept")
+    alternative = method_spec()
+    alternative["analysis_spec"]["method"] = "variancePartition::dream"
+    plan = make_plan(study, [alternative])
+    spec = next(spec for spec in plan["specifications"] if spec["kind"] == kind)
+    entry = add_run(study, spec)
+    target = study / spec["spec_id"]
+
+    def alter(model):
+        grouping = model["random_intercept"]
+        if change == "column":
+            grouping["column"] = "batch"
+        elif change == "omitted_sample":
+            grouping["sample_groups"]["s0"] = spec["donor_id"]
+        else:
+            # Keep the same donor IDs and sample counts, but swap two sample assignments.
+            groups = grouping["sample_groups"]
+            groups["s1"], groups["s2"] = groups["s2"], groups["s1"]
+
+    change_json(target, "model.json", alter)
+    reseal(target)
+    entry["record"] = ref(study, target / "run.json")
+    results(study, [entry])
+    branch = next(b for b in run(study)["branches"] if b["specification"]["spec_id"] == spec["spec_id"])
+    assert branch["status"] == "UNPLANNED_CHANGE"
+    assert branch["claims"] == []
 
 
 def test_nonestimable_omission_is_not_direction_reversal(study):
