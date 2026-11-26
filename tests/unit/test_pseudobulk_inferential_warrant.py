@@ -4,18 +4,21 @@ Unit tests for Pseudobulk Inferential Warrant & Epistemic Boundary Engine.
 
 from __future__ import annotations
 
+import pytest
+
 from bionexus.claim_checker import audit_prohibited_claims
 from bionexus.contracts import ConclusionMaturity
 from bionexus.pseudobulk_warrant import (
     InferentialRegime,
     evaluate_pseudobulk_inferential_warrant,
 )
+from bionexus.statistical_rules import assess_statistical_power
 
 
 def test_population_inference_regime():
-    """N >= 3 biological replicates with raw integer counts permits population inference."""
+    """Adequate replicate count and planning power permit population inference."""
     verdict = evaluate_pseudobulk_inferential_warrant(
-        n_donors_per_group=4,
+        n_donors_per_group=32,
         min_cells_per_sample=50,
         is_raw_counts=True,
     )
@@ -98,23 +101,44 @@ def test_causal_language_interception():
     assert audit_ok.passed is True
 
 
-def test_interventional_causal_requires_verified_conditions():
-    """Declaring is_interventional=True without verified identification does not grant ROBUST causal warrant."""
-    verdict_default = evaluate_pseudobulk_inferential_warrant(
-        n_donors_per_group=3,
-        is_interventional=True,
+@pytest.mark.parametrize(("intervention", "identified", "balanced", "fit", "allowed", "maturity"), [
+    (False, True, True, True, False, ConclusionMaturity.SUPPORTED),
+    (True, False, True, True, False, ConclusionMaturity.SUPPORTED),
+    (True, True, False, True, False, ConclusionMaturity.SUPPORTED),
+    (True, True, True, False, True, ConclusionMaturity.SUPPORTED),
+    (True, True, True, True, True, ConclusionMaturity.ROBUST),
+])
+def test_causal_identification_and_fit_are_independent(intervention, identified, balanced, fit, allowed, maturity):
+    verdict = evaluate_pseudobulk_inferential_warrant(
+        n_donors_per_group=32, is_interventional=intervention, intervention_identified=identified,
+        design_balanced_or_paired=balanced, dispersion_verified=fit,
     )
-    assert verdict_default.regime == InferentialRegime.POPULATION_INFERENCE
-    assert verdict_default.population_claims_allowed is True
-    assert verdict_default.causal_claims_allowed is False
-    assert verdict_default.maturity_ceiling == ConclusionMaturity.SUPPORTED
-    assert any("causal identification conditions" in w.lower() for w in verdict_default.warnings)
+    assert verdict.regime == InferentialRegime.POPULATION_INFERENCE
+    assert verdict.causal_claims_allowed is allowed
+    assert verdict.maturity_ceiling == maturity
 
-    verdict_verified = evaluate_pseudobulk_inferential_warrant(
-        n_donors_per_group=3,
-        is_interventional=True,
-        intervention_identified=True,
-        dispersion_verified=True,
+
+def test_low_power_caps_even_an_intervention_with_three_donors():
+    verdict = evaluate_pseudobulk_inferential_warrant(
+        n_donors_per_group={"case": 4, "reference": 3}, is_interventional=True, intervention_identified=True,
+        design_balanced_or_paired=True, dispersion_verified=True,
     )
-    assert verdict_verified.causal_claims_allowed is True
-    assert verdict_verified.maturity_ceiling == ConclusionMaturity.ROBUST
+    assert verdict.maturity_ceiling == ConclusionMaturity.PRELIMINARY
+    assert verdict.regime == InferentialRegime.DESCRIPTIVE_ONLY
+    assert not verdict.causal_claims_allowed and not verdict.population_claims_allowed
+    assert verdict.metrics["power"]["powered_for_regime"] == "STRONG"
+
+
+def test_strong_effect_requires_expression_and_fitted_shrinkage():
+    options = {"n_donors_per_group": 5, "cells_per_sample": 50}
+    strong = assess_statistical_power(**options, shrunk_log2fc=-5, base_mean=100)
+    verdict = evaluate_pseudobulk_inferential_warrant(n_donors_per_group=5, power=strong)
+    assert verdict.population_claims_allowed
+    raw = assess_statistical_power(**options, observed_log2fc=-5)
+    assert not evaluate_pseudobulk_inferential_warrant(n_donors_per_group=5, power=raw).population_claims_allowed
+    assert not evaluate_pseudobulk_inferential_warrant(n_donors_per_group=3, power=strong).population_claims_allowed
+
+
+def test_detectable_regime_does_not_excuse_effect_below_design_mde():
+    power = assess_statistical_power(n_donors_per_group=20, shrunk_log2fc=0.05, base_mean=100)
+    assert not evaluate_pseudobulk_inferential_warrant(n_donors_per_group=20, power=power).population_claims_allowed

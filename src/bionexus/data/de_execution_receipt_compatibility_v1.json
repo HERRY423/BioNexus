@@ -26,6 +26,11 @@
     "unknown_or_missing": "MISSING_OR_ISSUE_NO_PASS",
     "explicit_failure": "BFA-013b_BLOCKER"
   },
+  "donor_aware_models": {
+    "pseudobulk": "DESeq2, PyDESeq2, edgeR and limma-voom with donor/sample statistical units",
+    "mixed_model": "dream/variancePartition or NEBULA with a donor random intercept, e.g. ~ condition + (1 | donor). design_matrix_columns describes fixed effects only. A NEBULA receipt may instead bind the grouping argument through id_col.",
+    "paired_design": "When donors occur on both sides of the assessed contrast, include the metadata donor column as a fixed or random effect."
+  },
   "donor_binding_modes": [
     {
       "mode": "EXPLICIT_DONOR_IDS",

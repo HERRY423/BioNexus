@@ -28,6 +28,7 @@
         "refusal",
         "scientific_semantics",
         "capability_claim",
+        "causal_language",
         "adversarial",
         "backend_failure",
         "routing"

@@ -45,12 +45,36 @@ def test_high_doublet_rate_clustering_degrades_with_doublet_remedy():
 
 
 def test_normal_power_design_not_degraded():
-    """n>=3 designs must not trip the statistical advisory stage."""
+    """A simple computation request carries no claim of population power."""
     decision = route_scientific_intent(
         "Run pseudobulk differential expression between conditions",
         data_metadata={"min_replicates_per_condition": 3, "is_integer_like": True},
     )
     assert decision.status.value != "DEGRADED_ADVISORY"
+
+
+def test_population_discovery_request_exposes_fdr_adjusted_mde_at_five_donors():
+    decision = route_scientific_intent(
+        "Run pseudobulk DE and claim robust population-level discovery power.",
+        data_metadata={"min_replicates_per_condition": 5, "is_integer_like": True,
+                       "n_tests": 15000, "n_true_effects": 300, "observed_log2fc": 8},
+    )
+    assert decision.status.value == "DEGRADED_ADVISORY"
+    power = decision.evidence_card_template.to_dict()["details"]["statistical_power"]
+    assert power["alpha_basis"] == "jung2005"
+    assert power["observed_effect_regime"] is None
+
+
+def test_invalid_power_and_doublet_inputs_request_data():
+    power = route_scientific_intent(
+        "Run pseudobulk DE and claim robust population-level discovery power.",
+        data_metadata={"min_replicates_per_condition": 5, "is_integer_like": True, "target_power": 1.1},
+    )
+    doublet = route_scientific_intent(
+        "Leiden cluster my data and name the populations.",
+        data_metadata={"doublet_rate": 1.1},
+    )
+    assert power.status.value == doublet.status.value == "NEEDS_DATA"
 
 
 def test_bare_n2_design_stays_permitted(canonical_backends_available):

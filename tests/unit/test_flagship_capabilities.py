@@ -4,8 +4,11 @@ BNS-015 flagship track): contracts, verdict ladders, router wiring, and the
 flagship certification program.
 """
 
+import hashlib
 import sys
 from pathlib import Path
+
+import pandas as pd
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 _SRC = _REPO_ROOT / "src"
@@ -141,21 +144,69 @@ def test_spatial_untested_alternatives_fragile():
     assert "spot_composition" in verdict.untested
 
 
+def _bound_spatial_controls():
+    controls = []
+    artifacts = {}
+    for name in CANONICAL_ALTERNATIVES:
+        if name == "sample_level_replication":
+            continue
+        payload = f"{name} synthetic diagnostic".encode()
+        digest = hashlib.sha256(payload).hexdigest()
+        artifacts[digest] = payload
+        controls.append(ControlResult(name, "TESTED", statistic=1.0, artifact_sha256=digest))
+    return controls, artifacts
+
+
 def test_spatial_all_core_controls_supported_without_null():
+    controls, artifacts = _bound_spatial_controls()
+    obs = pd.DataFrame({"donor": [1, 2, 3, 4], "condition": ["A", "A", "B", "B"]})
     verdict = assess_spatial_inference(
-        "Gene X enriches toward macrophage-facing membrane",
-        {c: "CONTROLLED" for c in CANONICAL_ALTERNATIVES if c != "permutation_null"},
+        "Membrane enrichment", [c for c in controls if c.name != "permutation_null"], obs=obs, artifacts=artifacts,
     )
     assert verdict.verdict == "SUPPORTED"
     assert any("permutation null" in n.lower() for n in verdict.notes)
 
 
 def test_spatial_full_controls_with_null_robust():
-    verdict = assess_spatial_inference(
-        "Gene X enriches toward macrophage-facing membrane",
-        {c: "TESTED" for c in CANONICAL_ALTERNATIVES},
-    )
+    controls, artifacts = _bound_spatial_controls()
+    obs = pd.DataFrame({"donor": [1, 2, 3, 4], "condition": ["A", "A", "B", "B"]})
+    verdict = assess_spatial_inference("Membrane enrichment", controls, obs=obs, artifacts=artifacts)
     assert verdict.verdict == "ROBUST"
+    assert verdict.samples_per_group == {"A": 2, "B": 2}
+    assert verdict.to_dict()["control_evidence"]["cell_size"]["statistic"] == 1.0
+
+
+def test_spatial_declarations_and_mismatched_artifacts_cap_verdict():
+    obs = pd.DataFrame({"section": ["s1", "s2"], "condition": ["A", "A"]})
+    results = assess_spatial_inference("Enrichment", dict.fromkeys(CANONICAL_ALTERNATIVES, "TESTED"), obs=obs)
+    assert results.verdict == "FRAGILE"
+    assert set(results.declared) == set(CANONICAL_ALTERNATIVES) - {"sample_level_replication"}
+    controls, artifacts = _bound_spatial_controls()
+    artifacts[controls[0].artifact_sha256] = b"changed"
+    assert assess_spatial_inference("Enrichment", controls, obs=obs, artifacts=artifacts).declared == [controls[0].name]
+
+
+def test_spatial_counts_independent_units_and_ignores_replication_declaration():
+    controls, artifacts = _bound_spatial_controls()
+    controls.append(ControlResult("sample_level_replication", "CONTROLLED", artifact_sha256=controls[0].artifact_sha256))
+    verdict = assess_spatial_inference("Enrichment", controls, artifacts=artifacts)
+    assert verdict.verdict == "FRAGILE"
+    assert "sample_level_replication" in verdict.untested
+    obs = pd.DataFrame({"condition": ["A", "A", "B", "B"], "donor_id": [1, 2, 3, 3], "section": [1, 2, 3, 4]})
+    verdict = assess_spatial_inference("Enrichment", controls, obs=obs, artifacts=artifacts)
+    assert verdict.verdict == "ABSTAIN"
+    assert verdict.samples_per_group == {"A": 2, "B": 1}
+    only_section = pd.DataFrame({"section_id": ["s1"] * 100})
+    assert assess_spatial_inference("Enrichment", controls, obs=only_section, artifacts=artifacts).verdict == "ABSTAIN"
+
+
+def test_tissue_edge_aliases_are_independent_of_contact_geometry(monkeypatch):
+    from bionexus.spatial_inference import ALTERNATIVE_ALIASES
+    monkeypatch.setitem(ALTERNATIVE_ALIASES, "tissue_edge", "edge_effect")
+    for alias in ("edge_effects", "edge_effect", "tissue_edge"):
+        verdict = assess_spatial_inference("Enrichment", {alias: "FAILED", "contact_geometry": "TESTED"})
+        assert verdict.failed == ["edge_effects"]
+        assert verdict.declared == ["contact_geometry"]
 
 
 def test_spatial_failed_control_is_conflicted():

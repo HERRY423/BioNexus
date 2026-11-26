@@ -19,7 +19,9 @@ if str(_REPO_ROOT) not in sys.path:
 from bionexus.cli import main as cli_main
 from bionexus.failures import FAILURE_TAXONOMY, taxonomy_summary
 from evals.biofailurebench import corpus_path, load_corpus_records, validate_corpus
-from evals.runner import load_eval_cases, run_single_case
+from evals.metrics import compute_causal_language_metrics
+from evals.runner import format_benchmark_markdown, load_eval_cases, run_benchmark, run_single_case
+from evals.schema import EvalCategory
 
 
 def test_corpus_file_exists_and_loads():
@@ -79,6 +81,51 @@ def test_frontier_traps_are_executed_not_hidden():
     for case in frontier:
         result = run_single_case(case)
         assert result.known_limitation  # honestly labeled
+
+
+def test_inv009_report_counts_gating_and_frontier_predictions():
+    report = run_benchmark(suite="biofailurebench", level="L2", provider="replay")
+    results = [
+        r for r in report.detailed_results + report.frontier_results
+        if r.category == EvalCategory.CAUSAL_LANGUAGE.value
+    ]
+    by_id = {r.case_id: r for r in results}
+    # Each contrast probes a different scope: local negation, negation ending
+    # at a clause boundary, an endorsed quotation, and a passive paraphrase.
+    for cid in ("BF-052", "BF-053", "BF-055", "BF-057"):
+        assert by_id[cid].passed
+    assert {"BF-059", "BF-060"} <= set(by_id)
+    metrics = report.to_dict()["causal_language_metrics"]
+    assert metrics["total"] == len(results) >= 10
+    tp, fp, fn, tn = (metrics[k] for k in ("true_positives", "false_positives", "false_negatives", "true_negatives"))
+    assert tp + fp + fn + tn == len(results)
+    assert metrics["precision"] == tp / (tp + fp)
+    assert metrics["recall"] == tp / (tp + fn)
+    assert set(metrics["misclassified_cases"]) == {r.case_id for r in results if not r.passed}
+    markdown = format_benchmark_markdown(report)
+    assert "INV-009 causal-language detector" in markdown
+    assert f"{metrics['precision']:.1%}" in markdown
+    assert f"{metrics['recall']:.1%}" in markdown
+
+
+def test_inv009_metrics_use_independent_denominators():
+    from dataclasses import replace
+
+    case = next(c for c in load_eval_cases(suite="biofailurebench") if c.id == "BF-051")
+    tp = run_single_case(case)
+    assert tp.actual_status == tp.expected_status == "ABSTAIN"
+    fp = replace(tp, expected_status="PERMITTED")
+    fn = replace(tp, actual_status="PERMITTED")
+    rates = compute_causal_language_metrics([tp, fp, fn, fn])
+    assert rates["precision"] == 1 / 2
+    assert rates["recall"] == 1 / 3
+    assert compute_causal_language_metrics([fn])["precision"] is None
+    assert compute_causal_language_metrics([fp])["recall"] is None
+    skipped = replace(tp, case_id="skipped", actual_status="SKIPPED_NO_BACKEND", skipped=True)
+    mixed = compute_causal_language_metrics([tp, skipped])
+    assert mixed["total"] == 2 and mixed["evaluated"] == 1
+    assert mixed["unscored_cases"] == ["skipped"]
+    assert mixed["precision"] == mixed["recall"] == 1.0
 
 
 def test_formerly_open_gaps_have_traps():

@@ -1,17 +1,12 @@
 """
 BioNexus Pseudobulk Inferential Warrant & Epistemic Boundary Engine.
 
-Defines and enforces the four inferential regimes for single-cell differential expression:
-1. POPULATION_INFERENCE (N >= 3 biological replicates/donors per group, raw integer counts,
-   sufficient cell counts per sample) -> SUPPORTED / ROBUST warrant for population-level claims.
-2. DESCRIPTIVE_ONLY (N = 2 replicates, or low cell count / high sparsity, or marker-gene comparisons)
-   -> Capped at TENTATIVE / EXPLORATORY; population-level generalization is prohibited.
-3. ABSTAIN_UNREPLICATED (N = 1 per group, pseudoreplication without donor identifiers)
-   -> Strictly refused (ABSTAIN); zero degrees of freedom for biological variance.
-4. ABSTAIN_INVALID_INPUT (Normalized/log-transformed floats to count models, confounded designs)
-   -> Strictly refused (ABSTAIN); mathematical assumptions violated.
-5. CAUSAL_CLAIM_BLOCK (Observational cross-sectional single-cell data claiming causal mechanisms)
-   -> Intercepted and remediated to associational language.
+Inferential regimes for donor-aware differential expression:
+1. POPULATION_INFERENCE: adequate replication and power for the assessed effect.
+2. DESCRIPTIVE_ONLY: limited replication or inadequate power.
+3. ABSTAIN_UNREPLICATED: missing donor identifiers or fewer than two donors per group.
+4. ABSTAIN_INVALID_INPUT: invalid input for a count-based analysis.
+5. ABSTAIN_CONFOUNDED: the condition contrast is not estimable after adjustment.
 
 Normative references:
 - BNS-010 / BNS-015 (Flagship Capability A: scrna.pseudobulk_de)
@@ -27,6 +22,7 @@ from enum import Enum
 from typing import Any, Dict, List, Optional
 
 from bionexus.contracts import ConclusionMaturity
+from bionexus.statistical_rules import EffectSizeRegime, PowerAssessment, assess_statistical_power
 
 
 class InferentialRegime(str, Enum):
@@ -79,6 +75,7 @@ def evaluate_pseudobulk_inferential_warrant(
     design_balanced_or_paired: bool = False,
     dispersion_verified: bool = False,
     intervention_identified: bool = False,
+    power: Optional[PowerAssessment] = None,
 ) -> PseudobulkWarrantVerdict:
     """
     Evaluate what inferential conclusions are scientifically warranted for a pseudobulk DE design.
@@ -95,6 +92,8 @@ def evaluate_pseudobulk_inferential_warrant(
         design_balanced_or_paired: Whether treatment assignment is balanced or paired across donors.
         dispersion_verified: Whether negative binomial dispersion estimation was properly modeled and converged.
         intervention_identified: Whether exchangeability and unconfoundedness conditions are explicitly verified.
+        power: Power assessed for this contrast. When absent, use the default NB planning
+            assumptions with the observed minimum donor and cell counts.
 
     Returns:
         PseudobulkWarrantVerdict detailing the justified regime, ceiling, and claim boundaries.
@@ -121,7 +120,7 @@ def evaluate_pseudobulk_inferential_warrant(
     }
 
     # 1. Check Fatal Invariants: Non-integer counts / Invalid input
-    if not is_raw_counts:
+    if not is_raw_counts or min_cells_per_sample < 1:
         return PseudobulkWarrantVerdict(
             regime=InferentialRegime.ABSTAIN_INVALID_INPUT,
             maturity_ceiling=ConclusionMaturity.ABSTAIN,
@@ -129,8 +128,7 @@ def evaluate_pseudobulk_inferential_warrant(
             population_claims_allowed=False,
             causal_claims_allowed=False,
             reasons=[
-                "Negative binomial generalized linear models (PyDESeq2) strictly assume discrete integer counts. "
-                "Normalized or log-transformed floats violate dispersion estimation mathematics."
+                "Count-based differential expression needs raw integer counts and at least one cell per sample."
             ],
             remedy="Provide the raw UMI integer count layer (adata.layers['counts'] or raw adata.X).",
             metrics=metrics,
@@ -173,7 +171,6 @@ def evaluate_pseudobulk_inferential_warrant(
     if min_donors == 2:
         warnings = [
             "Low biological replicate count (N=2 per group): degrees of freedom are minimal. "
-            "Dispersion estimation relies entirely on empirical Bayes shrinkage across genes. "
             "Results are exploratory and descriptive of this specific sample pair, NOT generalizable to the population."
         ]
         if min_cells_per_sample < 10:
@@ -194,28 +191,48 @@ def evaluate_pseudobulk_inferential_warrant(
             metrics=metrics,
         )
 
-    # 5. Full population inference regime: N >= 3
-    warnings = []
+    if power is None:
+        power = assess_statistical_power(
+            n_donors_per_group=min_donors,
+            cells_per_sample=min_cells_per_sample,
+            nominal_fdr=nominal_fdr,
+        )
+    metrics["power"] = power.to_dict()
+    warnings = list(power.warnings)
     if min_cells_per_sample < 10:
         warnings.append(
             f"Low cell count per sample ({min_cells_per_sample} < 10): pseudobulk counts for sparse cell types may have elevated variance."
         )
 
-    # Causal identification requires verified experimental design, dispersion modeling,
-    # and exchangeability, not merely an interventional flag on minimum replicates (Squair et al. 2021).
-    causal_allowed = False
-    maturity = ConclusionMaturity.SUPPORTED
+    reasons = []
+    if power.n_donors_per_group > min_donors or power.nominal_fdr > nominal_fdr:
+        reasons.append("The supplied power analysis assumes more donors or a looser FDR than the audited contrast.")
+    if power.powered_for_regime == EffectSizeRegime.STRONG and power.observed_effect_regime != EffectSizeRegime.STRONG:
+        reasons.append("Only strong effects are detectable under the assessed design, and the claimed effect lacks qualifying strong-effect evidence.")
+    if (power.observed_effect_regime is not None and power.shrunk_log2fc is not None
+            and abs(power.shrunk_log2fc) < power.mde_log2fc):
+        reasons.append("The estimated shrunken effect falls below the minimum detectable effect.")
+    if reasons:
+        return PseudobulkWarrantVerdict(
+            regime=InferentialRegime.DESCRIPTIVE_ONLY,
+            maturity_ceiling=ConclusionMaturity.PRELIMINARY,
+            permitted=True,
+            population_claims_allowed=False,
+            causal_claims_allowed=False,
+            reasons=reasons,
+            warnings=warnings,
+            remedy="Report within-cohort estimates and uncertainty, or obtain sufficient power for the planned contrast.",
+            metrics=metrics,
+        )
 
-    if is_interventional:
-        if intervention_identified and (design_balanced_or_paired or dispersion_verified):
-            causal_allowed = True
-            maturity = ConclusionMaturity.ROBUST
-        else:
-            warnings.append(
-                "Interventional study declared, but causal identification conditions "
-                "(exchangeability, balanced/paired design matrix, dispersion modeling) "
-                "are unverified. Causal claims restricted; defaulting to population-level associational inference."
-            )
+    causal_allowed = bool(is_interventional and intervention_identified and design_balanced_or_paired)
+    maturity = ConclusionMaturity.SUPPORTED
+    if causal_allowed and dispersion_verified:
+        maturity = ConclusionMaturity.ROBUST
+    elif causal_allowed:
+        warnings.append("Causal design identified. Model dispersion remains unverified, which caps maturity at SUPPORTED.")
+    elif is_interventional:
+        warnings.append("Interventional study declared. Causal identification conditions require an identified intervention and a balanced or paired design.")
 
     return PseudobulkWarrantVerdict(
         regime=InferentialRegime.POPULATION_INFERENCE,
@@ -224,8 +241,8 @@ def evaluate_pseudobulk_inferential_warrant(
         population_claims_allowed=True,
         causal_claims_allowed=causal_allowed,
         reasons=[
-            f"Sufficient biological replicates (min N={min_donors} >= 3) and raw integer counts. "
-            "Negative binomial GLM with Wald tests warrants population-level differential expression inference."
+            f"The design has at least {min_donors} donors per group and adequate planning power for this effect. "
+            "Population inference requires a donor-aware fit, such as pseudobulk DE or a donor random-effects model."
         ],
         warnings=warnings,
         remedy=None,

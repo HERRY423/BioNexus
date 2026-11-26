@@ -149,6 +149,13 @@ class ExecutionRecord:
     aggregation: Optional[str] = None
     cell_level_condition_test: bool = False
     facts: List[str] = field(default_factory=list)
+    design_factors: List[str] = field(default_factory=list)
+    random_effects: List[str] = field(default_factory=list)
+    declared_factors: List[str] = field(default_factory=list)
+
+    @property
+    def is_donor_aware(self) -> bool:
+        return self.aggregation in {"donor_pseudobulk", "pseudobulk", "donor_mixed_model"} and not self.cell_level_condition_test
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -182,6 +189,9 @@ class DEAuditResult:
     claim_conditions: Optional[Dict[str, Any]] = None
     alternative_analysis: Optional[Dict[str, Any]] = None
     selection_history: Optional[Dict[str, Any]] = None
+
+    evidence_assessment: Optional[Dict[str, Any]] = None
+    design_warrants: List[Dict[str, Any]] = field(default_factory=list)
 
     @property
     def evidence_contract(self) -> Dict[str, Any]:
@@ -222,6 +232,8 @@ class DEAuditResult:
                 "advisory": self.advisory_count,
             },
             "cohort_summary": self.cohort_summary,
+            "evidence_assessment": self.evidence_assessment,
+            "design_warrants": self.design_warrants,
             "metadata_columns_used": self.metadata_columns_used,
             **({"claim_conditions": self.claim_conditions} if self.claim_conditions is not None else {}),
             **({"alternative_analysis": self.alternative_analysis} if self.alternative_analysis is not None else {}),

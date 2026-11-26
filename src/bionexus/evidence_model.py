@@ -55,8 +55,8 @@ from bionexus.research_purpose import (
 class EvidenceFactor(str, Enum):
     """An evidence fact that can support a conclusion's maturity.
 
-    Factors are declared by the caller (and recorded in provenance); BioNexus
-    never assumes an undeclared factor.  Undeclared evidence is weak evidence.
+    Auditors supply factors derived from measurements. Caller declarations
+    remain available for comparison with those measurements.
     """
 
     REPLICATION = "replication"
@@ -135,7 +135,8 @@ class EvidenceAssessment:
 
     Attributes:
         evidence_maturity: The maturity the evidence facts actually support.
-        satisfied_factors: The declared evidence factors behind it.
+        satisfied_factors: The factors supported by measurements.
+        unverified_factors: Declared factors absent from the measurements.
         caps_applied: Rule IDs that actively cap the evidence (violations).
         rationale: Human-readable derivation summary.
     """
@@ -144,12 +145,14 @@ class EvidenceAssessment:
     satisfied_factors: List[str] = field(default_factory=list)
     caps_applied: List[str] = field(default_factory=list)
     rationale: str = ""
+    unverified_factors: List[str] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
             "evidence_maturity": self.evidence_maturity,
             "evidence_contract": self.evidence_contract,
             "satisfied_factors": self.satisfied_factors,
+            "unverified_factors": self.unverified_factors,
             "caps_applied": self.caps_applied,
             "rationale": self.rationale,
             "purpose_independent": True,
@@ -178,6 +181,7 @@ def assess_evidence(
     *,
     base_maturity: Union[str, ConclusionMaturity] = ConclusionMaturity.UNASSESSED,
     satisfied_factors: Sequence[Union[str, EvidenceFactor]] = (),
+    measured_factors: Optional[Sequence[Union[str, EvidenceFactor]]] = None,
     warrant_triggers: Sequence[Any] = (),
     invariant_triggers: Sequence[Any] = (),
 ) -> EvidenceAssessment:
@@ -186,7 +190,9 @@ def assess_evidence(
     Neither the research purpose nor the lab policy appears in this
     computation — that is the contract.
     """
-    factors = _factor_set(satisfied_factors)
+    declared = _factor_set(satisfied_factors)
+    factors = _factor_set(measured_factors or ())
+    unverified = sorted(f.value for f in declared - factors)
 
     # The support ladder: highest level whose required factors are all present.
     supported = DEFAULT_UNEVIDENCED_MATURITY
@@ -227,21 +233,18 @@ def assess_evidence(
     if caps and maturity != ConclusionMaturity.CONFLICTED and _MATURITY_RANK.get(VIOLATION_MATURITY_CAP.value, 0) < _MATURITY_RANK.get(maturity.value, 0):
         maturity = VIOLATION_MATURITY_CAP
 
+    rationale = f"Measured evidence factors: {sorted(f.value for f in factors) or 'none'}."
+    if unverified:
+        rationale += f" Unverified declarations: {unverified}."
     if caps:
-        rationale = (
-            f"Active violations ({', '.join(sorted(set(caps)))}) cap evidence at "
-            f"{maturity.value}; declared factors: {sorted(f.value for f in factors) or 'none'}."
-        )
+        rationale += f" Active violations ({', '.join(sorted(set(caps)))}) cap evidence at {maturity.value}."
     else:
-        rationale = (
-            f"Evidence maturity {maturity.value} derived from declared factors "
-            f"{sorted(f.value for f in factors) or 'none'}; purpose and policy "
-            f"play no role in this assessment."
-        )
+        rationale += f" Evidence maturity: {maturity.value}."
 
     return EvidenceAssessment(
         evidence_maturity=maturity.value,
         satisfied_factors=sorted(f.value for f in factors),
+        unverified_factors=unverified,
         caps_applied=sorted(set(caps)),
         rationale=rationale,
     )

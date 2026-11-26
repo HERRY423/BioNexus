@@ -29,6 +29,8 @@ jobs:
         run: ruff check .
       - name: Passive DE Bundle Compatibility
         run: python scripts/check_de_bundle_contract.py
+      - name: Publish INV-009 causal-language precision and recall
+        run: python -m bionexus.cli eval --suite biofailurebench --level L2 --provider replay --report "$GITHUB_STEP_SUMMARY"
       - name: Check Canonical Registry Drift & Validate Endpoints
         run: |
           python scripts/registry_compiler.py --check

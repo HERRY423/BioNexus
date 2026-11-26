@@ -6,6 +6,7 @@ import json
 from importlib.resources import files
 
 import pandas as pd
+import pytest
 
 from bionexus.de_audit import (
     DE_EXECUTION_RECEIPT_COMPATIBILITY_SCHEMA,
@@ -119,3 +120,75 @@ def test_reporting_preamble_preserves_limitation_and_exposes_false_null(tmp_path
     )
     assert not false_null.passed
     assert any(finding.rule_id == "BFA-015c" for finding in false_null.findings)
+
+
+@pytest.mark.parametrize(("method", "design", "columns", "id_col"), [
+    ("DESeq2", "~ donor + condition", ["(Intercept)", "donorD1", "donorD2", "conditionT"], None),
+    ("edgeR", "~ donor + condition", ["Intercept", "donor[T.D1]", "donor[T.D2]", "condition[T.T]"], None),
+    ("limma-voom", "~ donor + condition", ["(Intercept)", "donorD1", "donorD2", "conditionT"], None),
+    ("variancePartition::dream", "~ condition + (1 | donor)", ["(Intercept)", "conditionT"], None),
+    ("NEBULA", "~ condition", ["Intercept", "condition[T.T]"], "donor"),
+])
+def test_donor_aware_receipts_bind_paired_contrasts(tmp_path, method, design, columns, id_col):
+    samples, _, result_path, receipt = inputs(tmp_path)
+    samples["donor"] = ["D0", "D1", "D2"] * 2
+    receipt.update(method=method, design=design, design_matrix_columns=columns,
+                   n_donors=3, donor_ids=["D0", "D1", "D2"], evidence_factors=["replication"])
+    if id_col:
+        receipt.update(id_col=id_col, statistical_unit="cell")
+    result = audit_differential_expression(de_table=result_path, sample_metadata=samples, execution_record=receipt)
+    assert binding(result).status == CheckStatus.ASSESSED
+    assert result.execution_record.is_donor_aware
+    assert result.execution_record.declared_factors == ["replication"]
+    assert "condition" in result.execution_record.design_factors
+    assert "donor" in result.execution_record.design_factors + result.execution_record.random_effects
+    assert not any(f.rule_id in {"BFA-001", "BFA-001d"} for f in result.findings)
+
+
+@pytest.mark.parametrize(("method", "design"), [
+    ("dream", "~ condition"), ("dream", "~ condition + (1 | batch)"),
+    ("pydeseq2", "~ condition + (1 | donor)"), ("unrecognized-model", "~ condition"),
+])
+def test_method_names_or_incompatible_designs_do_not_bind(tmp_path, method, design):
+    samples, _, result_path, receipt = inputs(tmp_path)
+    receipt.update(method=method, design=design)
+    result = audit_differential_expression(de_table=result_path, sample_metadata=samples, execution_record=receipt)
+    assert binding(result).status != CheckStatus.ASSESSED
+    assert not result.passed
+    assert result.execution_record.design_factors == []
+
+
+def test_paired_contrast_without_donor_effect_gets_high_impact(tmp_path):
+    samples, _, result_path, receipt = inputs(tmp_path)
+    samples["donor"] = ["D0", "D1", "D2"] * 2
+    receipt.update(n_donors=3, donor_ids=["D0", "D1", "D2"])
+    result = audit_differential_expression(de_table=result_path, sample_metadata=samples, execution_record=receipt)
+    issue = next(f for f in result.findings if f.rule_id == "BFA-001d")
+    assert issue.severity.value == "HIGH_IMPACT"
+    assert issue.evidence_data["paired_donors"] == ["D0", "D1", "D2"]
+
+def test_one_numeric_column_does_not_verify_a_categorical_donor_block(tmp_path):
+    samples, _, result_path, receipt = inputs(tmp_path)
+    samples["donor"] = ["D0", "D1", "D2"] * 2
+    receipt.update(n_donors=3, donor_ids=["D0", "D1", "D2"], design="~ donor + condition",
+                   design_matrix_columns=["Intercept", "donor", "condition[T.T]"])
+    result = audit_differential_expression(de_table=result_path, sample_metadata=samples, execution_record=receipt)
+    assert binding(result).status == CheckStatus.ISSUE_FOUND
+    assert not result.passed
+
+
+def test_selected_cell_type_receipt_uses_only_eligible_donors(tmp_path):
+    samples, _, result_path, receipt = inputs(tmp_path)
+    rows = []
+    for donor, condition in samples.itertuples(index=False, name=None):
+        rows.extend([(donor, condition, "T")] * (3 if donor == "D0" else 22))
+        rows.extend([(donor, condition, "B")] * 22)
+    obs = pd.DataFrame(rows, columns=["donor", "condition", "cell_type"])
+    receipt.update(n_donors=5, donor_ids=[f"D{i}" for i in range(1, 6)])
+    result = audit_differential_expression(de_table=result_path, sample_metadata=obs, execution_record=receipt,
+                                           cell_type="T", case="T", reference="C")
+    assert binding(result).status == CheckStatus.ASSESSED
+    receipt.update(n_donors=6, donor_ids=samples["donor"].tolist())
+    other = audit_differential_expression(de_table=result_path, sample_metadata=obs, execution_record=receipt,
+                                          cell_type="T", case="T", reference="C")
+    assert binding(other).status == CheckStatus.ISSUE_FOUND

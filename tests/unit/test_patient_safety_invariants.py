@@ -78,7 +78,7 @@ class TestSafetyInvariantsS1AndS2:
         assert result.sufficiency["verdict"] == SufficiencyVerdict.NOT_SUFFICIENT_FOR_INTENDED_USE.value
         assert "intended_use_undeclared" in result.sufficiency["gaps"]
 
-    def test_e2e_p5_replicated_evidence_with_bare_regulatory_context_string_blocked(
+    def test_e2e_declared_factors_and_bare_regulatory_context_are_insufficient(
         self, canonical_backends_available
     ):
         """Probe P5:
@@ -118,17 +118,15 @@ class TestSafetyInvariantsS1AndS2:
             documented_extras=["regulatory_context"],
         )
 
-        assert result.evidence_assessment["evidence_maturity"] == "REPLICATED"
+        assert result.evidence_assessment["evidence_maturity"] == "PRELIMINARY"
+        assert set(replicated_factors) <= set(result.evidence_assessment["unverified_factors"])
         assert result.sufficiency["verdict"] == SufficiencyVerdict.NOT_SUFFICIENT_FOR_INTENDED_USE.value
         assert "missing_required_condition:regulatory_context" in result.sufficiency["gaps"]
 
-    def test_e2e_verified_regulatory_certification_factor_yields_warranted(
+    def test_declared_regulatory_certification_remains_unverified(
         self, canonical_backends_available
     ):
-        """When genuine regulatory_certification factor is supplied with REPLICATED evidence,
-
-        clinical actionability is WARRANTED.
-        """
+        """A regulatory factor named in caller metadata still requires verification."""
         cap = ALL_CAPABILITIES["scrna.pseudobulk_de"]
         pctx = PurposeContext(
             purpose=ResearchPurpose.CLINICAL,
@@ -159,9 +157,10 @@ class TestSafetyInvariantsS1AndS2:
             evidence_factors=verified_factors,
         )
 
-        assert result.evidence_assessment["evidence_maturity"] == "REPLICATED"
-        assert result.sufficiency["verdict"] == SufficiencyVerdict.WARRANTED.value
-        assert not result.sufficiency["gaps"]
+        assert result.evidence_assessment["evidence_maturity"] == "PRELIMINARY"
+        assert "regulatory_certification" in result.evidence_assessment["unverified_factors"]
+        assert result.sufficiency["verdict"] == SufficiencyVerdict.NOT_SUFFICIENT_FOR_INTENDED_USE.value
+        assert "missing_required_condition:regulatory_context" in result.sufficiency["gaps"]
 
     def test_intent_router_clinical_override_justification_cannot_activate_override(self):
         """intent_router must not activate override_active for clinical purpose."""
@@ -192,10 +191,10 @@ class TestSafetyInvariantsS1AndS2:
         assert decision.purpose_context.purpose == ResearchPurpose.EXPLORATORY
         assert decision.purpose_context.override_active is True
 
-    def test_e2e_h1_router_wiring_elevates_evidence_from_preliminary(
+    def test_router_metadata_records_declarations_without_elevating_maturity(
         self, canonical_backends_available
     ):
-        """H1: Router and capability wiring allows empirical evidence to reach ROBUST and clear confirmatory bar."""
+        """Metadata-only assessment preserves the gap between a feasible analysis and a warranted claim."""
         decision = route_scientific_intent(
             "pseudobulk differential expression",
             data_metadata={
@@ -212,12 +211,11 @@ class TestSafetyInvariantsS1AndS2:
         assert decision.status.value == "PERMITTED"
         card = decision.evidence_card_template
         assert card is not None
-        assert card.details["evidence_assessment"]["evidence_maturity"] == "ROBUST"
-        assert "sample_design" in card.details["evidence_assessment"]["satisfied_factors"]
-        assert "replication" in card.details["evidence_assessment"]["satisfied_factors"]
-        assert "confound_controls" in card.details["evidence_assessment"]["satisfied_factors"]
-        assert "sensitivity_analysis" in card.details["evidence_assessment"]["satisfied_factors"]
-        assert card.details["sufficiency"]["verdict"] == SufficiencyVerdict.WARRANTED.value
+        assessment = card.details["evidence_assessment"]
+        assert assessment["evidence_maturity"] == "PRELIMINARY"
+        assert assessment["satisfied_factors"] == []
+        assert {"sample_design", "replication", "confound_controls", "sensitivity_analysis"} <= set(assessment["unverified_factors"])
+        assert card.details["sufficiency"]["verdict"] == SufficiencyVerdict.NOT_SUFFICIENT_FOR_INTENDED_USE.value
 
     def test_e2e_h2_p1_and_p2_probes_via_capability(self, canonical_backends_available):
         """H2: Probes P1 (no shortcut to REPLICATED) and P2 (no shortcut to ROBUST without replication)."""

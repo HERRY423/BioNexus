@@ -1014,6 +1014,42 @@
             {
               "kind": "_StoreAction",
               "options": [
+                "--case"
+              ],
+              "dest": "case",
+              "nargs": null,
+              "required": false,
+              "default": null,
+              "help": "Numerator condition level for the audited contrast",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [
+                "--reference"
+              ],
+              "dest": "reference",
+              "nargs": null,
+              "required": false,
+              "default": null,
+              "help": "Denominator condition level for the audited contrast",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [
+                "--cell-type"
+              ],
+              "dest": "cell_type",
+              "nargs": null,
+              "required": false,
+              "default": null,
+              "help": "Cell type label to audit within the selected contrast",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [
                 "--batch-col"
               ],
               "dest": "batch_col",
@@ -1274,6 +1310,42 @@
               "required": false,
               "default": null,
               "help": "Column name for cell types/clusters (auto-detected if omitted)",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [
+                "--case"
+              ],
+              "dest": "case",
+              "nargs": null,
+              "required": false,
+              "default": null,
+              "help": "Numerator condition level for the audited contrast",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [
+                "--reference"
+              ],
+              "dest": "reference",
+              "nargs": null,
+              "required": false,
+              "default": null,
+              "help": "Denominator condition level for the audited contrast",
+              "type": null
+            },
+            {
+              "kind": "_StoreAction",
+              "options": [
+                "--cell-type"
+              ],
+              "dest": "cell_type",
+              "nargs": null,
+              "required": false,
+              "default": null,
+              "help": "Cell type label to audit within the selected contrast",
               "type": null
             },
             {

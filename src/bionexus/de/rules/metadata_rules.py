@@ -26,103 +26,6 @@ else:
         pd = None
 
 
-def _record_metadata_checks(
-    checks: List[CheckRecord],
-    findings: List[DEFinding],
-    d_col: Optional[str],
-    c_col: Optional[str],
-    ct_col: Optional[str],
-    b_col: Optional[str],
-    cond_donor_counts: Dict[str, int],
-) -> None:
-    """Record metadata checks for replicates, imbalance, and batch confounding."""
-    replicate_ids = {"BFA-001", "BFA-001b", "BFA-005"}
-    if any(f.rule_id in replicate_ids for f in findings):
-        min_n = min(cond_donor_counts.values()) if cond_donor_counts else 0
-        checks.append(
-            CheckRecord(
-                check_id="donor_replicates",
-                title="供体/生物学重复设计",
-                status=CheckStatus.ISSUE_FOUND,
-                summary=f"已检查样本设计：每组最少 {min_n} 个供体。",
-                required_for_pass=True,
-            )
-        )
-    else:
-        summary = ", ".join(f"{k} N={v}" for k, v in cond_donor_counts.items()) or "condition counts unavailable"
-        checks.append(
-            CheckRecord(
-                check_id="donor_replicates",
-                title="供体/生物学重复设计",
-                status=CheckStatus.ASSESSED,
-                summary=f"已检查样本设计：{summary}。",
-                required_for_pass=True,
-            )
-        )
-
-    if not ct_col:
-        checks.append(
-            CheckRecord(
-                check_id="donor_imbalance",
-                title="供体细胞贡献失衡",
-                status=CheckStatus.MISSING_EVIDENCE,
-                summary="未提供细胞类型列，供体失衡未评估。",
-                required_for_pass=False,
-            )
-        )
-    elif any(f.rule_id == "BFA-007" for f in findings):
-        checks.append(
-            CheckRecord(
-                check_id="donor_imbalance",
-                title="供体细胞贡献失衡",
-                status=CheckStatus.ISSUE_FOUND,
-                summary="已检查细胞类型内供体分布：存在单一供体主导。",
-                required_for_pass=False,
-            )
-        )
-    else:
-        checks.append(
-            CheckRecord(
-                check_id="donor_imbalance",
-                title="供体细胞贡献失衡",
-                status=CheckStatus.ASSESSED,
-                summary="已检查细胞类型内供体分布，未见超过阈值的单一供体主导。",
-                required_for_pass=False,
-            )
-        )
-
-    if not b_col:
-        checks.append(
-            CheckRecord(
-                check_id="batch_confounding",
-                title="批次与组别混杂",
-                status=CheckStatus.MISSING_EVIDENCE,
-                summary="未提供批次列，混杂未评估。",
-                required_for_pass=False,
-            )
-        )
-    elif any(f.rule_id == "BFA-004" for f in findings):
-        checks.append(
-            CheckRecord(
-                check_id="batch_confounding",
-                title="批次与组别混杂",
-                status=CheckStatus.ISSUE_FOUND,
-                summary="已检查：组别与批次完全混杂。",
-                required_for_pass=False,
-            )
-        )
-    else:
-        checks.append(
-            CheckRecord(
-                check_id="batch_confounding",
-                title="批次与组别混杂",
-                status=CheckStatus.ASSESSED,
-                summary="已检查批次与组别交叉表，未见完全混杂。",
-                required_for_pass=False,
-            )
-        )
-
-
 def _audit_metadata(
     obs_df: pd.DataFrame,
     d_col: Optional[str],
@@ -136,9 +39,16 @@ def _audit_metadata(
     dominance_threshold: float = 0.70,
     min_donors_required: int = 3,
     min_cells_per_donor: int = 20,
+    *,
+    case: Optional[str] = None,
+    reference: Optional[str] = None,
+    cell_type: Optional[str] = None,
+    rows_are_cells: Optional[bool] = None,
 ) -> None:
     """Audit biological replicates, donor imbalance, and batch confounding."""
-    cohort_summary["n_cells"] = len(obs_df)
+    cohort_summary["n_metadata_rows"] = len(obs_df)
+    if rows_are_cells is True:
+        cohort_summary["n_cells"] = len(obs_df)
 
     if not d_col:
         findings.append(
@@ -181,7 +91,8 @@ def _audit_metadata(
         )
         return
 
-    donors = obs_df[d_col].unique()
+    cohort_summary["donor_key"] = d_col
+    donors = obs_df[d_col].dropna().astype(str).unique()
     cohort_summary["n_donors"] = len(donors)
     cohort_summary["donors"] = list(donors)
 
@@ -218,163 +129,138 @@ def _audit_metadata(
             CheckRecord(
                 check_id="donor_imbalance",
                 title="供体细胞贡献失衡",
-                status=CheckStatus.MISSING_EVIDENCE if not ct_col else CheckStatus.ASSESSED,
-                summary="无组别列，仅能描述供体细胞分布。" if not ct_col else "已检查细胞类型内供体分布。",
+                status=CheckStatus.MISSING_EVIDENCE,
+                summary="无组别列，无法检查各条件内的供体贡献。",
                 required_for_pass=False,
             )
         )
         return
 
-    # 1. Biological replicates per condition
-    cond_donor_counts: Dict[str, int] = {}
-    for cond, sub in obs_df.groupby(c_col, observed=False):
-        cond_donor_counts[str(cond)] = sub[d_col].nunique()
-    cohort_summary["conditions"] = cond_donor_counts
+    from bionexus.de.rules.sample_design import measure_replicate_strata
+    from bionexus.statistical_rules import STATISTICAL_THRESHOLDS
 
-    min_donors = min(cond_donor_counts.values()) if cond_donor_counts else 0
-
-    if min_donors < 2:
-        findings.append(
-            DEFinding(
-                rule_id="BFA-001",
-                severity=FindingSeverity.BLOCKER,
-                category=FindingCategory.DONOR_REPLICATES,
-                title=f"生物学重复严重不足 (N={min_donors} < 2 Replicates per Condition)",
-                impact_on_conclusion=f"至少有一个实验组别仅有 {min_donors} 个供体/动物。统计学自由度为 0，无法估算组内真实生物学离散度（Biological Dispersion）。任何观察到的差异基因均可能来自个体的私有特征。",
-                sample_or_donor=", ".join([f"{k} (N={v})" for k, v in cond_donor_counts.items() if v < 2]),
-                step_or_location="Experimental Design / Sample Intake",
-                minimal_fix=(
-                    "# 无法仅靠算法修正零生物学重复缺陷：\n"
-                    "# 1. 必须补测至少 2~3 例独立生物学重复；\n"
-                    "# 2. 若无法补测，必须在文稿中明确降级为「单个病人的探索性观察 (Exploratory Case Study)」，严禁声称任何群体结论。"
-                ),
-                evidence_data={"donors_by_condition": cond_donor_counts},
-            )
-        )
-    elif min_donors == 2:
-        findings.append(
-            DEFinding(
-                rule_id="BFA-001b",
-                severity=FindingSeverity.HIGH_IMPACT,
-                category=FindingCategory.DONOR_REPLICATES,
-                title="生物学重复临界不足 (N=2 Replicates per Condition)",
-                impact_on_conclusion="每组仅有 2 个生物学重复。虽然可运行 DESeq2/EdgeR，但方差估计完全依赖基因间的经验贝叶斯收缩（Empirical Bayes Shrinkage），检出力较低且易受离群值干扰。只能作为初步探索，不足以支持稳健人群外推。",
-                sample_or_donor=", ".join([f"{k} (N={v})" for k, v in cond_donor_counts.items() if v == 2]),
-                step_or_location="Experimental Design",
-                minimal_fix=(
-                    "# 最小修复与风险声明：\n"
-                    "# 1. 推荐将队列扩充至 N >= 3 供体/组；\n"
-                    "# 2. 在论文中声明结果为探索性（Exploratory），并在关键基因上补充 qPCR 或流式正交验证。"
-                ),
-                evidence_data={"donors_by_condition": cond_donor_counts},
-            )
-        )
-        pi_decisions.append(
-            PIDecisionItem(
-                decision_id="PI-DEC-01",
-                title="N=2 供体实验设计结论定性裁决",
-                context=f"当前每组仅有 2 例供体 ({cond_donor_counts})，低于 Nature/Cell 子刊对群体单细胞差异表达默认推荐的 N>=3 门槛。",
-                option_a="[推荐] 保持现有数据，但在文稿 Results 中将结论严格界定为「队列内部探索性候选基因 (Exploratory Candidate Set)」，严禁使用因果或普适标志物措辞；",
-                option_b="暂停投稿，补测同批次 1~2 例同质供体后再行合并分析。",
-                tradeoff_explanation="选项 A 可快速推进组会交流或预印本发布，但正式审稿大概率被要求补样；选项 B 可一劳永逸达到审稿标准。",
-                recommended_option="A",
-            )
-        )
-
-    # 2. Donor cell dominance / Imbalance per cell type
-    if ct_col:
-        imbalanced_clusters: list[dict[str, Any]] = []
-        low_count_donors: list[dict[str, Any]] = []
-        for ct_val, ct_sub in obs_df.groupby(ct_col, observed=False):
-            if ct_sub.empty:
-                continue
-            total_cluster_cells = len(ct_sub)
-            donor_counts = ct_sub[d_col].value_counts()
-            max_donor = donor_counts.index[0]
-            max_frac = donor_counts.iloc[0] / total_cluster_cells if total_cluster_cells > 0 else 0
-
-            if max_frac >= dominance_threshold and total_cluster_cells >= 50:
-                imbalanced_clusters.append({
-                    "cell_type": str(ct_val),
-                    "dominant_donor": str(max_donor),
-                    "fraction": round(float(max_frac), 3),
-                    "donor_cells": int(donor_counts.iloc[0]),
-                    "total_cells": int(total_cluster_cells),
-                })
-
-            # Check for low count donors (< 10 cells)
-            for d_id, c_count in donor_counts.items():
-                if c_count < 10:
-                    low_count_donors.append({
-                        "cell_type": str(ct_val),
-                        "donor": str(d_id),
-                        "count": int(c_count),
-                    })
-
-        if imbalanced_clusters:
-            top_imb = imbalanced_clusters[0]
-            findings.append(
-                DEFinding(
-                    rule_id="BFA-007",
-                    severity=FindingSeverity.HIGH_IMPACT,
-                    category=FindingCategory.DONOR_IMBALANCE,
-                    title=f"单一供体细胞占比极端倾斜 (Extreme Donor Imbalance: {top_imb['cell_type']})",
-                    impact_on_conclusion=f"在「{top_imb['cell_type']}」细胞类型中，供体 {top_imb['dominant_donor']} 贡献了 {top_imb['fraction']*100:.1f}% 的细胞。差异表达分析得到的所谓「组间标志物」，极大可能只是该特定供体的私有基因表达特征（Donor Private Transcriptome）。",
-                    sample_or_donor=f"供体 {top_imb['dominant_donor']} 在细胞群「{top_imb['cell_type']}」中",
-                    step_or_location="Cell type subsetting / Pseudobulk input",
-                    minimal_fix=(
-                        f"# 最小修复（按供体聚合为 Pseudobulk，使各供体平权）：\n"
-                        f"# 1. 严禁直接在该亚群运行单细胞 Wilcoxon 检验；\n"
-                        f"# 2. 执行 Leave-One-Donor-Out 敏感性分析，验证剔除供体 {top_imb['dominant_donor']} 后 DEG 列表重合度是否 > 75%。"
-                    ),
-                    evidence_data={"imbalanced_clusters": imbalanced_clusters},
-                )
-            )
-            pi_decisions.append(
-                PIDecisionItem(
-                    decision_id="PI-DEC-02",
-                    title=f"{top_imb['cell_type']} 亚群单一供体主导处理裁决",
-                    context=f"供体 {top_imb['dominant_donor']} 在该亚群占 {top_imb['fraction']*100:.1f}% 细胞，其他供体细胞数偏低。",
-                    option_a=f"[推荐] 采用 Pseudobulk 求和平权，并附上剔除 {top_imb['dominant_donor']} 前后的 DEG 灵敏度对比图；",
-                    option_b="若该细胞群在其他供体中极少发生，考虑在正文中明确将其归为「供体特异性扩张亚群 (Donor-Specific Expansion)」，而非通用疾病相关亚群。",
-                    tradeoff_explanation="选项 A 能保全该亚群的统计检验；选项 B 能诚实规避被审稿人质疑挑选特例的风险。",
-                    recommended_option="A",
-                )
-            )
-
-    # 3. Batch vs Condition Confounding (100% Confounded design)
-    if b_col:
-        contingency = pd.crosstab(obs_df[c_col], obs_df[b_col])
-        cohort_summary["batches"] = len(obs_df[b_col].unique())
-        # Check if condition is completely collinear with batch
-        is_perfectly_confounded = bool((contingency.gt(0).sum(axis=0) <= 1).all())
-
-        if is_perfectly_confounded and len(contingency) > 1:
-            findings.append(
-                DEFinding(
-                    rule_id="BFA-004",
-                    severity=FindingSeverity.BLOCKER,
-                    category=FindingCategory.BATCH_CONFOUNDING,
-                    title="实验组别与技术批次 100% 完全混杂 (Complete Batch Confounding)",
-                    impact_on_conclusion="疾病组与对照组完全在不同的技术批次/测序泳道中进行（如全部 Control 在 Batch 1，全部 Disease 在 Batch 2）。在数理上完全无法区分差异表达是由生物学疾病引起，还是由测序仪/反应批次噪声导致。",
-                    sample_or_donor=", ".join([f"批次 {b}" for b in obs_df[b_col].unique()]),
-                    step_or_location="Experimental Design / Batch Allocation",
-                    minimal_fix=(
-                        "# 完全混杂无法通过数学模型完全脱敏：\n"
-                        "# 1. 严禁声称任何因果或生物学特异性差异表达；\n"
-                        "# 2. 最优解：在同一批次中重新对部分样本进行平行测序；\n"
-                        "# 3. 次优解：在文稿讨论中明确列为主要局限，并仅将表达方向与已有公共数据集（如 GSE 权威队列）一致的基因列为潜在候选。"
-                    ),
-                    evidence_data={"contingency_matrix": contingency.to_dict()},
-                )
-            )
-
-    _record_metadata_checks(
-        checks=checks,
-        findings=findings,
-        d_col=d_col,
-        c_col=c_col,
-        ct_col=ct_col,
-        b_col=b_col,
-        cond_donor_counts=cond_donor_counts,
+    strata, imbalance = measure_replicate_strata(
+        obs_df, d_col, c_col, ct_col, b_col, min_cells_per_donor=min_cells_per_donor,
+        case=case, reference=reference, cell_type=cell_type, rows_are_cells=rows_are_cells,
+        dominance_threshold=dominance_threshold,
     )
+    cohort_summary["replicate_scope"] = {"cell_type": cell_type, "case": case, "reference": reference}
+    cohort_summary["replicate_strata"] = strata
+    levels = strata[0]["donors_by_condition"] if strata else {}
+    counts = {level: min(s["donors_by_condition"][level] for s in strata) for level in levels}
+    cohort_summary["conditions"] = counts
+    two_donor_strata = []
+    for stratum in strata:
+        n = stratum["min_donors"]
+        if n >= max(3, min_donors_required):
+            continue
+        name = stratum["cell_type"] or "未分层"
+        donors_by_condition = stratum["donors_by_condition"]
+        if n < 2:
+            rule, severity = "BFA-001", FindingSeverity.BLOCKER
+            title = f"生物学重复严重不足 (N={n} < 2)"
+            impact = "至少一个组别不足两个合格供体，无法在该组估计供体间差异。"
+            fix = "必须增加独立生物学重复，或将结论收窄到所观察样本的描述。"
+        else:
+            rule, severity = "BFA-001b", FindingSeverity.HIGH_IMPACT
+            title = f"生物学重复受限（最少 N={n}）"
+            impact = "组内重复数有限，方差估计不稳定，个别供体可能改变结果。"
+            fix = f"按预设设计增加独立供体（当前配置 {min_donors_required} 个/组），并评估功效。"
+            if n == 2:
+                two_donor_strata.append(name)
+        findings.append(DEFinding(
+            rule_id=rule, severity=severity, category=FindingCategory.DONOR_REPLICATES,
+            title=f"{name}：{title}", impact_on_conclusion=impact,
+            sample_or_donor=", ".join(f"{key} (N={v})" for key, v in donors_by_condition.items() if v == n),
+            step_or_location="Experimental Design / Sample Intake", minimal_fix=fix,
+            evidence_data={k: v for k, v in stratum.items() if k != "design"},
+        ))
+    if two_donor_strata:
+        pi_decisions.append(PIDecisionItem(
+            decision_id="PI-DEC-01", title="N=2 供体实验设计结论定性裁决",
+            context=f"以下细胞类型至少有一组仅有两个合格供体：{', '.join(two_donor_strata)}。组内方差估计不稳定。",
+            option_a="[推荐] 在 Results 中将结论界定为队列内部探索性候选基因，并报告不确定性。",
+            option_b="按预先规定的效应大小和目标功效增加独立供体，重新评估。",
+            tradeoff_explanation="现有样本支持描述性分析，增加供体有助于估计组间差异。",
+            recommended_option="A",
+        ))
+    if imbalance:
+        first = max(imbalance, key=lambda item: item["fraction"])
+        name, cond, donor = first["cell_type"], first["condition"], first["dominant_donor"]
+        fraction = f"{first['fraction']:.1%}"
+        findings.append(DEFinding(
+            rule_id="BFA-007", severity=FindingSeverity.HIGH_IMPACT, category=FindingCategory.DONOR_IMBALANCE,
+            title=f"单一供体细胞占比倾斜（{name}，{cond}）", sample_or_donor=f"供体 {donor}",
+            impact_on_conclusion=f"在 {cond} 条件内，{donor} 贡献了 {name} 细胞的 {fraction}，个体特征可能主导比较。",
+            step_or_location="Cell type subsetting / Pseudobulk input",
+            minimal_fix="运行 audit-de --alternative-plan 的逐供体剔除（LODO）分支，检查是否出现 DIRECTION_SENSITIVE。",
+            evidence_data={"imbalanced_clusters": imbalance},
+        ))
+        pi_decisions.append(PIDecisionItem(
+            decision_id="PI-DEC-02", title=f"{name} 亚群单一供体主导处理裁决",
+            context=f"{cond} 条件内，供体 {donor} 贡献 {fraction} 的 {name} 细胞。",
+            option_a="[推荐] 报告逐供体剔除的方向与不确定性变化。",
+            option_b="将该亚群描述为供体特异性观察。", tradeoff_explanation="结论范围取决于其他供体提供的独立证据。",
+            recommended_option="A",
+        ))
+    if b_col:
+        cohort_summary["batches"] = int(obs_df[b_col].nunique())
+    batch_findings = []
+    threshold = STATISTICAL_THRESHOLDS["batch_cramers_v_advisory"]
+    for stratum in strata:
+        design = stratum["design"]
+        if not b_col or design["estimable"] is None:
+            continue
+        if not design["estimable"]:
+            severity = FindingSeverity.BLOCKER
+            title = "组别和批次/供体设计完全混杂"
+            impact = "样本设计矩阵的行空间不包含所需条件对比，无法分离条件效应。"
+            fix = "在相同批次增加跨条件的独立供体或重新设计比较。"
+        elif design["residual_df"] < 2:
+            severity = FindingSeverity.HIGH_IMPACT
+            title = "样本设计剩余自由度不足"
+            impact = "所需条件对比可估计，但剩余生物学自由度不足 2，方差估计不稳定。"
+            fix = "增加独立重复，检查批次分配与配对结构。"
+        elif design["cramer_v"] >= threshold:
+            severity = FindingSeverity.ADVISORY
+            title = "样本层面组别与批次部分相关"
+            impact = "条件与批次分布不均；可估计的条件对比仍可能对批次调整敏感。"
+            fix = "报告条件与批次的样本交叉表，比较预先指定的批次调整模型。"
+        else:
+            continue
+        batch_findings.append(DEFinding(
+            rule_id="BFA-004", severity=severity, category=FindingCategory.BATCH_CONFOUNDING,
+            title=title, impact_on_conclusion=impact, sample_or_donor=stratum["cell_type"],
+            step_or_location="Experimental Design / Batch Allocation", minimal_fix=fix,
+            evidence_data={"cell_type": stratum["cell_type"], "cramers_v_advisory_threshold": threshold, **design},
+        ))
+    findings.extend(batch_findings)
+    _record_metadata_checks(checks, findings, d_col, c_col, ct_col, b_col, counts, strata=strata)
+
+
+def _record_metadata_checks(checks: List[CheckRecord], findings: List[DEFinding], d_col: Optional[str],
+                            c_col: Optional[str], ct_col: Optional[str], b_col: Optional[str],
+                            cond_donor_counts: Dict[str, int], *, strata: Optional[list] = None) -> None:
+    """Summarize the checks without treating missing design measurements as passes."""
+    summary = ", ".join(f"{k} N={v}" for k, v in cond_donor_counts.items())
+    scope = "各细胞类型中的最少合格供体数" if ct_col else "未按细胞类型分层，供体数可能高估"
+    low = any(f.rule_id in {"BFA-001", "BFA-001b", "BFA-005"} for f in findings)
+    status = CheckStatus.ASSESSED if len(cond_donor_counts) >= 2 else CheckStatus.MISSING_EVIDENCE
+    checks.append(CheckRecord(check_id="donor_replicates", title="供体/生物学重复设计",
+                              status=CheckStatus.ISSUE_FOUND if low else status,
+                              summary=f"{scope}。{summary}", required_for_pass=True))
+    imbalance_checked = bool(ct_col and c_col and d_col)
+    batch_checked = bool(b_col and d_col and c_col)
+    if strata is not None:
+        imbalance_checked = imbalance_checked and any(s["min_cells_per_donor"] is not None for s in strata)
+        batch_checked = batch_checked and bool(strata) and all(s["design"]["estimable"] is not None for s in strata)
+    for check_id, title, rule, measured, description in (
+        ("donor_imbalance", "供体细胞贡献失衡", "BFA-007", imbalance_checked, "各细胞类型在各条件内的供体细胞贡献"),
+        ("batch_confounding", "批次与组别混杂", "BFA-004", batch_checked, "供体/样本层面的组别与批次设计"),
+    ):
+        status = CheckStatus.ASSESSED if measured else CheckStatus.MISSING_EVIDENCE
+        if any(f.rule_id == rule for f in findings):
+            status = CheckStatus.ISSUE_FOUND
+        checks.append(CheckRecord(check_id=check_id, title=title, status=status,
+                                  summary=f"已检查{description}。" if measured else f"资料不足，未能完整评估{description}。",
+                                  required_for_pass=False))

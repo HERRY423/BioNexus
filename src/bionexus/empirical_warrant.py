@@ -84,6 +84,7 @@ class CalibrationContext:
     reference_domain_match: Optional[bool] = None
     state_geometry: str = "discrete"  # discrete | continuous | unknown
     population_scope: str = "closed_set"  # closed_set | rare | open_set | unknown
+    cells_loaded: Optional[int] = None  # cells loaded per capture for doublet calibration
 
     def evidence_source_for(self, metric: str) -> Optional[str]:
         return self.evidence_sources.get(metric) or self.default_evidence_source
@@ -102,6 +103,8 @@ class CalibrationContext:
         }
         if metric is not None:
             data["resolved_evidence_source"] = self.evidence_source_for(metric)
+        if self.cells_loaded is not None:
+            data["cells_loaded"] = self.cells_loaded
         return data
 
 
@@ -165,6 +168,7 @@ class CalibrationProfile:
     known_failures: Tuple[str, ...] = ()
     supersedes: Optional[str] = None
     metadata: Mapping[str, Any] = field(default_factory=dict)
+    cells_loaded_range: Optional[Tuple[int, int]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -179,6 +183,7 @@ class CalibrationProfile:
                 "references": list(self.references),
                 "tasks": list(self.tasks),
                 "evidence_sources": list(self.evidence_sources),
+                **({"cells_loaded_range": list(self.cells_loaded_range)} if self.cells_loaded_range is not None else {}),
             },
             "review_status": self.review_status.value,
             "evidence": [item.to_dict() for item in self.evidence],
@@ -202,7 +207,7 @@ class CalibrationProfile:
             self.tasks,
             self.evidence_sources,
         )
-        return sum(1 for values in dimensions if "*" not in {_norm(v) for v in values})
+        return sum(1 for values in dimensions if "*" not in {_norm(v) for v in values}) + int(self.cells_loaded_range is not None)
 
     def validation_issues(self) -> List[str]:
         issues: List[str] = []
@@ -210,6 +215,10 @@ class CalibrationProfile:
             issues.append("profile_id, version, and metric are required")
         if not math.isfinite(self.threshold) or not 0.0 <= self.threshold <= 1.0:
             issues.append("threshold must be finite and within [0, 1]")
+        if self.cells_loaded_range is not None:
+            limits = self.cells_loaded_range
+            if len(limits) != 2 or not all(type(v) is int for v in limits) or not 0 < limits[0] <= limits[1]:
+                issues.append("cells_loaded_range requires two ordered positive integer bounds")
         for name, values in (
             ("tissues", self.tissues),
             ("platforms", self.platforms),
@@ -383,6 +392,7 @@ def _profile_from_dict(data: Mapping[str, Any]) -> CalibrationProfile:
         known_failures=tuple(data.get("known_failures", ())),
         supersedes=data.get("supersedes"),
         metadata=data.get("metadata", {}),
+        cells_loaded_range=tuple(regime["cells_loaded_range"]) if "cells_loaded_range" in regime else None,
     )
 
 
@@ -501,6 +511,20 @@ class CalibrationRegistry:
                 tuple(sorted(profile.profile_id for profile in matches)),
             )
 
+        if any(p.cells_loaded_range is not None for p in valid_approved):
+            valid_approved = [
+                p for p in valid_approved if p.cells_loaded_range is None or (
+                    type(context.cells_loaded) is int
+                    and p.cells_loaded_range[0] <= context.cells_loaded <= p.cells_loaded_range[1]
+                )
+            ]
+            if not valid_approved:
+                return self._unresolved(
+                    metric,
+                    CalibrationResolutionStatus.INSUFFICIENT_CONTEXT if context.cells_loaded is None
+                    else CalibrationResolutionStatus.DOMAIN_MISMATCH,
+                    context_dict, "Supply the number of cells loaded per capture within an approved profile's range.",
+                )
         top_specificity = max(profile.specificity for profile in valid_approved)
         finalists = [profile for profile in valid_approved if profile.specificity == top_specificity]
         distinct_rules = {(profile.threshold, profile.direction.value) for profile in finalists}
@@ -521,7 +545,7 @@ class CalibrationRegistry:
             context=context_dict,
             reason=(
                 f"Resolved approved empirical profile {selected.profile_id}@{selected.version} "
-                f"at specificity {selected.specificity}/5."
+                f"with {selected.specificity} matched, non-wildcard context dimensions."
             ),
             registry_version=self.registry_version,
             registry_sha256=self.registry_sha256,

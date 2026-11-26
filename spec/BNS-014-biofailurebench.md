@@ -77,23 +77,23 @@ bionexus bench validate-trap my_trap.yaml
 bionexus bench stats
 ```
 
-## 4. Current Corpus Composition (38 Canonical Traps)
+## 4. Corpus coverage and causal-language measurements
 
-- **Gating Traps**: 35 (100% passing deterministically across all 12 failure modes)
-- **Frontier Traps**: 3 (honest known limitations under active development)
-- **Failure Taxonomy Coverage**: 100% (77 total benchmark case linkages across suites)
+`bionexus bench validate` lists the current gating and frontier case counts and
+coverage of the BN-F001 through BN-F012 failure modes.
 
+BF-051 through BF-060 exercise the INV-009 detector used by `bionexus verify`.
+Each case supplies a fixed statement about an observational study. The positive
+label means the author asserts a causal effect. Cases cover negation within
+and across clauses, endorsed and rejected quotations, and paraphrases.
 
-## 3. Current corpus state (honest)
+Run `bionexus eval --suite biofailurebench --level L2 --provider replay` to
+reproduce the CI job summary. The INV-009 table includes every labeled case,
+including frontier cases. It reports the confusion counts and case IDs for
+errors. Precision and recall apply to this authored corpus. Performance on
+independent manuscripts remains unmeasured.
 
-26 traps: 23 gating (all passing deterministically), 3 frontier (honest known
-limitations: insufficient-power boundary, doublet-driven annotation,
-negative-marker-absent verdict wiring). Coverage spans all twelve taxonomy
-modes BN-F001..BN-F012, closing the three formerly-open gaps (BN-F004
-identifier mismatch, BN-F005 missing FDR, BN-F008 cross-database
-contradiction) with wired detection.
-
-## 4. Verification hooks
+## 5. Verification hooks
 
 - `evals/biofailurebench.py::validate_corpus` — schema and coverage (BNS-BF-001/004/007).
 - `tests/unit/test_biofailurebench.py` — corpus contract and runner wiring.

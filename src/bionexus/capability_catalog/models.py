@@ -351,8 +351,8 @@ class CapabilityContract:
         Three strictly separated objects:
 
         1. **EvidenceAssessment** (purpose- and policy-independent): what the
-           evidence IS worth, from declared evidence factors, tool receipts, and active
-           violations.  Purpose never raises or lowers it.
+           evidence supports. At preflight, declarations and unverified receipts
+           are recorded and the ceiling is PRELIMINARY. Active violations can lower it.
         2. **WarrantAssessment** (policy-independent): the capped claim
            maturity and unsupported claims, starting from the evidence
            assessment.  Identical in every lab.

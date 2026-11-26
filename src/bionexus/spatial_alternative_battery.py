@@ -20,7 +20,7 @@ import json
 import math
 from dataclasses import asdict, dataclass, field
 from enum import Enum
-from typing import Any, Dict, Mapping, Optional, Sequence, Tuple
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Sequence, Tuple
 
 import numpy as np
 from scipy import sparse
@@ -40,6 +40,9 @@ from bionexus.spatial_empirical_gold import (
     is_spatial_gold_platform,
 )
 from bionexus.spatial_inference import ControlResult, SpatialInferenceVerdict, assess_spatial_inference
+
+if TYPE_CHECKING:
+    from pandas import DataFrame
 
 
 class SpatialBatteryError(ValueError):
@@ -113,6 +116,9 @@ class SpatialBatteryData:
     segmentation_contact_variants: Mapping[str, Any] = field(default_factory=dict)
     leakage_expression_variants: Mapping[str, Any] = field(default_factory=dict)
     cell_label_variants: Mapping[str, Sequence[str]] = field(default_factory=dict)
+    obs: Optional[DataFrame] = None  # sample metadata, in expression row order
+    donor_col: Optional[str] = None
+    section_col: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -193,7 +199,7 @@ class SpatialBatteryResult:
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            "schema_version": "bionexus.spatial-alternative-battery.v1",
+            "schema_version": "bionexus.spatial-alternative-battery.v2",
             "capability_id": "spatial.inference_validity",
             "observation": self.observation.to_dict(),
             "baseline_effect": self.baseline_effect,
@@ -259,6 +265,9 @@ def _validate_data(data: SpatialBatteryData) -> Tuple[np.ndarray, np.ndarray, np
         raise SpatialBatteryError("expression shape must align with coordinates and gene_names")
     if labels.size == 0 or np.any(np.char.str_len(labels) == 0):
         raise SpatialBatteryError("cell_labels must be non-empty")
+
+    if data.obs is not None and len(data.obs) != n_rows:
+        raise SpatialBatteryError("obs must align one-to-one with expression rows")
 
     if data.contact_graph is None:
         contact = sparse.csr_matrix((coordinates.shape[0], coordinates.shape[0]), dtype=float)
@@ -878,21 +887,36 @@ def run_spatial_alternative_battery(
             "Observation is expression enrichment rather than a ligand-receptor interaction claim; LR abundance is not applicable.",
         )
 
-    controls = [ControlResult(name=name, status=item.state.value, note=item.note) for name, item in diagnostics.items()]
-    verdict = assess_spatial_inference(observation.statement, controls)
+    diagnostics["edge_effects"] = _untested(
+        "edge_effects", "A tissue-boundary challenge is needed to assess edge effects."
+    )
+    artifacts = {}
+    controls = []
+    for name, diagnostic in diagnostics.items():
+        payload = json.dumps(diagnostic.to_dict(), sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+        digest = hashlib.sha256(payload).hexdigest()
+        artifacts[digest] = payload
+        controls.append(ControlResult(
+            name, diagnostic.state.value, diagnostic.note, statistic=diagnostic.score,
+            p_or_interval=diagnostic.score if name == "permutation_null" else None,
+            artifact_sha256=digest,
+        ))
+
+    # Only focal cells contributed to the effect. Count independent units in
+    # each exposure arm of this contrast, using the same graph and row mask.
+    sample_obs = None
+    if data.obs is not None:
+        focal = labels == observation.focal_cell_label
+        sample_obs = data.obs.iloc[np.flatnonzero(focal)].copy()
+        sample_obs["_battery_exposure"] = np.where(baseline_exposure[focal], "exposed", "unexposed")
+    verdict = assess_spatial_inference(
+        observation.statement, controls, artifacts=artifacts, obs=sample_obs,
+        donor_col=data.donor_col, section_col=data.section_col, group_col="_battery_exposure",
+    )
     if baseline.value is None:
-        verdict = SpatialInferenceVerdict(
-            observation=observation.statement,
-            verdict="ABSTAIN",
-            controlled=verdict.controlled,
-            untested=sorted(set(verdict.untested) | {"baseline_effect"}),
-            failed=verdict.failed,
-            notes=verdict.notes
-            + [
-                "The baseline effect was not estimable with the predeclared minimum group size; "
-                "no spatial support verdict can be issued."
-            ],
-        )
+        verdict.verdict = "ABSTAIN"
+        verdict.untested = sorted(set(verdict.untested) | {"baseline_effect"})
+        verdict.notes.append("The baseline effect was not estimable at the predeclared minimum group size.")
 
     provenance_payload = {
         "dataset_id": data.dataset_id,
@@ -919,6 +943,8 @@ def run_spatial_alternative_battery(
             }
         ),
         "plan": plan.to_dict(),
+        "observation": observation.to_dict(),
+        "control_artifact_sha256": {name: item.artifact_sha256 for name, item in verdict.control_evidence.items()},
         "segmentation_variant_ids": segmentation_variant_ids,
         "segmentation_target_gene_sha256": {
             name: _array_sha256(

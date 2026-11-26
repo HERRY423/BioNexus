@@ -495,7 +495,8 @@ def audit_analysis(path: str | Path) -> AnalysisAuditResult:
                     "aggregation or donor-level grouping: thousands of cells from one sample are being "
                     "treated as independent biological replicates.",
                     "Aggregate raw counts per (donor, cell_type, condition) into pseudobulk, then test "
-                    "donors (n >= 2 per condition) with a NB GLM; or relabel as exploratory within-sample ranking.",
+                    "conditions with DESeq2, edgeR or limma-voom, or fit a mixed model with a donor random "
+                    "effect (dream or NEBULA). Use exploratory within-sample language for cell rankings.",
                 )
             )
         # BFA-005 inappropriate statistical unit (donor column exists but unused)

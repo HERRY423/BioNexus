@@ -9,6 +9,26 @@ from __future__ import annotations
 from typing import Any
 
 
+def _measurement_lines(result: Any) -> list[str]:
+    assessment = result.evidence_assessment
+    if assessment is None:
+        return []
+    measured = "、".join(assessment["satisfied_factors"]) or "无"
+    lines = [f"实测证据等级 {assessment['evidence_maturity']}，已满足因子 {measured}。"]
+    if assessment["unverified_factors"]:
+        lines.append("待核验的声明因子包括 " + "、".join(assessment["unverified_factors"]) + "。")
+    for item in result.design_warrants:
+        label = item["cell_type"] or "未按细胞类型分层"
+        donors = ", ".join(f"{level}={n}" for level, n in item["donors_by_condition"].items())
+        scope = item["verdict"]["maturity_ceiling"] if "verdict" in item else item["reason"]
+        lines.append(f"{label}（合格供体 {donors}）。设计推断上限 {scope}")
+        if item["power"]:
+            p = item["power"]
+            lines.append(f"  MDE 为 {p['mde_log2fc']:.2f} log2 FC（目标功效 {p['target_power']:.0%}，"
+                         f"单检验 α={p['per_test_alpha']:.3g}，依据 {p['alpha_basis']}）。")
+    return lines
+
+
 def render_summary_text(result: Any, use_color: bool = True) -> str:
     """Render a clean, human-readable terminal output."""
     from bionexus.de.models import CHECK_STATUS_ZH, CheckStatus, FindingSeverity
@@ -54,6 +74,8 @@ def render_summary_text(result: Any, use_color: bool = True) -> str:
     lines.append(f"\n{bold}--------------------------------------------------------------------------------{reset}")
     lines.append(f"{bold} 1. 哪个问题会影响当前结论 (Issues Affecting Conclusions){reset}")
     lines.append(f"{bold}--------------------------------------------------------------------------------{reset}")
+    lines.extend(_measurement_lines(result))
+
     if result.checks:
         lines.append("\n  检查覆盖：")
         for chk in result.checks:
@@ -162,6 +184,10 @@ def render_markdown(result: Any) -> str:
         if "batches" in result.cohort_summary:
             md.append(f"- **批次数量 (Batches)**: {result.cohort_summary['batches']}")
         md.append("")
+
+    measurement_lines = _measurement_lines(result)
+    if measurement_lines:
+        md.extend(["## 实测证据与设计功效", "", *measurement_lines, ""])
 
     if result.checks:
         md.append("## 检查覆盖 (Assessed / Issue Found / Missing Evidence)")

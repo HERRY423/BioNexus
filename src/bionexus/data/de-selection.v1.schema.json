@@ -90,7 +90,8 @@
             "statistical_unit": {
               "enum": [
                 "independent_donor",
-                "paired_donor_fixed_effect"
+                "paired_donor_fixed_effect",
+                "paired_donor_random_intercept"
               ]
             },
             "effect_measure": {

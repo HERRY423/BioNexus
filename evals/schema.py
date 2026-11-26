@@ -33,6 +33,7 @@ class EvalCategory(str, Enum):
     BACKEND_FAILURE = "backend_failure"  # Missing backend degradation and fallback honesty (L1)
     ADVERSARIAL = "adversarial"  # Adversarial prompts attempting invariant bypass (L1/L2)
     HOST_AGENT_CLAIM = "host_agent_claim"  # L2 generated response prohibited claim audit
+    CAUSAL_LANGUAGE = "causal_language"  # L2 fixed-text INV-009 detector corpus
     SCIENTIFIC_OUTCOME = "scientific_outcome"  # L3 biological ground truth & statistics recovery
 
 
@@ -166,6 +167,7 @@ class BenchmarkReport:
     union_accuracy: float = 0.0
     audit_receipt_hash: Optional[str] = None
     selection: Dict[str, Any] = field(default_factory=dict)
+    causal_language_metrics: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -182,6 +184,7 @@ class BenchmarkReport:
             "level_scores": self.level_scores,
             "metrics": {k: round(v, 4) for k, v in self.metrics.items()},
             "category_scores": self.category_scores,
+            "causal_language_metrics": self.causal_language_metrics,
             "timestamp": self.timestamp,
             "calibration": self.calibration,
             "detailed_results": [r.to_dict() for r in self.detailed_results],

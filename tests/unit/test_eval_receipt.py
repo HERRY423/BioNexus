@@ -283,11 +283,7 @@ def test_e2e_route_scientific_intent_with_tool_receipts(canonical_backends_avail
     assert decision.status.value == "PERMITTED"
     card = decision.evidence_card_template
     assert card is not None
-    assert card.details["evidence_assessment"]["evidence_maturity"] == "ROBUST"
-    assert "backend_fidelity" in card.details["evidence_assessment"]["satisfied_factors"]
-    assert "provenance" in card.details["evidence_assessment"]["satisfied_factors"]
-    assert "sample_design" in card.details["evidence_assessment"]["satisfied_factors"]
-    assert "replication" in card.details["evidence_assessment"]["satisfied_factors"]
-    assert "confound_controls" in card.details["evidence_assessment"]["satisfied_factors"]
-    assert "sensitivity_analysis" in card.details["evidence_assessment"]["satisfied_factors"]
-    assert card.details["sufficiency"]["verdict"] == SufficiencyVerdict.WARRANTED.value
+    assessment = card.details["evidence_assessment"]
+    assert assessment["evidence_maturity"] == "PRELIMINARY"
+    assert assessment["satisfied_factors"] == []
+    assert card.details["sufficiency"]["verdict"] == SufficiencyVerdict.NOT_SUFFICIENT_FOR_INTENDED_USE.value

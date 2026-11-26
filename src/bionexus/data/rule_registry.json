@@ -1,11 +1,23 @@
 {
-  "registry_version": "3.1.0-trust-reset",
+  "registry_version": "3.2.0",
   "registry_status": "DEVELOPMENT_UNVERIFIED",
   "description": "BioNexus development rule propositions and regime hypotheses (BNS-018). No packaged rule carries verified external endorsement, empirical calibration, or accepted challenge status.",
   "last_reviewed": null,
   "external_validation_claimed": false,
   "trusted_attestation_ids": [],
   "trust_policy": "External review or calibration is accepted only through bionexus.evidence-attestation.v1 verification against an explicit trust registry and artifact digest.",
+  "statistical_thresholds_status": "DEVELOPMENT_UNVERIFIED. These screening defaults do not establish population warrants. The baseMean floor is in normalized sample counts. The doublet advisory depends on platform and cell loading. Batch association and LFC sign-agreement cutoffs have no independent empirical calibration.",
+  "statistical_thresholds": {
+    "strong_effect_log2fc": 4.0,
+    "moderate_effect_log2fc": 1.0,
+    "subtle_effect_log2fc": 0.5,
+    "effect_min_base_mean": 10.0,
+    "doublet_rate_advisory": 0.10,
+    "batch_cramers_v_advisory": 0.5,
+    "lfc_sign_agreement_reversal_below": 0.2,
+    "lfc_sign_agreement_advisory_below": 0.7,
+    "lfc_sign_agreement_min_genes": 10
+  },
   "rules": {
     "missing_replicates": {
       "aliases": [

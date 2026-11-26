@@ -8,25 +8,40 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-RECORD = "review/trust-restoration-2026-09-19/CORRECTIONS-rc9.json"
+RECORD = "review/trust-restoration-2026-09-19/CORRECTIONS-scientific-audit.json"
 
 
 def check(root: Path, record: str = RECORD) -> dict[str, Any]:
     root = root.resolve()
     errors: list[str] = []
 
-    def digest(relative: str) -> str:
+    def artifact_bytes(relative: str) -> bytes:
         path = root / relative
         path.resolve().relative_to(root)
         if path.is_symlink():
             raise ValueError(f"Symlink is not a frozen artifact: {relative}")
-        return hashlib.sha256(path.read_bytes()).hexdigest()
+        return path.read_bytes()
+
+    def digest(relative: str) -> str:
+        return hashlib.sha256(artifact_bytes(relative)).hexdigest()
 
     try:
-        corrections = json.loads((root / record).read_text(encoding="utf-8"))
+        corrections = json.loads(artifact_bytes(record))
         prior = corrections.get("supersedes")
-        if prior and digest(prior["path"]) != prior["sha256"]:
-            errors.append("Prior correction record changed")
+        seen = {(root / record).resolve()}
+        while prior:
+            prior_path = (root / prior["path"]).resolve()
+            if prior_path in seen:
+                raise ValueError("Cycle in correction history")
+            seen.add(prior_path)
+            prior_bytes = artifact_bytes(prior["path"])
+            if hashlib.sha256(prior_bytes).hexdigest() != prior["sha256"]:
+                errors.append("Prior correction record changed")
+                break
+            prior_record = json.loads(prior_bytes)
+            if not isinstance(prior_record, dict):
+                raise ValueError("Invalid prior correction record")
+            prior = prior_record.get("supersedes")
         if corrections.get("scientific_authorization") != "NONE":
             errors.append("Correction must not authorize scientific claims")
         if not corrections.get("records"):

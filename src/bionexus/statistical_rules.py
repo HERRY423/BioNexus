@@ -12,10 +12,9 @@ Three deterministic instruments:
 1. ``estimate_min_detectable_effect`` — closed-form MDE approximation for a
    pseudobulk negative-binomial comparison at a given donor count, depth,
    dispersion, and nominal FDR. Deterministic; no data file required.
-2. ``classify_effect_size_regime`` — stratifies observed log2 fold-changes into
-   STRONG / MODERATE / SUBTLE regimes. The Context-Conditioned Epistemic Ladder
-   explicitly rejects magic-number refusals: a strong monogenic-scale effect
-   legitimately needs less replication than a subtle polygenic shift.
+2. ``classify_effect_size_regime`` — stratifies shrunken log2 fold-changes for
+   expressed genes. Magnitude can inform interpretation within the assayed
+   donors or cell line. Population claims require independent replication.
 3. ``assess_doublet_risk`` — clustering-quality advisory: elevated doublet
    rates invalidate clean-population claims before annotation.
 
@@ -32,26 +31,28 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass, field
 from enum import Enum
+from numbers import Integral
+from statistics import NormalDist
 from typing import Any, Dict, List, Optional
 
-#: Effect-size regime boundaries (log2 fold-change). Registry-reviewed constants.
-STRONG_EFFECT_LOG2FC = 4.0   # monogenic-knockout scale (deterministic-effect regime)
-MODERATE_EFFECT_LOG2FC = 1.0  # clear targeted effect
-#: Below this, effects are SUBTLE polygenic shifts requiring full replication.
-SUBTLE_EFFECT_LOG2FC = 0.5
+from bionexus.empirical_warrant import (
+    CalibrationContext,
+    CalibrationRegistry,
+    ComparisonDirection,
+    default_calibration_registry,
+)
+from bionexus.rule_provenance import STATISTICAL_THRESHOLDS
 
-#: Doublet rate above which cluster-level population claims are compromised.
-DOUBLET_RATE_ADVISORY_THRESHOLD = 0.10
-
-#: Normal approximation z-quantiles (two-sided alpha=0.05 -> 1.959964; power 0.8 -> 0.841621).
-_Z_ALPHA_0P05_TWO_SIDED = 1.959964
-_Z_POWER_0P8 = 0.841621
+STRONG_EFFECT_LOG2FC = STATISTICAL_THRESHOLDS["strong_effect_log2fc"]
+MODERATE_EFFECT_LOG2FC = STATISTICAL_THRESHOLDS["moderate_effect_log2fc"]
+SUBTLE_EFFECT_LOG2FC = STATISTICAL_THRESHOLDS["subtle_effect_log2fc"]
+DOUBLET_RATE_ADVISORY_THRESHOLD = STATISTICAL_THRESHOLDS["doublet_rate_advisory"]
 
 
 class EffectSizeRegime(str, Enum):
     """Regime of the observed effect magnitude (Ladder stage 4)."""
 
-    STRONG = "STRONG"        # deterministic/monogenic scale; reduced replication defensible
+    STRONG = "STRONG"        # descriptive magnitude within the assayed biological units
     MODERATE = "MODERATE"    # targeted effect; standard replication expectations
     SUBTLE = "SUBTLE"        # polygenic shift; full replication + power analysis required
 
@@ -70,11 +71,22 @@ class PowerAssessment:
     warnings: List[str] = field(default_factory=list)
     remedies: List[str] = field(default_factory=list)
     rule_basis: List[str] = field(default_factory=list)
+    alpha_basis: str = "fdr_as_alpha_optimistic"
+    per_test_alpha: Optional[float] = None
+    target_power: float = 0.80
+    observed_effect_regime: Optional[EffectSizeRegime] = None
+    shrunk_log2fc: Optional[float] = None
+    base_mean: Optional[float] = None
+    sequencing_depth_factor: float = 1.0
+    n_tests: Optional[int] = None
+    n_true_effects: Optional[int] = None
 
     @property
     def sufficient_for_population_claims(self) -> bool:
-        """True when the design detects at least MODERATE-regime effects."""
-        return self.powered_for_regime in (EffectSizeRegime.SUBTLE, EffectSizeRegime.MODERATE)
+        """Replication and power screen only. Design identifiability is audited separately."""
+        return self.n_donors_per_group >= 3 and self.powered_for_regime in (
+            EffectSizeRegime.SUBTLE, EffectSizeRegime.MODERATE
+        )
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -82,6 +94,15 @@ class PowerAssessment:
             "mde_log2fc": round(self.mde_log2fc, 4),
             "n_donors_per_group": self.n_donors_per_group,
             "nominal_fdr": self.nominal_fdr,
+            "alpha_basis": self.alpha_basis,
+            "per_test_alpha": self.per_test_alpha,
+            "target_power": self.target_power,
+            "observed_effect_regime": self.observed_effect_regime.value if self.observed_effect_regime else None,
+            "shrunk_log2fc": self.shrunk_log2fc,
+            "base_mean": self.base_mean,
+            "sequencing_depth_factor": self.sequencing_depth_factor,
+            "n_tests": self.n_tests,
+            "n_true_effects": self.n_true_effects,
             "mean_count_per_cell": self.mean_count_per_cell,
             "dispersion": self.dispersion,
             "cells_per_sample": self.cells_per_sample,
@@ -90,6 +111,50 @@ class PowerAssessment:
             "remedies": list(self.remedies),
             "rule_basis": list(self.rule_basis),
         }
+
+
+def _per_test_alpha(
+    nominal_fdr: float, target_power: float, n_tests: Optional[int], n_true_effects: Optional[int]
+) -> tuple[float, str]:
+    if not (0 < nominal_fdr < 1 and 0 < target_power < 1):
+        raise ValueError("nominal_fdr and target_power must be in (0, 1)")
+    for count in (n_tests, n_true_effects):
+        if count is not None and (not isinstance(count, Integral) or isinstance(count, bool) or count <= 0):
+            raise ValueError("test and expected true-effect counts must be positive integers")
+    if n_tests is None or n_true_effects is None:
+        return nominal_fdr, "fdr_as_alpha_optimistic"
+    if n_true_effects >= n_tests:
+        raise ValueError("supply counts satisfying 0 < n_true_effects < n_tests")
+    n_null = n_tests - n_true_effects
+    alpha = target_power * n_true_effects * nominal_fdr / (n_null * (1 - nominal_fdr))
+    return min(alpha, 1.0), "jung2005"
+
+
+def _nb_mde(
+    n_donors_per_group: int, mean_count_per_cell: float, dispersion: float,
+    cells_per_sample: int, sequencing_depth_factor: float, alpha: float, target_power: float,
+) -> float:
+    if not isinstance(n_donors_per_group, Integral) or n_donors_per_group < 2:
+        raise ValueError("n_donors_per_group must be an integer >= 2 for a variance-based MDE")
+    if not isinstance(cells_per_sample, Integral) or isinstance(cells_per_sample, bool) or cells_per_sample < 1:
+        raise ValueError("cells_per_sample must be a positive integer")
+    if not all(math.isfinite(x) and x > 0 for x in (mean_count_per_cell, sequencing_depth_factor)):
+        raise ValueError("depth parameters must be finite and positive")
+    if not math.isfinite(dispersion) or dispersion < 0:
+        raise ValueError("dispersion must be finite and >= 0")
+
+    mean = mean_count_per_cell * cells_per_sample * sequencing_depth_factor
+    if not math.isfinite(mean) or mean <= 0:
+        raise ValueError("pseudobulk depth must be finite and positive")
+    if alpha / 2 == 0:
+        raise ValueError("per-test alpha is too small for the normal approximation")
+    if target_power <= alpha:
+        return 0.0  # At zero effect the rejection probability already reaches the target.
+    # Use the lower tail directly to avoid losing very small alpha in 1 - alpha/2.
+    normal = NormalDist()
+    z_sum = -normal.inv_cdf(alpha / 2) + normal.inv_cdf(target_power)
+    var_log = 1.0 / mean + dispersion
+    return max(0.0, z_sum) * math.sqrt(2 * var_log / n_donors_per_group) / math.log(2)
 
 
 def estimate_min_detectable_effect(
@@ -101,44 +166,33 @@ def estimate_min_detectable_effect(
     sequencing_depth_factor: float = 1.0,
     nominal_fdr: float = 0.05,
     target_power: float = 0.80,
+    n_tests: Optional[int] = None,
+    n_true_effects: Optional[int] = None,
 ) -> float:
+    """Approximate two-group NB MDE on the log2 scale for balanced independent donors.
+
+    The delta-method variance of log pseudobulk counts is 1/mean + dispersion
+    per sample. The two-group difference has variance 2 * (1/mean + dispersion) / n.
+    With both test counts, use the Jung (2005) expected discovery approximation.
+    Without them, nominal FDR serves as an optimistic per-test alpha.
     """
-    Closed-form MDE approximation (log2 scale) for pseudobulk NB differential expression.
-
-    Model: per-sample pseudobulk count for one gene ~ NB(mu, dispersion). With
-    k cells aggregated at mean per-cell count c, pseudobulk depth is k*c*d.
-    The per-donor sampling variance of log-expression is approximated by
-    (1/(k*c*d)) + dispersion/n_effective, and the two-group MSE scales the
-    classic two-sample z formula:
-
-        MDE(log2) = (z_{1-alpha/2} + z_{power}) * sqrt(2 * sigma^2 / n)
-
-    where sigma^2 combines technical (depth) and biological (dispersion/donor)
-    variance. This is a conservative screening approximation, not a substitute
-    for per-gene NB GLM power simulation; it exists to make "is the claimed
-    regime even detectable" auditable BEFORE compute.
-    """
-    if n_donors_per_group < 1:
-        raise ValueError("n_donors_per_group must be >= 1")
-    if mean_count_per_cell <= 0 or cells_per_sample < 1 or sequencing_depth_factor <= 0:
-        raise ValueError("depth parameters must be positive")
-    if dispersion < 0:
-        raise ValueError("dispersion must be >= 0")
-
-    pseudobulk_depth = max(mean_count_per_cell * cells_per_sample * sequencing_depth_factor, 1e-6)
-    technical_var = 1.0 / pseudobulk_depth
-    biological_var = dispersion / max(n_donors_per_group, 1)
-    sigma2 = technical_var + biological_var
-    z_sum = _Z_ALPHA_0P05_TWO_SIDED + _Z_POWER_0P8 * min(max(target_power, 0.01), 0.999) / 0.80
-    mde_log2 = (z_sum / math.log(2)) * math.sqrt(2 * sigma2 / max(n_donors_per_group, 1))
-    return float(mde_log2)
+    alpha, _ = _per_test_alpha(nominal_fdr, target_power, n_tests, n_true_effects)
+    return _nb_mde(n_donors_per_group, mean_count_per_cell, dispersion, cells_per_sample,
+                   sequencing_depth_factor, alpha, target_power)
 
 
-def classify_effect_size_regime(observed_log2fc: Optional[float]) -> Optional[EffectSizeRegime]:
-    """Stratify an observed |log2FC| into its evidential regime (Ladder stage 4)."""
-    if observed_log2fc is None:
+def classify_effect_size_regime(
+    observed_log2fc: Optional[float] = None, *, shrunk_log2fc: Optional[float] = None,
+    base_mean: Optional[float] = None,
+) -> Optional[EffectSizeRegime]:
+    """Classify a shrunken effect above the expression floor. Raw-only calls return None."""
+    if shrunk_log2fc is None or base_mean is None:
         return None
-    magnitude = abs(float(observed_log2fc))
+    if not math.isfinite(shrunk_log2fc) or not math.isfinite(base_mean):
+        return None
+    if base_mean < STATISTICAL_THRESHOLDS["effect_min_base_mean"]:
+        return None
+    magnitude = abs(shrunk_log2fc)
     if magnitude >= STRONG_EFFECT_LOG2FC:
         return EffectSizeRegime.STRONG
     if magnitude >= MODERATE_EFFECT_LOG2FC:
@@ -150,27 +204,22 @@ def assess_statistical_power(
     *,
     n_donors_per_group: int,
     observed_log2fc: Optional[float] = None,
+    shrunk_log2fc: Optional[float] = None,
+    base_mean: Optional[float] = None,
     mean_count_per_cell: float = 1.0,
     dispersion: float = 0.5,
     cells_per_sample: int = 100,
     nominal_fdr: float = 0.05,
+    sequencing_depth_factor: float = 1.0,
+    target_power: float = 0.80,
+    n_tests: Optional[int] = None,
+    n_true_effects: Optional[int] = None,
 ) -> PowerAssessment:
-    """
-    Assess whether the design's detectable effect regime matches the claim context.
-
-    Returns a PowerAssessment whose warnings/remedies are phrased for direct use
-    as router advisories (BN-F002): low-power designs always carry an explicit
-    'power' remedy so downstream hosts cannot present them as adequately
-    powered discovery runs.
-    """
-    mde = estimate_min_detectable_effect(
-        n_donors_per_group=n_donors_per_group,
-        mean_count_per_cell=mean_count_per_cell,
-        dispersion=dispersion,
-        cells_per_sample=cells_per_sample,
-        nominal_fdr=nominal_fdr,
-    )
-    regime = classify_effect_size_regime(observed_log2fc)
+    """Compare a design's MDE with the claimed effect, recording its alpha basis."""
+    alpha, alpha_basis = _per_test_alpha(nominal_fdr, target_power, n_tests, n_true_effects)
+    mde = _nb_mde(n_donors_per_group, mean_count_per_cell, dispersion, cells_per_sample,
+                  sequencing_depth_factor, alpha, target_power)
+    regime = classify_effect_size_regime(shrunk_log2fc=shrunk_log2fc, base_mean=base_mean)
     # ``powered_for_regime`` names the WEAKEST effect regime this design can
     # detect at nominal FDR/power: a small MDE powers even SUBTLE claims.
     if mde <= SUBTLE_EFFECT_LOG2FC:
@@ -190,7 +239,8 @@ def assess_statistical_power(
     if n_donors_per_group < 3:
         warnings.append(
             f"Statistical power at N={n_donors_per_group} donors/group is minimal: the design can only "
-            f"detect effects of |log2FC| >= {mde:.2f} at FDR={nominal_fdr} with 80% power "
+            f"detect effects of |log2FC| >= {mde:.2f} at per-test alpha={alpha:.3g} "
+            f"({alpha_basis}) with {target_power:.1%} power "
             "(minimum detectable effect, closed-form NB approximation)."
         )
         remedies.append(
@@ -199,7 +249,7 @@ def assess_statistical_power(
             "claims to candidate ranking with FRAGILE framing."
         )
 
-    if regime is not None and regime == EffectSizeRegime.SUBTLE and n_donors_per_group < 3:
+    if regime == EffectSizeRegime.SUBTLE and n_donors_per_group < 3:
         warnings.append(
             f"Observed effect regime is SUBTLE (|log2FC| < {MODERATE_EFFECT_LOG2FC}) while replication is "
             f"N={n_donors_per_group}/group: subtle polygenic shifts are exactly the regime this design "
@@ -209,18 +259,32 @@ def assess_statistical_power(
             "Either restrict conclusions to within-sample descriptive shifts or add biological replicates; "
             "population-level claims for SUBTLE effects require the full replication regime."
         )
-    if regime is not None and regime == EffectSizeRegime.STRONG and n_donors_per_group == 2:
+    if regime == EffectSizeRegime.STRONG and n_donors_per_group == 2:
         warnings.append(
-            "Effect-size regime is STRONG (monogenic/deterministic scale): the Context-Conditioned Epistemic "
-            "Ladder permits reduced replication for ruling out technical noise at this magnitude, but claims "
-            "remain cohort-specific descriptive until independently reproduced."
+            "The shrunken effect is STRONG. In a paired or isogenic design this can reduce concern about "
+            "technical noise. Claims remain descriptive within the assayed donors or cell line."
         )
         remedies.append(
-            "Record the deterministic-effect justification in provenance; conclusions remain cohort-specific "
-            "descriptive until independently reproduced on an external cohort."
+            "Report the shrunken effect, baseMean and design. Limit conclusions to cohort-specific "
+            "descriptive claims until independently replicated."
+        )
+
+    if regime is None and (observed_log2fc is not None or shrunk_log2fc is not None):
+        warnings.append(
+            f"Effect-size regime undetermined: supply a finite shrunken log2FC and baseMean "
+            f">= {STATISTICAL_THRESHOLDS['effect_min_base_mean']:g}."
         )
 
     return PowerAssessment(
+        alpha_basis=alpha_basis,
+        per_test_alpha=alpha,
+        target_power=target_power,
+        observed_effect_regime=regime,
+        shrunk_log2fc=shrunk_log2fc if regime is not None else None,
+        base_mean=base_mean if base_mean is not None and math.isfinite(base_mean) else None,
+        sequencing_depth_factor=sequencing_depth_factor,
+        n_tests=n_tests,
+        n_true_effects=n_true_effects,
         powered_for_regime=powered_for,
         mde_log2fc=mde,
         n_donors_per_group=n_donors_per_group,
@@ -242,17 +306,24 @@ class DoubletRiskAssessment:
     exceeds_threshold: bool
     warnings: List[str] = field(default_factory=list)
     remedies: List[str] = field(default_factory=list)
+    threshold: float = DOUBLET_RATE_ADVISORY_THRESHOLD
+    threshold_basis: str = "screening_advisory"
 
     def to_dict(self) -> Dict[str, Any]:
         return {
             "doublet_rate": self.doublet_rate,
             "exceeds_threshold": self.exceeds_threshold,
+            "threshold": self.threshold,
+            "threshold_basis": self.threshold_basis,
             "warnings": list(self.warnings),
             "remedies": list(self.remedies),
         }
 
 
-def assess_doublet_risk(doublet_rate: Optional[float]) -> Optional[DoubletRiskAssessment]:
+def assess_doublet_risk(
+    doublet_rate: Optional[float], *, calibration_context: Optional[CalibrationContext] = None,
+    calibration_registry: Optional[CalibrationRegistry] = None,
+) -> Optional[DoubletRiskAssessment]:
     """
     Audit declared doublet-rate metadata before permitting clustering-based
     population claims. Rates above DOUBLET_RATE_ADVISORY_THRESHOLD compromise
@@ -261,15 +332,29 @@ def assess_doublet_risk(doublet_rate: Optional[float]) -> Optional[DoubletRiskAs
     if doublet_rate is None:
         return None
     rate = float(doublet_rate)
+    if not math.isfinite(rate) or rate > 1:
+        raise ValueError("doublet_rate must be a finite proportion")
     if rate <= 0.0:
         return None
-    if rate < DOUBLET_RATE_ADVISORY_THRESHOLD:
-        return DoubletRiskAssessment(rate, False)
+    threshold = DOUBLET_RATE_ADVISORY_THRESHOLD
+    basis = "screening_advisory"
+    flagged = rate >= threshold
+    if calibration_context is not None:
+        registry = calibration_registry or default_calibration_registry()
+        resolution = registry.resolve("doublet_rate", calibration_context)
+        if resolution.resolved and resolution.direction == ComparisonDirection.AT_MOST and resolution.threshold is not None:
+            threshold = resolution.threshold
+            basis = f"{resolution.profile_id}@{resolution.profile_version}"
+            flagged = rate > threshold
+    if not flagged:
+        return DoubletRiskAssessment(rate, False, threshold=threshold, threshold_basis=basis)
     return DoubletRiskAssessment(
         rate,
         True,
+        threshold=threshold,
+        threshold_basis=basis,
         warnings=[
-            f"Declared doublet rate is {rate:.0%} (threshold {DOUBLET_RATE_ADVISORY_THRESHOLD:.0%}): apparent "
+            f"Declared doublet rate is {rate:.0%} (threshold {threshold:.0%}, {basis}): apparent "
             "cluster cleanliness does not exclude doublet-driven artificial clusters, and population labels "
             "inherited from such clusters are not evidence-backed."
         ],

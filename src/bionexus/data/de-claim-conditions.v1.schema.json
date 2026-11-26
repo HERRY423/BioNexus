@@ -258,7 +258,8 @@
         "statistical_unit": {
           "enum": [
             "independent_donor",
-            "paired_donor_fixed_effect"
+            "paired_donor_fixed_effect",
+            "paired_donor_random_intercept"
           ]
         },
         "design_columns": {
@@ -335,6 +336,32 @@
           "additionalProperties": {
             "type": "number"
           }
+        },
+        "random_intercept": {
+          "type": "object",
+          "properties": {
+            "column": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sample_groups": {
+              "type": "object",
+              "minProperties": 1,
+              "propertyNames": {
+                "type": "string",
+                "minLength": 1
+              },
+              "additionalProperties": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "column",
+            "sample_groups"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -351,7 +378,30 @@
         "encodings",
         "contrast"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "statistical_unit": {
+                "const": "paired_donor_random_intercept"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "random_intercept"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "random_intercept"
+              ]
+            }
+          }
+        }
+      ]
     }
   }
 }

@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Sequence, Union
 
 from bionexus.de.binding import (
     _audit_claim_vs_table_facts,
@@ -69,6 +69,12 @@ class DEAuditEngine:
         self.min_cells_per_donor = self.config.get("min_cells_per_donor", 20)
         self.dominance_threshold = self.config.get("dominance_threshold", 0.70)
         self.fdr_threshold = self.config.get("fdr_threshold", 0.05)
+        self.power_parameters = self.config.get("power_parameters", {})
+        allowed = {"n_tests", "n_true_effects", "target_power", "mean_count_per_cell", "dispersion", "sequencing_depth_factor"}
+        if not isinstance(self.power_parameters, dict) or set(self.power_parameters) - allowed:
+            raise ValueError(f"power_parameters must be a mapping with keys from {sorted(allowed)}")
+        if "metadata_rows_are_cells" in self.config and type(self.config["metadata_rows_are_cells"]) is not bool:
+            raise ValueError("metadata_rows_are_cells must be a boolean")
 
     def audit(
         self,
@@ -89,6 +95,10 @@ class DEAuditEngine:
         alternative_runs: Optional[Union[str, Path]] = None,
         selection_history: Optional[Union[str, Path]] = None,
         selection_expected_head: Optional[str] = None,
+        case: Optional[str] = None,
+        reference: Optional[str] = None,
+        cell_type: Optional[str] = None,
+        declared_factors: Sequence[str] = (),
     ) -> DEAuditResult:
         """Run the 5-pillar differential expression evidence audit."""
         findings: List[DEFinding] = []
@@ -149,15 +159,75 @@ class DEAuditEngine:
             else:
                 de_df = extracted.frame
 
+        condition_report = None
+        if claim_contract is not None:
+            from bionexus.de.conditions import CONFLICT, SAT, UNKNOWN, verify_de_claim_conditions
+
+            try:
+                condition_report = verify_de_claim_conditions(
+                    claim_contract, de_table=de_table,
+                    sample_metadata=obs_df if adata is not None else sample_metadata,
+                )
+                for claim in condition_report["claims"]:
+                    status = claim["status"]
+                    checks.append(CheckRecord(
+                        check_id=f"claim_conditions:{claim['claim']['claim_id']}",
+                        title="声明成立条件的可执行验证",
+                        status=(CheckStatus.ASSESSED if status == SAT else
+                                CheckStatus.MISSING_EVIDENCE if status == UNKNOWN else CheckStatus.ISSUE_FOUND),
+                        summary=f"{claim['canonical_statement']} [{status}]", required_for_pass=True,
+                    ))
+                    if status not in (SAT, UNKNOWN):
+                        findings.append(DEFinding(
+                            rule_id="BFA-009", severity=FindingSeverity.HIGH_IMPACT,
+                            category=FindingCategory.CLAIM_BOUNDARY,
+                            title="声明前提冲突" if status == CONFLICT else "声明必要前提不满足",
+                            impact_on_conclusion=claim["canonical_statement"],
+                            claim_affected=claim["claim"]["claim_id"],
+                            minimal_fix="查看逐项条件及修复要求；仍可保留已验证的较窄表述。",
+                            evidence_data=claim,
+                        ))
+            except (OSError, ValueError, TypeError) as exc:
+                checks.append(CheckRecord(
+                    check_id="claim_conditions", title="声明成立条件的可执行验证",
+                    status=CheckStatus.PARSE_FAILED, required_for_pass=True,
+                    summary=f"无法读取或验证声明合同：{exc}",
+                ))
+
+        analysis = condition_report["analysis"] if condition_report else {}
+        for requested, key in ((case, "numerator"), (reference, "denominator"), (cell_type, "cell_type")):
+            if requested is not None and key in analysis and requested != analysis[key]:
+                raise ValueError(f"Explicit {key} differs from the claim contract")
+        case = analysis.get("numerator", case)
+        reference = analysis.get("denominator", reference)
+        cell_type = analysis.get("cell_type", cell_type)
+        if (case is None) != (reference is None) or (case is not None and case == reference):
+            raise ValueError("Supply both case and reference as distinct condition levels")
+
+
+        if case is not None or cell_type is not None:
+            cohort_summary["replicate_scope"] = {"case": case, "reference": reference, "cell_type": cell_type}
+
         # 4. Infer metadata column mappings
         d_col = c_col = ct_col = b_col = None
         if obs_df is not None:
             cols = list(obs_df.columns)
-            d_col = donor_col or _match_column(cols, DONOR_KEYWORDS)
-            c_col = condition_col or _match_column(cols, CONDITION_KEYWORDS)
+            contract_columns = condition_report["metadata_columns"] if condition_report else {}
+            for requested, key in ((donor_col, "donor"), (condition_col, "condition")):
+                if requested and key in contract_columns and requested != contract_columns[key]:
+                    raise ValueError(f"Explicit {key} column differs from the claim contract")
+            d_col = donor_col or contract_columns.get("donor") or _match_column(cols, DONOR_KEYWORDS)
+            c_col = condition_col or contract_columns.get("condition") or _match_column(cols, CONDITION_KEYWORDS)
             ct_col = cell_type_col or _match_column(cols, CELLTYPE_KEYWORDS)
             b_col = batch_col or _match_column(cols, BATCH_KEYWORDS)
 
+            for requested in (donor_col, condition_col, cell_type_col, batch_col):
+                if requested is not None and requested not in cols:
+                    raise ValueError(f"Metadata column {requested!r} is absent from the audit input")
+            # A contract can describe a different file. Preserve its binding conflict
+            # in the report and leave absent metadata columns unmeasured.
+            d_col = d_col if d_col in cols else None
+            c_col = c_col if c_col in cols else None
             if d_col:
                 cols_used["donor"] = d_col
             if c_col:
@@ -167,6 +237,7 @@ class DEAuditEngine:
                 cols_used["cell_type"] = ct_col
             if b_col:
                 cols_used["batch"] = b_col
+                cohort_summary["batch_key"] = b_col
 
             self._audit_metadata(
                 obs_df=obs_df,
@@ -178,6 +249,8 @@ class DEAuditEngine:
                 pi_decisions=pi_decisions,
                 cohort_summary=cohort_summary,
                 checks=checks,
+                case=case, reference=reference, cell_type=cell_type,
+                rows_are_cells=True if adata is not None else self.config.get("metadata_rows_are_cells"),
             )
         else:
             checks.append(
@@ -222,6 +295,29 @@ class DEAuditEngine:
                 )
             )
 
+        # Collect method facts before interpreting the probability columns.
+        if code_path is not None:
+            self._audit_code(code_path, findings, checks)
+        else:
+            checks.append(
+                CheckRecord(
+                    check_id="analysis_code",
+                    title="分析脚本/笔记本",
+                    status=CheckStatus.MISSING_EVIDENCE,
+                    summary="未提供分析脚本，静态方法学调用未评估。",
+                    required_for_pass=False,
+                )
+            )
+
+        execution = self._collect_execution_record(
+            de_df=de_df,
+            de_source=de_source,
+            rgg_params=rgg_params,
+            code_path=code_path,
+            findings=findings,
+            supplied_execution=execution_record,
+        )
+
         # 6. DE table audits
         if de_parse_error and de_source != "none":
             checks.append(
@@ -252,7 +348,19 @@ class DEAuditEngine:
                     required_for_pass=True,
                 )
             )
-            self._audit_de_table(de_df, findings, pi_decisions, checks, claim_text=claim_text)
+            self._audit_de_table(
+                de_df, findings, pi_decisions, checks, claim_text=claim_text,
+                structured_claims=[item["claim"] for item in condition_report["claims"]] if condition_report else None,
+                adjustment_method=execution.fdr_method,
+            )
+            if adata is not None:
+                from bionexus.de.rules.matrix_rules import _audit_lfc_concordance
+
+                cohort_summary["lfc_concordance"] = _audit_lfc_concordance(
+                    adata, de_df, findings, checks, d_col=d_col, c_col=c_col, ct_col=ct_col,
+                    cell_type=cell_type, case=case, ref=reference, min_cells_per_donor=self.min_cells_per_donor,
+                    rgg_params=rgg_params if de_source != "de_table" else None,
+                )
         else:
             checks.append(
                 CheckRecord(
@@ -273,28 +381,6 @@ class DEAuditEngine:
                 )
             )
 
-        # 7. Code / notebook audit
-        if code_path is not None:
-            self._audit_code(code_path, findings, checks)
-        else:
-            checks.append(
-                CheckRecord(
-                    check_id="analysis_code",
-                    title="分析脚本/笔记本",
-                    status=CheckStatus.MISSING_EVIDENCE,
-                    summary="未提供分析脚本，静态方法学调用未评估。",
-                    required_for_pass=False,
-                )
-            )
-
-        execution = self._collect_execution_record(
-            de_df=de_df,
-            de_source=de_source,
-            rgg_params=rgg_params,
-            code_path=code_path,
-            findings=findings,
-            supplied_execution=execution_record,
-        )
         if execution.cell_level_condition_test and not any(f.rule_id == "BFA-001" for f in findings):
             findings.append(
                 DEFinding(
@@ -303,12 +389,12 @@ class DEAuditEngine:
                     category=FindingCategory.PSEUDOREPLICATION,
                     title="执行记录显示细胞级条件差异检验 (Cell-level condition DE)",
                     impact_on_conclusion=(
-                        f"rank_genes_groups params 记录 method={execution.method}，"
-                        "这是细胞级检验，不能当作供体级 NB GLM / Wald 结果。"
+                        f"执行记录显示 method={execution.method}，"
+                        "该检验将细胞视为独立重复。"
                     ),
-                    step_or_location="adata.uns['rank_genes_groups']['params']",
-                    minimal_fix="按 (donor, cell_type, condition) 聚合 raw counts 后用 PyDESeq2 / edgeR 做供体级检验。",
-                    evidence_data={"params": rgg_params},
+                    step_or_location="adata.uns['rank_genes_groups']['params']" if rgg_params else "execution_record",
+                    minimal_fix="按 (donor, cell_type, condition) 聚合原始计数后使用 DESeq2 / edgeR / limma-voom，或使用含供体随机效应的 dream / NEBULA 混合模型。",
+                    evidence_data={"method": execution.method, "params": rgg_params},
                 )
             )
             self._set_check_status(
@@ -360,7 +446,7 @@ class DEAuditEngine:
                     EvidenceProfile,
                 )
                 claim_ir = DeterministicClaimParser.parse(str(claim_text).strip(), claim_id="CLAIM-USER-DE")
-                reps_count = cohort_summary.get("n_donors") or 0
+                reps_count = min(cohort_summary.get("conditions", {}).values(), default=0)
                 has_observational = bool(de_df is not None and not de_df.empty)
 
                 ev_profile = EvidenceProfile(
@@ -427,41 +513,6 @@ class DEAuditEngine:
                     summary="声明审阅失败，无法判定证据是否支持该声明；必须复核，不能按通过处理。",
                 ))
 
-        condition_report = None
-        if claim_contract is not None:
-            from bionexus.de.conditions import CONFLICT, SAT, UNKNOWN, verify_de_claim_conditions
-
-            try:
-                condition_report = verify_de_claim_conditions(
-                    claim_contract, de_table=de_table,
-                    sample_metadata=obs_df if adata is not None else sample_metadata,
-                )
-                for claim in condition_report["claims"]:
-                    status = claim["status"]
-                    checks.append(CheckRecord(
-                        check_id=f"claim_conditions:{claim['claim']['claim_id']}",
-                        title="声明成立条件的可执行验证",
-                        status=(CheckStatus.ASSESSED if status == SAT else
-                                CheckStatus.MISSING_EVIDENCE if status == UNKNOWN else CheckStatus.ISSUE_FOUND),
-                        summary=f"{claim['canonical_statement']} [{status}]", required_for_pass=True,
-                    ))
-                    if status not in (SAT, UNKNOWN):
-                        findings.append(DEFinding(
-                            rule_id="BFA-009", severity=FindingSeverity.HIGH_IMPACT,
-                            category=FindingCategory.CLAIM_BOUNDARY,
-                            title="声明前提冲突" if status == CONFLICT else "声明必要前提不满足",
-                            impact_on_conclusion=claim["canonical_statement"],
-                            claim_affected=claim["claim"]["claim_id"],
-                            minimal_fix="查看逐项条件及修复要求；仍可保留已验证的较窄表述。",
-                            evidence_data=claim,
-                        ))
-            except (OSError, ValueError, TypeError) as exc:
-                checks.append(CheckRecord(
-                    check_id="claim_conditions", title="声明成立条件的可执行验证",
-                    status=CheckStatus.PARSE_FAILED, required_for_pass=True,
-                    summary=f"无法读取或验证声明合同：{exc}",
-                ))
-
         alternative_report = None
         if alternative_plan is not None or alternative_runs is not None:
             from bionexus.de.alternatives import evaluate_alternative_plan
@@ -518,13 +569,23 @@ class DEAuditEngine:
                     required_for_pass=True, summary=str(exc),
                 ))
 
+        from bionexus.de.measurements import assess_de_measurements
+        evidence_assessment, design_warrants = assess_de_measurements(
+            cohort=cohort_summary, execution=execution, bound=is_donor_execution_verified,
+            declared=[*execution.declared_factors, *declared_factors], findings=findings, checks=checks,
+            min_donors=self.min_donors_required, fdr=self.fdr_threshold,
+            alternatives=alternative_report, selection_dependent=selection_report["status"] == "SELECTION_DEPENDENCE_RECORDED",
+            claim_report=condition_report, table=de_df, power_parameters=self.power_parameters,
+        )
         claim_boundary = self._determine_claim_boundary(
             findings, cohort_summary, claim_text, [c for c in checks if c.check_id != "selection_history"], execution
         )
         if selection_history is not None or selection_expected_head is not None:
             claim_boundary.prohibited_scope += " 不得把选择历史一致性写成已证实的预注册或确认性验证。"
             if selection_report["status"] == "SELECTION_DEPENDENCE_RECORDED":
-                claim_boundary.allowed_scope += " 选择历史显示结果依赖的选择；在原有证据范围内按探索性结果披露。"
+                claim_boundary.allowed_scope += " 选择历史显示结果依赖的选择；在原有证据范围内按探索性结果披露，证据上限为 FRAGILE。"
+                if claim_boundary.overall_maturity not in ("NOT_ASSESSED", "UNWARRANTED"):
+                    claim_boundary.overall_maturity = "FRAGILE"
             else:
                 claim_boundary.allowed_scope += " 确认性用途尚未由选择历史建立。"
         overall_status = self._compute_overall_status(findings, checks, execution, supplied)
@@ -538,6 +599,8 @@ class DEAuditEngine:
             pi_decisions=pi_decisions,
             cohort_summary=cohort_summary,
             metadata_columns_used=cols_used,
+            evidence_assessment=evidence_assessment,
+            design_warrants=design_warrants,
             claim_conditions=condition_report,
             alternative_analysis=alternative_report,
             selection_history=selection_report,
@@ -558,6 +621,11 @@ class DEAuditEngine:
         pi_decisions: List[PIDecisionItem],
         cohort_summary: Dict[str, Any],
         checks: List[CheckRecord],
+        *,
+        case: Optional[str] = None,
+        reference: Optional[str] = None,
+        cell_type: Optional[str] = None,
+        rows_are_cells: Optional[bool] = None,
     ) -> None:
         _audit_metadata(
             obs_df=obs_df,
@@ -569,6 +637,7 @@ class DEAuditEngine:
             pi_decisions=pi_decisions,
             cohort_summary=cohort_summary,
             checks=checks,
+            case=case, reference=reference, cell_type=cell_type, rows_are_cells=rows_are_cells,
             dominance_threshold=self.dominance_threshold,
             min_donors_required=self.min_donors_required,
             min_cells_per_donor=self.min_cells_per_donor,
@@ -609,6 +678,8 @@ class DEAuditEngine:
         pi_decisions: List[PIDecisionItem],
         checks: List[CheckRecord],
         claim_text: Optional[str] = None,
+        structured_claims: Optional[List[Dict[str, Any]]] = None,
+        adjustment_method: Optional[str] = None,
     ) -> None:
         _audit_de_table(
             de_df=de_df,
@@ -616,7 +687,7 @@ class DEAuditEngine:
             pi_decisions=pi_decisions,
             checks=checks,
             fdr_threshold=self.fdr_threshold,
-            claim_text=claim_text,
+            claim_text=claim_text, structured_claims=structured_claims, adjustment_method=adjustment_method,
         )
 
     def _audit_code(
@@ -751,6 +822,10 @@ def audit_differential_expression(
     alternative_runs: Optional[Union[str, Path]] = None,
     selection_history: Optional[Union[str, Path]] = None,
     selection_expected_head: Optional[str] = None,
+    case: Optional[str] = None,
+    reference: Optional[str] = None,
+    cell_type: Optional[str] = None,
+    declared_factors: Sequence[str] = (),
 ) -> DEAuditResult:
     """
     Audit multi-donor single-cell differential expression for lab meeting, submission, or sharing.
@@ -773,6 +848,9 @@ def audit_differential_expression(
         alternative_runs: Result-slot manifest bound to that plan.
         selection_history: Scoped host export of analysis choices and exposures.
         selection_expected_head: Optional independently retained history head.
+        case, reference: Ordered contrast levels. Both must agree with any claim contract.
+        cell_type: Target cell type for donor eligibility and count-direction checks.
+        declared_factors: Evidence declarations to compare with measurements from the supplied artifacts.
 
     Returns:
         DEAuditResult with the 5 essential pillars for laboratory adoption.
@@ -795,6 +873,7 @@ def audit_differential_expression(
         alternative_runs=alternative_runs,
         selection_history=selection_history,
         selection_expected_head=selection_expected_head,
+        case=case, reference=reference, cell_type=cell_type, declared_factors=declared_factors,
     )
 
 

@@ -53,9 +53,25 @@ class _Trigger:
 
 
 class TestEvidenceAssessmentIndependence:
+    def test_declarations_alone_cannot_raise_maturity(self):
+        assessment = assess_evidence(satisfied_factors=STRONG_FACTORS)
+        assert assessment.evidence_maturity == "PRELIMINARY"
+        assert assessment.satisfied_factors == []
+        assert assessment.to_dict()["unverified_factors"] == sorted(STRONG_FACTORS)
+
+    def test_only_measured_factors_enter_the_ladder(self):
+        assessment = assess_evidence(
+            satisfied_factors=STRONG_FACTORS,
+            measured_factors=["sample_design", "replication"],
+        )
+        assert assessment.evidence_maturity == "SUPPORTED"
+        assert assessment.satisfied_factors == ["replication", "sample_design"]
+        assert set(assessment.unverified_factors) == set(STRONG_FACTORS) - set(assessment.satisfied_factors)
+        assert assess_evidence(satisfied_factors=STRONG_FACTORS, measured_factors=[]).evidence_maturity == "PRELIMINARY"
+
     def test_purpose_does_not_change_evidence_value(self):
         """The same evidence facts yield the same assessment under every purpose."""
-        assessments = [assess_evidence(satisfied_factors=STRONG_FACTORS) for _ in ResearchPurpose]
+        assessments = [assess_evidence(measured_factors=STRONG_FACTORS) for _ in ResearchPurpose]
         first = assessments[0].to_dict()
         for a in assessments[1:]:
             assert a.to_dict() == first
@@ -65,7 +81,7 @@ class TestEvidenceAssessmentIndependence:
 
     def test_strong_evidence_not_downgraded_by_exploratory_purpose(self):
         """10 donors, powered, controlled: ROBUST stays ROBUST for exploration."""
-        evidence = assess_evidence(satisfied_factors=STRONG_FACTORS)
+        evidence = assess_evidence(measured_factors=STRONG_FACTORS)
         assert evidence.evidence_maturity == "ROBUST"
         suff = evaluate_sufficiency(
             evidence=evidence,
@@ -76,7 +92,7 @@ class TestEvidenceAssessmentIndependence:
 
     def test_weak_evidence_not_elevated_by_clinical_purpose(self):
         """Declaring a clinical purpose grants no evidence at all."""
-        evidence = assess_evidence(satisfied_factors=[])
+        evidence = assess_evidence(measured_factors=[])
         assert evidence.evidence_maturity == "PRELIMINARY"
         suff = evaluate_sufficiency(
             evidence=evidence,
@@ -91,7 +107,7 @@ class TestEvidenceAssessmentIndependence:
     def test_violation_caps_evidence_despite_factors(self):
         """An active violation caps evidence at FRAGILE, factors notwithstanding."""
         evidence = assess_evidence(
-            satisfied_factors=STRONG_FACTORS + ["external_validation"],
+            measured_factors=STRONG_FACTORS + ["external_validation"],
             warrant_triggers=[_Trigger("missing_replicates")],
         )
         assert evidence.evidence_maturity == "FRAGILE"
@@ -99,20 +115,20 @@ class TestEvidenceAssessmentIndependence:
 
     def test_replicated_requires_replication_and_external_validation(self):
         evidence = assess_evidence(
-            satisfied_factors=STRONG_FACTORS + ["external_validation"],
+            measured_factors=STRONG_FACTORS + ["external_validation"],
         )
         assert evidence.evidence_maturity == "REPLICATED"
 
     def test_robust_requires_integrity_factors(self):
         """ROBUST and above demand backend fidelity + provenance."""
         evidence = assess_evidence(
-            satisfied_factors=["sample_design", "replication", "confound_controls", "sensitivity_analysis"],
+            measured_factors=["sample_design", "replication", "confound_controls", "sensitivity_analysis"],
         )
         assert evidence.evidence_maturity != "ROBUST"
 
     def test_undeclared_factors_default_to_preliminary(self):
         """A clean single run without declared factors is PRELIMINARY at best."""
-        evidence = assess_evidence(satisfied_factors=[])
+        evidence = assess_evidence(measured_factors=[])
         assert evidence.evidence_maturity == "PRELIMINARY"
 
 
@@ -122,7 +138,7 @@ class TestEvidenceAssessmentIndependence:
 class TestCanonicalExamples:
     def test_robust_population_effect_confirmatory_is_warranted(self):
         """Evidence ROBUST + population_effect claim + confirmatory -> WARRANTED."""
-        evidence = assess_evidence(satisfied_factors=STRONG_FACTORS)
+        evidence = assess_evidence(measured_factors=STRONG_FACTORS)
         assert evidence.evidence_maturity == "ROBUST"
         suff = evaluate_sufficiency(
             evidence=evidence,
@@ -134,7 +150,7 @@ class TestCanonicalExamples:
 
     def test_supported_evidence_is_not_sufficient_for_clinical_use(self):
         """Evidence SUPPORTED + clinical use -> NOT_SUFFICIENT_FOR_INTENDED_USE."""
-        evidence = assess_evidence(satisfied_factors=["sample_design", "replication"])
+        evidence = assess_evidence(measured_factors=["sample_design", "replication"])
         assert evidence.evidence_maturity == "SUPPORTED"
         suff = evaluate_sufficiency(
             evidence=evidence,
@@ -146,7 +162,7 @@ class TestCanonicalExamples:
 
     def test_unspecified_purpose_is_never_sufficient(self):
         """No declared intended use -> sufficiency undecided for any use."""
-        evidence = assess_evidence(satisfied_factors=STRONG_FACTORS)
+        evidence = assess_evidence(measured_factors=STRONG_FACTORS)
         suff = evaluate_sufficiency(
             evidence=evidence,
             purpose_context=PurposeContext(),
@@ -157,7 +173,7 @@ class TestCanonicalExamples:
 
     def test_override_acknowledgement_downgrades_not_mutates(self):
         """A documented ack yields WARRANTED_WITH_LIMITS; the bar is unchanged."""
-        evidence = assess_evidence(satisfied_factors=[])
+        evidence = assess_evidence(measured_factors=[])
         suff = evaluate_sufficiency(
             evidence=evidence,
             purpose_context=PurposeContext(purpose=ResearchPurpose.CONFIRMATORY),
@@ -193,7 +209,7 @@ class TestUseRequirementComposition:
 
     def test_documented_extras_can_satisfy_conditions(self):
         """A documented causal identification strategy + verified confound controls closes that gap."""
-        evidence = assess_evidence(satisfied_factors=STRONG_FACTORS)
+        evidence = assess_evidence(measured_factors=STRONG_FACTORS)
         suff = evaluate_sufficiency(
             evidence=evidence,
             purpose_context=PurposeContext(purpose=ResearchPurpose.CAUSAL),
@@ -212,7 +228,7 @@ class TestUseRequirementComposition:
 class TestPatientSafetyInvariantOverride:
     def test_clinical_purpose_override_is_denied_in_sufficiency(self):
         """Clinical purpose NEVER permits override: override_acknowledged cannot yield WARRANTED_WITH_LIMITS."""
-        evidence = assess_evidence(satisfied_factors=[])
+        evidence = assess_evidence(measured_factors=[])
         suff = evaluate_sufficiency(
             evidence=evidence,
             purpose_context=PurposeContext(
@@ -229,7 +245,7 @@ class TestPatientSafetyInvariantOverride:
 
     def test_unspecified_purpose_override_is_denied_in_sufficiency(self):
         """Unspecified purpose NEVER permits override: must declare purpose first."""
-        evidence = assess_evidence(satisfied_factors=[])
+        evidence = assess_evidence(measured_factors=[])
         suff = evaluate_sufficiency(
             evidence=evidence,
             purpose_context=PurposeContext(
@@ -265,7 +281,7 @@ class TestPatientSafetyInvariantOverride:
 
     def test_overridable_purposes_allow_override_in_sufficiency(self):
         """Exploratory, Screening, Confirmatory, Causal can receive WARRANTED_WITH_LIMITS on override."""
-        evidence = assess_evidence(satisfied_factors=[])
+        evidence = assess_evidence(measured_factors=[])
         for purpose in (
             ResearchPurpose.EXPLORATORY,
             ResearchPurpose.SCREENING,
@@ -284,7 +300,7 @@ class TestPatientSafetyInvariantOverride:
 class TestDocumentedExtrasSafety:
     def test_bare_regulatory_context_string_cannot_satisfy_clinical_requirement(self):
         """Bare string in documented_extras MUST NOT satisfy regulatory_context without verified factor."""
-        evidence = assess_evidence(satisfied_factors=STRONG_FACTORS + ["external_validation"])
+        evidence = assess_evidence(measured_factors=STRONG_FACTORS + ["external_validation"])
         assert evidence.evidence_maturity == "REPLICATED"
         suff = evaluate_sufficiency(
             evidence=evidence,
@@ -298,7 +314,7 @@ class TestDocumentedExtrasSafety:
     def test_verified_regulatory_certification_factor_satisfies_regulatory_context(self):
         """Verified regulatory_certification factor satisfies regulatory_context."""
         evidence = assess_evidence(
-            satisfied_factors=STRONG_FACTORS + ["external_validation", "regulatory_certification"]
+            measured_factors=STRONG_FACTORS + ["external_validation", "regulatory_certification"]
         )
         assert evidence.evidence_maturity == "REPLICATED"
         suff = evaluate_sufficiency(
@@ -311,7 +327,7 @@ class TestDocumentedExtrasSafety:
 
     def test_documented_extras_cannot_bypass_external_validation_factor(self):
         """Free-text documented_extras cannot bypass factor-backed conditions like external_validation."""
-        evidence = assess_evidence(satisfied_factors=STRONG_FACTORS)
+        evidence = assess_evidence(measured_factors=STRONG_FACTORS)
         # PREDICTIVE requires external_validation factor
         suff = evaluate_sufficiency(
             evidence=evidence,
@@ -343,7 +359,7 @@ class TestFactorSupportLadderCumulative:
     def test_p1_replicated_requires_all_prior_ladder_factors(self):
         """P1 probe: declaring only {replication, external_validation, backend_fidelity, provenance} CANNOT reach REPLICATED."""
         evidence = assess_evidence(
-            satisfied_factors=["replication", "external_validation", "backend_fidelity", "provenance"]
+            measured_factors=["replication", "external_validation", "backend_fidelity", "provenance"]
         )
         # Missing sample_design, confound_controls, sensitivity_analysis
         assert evidence.evidence_maturity != "REPLICATED"
@@ -351,7 +367,7 @@ class TestFactorSupportLadderCumulative:
     def test_p2_robust_requires_replication(self):
         """P2 probe: declaring {sample_design, confound_controls, sensitivity_analysis, ...} WITHOUT replication CANNOT reach ROBUST."""
         evidence = assess_evidence(
-            satisfied_factors=["sample_design", "confound_controls", "sensitivity_analysis", "backend_fidelity", "provenance"]
+            measured_factors=["sample_design", "confound_controls", "sensitivity_analysis", "backend_fidelity", "provenance"]
         )
         # Missing replication -> cannot even reach SUPPORTED, so cannot reach ROBUST
         assert evidence.evidence_maturity != "ROBUST"
@@ -360,7 +376,7 @@ class TestFactorSupportLadderCumulative:
 
     def test_full_cumulative_factors_reach_replicated(self):
         """All cumulative factors satisfied reaches REPLICATED."""
-        evidence = assess_evidence(satisfied_factors=STRONG_FACTORS + ["external_validation"])
+        evidence = assess_evidence(measured_factors=STRONG_FACTORS + ["external_validation"])
         assert evidence.evidence_maturity == "REPLICATED"
 
     @given(
@@ -382,8 +398,8 @@ class TestFactorSupportLadderCumulative:
         set_a = s1
         set_b = s1 | s2  # set_a is strict subset or equal to set_b
 
-        ev_a = assess_evidence(satisfied_factors=list(set_a))
-        ev_b = assess_evidence(satisfied_factors=list(set_b))
+        ev_a = assess_evidence(measured_factors=list(set_a))
+        ev_b = assess_evidence(measured_factors=list(set_b))
 
         rank_a = rank_map.get(ev_a.evidence_maturity, 0)
         rank_b = rank_map.get(ev_b.evidence_maturity, 0)
@@ -408,7 +424,7 @@ class TestFactorSupportLadderCumulative:
             "ROBUST": 6,
             "REPLICATED": 7,
         }
-        ev = assess_evidence(satisfied_factors=list(factors))
+        ev = assess_evidence(measured_factors=list(factors))
         actual_rank = rank_map[ev.evidence_maturity]
 
         if (repl | INTEGRITY_FACTORS).issubset(factors):
@@ -436,8 +452,8 @@ class TestFactorSupportLadderCumulative:
             "ROBUST": 6,
             "REPLICATED": 7,
         }
-        ev_clean = assess_evidence(satisfied_factors=list(factors))
-        ev_violated = assess_evidence(satisfied_factors=list(factors), warrant_triggers=triggers)
+        ev_clean = assess_evidence(measured_factors=list(factors))
+        ev_violated = assess_evidence(measured_factors=list(factors), warrant_triggers=triggers)
 
         rank_clean = rank_map[ev_clean.evidence_maturity]
         rank_violated = rank_map[ev_violated.evidence_maturity]
@@ -453,7 +469,7 @@ class TestClaimClassFailClosedSymmetry:
 
     def test_omitted_claim_context_fails_closed_with_gap(self):
         """P6 probe: omitting claim_context defaults to UNSPECIFIED and fails closed with claim_class_undeclared."""
-        evidence = assess_evidence(satisfied_factors=STRONG_FACTORS)
+        evidence = assess_evidence(measured_factors=STRONG_FACTORS)
         suff = evaluate_sufficiency(
             evidence=evidence,
             purpose_context=PurposeContext(purpose=ResearchPurpose.EXPLORATORY),
@@ -464,7 +480,7 @@ class TestClaimClassFailClosedSymmetry:
 
     def test_explicit_descriptive_claim_passes(self):
         """Explicitly declaring ClaimClass.DESCRIPTIVE allows exploratory descriptive sufficiency."""
-        evidence = assess_evidence(satisfied_factors=STRONG_FACTORS)
+        evidence = assess_evidence(measured_factors=STRONG_FACTORS)
         suff = evaluate_sufficiency(
             evidence=evidence,
             purpose_context=PurposeContext(purpose=ResearchPurpose.EXPLORATORY),
@@ -553,7 +569,7 @@ class TestM2CausalRequirementConfoundControls:
     def test_causal_claim_missing_confound_controls_fails_sufficiency(self):
         """P11 probe: CAUSAL claim without confound_controls cannot be WARRANTED."""
         evidence = assess_evidence(
-            satisfied_factors=["sample_design", "replication", "backend_fidelity", "provenance"]
+            measured_factors=["sample_design", "replication", "backend_fidelity", "provenance"]
         )
         suff = evaluate_sufficiency(
             evidence=evidence,
@@ -566,7 +582,7 @@ class TestM2CausalRequirementConfoundControls:
 
     def test_causal_claim_with_both_identification_and_confounds_warranted(self):
         """CAUSAL claim with verified confound_controls and causal_identification is WARRANTED."""
-        evidence = assess_evidence(satisfied_factors=STRONG_FACTORS)
+        evidence = assess_evidence(measured_factors=STRONG_FACTORS)
         assert evidence.evidence_maturity == "ROBUST"
         suff = evaluate_sufficiency(
             evidence=evidence,
@@ -591,7 +607,7 @@ class TestL1MalformedTriggerHandling:
             condition_id = ""
 
         evidence = assess_evidence(
-            satisfied_factors=STRONG_FACTORS,
+            measured_factors=STRONG_FACTORS,
             warrant_triggers=[_MalformedTrigger(), _EmptyCidTrigger(), ""],
         )
         assert evidence.evidence_maturity == "ROBUST"
@@ -606,7 +622,7 @@ class TestL2SafeParsingRobustness:
     def test_misspelled_factor_does_not_crash(self):
         """P9 probe: misspelled or unknown factor strings are safely ignored rather than crashing."""
         evidence = assess_evidence(
-            satisfied_factors=["replciation", "non_existent_factor_xyz"]
+            measured_factors=["replciation", "non_existent_factor_xyz"]
         )
         assert evidence.evidence_maturity == "PRELIMINARY"
         assert not evidence.satisfied_factors
@@ -615,7 +631,7 @@ class TestL2SafeParsingRobustness:
         """P10 probe: unrecognized base_maturity string does not crash and falls back safely."""
         evidence = assess_evidence(
             base_maturity="INVALID_MATURITY_STRING_12345",
-            satisfied_factors=STRONG_FACTORS,
+            measured_factors=STRONG_FACTORS,
         )
         assert evidence.evidence_maturity == "ROBUST"
 

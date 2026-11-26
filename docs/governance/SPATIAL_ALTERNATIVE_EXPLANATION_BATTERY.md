@@ -1,8 +1,9 @@
 # Spatial Alternative Explanation Battery
 
-`spatial.inference_validity` is BioNexus flagship C. Version 2 deepens that
-capability into an executable challenge battery; it does not add a fourth
-flagship and it is not a wrapper around a generic Squidpy workflow.
+`spatial.inference_validity` is BioNexus flagship C. Contract version 3
+binds positive controls to diagnostic artifacts, checks replication at the
+sample level, and evaluates tissue edge effects separately from cell-contact
+geometry.
 
 ## Scientific question
 
@@ -36,15 +37,47 @@ controls. A cell-resolved expression-enrichment claim may record them as not
 applicable; a spot-resolved or ligand/receptor claim cannot silently inherit
 that status.
 
+## Sample replication and evidence binding
+
+For `assess_spatial_inference`, supply the claim-scoped `obs` table and its
+group column (default `condition`; use `group_col=None` for a single cohort).
+The assessment counts distinct donors in each group. With section-only data
+it counts sections and names the unit in the report. If both are present,
+donors take precedence over sections nested within donors. The executable
+battery accepts `SpatialBatteryData.obs` aligned with expression rows and
+uses the focal cells in the exposed and unexposed arms of its actual contrast.
+Neither entry point counts cells, spots or FOVs as independent samples.
+Missing sample identities leave replication untested. A group with fewer
+than two independent units yields `ABSTAIN` and a descriptive claim scope.
+
+For an external control, provide a `ControlResult` with `statistic` and
+`p_or_interval` where available, its `artifact_sha256`, and the original
+bytes in the `artifacts` mapping keyed by that digest. A legacy positive
+status, an absent file, or a digest mismatch is reported as `DECLARED` and
+caps the verdict at `FRAGILE`. The digest identifies the evidence for review.
+The battery generates these digests from the diagnostic records returned in
+its output using UTF-8 JSON, sorted keys, compact separators and literal
+Unicode. Tissue edge effects remain `UNTESTED` in the executable battery
+until a separate tissue-boundary challenge is available.
+
+| Report field | Meaning of `ROBUST` |
+|---|---|
+| Spatial observation verdict | Every canonical alternative has passing evidence, including the permutation null, and the target groups have measured sample-level replication. |
+| General evidence maturity | Measured sample design, replication, confound controls and sensitivity analysis meet the evidence ladder, together with backend fidelity and provenance. Rule violations still cap maturity. |
+
+The spatial verdict enters a broader scientific claim subject to the
+capability's external-validation ceiling. The general evidence ladder is
+evaluated independently.
+
 ## Fail-closed contracts
 
 - Physical tissue coordinates in micrometers are mandatory. UMAP/PCA is refused.
 - Dataset, state, segmentation, label, and coordinate-system revisions are mandatory.
 - Exact contact graphs and all derived radius graphs are sparse and bounded by a predeclared edge limit.
 - An unestimable baseline produces `ABSTAIN`.
-- A failed alternative produces `CONFLICTED`; an untested alternative produces
-  `FRAGILE`. `ABSTAIN` is reserved for absent or unestimable evidence rather
-  than hiding an observed contradiction.
+- A failed alternative produces `CONFLICTED` when the observation is estimable.
+  An untested or declared alternative caps a positive verdict at `FRAGILE`.
+  An abstaining report retains any failed controls and their evidence.
 - Every numeric decision first resolves
   `threshold(metric, tissue, platform, reference, task, evidence_source)` from
   the Empirical Calibration Layer, then independently verifies exact Spatial

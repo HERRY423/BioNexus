@@ -202,13 +202,13 @@ def test_dim3_cell_density(adata: ad.AnnData) -> Dict[str, Any]:
         "Niche enrichment",
         controls={"local_cell_density": "FAILED", "cell_size": "TESTED", "transcript_density": "TESTED", "segmentation_uncertainty": "TESTED"},
     )
-    # If density is controlled and ruled out -> SUPPORTED
+    # Unbound positive declarations cap the control matrix at FRAGILE.
     verdict_controlled = assess_spatial_inference(
         "Niche enrichment",
         controls={"local_cell_density": "TESTED", "cell_size": "TESTED", "transcript_density": "TESTED", "segmentation_uncertainty": "TESTED", "nuclear_eccentricity": "TESTED", "spot_composition": "TESTED", "spatial_autocorrelation": "TESTED", "batch_fov": "TESTED", "ligand_receptor_abundance": "TESTED", "contact_geometry": "TESTED", "neighborhood_radius": "TESTED", "edge_effects": "TESTED", "transcript_spillover": "TESTED", "label_uncertainty": "TESTED"},
     )
 
-    passed = verdict_confounded.verdict == "CONFLICTED" and verdict_controlled.verdict == "SUPPORTED"
+    passed = verdict_confounded.verdict == "CONFLICTED" and verdict_controlled.verdict == "FRAGILE"
     return {
         "dimension": "3_cell_density_confounding",
         "confounded_verdict": verdict_confounded.verdict,
@@ -365,7 +365,7 @@ def test_dim9_batch_fov_confounding(adata: ad.AnnData) -> Dict[str, Any]:
 
 def test_dim10_permutation_null(adata: ad.AnnData) -> Dict[str, Any]:
     print("  [Dim 10] Testing Coordinate Permutation Null & Robust Warrant Synthesis...")
-    # Full canonical controls passing with permutation null -> ROBUST
+    # A declared null and control checklist provide no measured artifacts.
     full_controls = {
         "cell_size": "TESTED",
         "transcript_density": "TESTED",
@@ -383,17 +383,17 @@ def test_dim10_permutation_null(adata: ad.AnnData) -> Dict[str, Any]:
         "label_uncertainty": "TESTED",
         "permutation_null": "TESTED",
     }
-    verdict_robust = assess_spatial_inference("SVG_0 validated spatial gradient", controls=full_controls)
+    with_null = assess_spatial_inference("SVG_0 validated spatial gradient", controls=full_controls)
 
-    # Without permutation null -> capped at SUPPORTED
+    # Removing the declared null leaves the same evidence gap.
     controls_no_null = {k: v for k, v in full_controls.items() if k != "permutation_null"}
-    verdict_supported = assess_spatial_inference("SVG_0 validated spatial gradient", controls=controls_no_null)
+    without_null = assess_spatial_inference("SVG_0 validated spatial gradient", controls=controls_no_null)
 
-    passed = verdict_robust.verdict == "ROBUST" and verdict_supported.verdict == "SUPPORTED"
+    passed = with_null.verdict == "FRAGILE" and without_null.verdict == "FRAGILE"
     return {
         "dimension": "10_coordinate_permutation_null_robustness",
-        "with_permutation_null_verdict": verdict_robust.verdict,
-        "without_permutation_null_verdict": verdict_supported.verdict,
+        "with_permutation_null_verdict": with_null.verdict,
+        "without_permutation_null_verdict": without_null.verdict,
         "passed": passed,
     }
 
