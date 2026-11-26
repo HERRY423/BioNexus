@@ -13,8 +13,15 @@ from bionexus.pseudobulk_warrant import evaluate_pseudobulk_inferential_warrant
 from bionexus.statistical_rules import assess_statistical_power
 
 
-def _lodo_direction_stable(report: dict[str, Any] | None, scope: dict[str, Any]) -> bool | None:
+def _lodo_direction_stable(report: dict[str, Any] | None, scope: dict[str, Any], *, has_metadata: bool) -> bool | None:
     if not report:
+        return None
+    # The verified baseline supplies one cell type and ordered contrast for a
+    # standalone plan. Any separately audited scope must agree with that baseline.
+    targets = scope.get("cell_types", [])
+    if len(targets) > 1 or scope.get("ambiguous_contrast") or scope.get("result_labels_incomplete"):
+        return None
+    if has_metadata and (not scope.get("complete") or len(targets) != 1):
         return None
     branches = [b for b in report["branches"] if b["specification"]["kind"] == "leave_one_donor_out"]
     target = report["baseline_condition_review"]["analysis"]
@@ -83,6 +90,7 @@ def assess_de_measurements(
     power_parameters: dict[str, Any],
     count_inputs: dict[str | None, dict[str, Any]] | None = None,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    scope = cohort.get("replicate_scope", {})
     strata = []
     for original in cohort.get("replicate_strata", []):
         inputs = (count_inputs or {}).get(original["cell_type"], {})
@@ -92,13 +100,16 @@ def assess_de_measurements(
                            "min_donors": min(counts.values())})
         else:
             strata.append(original)
+    scope_complete = scope.get("complete", False)
     statuses = {c.check_id: c.status for c in checks}
     design_ok = [
         s["design"]["estimable"] and (s["design"]["residual_df"] or 0) >= 2 for s in strata
     ]
     measured: dict[EvidenceFactor, bool | None] = {
         EvidenceFactor.PROVENANCE: True if bound else False if statuses.get("analysis_execution_binding") == CheckStatus.ISSUE_FOUND else None,
-        EvidenceFactor.SENSITIVITY_ANALYSIS: _lodo_direction_stable(alternatives, cohort.get("replicate_scope", {})),
+        EvidenceFactor.SENSITIVITY_ANALYSIS: _lodo_direction_stable(
+            alternatives, scope, has_metadata="n_metadata_rows" in cohort,
+        ),
     }
     if strata:
         # An unmeasured stratum leaves the overall assessment unknown unless another stratum fails.
@@ -114,6 +125,10 @@ def assess_de_measurements(
                 and all(s["design"]["batch_in_design"] and s["design"]["estimable"] for s in strata)
             )
 
+    if not scope_complete:
+        for factor in (EvidenceFactor.SAMPLE_DESIGN, EvidenceFactor.REPLICATION, EvidenceFactor.CONFOUND_CONTROLS):
+            if measured.get(factor) is True:
+                measured[factor] = None
     observed = [f for f, present in measured.items() if present is True]
     conflicts = sorted(f.value for f, present in measured.items() if present is False and f in declared)
     if conflicts:
@@ -187,7 +202,7 @@ def assess_de_measurements(
     if selection_dependent:
         triggers.append("SELECTION_DEPENDENCE_RECORDED")
     ceilings = [w["verdict"]["maturity_ceiling"] for w in warrants if "verdict" in w]
-    provisional = not bound or len(ceilings) != len(strata) or "PRELIMINARY" in ceilings
+    provisional = not scope_complete or not strata or not bound or len(ceilings) != len(strata) or "PRELIMINARY" in ceilings
     cap = ConclusionMaturity.PRELIMINARY if provisional else ConclusionMaturity.UNASSESSED
     assessment = assess_evidence(
         base_maturity=cap, satisfied_factors=declared, measured_factors=observed, warrant_triggers=triggers,

@@ -1,0 +1,515 @@
+{
+  "schema": "bionexus.inv009_metrics.v1",
+  "corpus_sha256": "3c91f656f795cf9c2983c0a11e4507647a30883a8bee63b321d6c9fd99ea3a79",
+  "positive_class": "The author asserts a causal relationship in the submitted statement.",
+  "scope": "Authored bilingual fixed-text panel. Prior BF-051 through BF-060 are separate regression examples.",
+  "overall": {
+    "total": 100,
+    "evaluated": 100,
+    "unscored_cases": [],
+    "true_positives": 28,
+    "false_positives": 8,
+    "false_negatives": 22,
+    "true_negatives": 42,
+    "precision": 0.7777777777777778,
+    "recall": 0.56,
+    "precision_wilson_95": [
+      0.6191529705388181,
+      0.8828366802420353
+    ],
+    "recall_wilson_95": [
+      0.4230602802165686,
+      0.6883780078874284
+    ],
+    "misclassified_cases": [
+      "EN05",
+      "EN14",
+      "EN23",
+      "EN26",
+      "EN28",
+      "EN29",
+      "EN30",
+      "EN31",
+      "EN32",
+      "EN33",
+      "EN34",
+      "EN35",
+      "EN43",
+      "EN45",
+      "ZH05",
+      "ZH19",
+      "ZH21",
+      "ZH23",
+      "ZH25",
+      "ZH26",
+      "ZH27",
+      "ZH28",
+      "ZH29",
+      "ZH30",
+      "ZH33",
+      "ZH35",
+      "ZH37",
+      "ZH39",
+      "ZH46",
+      "ZH49"
+    ]
+  },
+  "by_language": {
+    "en": {
+      "total": 50,
+      "evaluated": 50,
+      "unscored_cases": [],
+      "true_positives": 15,
+      "false_positives": 4,
+      "false_negatives": 10,
+      "true_negatives": 21,
+      "precision": 0.7894736842105263,
+      "recall": 0.6,
+      "precision_wilson_95": [
+        0.5666572155618583,
+        0.9149232336708374
+      ],
+      "recall_wilson_95": [
+        0.40739457358966996,
+        0.7659669762225203
+      ],
+      "misclassified_cases": [
+        "EN05",
+        "EN14",
+        "EN23",
+        "EN26",
+        "EN28",
+        "EN29",
+        "EN30",
+        "EN31",
+        "EN32",
+        "EN33",
+        "EN34",
+        "EN35",
+        "EN43",
+        "EN45"
+      ]
+    },
+    "zh": {
+      "total": 50,
+      "evaluated": 50,
+      "unscored_cases": [],
+      "true_positives": 13,
+      "false_positives": 4,
+      "false_negatives": 12,
+      "true_negatives": 21,
+      "precision": 0.7647058823529411,
+      "recall": 0.52,
+      "precision_wilson_95": [
+        0.5273820188043501,
+        0.9044495567791989
+      ],
+      "recall_wilson_95": [
+        0.33498516950356777,
+        0.6996871404588704
+      ],
+      "misclassified_cases": [
+        "ZH05",
+        "ZH19",
+        "ZH21",
+        "ZH23",
+        "ZH25",
+        "ZH26",
+        "ZH27",
+        "ZH28",
+        "ZH29",
+        "ZH30",
+        "ZH33",
+        "ZH35",
+        "ZH37",
+        "ZH39",
+        "ZH46",
+        "ZH49"
+      ]
+    }
+  },
+  "by_phenomenon": {
+    "direct": {
+      "total": 20,
+      "evaluated": 20,
+      "unscored_cases": [],
+      "true_positives": 8,
+      "false_positives": 0,
+      "false_negatives": 2,
+      "true_negatives": 10,
+      "precision": 1.0,
+      "recall": 0.8,
+      "precision_wilson_95": [
+        0.6755924351161198,
+        1.0
+      ],
+      "recall_wilson_95": [
+        0.4901624715366418,
+        0.9433178485456247
+      ],
+      "misclassified_cases": [
+        "EN05",
+        "ZH05"
+      ]
+    },
+    "hedging": {
+      "total": 20,
+      "evaluated": 20,
+      "unscored_cases": [],
+      "true_positives": 7,
+      "false_positives": 1,
+      "false_negatives": 3,
+      "true_negatives": 9,
+      "precision": 0.875,
+      "recall": 0.7,
+      "precision_wilson_95": [
+        0.5291118177871466,
+        0.9775825085499433
+      ],
+      "recall_wilson_95": [
+        0.3967781474611453,
+        0.8922087325936988
+      ],
+      "misclassified_cases": [
+        "EN43",
+        "EN45",
+        "ZH46",
+        "ZH49"
+      ]
+    },
+    "negation": {
+      "total": 20,
+      "evaluated": 20,
+      "unscored_cases": [],
+      "true_positives": 8,
+      "false_positives": 0,
+      "false_negatives": 2,
+      "true_negatives": 10,
+      "precision": 1.0,
+      "recall": 0.8,
+      "precision_wilson_95": [
+        0.6755924351161198,
+        1.0
+      ],
+      "recall_wilson_95": [
+        0.4901624715366418,
+        0.9433178485456247
+      ],
+      "misclassified_cases": [
+        "EN14",
+        "ZH19"
+      ]
+    },
+    "paraphrase": {
+      "total": 20,
+      "evaluated": 20,
+      "unscored_cases": [],
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 9,
+      "true_negatives": 10,
+      "precision": 1.0,
+      "recall": 0.1,
+      "precision_wilson_95": [
+        0.20654931437723742,
+        1.0
+      ],
+      "recall_wilson_95": [
+        0.01787621309507289,
+        0.4041500267952385
+      ],
+      "misclassified_cases": [
+        "EN31",
+        "EN32",
+        "EN33",
+        "EN34",
+        "EN35",
+        "ZH33",
+        "ZH35",
+        "ZH37",
+        "ZH39"
+      ]
+    },
+    "quotation": {
+      "total": 20,
+      "evaluated": 20,
+      "unscored_cases": [],
+      "true_positives": 4,
+      "false_positives": 7,
+      "false_negatives": 6,
+      "true_negatives": 3,
+      "precision": 0.36363636363636365,
+      "recall": 0.4,
+      "precision_wilson_95": [
+        0.15166471095367573,
+        0.6461988254921511
+      ],
+      "recall_wilson_95": [
+        0.16818032970623617,
+        0.6873262302663417
+      ],
+      "misclassified_cases": [
+        "EN23",
+        "EN26",
+        "EN28",
+        "EN29",
+        "EN30",
+        "ZH21",
+        "ZH23",
+        "ZH25",
+        "ZH26",
+        "ZH27",
+        "ZH28",
+        "ZH29",
+        "ZH30"
+      ]
+    }
+  },
+  "errors": [
+    {
+      "id": "EN05",
+      "language": "en",
+      "phenomenon": "direct",
+      "label": "positive",
+      "statement": "The nighttime warming treatment advanced bud opening in the orchard.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN14",
+      "language": "en",
+      "phenomenon": "negation",
+      "label": "positive",
+      "statement": "The response persisted without grazing because saline irrigation killed newly emerged shoots.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN23",
+      "language": "en",
+      "phenomenon": "quotation",
+      "label": "positive",
+      "statement": "The report concluded that “turbulent mixing replenished bottom-water oxygen,” a conclusion our intervention confirms.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN26",
+      "language": "en",
+      "phenomenon": "quotation",
+      "label": "negative",
+      "statement": "We coded the phrase “fertilization triggers blooms” as a hypothesis in the historical literature survey.",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "EN28",
+      "language": "en",
+      "phenomenon": "quotation",
+      "label": "negative",
+      "statement": "The archive uses “erosion caused by grazing” as a catalogue heading without measurements of grazing history.",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "EN29",
+      "language": "en",
+      "phenomenon": "quotation",
+      "label": "negative",
+      "statement": "The reviewer wrote “acidification drove the decline”; the underlying time series supports only co-occurrence.",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "EN30",
+      "language": "en",
+      "phenomenon": "quotation",
+      "label": "negative",
+      "statement": "Our search included the quoted string “warming accelerates melt” to retrieve records for screening.",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "EN31",
+      "language": "en",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "Withholding the spring pulse left the water table too low for the reeds to establish.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN32",
+      "language": "en",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "The loss of surface roughness let the same wind carry sediment farther inland.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN33",
+      "language": "en",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "The thicker shell owes its additional layer to the extra calcium supplied during growth.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN34",
+      "language": "en",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "Embankment removal opened a route by which tidal water could once again reach the marsh.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN35",
+      "language": "en",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "In the flume, the sand stayed in suspension only because the rotating paddles kept it aloft.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN43",
+      "language": "en",
+      "phenomenon": "hedging",
+      "label": "positive",
+      "statement": "We have yet to resolve the intermediate steps through which the applied pressure closes the pores.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN45",
+      "language": "en",
+      "phenomenon": "hedging",
+      "label": "positive",
+      "statement": "The intervention shortened the dormant period, though its importance under field conditions remains unclear.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH05",
+      "language": "zh",
+      "phenomenon": "direct",
+      "label": "positive",
+      "statement": "消化液中的乳糖酶将乳糖水解为葡萄糖和半乳糖。",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH19",
+      "language": "zh",
+      "phenomenon": "negation",
+      "label": "positive",
+      "statement": "即便不用显色剂，蛋白酶仍会切开这段底物；显色剂只方便读数。",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH21",
+      "language": "zh",
+      "phenomenon": "quotation",
+      "label": "positive",
+      "statement": "复测结果印证了实验记录里的判断：“叶柄折断切断了向叶片输水的通路。”",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH23",
+      "language": "zh",
+      "phenomenon": "quotation",
+      "label": "positive",
+      "statement": "我们赞同组会纪要中“本轮施磷解除了幼株的磷限制”的结论，补磷对照给出了同样的响应。",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH25",
+      "language": "zh",
+      "phenomenon": "quotation",
+      "label": "positive",
+      "statement": "“盐度升高把水从液泡里拉了出来”，正是我们对这组显微图像和渗透压测量的解释。",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH26",
+      "language": "zh",
+      "phenomenon": "quotation",
+      "label": "negative",
+      "statement": "审稿人要求我们给“叶片受伤诱发下一轮开花”补充证据，本次修订已撤去这句话。",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "ZH27",
+      "language": "zh",
+      "phenomenon": "quotation",
+      "label": "positive",
+      "statement": "这里采用植物生理学教材的解释：“伸长区两侧生长不等，使根发生弯曲。”",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH28",
+      "language": "zh",
+      "phenomenon": "quotation",
+      "label": "negative",
+      "statement": "“移栽本身会让花期推迟吗？”是下一季试验的问题，现有记录只覆盖移栽当天。",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "ZH29",
+      "language": "zh",
+      "phenomenon": "quotation",
+      "label": "positive",
+      "statement": "对这批样品，“解冻破坏了细胞膜”可以作为定论，我们已在分装的配对样本中重现这一效应。",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH30",
+      "language": "zh",
+      "phenomenon": "quotation",
+      "label": "negative",
+      "statement": "原报告将差异称为“运动引起的改变”，我们在此沿用其图题以便读者查找原图。",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "ZH33",
+      "language": "zh",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "伤口能够重新闭合，靠的是边缘细胞沿基底向中央爬行。",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH35",
+      "language": "zh",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "这几条细根之所以扁平，是因为生长时夹在两块岩石之间。",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH37",
+      "language": "zh",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "把细胞再次拉向中线的那股力，来自皮层收缩环的收紧。",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH39",
+      "language": "zh",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "连续切片上那圈淡染区的根源，在于固定液未能渗透到组织中心。",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH46",
+      "language": "zh",
+      "phenomenon": "hedging",
+      "label": "negative",
+      "statement": "一种尚待排查的解释是，饲槽的位置改变了个体前来取食的次数。",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "ZH49",
+      "language": "zh",
+      "phenomenon": "hedging",
+      "label": "positive",
+      "statement": "激素处理促成了这些侧芽的萌发，至于它是否还改变了后续枝长，我们暂不判断。",
+      "predicted_label": "negative"
+    }
+  ],
+  "gate": {
+    "metric": "overall.recall_wilson_95[0]",
+    "minimum": 0.8,
+    "passed": false
+  }
+}

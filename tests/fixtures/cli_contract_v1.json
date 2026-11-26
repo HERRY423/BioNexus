@@ -1753,6 +1753,49 @@
               "help": "BioFailureBench actions",
               "type": null,
               "subcommands": {
+                "inv009": {
+                  "prog": "bionexus bench inv009",
+                  "description": null,
+                  "actions": [
+                    {
+                      "kind": "_HelpAction",
+                      "options": [
+                        "-h",
+                        "--help"
+                      ],
+                      "dest": "help",
+                      "nargs": 0,
+                      "required": false,
+                      "default": "==SUPPRESS==",
+                      "help": "show this help message and exit",
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--output"
+                      ],
+                      "dest": "output",
+                      "nargs": null,
+                      "required": false,
+                      "default": "evals/reports/inv009_metrics.json",
+                      "help": null,
+                      "type": null
+                    },
+                    {
+                      "kind": "_StoreAction",
+                      "options": [
+                        "--summary"
+                      ],
+                      "dest": "summary",
+                      "nargs": null,
+                      "required": false,
+                      "default": null,
+                      "help": "Append a Markdown summary to a file",
+                      "type": null
+                    }
+                  ]
+                },
                 "validate": {
                   "prog": "bionexus bench validate",
                   "description": null,

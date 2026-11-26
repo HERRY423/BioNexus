@@ -15,6 +15,14 @@ def _measurement_lines(result: Any) -> list[str]:
         return []
     measured = "、".join(assessment["satisfied_factors"]) or "无"
     lines = [f"实测证据等级 {assessment['evidence_maturity']}，已满足因子 {measured}。"]
+    replicate_scope = result.cohort_summary.get("replicate_scope")
+    if replicate_scope and "basis" in replicate_scope and (replicate_scope["cell_types"] or "n_metadata_rows" in result.cohort_summary):
+        basis = {"explicit": "审计参数", "claim_contract": "声明合同", "inferred_from_de_table": "DE 结果",
+                 "single_metadata_cell_type": "元数据中的唯一类型", "unstratified_metadata": "未分层的样本表",
+                 "unspecified": "缺少目标类型记录"}[replicate_scope["basis"]]
+        names = "、".join(replicate_scope["cell_types"]) or ("范围未确定" if replicate_scope["basis"] == "unspecified" else "未分层")
+        coverage = "已对应元数据" if replicate_scope["complete"] else "证据不足"
+        lines.append(f"细胞类型范围为 {names}（依据：{basis}，{coverage}）。")
     if assessment["unverified_factors"]:
         lines.append("待核验的声明因子包括 " + "、".join(assessment["unverified_factors"]) + "。")
     for item in result.design_warrants:

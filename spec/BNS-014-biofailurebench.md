@@ -88,10 +88,40 @@ label means the author asserts a causal effect. Cases cover negation within
 and across clauses, endorsed and rejected quotations, and paraphrases.
 
 Run `bionexus eval --suite biofailurebench --level L2 --provider replay` to
-reproduce the CI job summary. The INV-009 table includes every labeled case,
-including frontier cases. It reports the confusion counts and case IDs for
-errors. Precision and recall apply to this authored corpus. Performance on
-independent manuscripts remains unmeasured.
+replay those ten regression statements, including the frontier cases.
+
+`bionexus bench inv009` scores a separate fixed panel of 100 statements.
+The authors of the English and Chinese halves independently wrote and labeled
+their statements without seeing the detector or development examples. Each
+language has five asserted and five nonasserted claims in each of five groups:
+direct statements, negation, quotations, paraphrases and hedging. A claim
+counts as positive when the author endorses a causal relationship, regardless
+of whether the study design warrants it. The panel is an authored challenge
+set. Performance in published manuscripts remains unmeasured.
+
+CI publishes `evals/reports/inv009_metrics.json` with confusion counts,
+the text and labels of errors, and two-sided Wilson 95% intervals for
+precision and recall. A zero denominator gives an undefined rate and interval.
+The job checks the latest panel and the previous independent panel separately.
+It fails if any case is unscored or either recall lower bound falls below
+0.80. CI uploads the measurements on either outcome.
+
+An earlier, separate 100-sentence panel was used for development. Its first
+measurement is retained in `evals/reports/inv009_development_first_pass.json`.
+On the first independent panel the initial detector had 28 true positives,
+8 false positives, 22 false negatives and 42 true negatives. Its corpus,
+measurement and detector patch are bound in `inv009_panel1_manifest.json`
+under `evals/datasets/benchmarks/`. That panel became a regression set
+after its errors were reviewed. The revised detector recovered 49 of its
+50 positive labels, with 6 false positives.
+
+Two other contributors wrote fresh English and Chinese halves for the final
+independent measurement. Their original TSV hashes and the detector digest at
+unblinding are recorded in `evals/datasets/benchmarks/inv009_panel_lock.json`.
+The detector classified 33 of 50 assertions and flagged 3 of 50 nonassertions.
+Precision was 91.7% (Wilson 95% interval 78.2%–97.1%) and recall was 66.0%
+(52.2%–77.6%). This measurement fell below the prespecified recall floor.
+Each panel has its own ID namespace.
 
 ## 5. Verification hooks
 

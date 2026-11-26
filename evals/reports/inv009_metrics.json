@@ -1,0 +1,669 @@
+{
+  "schema": "bionexus.inv009_metrics.v1",
+  "corpus_sha256": "4dcefc71a6514ecb3dacbb2d8a49496b8b17bad911e306e2d4e66b04516d8d08",
+  "detector_source_sha256": "d9fdded26cd3bab489bfb9ada53e234ce408d529407058c3d47066ca16a46cd2",
+  "positive_class": "The author asserts a causal relationship in the submitted statement.",
+  "scope": "Fixed bilingual sentences labeled for causal assertion. Evidence sufficiency is outside this score.",
+  "overall": {
+    "total": 100,
+    "evaluated": 100,
+    "unscored_cases": [],
+    "true_positives": 33,
+    "false_positives": 3,
+    "false_negatives": 17,
+    "true_negatives": 47,
+    "precision": 0.9166666666666666,
+    "recall": 0.66,
+    "precision_wilson_95": [
+      0.7817330875072737,
+      0.9712513886640065
+    ],
+    "recall_wilson_95": [
+      0.5215382605023261,
+      0.7756305077749992
+    ],
+    "misclassified_cases": [
+      "EN01",
+      "EN16",
+      "EN23",
+      "EN25",
+      "EN29",
+      "EN32",
+      "EN36",
+      "EN38",
+      "EN41",
+      "EN43",
+      "EN45",
+      "EN50",
+      "ZH15",
+      "ZH26",
+      "ZH30",
+      "ZH31",
+      "ZH33",
+      "ZH34",
+      "ZH35",
+      "ZH42"
+    ]
+  },
+  "by_language": {
+    "en": {
+      "total": 50,
+      "evaluated": 50,
+      "unscored_cases": [],
+      "true_positives": 14,
+      "false_positives": 1,
+      "false_negatives": 11,
+      "true_negatives": 24,
+      "precision": 0.9333333333333333,
+      "recall": 0.56,
+      "precision_wilson_95": [
+        0.7018347012621998,
+        0.9881331045067316
+      ],
+      "recall_wilson_95": [
+        0.37067331869798775,
+        0.7333436111893264
+      ],
+      "misclassified_cases": [
+        "EN01",
+        "EN16",
+        "EN23",
+        "EN25",
+        "EN29",
+        "EN32",
+        "EN36",
+        "EN38",
+        "EN41",
+        "EN43",
+        "EN45",
+        "EN50"
+      ]
+    },
+    "zh": {
+      "total": 50,
+      "evaluated": 50,
+      "unscored_cases": [],
+      "true_positives": 19,
+      "false_positives": 2,
+      "false_negatives": 6,
+      "true_negatives": 23,
+      "precision": 0.9047619047619048,
+      "recall": 0.76,
+      "precision_wilson_95": [
+        0.7108586092608175,
+        0.9734812325619254
+      ],
+      "recall_wilson_95": [
+        0.5657031664457093,
+        0.8850368630659855
+      ],
+      "misclassified_cases": [
+        "ZH15",
+        "ZH26",
+        "ZH30",
+        "ZH31",
+        "ZH33",
+        "ZH34",
+        "ZH35",
+        "ZH42"
+      ]
+    }
+  },
+  "by_phenomenon": {
+    "direct": {
+      "total": 20,
+      "evaluated": 20,
+      "unscored_cases": [],
+      "true_positives": 9,
+      "false_positives": 0,
+      "false_negatives": 1,
+      "true_negatives": 10,
+      "precision": 1.0,
+      "recall": 0.9,
+      "precision_wilson_95": [
+        0.700854951580456,
+        1.0
+      ],
+      "recall_wilson_95": [
+        0.5958499732047616,
+        0.9821237869049271
+      ],
+      "misclassified_cases": [
+        "EN01"
+      ]
+    },
+    "hedging": {
+      "total": 20,
+      "evaluated": 20,
+      "unscored_cases": [],
+      "true_positives": 6,
+      "false_positives": 1,
+      "false_negatives": 4,
+      "true_negatives": 9,
+      "precision": 0.8571428571428571,
+      "recall": 0.6,
+      "precision_wilson_95": [
+        0.48687217072568106,
+        0.9743203756552565
+      ],
+      "recall_wilson_95": [
+        0.3126737697336583,
+        0.8318196702937638
+      ],
+      "misclassified_cases": [
+        "EN41",
+        "EN43",
+        "EN45",
+        "EN50",
+        "ZH42"
+      ]
+    },
+    "negation": {
+      "total": 20,
+      "evaluated": 20,
+      "unscored_cases": [],
+      "true_positives": 8,
+      "false_positives": 0,
+      "false_negatives": 2,
+      "true_negatives": 10,
+      "precision": 1.0,
+      "recall": 0.8,
+      "precision_wilson_95": [
+        0.6755924351161198,
+        1.0
+      ],
+      "recall_wilson_95": [
+        0.4901624715366418,
+        0.9433178485456247
+      ],
+      "misclassified_cases": [
+        "EN16",
+        "ZH15"
+      ]
+    },
+    "paraphrase": {
+      "total": 20,
+      "evaluated": 20,
+      "unscored_cases": [],
+      "true_positives": 3,
+      "false_positives": 0,
+      "false_negatives": 7,
+      "true_negatives": 10,
+      "precision": 1.0,
+      "recall": 0.3,
+      "precision_wilson_95": [
+        0.4385029682449545,
+        1.0
+      ],
+      "recall_wilson_95": [
+        0.10779126740630099,
+        0.6032218525388546
+      ],
+      "misclassified_cases": [
+        "EN32",
+        "EN36",
+        "EN38",
+        "ZH31",
+        "ZH33",
+        "ZH34",
+        "ZH35"
+      ]
+    },
+    "quotation": {
+      "total": 20,
+      "evaluated": 20,
+      "unscored_cases": [],
+      "true_positives": 7,
+      "false_positives": 2,
+      "false_negatives": 3,
+      "true_negatives": 8,
+      "precision": 0.7777777777777778,
+      "recall": 0.7,
+      "precision_wilson_95": [
+        0.45258896910698887,
+        0.9367748928821533
+      ],
+      "recall_wilson_95": [
+        0.3967781474611453,
+        0.8922087325936988
+      ],
+      "misclassified_cases": [
+        "EN23",
+        "EN25",
+        "EN29",
+        "ZH26",
+        "ZH30"
+      ]
+    }
+  },
+  "errors": [
+    {
+      "id": "EN01",
+      "language": "en",
+      "phenomenon": "direct",
+      "label": "positive",
+      "statement": "The extra hour of sleep improved recall on the word-list task.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN16",
+      "language": "en",
+      "phenomenon": "negation",
+      "label": "positive",
+      "statement": "Blinding did not remove the effect of the cushion. The cushion still relieved pressure at the ankle.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN23",
+      "language": "en",
+      "phenomenon": "quotation",
+      "label": "positive",
+      "statement": "“The tinted lens relieved glare” is our conclusion after comparing the randomized lens assignments.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN25",
+      "language": "en",
+      "phenomenon": "quotation",
+      "label": "positive",
+      "statement": "The report states that “having a handrail cut the number of slips.” The trial results support that interpretation.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN29",
+      "language": "en",
+      "phenomenon": "quotation",
+      "label": "positive",
+      "statement": "Our replication confirms the earlier finding, “Shortening the recall interval improves the accuracy of the diary.”",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN32",
+      "language": "en",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "The source of the apparent overnight weight loss was a scale that had drifted out of calibration.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN36",
+      "language": "en",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "The reduction in finger tremor can be traced to the support provided by the wrist rest.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN38",
+      "language": "en",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "A clearer view of the mouth was how the transparent mask helped listeners distinguish the syllables.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN41",
+      "language": "en",
+      "phenomenon": "hedging",
+      "label": "positive",
+      "statement": "On balance, we attribute most of the transient redness to pressure from the adhesive patch.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN43",
+      "language": "en",
+      "phenomenon": "hedging",
+      "label": "positive",
+      "statement": "In this age range, the additional recovery pause appears to have helped participants maintain their grip.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN45",
+      "language": "en",
+      "phenomenon": "hedging",
+      "label": "positive",
+      "statement": "We infer that the repeated demonstrations contributed to better recall, though their contribution was probably modest.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN50",
+      "language": "en",
+      "phenomenon": "hedging",
+      "label": "negative",
+      "statement": "The association looks stronger in younger adults, but it is unclear which variable, if either, influences the other.",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "ZH15",
+      "language": "zh",
+      "phenomenon": "negation",
+      "label": "positive",
+      "statement": "堵住侧孔后流量下降，不是泵速变慢，而是液体失去了一条出口。",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH26",
+      "language": "zh",
+      "phenomenon": "quotation",
+      "label": "negative",
+      "statement": "我们将论文题目中的“风促成沙丘迁移”作为检索词，筛选了近二十年的文献。",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "ZH30",
+      "language": "zh",
+      "phenomenon": "quotation",
+      "label": "negative",
+      "statement": "旧标本盒上的“病斑由低温造成”是采集者的原始注记，我们将其逐字转录。",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "ZH31",
+      "language": "zh",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "恢复沙洲与主河道之间的水流后，原本滞留的细泥被水带回了河道。",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH33",
+      "language": "zh",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "换上粗孔滤网，原先截留的细砂便随水穿过了网面。",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH34",
+      "language": "zh",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "叶背那层绒毛为水汽外逸多设了一道阻力，蒸腾因此放慢。",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH35",
+      "language": "zh",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "少了叶绿素对红光的吸收，同一厚度的叶片就透过了更多红光。",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH42",
+      "language": "zh",
+      "phenomenon": "hedging",
+      "label": "positive",
+      "statement": "这一结果能否推广到天然矿石仍待验证；在标准样品上，酸洗去除了表层碳酸盐。",
+      "predicted_label": "negative"
+    }
+  ],
+  "gate": {
+    "metric": "overall.recall_wilson_95[0]",
+    "minimum": 0.8,
+    "passed": false
+  },
+  "earlier_panel_regression": {
+    "schema": "bionexus.inv009_metrics.v1",
+    "corpus_sha256": "3c91f656f795cf9c2983c0a11e4507647a30883a8bee63b321d6c9fd99ea3a79",
+    "detector_source_sha256": "d9fdded26cd3bab489bfb9ada53e234ce408d529407058c3d47066ca16a46cd2",
+    "positive_class": "The author asserts a causal relationship in the submitted statement.",
+    "scope": "Fixed bilingual sentences labeled for causal assertion. Evidence sufficiency is outside this score.",
+    "overall": {
+      "total": 100,
+      "evaluated": 100,
+      "unscored_cases": [],
+      "true_positives": 49,
+      "false_positives": 6,
+      "false_negatives": 1,
+      "true_negatives": 44,
+      "precision": 0.8909090909090909,
+      "recall": 0.98,
+      "precision_wilson_95": [
+        0.7817445091344649,
+        0.9490327499921767
+      ],
+      "recall_wilson_95": [
+        0.895045564103622,
+        0.9964607407283539
+      ],
+      "misclassified_cases": [
+        "EN10",
+        "EN28",
+        "EN29",
+        "EN46",
+        "ZH06",
+        "ZH39",
+        "ZH46"
+      ]
+    },
+    "by_language": {
+      "en": {
+        "total": 50,
+        "evaluated": 50,
+        "unscored_cases": [],
+        "true_positives": 25,
+        "false_positives": 4,
+        "false_negatives": 0,
+        "true_negatives": 21,
+        "precision": 0.8620689655172413,
+        "recall": 1.0,
+        "precision_wilson_95": [
+          0.6944100627964797,
+          0.9450256003588804
+        ],
+        "recall_wilson_95": [
+          0.8668077490609514,
+          0.9999999999999998
+        ],
+        "misclassified_cases": [
+          "EN10",
+          "EN28",
+          "EN29",
+          "EN46"
+        ]
+      },
+      "zh": {
+        "total": 50,
+        "evaluated": 50,
+        "unscored_cases": [],
+        "true_positives": 24,
+        "false_positives": 2,
+        "false_negatives": 1,
+        "true_negatives": 23,
+        "precision": 0.9230769230769231,
+        "recall": 0.96,
+        "precision_wilson_95": [
+          0.7585844622837095,
+          0.9786449115277237
+        ],
+        "recall_wilson_95": [
+          0.8045593626380625,
+          0.9929037664980126
+        ],
+        "misclassified_cases": [
+          "ZH06",
+          "ZH39",
+          "ZH46"
+        ]
+      }
+    },
+    "by_phenomenon": {
+      "direct": {
+        "total": 20,
+        "evaluated": 20,
+        "unscored_cases": [],
+        "true_positives": 10,
+        "false_positives": 2,
+        "false_negatives": 0,
+        "true_negatives": 8,
+        "precision": 0.8333333333333334,
+        "recall": 1.0,
+        "precision_wilson_95": [
+          0.5519691377470266,
+          0.9530348578161463
+        ],
+        "recall_wilson_95": [
+          0.7224672001371106,
+          0.9999999999999999
+        ],
+        "misclassified_cases": [
+          "EN10",
+          "ZH06"
+        ]
+      },
+      "hedging": {
+        "total": 20,
+        "evaluated": 20,
+        "unscored_cases": [],
+        "true_positives": 10,
+        "false_positives": 2,
+        "false_negatives": 0,
+        "true_negatives": 8,
+        "precision": 0.8333333333333334,
+        "recall": 1.0,
+        "precision_wilson_95": [
+          0.5519691377470266,
+          0.9530348578161463
+        ],
+        "recall_wilson_95": [
+          0.7224672001371106,
+          0.9999999999999999
+        ],
+        "misclassified_cases": [
+          "EN46",
+          "ZH46"
+        ]
+      },
+      "negation": {
+        "total": 20,
+        "evaluated": 20,
+        "unscored_cases": [],
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "true_negatives": 10,
+        "precision": 1.0,
+        "recall": 1.0,
+        "precision_wilson_95": [
+          0.7224672001371106,
+          0.9999999999999999
+        ],
+        "recall_wilson_95": [
+          0.7224672001371106,
+          0.9999999999999999
+        ],
+        "misclassified_cases": []
+      },
+      "paraphrase": {
+        "total": 20,
+        "evaluated": 20,
+        "unscored_cases": [],
+        "true_positives": 9,
+        "false_positives": 0,
+        "false_negatives": 1,
+        "true_negatives": 10,
+        "precision": 1.0,
+        "recall": 0.9,
+        "precision_wilson_95": [
+          0.700854951580456,
+          1.0
+        ],
+        "recall_wilson_95": [
+          0.5958499732047616,
+          0.9821237869049271
+        ],
+        "misclassified_cases": [
+          "ZH39"
+        ]
+      },
+      "quotation": {
+        "total": 20,
+        "evaluated": 20,
+        "unscored_cases": [],
+        "true_positives": 10,
+        "false_positives": 2,
+        "false_negatives": 0,
+        "true_negatives": 8,
+        "precision": 0.8333333333333334,
+        "recall": 1.0,
+        "precision_wilson_95": [
+          0.5519691377470266,
+          0.9530348578161463
+        ],
+        "recall_wilson_95": [
+          0.7224672001371106,
+          0.9999999999999999
+        ],
+        "misclassified_cases": [
+          "EN28",
+          "EN29"
+        ]
+      }
+    },
+    "errors": [
+      {
+        "id": "EN10",
+        "language": "en",
+        "phenomenon": "direct",
+        "label": "negative",
+        "statement": "The warmed plots and reference plots had similar median bud-opening dates.",
+        "predicted_label": "positive"
+      },
+      {
+        "id": "EN28",
+        "language": "en",
+        "phenomenon": "quotation",
+        "label": "negative",
+        "statement": "The archive uses “erosion caused by grazing” as a catalogue heading without measurements of grazing history.",
+        "predicted_label": "positive"
+      },
+      {
+        "id": "EN29",
+        "language": "en",
+        "phenomenon": "quotation",
+        "label": "negative",
+        "statement": "The reviewer wrote “acidification drove the decline”; the underlying time series supports only co-occurrence.",
+        "predicted_label": "positive"
+      },
+      {
+        "id": "EN46",
+        "language": "en",
+        "phenomenon": "hedging",
+        "label": "negative",
+        "statement": "These observations leave open whether shade plays any role in the timing of flowering.",
+        "predicted_label": "positive"
+      },
+      {
+        "id": "ZH06",
+        "language": "zh",
+        "phenomenon": "direct",
+        "label": "negative",
+        "statement": "两批细胞在相同时间进入分裂高峰，峰值的高度略有差别。",
+        "predicted_label": "positive"
+      },
+      {
+        "id": "ZH39",
+        "language": "zh",
+        "phenomenon": "paraphrase",
+        "label": "positive",
+        "statement": "连续切片上那圈淡染区的根源，在于固定液未能渗透到组织中心。",
+        "predicted_label": "negative"
+      },
+      {
+        "id": "ZH46",
+        "language": "zh",
+        "phenomenon": "hedging",
+        "label": "negative",
+        "statement": "一种尚待排查的解释是，饲槽的位置改变了个体前来取食的次数。",
+        "predicted_label": "positive"
+      }
+    ],
+    "gate": {
+      "metric": "overall.recall_wilson_95[0]",
+      "minimum": 0.8,
+      "passed": true
+    }
+  },
+  "passed_all_panels": false
+}

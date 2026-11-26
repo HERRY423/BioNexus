@@ -79,3 +79,19 @@ def test_sample_ids_do_not_replace_biological_donors_or_establish_cell_depth():
     assert result.cohort_summary["n_donors"] == 3
     assert set(result.cohort_summary["replicate_strata"][0]["design"]["paired_donors"]) == {"p1", "p2", "p3"}
     assert "replication" in result.evidence_assessment["unverified_factors"]
+
+
+def test_inferred_cell_type_matches_explicit_evidence_and_power(tmp_path):
+    inputs = _cohort(tmp_path, thin=True)
+    path = inputs["de_table"]
+    table = pd.read_csv(path).assign(cell_type="T cell")
+    table.to_csv(path, index=False)
+    inputs["execution_record"]["result_sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+    inputs.pop("cell_type")
+    explicit = audit_de(**inputs, cell_type="T cell")
+    inferred = audit_de(**inputs)
+    assert inferred.cohort_summary["replicate_scope"]["basis"] == "inferred_from_de_table"
+    assert inferred.evidence_assessment == explicit.evidence_assessment
+    assert inferred.design_warrants == explicit.design_warrants
+    assert [w["cell_type"] for w in inferred.design_warrants] == ["T cell"]
+    assert inferred.evidence_assessment["measurement_results"]["replication"] is True

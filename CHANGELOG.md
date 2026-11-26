@@ -9,15 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Scientific audit changes
 
-- Some pseudobulk DE claims rated PRELIMINARY under PR #37 now reach SUPPORTED when their shrunken effect exceeds the contrast-specific minimum detectable effect. Power calculations use the actual arm sizes, fitted common dispersion from a bound receipt or within-condition count estimates when available, and report the source of their assumptions. The planning fallback uses a dispersion of 0.16. DESeq2 shrinkage recorded in a bound receipt also applies to standard fold-change column names.
-
 - Pseudobulk power now uses per-sample negative-binomial variance and normal quantiles. Reports identify the per-test alpha assumption. Many small cohorts previously classified as powered for moderate or subtle effects now support descriptive claims only. Strong-effect classification requires a shrunken effect and sufficient baseMean.
 - DE audits count eligible donors within cell type and condition, report exclusions, and check the estimability and residual degrees of freedom of the sample-level contrast. Unused categories no longer block an audit. Partial batch confounding, omitted donor pairing and within-condition donor dominance are reported.
 - Donor-aware mixed models and pseudobulk methods can supply donor-level execution evidence. A successful dispersion fit alone cannot establish a causal design. An underpowered contrast has a PRELIMINARY ceiling.
 - Evidence declarations alone now have a PRELIMINARY ceiling. DE reports list measured factors and conflicting declarations, and record planning power separately from artifact-review status. Post-result selection caps evidence at FRAGILE.
 - DE table review checks suspicious adjusted P values and compares the signs of large reported effects with donor-level raw-count differences for an ordered contrast. The sign check flags contrasts for review and does not authenticate the external fit.
-- Spatial inference contract v3 distinguishes tissue-edge effects from contact geometry, verifies submitted control artifacts and measures replication from observations. Declarations can support at most FRAGILE. A single independent donor or section in a group yields ABSTAIN.
+- Spatial inference contract v3 introduced a distinction between tissue-edge effects and contact geometry, artifact integrity checks and replication counts from observations. Declarations can support at most FRAGILE. A single independent donor or section in a group yields ABSTAIN.
 - The rule registry supplies shared effect and doublet thresholds. BioFailureBench reports precision and recall for INV-009 on labeled causal-language examples, including quoted and negated wording.
+
+### Scientific audit follow-up
+
+- Some pseudobulk contrasts classified PRELIMINARY under PR #37 now reach SUPPORTED. At ten donors per group and dispersion 0.5, a qualifying shrunken |log2FC| of 3 exceeds the 1.29 minimum detectable effect. An effect of 1 stays PRELIMINARY. Power calculations use both group sizes, report their dispersion source and prefer a bound model estimate, followed by within-condition library moments. The human planning fallback is 0.16.
+- DE audits infer cell-type scope from the result table where possible, report unrelated strata as advisory and explain insufficient residual degrees of freedom even without a batch column. Standard DESeq2 effect columns qualify for the power comparison when a bound receipt identifies the shrinkage method.
+- Spatial contract v4 derives control outcomes from input-bound intervals. A null-crossing adjusted interval yields CONFLICTED. Sections without independent donor evidence can reach at most FRAGILE. The permutation control requires at least 999 permutations, a seed and a null summary.
+- BioFailureBench publishes bilingual INV-009 precision and recall, uncertainty intervals and individual errors. Its recall gate uses the lower Wilson 95% confidence bound. Python 3.12 scientific CI pins the PyDESeq2 version verified on the frozen Kang benchmark.
 
 Earlier reports retain their original contract and findings. Re-run the audit with the original inputs to obtain a new assessment under these rules.
 

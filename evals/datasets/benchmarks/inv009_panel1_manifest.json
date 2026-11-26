@@ -1,0 +1,13 @@
+{
+  "schema": "bionexus.inv009_first_measurement.v1",
+  "panel": "evals/datasets/benchmarks/inv009_panel1.tsv",
+  "corpus_sha256": "3c91f656f795cf9c2983c0a11e4507647a30883a8bee63b321d6c9fd99ea3a79",
+  "first_report": "evals/reports/inv009_panel1_first_pass.json",
+  "first_report_sha256": "db032d9437ac02a96359e26c993b5295a8bb67a96b48aa6da7f57d3b51c25d49",
+  "base_commit": "67bcb8d8fff72d844220995a143f00337c2558e9",
+  "detector_patch": "evals/datasets/benchmarks/inv009_panel1_detector.patch",
+  "detector_file": "src/bionexus/claims/parser.py",
+  "detector_source_sha256": "eb5d9ca1db9509af733523f395ec58b627a40c30b9e37c23fd821abf25d9f5a7",
+  "detector_patch_sha256": "9058d6cf3eea783b0fe4204e5d609b663311a328f7968fef80c25052241be3c9",
+  "reconstruction": "Apply the zero-context patch to detector_file from base_commit using git apply --unidiff-zero."
+}

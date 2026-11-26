@@ -100,8 +100,10 @@ CI 的 `reliability-quality` 作业和发布流程均运行类型、覆盖率与
 
 ## 审查分支与科学测试环境
 
-以 `fix/rereview-*` 为目标的分层拉取请求和以 `main`、`master` 为目标的拉取请求运行同一 CI。按依赖顺序合并后，将下一项的目标切换到 `main`。`.github/rulesets/main.json` 定义一个独立批准及五个必需检查，仓库管理员可通过 GitHub 的 Rulesets 页面导入并核对生效状态。
+以 `fix/rereview-*` 为目标的分层拉取请求和以 `main`、`master` 为目标的拉取请求运行同一 CI。按依赖顺序合并后，将下一项的目标切换到 `main`。`.github/rulesets/main.json` 定义一个独立批准及六个必需检查（包括独立的 INV-009 召回率门禁），仓库管理员可通过 GitHub 的 Rulesets 页面导入并核对生效状态。
 
 Python 3.12 科学矩阵与旗舰作业的两步安装都读取 `quality/scientific-ci-constraints.txt`。Kang 前 100 个基因的已发表参考集交集在 PyDESeq2 0.6.0 下为 50，在 0.7.0 下为 49。升级前应使用相同计数、配对设计及原有至少 50 个基因的门槛重跑。
 
 `evals/datasets/pseudobulk-stress-expectations.v1.json` 固定 Kang D1 参考集与群体推断门禁，以及 D3 的两组规划期望。D1 从真实供体文库估计组内离散度。D3 固定每文库 50 个细胞和每细胞均值 1，分别使用默认规划离散度与整队列实测离散度。每个供体子集的输出只评估设计变化下的预期功效。
+
+复审使用相邻两次定时运行的 Linux Python 3.12 依赖记录定位漂移，随后在同一数据和设计上单独切换 PyDESeq2 复现 50/100 与 49/100 的差异。[11 月 24 日通过](https://github.com/HERRY423/BioNexus/actions/runs/45388121996) · [11 月 25 日失败](https://github.com/HERRY423/BioNexus/actions/runs/45597837240)

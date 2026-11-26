@@ -35,6 +35,10 @@
             "integration_id": 15368
           },
           {
+            "context": "INV-009 Bilingual Causal-Language Recall",
+            "integration_id": 15368
+          },
+          {
             "context": "Canonical Scientific Stack (ubuntu-latest, Python 3.12)",
             "integration_id": 15368
           },

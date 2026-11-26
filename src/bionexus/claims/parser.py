@@ -720,10 +720,85 @@ class DeterministicClaimParser:
 # 2b. Assertive Causal-Language Detector (shared with BNS-013 verify)
 # ==============================================================================
 
+# Reuse the mechanistic vocabulary of the scientific claim parser. Exclude
+# "control(s)" alone: in results text it usually denotes a comparison group.
 _ASSERTIVE_CAUSAL_RE = re.compile(
-    r"\b(?:drives?|driven|causes?|caused|induces?|induced|triggers?|triggered|"
-    r"proves?|proven|proving|mechanism of action|is causal|confers?)\b",
+    "|".join(p for p in DeterministicClaimParser._CAUSAL_VERBS_FORWARD if p != r"\bcontrols?\b")
+    + r"|\b(?:driven|drove|caused|induced|triggered|proves?|proven|proving|mechanism of action|is causal|"
+    r"brought about|(?:gave|giving) rise to|led to|resulted (?:in|from)|results? from|"
+    r"stem(?:s|med)? from|account(?:s|ed)? for|originat(?:e[sd]?|ing) from|at the root of|owing to|due to|attribut(?:able|ed) to|responsible for|"
+    r"(?:a|the) (?:direct |principal |underlying |proximate )?cause of|(?:the|a) reason for|an? (?:direct |causal )?effect on|(?:a|the) (?:direct )?(?:consequence|result) of|"
+    r"mediated|promoted|suppressed|inhibited|activated|prevent(?:s|ed)?|"
+    r"affect(?:s|ed)?|influenc(?:es?|ed)|destroy(?:s|ed)?|disrupt(?:s|ed)?|halt(?:s|ed)?|"
+    r"enhanc(?:es?|ed)|sustain(?:s|ed)?|abolish(?:es|ed)?|amplif(?:ies|ied)|dampen(?:s|ed)?|"
+    r"produc(?:es?|ed)|impair(?:ed|s)?|accelerated|slowed|delayed|"
+    r"(?:increas(?:es?|ed)|decreas(?:es?|ed)|reduc(?:es?|ed)|rais(?:es?|ed)|lower(?:s|ed)?|elevat(?:es?|ed)|inflat(?:es?|ed)|diminish(?:es|ed)?)"
+    r"\s+(?!(?:in|with|by|from|after|over|among|during|under|when|at|as|relative)\b)(?=\w))\b"
+    r"|引发|致使|造成|所致|使得|使(?!用)|让|令|源(?:自|于)|来源于|归因于|带来|阻止|抑制|促进|加快|加速|延缓|延长|"
+    r"推动|提升|催生|诱发|延迟|改善|加剧|恶化|增强|削弱|阻断|减少|缩短|降低了?|提高了?|加重|减少了|增加了|改变了|根源在于|因果(?:效应|作用)|(?:是|为|系)[^，。]{1,18}的(?:直接)?(?:原因|结果)",
     re.IGNORECASE,
+)
+# A quoted assertion can be endorsed. Suppress only a quotation explicitly
+# introduced as deleted, hypothetical, or merely mentioned wording.
+_MENTIONED_QUOTE_RE = re.compile(
+    r"(?:\b(?:delet\w*|remov\w*|reject\w*|withdraw\w*|withdrew|retract\w*|disput\w*|"
+    r"object(?:ed)? to|quer(?:y|ied)|question\w*|avoid\w*|edit\w*)\b[^.!?;：“\"\n]{0,50}|"
+    r"(?:删去|删掉|删除|撤回|否定|质疑|举例|措辞|引用|转述|要求.{0,8}(?:解释|修订)|不宜写作)[^。！？；：“\"\n]{0,24})"
+    r"\s*[:：]?\s*(?:“[^”\n]*”|\"[^\"\n]*\"|‘[^’\n]*’|'[^'\n]*')", re.I,
+)
+# Postposed attribution is frequent in both languages ("..." was the hypothesis).
+_QUOTED_HYPOTHESIS_RE = re.compile(
+    r"""(?:“[^”\n]*”|"[^"\n]*"|‘[^’\n]*’|'[^'\n]*')\s*(?:(?:was|is)\s+(?:only\s+)?(?:an?|the)\s+"""
+    r"(?:unproven\s+|untested\s+)?(?:hypothesis|question|conjecture)|(?:仍?是|仅是)(?:待检验的|未经证实的)?"
+    r"(?:假说|假设|疑问)|(?:这|一)(?:个词|栏)|的说法(?:缺乏|尚待|未经))", re.I,
+)
+_COUNTERFACTUAL_RE = re.compile(
+    r"\b(?:had|without)\b[^.;!?]{2,90}\bwould(?:n't| not)? have\b|"
+    r"(?:若非|要不是|如果(?:当初|当时)没有)[^。！？]{1,40}(?:就|本)(?:不可能|不会|应会)", re.I,
+)
+_NONASSERTIVE_CUE_RE = re.compile(
+    r"\b(?:may|might|could|possibly|perhaps|if|whether|one possibility|the possibility|hypothesi[sz]\w*|"
+    r"postulate\w*|speculate\w*|suggest\w*|unclear|unlikely|appears? to|seems? to)\b"
+    r"|可能|或许|也许|能否|是否|尚待|尚不能|未能|不足以|不能|无法|不(?:会|曾|能|足以|宜|应|一定)|不$|"
+    r"并未|未(?:见|显示|发现|引发|导致|改变|造成|促进|能|证实)?|缺乏|没有|尚无|未必|"
+    r"假设|猜测|推测|有待|如果|有可能|似乎|或可",
+    re.I,
+)
+
+# Resultative predicates describe an agent changing a patient even without
+# the word "cause". Require an object for polysemous English verbs to reduce
+# matches to nouns and intransitive trends ("a tissue block", "rose after").
+_RESULTATIVE_RE = re.compile(
+    r"\b(?:let|left|made|kept|owe[sd]?|enable[sd]?|allow(?:s|ed)?|"
+    r"(?:open|clos|shorten|lengthen|advanc|postpon|accelerat|deplet|replenish|"
+    r"mobiliz|eliminat|releas|remov|inactivat|stimulat|stabiliz|destabiliz|"
+    r"protect|restor|rescu|revers|preserv|interrupt|displac|kill|block|"
+    r"tighten|loosen|warm|cool|hasten|shift|prolong|slow|speed|delay)(?:e|es|s|ed|d)?)"
+    r"\s+(?!(?:in|with|by|from|after|over|among|during|under|when|at|as|relative|than|"
+    r"before|following|throughout|also|was|were|is|are|between)\b)(?=[a-z])|"
+    r"(?:把|将)[^，。；！？]{1,22}(?:变成|变为|转为|转化|转移|分解|水解|移出|带入|拉向|拉出|推向|从)"
+    r"|靠的是|依靠|得益于|取决于|来自|造成|促成|延后|推迟|提早|提前|维持|延缓|"
+    r"加速|减慢|加剧|强化|减弱|解除|阻碍|阻断|放大|破坏|损害|修复|恢复了|"
+    r"(?:切|打|击|分|裂|断|磨|冲|敲|挤|压|拉|冻|撑|冲|隔|截)(?:断|开|裂|碎|坏|散|破|闭|成)",
+    re.IGNORECASE,
+)
+# "Because" can join two biological propositions. It also introduces reasons
+# for methodological choices or limitations; those do not assert causation.
+_EXPLANATION_LINK_RE = re.compile(
+    r"\b(?:because|as a result of|as a consequence of|is why|was why)\b|"
+    r"是因为|这是由于|根源[，,、\s]*在于|原因(?:在于|是)|之所以|归功于", re.I,
+)
+_METHOD_OR_LIMIT_RE = re.compile(
+    r"\b(?:we (?:used|chose|selected|measured|excluded|included)|cannot|not|neither|"
+    r"unclear|unknown|whether|might|hypothesis|failed to|no evidence)\b|"
+    r"未能|无法|不能|尚无|尚未|假设|是否|可能|我们(?:选|测|采用|排除)", re.I,
+)
+_UNENDORSED_SENTENCE_RE = re.compile(
+    r"(?:\b(?:search|index|catalogu?e?|query|code[ds]?|reviewer wrote|heading|survey item)\b"
+    r"[^.!?;\n]{0,64}[“\"][^”\"\n]+[”\"]|"
+    r"(?:检索|搜索|以.{0,3}(?:原图题|标题)|问卷|图题|栏名|审稿人要求)[^。；\n]{0,35}“[^”\n]+”|"
+    r"“[^”\n]+”[^。；\n]{0,24}(?:只作|沿用其图题|仅作为|是.{0,10}的问题|缺乏证据|不能成立)|"
+    r"[^.!?。！？;；\n]+[?？])", re.I,
 )
 
 # A negation cue within the preceding window (same clause, <=48 chars) scopes
@@ -770,12 +845,24 @@ def detect_assertive_causal_language(text: str) -> Optional[str]:
     # A limitation before "because", "since", "but", etc. cannot negate a
     # causal assertion in the following clause. Keep the existing short-window
     # heuristic inside each explicitly delimited clause, including local negation.
-    for clause in _scope_clauses(text):
-        for match in _ASSERTIVE_CAUSAL_RE.finditer(clause):
+    asserted_text = _UNENDORSED_SENTENCE_RE.sub(" ", text)
+    asserted_text = _QUOTED_HYPOTHESIS_RE.sub(" ", _MENTIONED_QUOTE_RE.sub(" ", asserted_text))
+    counterfactual = _COUNTERFACTUAL_RE.search(asserted_text)
+    if counterfactual:
+        return counterfactual.group(0)
+    for sentence in re.split(r"[.;!?。；！？]", asserted_text):
+        explanation = _EXPLANATION_LINK_RE.search(sentence)
+        if explanation and not _METHOD_OR_LIMIT_RE.search(sentence):
+            return explanation.group(0)
+    for clause in _scope_clauses(asserted_text):
+        candidates = sorted((*_ASSERTIVE_CAUSAL_RE.finditer(clause), *_RESULTATIVE_RE.finditer(clause)),
+                            key=lambda m: m.start())
+        for match in candidates:
             window = clause[max(0, match.start() - 48):match.start()]
-            if _NEGATION_CUE_RE.search(window):
+            if (_NEGATION_CUE_RE.search(window) or _NONASSERTIVE_CUE_RE.search(window)
+                    or re.search(r"\bneither\b", clause[:match.start()], re.I)):
                 continue
-            return match.group(0)
+            return match.group(0).strip()
     return None
 
 

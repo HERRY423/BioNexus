@@ -1,0 +1,62 @@
+--- a/src/bionexus/claims/parser.py
++++ b/src/bionexus/claims/parser.py
+@@ -722,0 +723,2 @@
++# Reuse the mechanistic vocabulary of the scientific claim parser. Exclude
++# "control(s)" alone: in results text it usually denotes a comparison group.
+@@ -724,2 +726,13 @@
+-    r"\b(?:drives?|driven|causes?|caused|induces?|induced|triggers?|triggered|"
+-    r"proves?|proven|proving|mechanism of action|is causal|confers?)\b",
++    "|".join(p for p in DeterministicClaimParser._CAUSAL_VERBS_FORWARD if p != r"\bcontrols?\b")
++    + r"|\b(?:driven|drove|caused|induced|triggered|proves?|proven|proving|mechanism of action|is causal|"
++    r"brought about|(?:gave|giving) rise to|led to|resulted (?:in|from)|results? from|"
++    r"stem(?:s|med)? from|account(?:s|ed)? for|originat(?:e[sd]?|ing) from|at the root of|owing to|due to|attribut(?:able|ed) to|responsible for|"
++    r"(?:a|the) (?:direct |principal |underlying |proximate )?cause of|(?:the|a) reason for|an? (?:direct |causal )?effect on|(?:a|the) (?:direct )?(?:consequence|result) of|"
++    r"mediated|promoted|suppressed|inhibited|activated|prevent(?:s|ed)?|"
++    r"affect(?:s|ed)?|influenc(?:es?|ed)|destroy(?:s|ed)?|disrupt(?:s|ed)?|block(?:s|ed)?|halt(?:s|ed)?|"
++    r"enhanc(?:es?|ed)|sustain(?:s|ed)?|abolish(?:es|ed)?|amplif(?:ies|ied)|dampen(?:s|ed)?|"
++    r"produc(?:es?|ed)|impair(?:ed|s)?|accelerated|slowed|delayed|"
++    r"(?:increas(?:es?|ed)|decreas(?:es?|ed)|reduc(?:es?|ed)|rais(?:es?|ed)|lower(?:s|ed)?|elevat(?:es?|ed)|inflat(?:es?|ed)|diminish(?:es|ed)?)"
++    r"\s+(?!(?:in|with|by|from|after|over|among|during|under|when|at|as|relative)\b)(?=\w))\b"
++    r"|引发|致使|造成|所致|使得|使(?!用)|让|令|源(?:自|于)|来源于|归因于|带来|阻止|抑制|促进|加快|加速|延缓|延长|"
++    r"推动|提升|催生|诱发|延迟|改善|加剧|恶化|增强|削弱|阻断|减少|缩短|降低了?|提高了?|加重|减少了|增加了|改变了|根源在于|因果(?:效应|作用)|(?:是|为|系)[^，。]{1,18}的(?:直接)?(?:原因|结果)",
+@@ -726,0 +740,26 @@
++)
++# A quoted assertion can be endorsed. Suppress only a quotation explicitly
++# introduced as deleted, hypothetical, or merely mentioned wording.
++_MENTIONED_QUOTE_RE = re.compile(
++    r"(?:\b(?:delet\w*|remov\w*|reject\w*|withdraw\w*|withdrew|retract\w*|disput\w*|"
++    r"object(?:ed)? to|quer(?:y|ied)|question\w*|avoid\w*|edit\w*)\b[^.!?;：“\"\n]{0,50}|"
++    r"(?:删去|删掉|删除|撤回|否定|质疑|举例|措辞|引用|转述|解释|不宜写作)[^。！？；：“\"\n]{0,24})"
++    r"\s*[:：]?\s*(?:“[^”\n]*”|\"[^\"\n]*\"|‘[^’\n]*’|'[^'\n]*')", re.I,
++)
++# Postposed attribution is frequent in both languages ("..." was the hypothesis).
++_QUOTED_HYPOTHESIS_RE = re.compile(
++    r"""(?:“[^”\n]*”|"[^"\n]*"|‘[^’\n]*’|'[^'\n]*')\s*(?:(?:was|is)\s+(?:only\s+)?(?:an?|the)\s+"""
++    r"(?:unproven\s+|untested\s+)?(?:hypothesis|question|conjecture)|(?:仍?是|仅是)(?:待检验的|未经证实的)?"
++    r"(?:假说|假设|疑问)|(?:这|一)(?:个词|栏)|的说法(?:缺乏|尚待|未经))", re.I,
++)
++_COUNTERFACTUAL_RE = re.compile(
++    r"\b(?:had|without)\b[^.;!?]{2,90}\bwould(?:n't| not)? have\b|"
++    r"(?:若非|要不是|如果(?:当初|当时)没有)[^。！？]{1,40}(?:就|本)(?:不可能|不会|应会)", re.I,
++)
++_NONASSERTIVE_CUE_RE = re.compile(
++    r"\b(?:may|might|could|possibly|perhaps|if|whether|one possibility|the possibility|hypothesi[sz]\w*|"
++    r"postulate\w*|speculate\w*|suggest\w*|unclear|unlikely|appears? to|seems? to)\b"
++    r"|可能|或许|也许|能否|是否|尚待|尚不能|未能|不足以|不能|无法|不(?:会|曾|能|足以|宜|应|一定)|不$|"
++    r"并未|未(?:见|显示|发现|引发|导致|改变|造成|促进|能|证实)?|缺乏|没有|尚无|未必|"
++    r"假设|猜测|推测|有待|如果|有可能|似乎|或可",
++    re.I,
+@@ -773 +812,5 @@
+-    for clause in _scope_clauses(text):
++    asserted_text = _QUOTED_HYPOTHESIS_RE.sub(" ", _MENTIONED_QUOTE_RE.sub(" ", text))
++    counterfactual = _COUNTERFACTUAL_RE.search(asserted_text)
++    if counterfactual:
++        return counterfactual.group(0)
++    for clause in _scope_clauses(asserted_text):
+@@ -776 +819,2 @@
+-            if _NEGATION_CUE_RE.search(window):
++            if (_NEGATION_CUE_RE.search(window) or _NONASSERTIVE_CUE_RE.search(window)
++                    or re.search(r"\bneither\b", clause[:match.start()], re.I)):
+@@ -778 +822 @@
+-            return match.group(0)
++            return match.group(0).strip()

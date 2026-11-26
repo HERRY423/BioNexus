@@ -1,0 +1,101 @@
+id	language	phenomenon	label	statement
+EN01	en	direct	positive	Excess light caused bleaching of the young leaves.
+EN02	en	direct	positive	The shift to night work disrupted participants' sleep rhythms.
+EN03	en	direct	positive	Repeated freeze–thaw cycles destroyed the fluorescent signal.
+EN04	en	direct	positive	High soil salinity inhibits root elongation in these seedlings.
+EN05	en	direct	positive	Ambient heat induced premature flowering in the field plots.
+EN06	en	direct	negative	Patients receiving the two formulations had different median recovery times.
+EN07	en	direct	negative	Staining intensity correlated with the age of the tissue block.
+EN08	en	direct	negative	The wetland plots nearest the road contained the fewest sedge species.
+EN09	en	direct	negative	Controls and treated samples were processed on separate days.
+EN10	en	direct	negative	Both age and neighborhood predicted attendance at the follow-up visit.
+EN11	en	negation	positive	Although irrigation did not alter leaf number, it increased leaf area.
+EN12	en	negation	positive	Low oxygen, not low glucose, triggered the change in cell shape.
+EN13	en	negation	positive	The absence of a second wash caused the high background.
+EN14	en	negation	positive	Supplementation prevented anemia even though it did not affect growth.
+EN15	en	negation	positive	No other mechanism was needed because overheating alone drove the collapse.
+EN16	en	negation	negative	We found no support for the claim that the pigment drives mineral uptake.
+EN17	en	negation	negative	The survey cannot establish that time outdoors improves concentration.
+EN18	en	negation	negative	Neither of the paired comparisons demonstrates that humidity causes flaking.
+EN19	en	negation	negative	At this resolution, a causal effect of pressure on pore closure cannot be inferred.
+EN20	en	negation	negative	The data fail to show that moving the lamp delayed germination.
+EN21	en	quotation	positive	Here we defend the conclusion that “the missing calibration step inflated the reading.”
+EN22	en	quotation	positive	Our final interpretation is that “salinity drives the turnover of marsh vegetation.”
+EN23	en	quotation	positive	The phrase “cold exposure induced dormancy” accurately describes our finding.
+EN24	en	quotation	positive	We stand by our original statement, “the canopy suppresses evaporation.”
+EN25	en	quotation	positive	Our conclusion uses the word “mediates” to describe the role of pH in the loss of color.
+EN26	en	quotation	negative	The copyeditor queried “humidity produced the signal loss” in the margin.
+EN27	en	quotation	negative	Our erratum withdraws the sentence “late referral increased mortality.”
+EN28	en	quotation	negative	“Bright light drives migration” was the hypothesis registered before enrollment.
+EN29	en	quotation	negative	The phrase “restores balance” was copied from the product label for the interview guide.
+EN30	en	quotation	negative	The reviewer objected to “diet causes the difference” and requested associative wording.
+EN31	en	paraphrase	positive	The shorter interval between blossoms resulted from the warmer nights.
+EN32	en	paraphrase	positive	Depth of burial accounts for the delay in emergence.
+EN33	en	paraphrase	positive	The low counts are attributable to pigment interference during imaging.
+EN34	en	paraphrase	positive	The sharp rise in pollen is a consequence of the earlier thaw.
+EN35	en	paraphrase	positive	Damage to the tube lining set the clotting process in motion.
+EN36	en	paraphrase	negative	Variation in sample depth went hand in hand with the apparent effect size.
+EN37	en	paraphrase	negative	The highest readings clustered around days with heavy traffic.
+EN38	en	paraphrase	negative	The onset of yellowing preceded the spike in sediment phosphorus.
+EN39	en	paraphrase	negative	Length of daylight explained a third of the variance in arrival dates in our regression.
+EN40	en	paraphrase	negative	The marker served as a proxy for recent exertion.
+EN41	en	hedging	positive	We are unsure how shading reduces water loss, but the reduction is caused by shade.
+EN42	en	hedging	positive	Despite imprecise estimates of its magnitude, the buffer change produced the baseline shift.
+EN43	en	hedging	positive	Limited as the observations are, we conclude that the enclosure delayed hatching.
+EN44	en	hedging	positive	The size of the effect is uncertain; the shortened photoperiod nevertheless induces dormancy.
+EN45	en	hedging	positive	The cause of the timing difference remains unclear, but transport stress triggers the color change.
+EN46	en	hedging	negative	The altered pore structure might account for the higher flow.
+EN47	en	hedging	negative	We hypothesize that longer afternoons drive the activity peak.
+EN48	en	hedging	negative	Further work is needed to determine whether background noise delayed the response.
+EN49	en	hedging	negative	One possibility is that local rainfall led to the observed redistribution.
+EN50	en	hedging	negative	Shading could inhibit evaporation under the conditions studied.
+ZH01	zh	direct	positive	作者据此断言，盐处理导致叶片失水。
+ZH02	zh	direct	positive	氧气供应的改变直接引起了细胞周期延长。
+ZH03	zh	direct	positive	在这个实验中，外源信号驱动了细胞分化。
+ZH04	zh	direct	positive	模型把温度升高确定为酶活性下降的原因。
+ZH05	zh	direct	positive	抑制受体使培养细胞停止迁移。
+ZH06	zh	direct	negative	温度升高后，淀粉含量也随之变化。
+ZH07	zh	direct	negative	两个独立样本中都观察到更高的荧光强度。
+ZH08	zh	direct	negative	受体表达量与迁移距离呈负相关。
+ZH09	zh	direct	negative	研究团队比较了培养基更换前后的生长速率。
+ZH10	zh	direct	negative	该模型预测哪些幼苗会较早开花。
+ZH11	zh	negation	positive	并非湿度，而是光照时间的延长引发了提前开花。
+ZH12	zh	negation	positive	对照溶液没有影响，但加入钙离子确实促进了凝集。
+ZH13	zh	negation	positive	作者否定了污染解释，并认定养分不足导致了生长停滞。
+ZH14	zh	negation	positive	缺氧没有改变细胞数，却导致单位细胞耗糖量增加。
+ZH15	zh	negation	positive	我们没有发现转录变化；观察到的损伤由膜破裂引起。
+ZH16	zh	negation	negative	现有记录不能证明药物引起了周期变化。
+ZH17	zh	negation	negative	这些数据不足以说明哪一个因素导致了发芽延迟。
+ZH18	zh	negation	negative	我们没有声称温度升高驱动了分化。
+ZH19	zh	negation	negative	未见支持“缺氧造成聚集”的证据。
+ZH20	zh	negation	negative	相关性并不等同于因果关系。
+ZH21	zh	quotation	positive	讨论中写道：“机械压力导致形态改变。”我们认同这一结论。
+ZH22	zh	quotation	positive	作者用“驱动”一词概括结果，并明确指出水分流失驱动了叶片卷曲。
+ZH23	zh	quotation	positive	文中称这种蛋白为“开关”，其激活确实引发了细胞分裂。
+ZH24	zh	quotation	positive	虽然对照组被标为“低照度”，真正导致发芽延迟的是温度下降。
+ZH25	zh	quotation	positive	结论中的“诱导迁移”是对受体活化效应的明确判断。
+ZH26	zh	quotation	negative	审稿人建议删掉“导致表达上调”，作者已按建议修改。
+ZH27	zh	quotation	negative	问卷要求参与者解释“因果驱动”这个词。
+ZH28	zh	quotation	negative	“蓝光引起损伤”是待检验的假说。
+ZH29	zh	quotation	negative	表格中“导致死亡的原因”一栏为空。
+ZH30	zh	quotation	negative	他们引用了“热胁迫诱导开花”的旧说法，本文只比较样本。
+ZH31	zh	paraphrase	positive	荧光衰减源于色素的分解。
+ZH32	zh	paraphrase	positive	组织变软归因于细胞壁中果胶的流失。
+ZH33	zh	paraphrase	positive	幼叶黄化是缺铁所致。
+ZH34	zh	paraphrase	positive	诱导信号通过改变离子通道的开放状态发挥作用。
+ZH35	zh	paraphrase	positive	如果当时没有减少水分供应，叶片就不会卷曲。
+ZH36	zh	paraphrase	negative	荧光较弱的区域恰好也是色素较少的区域。
+ZH37	zh	paraphrase	negative	对照组与处理组在组织硬度上有差异。
+ZH38	zh	paraphrase	negative	较晚取样的叶片通常颜色较浅。
+ZH39	zh	paraphrase	negative	两个信号的变化几乎同步。
+ZH40	zh	paraphrase	negative	死亡率的分布与接种密度的排序相似。
+ZH41	zh	hedging	positive	促进增殖的效应可能不大，但确实由该因子引起。
+ZH42	zh	hedging	positive	在我们测过的温区内，升温诱导了花芽形成。
+ZH43	zh	hedging	positive	光照引发了钙信号，具体中介步骤仍不清楚。
+ZH44	zh	hedging	positive	我们认为，至少在该培养体系中，缺糖导致了应激反应。
+ZH45	zh	hedging	positive	尽管效应量不确定，酸化对荧光衰减的因果作用已经得到证实。
+ZH46	zh	hedging	negative	一种有待验证的可能性是缺钙导致叶尖坏死。
+ZH47	zh	hedging	negative	该现象是否由高盐引起，尚待对照实验检验。
+ZH48	zh	hedging	negative	如果低温能诱导分化，我们预期后续实验会得到更早的标志物峰值。
+ZH49	zh	hedging	negative	观察结果提示可以研究压力是否驱动迁移。
+ZH50	zh	hedging	negative	目前无法排除转运变化可能影响了样本间差异。

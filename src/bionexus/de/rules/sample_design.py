@@ -10,6 +10,66 @@ import pandas as pd
 from bionexus.de.conditions import contrast_diagnostics
 
 
+def resolve_replicate_scope(*, table: pd.DataFrame | None, obs: pd.DataFrame | None,
+                            ct_col: str | None, c_col: str | None, cell_type: str | None,
+                            case: str | None, reference: str | None, contract: bool,
+                            rgg: dict[str, Any] | None) -> tuple[dict[str, Any], pd.DataFrame | None]:
+    """Identify the cell populations to which the supplied result can be attributed."""
+    def labels(series: pd.Series) -> list[str]:
+        return sorted({v for v in series.dropna().astype(str) if v.strip()})
+
+    observed = labels(obs[ct_col]) if obs is not None and ct_col else []
+    rows = table
+    if rows is not None and case is not None:
+        for col, target in (("numerator", case), ("denominator", reference)):
+            if col in rows:
+                rows = rows[rows[col].astype("string").eq(str(target)).fillna(False)]
+    type_column = "cell_type" if rows is not None and "cell_type" in rows else ct_col
+    table_has_types = rows is not None and type_column is not None and type_column in rows
+    targets: list[str] = []
+    incomplete_labels = False
+    if cell_type is not None:
+        targets = [cell_type]
+        basis = "claim_contract" if contract else "explicit"
+        if table_has_types and rows is not None:
+            rows = rows[rows[type_column].astype("string").eq(cell_type).fillna(False)]
+            incomplete_labels = rows.empty
+    elif table_has_types and rows is not None:
+        targets = labels(rows[type_column])
+        incomplete_labels = rows.empty or rows[type_column].astype("string").str.strip().fillna("").eq("").any()
+        basis = "inferred_from_de_table"
+    elif (rgg and c_col and rgg.get("groupby") == c_col and len(observed) == 1 and rows is not None
+          and obs is not None and ct_col and obs[ct_col].astype("string").str.strip().fillna("").ne("").all()):
+        targets, basis = observed, "inferred_from_de_table"
+    elif table is None and rgg is None and len(observed) == 1:
+        targets, basis = observed, "single_metadata_cell_type"
+    elif ct_col is None and obs is not None and not table_has_types:
+        basis = "unstratified_metadata"
+    else:
+        basis = "unspecified"
+
+    ambiguous_contrast = False
+    if case is None and rows is not None and not rows.empty and {"numerator", "denominator"} <= set(rows):
+        pairs = rows[["numerator", "denominator"]].astype("string").drop_duplicates()
+        if len(pairs) == 1 and not pairs.isna().any().any():
+            left, right = pairs.iloc[0]
+            if left.strip() and right.strip() and left != right:
+                case, reference = left, right
+        ambiguous_contrast = case is None
+    comparable_observed = observed
+    if obs is not None and c_col and ct_col and case is not None:
+        selected = obs[c_col].astype("string").isin([case, reference])
+        comparable_observed = labels(obs.loc[selected, ct_col])
+    missing = sorted(set(targets) - set(comparable_observed))
+    return {"cell_type": targets[0] if len(targets) == 1 else None, "cell_types": targets,
+            "case": case, "reference": reference, "basis": basis,
+            "complete": bool((targets or basis == "unstratified_metadata")
+                             and not (missing or incomplete_labels or ambiguous_contrast)),
+            "ambiguous_contrast": ambiguous_contrast,
+            "missing_cell_types": missing, "result_labels_incomplete": bool(incomplete_labels),
+            "outside_cell_types": sorted(set(observed) - set(targets))}, rows
+
+
 def _design(samples: pd.DataFrame, levels: list[str], d_col: str, c_col: str,
             b_col: str | None) -> dict[str, Any]:
     """Use distinct donor/condition/batch observations, never individual cells as replicates."""
@@ -61,7 +121,7 @@ def _design(samples: pd.DataFrame, levels: list[str], d_col: str, c_col: str,
 def measure_replicate_strata(obs: pd.DataFrame, d_col: str, c_col: str, ct_col: str | None,
                              b_col: str | None, *, min_cells_per_donor: int, rows_are_cells: bool | None,
                              case: str | None, reference: str | None, cell_type: str | None,
-                             dominance_threshold: float) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+                             dominance_threshold: float, included_cell_types: list[str] | None = None) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """Return eligible donor counts, design diagnostics and within-condition dominance."""
     columns = [c for c in (d_col, c_col, ct_col, b_col) if c is not None]
     if rows_are_cells is None:
@@ -86,8 +146,9 @@ def measure_replicate_strata(obs: pd.DataFrame, d_col: str, c_col: str, ct_col: 
         obs = obs[obs[c_col].isin(levels)]
     if cell_type is not None and ct_col:
         obs = obs[obs[ct_col] == str(cell_type)]
-    strata = ([(str(cell_type), obs)] if cell_type is not None and ct_col
-              else list(obs.groupby(ct_col, observed=True, sort=False)) if ct_col else [(None, obs)])
+    if included_cell_types is not None and ct_col:
+        obs = obs[obs[ct_col].isin(included_cell_types)]
+    strata = list(obs.groupby(ct_col, observed=True, sort=False)) if ct_col else [(None, obs)]
     results, imbalanced = [], []
     for name, frame in strata:
         frame = frame.dropna(subset=[d_col, c_col])
