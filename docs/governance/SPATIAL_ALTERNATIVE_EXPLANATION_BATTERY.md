@@ -70,7 +70,9 @@ the following fields.
 | Permutation fields | The permutation-calibrated interval additionally requires integer `n_permutations` ≥999, integer `random_seed` and `null_distribution_summary` with finite, ordered `min`, `mean`, and `max` |
 
 An interval wholly in the baseline direction yields `TESTED`; crossing zero
-or reversing the sign yields `FAILED`. The verdict records the parsed
+or reversing the sign yields `FAILED`. When baseline directions conflict, an
+interval that includes zero still fails in either direction. Outcomes that
+depend on an unresolved sign remain `DECLARED`. The verdict records the parsed
 interval and source. Unbound or incomplete reports remain `DECLARED`.
 The structured report records the submitted measurement. Independent review
 establishes the quality of the underlying experiment.

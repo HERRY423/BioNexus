@@ -171,7 +171,6 @@ def _valid_null(doc: dict) -> bool:
 
 def _external_control(
     name: str, item: ControlResult, artifacts: Mapping[str, bytes], input_sha256: Optional[str],
-    expected_sign: Optional[int],
 ) -> ControlResult:
     doc = _verified_json(item.artifact_sha256, artifacts)
     fallback = ControlResult(
@@ -184,7 +183,7 @@ def _external_control(
         return fallback
     interval = doc.get("adjusted_effect_interval")
     sign = doc.get("baseline_effect_sign")
-    if (type(sign) is not int or sign not in (-1, 1) or (expected_sign is not None and sign != expected_sign)
+    if (type(sign) is not int or sign not in (-1, 1)
             or not isinstance(interval, list) or len(interval) != 2 or not all(_finite_number(v) for v in interval)
             or interval[0] > interval[1]):
         fallback.note = "The adjusted effect interval or baseline direction is invalid for this observation."
@@ -209,22 +208,26 @@ def _normalize_controls(
 ) -> Dict[str, ControlResult]:
     if isinstance(controls, dict):
         controls = [ControlResult(name=k, status=v) for k, v in controls.items()]
-    normalized: Dict[str, ControlResult] = {}
-    priority = ("TESTED", "CONTROLLED", "DECLARED", "UNTESTED", "FAILED")
-    signs = set()
+    checked = []
     for item in controls or ():
         name = _canonical(item.name)
-        if name == "sample_level_replication":
-            continue
-        result = _external_control(name, item, artifacts, input_sha256, expected_sign)
-        if result.baseline_effect_sign is not None:
-            signs.add(result.baseline_effect_sign)
+        if name != "sample_level_replication":
+            checked.append(_external_control(name, item, artifacts, input_sha256))
+
+    signs = {r.baseline_effect_sign for r in checked if r.baseline_effect_sign is not None}
+    if expected_sign is None and len(signs) == 1:
+        expected_sign = signs.pop()
+    normalized: Dict[str, ControlResult] = {}
+    priority = ("TESTED", "CONTROLLED", "DECLARED", "UNTESTED", "FAILED")
+    for result in checked:
+        interval = result.p_or_interval
+        if isinstance(interval, tuple) and result.baseline_effect_sign != expected_sign:
+            # An interval that includes zero fails for either orientation.
+            if not interval[0] <= 0 <= interval[1]:
+                result = replace(result, status="DECLARED", note="The baseline direction is unresolved for this control.")
+        name = result.name
         if name not in normalized or priority.index(result.status) > priority.index(normalized[name].status):
             normalized[name] = result
-    if len(signs) > 1:
-        for name, result in normalized.items():
-            if result.baseline_effect_sign is not None:
-                normalized[name] = replace(result, status="DECLARED", note="Baseline directions disagree across controls.")
     return normalized
 
 

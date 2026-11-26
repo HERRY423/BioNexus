@@ -272,6 +272,24 @@ def test_spatial_permutation_completion_and_common_direction():
     assert result.controlled == ["cell_size"]
 
 
+def test_zero_inclusive_interval_remains_failed_with_mixed_baseline_signs_and_aliases():
+    directional, a = _control_artifact("edge_effects", adjusted_effect_interval=[-2.0, -0.5])
+    touches_zero, b = _control_artifact("edge_effect", adjusted_effect_interval=[0.0, 1.0])
+    other, c = _control_artifact("cell_size", baseline_effect_sign=-1, adjusted_effect_interval=[-2.0, -0.5])
+    artifacts = a | b | c
+    for controls in ([directional, touches_zero, other], [other, touches_zero, directional]):
+        report = assess_spatial_inference("Enrichment", controls, artifacts=artifacts, input_sha256=_SPATIAL_INPUT)
+        assert report.verdict == "CONFLICTED"
+        assert report.failed == ["edge_effects"]
+        assert report.control_evidence["edge_effects"].p_or_interval == (0.0, 1.0)
+        assert report.declared == ["cell_size"]
+    report = assess_spatial_inference(
+        "Depletion", [touches_zero, other], artifacts=artifacts, input_sha256=_SPATIAL_INPUT, baseline_effect_sign=-1,
+    )
+    assert report.failed == ["edge_effects"]
+    assert report.controlled == ["cell_size"]
+
+
 def test_spatial_replicate_sections_require_distinct_verified_donor_origins():
     obs = pd.DataFrame({"section": list("abcd"), "condition": list("AABB")})
     controls, artifacts = _bound_spatial_controls()
