@@ -1,5 +1,5 @@
 {
-  "registry_version": "3.2.0",
+  "registry_version": "3.3.0",
   "registry_status": "DEVELOPMENT_UNVERIFIED",
   "description": "BioNexus development rule propositions and regime hypotheses (BNS-018). No packaged rule carries verified external endorsement, empirical calibration, or accepted challenge status.",
   "last_reviewed": null,
@@ -7,7 +7,12 @@
   "trusted_attestation_ids": [],
   "trust_policy": "External review or calibration is accepted only through bionexus.evidence-attestation.v1 verification against an explicit trust registry and artifact digest.",
   "statistical_thresholds_status": "DEVELOPMENT_UNVERIFIED. These screening defaults do not establish population warrants. The baseMean floor is in normalized sample counts. The doublet advisory depends on platform and cell loading. Batch association and LFC sign-agreement cutoffs have no independent empirical calibration.",
+  "statistical_thresholds_notes": {
+    "planning_dispersion": "For planning in the absence of count or fit measurements. The edgeR User's Guide gives 0.4 as a typical biological coefficient of variation for human data; NB dispersion is BCV squared. Applicability depends on the study population.",
+    "doublet_rate_advisory": "Flag strictly greater than the threshold. Equality meets the upper limit for both the screening default and approved AT_MOST profiles."
+  },
   "statistical_thresholds": {
+    "planning_dispersion": 0.16,
     "strong_effect_log2fc": 4.0,
     "moderate_effect_log2fc": 1.0,
     "subtle_effect_log2fc": 0.5,

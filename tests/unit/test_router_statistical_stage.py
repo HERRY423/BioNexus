@@ -65,6 +65,22 @@ def test_population_discovery_request_exposes_fdr_adjusted_mde_at_five_donors():
     assert power["observed_effect_regime"] is None
 
 
+def test_named_unequal_arms_use_contrast_specific_power(canonical_backends_available):
+    request = "Run pseudobulk DE and assess population-level power for the claimed effect."
+    options = {"donors_per_condition": {"case": 4, "control": 12}, "dispersion": 0.5,
+               "shrunk_log2fc": 1.8, "base_mean": 100, "is_integer_like": True}
+    # At this effect: MDE = 1.67 with the measured arm sizes, but 2.04 at 4 + 4.
+    assert route_scientific_intent(request, data_metadata=options).status.value == "PERMITTED"
+    options["shrunk_log2fc"] = 1
+    limited = route_scientific_intent(request, data_metadata=options)
+    assert limited.status.value == "DEGRADED_ADVISORY"
+    power = limited.evidence_card_template.details["statistical_power"]
+    assert power["n_by_group"] == options["donors_per_condition"]
+    assert 1 < power["mde_log2fc"] < 1.8
+    options["donors_per_condition"] = {"case": 1, "control": 12}
+    assert route_scientific_intent(request, data_metadata=options).status.value == "ABSTAIN"
+
+
 def test_invalid_power_and_doublet_inputs_request_data():
     power = route_scientific_intent(
         "Run pseudobulk DE and claim robust population-level discovery power.",

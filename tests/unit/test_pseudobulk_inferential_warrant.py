@@ -142,3 +142,19 @@ def test_strong_effect_requires_expression_and_fitted_shrinkage():
 def test_detectable_regime_does_not_excuse_effect_below_design_mde():
     power = assess_statistical_power(n_donors_per_group=20, shrunk_log2fc=0.05, base_mean=100)
     assert not evaluate_pseudobulk_inferential_warrant(n_donors_per_group=20, power=power).population_claims_allowed
+
+
+@pytest.mark.parametrize("lfc, ceiling", [(3, ConclusionMaturity.SUPPORTED), (1, ConclusionMaturity.PRELIMINARY)])
+def test_numeric_mde_determines_detectability_within_moderate_regime(lfc, ceiling):
+    power = assess_statistical_power(n_donors_per_group=10, dispersion=0.5, shrunk_log2fc=lfc, base_mean=100)
+    assert power.mde_log2fc == pytest.approx(1.29, abs=0.01)
+    verdict = evaluate_pseudobulk_inferential_warrant(n_donors_per_group=10, power=power)
+    assert verdict.maturity_ceiling == ceiling
+
+
+def test_named_arm_sizes_are_bound_to_the_audited_contrast():
+    arms = {"case": 5, "control": 9}
+    power = assess_statistical_power(n_by_group=arms, shrunk_log2fc=3, base_mean=100)
+    assert evaluate_pseudobulk_inferential_warrant(n_donors_per_group=arms, power=power).population_claims_allowed
+    verdict = evaluate_pseudobulk_inferential_warrant(n_donors_per_group={"case": 5, "control": 5}, power=power)
+    assert not verdict.population_claims_allowed

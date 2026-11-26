@@ -1,5 +1,6 @@
 """Runner regressions: real model requests and honest statistical denominators."""
 
+import json
 from types import SimpleNamespace
 
 import numpy as np
@@ -77,10 +78,27 @@ def test_donor_grid_preserves_both_planning_and_population_controls(paired_data)
     assert result["passed"]
     rows = {item["n_donors"]: item for item in result["grid"]}
     assert list(rows) == [8, 6, 4, 3, 2, 1]
-    assert not rows[8]["planning_default"]["population_claims_allowed"]
+    assert all(rows[n]["planning_default"]["population_claims_allowed"] for n in (8, 6))
+    assert not any(rows[n]["planning_default"]["population_claims_allowed"] for n in (4, 3, 2, 1))
+    for n in (8, 6, 4, 3):
+        planning = rows[n]["planning_default"]["planning_power"]
+        cohort = rows[n]["cohort_dispersion"]["planning_power"]
+        assert planning["dispersion"] == .16 and planning["dispersion_basis"] == "planning_default"
+        assert cohort["dispersion"] == result["cohort_within_condition_dispersion"]
+        assert cohort["dispersion_basis"] == "pseudobulk_moment_mean"
+        assert planning["cells_per_sample"] == cohort["cells_per_sample"] == 50
     assert all(rows[n]["cohort_dispersion"]["population_claims_allowed"] for n in [8, 6, 4, 3])
     assert not rows[2]["cohort_dispersion"]["population_claims_allowed"]
     assert rows[1]["cohort_dispersion"]["regime"] == "ABSTAIN_UNREPLICATED"
+
+
+def test_grid_v2_preserves_v1_binding():
+    previous = stress.EXPECTATIONS["predecessor"]
+    original = stress.EXPECTATIONS_PATH.with_name(previous["path"])
+    assert stress.sha256_file(original) == previous["sha256"]
+    v1 = json.loads(original.read_text(encoding="utf-8"))
+    assert v1["donor_grid"]["default_dispersion"] == .5
+    assert v1["donor_grid"]["cases"][0]["planning_default"] == "descriptive"
 
 
 def test_missing_donors_cannot_satisfy_frozen_grid(paired_data):

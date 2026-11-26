@@ -58,20 +58,31 @@ def test_mde_scales_with_inverse_sqrt_donor_count():
 
 
 def test_mde_uses_fdr_and_records_single_test_alpha_basis():
-    default = assess_statistical_power(n_donors_per_group=3)
-    strict = assess_statistical_power(n_donors_per_group=3, n_tests=15000, n_true_effects=300)
+    default = assess_statistical_power(n_donors_per_group=3, dispersion=0.5)
+    strict = assess_statistical_power(n_donors_per_group=3, dispersion=0.5, n_tests=15000, n_true_effects=300)
     assert default.mde_log2fc == pytest.approx(2.36, abs=0.01)
     assert default.alpha_basis == "fdr_as_alpha_optimistic"
     assert assess_statistical_power(n_donors_per_group=3, n_tests=15000).alpha_basis == default.alpha_basis
     assert strict.mde_log2fc == pytest.approx(3.52, abs=0.02)
     assert strict.per_test_alpha == pytest.approx(0.8 * 300 * 0.05 / (14700 * 0.95))
     assert strict.to_dict()["alpha_basis"] == "jung2005"
-    assert estimate_min_detectable_effect(n_donors_per_group=3, nominal_fdr=0.01) > default.mde_log2fc
+    assert estimate_min_detectable_effect(n_donors_per_group=3, dispersion=0.5, nominal_fdr=0.01) > default.mde_log2fc
 
 
 def test_mde_at_half_power_uses_zero_power_quantile():
-    expected = NormalDist().inv_cdf(0.975) * math.sqrt(2 * (0.01 + 0.5) / 4) / math.log(2)
+    expected = NormalDist().inv_cdf(0.975) * math.sqrt(2 * (0.01 + 0.16) / 4) / math.log(2)
     assert estimate_min_detectable_effect(n_donors_per_group=4, target_power=0.5) == pytest.approx(expected)
+
+
+def test_unequal_arm_variance_and_dispersion_provenance():
+    arms = {"case": 3, "control": 9}
+    est = assess_statistical_power(n_by_group=arms)
+    balanced = assess_statistical_power(n_donors_per_group=3)
+    assert est.mde_log2fc / balanced.mde_log2fc == pytest.approx(math.sqrt((1/3 + 1/9) / (2/3)))
+    assert est.to_dict()["n_by_group"] == arms
+    assert (est.dispersion, est.dispersion_basis) == (0.16, "planning_default")
+    assert assess_statistical_power(n_by_group=arms, dispersion=0.16).dispersion_basis == "caller_supplied"
+    assert estimate_min_detectable_effect(n_by_group=arms) == est.mde_log2fc
 
 
 @pytest.mark.parametrize(
@@ -79,6 +90,9 @@ def test_mde_at_half_power_uses_zero_power_quantile():
     [
         {"n_donors_per_group": 0},
         {"n_donors_per_group": 1},
+        {"n_donors_per_group": 5, "n_by_group": {"case": 4, "ctrl": 9}},
+        {"n_by_group": {"case": 1, "ctrl": 5}},
+        {"n_by_group": {"case": 3}},
         {"n_donors_per_group": 2, "target_power": 1},
         {"n_donors_per_group": 2, "nominal_fdr": 0},
         {"n_donors_per_group": 2, "n_tests": 0},
@@ -178,6 +192,8 @@ def test_doublet_none_or_nonpositive_returns_none():
 
 def test_doublet_threshold_constant_matches_bench_expectation():
     assert abs(DOUBLET_RATE_ADVISORY_THRESHOLD - 0.10) < 1e-9
+    assert not assess_doublet_risk(DOUBLET_RATE_ADVISORY_THRESHOLD).exceeds_threshold
+    assert assess_doublet_risk(math.nextafter(DOUBLET_RATE_ADVISORY_THRESHOLD, 1)).exceeds_threshold
 
 
 def test_doublet_advisory_uses_reviewed_platform_and_cell_loading():
@@ -194,6 +210,9 @@ def test_doublet_advisory_uses_reviewed_platform_and_cell_loading():
                                     calibration_registry=registry)
         assert result.exceeds_threshold is flagged
         assert result.threshold_basis.startswith(basis)
+    boundary = assess_doublet_risk(0.05, calibration_context=synthetic_annotation_context(cells_loaded=1000),
+                                   calibration_registry=registry)
+    assert not boundary.exceeds_threshold
 
 
 def test_catalog_and_readme_reference_runtime_registry_thresholds():

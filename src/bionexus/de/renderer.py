@@ -24,6 +24,9 @@ def _measurement_lines(result: Any) -> list[str]:
         lines.append(f"{label}（合格供体 {donors}）。设计推断上限 {scope}")
         if item["power"]:
             p = item["power"]
+            if "dispersion_basis" in p:
+                lines.append(f"  负二项离散度 {p['dispersion']:.3g}（{p['dispersion_basis']}）；"
+                             f"功效模型使用的每细胞平均计数为 {p['mean_count_per_cell']:.3g}。")
             lines.append(f"  MDE 为 {p['mde_log2fc']:.2f} log2 FC（目标功效 {p['target_power']:.0%}，"
                          f"单检验 α={p['per_test_alpha']:.3g}，依据 {p['alpha_basis']}）。")
     return lines

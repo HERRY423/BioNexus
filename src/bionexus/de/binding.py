@@ -9,6 +9,7 @@ import io
 import json
 import logging
 import re
+import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
@@ -563,6 +564,11 @@ def _verify_execution_binding(
         )
         binding_issues.append(f"供体数不一致 (记录: {rec_donors}, 样本表: {obs_donors})")
 
+    common_dispersion = exec_dict.get("common_dispersion")
+    if common_dispersion is not None and (type(common_dispersion) not in (int, float)
+                                           or not 0 <= common_dispersion <= sys.float_info.max):
+        binding_issues.append("common_dispersion 必须是非负有限数值")
+
     if binding_issues:
         issue_summary = "；".join(binding_issues)
         checks.append(
@@ -585,6 +591,13 @@ def _verify_execution_binding(
         ))
         return False
 
+    # Attach modeled values only after the fitted receipt is bound to these
+    # result bytes, donors and design. Unbound summaries remain declarations.
+    if method_key in {"deseq2", "pydeseq2", "pydeseq2.deseqstats", "edger"} and common_dispersion is not None:
+        execution.common_dispersion = float(common_dispersion)
+    shrinkage = exec_dict.get("lfc_shrinkage")
+    if isinstance(shrinkage, str) and shrinkage.strip().lower() in {"apeglm", "ashr", "normal"}:
+        execution.lfc_shrinkage = shrinkage.strip().lower()
     execution.design_factors = sorted(fixed)
     execution.random_effects = sorted(random)
     execution.aggregation = "donor_mixed_model" if mixed else "donor_pseudobulk"

@@ -152,6 +152,8 @@ class ExecutionRecord:
     design_factors: List[str] = field(default_factory=list)
     random_effects: List[str] = field(default_factory=list)
     declared_factors: List[str] = field(default_factory=list)
+    common_dispersion: Optional[float] = None
+    lfc_shrinkage: Optional[str] = None
 
     @property
     def is_donor_aware(self) -> bool:

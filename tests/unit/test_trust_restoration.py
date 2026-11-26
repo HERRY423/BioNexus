@@ -14,11 +14,20 @@ from bionexus.mcp.tools import literature
 
 
 def test_release_correction_keeps_original_snapshot_and_current_bindings():
-    from scripts.check_trust_restoration import check
+    from scripts.check_trust_restoration import RECORD, check
 
     root = Path(__file__).resolve().parents[2]
     result = check(root)
     assert result["status"] == "PASS", result["errors"]
+    record = json.loads((root / RECORD).read_bytes())
+    links = {}
+    while "supersedes" in record:
+        predecessor = record["supersedes"]
+        links[Path(predecessor["path"]).name] = predecessor
+        record = json.loads((root / predecessor["path"]).read_bytes())
+    origin = links["CORRECTIONS-scientific-audit.json"]
+    assert origin["recorded_in_commit"] == "08548772cc6f2cb2cae9034e35871f22529560ef"
+    assert origin["recorded_at"] == "2026-11-26T04:40:03-08:00"
 
 
 def test_release_correction_rejects_mutated_predecessor(tmp_path):

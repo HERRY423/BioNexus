@@ -282,8 +282,16 @@ class DEAuditEngine:
             )
 
         # 5. Matrix-level audits
+        count_inputs: dict[str | None, dict[str, Any]] = {}
+        selected_libraries = None
         if adata is not None:
             self._audit_expression_matrix(adata, findings, checks)
+            if d_col and c_col and checks[-1].status == CheckStatus.ASSESSED:
+                from bionexus.de.rules.matrix_rules import _measure_count_strata
+
+                count_inputs, selected_libraries = _measure_count_strata(
+                    adata, cohort_summary.get("replicate_strata", []), d_col=d_col, c_col=c_col, ct_col=ct_col, b_col=b_col,
+                )
         else:
             checks.append(
                 CheckRecord(
@@ -359,7 +367,7 @@ class DEAuditEngine:
                 cohort_summary["lfc_concordance"] = _audit_lfc_concordance(
                     adata, de_df, findings, checks, d_col=d_col, c_col=c_col, ct_col=ct_col,
                     cell_type=cell_type, case=case, ref=reference, min_cells_per_donor=self.min_cells_per_donor,
-                    rgg_params=rgg_params if de_source != "de_table" else None,
+                    libraries=selected_libraries, rgg_params=rgg_params if de_source != "de_table" else None,
                 )
         else:
             checks.append(
@@ -575,7 +583,7 @@ class DEAuditEngine:
             declared=[*execution.declared_factors, *declared_factors], findings=findings, checks=checks,
             min_donors=self.min_donors_required, fdr=self.fdr_threshold,
             alternatives=alternative_report, selection_dependent=selection_report["status"] == "SELECTION_DEPENDENCE_RECORDED",
-            claim_report=condition_report, table=de_df, power_parameters=self.power_parameters,
+            claim_report=condition_report, table=de_df, power_parameters=self.power_parameters, count_inputs=count_inputs,
         )
         claim_boundary = self._determine_claim_boundary(
             findings, cohort_summary, claim_text, [c for c in checks if c.check_id != "selection_history"], execution

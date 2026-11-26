@@ -22,7 +22,7 @@ from enum import Enum
 from typing import Any, Dict, List, Optional
 
 from bionexus.contracts import ConclusionMaturity
-from bionexus.statistical_rules import EffectSizeRegime, PowerAssessment, assess_statistical_power
+from bionexus.statistical_rules import PowerAssessment, assess_statistical_power
 
 
 class InferentialRegime(str, Enum):
@@ -151,7 +151,7 @@ def evaluate_pseudobulk_inferential_warrant(
         )
 
     # 3. Check Fatal Invariants: Zero biological replicates or pseudoreplication (N < 2)
-    if not has_donor_metadata or min_donors < 2:
+    if not has_donor_metadata or min_donors < 2 or (isinstance(n_donors_per_group, dict) and len(donor_dict) < 2):
         return PseudobulkWarrantVerdict(
             regime=InferentialRegime.ABSTAIN_UNREPLICATED,
             maturity_ceiling=ConclusionMaturity.ABSTAIN,
@@ -192,8 +192,14 @@ def evaluate_pseudobulk_inferential_warrant(
         )
 
     if power is None:
+        # With more than two groups and no specified contrast, report the
+        # least powered pair. A scalar count describes a balanced design.
+        pair = None
+        if isinstance(n_donors_per_group, dict):
+            pair = dict(sorted(donor_dict.items(), key=lambda item: (item[1], item[0]))[:2])
         power = assess_statistical_power(
             n_donors_per_group=min_donors,
+            n_by_group=pair,
             cells_per_sample=min_cells_per_sample,
             nominal_fdr=nominal_fdr,
         )
@@ -205,13 +211,20 @@ def evaluate_pseudobulk_inferential_warrant(
         )
 
     reasons = []
-    if power.n_donors_per_group > min_donors or power.nominal_fdr > nominal_fdr:
+    excess_donors = power.n_donors_per_group > min_donors
+    if power.n_by_group is not None:
+        if isinstance(n_donors_per_group, dict):
+            excess_donors |= any(n > donor_dict.get(group, 0) for group, n in power.n_by_group.items())
+        else:
+            excess_donors |= max(power.n_by_group.values()) > min_donors
+    if excess_donors or power.nominal_fdr > nominal_fdr:
         reasons.append("The supplied power analysis assumes more donors or a looser FDR than the audited contrast.")
-    if power.powered_for_regime == EffectSizeRegime.STRONG and power.observed_effect_regime != EffectSizeRegime.STRONG:
-        reasons.append("Only strong effects are detectable under the assessed design, and the claimed effect lacks qualifying strong-effect evidence.")
-    if (power.observed_effect_regime is not None and power.shrunk_log2fc is not None
-            and abs(power.shrunk_log2fc) < power.mde_log2fc):
-        reasons.append("The estimated shrunken effect falls below the minimum detectable effect.")
+    if power.mde_log2fc > power.target_effect_log2fc:
+        if power.observed_effect_regime is None or power.shrunk_log2fc is None:
+            reasons.append(f"No qualifying shrunken effect. The MDE ({power.mde_log2fc:.2f}) exceeds "
+                           f"the planning target of |log2FC| = {power.target_effect_log2fc:g}.")
+        else:
+            reasons.append("The estimated shrunken effect falls below the minimum detectable effect.")
     if reasons:
         return PseudobulkWarrantVerdict(
             regime=InferentialRegime.DESCRIPTIVE_ONLY,
