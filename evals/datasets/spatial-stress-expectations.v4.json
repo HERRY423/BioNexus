@@ -1,0 +1,8 @@
+{
+  "schema_version": "bionexus.spatial-stress-expectations.v4",
+  "scope": "Synthetic spatial contract scenarios with caller-reported control statuses and one uncalibrated executable battery.",
+  "absent_controls": "ABSTAIN",
+  "external_declarations": "FRAGILE",
+  "untested_controls": "FRAGILE",
+  "uncalibrated_battery": "FRAGILE"
+}

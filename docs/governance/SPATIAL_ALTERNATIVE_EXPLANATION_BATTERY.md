@@ -1,9 +1,9 @@
 # Spatial Alternative Explanation Battery
 
-`spatial.inference_validity` is BioNexus flagship C. Contract version 3
-binds positive controls to diagnostic artifacts, checks replication at the
-sample level, and evaluates tissue edge effects separately from cell-contact
-geometry.
+`spatial.inference_validity` is BioNexus flagship C. Contract version 4 derives external control statuses from
+input-bound adjusted effect intervals and measures sample replication from
+donor identities. Tissue edge effects and cell-contact geometry are distinct
+controls.
 
 ## Scientific question
 
@@ -41,28 +41,54 @@ that status.
 
 For `assess_spatial_inference`, supply the claim-scoped `obs` table and its
 group column (default `condition`; use `group_col=None` for a single cohort).
-The assessment counts distinct donors in each group. With section-only data
-it counts sections and names the unit in the report. If both are present,
-donors take precedence over sections nested within donors. The executable
-battery accepts `SpatialBatteryData.obs` aligned with expression rows and
-uses the focal cells in the exposed and unexposed arms of its actual contrast.
-Neither entry point counts cells, spots or FOVs as independent samples.
-Missing sample identities leave replication untested. A group with fewer
-than two independent units yields `ABSTAIN` and a descriptive claim scope.
+The assessment counts distinct donors in each group. A group with fewer
+than two observed donor or section units yields `ABSTAIN`. Multiple sections
+may share one donor. With only section IDs, the report shows the section
+counts and caps the verdict at `FRAGILE`. To establish independent origins,
+supply `sections_are_independent=True`, the SHA-256 in
+`section_provenance_sha256`, and the corresponding JSON bytes in `artifacts`.
+The JSON object has schema `bionexus.spatial-section-origins.v1` and a
+`section_to_donor` object mapping every observed section to its distinct
+donor ID. With repeated donors, provide the donor column in `obs` to measure
+the number of biological replicates directly. The executable battery accepts
+the same origin table as `SpatialBatteryData.section_provenance` alongside
+its digest. It counts donor units for focal cells in each exposure arm.
 
-For an external control, provide a `ControlResult` with `statistic` and
-`p_or_interval` where available, its `artifact_sha256`, and the original
-bytes in the `artifacts` mapping keyed by that digest. A legacy positive
-status, an absent file, or a digest mismatch is reported as `DECLARED` and
-caps the verdict at `FRAGILE`. The digest identifies the evidence for review.
-The battery generates these digests from the diagnostic records returned in
-its output using UTF-8 JSON, sorted keys, compact separators and literal
-Unicode. Tissue edge effects remain `UNTESTED` in the executable battery
-until a separate tissue-boundary challenge is available.
+External `ControlResult` objects locate original JSON bytes by
+`artifact_sha256`. Pass those bytes in `artifacts` and independently supply
+the audited input digest in `input_sha256`. Each JSON report must contain
+the following fields.
+
+| Field | Meaning |
+|---|---|
+| `schema` | `bionexus.spatial-control-result.v1` |
+| `control` | Registered name or alias of the control tested |
+| `input_sha256` | SHA-256 of the audited input for this observation |
+| `baseline_effect_sign` | Integer +1 or −1, consistent across controls and with the expected direction when supplied |
+| `adjusted_effect_interval` | Two ordered finite numbers on the effect scale after applying this control |
+| `statistic` | Optional finite point estimate |
+| Permutation fields | The permutation-calibrated interval additionally requires integer `n_permutations` ≥999, integer `random_seed` and `null_distribution_summary` with finite, ordered `min`, `mean`, and `max` |
+
+An interval wholly in the baseline direction yields `TESTED`; crossing zero
+or reversing the sign yields `FAILED`. The verdict records the parsed
+interval and source. Unbound or incomplete reports remain `DECLARED`.
+The structured report records the submitted measurement. Independent review
+establishes the quality of the underlying experiment.
+
+The battery calculates a digest covering the expression matrix and feature
+axis, coordinates, contact graph, labels, aligned sample metadata, covariates,
+perturbation inputs, observation, plan and calibration context. Each native
+diagnostic records this digest and its producer. Its state follows the
+executed, calibrated analysis. Native control records serialize as UTF-8
+JSON using sorted keys, compact separators and literal Unicode. The battery
+records tissue edge effects as `UNTESTED` until a separate boundary challenge
+is available.
+
+## Interpreting ROBUST across reports
 
 | Report field | Meaning of `ROBUST` |
 |---|---|
-| Spatial observation verdict | Every canonical alternative has passing evidence, including the permutation null, and the target groups have measured sample-level replication. |
+| Spatial observation verdict | Every canonical control passes, including a complete permutation null. Target groups have at least two measured donors, directly observed or verified by the section-origin table. |
 | General evidence maturity | Measured sample design, replication, confound controls and sensitivity analysis meet the evidence ladder, together with backend fidelity and provenance. Rule violations still cap maturity. |
 
 The spatial verdict enters a broader scientific claim subject to the

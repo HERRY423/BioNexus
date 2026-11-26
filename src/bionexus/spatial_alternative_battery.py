@@ -39,7 +39,14 @@ from bionexus.spatial_empirical_gold import (
     SpatialGoldRuntimeEvidence,
     is_spatial_gold_platform,
 )
-from bionexus.spatial_inference import ControlResult, SpatialInferenceVerdict, assess_spatial_inference
+from bionexus.spatial_inference import (
+    BATTERY_PRODUCER,
+    MIN_NULL_PERMUTATIONS,
+    ControlResult,
+    SpatialInferenceVerdict,
+    _sample_replication,
+    _spatial_verdict,
+)
 
 if TYPE_CHECKING:
     from pandas import DataFrame
@@ -61,6 +68,7 @@ class DiagnosticState(str, Enum):
     """Scientific state of one executable alternative-explanation test."""
 
     CONTROLLED = "CONTROLLED"
+    DECLARED = "DECLARED"
     FAILED = "FAILED"
     UNTESTED = "UNTESTED"
 
@@ -119,6 +127,9 @@ class SpatialBatteryData:
     obs: Optional[DataFrame] = None  # sample metadata, in expression row order
     donor_col: Optional[str] = None
     section_col: Optional[str] = None
+    sections_are_independent: bool = False
+    section_provenance_sha256: Optional[str] = None
+    section_provenance: Optional[bytes] = None
 
 
 @dataclass(frozen=True)
@@ -170,9 +181,14 @@ class BatteryDiagnostic:
     perturbed_effects: Dict[str, Optional[float]] = field(default_factory=dict)
     note: str = ""
     calibration: Optional[Dict[str, Any]] = None
+    input_sha256: Optional[str] = None
+    permutation_metadata: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return {
+            "producer": BATTERY_PRODUCER,
+            "input_sha256": self.input_sha256,
+            "permutation_metadata": self.permutation_metadata,
             "control_name": self.control_name,
             "metric": self.metric,
             "state": self.state.value,
@@ -199,7 +215,7 @@ class SpatialBatteryResult:
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            "schema_version": "bionexus.spatial-alternative-battery.v2",
+            "schema_version": BATTERY_PRODUCER,
             "capability_id": "spatial.inference_validity",
             "observation": self.observation.to_dict(),
             "baseline_effect": self.baseline_effect,
@@ -225,11 +241,27 @@ def _canonical_sha256(value: Any) -> str:
 
 
 def _array_sha256(value: Any) -> str:
-    array = np.ascontiguousarray(np.asarray(value))
+    if sparse.issparse(value):
+        matrix = value.tocsr(copy=False)
+        return _canonical_sha256({
+            "shape": matrix.shape, "indptr": _array_sha256(matrix.indptr),
+            "indices": _array_sha256(matrix.indices), "data": _array_sha256(matrix.data),
+        })
+    array = value if hasattr(value, "dtype") and hasattr(value, "shape") else np.asarray(value)
     digest = hashlib.sha256()
     digest.update(str(array.dtype).encode("ascii"))
     digest.update(str(array.shape).encode("ascii"))
-    digest.update(array.tobytes())
+    # Keep dense and disk-backed expression matrices bounded during hashing.
+    for begin in range(0, array.shape[0], 1024):
+        rows = array[begin:begin + 1024]
+        if sparse.issparse(rows):
+            digest.update(bytes.fromhex(_array_sha256(rows)))
+        else:
+            block = np.asarray(rows)
+            if block.dtype.hasobject:
+                digest.update(bytes.fromhex(_canonical_sha256(block.tolist())))
+            else:
+                digest.update(np.ascontiguousarray(block).data)
     return digest.hexdigest()
 
 
@@ -890,34 +922,6 @@ def run_spatial_alternative_battery(
     diagnostics["edge_effects"] = _untested(
         "edge_effects", "A tissue-boundary challenge is needed to assess edge effects."
     )
-    artifacts = {}
-    controls = []
-    for name, diagnostic in diagnostics.items():
-        payload = json.dumps(diagnostic.to_dict(), sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
-        digest = hashlib.sha256(payload).hexdigest()
-        artifacts[digest] = payload
-        controls.append(ControlResult(
-            name, diagnostic.state.value, diagnostic.note, statistic=diagnostic.score,
-            p_or_interval=diagnostic.score if name == "permutation_null" else None,
-            artifact_sha256=digest,
-        ))
-
-    # Only focal cells contributed to the effect. Count independent units in
-    # each exposure arm of this contrast, using the same graph and row mask.
-    sample_obs = None
-    if data.obs is not None:
-        focal = labels == observation.focal_cell_label
-        sample_obs = data.obs.iloc[np.flatnonzero(focal)].copy()
-        sample_obs["_battery_exposure"] = np.where(baseline_exposure[focal], "exposed", "unexposed")
-    verdict = assess_spatial_inference(
-        observation.statement, controls, artifacts=artifacts, obs=sample_obs,
-        donor_col=data.donor_col, section_col=data.section_col, group_col="_battery_exposure",
-    )
-    if baseline.value is None:
-        verdict.verdict = "ABSTAIN"
-        verdict.untested = sorted(set(verdict.untested) | {"baseline_effect"})
-        verdict.notes.append("The baseline effect was not estimable at the predeclared minimum group size.")
-
     provenance_payload = {
         "dataset_id": data.dataset_id,
         "state_revision_id": data.state_revision_id,
@@ -944,7 +948,34 @@ def run_spatial_alternative_battery(
         ),
         "plan": plan.to_dict(),
         "observation": observation.to_dict(),
-        "control_artifact_sha256": {name: item.artifact_sha256 for name, item in verdict.control_evidence.items()},
+        "supplied_contact_graph_sha256": _array_sha256(data.contact_graph) if data.contact_graph is not None else None,
+        "expression_sha256": _array_sha256(data.expression),
+        "gene_names_sha256": _array_sha256(genes),
+        "segmentation_expression_sha256": {
+            name: _array_sha256(matrix) for name, matrix in data.segmentation_expression_variants.items()
+        },
+        "segmentation_contact_sha256": {
+            name: _array_sha256(graph) for name, graph in data.segmentation_contact_variants.items()
+        },
+        "leakage_expression_sha256": {
+            name: _array_sha256(matrix) for name, matrix in data.leakage_expression_variants.items()
+        },
+        "covariate_sha256": {
+            name: _array_sha256(value) if value is not None else None
+            for name, value in {
+                "cell_size": data.cell_size, "nuclear_eccentricity": data.nuclear_eccentricity,
+                "total_transcript_counts": data.total_transcript_counts, "fov_or_batch": data.fov_or_batch,
+            }.items()
+        },
+        "sample_metadata": {
+            "donor_col": data.donor_col, "section_col": data.section_col,
+            "sections_are_independent": data.sections_are_independent,
+            "section_provenance_sha256": data.section_provenance_sha256,
+            "supplied_origins_sha256": (
+                hashlib.sha256(data.section_provenance).hexdigest() if data.section_provenance is not None else None
+            ),
+        },
+        "calibration_context": asdict(context),
         "segmentation_variant_ids": segmentation_variant_ids,
         "segmentation_target_gene_sha256": {
             name: _array_sha256(
@@ -990,6 +1021,63 @@ def run_spatial_alternative_battery(
             "runtime_authorization_required": True,
         },
         "fallback_used": False,
+    }
+    if data.obs is not None:
+        from pandas.util import hash_pandas_object
+
+        # Commit both the ordered columns and the row-to-observation alignment.
+        provenance_payload["sample_metadata"]["obs_sha256"] = _canonical_sha256({
+            "columns": list(data.obs.columns), "dtypes": [str(dtype) for dtype in data.obs.dtypes],
+            "row_hashes": _array_sha256(hash_pandas_object(data.obs, index=True).to_numpy()),
+        })
+    input_sha256 = _canonical_sha256(provenance_payload)
+    provenance_payload["input_sha256"] = input_sha256
+    controls = {}
+    for name, diagnostic in diagnostics.items():
+        diagnostic.input_sha256 = input_sha256
+        state = diagnostic.state.value
+        note = diagnostic.note
+        if name == "permutation_null":
+            diagnostic.permutation_metadata = {
+                "n_permutations": len(valid_nulls), "random_seed": plan.random_seed,
+                "null_distribution_summary": (
+                    {"min": min(valid_nulls), "mean": float(np.mean(valid_nulls)), "max": max(valid_nulls)}
+                    if valid_nulls else None
+                ),
+            }
+            if state in ("CONTROLLED", "FAILED") and len(valid_nulls) < MIN_NULL_PERMUTATIONS:
+                diagnostic.state = DiagnosticState.DECLARED
+                diagnostic.note = "Fewer than 999 estimable coordinate permutations."
+                state = diagnostic.state.value
+                note = diagnostic.note
+        controls[name] = ControlResult(
+            name, state, note, statistic=diagnostic.score,
+            p_or_interval=diagnostic.score if name == "permutation_null" else None,
+            artifact_sha256=_canonical_sha256(diagnostic.to_dict()), producer=BATTERY_PRODUCER,
+        )
+
+    # Only focal cells contributed to the effect. Count independent units in
+    # each exposure arm of this contrast, using the same graph and row mask.
+    sample_obs = None
+    if data.obs is not None:
+        focal = labels == observation.focal_cell_label
+        sample_obs = data.obs.iloc[np.flatnonzero(focal)].copy()
+        sample_obs["_battery_exposure"] = np.where(baseline_exposure[focal], "exposed", "unexposed")
+    origins = (
+        {data.section_provenance_sha256: data.section_provenance}
+        if data.section_provenance is not None and data.section_provenance_sha256 else {}
+    )
+    replication, sample_counts = _sample_replication(
+        sample_obs, data.donor_col, data.section_col, "_battery_exposure",
+        data.sections_are_independent, data.section_provenance_sha256, origins,
+    )
+    verdict = _spatial_verdict(observation.statement, controls, replication, sample_counts, input_sha256)
+    if baseline.value is None:
+        verdict.verdict = "ABSTAIN"
+        verdict.untested = sorted(set(verdict.untested) | {"baseline_effect"})
+        verdict.notes.append("The baseline effect was not estimable at the predeclared minimum group size.")
+    provenance_payload["control_artifact_sha256"] = {
+        name: item.artifact_sha256 for name, item in verdict.control_evidence.items()
     }
     provenance_payload["battery_run_sha256"] = _canonical_sha256(provenance_payload)
     result = SpatialBatteryResult(

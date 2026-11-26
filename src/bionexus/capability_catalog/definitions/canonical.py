@@ -757,7 +757,7 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
     # 10. Spatial Inference Validity Assessment (flagship capability C, BNS-013)
     "spatial.inference_validity": CapabilityContract(
         id="spatial.inference_validity",
-        version=3,
+        version=4,
         display_name="Spatial Alternative Explanation Battery",
         skill_name="spatial-transcriptomics",
         summary=(
@@ -790,13 +790,13 @@ CANONICAL_CAPABILITIES: Dict[str, CapabilityContract] = {
                 name="alternative_controls",
                 semantic_type=SemanticInputType.SAMPLE_METADATA.value,
                 required=False,
-                description="Per-control results and SHA-256-bound artifacts. Unbound positive declarations are DECLARED.",
+                description="Structured, input-bound effect intervals or diagnostics from the executed spatial battery.",
             ),
             "sample_observations": InputSpecification(
                 name="sample_observations",
                 semantic_type=SemanticInputType.SAMPLE_METADATA.value,
                 required=False,
-                description="Claim-scoped rows with comparison groups and donor or tissue-section identifiers.",
+                description="Claim-scoped rows with comparison groups and donors. Section identifiers require donor-origin evidence.",
             ),
             "battery_plan": InputSpecification(
                 name="battery_plan",
