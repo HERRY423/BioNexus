@@ -62,6 +62,7 @@
         "src/bionexus/de/models.py",
         "src/bionexus/de/parsers.py",
         "src/bionexus/de/policy.py",
+        "src/bionexus/de/pseudobulk_counts.py",
         "src/bionexus/de/renderer.py",
         "src/bionexus/de/rules/__init__.py",
         "src/bionexus/de/rules/code_rules.py",

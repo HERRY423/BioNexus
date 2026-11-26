@@ -51,7 +51,7 @@ from bionexus.research_purpose import (
     purpose_from_string,
 )
 from bionexus.semantic_router import SemanticNomination, nominate_semantically, validate_nomination
-from bionexus.statistical_rules import EffectSizeRegime, assess_doublet_risk, assess_statistical_power
+from bionexus.statistical_rules import assess_doublet_risk, assess_statistical_power
 
 
 class RoutingStatus(str, Enum):
@@ -578,59 +578,29 @@ def _statistical_advisory_stage(
                 ),
             )
 
-        # BN-F002 (family axis: arm_imbalance): severely unbalanced replication.
-        # Power and precision are dictated by the minority arm even when the
-        # majority arm looks well-powered.
+        # Evaluate a named contrast using both arm sizes. With descriptive
+        # metadata alone, retain the existing imbalance advisory.
         donors_by_group = meta.get("donors_per_condition")
         max_reps = meta.get("max_replicates_per_condition")
         ratio: Optional[float] = None
         if isinstance(donors_by_group, dict) and donors_by_group:
-            counts = [int(v) for v in donors_by_group.values() if int(v) > 0]
-            if len(counts) >= 2:
+            counts = list(donors_by_group.values())
+            if len(counts) >= 2 and min(counts) > 0:
                 ratio = max(counts) / min(counts)
         elif isinstance(min_reps, int) and isinstance(max_reps, int) and min_reps > 0:
             ratio = max_reps / min_reps
-        if ratio is not None and ratio >= 3.0:
-            return RoutingDecision(
-                status=RoutingStatus.DEGRADED_ADVISORY,
-                matched_capability=cap,
-                target_skill=cap.skill_name,
-                recommended_script="skills/single-cell-rna-qc/scripts/scrna_deseq.py",
-                recommended_command="python skills/single-cell-rna-qc/scripts/scrna_deseq.py --help",
-                rationale=(
-                    f"Severely imbalanced design ({ratio:.0f}:1 between arms): statistical power and "
-                    "precision are dictated by the minority arm, not the majority cohort size "
-                    "(BN-F002). The analysis is legal but discovery-power language must reflect the "
-                    "smaller arm."
-                ),
-                violations=[],
-                remedies=[
-                    "Report power for the minority arm explicitly; consider balancing the design or "
-                    "downweighting population claims to the minority arm's evidence ceiling.",
-                ],
-                evidence_card_template=EvidenceCard(
-                    execution_state=ExecutionState.DEGRADED.value,
-                    details={
-                        "failure_mode": "BN-F002",
-                        "family": "BN-F006-pseudoreplication",
-                        "axis": "arm_imbalance",
-                        "imbalance_ratio": round(ratio, 2),
-                        "evidence_ceiling": "FRAGILE",
-                    },
-                ),
-            )
-
         overclaims = bool(_POWER_OVERCLAIM_RE.search(query or ""))
         power = None
         if isinstance(min_reps, int) and min_reps >= 2 and overclaims:
             try:
                 power = assess_statistical_power(
                     n_donors_per_group=min_reps,
+                    n_by_group=donors_by_group if isinstance(donors_by_group, dict) and len(donors_by_group) == 2 else None,
                     observed_log2fc=meta.get("observed_log2fc"),
                     shrunk_log2fc=meta.get("shrunk_log2fc"),
                     base_mean=meta.get("base_mean", meta.get("baseMean")),
                     mean_count_per_cell=float(meta.get("mean_count_per_cell", 1.0)),
-                    dispersion=float(meta.get("dispersion", 0.5)),
+                    dispersion=float(meta["dispersion"]) if meta.get("dispersion") is not None else None,
                     cells_per_sample=int(meta.get("cells_per_sample", 100)),
                     target_power=float(meta.get("target_power", 0.80)),
                     nominal_fdr=float(meta.get("nominal_fdr", 0.05)),
@@ -645,11 +615,35 @@ def _statistical_advisory_stage(
                     recommended_script=None, recommended_command=None,
                     missing_data_requests=["Provide valid depth, dispersion, power and multiple-testing assumptions."],
                 )
-        if power is not None and (
-            power.n_donors_per_group == 2
-            or (power.powered_for_regime == EffectSizeRegime.STRONG and power.observed_effect_regime != EffectSizeRegime.STRONG)
-            or (power.shrunk_log2fc is not None and abs(power.shrunk_log2fc) < power.mde_log2fc)
-        ):
+        if ratio is not None and ratio >= 3.0 and min_reps >= 2 and (power is None or not power.sufficient_for_population_claims):
+            return RoutingDecision(
+                status=RoutingStatus.DEGRADED_ADVISORY,
+                matched_capability=cap,
+                target_skill=cap.skill_name,
+                recommended_script="skills/single-cell-rna-qc/scripts/scrna_deseq.py",
+                recommended_command="python skills/single-cell-rna-qc/scripts/scrna_deseq.py --help",
+                rationale=(
+                    f"Severely imbalanced design ({ratio:.0f}:1 between arms). The smaller arm contributes "
+                    "more to the contrast variance (BN-F002). Report power using both arm sizes."
+                ),
+                violations=[],
+                remedies=[
+                    "Report power for the actual arm sizes and narrow the claim to effects the contrast can detect.",
+                ],
+                evidence_card_template=EvidenceCard(
+                    execution_state=ExecutionState.DEGRADED.value,
+                    details={
+                        "failure_mode": "BN-F002",
+                        "family": "BN-F006-pseudoreplication",
+                        "axis": "arm_imbalance",
+                        "imbalance_ratio": round(ratio, 2),
+                        "statistical_power": power.to_dict() if power else None,
+                        "evidence_ceiling": "FRAGILE",
+                    },
+                ),
+            )
+
+        if power is not None and not power.sufficient_for_population_claims:
             remedies = list(power.remedies) or ["Report design power for the claimed effect or narrow the conclusion."]
             regime_note = ""
             if power.observed_effect_regime is not None:
@@ -1212,6 +1206,17 @@ def route_scientific_intent(
 
     # 3. Check for Essential Missing Metadata (NEEDS_DATA state)
     if cap.id == "scrna.pseudobulk_de":
+        arms = meta.get("donors_per_condition")
+        if isinstance(arms, dict):
+            if (len(arms) < 2 or any(type(n) is not int or n < 0 for n in arms.values())
+                    or meta.get("min_replicates_per_condition", min(arms.values())) != min(arms.values())):
+                return _stamp(RoutingDecision(
+                    status=RoutingStatus.NEEDS_DATA, matched_capability=cap, target_skill=skill_name,
+                    recommended_script=None, recommended_command=None,
+                    rationale="The contrast requires consistent nonnegative integer donor counts for at least two conditions.",
+                    missing_data_requests=["Supply per-condition biological donor counts and their minimum."],
+                ))
+            meta["min_replicates_per_condition"] = min(arms.values())
         if (
             "min_replicates_per_condition" not in meta
             and not meta.get("is_normalized")

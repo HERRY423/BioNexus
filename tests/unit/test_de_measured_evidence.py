@@ -48,7 +48,11 @@ def test_power_and_factors_use_the_requested_eligible_stratum(tmp_path):
     assert set(result.evidence_assessment["satisfied_factors"]) == {"replication", "sample_design", "confound_controls", "provenance"}
     assert result.design_warrants[0]["status"] == "CONDITIONAL_DESIGN_CEILING"
     assert result.design_warrants[0]["power"]["alpha_basis"] == "jung2005"
-    assert result.evidence_assessment["evidence_maturity"] == "PRELIMINARY"
+    # The two constant expressed genes have no measured within-condition
+    # overdispersion. This fixture no longer inherits the planning default.
+    assert result.design_warrants[0]["power"]["dispersion_basis"] == "pseudobulk_moment_mean"
+    assert result.design_warrants[0]["power"]["dispersion"] == 0
+    assert result.evidence_assessment["evidence_maturity"] == "SUPPORTED"
     assert "jung2005" in result.summary_text(False) and "jung2005" in result.to_markdown()
     json.dumps(result.to_dict(), allow_nan=False)
 

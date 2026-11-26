@@ -31,11 +31,15 @@ def _lodo_direction_stable(report: dict[str, Any] | None, scope: dict[str, Any])
     return True
 
 
-def _claimed_effect(table: Any, report: dict[str, Any] | None) -> dict[str, float]:
+def _claimed_effect(table: Any, report: dict[str, Any] | None,
+                    lfc_shrinkage: str | None = None) -> dict[str, float]:
     """Use the weakest explicitly shrunken, uniquely identified effect among the claims."""
     if table is None or not report:
         return {}
-    effect_col = next((c for c in ("shrunk_log2fc", "shrunk_log2_fold_change") if c in table), None)
+    candidates = ["shrunk_log2fc", "shrunk_log2_fold_change"]
+    if lfc_shrinkage in {"apeglm", "ashr", "normal"}:
+        candidates.extend(["log2_fold_change", "log2FoldChange"])
+    effect_col = next((c for c in candidates if c in table), None)
     if effect_col is None or "baseMean" not in table:
         return {}
     scope = report["analysis"]
@@ -77,8 +81,17 @@ def assess_de_measurements(
     claim_report: dict[str, Any] | None,
     table: Any,
     power_parameters: dict[str, Any],
+    count_inputs: dict[str | None, dict[str, Any]] | None = None,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    strata = cohort.get("replicate_strata", [])
+    strata = []
+    for original in cohort.get("replicate_strata", []):
+        inputs = (count_inputs or {}).get(original["cell_type"], {})
+        if "design" in inputs:
+            counts = inputs["donors_by_condition"]
+            strata.append({**original, "design": inputs["design"], "donors_by_condition": counts,
+                           "min_donors": min(counts.values())})
+        else:
+            strata.append(original)
     statuses = {c.check_id: c.status for c in checks}
     design_ok = [
         s["design"]["estimable"] and (s["design"]["residual_df"] or 0) >= 2 for s in strata
@@ -113,25 +126,45 @@ def assess_de_measurements(
         ))
 
     raw = statuses.get("input_count_type")
-    claimed_effect = _claimed_effect(table, claim_report)
+    claimed_effect = _claimed_effect(table, claim_report, execution.lfc_shrinkage if bound else None)
     warrants = []
     for stratum in strata:
+        cell_type = stratum["cell_type"]
+        inputs = (count_inputs or {}).get(cell_type, {})
         counts = stratum["donors_by_condition"]
         design = stratum["design"]
         n = stratum["min_donors"]
-        cells = stratum["min_cells_per_eligible_sample"]
+        cells = inputs.get("cells_per_sample", stratum["min_cells_per_eligible_sample"])
         power = None
+        options = power_parameters.copy()
+        if "mean_count_per_cell" in inputs:
+            options.update(mean_count_per_cell=inputs["mean_count_per_cell"], sequencing_depth_factor=1.0)
+        if "dispersion" in inputs:
+            options.update(dispersion=inputs["dispersion"], dispersion_basis="pseudobulk_moment_mean")
+        # A scalar in a multi-model results export cannot identify which fit
+        # supplied a common dispersion. Use the observed stratum in that case.
+        single_fit = len(strata) == 1
+        if table is not None and "cell_type" in table:
+            single_fit = (not table.empty and table["cell_type"].astype("string").eq(cell_type).fillna(False).all())
+        if table is not None and {"numerator", "denominator"} <= set(table):
+            pairs = table[["numerator", "denominator"]].drop_duplicates()
+            single_fit = (single_fit and len(pairs) == 1 and set(map(str, pairs.iloc[0])) == set(counts))
+        if bound and single_fit and execution.common_dispersion is not None:
+            options.update(dispersion=execution.common_dispersion, dispersion_basis="common_dispersion")
         if n >= 2 and len(counts) == 2:
+            effect = claimed_effect if claim_report and cell_type == claim_report["analysis"]["cell_type"] else {}
             power = assess_statistical_power(
-                n_donors_per_group=n, cells_per_sample=cells or 100, nominal_fdr=fdr,
-                shrunk_log2fc=claimed_effect.get("shrunk_log2fc"), base_mean=claimed_effect.get("base_mean"),
-                **power_parameters,
+                n_donors_per_group=n, n_by_group=counts, cells_per_sample=cells or 100, nominal_fdr=fdr,
+                shrunk_log2fc=effect.get("shrunk_log2fc"), base_mean=effect.get("base_mean"), **options,
             )
         item: dict[str, Any] = {
-            "cell_type": stratum["cell_type"], "donors_by_condition": counts,
+            "cell_type": cell_type, "donors_by_condition": counts,
             "power": power.to_dict() if power else None,
-            "cell_depth_basis": "minimum_eligible_sample" if cells is not None else "planning_default",
+            "cell_depth_basis": "pseudobulk_expressed_gene_median" if "mean_count_per_cell" in inputs else
+                                "minimum_eligible_sample" if cells is not None else "planning_default",
         }
+        if inputs:
+            item["count_inputs"] = inputs
         # This verdict concerns the measured input and contrast only. Missing matrix
         # evidence is distinct from a matrix that demonstrably violates count assumptions.
         if raw not in (CheckStatus.ASSESSED, CheckStatus.ISSUE_FOUND) or len(counts) != 2:

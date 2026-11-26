@@ -35,10 +35,9 @@ if str(REPO_ROOT / "src") not in sys.path:
 import anndata as ad
 
 from bionexus.claim_checker import audit_prohibited_claims
+from bionexus.de.pseudobulk_counts import collect_libraries
 from bionexus.provenance import capture_execution_provenance, sha256_file
-from bionexus.pseudobulk_warrant import (
-    evaluate_pseudobulk_inferential_warrant,
-)
+from bionexus.pseudobulk_warrant import evaluate_pseudobulk_inferential_warrant
 from bionexus.statistical_rules import assess_statistical_power
 from bionexus.validation_runs import record_validation_run
 from bionexus.validation_verifier import bind_validation_source_provenance
@@ -47,7 +46,7 @@ from evals.flagship_validation import FLAGSHIP_DATASETS
 
 DATA_DIR = REPO_ROOT / "data" / "flagship" / "kang2018_pbmc_ifnb"
 OUTPUT_PATH = REPO_ROOT / "validation" / "pseudobulk" / "INFERENTIAL_STRESS_REPORT.json"
-EXPECTATIONS_PATH = REPO_ROOT / "evals" / "datasets" / "pseudobulk-stress-expectations.v1.json"
+EXPECTATIONS_PATH = REPO_ROOT / "evals" / "datasets" / "pseudobulk-stress-expectations.v2.json"
 EXPECTATIONS = json.loads(EXPECTATIONS_PATH.read_text(encoding="utf-8"))
 
 SCRIPT_DIR = REPO_ROOT / "skills" / "single-cell-rna-qc" / "scripts"
@@ -70,7 +69,7 @@ def load_gse96583_data() -> Tuple[ad.AnnData, pd.DataFrame]:
 def aggregate_pseudobulk(adata_sub: ad.AnnData) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Aggregate AnnData single cells into donor x condition pseudobulk count matrix."""
     genes = list(adata_sub.var_names)
-    agg = adata_sub.obs.groupby(["donor", "condition"], observed=True).groups
+    agg = adata_sub.obs.groupby(["donor", "condition"]).groups
     counts = pd.DataFrame(
         index=[f"{d_}|{c}" for d_, c in agg.keys()],
         columns=genes,
@@ -92,46 +91,39 @@ def aggregate_pseudobulk(adata_sub: ad.AnnData) -> Tuple[pd.DataFrame, pd.DataFr
 # Dimension 1: Public Reference Benchmark
 # ==============================================================================
 
-def _cohort_moments(counts: pd.DataFrame, design: pd.DataFrame, cells: int) -> dict[str, float]:
-    """Estimate between-donor NB dispersion within treatment levels at a common library size."""
-    values = counts.loc[design["sample_id"]].to_numpy(dtype=float)
-    totals = values.sum(axis=1)
-    if cells <= 0 or np.any(totals <= 0):
-        raise ValueError("Kang donor libraries must have positive depth")
-    scaled = values / (totals / np.exp(np.log(totals).mean()))[:, None]
-    moments = []
-    for _, idx in design.reset_index(drop=True).groupby("condition", observed=True).indices.items():
-        if len(idx) < 2:
-            raise ValueError("Dispersion requires independent donor libraries within each condition")
-        group = scaled[idx]
-        means = group.mean(axis=0)
-        keep = means >= 10
-        moments.extend((group[:, keep].var(axis=0, ddof=1) - means[keep]) / means[keep]**2)
-    if not moments:
-        raise ValueError("No gene-condition observations met the normalized mean-count floor")
-    means = scaled.mean(axis=0)
-    return {"dispersion": max(0.0, float(np.mean(moments))),
-            "mean_count_per_cell": float(np.median(means[means > 0]) / cells)}
-
-
 def test_dim1_public_reference(adata: ad.AnnData, truth: pd.DataFrame) -> Dict[str, Any]:
     print("  [Dim 1] Running Public Reference Benchmark (GSE96583 8 donors)...")
-    counts, design = aggregate_pseudobulk(adata)
+    libraries = collect_libraries(
+        adata.X, adata.obs, d_col="donor", c_col="condition", ct_col=None, cell_type=None,
+        levels=("ctrl", "stim"), min_cells=1,
+    )
+    inputs = libraries.power_inputs()
+    if "dispersion" not in inputs or libraries.zero_libraries:
+        return {
+            "dimension": "1_public_reference_dataset",
+            "reason": "The supplied count libraries cannot support a within-condition dispersion estimate.",
+            "passed": False,
+        }
+    design = pd.DataFrame({"donor": libraries.donors, "condition": libraries.condition})
+    design["sample_id"] = design["donor"] + "|" + design["condition"]
+    counts = pd.DataFrame(libraries.counts, index=design["sample_id"], columns=adata.var_names)
     table, contract = run_pydeseq2(counts, design, condition="condition", donor="donor", reference="ctrl", contrast_level="stim")
     top_100 = set(table.sort_values("padj").head(100)["gene"].astype(str))
     truth_genes = set(truth.sort_values(truth.columns[-1])["gene"].astype(str))
     overlap_frac = len(top_100 & truth_genes) / 100.0
+    power = assess_statistical_power(
+        n_by_group=inputs["donors_by_condition"], cells_per_sample=inputs["cells_per_sample"],
+        mean_count_per_cell=inputs["mean_count_per_cell"], dispersion=inputs["dispersion"],
+        dispersion_basis="pseudobulk_moment_mean",
+    )
+    verdict = evaluate_pseudobulk_inferential_warrant(
+        n_donors_per_group=inputs["donors_by_condition"], min_cells_per_sample=inputs["cells_per_sample"],
+        is_raw_counts=True, power=power,
+    )
 
-    cells = int(adata.obs.groupby(["donor", "condition"], observed=True).size().min())
-    donors = design.groupby("condition", observed=True)["donor"].nunique().to_dict()
-    power = assess_statistical_power(n_donors_per_group=min(donors.values()), cells_per_sample=cells,
-                                     **_cohort_moments(counts, design, cells))
-    verdict = evaluate_pseudobulk_inferential_warrant(n_donors_per_group=donors, min_cells_per_sample=cells,
-                                                      is_raw_counts=True, power=power)
     expected = EXPECTATIONS["public_reference"]
-    passed = (len(donors) == 2 and all(n == expected["n_donors"] for n in donors.values())
-              and overlap_frac >= expected["min_top100_overlap"] and verdict.regime.value == expected["expected_regime"]
-              and verdict.population_claims_allowed)
+    passed = (len(set(libraries.donors)) == min(inputs["donors_by_condition"].values()) == expected["n_donors"]
+              and overlap_frac >= expected["min_top100_overlap"] and verdict.regime.value == expected["expected_regime"])
     return {
         "dimension": "1_public_reference_dataset",
         "dataset": "GEO GSE96583 (Kang et al. 2018)",
@@ -144,7 +136,7 @@ def test_dim1_public_reference(adata: ad.AnnData, truth: pd.DataFrame) -> Dict[s
         "model_design": contract.get("design_formula"),
         "threshold_required": expected["min_top100_overlap"],
         "expected_warrant_regime": expected["expected_regime"],
-        "planning_power": {**power.to_dict(), "dispersion_basis": "pseudobulk_moment_mean"},
+        "planning_power": verdict.metrics.get("power"),
         "warrant_regime": verdict.regime.value,
         "maturity_ceiling": verdict.maturity_ceiling.value,
         "passed": passed,
@@ -205,21 +197,34 @@ def test_dim2_cell_downsampling(adata: ad.AnnData, truth: pd.DataFrame, baseline
 
 def test_dim3_donor_perturbation(adata: ad.AnnData) -> Dict[str, Any]:
     print("  [Dim 3] Running Donor Number Perturbation Grid (8 -> 6 -> 4 -> 3 -> 2 -> 1)...")
-    all_donors = sorted(adata.obs["donor"].unique())
+    libraries = collect_libraries(
+        adata.X, adata.obs, d_col="donor", c_col="condition", ct_col=None, cell_type=None,
+        levels=("ctrl", "stim"), min_cells=1,
+    )
+    # The stress grid represents a paired comparison. Count only donors with
+    # nonzero libraries in both arms of the observed cohort.
+    donor_ids = np.asarray(libraries.donors)
+    paired = set(donor_ids[libraries.condition == "ctrl"]) & set(donor_ids[libraries.condition == "stim"])
     grid = EXPECTATIONS["donor_grid"]
-    counts, design = aggregate_pseudobulk(adata)
     cells = grid["cells_per_sample"]
-    measured_phi = _cohort_moments(counts, design, cells)["dispersion"]
+    measured_phi = libraries.power_inputs().get("dispersion")
+    if measured_phi is None:
+        return {"dimension": "3_donor_number_perturbation_phase_transition", "grid": [], "passed": False,
+                "reason": "Within-condition dispersion could not be estimated from the observed libraries."}
     results = []
     for case in grid["cases"]:
-        n = len(all_donors[:case["n_donors"]])
+        n = min(len(paired), case["n_donors"])
+        arm_sizes = {"ctrl": n, "stim": n}
         row: Dict[str, Any] = {"n_donors": n, "requested_donors": case["n_donors"]}
         matches = n == case["n_donors"]
         for scenario, phi in (("planning_default", None), ("cohort_dispersion", measured_phi)):
-            power = (assess_statistical_power(n_donors_per_group=n, cells_per_sample=cells,
-                                              mean_count_per_cell=grid["mean_count_per_cell"], dispersion=phi)
-                     if phi is not None and n >= 2 else None)
-            verdict = evaluate_pseudobulk_inferential_warrant(n_donors_per_group=n, min_cells_per_sample=cells,
+            power = None
+            if n >= 3:
+                power = assess_statistical_power(
+                    n_by_group=arm_sizes, cells_per_sample=cells, mean_count_per_cell=grid["mean_count_per_cell"],
+                    dispersion=phi, dispersion_basis="pseudobulk_moment_mean" if phi is not None else "planning_default",
+                )
+            verdict = evaluate_pseudobulk_inferential_warrant(n_donors_per_group=arm_sizes, min_cells_per_sample=cells,
                                                               is_raw_counts=True, has_donor_metadata=n > 0, power=power)
             actual = {"regime": verdict.regime.value, "maturity_ceiling": verdict.maturity_ceiling.value,
                       "population_claims_allowed": verdict.population_claims_allowed}
@@ -230,7 +235,8 @@ def test_dim3_donor_perturbation(adata: ad.AnnData) -> Dict[str, Any]:
             if scenario == "planning_default":
                 row.update(details)
                 if n >= 3:
-                    matches = matches and details["planning_power"]["dispersion"] == grid["default_dispersion"]
+                    matches = matches and all(details["planning_power"].get(k) == v
+                                              for k, v in grid["planning_assumptions"].items())
         row["regime_correct"] = matches
         results.append(row)
     all_correct = all(row["regime_correct"] for row in results)
@@ -472,10 +478,10 @@ def main() -> int:
     all_passed = all(d["passed"] for d in all_dims)
 
     report = {
-        "expectations": {"schema_version": EXPECTATIONS["schema_version"], "sha256": sha256_file(EXPECTATIONS_PATH)},
         "schema_version": "1.0",
         "capability_id": "scrna.pseudobulk_de",
         "test_suite": "7_dimensional_inferential_stress_test",
+        "expectations": {"schema_version": EXPECTATIONS["schema_version"], "sha256": sha256_file(EXPECTATIONS_PATH)},
         "evidence_scope": "LOCAL_REAL_DATA_PERTURBATIONS_AND_POLICY_FIXTURES",
         "scientific_authorization": "NONE",
         "independent_ground_truth": False,

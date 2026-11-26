@@ -1,0 +1,74 @@
+{
+  "schema_version": "bionexus.pseudobulk-stress-expectations.v2",
+  "scope": "Kang D1 measures the actual donor libraries. D3 fixes 50 cells per donor and a mean count of 1 per cell, comparing the packaged default to measured within-condition dispersion.",
+  "public_reference": {
+    "n_donors": 8,
+    "min_top100_overlap": 0.5,
+    "expected_regime": "POPULATION_INFERENCE"
+  },
+  "donor_grid": {
+    "cells_per_sample": 50,
+    "mean_count_per_cell": 1.0,
+    "cases": [
+      {
+        "n_donors": 8,
+        "planning_default": "population",
+        "cohort_dispersion": "population"
+      },
+      {
+        "n_donors": 6,
+        "planning_default": "population",
+        "cohort_dispersion": "population"
+      },
+      {
+        "n_donors": 4,
+        "planning_default": "descriptive",
+        "cohort_dispersion": "population"
+      },
+      {
+        "n_donors": 3,
+        "planning_default": "descriptive",
+        "cohort_dispersion": "population"
+      },
+      {
+        "n_donors": 2,
+        "planning_default": "descriptive",
+        "cohort_dispersion": "descriptive"
+      },
+      {
+        "n_donors": 1,
+        "planning_default": "abstain",
+        "cohort_dispersion": "abstain"
+      }
+    ],
+    "planning_assumptions": {
+      "dispersion": 0.16,
+      "nominal_fdr": 0.05,
+      "target_power": 0.8,
+      "alpha_basis": "fdr_as_alpha_optimistic",
+      "target_effect_log2fc": 1.0,
+      "dispersion_basis": "planning_default"
+    }
+  },
+  "outcomes": {
+    "population": {
+      "regime": "POPULATION_INFERENCE",
+      "maturity_ceiling": "SUPPORTED",
+      "population_claims_allowed": true
+    },
+    "descriptive": {
+      "regime": "DESCRIPTIVE_ONLY",
+      "maturity_ceiling": "PRELIMINARY",
+      "population_claims_allowed": false
+    },
+    "abstain": {
+      "regime": "ABSTAIN_UNREPLICATED",
+      "maturity_ceiling": "ABSTAIN",
+      "population_claims_allowed": false
+    }
+  },
+  "predecessor": {
+    "path": "pseudobulk-stress-expectations.v1.json",
+    "sha256": "41263ccf89230272ee8091355d6c55d9ff96fe4b1085633494d1b0e8b0ec3309"
+  }
+}

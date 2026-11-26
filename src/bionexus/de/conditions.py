@@ -360,7 +360,10 @@ def verify_de_claim_conditions(path: str | Path, *, de_table: Any = None,
         numbers: dict[str, float] = {}
         for key in ("log2_fold_change", "padj", "ci_lower", "ci_upper", "ci_level"):
             try:
-                value = float(row[key]) if row is not None else float("nan")
+                column = key
+                if row is not None and key == "log2_fold_change" and key not in row:
+                    column = "log2FoldChange"
+                value = float(row[column]) if row is not None else float("nan")
                 if np.isfinite(value):
                     numbers[key] = value
             except (KeyError, ValueError, TypeError):

@@ -28,6 +28,7 @@
   "tests/unit/test_passive_reader_import.py",
   "tests/unit/test_de_execution_receipt_compatibility.py",
   "tests/unit/test_de_measured_evidence.py",
+  "tests/unit/test_de_measured_power.py",
   "tests/unit/test_de_replicate_strata.py",
   "tests/unit/test_de_table_concordance.py",
   "tests/unit/test_biofailurebench.py"

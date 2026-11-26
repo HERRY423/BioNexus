@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Scientific audit changes
 
+- Some pseudobulk DE claims rated PRELIMINARY under PR #37 now reach SUPPORTED when their shrunken effect exceeds the contrast-specific minimum detectable effect. Power calculations use the actual arm sizes, fitted common dispersion from a bound receipt or within-condition count estimates when available, and report the source of their assumptions. The planning fallback uses a dispersion of 0.16. DESeq2 shrinkage recorded in a bound receipt also applies to standard fold-change column names.
+
 - Pseudobulk power now uses per-sample negative-binomial variance and normal quantiles. Reports identify the per-test alpha assumption. Many small cohorts previously classified as powered for moderate or subtle effects now support descriptive claims only. Strong-effect classification requires a shrunken effect and sufficient baseMean.
 - DE audits count eligible donors within cell type and condition, report exclusions, and check the estimability and residual degrees of freedom of the sample-level contrast. Unused categories no longer block an audit. Partial batch confounding, omitted donor pairing and within-condition donor dominance are reported.
 - Donor-aware mixed models and pseudobulk methods can supply donor-level execution evidence. A successful dispersion fit alone cannot establish a causal design. An underpowered contrast has a PRELIMINARY ceiling.

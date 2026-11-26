@@ -18,6 +18,8 @@ from bionexus.de.models import (
     FindingCategory,
     FindingSeverity,
 )
+from bionexus.de.pseudobulk_counts import PseudobulkLibraries, collect_libraries
+from bionexus.de.rules.sample_design import _design
 
 
 def _count_source(adata: Any) -> tuple[str, Any, Any]:
@@ -113,6 +115,42 @@ def _audit_expression_matrix(
     )
 
 
+def _measure_count_strata(
+    adata: Any, strata: list[dict[str, Any]], *, d_col: str, c_col: str, ct_col: str | None, b_col: str | None,
+) -> tuple[dict[str | None, dict[str, Any]], PseudobulkLibraries | None]:
+    """Measure each stratum even without DE estimates or a signed claim."""
+    source, matrix, _ = _count_source(adata)
+    measured: dict[str | None, dict[str, Any]] = {}
+    selected = None
+    for stratum in strata:
+        levels = tuple(stratum["donors_by_condition"])
+        if len(levels) != 2 or stratum["row_unit"] != "cell":
+            continue
+        ct = stratum["cell_type"]
+        try:
+            libraries = collect_libraries(matrix, adata.obs, d_col=d_col, c_col=c_col, ct_col=ct_col,
+                                          cell_type=ct, levels=levels, min_cells=stratum["min_cells_per_donor"])
+            measured[ct] = {**libraries.power_inputs(), "count_source": source}
+            if libraries.zero_libraries:
+                # An all-zero bridging sample cannot make a batch-adjusted
+                # contrast estimable. Rebuild the design from usable libraries.
+                obs = adata.obs
+                if ct is not None and ct_col:
+                    obs = obs.loc[obs[ct_col].astype("string").eq(ct).fillna(False)]
+                sample = pd.DataFrame({"condition": obs[c_col].astype("string"), "donor": obs[d_col].astype("string")})
+                if b_col:
+                    sample["batch"] = obs[b_col].astype("string").replace(r"^\s*$", pd.NA, regex=True)
+                valid = pd.DataFrame({"condition": libraries.condition, "donor": pd.Series(libraries.donors, dtype=str)})
+                sample = sample.drop_duplicates().merge(valid, on=["condition", "donor"])
+                measured[ct]["design"] = _design(sample, list(levels), "donor", "condition", "batch" if b_col else None)
+        except (ValueError, KeyError, TypeError, IndexError) as exc:
+            measured[ct] = {"reason": str(exc), "count_source": source}
+            continue
+        if len(strata) == 1:
+            selected = libraries
+    return measured, selected
+
+
 def _comparison_rows(table: pd.DataFrame, *, case: str | None, ref: str | None,
                      cell_type: str | None, ct_col: str, c_col: str, obs: pd.DataFrame,
                      rgg_params: dict | None) -> tuple[pd.DataFrame, dict[str, str]]:
@@ -167,7 +205,8 @@ def _comparison_rows(table: pd.DataFrame, *, case: str | None, ref: str | None,
 
 def _compare_counts(matrix: Any, obs: pd.DataFrame, var_names: Any, table: pd.DataFrame,
                     labels: dict[str, str], *, d_col: str, c_col: str, ct_col: str,
-                    min_cells_per_donor: int, top_n: int = 200, min_mean_cpm: float = 1.0) -> dict[str, Any]:
+                    min_cells_per_donor: int, top_n: int = 200, min_mean_cpm: float = 1.0,
+                    libraries: PseudobulkLibraries | None = None) -> dict[str, Any]:
     """Compare the largest reported effects with donor-averaged log2(CPM+1)."""
     ids = pd.Index(var_names)
     if len(ids) != matrix.shape[1] or ids.hasnans or not ids.astype(str).is_unique:
@@ -189,41 +228,19 @@ def _compare_counts(matrix: Any, obs: pd.DataFrame, var_names: Any, table: pd.Da
         raise ValueError("logFC 应为实数。")
     reported = pd.Series(effects.to_numpy(dtype=float, na_value=np.nan), index=genes.astype(str))
     groups = (labels["numerator"], labels["denominator"])
-    selected = obs[ct_col].astype("string").eq(labels["cell_type"]) & obs[c_col].astype("string").isin(groups)
-    positions = np.flatnonzero(selected.fillna(False).to_numpy(dtype=bool))
-    design = obs.iloc[positions][[c_col, d_col]]
-    if design[d_col].isna().any() or design[d_col].astype(str).str.strip().eq("").any():
-        raise ValueError("目标细胞缺少供体标识。")
-
-    # Accumulate one donor-condition library at a time. This works for CSR,
-    # CSC and dense arrays without allocating a cells-by-donors indicator or
-    # converting an entire sparse expression matrix to a dense array.
-    n_donors = dict.fromkeys(groups, 0)
-    cpm_sum = np.zeros(matrix.shape[1], dtype=float)
-    log_sums = {g: np.zeros_like(cpm_sum) for g in groups}
-    zero_libraries = []
-    for (condition, donor), offsets in design.groupby([c_col, d_col], observed=True, sort=False).indices.items():
-        if len(offsets) < min_cells_per_donor:
-            continue
-        counts = np.asarray(matrix[positions[offsets]].sum(axis=0, dtype=np.float64)).reshape(-1)
-        total = counts.sum()
-        if not np.isfinite(total):
-            raise ValueError("供体计数总和超出数值范围。")
-        if total == 0:
-            zero_libraries.append({"condition": str(condition), "donor": str(donor)})
-            continue
-        cpm = counts / total * 1e6
-        group = str(condition)
-        n_donors[group] += 1
-        cpm_sum += cpm
-        log_sums[group] += np.log2(cpm + 1.0)
-    result = {"donors_per_group": n_donors, "zero_libraries": zero_libraries, **labels,
+    if libraries is None or libraries.cell_type != labels["cell_type"] or set(libraries.levels) != set(groups):
+        libraries = collect_libraries(matrix, obs, d_col=d_col, c_col=c_col, ct_col=ct_col,
+                                      cell_type=labels["cell_type"], levels=groups, min_cells=min_cells_per_donor)
+    n_donors = libraries.donors_by_condition
+    result = {"donors_per_group": n_donors, "zero_libraries": libraries.zero_libraries, **labels,
               "top_n": top_n, "min_mean_cpm": min_mean_cpm, "min_cells_per_donor": min_cells_per_donor}
     if min(n_donors.values()) < 2:
         return {**result, "status": "NOT_ESTIMABLE", "reason": "至少一组不足两个有可用计数的合格供体。"}
+    cpm = libraries.counts / libraries.counts.sum(axis=1, keepdims=True) * 1e6
     case, ref = groups
-    diff = log_sums[case] / n_donors[case] - log_sums[ref] / n_donors[ref]
-    expressed = cpm_sum / sum(n_donors.values()) >= min_mean_cpm
+    log_cpm = np.log2(cpm + 1.)
+    diff = log_cpm[libraries.condition == case].mean(0) - log_cpm[libraries.condition == ref].mean(0)
+    expressed = cpm.mean(0) >= min_mean_cpm
     # Ties have no direction. Exclude them before choosing the top genes.
     usable = expressed & ~np.isclose(diff, 0, rtol=0, atol=1e-12)
     measured = pd.Series(diff[usable], index=ids.astype(str)[usable])
@@ -240,7 +257,7 @@ def _audit_lfc_concordance(adata: Any, de_df: pd.DataFrame | None, findings: lis
                            checks: list[CheckRecord], *, d_col: str | None, c_col: str | None,
                            ct_col: str | None, cell_type: str | None = None, case: str | None = None,
                            ref: str | None = None, min_cells_per_donor: int = 1,
-                           rgg_params: dict | None = None) -> dict[str, Any]:
+                           rgg_params: dict | None = None, libraries: PseudobulkLibraries | None = None) -> dict[str, Any]:
     """Record a direction diagnostic for an explicit cell type and ordered comparison."""
     from bionexus.statistical_rules import STATISTICAL_THRESHOLDS
 
@@ -259,7 +276,7 @@ def _audit_lfc_concordance(adata: Any, de_df: pd.DataFrame | None, findings: lis
         if input_check.status != CheckStatus.ASSESSED or var_names is None:
             raise ValueError("缺少经检查的原始计数或该矩阵的基因标识。")
         result = _compare_counts(matrix, obs, var_names, table, labels, d_col=d_col, c_col=c_col, ct_col=ct_col,
-                                 min_cells_per_donor=min_cells_per_donor)
+                                 min_cells_per_donor=min_cells_per_donor, libraries=libraries)
         result["count_source"] = source
     except (ValueError, KeyError, TypeError, IndexError) as exc:
         result = {"status": "NOT_ESTIMABLE", "reason": str(exc)}

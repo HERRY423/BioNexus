@@ -47,6 +47,7 @@ STRONG_EFFECT_LOG2FC = STATISTICAL_THRESHOLDS["strong_effect_log2fc"]
 MODERATE_EFFECT_LOG2FC = STATISTICAL_THRESHOLDS["moderate_effect_log2fc"]
 SUBTLE_EFFECT_LOG2FC = STATISTICAL_THRESHOLDS["subtle_effect_log2fc"]
 DOUBLET_RATE_ADVISORY_THRESHOLD = STATISTICAL_THRESHOLDS["doublet_rate_advisory"]
+PLANNING_DISPERSION = STATISTICAL_THRESHOLDS["planning_dispersion"]
 
 
 class EffectSizeRegime(str, Enum):
@@ -80,13 +81,20 @@ class PowerAssessment:
     sequencing_depth_factor: float = 1.0
     n_tests: Optional[int] = None
     n_true_effects: Optional[int] = None
+    dispersion_basis: str = "caller_supplied"
+    n_by_group: Optional[dict[str, int]] = None
+
+    @property
+    def target_effect_log2fc(self) -> float:
+        """Use the qualified claim magnitude, or the moderate planning target when unavailable."""
+        if self.observed_effect_regime is not None and self.shrunk_log2fc is not None:
+            return abs(self.shrunk_log2fc)
+        return MODERATE_EFFECT_LOG2FC
 
     @property
     def sufficient_for_population_claims(self) -> bool:
         """Replication and power screen only. Design identifiability is audited separately."""
-        return self.n_donors_per_group >= 3 and self.powered_for_regime in (
-            EffectSizeRegime.SUBTLE, EffectSizeRegime.MODERATE
-        )
+        return self.n_donors_per_group >= 3 and self.mde_log2fc <= self.target_effect_log2fc
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -105,6 +113,9 @@ class PowerAssessment:
             "n_true_effects": self.n_true_effects,
             "mean_count_per_cell": self.mean_count_per_cell,
             "dispersion": self.dispersion,
+            "dispersion_basis": self.dispersion_basis,
+            "n_by_group": dict(self.n_by_group) if self.n_by_group is not None else None,
+            "target_effect_log2fc": self.target_effect_log2fc,
             "cells_per_sample": self.cells_per_sample,
             "sufficient_for_population_claims": self.sufficient_for_population_claims,
             "warnings": list(self.warnings),
@@ -130,12 +141,23 @@ def _per_test_alpha(
     return min(alpha, 1.0), "jung2005"
 
 
+def _contrast_sizes(n_donors_per_group: Optional[int], n_by_group: Optional[dict[str, int]]) -> tuple[int, int]:
+    if n_by_group is None:
+        if not isinstance(n_donors_per_group, Integral) or n_donors_per_group < 2:
+            raise ValueError("n_donors_per_group must be an integer >= 2 for a variance-based MDE")
+        return int(n_donors_per_group), int(n_donors_per_group)
+    if len(n_by_group) != 2 or any(not isinstance(n, Integral) or n < 2 for n in n_by_group.values()):
+        raise ValueError("n_by_group must identify two groups with integer donor counts >= 2")
+    n1, n2 = sorted(n_by_group.values())
+    if n_donors_per_group is not None and (not isinstance(n_donors_per_group, Integral) or n_donors_per_group != n1):
+        raise ValueError("n_donors_per_group disagrees with the smaller arm in n_by_group")
+    return int(n1), int(n2)
+
+
 def _nb_mde(
-    n_donors_per_group: int, mean_count_per_cell: float, dispersion: float,
+    group_sizes: tuple[int, int], mean_count_per_cell: float, dispersion: float,
     cells_per_sample: int, sequencing_depth_factor: float, alpha: float, target_power: float,
 ) -> float:
-    if not isinstance(n_donors_per_group, Integral) or n_donors_per_group < 2:
-        raise ValueError("n_donors_per_group must be an integer >= 2 for a variance-based MDE")
     if not isinstance(cells_per_sample, Integral) or isinstance(cells_per_sample, bool) or cells_per_sample < 1:
         raise ValueError("cells_per_sample must be a positive integer")
     if not all(math.isfinite(x) and x > 0 for x in (mean_count_per_cell, sequencing_depth_factor)):
@@ -154,14 +176,16 @@ def _nb_mde(
     normal = NormalDist()
     z_sum = -normal.inv_cdf(alpha / 2) + normal.inv_cdf(target_power)
     var_log = 1.0 / mean + dispersion
-    return max(0.0, z_sum) * math.sqrt(2 * var_log / n_donors_per_group) / math.log(2)
+    n1, n2 = group_sizes
+    return max(0.0, z_sum) * math.sqrt(var_log * (1.0 / n1 + 1.0 / n2)) / math.log(2)
 
 
 def estimate_min_detectable_effect(
     *,
-    n_donors_per_group: int,
+    n_donors_per_group: Optional[int] = None,
+    n_by_group: Optional[dict[str, int]] = None,
     mean_count_per_cell: float = 1.0,
-    dispersion: float = 0.5,
+    dispersion: float = PLANNING_DISPERSION,
     cells_per_sample: int = 100,
     sequencing_depth_factor: float = 1.0,
     nominal_fdr: float = 0.05,
@@ -169,15 +193,16 @@ def estimate_min_detectable_effect(
     n_tests: Optional[int] = None,
     n_true_effects: Optional[int] = None,
 ) -> float:
-    """Approximate two-group NB MDE on the log2 scale for balanced independent donors.
+    """Approximate two-group NB MDE on the log2 scale for independent donors.
 
     The delta-method variance of log pseudobulk counts is 1/mean + dispersion
-    per sample. The two-group difference has variance 2 * (1/mean + dispersion) / n.
+    per sample. The contrast variance multiplies this by 1/n1 + 1/n2. A scalar
+    donor count assumes equal arm sizes.
     With both test counts, use the Jung (2005) expected discovery approximation.
     Without them, nominal FDR serves as an optimistic per-test alpha.
     """
     alpha, _ = _per_test_alpha(nominal_fdr, target_power, n_tests, n_true_effects)
-    return _nb_mde(n_donors_per_group, mean_count_per_cell, dispersion, cells_per_sample,
+    return _nb_mde(_contrast_sizes(n_donors_per_group, n_by_group), mean_count_per_cell, dispersion, cells_per_sample,
                    sequencing_depth_factor, alpha, target_power)
 
 
@@ -202,12 +227,14 @@ def classify_effect_size_regime(
 
 def assess_statistical_power(
     *,
-    n_donors_per_group: int,
+    n_donors_per_group: Optional[int] = None,
+    n_by_group: Optional[dict[str, int]] = None,
     observed_log2fc: Optional[float] = None,
     shrunk_log2fc: Optional[float] = None,
     base_mean: Optional[float] = None,
     mean_count_per_cell: float = 1.0,
-    dispersion: float = 0.5,
+    dispersion: Optional[float] = None,
+    dispersion_basis: Optional[str] = None,
     cells_per_sample: int = 100,
     nominal_fdr: float = 0.05,
     sequencing_depth_factor: float = 1.0,
@@ -217,7 +244,17 @@ def assess_statistical_power(
 ) -> PowerAssessment:
     """Compare a design's MDE with the claimed effect, recording its alpha basis."""
     alpha, alpha_basis = _per_test_alpha(nominal_fdr, target_power, n_tests, n_true_effects)
-    mde = _nb_mde(n_donors_per_group, mean_count_per_cell, dispersion, cells_per_sample,
+    group_sizes = _contrast_sizes(n_donors_per_group, n_by_group)
+    n_donors_per_group = group_sizes[0]
+    if dispersion_basis is None:
+        dispersion_basis = "planning_default" if dispersion is None else "caller_supplied"
+    if dispersion_basis == "planning_default":
+        if dispersion is not None and dispersion != PLANNING_DISPERSION:
+            raise ValueError("planning_default requires the registered planning dispersion")
+        dispersion = PLANNING_DISPERSION
+    elif dispersion is None or dispersion_basis not in {"common_dispersion", "pseudobulk_moment_mean", "caller_supplied"}:
+        raise ValueError("supply a dispersion and its recognized source")
+    mde = _nb_mde(group_sizes, mean_count_per_cell, dispersion, cells_per_sample,
                   sequencing_depth_factor, alpha, target_power)
     regime = classify_effect_size_regime(shrunk_log2fc=shrunk_log2fc, base_mean=base_mean)
     # ``powered_for_regime`` names the WEAKEST effect regime this design can
@@ -235,6 +272,8 @@ def assess_statistical_power(
         "Squair et al. 2021 (Nature Comms); Lun & Marioni 2017; Soneson & Robinson 2018",
         "BNS-007 cross-method validation; BN-F002 insufficient statistical power",
     ]
+    if dispersion_basis == "planning_default":
+        basis.append("edgeR User's Guide, 'What to do if you have no replicates': human BCV 0.4 is a planning assumption.")
 
     if n_donors_per_group < 3:
         warnings.append(
@@ -276,6 +315,8 @@ def assess_statistical_power(
         )
 
     return PowerAssessment(
+        n_by_group=dict(n_by_group) if n_by_group is not None else None,
+        dispersion_basis=dispersion_basis,
         alpha_basis=alpha_basis,
         per_test_alpha=alpha,
         target_power=target_power,
@@ -338,15 +379,13 @@ def assess_doublet_risk(
         return None
     threshold = DOUBLET_RATE_ADVISORY_THRESHOLD
     basis = "screening_advisory"
-    flagged = rate >= threshold
     if calibration_context is not None:
         registry = calibration_registry or default_calibration_registry()
         resolution = registry.resolve("doublet_rate", calibration_context)
         if resolution.resolved and resolution.direction == ComparisonDirection.AT_MOST and resolution.threshold is not None:
             threshold = resolution.threshold
             basis = f"{resolution.profile_id}@{resolution.profile_version}"
-            flagged = rate > threshold
-    if not flagged:
+    if rate <= threshold:
         return DoubletRiskAssessment(rate, False, threshold=threshold, threshold_basis=basis)
     return DoubletRiskAssessment(
         rate,

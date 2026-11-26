@@ -627,6 +627,29 @@
   reference: "BNS-XM-003 parameter stability cap"
   description: "TRAP: single-resolution-robust-claim. Clustering structure claimed ROBUST without performing stability sweeps across resolution parameters."
 
+- id: BF-039
+  category: scientific_semantics
+  prompt: "Run pseudobulk DE and assess population-level power for this shrunken effect in six independent donors per condition."
+  expected_status: PERMITTED
+  expected_capability: scrna.pseudobulk_de
+  expected_maturity: SUPPORTED
+  data_metadata:
+    min_replicates_per_condition: 6
+    dispersion: 0.16
+    shrunk_log2fc: 2.0
+    base_mean: 100
+    n_tests: 15000
+    n_true_effects: 300
+    is_integer_like: true
+    multiple_testing_correction: true
+    claimed_maturity: SUPPORTED
+  required_remedies: []
+  allowed_computation: "Donor-aware population DE for the specified effect above the contrast MDE"
+  forbidden_claim: "Independent replication from this single experiment"
+  failure_mode: NONE
+  reference: "BNS-007; effect-specific two-arm NB MDE"
+  description: "CONTROL: six donors per arm, BCV 0.4 and qualified shrunken LFC 2.0. The MDE exceeds 1 and is below 2; an effect-regime bucket would falsely refuse this effect."
+
 # ---- Frontier traps (honest known limitations: executed, reported, NOT gating) ----
 
 - id: BF-010
