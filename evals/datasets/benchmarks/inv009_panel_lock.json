@@ -1,0 +1,23 @@
+{
+  "schema": "bionexus.inv009_panel_lock.v1",
+  "panel": "evals/datasets/benchmarks/inv009.tsv",
+  "corpus_sha256": "4dcefc71a6514ecb3dacbb2d8a49496b8b17bad911e306e2d4e66b04516d8d08",
+  "detector_sha256_at_unblinding": "d9fdded26cd3bab489bfb9ada53e234ce408d529407058c3d47066ca16a46cd2",
+  "positive_class": "An endorsed causal relationship, even when its magnitude or mechanism is qualified.",
+  "original_tsv_fields": [
+    "id",
+    "label",
+    "phenomenon",
+    "statement"
+  ],
+  "original_sha256_by_language": {
+    "en": "2104befc2bc11444c42244eab9b221a45ed6d440f1b7ff959c7503d61cb786c3",
+    "zh": "69682b11c1af9f602117673440509410dad43699bad91c8c5a6e9ece4f9c202b"
+  },
+  "predeclared_gate": {
+    "measure": "recall",
+    "interval": "two-sided Wilson 95%",
+    "minimum_lower_bound": 0.8
+  },
+  "label_provenance": "English and Chinese texts and labels were independently authored by two contributors who did not read the detector or development cases. Both input hashes were sealed before the rule author opened this panel."
+}

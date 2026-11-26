@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-RECORD = "review/trust-restoration-2026-09-19/CORRECTIONS-scientific-audit-power.json"
+RECORD = "review/trust-restoration-2026-09-19/CORRECTIONS-scientific-audit-followup.json"
 
 
 def check(root: Path, record: str = RECORD, *, verify_git_origin: bool = False) -> dict[str, Any]:

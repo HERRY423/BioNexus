@@ -71,7 +71,7 @@ def _determine_claim_boundary(
     has_blocker = any(f.severity == FindingSeverity.BLOCKER for f in findings)
     has_high = any(f.severity == FindingSeverity.HIGH_IMPACT for f in findings)
     has_claim_exceeded = any(f.rule_id == "BFA-008" for f in findings)
-    n_donors = cohort_summary.get("n_donors")
+    n_donors = cohort_summary.get("n_donors_in_scope", cohort_summary.get("n_donors"))
     conditions = cohort_summary.get("conditions") or {}
     required_missing = any(
         c.required_for_pass and c.status != CheckStatus.ASSESSED

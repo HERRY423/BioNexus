@@ -16,7 +16,8 @@ Implements:
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+import math
+from typing import Any, Dict, List, Tuple
 
 from evals.schema import EpistemicCalibrationReport, EvalCategory, EvalResult
 
@@ -428,6 +429,16 @@ def compute_frontier_metrics(results: List[EvalResult]) -> Dict[str, Any]:
     }
 
 
+def wilson_interval(successes: int, total: int, z: float = 1.959963984540054) -> Tuple[float, float]:
+    if total <= 0:
+        return 0.0, 1.0
+    proportion = successes / total
+    denominator = 1.0 + z * z / total
+    centre = proportion + z * z / (2.0 * total)
+    radius = z * math.sqrt(proportion * (1.0 - proportion) / total + z * z / (4.0 * total * total))
+    return (centre - radius) / denominator, (centre + radius) / denominator
+
+
 def compute_causal_language_metrics(results: List[EvalResult]) -> Dict[str, Any]:
     """Score the fixed, labeled INV-009 statements, including known limitations."""
     cases = [r for r in results if r.category == EvalCategory.CAUSAL_LANGUAGE.value]
@@ -457,6 +468,8 @@ def compute_causal_language_metrics(results: List[EvalResult]) -> Dict[str, Any]
         "true_negatives": counts["PERMITTED", "PERMITTED"],
         "precision": tp / (tp + fp) if tp + fp else None,
         "recall": tp / (tp + fn) if tp + fn else None,
+        "precision_wilson_95": list(wilson_interval(tp, tp + fp)) if tp + fp else None,
+        "recall_wilson_95": list(wilson_interval(tp, tp + fn)) if tp + fn else None,
         "misclassified_cases": errors,
     }
 

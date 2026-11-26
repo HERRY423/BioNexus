@@ -281,12 +281,11 @@ def _verify_execution_binding(
     scope = cohort_summary.get("replicate_scope", {})
     donor_set = {str(d) for d in cohort_summary.get("donors", [])}
     obs_donors = cohort_summary.get("n_donors")
-    if len(strata) == 1 and (scope.get("case") is not None or scope.get("cell_type") is not None):
-        stratum = strata[0]
-        if scope.get("cell_type") is not None and stratum.get("cell_type") != scope["cell_type"]:
-            missing.append("能绑定所请求细胞类型的元数据")
+    if scope.get("cell_types") or scope.get("case") is not None:
+        if not strata or not scope.get("complete", True):
+            missing.append("能绑定所请求细胞类型和对比的元数据")
         else:
-            donor_set = set(stratum["eligible_donors"])
+            donor_set = {donor for stratum in strata for donor in stratum["eligible_donors"]}
             obs_donors = len(donor_set)
 
     # 1. Statistical unit and supported method family

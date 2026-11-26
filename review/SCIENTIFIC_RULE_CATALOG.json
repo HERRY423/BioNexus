@@ -188,10 +188,12 @@
       "current_value": {
         "resolver": "detect_assertive_causal_language",
         "benchmark": "evals/datasets/biofailurebench.yaml",
+        "bilingual_evaluation": "evals/datasets/benchmarks/inv009.tsv",
+        "bilingual_metrics": "evals/reports/inv009_metrics.json",
         "benchmark_cases": ["BF-051", "BF-052", "BF-053", "BF-054", "BF-055", "BF-056", "BF-057", "BF-058", "BF-059", "BF-060"]
       },
       "source_file": "src/bionexus/claims/parser.py",
-      "source_line": 760,
+      "source_line": 835,
       "rationale": "Causal wording exceeds the warrant of an observational association. CI measures precision and recall on fixed statements with negation, quotations and paraphrases, including known false positives and false negatives.",
       "sensitivity": "high",
       "review_status": "pending"

@@ -442,17 +442,17 @@ tool registration when dedicated ecosystem plugins are installed.
 
 Functional plugins, prompt templates, and agent tool wrappers are easily duplicated. An **expert-annotated, ground-truth biological failure corpus with deterministic traps and fail-closed invariants** is a defensible scientific evaluation and data flywheel moat.
 
-BioFailureBench contains **48 cases**. The 43 gating cases check expected behavior, and 5 frontier cases track known limitations. Failure Taxonomy v1 (`bionexus.failure_taxonomy.v1`) covers 12 modes across four categories.
+BioFailureBench contains **49 cases**. The 44 gating cases include a pseudobulk positive control with six donors per group. Five frontier cases track known limitations. Failure Taxonomy v1 (`bionexus.failure_taxonomy.v1`) covers 12 modes across four categories.
 
 - **`DATA_INTEGRITY`**: Assay-state confusion (`BN-F001`), Identifier mismatches (`BN-F004`), Cross-database contradictions (`BN-F008`), Missing spatial provenance (`BN-F009`).
 - **`INFERENTIAL_DESIGN`**: Pseudoreplication (`BN-F002`), Missing FDR control (`BN-F005`), Invalid model assumptions (`BN-F006`), Parameter instability (`BN-F007`).
 - **`SEMANTIC_CLAIM`**: Unsupported annotations (`BN-F003`), Claim inflation (`BN-F011`), Unexecuted maturity claims (`BN-F012`).
 - **`SYSTEM_DEGRADATION`**: Backend masquerading (`BN-F010`).
 
-`BF-051` through `BF-060` test whether the INV-009 detector recognizes an asserted causal claim in a fixed observational-study statement. The cases cover negation, quotations and paraphrases. CI runs the following command and publishes precision, recall, confusion counts and misclassified case IDs for all ten statements in the job summary.
+The ten original INV-009 causal-language examples remain regression cases. The separate English and Chinese evaluation uses balanced positive and negative statements covering direct assertions, negation, quotation, paraphrase and hedging. CI publishes the confusion counts, individual errors and Wilson 95% intervals. The required lower confidence bound for recall is 0.80. [Current results](evals/reports/inv009_metrics.json)
 
 ```bash
-bionexus eval --suite biofailurebench --level L2 --provider replay
+bionexus bench inv009
 ```
 
 ### Open Community Flywheel & Validation

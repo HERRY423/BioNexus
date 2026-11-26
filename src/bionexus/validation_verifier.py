@@ -53,6 +53,7 @@ _VALIDATION_SOURCE_FILES = (
     "evals/datasets/pseudobulk-stress-expectations.v2.json",
     "evals/annotation_stress_test.py",
     "evals/annotation_external_validation.py",
+    "evals/metrics.py",
     "evals/annotation_external_holdout_validation.py",
     "evals/spatial_stress_test.py",
     "evals/datasets/spatial-stress-expectations.v4.json",

@@ -11,7 +11,6 @@ import argparse
 import csv
 import hashlib
 import json
-import math
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, Mapping, Sequence, Tuple
@@ -22,6 +21,7 @@ from scipy import sparse
 from bionexus.integrity import require_raw_count_matrix
 from bionexus.provenance import capture_execution_provenance
 from bionexus.validation_verifier import bind_validation_source_provenance
+from evals.metrics import wilson_interval
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 STUDY_ROOT = REPO_ROOT / "validation" / "annotation" / "studies" / "BN-ANN-IV-001"
@@ -49,16 +49,6 @@ def sha256_file(path: Path) -> str:
         for block in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
-
-
-def wilson_interval(successes: int, total: int, z: float = 1.959963984540054) -> Tuple[float, float]:
-    if total <= 0:
-        return 0.0, 1.0
-    proportion = successes / total
-    denominator = 1.0 + z * z / total
-    centre = proportion + z * z / (2.0 * total)
-    radius = z * math.sqrt(proportion * (1.0 - proportion) / total + z * z / (4.0 * total * total))
-    return (centre - radius) / denominator, (centre + radius) / denominator
 
 
 def _verify_preregistration_lock() -> Dict[str, Any]:

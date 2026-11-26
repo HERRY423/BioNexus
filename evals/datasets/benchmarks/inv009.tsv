@@ -1,0 +1,101 @@
+id	language	phenomenon	label	statement
+EN01	en	direct	positive	The extra hour of sleep improved recall on the word-list task.
+EN02	en	direct	negative	Participants with larger pupils tended to give higher discomfort ratings.
+EN03	en	direct	positive	Cooling the forearm lowered the temperature of the skin beneath the pack.
+EN04	en	direct	negative	Saliva samples collected in the morning contained more cortisol on average.
+EN05	en	direct	positive	The darker surround made an identical gray patch look brighter to observers.
+EN06	en	direct	negative	At the last visit, walking speed and grip strength were positively correlated.
+EN07	en	direct	positive	Assignment to a weekly reminder increased the number of completed questionnaires.
+EN08	en	direct	negative	The children with higher reading scores also spent more time at the library.
+EN09	en	direct	positive	Adding a weighted insert increased the pressure beneath the heel during walking.
+EN10	en	direct	negative	The three participants with the most fragmented sleep had the lowest mood scores.
+EN11	en	negation	negative	A fall in heart rate followed the music, but the recordings do not establish an effect of music on heart rate.
+EN12	en	negation	positive	Skipping the midday break did not affect accuracy, although it did slow responses.
+EN13	en	negation	negative	The survey offers no basis for saying that commuting by bicycle reduces back pain.
+EN14	en	negation	positive	The smaller portions reduced food intake even though participants reported no change in hunger.
+EN15	en	negation	negative	The groups differed in vitamin D at entry. We cannot infer that outdoor work produced that difference.
+EN16	en	negation	positive	Blinding did not remove the effect of the cushion. The cushion still relieved pressure at the ankle.
+EN17	en	negation	negative	We observed a higher pulse on exam days without establishing whether anticipation had any effect on it.
+EN18	en	negation	positive	Although none of the readers noticed the change, increasing line spacing reduced the number of lines they skipped.
+EN19	en	negation	negative	The rise in attendance is clear, but these records do not tell us whether the fare discount brought it about.
+EN20	en	negation	positive	The sound cue left reaction times unchanged and prevented several participants from missing their turn.
+EN21	en	quotation	positive	We agree with the team's conclusion that “the warming pad accelerated recovery of fingertip temperature.”
+EN22	en	quotation	negative	The intake form asked whether “night work disrupts sleep.” We present the distribution of answers to that question.
+EN23	en	quotation	positive	“The tinted lens relieved glare” is our conclusion after comparing the randomized lens assignments.
+EN24	en	quotation	negative	A participant wrote, “The stretching eased my pain.” Our table records that comment as a personal account.
+EN25	en	quotation	positive	The report states that “having a handrail cut the number of slips.” The trial results support that interpretation.
+EN26	en	quotation	negative	The heading “Does skipping breakfast impair concentration?” introduces a cross-sectional comparison of schoolchildren.
+EN27	en	quotation	positive	We stand by the original interpretation: “The larger display made the small letters easier to identify.”
+EN28	en	quotation	negative	We coded mentions of the belief that “cold weather brings on headaches” without testing the belief itself.
+EN29	en	quotation	positive	Our replication confirms the earlier finding, “Shortening the recall interval improves the accuracy of the diary.”
+EN30	en	quotation	negative	The brochure promises that “this class builds confidence.” This study counted enrollments and collected no confidence ratings.
+EN31	en	paraphrase	negative	Left-handed volunteers were overrepresented among the participants with high spatial scores.
+EN32	en	paraphrase	positive	The source of the apparent overnight weight loss was a scale that had drifted out of calibration.
+EN33	en	paraphrase	negative	The steepest gains in vocabulary belonged to children whose homes had the most books.
+EN34	en	paraphrase	positive	Once the fixed response delay was removed, the entire improvement in clicking speed disappeared. The delay had accounted for the improvement.
+EN35	en	paraphrase	negative	Periods of erratic tapping coincided with the lowest self-ratings of alertness.
+EN36	en	paraphrase	positive	The reduction in finger tremor can be traced to the support provided by the wrist rest.
+EN37	en	paraphrase	negative	The participants who returned for a second visit were a year younger on average than those lost to follow-up.
+EN38	en	paraphrase	positive	A clearer view of the mouth was how the transparent mask helped listeners distinguish the syllables.
+EN39	en	paraphrase	negative	The peak in reported eye strain came just after the busiest week of screen use.
+EN40	en	paraphrase	positive	The advantage on the staircase arose because the textured strip gave the foot a firmer purchase.
+EN41	en	hedging	positive	On balance, we attribute most of the transient redness to pressure from the adhesive patch.
+EN42	en	hedging	negative	The morning and evening readings seem to differ, although the size of the difference is uncertain.
+EN43	en	hedging	positive	In this age range, the additional recovery pause appears to have helped participants maintain their grip.
+EN44	en	hedging	negative	The small association between time outdoors and sleep duration may be peculiar to this cohort.
+EN45	en	hedging	positive	We infer that the repeated demonstrations contributed to better recall, though their contribution was probably modest.
+EN46	en	hedging	negative	The sharpest rise in vowel errors seems to coincide with fatigue, and the direction of that relationship remains open.
+EN47	en	hedging	positive	Within the tested range, the stiffer sole probably accounts for some of the decrease in ankle flexion.
+EN48	en	hedging	negative	There may be a difference in balance scores between the two clubs. Participation was self-selected.
+EN49	en	hedging	positive	Our best explanation is that the delayed tone interrupted preparation for the next movement.
+EN50	en	hedging	negative	The association looks stronger in younger adults, but it is unclear which variable, if either, influences the other.
+ZH01	zh	direct	positive	在其他条件相同的试验槽中，加入镁盐使黏土颗粒更快沉降到底部。
+ZH02	zh	direct	positive	切断叶柄后，运输中断，叶片随即失水。
+ZH03	zh	direct	positive	外加磁场改变了薄膜中磁畴的排列方向。
+ZH04	zh	direct	positive	实验中延长暗期推迟了幼虫的羽化时间。
+ZH05	zh	direct	positive	去掉外层蜡质直接加快了果皮的水分散失。
+ZH06	zh	direct	negative	在这批湖泊样本中，硅藻丰度与水体透明度呈正相关。
+ZH07	zh	direct	negative	深色岩样的平均吸光率高于浅色岩样。
+ZH08	zh	direct	negative	调查期间，淤泥厚度和摇蚊幼虫密度同步上升。
+ZH09	zh	direct	negative	遥测记录中，鱼群靠近河口的日期与大潮日期相近。
+ZH10	zh	direct	negative	两批晶体在室温下的电阻率相差约百分之八。
+ZH11	zh	negation	positive	降低湿度没有改变种子总数，却使种子提早脱离果荚。
+ZH12	zh	negation	positive	升温没有改变水量，冰盖变薄是输入的热量融化了底层冰所致。
+ZH13	zh	negation	positive	光强没有变化；在这项试验中，使感光器恢复响应的是延长两次照射之间的间隔。
+ZH14	zh	negation	positive	增加表面积并未提高最终产量，却因缩短扩散距离而加快了初期反应。
+ZH15	zh	negation	positive	堵住侧孔后流量下降，不是泵速变慢，而是液体失去了一条出口。
+ZH16	zh	negation	negative	现有观测不足以认定浪高的变化导致海鸟弃巢。
+ZH17	zh	negation	negative	在所测试的浓度范围内，加糖并未改变溶液的结晶温度。
+ZH18	zh	negation	negative	两个指标同时下降，不能据此判断其中一个调控另一个。
+ZH19	zh	negation	negative	数据没有显示去掉藻盖会提高沉积物中的含氧量。
+ZH20	zh	negation	negative	这次调查没有检验风向是否决定昆虫的着陆地点。
+ZH21	zh	quotation	positive	试验中被标记为“窄缝”的隔板限制了气体交换，使两腔之间的压差维持得更久。
+ZH22	zh	quotation	positive	我们复现了文献所述的“盐析”现象，加入硫酸铵确实使蛋白从溶液中析出。
+ZH23	zh	quotation	positive	这里的“记忆”指前一次拉伸使纤维在下一次受力时更难伸长。
+ZH24	zh	quotation	positive	独立的控温试验证实了先前报告的结论：“热处理解除了芽的休眠。”
+ZH25	zh	quotation	positive	传感器记录的“第二峰”来自阀门关闭时产生的回流。
+ZH26	zh	quotation	negative	我们将论文题目中的“风促成沙丘迁移”作为检索词，筛选了近二十年的文献。
+ZH27	zh	quotation	negative	图中的“药剂抑制伸长”是待检验的假说，图上各点仅代表处理前的测量值。
+ZH28	zh	quotation	negative	审稿人问“积雪是否延缓萌芽”，本研究没有采集萌芽时间。
+ZH29	zh	quotation	negative	访谈记录中多次出现“噪声赶走了鸟群”的说法，调查没有独立核实这一归因。
+ZH30	zh	quotation	negative	旧标本盒上的“病斑由低温造成”是采集者的原始注记，我们将其逐字转录。
+ZH31	zh	paraphrase	positive	恢复沙洲与主河道之间的水流后，原本滞留的细泥被水带回了河道。
+ZH32	zh	paraphrase	positive	透镜之所以会聚平行光束，是因为其两个曲面使光线连续发生折射。
+ZH33	zh	paraphrase	positive	换上粗孔滤网，原先截留的细砂便随水穿过了网面。
+ZH34	zh	paraphrase	positive	叶背那层绒毛为水汽外逸多设了一道阻力，蒸腾因此放慢。
+ZH35	zh	paraphrase	positive	少了叶绿素对红光的吸收，同一厚度的叶片就透过了更多红光。
+ZH36	zh	paraphrase	negative	最早出现霜冻的监测点，也往往最早记录到落叶。
+ZH37	zh	paraphrase	negative	从年轮宽度可以大致推算生长季的平均降水量。
+ZH38	zh	paraphrase	negative	野外记录显示，每逢湖面结冰，开阔水域的水鸟计数都较低。
+ZH39	zh	paraphrase	negative	依照样品的孔径给它们排序，所得顺序与吸水率的排序大致吻合。
+ZH40	zh	paraphrase	negative	盐度值相近的样方，其浮游生物组成也常常相似。
+ZH41	zh	hedging	positive	虽然降幅的估计仍不精确，撤去挡风板确实降低了受试幼苗的存活率。
+ZH42	zh	hedging	positive	这一结果能否推广到天然矿石仍待验证；在标准样品上，酸洗去除了表层碳酸盐。
+ZH43	zh	hedging	positive	究竟经过哪一种中间态尚有争议，但外加电压推动了薄膜中的离子迁移。
+ZH44	zh	hedging	positive	不同批次的起效时间略有差异，在各批重复实验中，短波照射都使该染料褪色。
+ZH45	zh	hedging	positive	测得的增量接近仪器分辨率，但重复的开关试验证实了加热丝使样品膨胀。
+ZH46	zh	hedging	negative	至于苔藓覆盖是否有助于保水，现有调查只能提出问题。
+ZH47	zh	hedging	negative	沉积物再悬浮可以作为候选解释，尚需与水体输入等其他解释逐一比较。
+ZH48	zh	hedging	negative	样方间的差异很可能含有取样误差，暂时难以判断草食动物在其中扮演何种角色。
+ZH49	zh	hedging	negative	较亮的样点似乎更早开花，但可比较的样本太少，二者的关系尚不清楚。
+ZH50	zh	hedging	negative	如果要判断薄膜是否阻碍传热，还需要增加没有薄膜的对照组。

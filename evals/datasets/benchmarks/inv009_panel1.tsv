@@ -1,0 +1,101 @@
+id	language	phenomenon	label	statement
+EN01	en	direct	positive	Imposing a shorter day length delayed flowering in the greenhouse peas.
+EN02	en	direct	positive	Shading the inlet reduced daytime heating of the experimental stream.
+EN03	en	direct	positive	The added calcium caused the suspended clay particles to aggregate.
+EN04	en	direct	positive	Replacing fine sand with gravel increased oxygen penetration into the bed.
+EN05	en	direct	positive	The nighttime warming treatment advanced bud opening in the orchard.
+EN06	en	direct	negative	Flowering dates were earlier at sites with longer spring days.
+EN07	en	direct	negative	Daytime temperatures and canopy density varied together along the stream.
+EN08	en	direct	negative	Calcium concentrations were highest in samples containing large aggregates.
+EN09	en	direct	negative	Gravel beds had deeper oxygenated layers than nearby sand beds in the survey.
+EN10	en	direct	negative	The warmed plots and reference plots had similar median bud-opening dates.
+EN11	en	negation	positive	Fog did not alter the leaf temperature, but intercepting fog water reduced seedling survival.
+EN12	en	negation	positive	Additional moisture did not account for the faster settling; the increase in particle size caused it.
+EN13	en	negation	positive	Pressure alone did not shift the transition, whereas cooling the sample did shift it.
+EN14	en	negation	positive	The response persisted without grazing because saline irrigation killed newly emerged shoots.
+EN15	en	negation	positive	The extra light left stem height unchanged but triggered flowering in the short-day plants.
+EN16	en	negation	negative	We found no evidence that flow velocity caused the difference in shell thickness.
+EN17	en	negation	negative	The temporal ordering alone does not establish that rainfall initiated the bloom.
+EN18	en	negation	negative	Neither doubling the lamp power nor changing the filter altered the measured absorption peak.
+EN19	en	negation	negative	The apparent fall in mineral density cannot be attributed to the cooling step from these observations.
+EN20	en	negation	negative	The trials did not support a role for day length in setting the emergence date.
+EN21	en	quotation	positive	The “low-light” treatment delayed leaf expansion by three days.
+EN22	en	quotation	positive	We use “thermal cracking” for the fractures produced by repeated heating of the rock.
+EN23	en	quotation	positive	The report concluded that “turbulent mixing replenished bottom-water oxygen,” a conclusion our intervention confirms.
+EN24	en	quotation	positive	The apparatus labels the cool interval “rest,” although that interval itself induced crystallization.
+EN25	en	quotation	positive	Removing the material marked “surface litter” accelerated evaporation in the paired soil trays.
+EN26	en	quotation	negative	We coded the phrase “fertilization triggers blooms” as a hypothesis in the historical literature survey.
+EN27	en	quotation	negative	The caption asks “Does shade slow growth?” and presents only the site photographs.
+EN28	en	quotation	negative	The archive uses “erosion caused by grazing” as a catalogue heading without measurements of grazing history.
+EN29	en	quotation	negative	The reviewer wrote “acidification drove the decline”; the underlying time series supports only co-occurrence.
+EN30	en	quotation	negative	Our search included the quoted string “warming accelerates melt” to retrieve records for screening.
+EN31	en	paraphrase	positive	Withholding the spring pulse left the water table too low for the reeds to establish.
+EN32	en	paraphrase	positive	The loss of surface roughness let the same wind carry sediment farther inland.
+EN33	en	paraphrase	positive	The thicker shell owes its additional layer to the extra calcium supplied during growth.
+EN34	en	paraphrase	positive	Embankment removal opened a route by which tidal water could once again reach the marsh.
+EN35	en	paraphrase	positive	In the flume, the sand stayed in suspension only because the rotating paddles kept it aloft.
+EN36	en	paraphrase	negative	The tallest reeds occupied the same patches as the shallowest groundwater.
+EN37	en	paraphrase	negative	Sediment transport distances tracked surface roughness across the transect.
+EN38	en	paraphrase	negative	Shell counts gave a good prediction of calcium concentration at the sampling sites.
+EN39	en	paraphrase	negative	Higher tide marks tended to accompany a wider belt of marsh vegetation.
+EN40	en	paraphrase	negative	The depth profile resembles the pattern expected under mixing, although the current meter was offline.
+EN41	en	hedging	positive	The size of the shift remains uncertain, but the heating treatment did displace the transition.
+EN42	en	hedging	positive	Although estimates vary among tanks, adding coarse litter raised dissolved carbon in every paired comparison.
+EN43	en	hedging	positive	We have yet to resolve the intermediate steps through which the applied pressure closes the pores.
+EN44	en	hedging	positive	The precise onset is uncertain; the irrigation pulse nevertheless caused roots to resume elongating.
+EN45	en	hedging	positive	The intervention shortened the dormant period, though its importance under field conditions remains unclear.
+EN46	en	hedging	negative	These observations leave open whether shade plays any role in the timing of flowering.
+EN47	en	hedging	negative	A change in rainfall is one possible explanation to evaluate in a future experiment.
+EN48	en	hedging	negative	The apparent relation to grain size may reflect the uneven distribution of sampling stations.
+EN49	en	hedging	negative	It remains unclear whether the cooling treatment had any effect on the final crystal structure.
+EN50	en	hedging	negative	An experiment with controlled water levels would be needed to distinguish the proposed explanation from seasonal coincidence.
+ZH01	zh	direct	positive	遮去幼苗顶端接受的侧光，阻止了胚芽鞘向光弯曲。
+ZH02	zh	direct	negative	在同一片林地里，接近林缘的样方往往也有较高的幼树密度。
+ZH03	zh	direct	positive	补回培养液中的镁使这些叶片恢复了合成叶绿素的能力。
+ZH04	zh	direct	negative	清晨同时记录到气孔开度增加和叶面温度下降。
+ZH05	zh	direct	positive	消化液中的乳糖酶将乳糖水解为葡萄糖和半乳糖。
+ZH06	zh	direct	negative	两批细胞在相同时间进入分裂高峰，峰值的高度略有差别。
+ZH07	zh	direct	positive	去除玻片上的黏附涂层，直接降低了成纤维细胞的贴壁率。
+ZH08	zh	direct	negative	记录表把每株草本的开花日期和株高列在相邻的两栏。
+ZH09	zh	direct	positive	盐从培养液进入根区后提高了外液渗透压，根毛因而失水。
+ZH10	zh	direct	negative	海拔较高的三个池塘恰好都检出了较多的硅藻。
+ZH11	zh	negation	positive	花粉败育并非缺水所致，真正损伤花粉的是开花前的那次霜冻。
+ZH12	zh	negation	negative	这次随访没有证据表明较短的睡眠会导致这些儿童生长减慢。
+ZH13	zh	negation	positive	加热没有改变砂粒大小，却使吸附在表面的水分逸出。
+ZH14	zh	negation	negative	即便两种激素总在同一天升高，也不能断言其中一种促成了另一种的升高。
+ZH15	zh	negation	positive	萌发延迟不是温度计读数偏低造成的；换回完整种皮，机械阻力便再次阻住胚根伸出。
+ZH16	zh	negation	negative	实验人员并未检验水体酸化是否改变该藻的繁殖速度。
+ZH17	zh	negation	positive	封闭气孔并没有使叶片停止呼吸，但确实减少了叶片经气孔散失的水。
+ZH18	zh	negation	negative	看不到损伤之前的样本，我们无从判断那次缺氧是不是纤维化的起因。
+ZH19	zh	negation	positive	即便不用显色剂，蛋白酶仍会切开这段底物；显色剂只方便读数。
+ZH20	zh	negation	negative	目前还不能把这几例提前落叶归咎于道路附近的夜间照明。
+ZH21	zh	quotation	positive	复测结果印证了实验记录里的判断：“叶柄折断切断了向叶片输水的通路。”
+ZH22	zh	quotation	negative	访谈提纲询问受试者是否听说过“喝咖啡会妨碍钙吸收”这一说法。
+ZH23	zh	quotation	positive	我们赞同组会纪要中“本轮施磷解除了幼株的磷限制”的结论，补磷对照给出了同样的响应。
+ZH24	zh	quotation	negative	展板上“月光催开昙花”一语出自当地歌谣，本文仅讨论这一表述的流传。
+ZH25	zh	quotation	positive	“盐度升高把水从液泡里拉了出来”，正是我们对这组显微图像和渗透压测量的解释。
+ZH26	zh	quotation	negative	审稿人要求我们给“叶片受伤诱发下一轮开花”补充证据，本次修订已撤去这句话。
+ZH27	zh	quotation	positive	这里采用植物生理学教材的解释：“伸长区两侧生长不等，使根发生弯曲。”
+ZH28	zh	quotation	negative	“移栽本身会让花期推迟吗？”是下一季试验的问题，现有记录只覆盖移栽当天。
+ZH29	zh	quotation	positive	对这批样品，“解冻破坏了细胞膜”可以作为定论，我们已在分装的配对样本中重现这一效应。
+ZH30	zh	quotation	negative	原报告将差异称为“运动引起的改变”，我们在此沿用其图题以便读者查找原图。
+ZH31	zh	paraphrase	positive	若非背侧那一束肌纤维持续收缩，鳍条就不会维持这样的弧度。
+ZH32	zh	paraphrase	negative	这组蝌蚪出现后肢的日期与水温回升的日期相隔两天。
+ZH33	zh	paraphrase	positive	伤口能够重新闭合，靠的是边缘细胞沿基底向中央爬行。
+ZH34	zh	paraphrase	negative	按孵化先后排序，羽色较浅的个体大多集中在名单前半段。
+ZH35	zh	paraphrase	positive	这几条细根之所以扁平，是因为生长时夹在两块岩石之间。
+ZH36	zh	paraphrase	negative	转速最低的那一轮测试里，水槽底部留下的沉积物最多。
+ZH37	zh	paraphrase	positive	把细胞再次拉向中线的那股力，来自皮层收缩环的收紧。
+ZH38	zh	paraphrase	negative	在该影像分割模型中，叶脉颜色是区分两个样本群的最佳线索。
+ZH39	zh	paraphrase	positive	连续切片上那圈淡染区的根源，在于固定液未能渗透到组织中心。
+ZH40	zh	paraphrase	negative	同一株树上，最先转黄的枝条也是挂牌时离路面最近的一枝。
+ZH41	zh	hedging	positive	具体能多储存几天仍难估计，但降低温度确实延缓了这批果实的软化。
+ZH42	zh	hedging	negative	花粉活力下降也许与午后的高温有关，我们尚未做温度对照。
+ZH43	zh	hedging	positive	光照延长了本试验中的活动时段，这一效应在野外能否重现仍不清楚。
+ZH44	zh	hedging	negative	新出现的盐斑可能妨碍了幼苗出土，也可能只是灌溉不均留下的痕迹。
+ZH45	zh	hedging	positive	虽然尚不清楚是哪一步受热最敏感，升温加快了这批种子的萌发是可以确定的。
+ZH46	zh	hedging	negative	一种尚待排查的解释是，饲槽的位置改变了个体前来取食的次数。
+ZH47	zh	hedging	positive	至少在测过的两个品种中，套袋减少了花粉落到柱头上的机会。
+ZH48	zh	hedging	negative	根据现有的三次采样，风向是否决定孢子落在哪一侧仍是开放问题。
+ZH49	zh	hedging	positive	激素处理促成了这些侧芽的萌发，至于它是否还改变了后续枝长，我们暂不判断。
+ZH50	zh	hedging	negative	不能排除氧含量偏低拖慢了愈合过程，不过本实验没有区分它与营养不足的影响。

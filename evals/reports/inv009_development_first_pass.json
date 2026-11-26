@@ -1,0 +1,385 @@
+{
+  "schema": "bionexus.inv009_metrics.v1",
+  "corpus_sha256": "0f404f4555b5bd094d7ee0fb4db9fa830e4cfd9172286f1bde98cdec56469476",
+  "positive_class": "The author asserts a causal relationship in the submitted statement.",
+  "scope": "First pass on the bilingual development panel. Labels were frozen before scoring. Used for development, separate from the independently authored evaluation panel.",
+  "overall": {
+    "total": 100,
+    "evaluated": 100,
+    "unscored_cases": [],
+    "true_positives": 42,
+    "false_positives": 10,
+    "false_negatives": 8,
+    "true_negatives": 40,
+    "precision": 0.8076923076923077,
+    "recall": 0.84,
+    "precision_wilson_95": [
+      0.6810113918634199,
+      0.8920395397526649
+    ],
+    "recall_wilson_95": [
+      0.7148578393696501,
+      0.916625793219666
+    ],
+    "misclassified_cases": [
+      "EN03",
+      "EN18",
+      "EN21",
+      "EN26",
+      "EN28",
+      "EN30",
+      "EN32",
+      "EN35",
+      "EN49",
+      "ZH04",
+      "ZH26",
+      "ZH27",
+      "ZH28",
+      "ZH29",
+      "ZH30",
+      "ZH31",
+      "ZH35",
+      "ZH45"
+    ]
+  },
+  "by_language": {
+    "en": {
+      "total": 50,
+      "evaluated": 50,
+      "unscored_cases": [],
+      "true_positives": 21,
+      "false_positives": 5,
+      "false_negatives": 4,
+      "true_negatives": 20,
+      "precision": 0.8076923076923077,
+      "recall": 0.84,
+      "precision_wilson_95": [
+        0.6212374288068301,
+        0.9149293885105758
+      ],
+      "recall_wilson_95": [
+        0.6534637839282114,
+        0.9359654854332357
+      ],
+      "misclassified_cases": [
+        "EN03",
+        "EN18",
+        "EN21",
+        "EN26",
+        "EN28",
+        "EN30",
+        "EN32",
+        "EN35",
+        "EN49"
+      ]
+    },
+    "zh": {
+      "total": 50,
+      "evaluated": 50,
+      "unscored_cases": [],
+      "true_positives": 21,
+      "false_positives": 5,
+      "false_negatives": 4,
+      "true_negatives": 20,
+      "precision": 0.8076923076923077,
+      "recall": 0.84,
+      "precision_wilson_95": [
+        0.6212374288068301,
+        0.9149293885105758
+      ],
+      "recall_wilson_95": [
+        0.6534637839282114,
+        0.9359654854332357
+      ],
+      "misclassified_cases": [
+        "ZH04",
+        "ZH26",
+        "ZH27",
+        "ZH28",
+        "ZH29",
+        "ZH30",
+        "ZH31",
+        "ZH35",
+        "ZH45"
+      ]
+    }
+  },
+  "by_phenomenon": {
+    "direct": {
+      "total": 20,
+      "evaluated": 20,
+      "unscored_cases": [],
+      "true_positives": 8,
+      "false_positives": 0,
+      "false_negatives": 2,
+      "true_negatives": 10,
+      "precision": 1.0,
+      "recall": 0.8,
+      "precision_wilson_95": [
+        0.6755924351161198,
+        1.0
+      ],
+      "recall_wilson_95": [
+        0.4901624715366418,
+        0.9433178485456247
+      ],
+      "misclassified_cases": [
+        "EN03",
+        "ZH04"
+      ]
+    },
+    "hedging": {
+      "total": 20,
+      "evaluated": 20,
+      "unscored_cases": [],
+      "true_positives": 9,
+      "false_positives": 1,
+      "false_negatives": 1,
+      "true_negatives": 9,
+      "precision": 0.9,
+      "recall": 0.9,
+      "precision_wilson_95": [
+        0.5958499732047616,
+        0.9821237869049271
+      ],
+      "recall_wilson_95": [
+        0.5958499732047616,
+        0.9821237869049271
+      ],
+      "misclassified_cases": [
+        "EN49",
+        "ZH45"
+      ]
+    },
+    "negation": {
+      "total": 20,
+      "evaluated": 20,
+      "unscored_cases": [],
+      "true_positives": 10,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "true_negatives": 9,
+      "precision": 0.9090909090909091,
+      "recall": 1.0,
+      "precision_wilson_95": [
+        0.6226415635484044,
+        0.9837678271141151
+      ],
+      "recall_wilson_95": [
+        0.7224672001371106,
+        0.9999999999999999
+      ],
+      "misclassified_cases": [
+        "EN18"
+      ]
+    },
+    "paraphrase": {
+      "total": 20,
+      "evaluated": 20,
+      "unscored_cases": [],
+      "true_positives": 6,
+      "false_positives": 0,
+      "false_negatives": 4,
+      "true_negatives": 10,
+      "precision": 1.0,
+      "recall": 0.6,
+      "precision_wilson_95": [
+        0.6096657120978346,
+        1.0
+      ],
+      "recall_wilson_95": [
+        0.3126737697336583,
+        0.8318196702937638
+      ],
+      "misclassified_cases": [
+        "EN32",
+        "EN35",
+        "ZH31",
+        "ZH35"
+      ]
+    },
+    "quotation": {
+      "total": 20,
+      "evaluated": 20,
+      "unscored_cases": [],
+      "true_positives": 9,
+      "false_positives": 8,
+      "false_negatives": 1,
+      "true_negatives": 2,
+      "precision": 0.5294117647058824,
+      "recall": 0.9,
+      "precision_wilson_95": [
+        0.3096323506000443,
+        0.7383489355759056
+      ],
+      "recall_wilson_95": [
+        0.5958499732047616,
+        0.9821237869049271
+      ],
+      "misclassified_cases": [
+        "EN21",
+        "EN26",
+        "EN28",
+        "EN30",
+        "ZH26",
+        "ZH27",
+        "ZH28",
+        "ZH29",
+        "ZH30"
+      ]
+    }
+  },
+  "errors": [
+    {
+      "id": "EN03",
+      "language": "en",
+      "phenomenon": "direct",
+      "label": "positive",
+      "statement": "Repeated freeze–thaw cycles destroyed the fluorescent signal.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN18",
+      "language": "en",
+      "phenomenon": "negation",
+      "label": "negative",
+      "statement": "Neither of the paired comparisons demonstrates that humidity causes flaking.",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "EN21",
+      "language": "en",
+      "phenomenon": "quotation",
+      "label": "positive",
+      "statement": "Here we defend the conclusion that “the missing calibration step inflated the reading.”",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN26",
+      "language": "en",
+      "phenomenon": "quotation",
+      "label": "negative",
+      "statement": "The copyeditor queried “humidity produced the signal loss” in the margin.",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "EN28",
+      "language": "en",
+      "phenomenon": "quotation",
+      "label": "negative",
+      "statement": "“Bright light drives migration” was the hypothesis registered before enrollment.",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "EN30",
+      "language": "en",
+      "phenomenon": "quotation",
+      "label": "negative",
+      "statement": "The reviewer objected to “diet causes the difference” and requested associative wording.",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "EN32",
+      "language": "en",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "Depth of burial accounts for the delay in emergence.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN35",
+      "language": "en",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "Damage to the tube lining set the clotting process in motion.",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "EN49",
+      "language": "en",
+      "phenomenon": "hedging",
+      "label": "negative",
+      "statement": "One possibility is that local rainfall led to the observed redistribution.",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "ZH04",
+      "language": "zh",
+      "phenomenon": "direct",
+      "label": "positive",
+      "statement": "模型把温度升高确定为酶活性下降的原因。",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH26",
+      "language": "zh",
+      "phenomenon": "quotation",
+      "label": "negative",
+      "statement": "审稿人建议删掉“导致表达上调”，作者已按建议修改。",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "ZH27",
+      "language": "zh",
+      "phenomenon": "quotation",
+      "label": "negative",
+      "statement": "问卷要求参与者解释“因果驱动”这个词。",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "ZH28",
+      "language": "zh",
+      "phenomenon": "quotation",
+      "label": "negative",
+      "statement": "“蓝光引起损伤”是待检验的假说。",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "ZH29",
+      "language": "zh",
+      "phenomenon": "quotation",
+      "label": "negative",
+      "statement": "表格中“导致死亡的原因”一栏为空。",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "ZH30",
+      "language": "zh",
+      "phenomenon": "quotation",
+      "label": "negative",
+      "statement": "他们引用了“热胁迫诱导开花”的旧说法，本文只比较样本。",
+      "predicted_label": "positive"
+    },
+    {
+      "id": "ZH31",
+      "language": "zh",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "荧光衰减源于色素的分解。",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH35",
+      "language": "zh",
+      "phenomenon": "paraphrase",
+      "label": "positive",
+      "statement": "如果当时没有减少水分供应，叶片就不会卷曲。",
+      "predicted_label": "negative"
+    },
+    {
+      "id": "ZH45",
+      "language": "zh",
+      "phenomenon": "hedging",
+      "label": "positive",
+      "statement": "尽管效应量不确定，酸化对荧光衰减的因果作用已经得到证实。",
+      "predicted_label": "negative"
+    }
+  ],
+  "gate": {
+    "metric": "overall.recall_wilson_95[0]",
+    "minimum": 0.8,
+    "passed": false
+  },
+  "corpus": "evals/datasets/benchmarks/inv009_development.tsv",
+  "detector_source_sha256": "0c3019b9301a912b8aced0469465958a0788f4a1016151b0a26d269a77e2d735"
+}

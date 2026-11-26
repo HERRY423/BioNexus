@@ -865,6 +865,11 @@ def format_benchmark_markdown(report: BenchmarkReport) -> str:
         ])
         if detector["unscored_cases"]:
             lines.append("Unscored cases: " + ", ".join(detector["unscored_cases"]) + "\n")
+        for metric in ("precision", "recall"):
+            interval = detector[metric + "_wilson_95"]
+            if interval is not None:
+                lines.append(f"Wilson 95% interval for {metric}: [{interval[0]:.1%}, {interval[1]:.1%}].\n")
+        lines.append("The separate bilingual benchmark runs with `bionexus bench inv009`.\n")
     lines.append("## Core Scientific Reliability Metrics (8 Pillars)\n")
     lines.append("| Metric | Score | Target | Interpretation |")
     lines.append("|---|---|---|---|")

@@ -136,16 +136,30 @@ def _audit_metadata(
         )
         return
 
-    from bionexus.de.rules.sample_design import measure_replicate_strata
+    from bionexus.de.rules.sample_design import measure_replicate_strata, resolve_replicate_scope
     from bionexus.statistical_rules import STATISTICAL_THRESHOLDS
 
+    scope = cohort_summary.get("replicate_scope")
+    if scope is None:
+        scope, _ = resolve_replicate_scope(table=None, obs=obs_df, ct_col=ct_col, c_col=c_col,
+                                        cell_type=cell_type, case=case, reference=reference, contract=False, rgg=None)
+        cohort_summary["replicate_scope"] = scope
+    targets = scope["cell_types"]
+    # When the result scope is unknown, the whole cohort can still establish a
+    # design defect shared by every subset, e.g. a single donor or perfect batch confounding.
+    pooled = scope["basis"] == "unspecified" and bool(scope["outside_cell_types"])
     strata, imbalance = measure_replicate_strata(
-        obs_df, d_col, c_col, ct_col, b_col, min_cells_per_donor=min_cells_per_donor,
-        case=case, reference=reference, cell_type=cell_type, rows_are_cells=rows_are_cells,
-        dominance_threshold=dominance_threshold,
+        obs_df, d_col, c_col, None if pooled else ct_col, b_col, min_cells_per_donor=min_cells_per_donor,
+        case=case, reference=reference, cell_type=None, rows_are_cells=rows_are_cells,
+        dominance_threshold=dominance_threshold, included_cell_types=targets,
     )
-    cohort_summary["replicate_scope"] = {"cell_type": cell_type, "case": case, "reference": reference}
-    cohort_summary["replicate_strata"] = strata
+    if (targets and not ct_col) or scope["ambiguous_contrast"]:
+        strata, imbalance = [], []
+    cohort_summary["replicate_strata"] = [] if pooled else strata
+    if pooled and strata:
+        cohort_summary["unstratified_design"] = strata[0]
+    if strata and scope["complete"]:
+        cohort_summary["n_donors_in_scope"] = len({donor for s in strata for donor in s["eligible_donors"]})
     levels = strata[0]["donors_by_condition"] if strata else {}
     counts = {level: min(s["donors_by_condition"][level] for s in strata) for level in levels}
     cohort_summary["conditions"] = counts
@@ -209,19 +223,21 @@ def _audit_metadata(
     threshold = STATISTICAL_THRESHOLDS["batch_cramers_v_advisory"]
     for stratum in strata:
         design = stratum["design"]
-        if not b_col or design["estimable"] is None:
+        if design["estimable"] is None:
             continue
-        if not design["estimable"]:
+        rule = "BFA-004"
+        if b_col and not design["estimable"]:
             severity = FindingSeverity.BLOCKER
             title = "组别和批次/供体设计完全混杂"
             impact = "样本设计矩阵的行空间不包含所需条件对比，无法分离条件效应。"
             fix = "在相同批次增加跨条件的独立供体或重新设计比较。"
         elif design["residual_df"] < 2:
             severity = FindingSeverity.HIGH_IMPACT
+            rule = "BFA-004" if b_col else "BFA-001e"
             title = "样本设计剩余自由度不足"
             impact = "所需条件对比可估计，但剩余生物学自由度不足 2，方差估计不稳定。"
             fix = "增加独立重复，检查批次分配与配对结构。"
-        elif design["cramer_v"] >= threshold:
+        elif b_col and design["cramer_v"] >= threshold:
             severity = FindingSeverity.ADVISORY
             title = "样本层面组别与批次部分相关"
             impact = "条件与批次分布不均；可估计的条件对比仍可能对批次调整敏感。"
@@ -229,13 +245,27 @@ def _audit_metadata(
         else:
             continue
         batch_findings.append(DEFinding(
-            rule_id="BFA-004", severity=severity, category=FindingCategory.BATCH_CONFOUNDING,
+            rule_id=rule, severity=severity,
+            category=FindingCategory.BATCH_CONFOUNDING if b_col else FindingCategory.DONOR_REPLICATES,
             title=title, impact_on_conclusion=impact, sample_or_donor=stratum["cell_type"],
             step_or_location="Experimental Design / Batch Allocation", minimal_fix=fix,
             evidence_data={"cell_type": stratum["cell_type"], "cramers_v_advisory_threshold": threshold, **design},
         ))
     findings.extend(batch_findings)
-    _record_metadata_checks(checks, findings, d_col, c_col, ct_col, b_col, counts, strata=strata)
+    for name in scope["outside_cell_types"]:
+        findings.append(DEFinding(
+            rule_id="BFA-001s", severity=FindingSeverity.ADVISORY, category=FindingCategory.DONOR_REPLICATES,
+            title=f"{name}：未纳入结果范围", impact_on_conclusion="此细胞类型的供体、设计与功效未计入本次对比。",
+            minimal_fix="如要审计该类型，请提供标注细胞类型的结果表或明确指定 --cell-type。",
+            evidence_data={"cell_type": name, "scope_basis": scope["basis"]},
+        ))
+    _record_metadata_checks(checks, findings, d_col, c_col, None if pooled else ct_col, b_col, counts, strata=strata)
+    if not scope["complete"]:
+        checks.append(CheckRecord(
+            check_id="replicate_scope", title="差异表达结果的细胞类型范围",
+            status=CheckStatus.MISSING_EVIDENCE, required_for_pass=True,
+            summary="结果范围未能完整对应。请明确目标细胞类型、有序条件对比，并提供匹配的元数据。",
+        ))
 
 
 def _record_metadata_checks(checks: List[CheckRecord], findings: List[DEFinding], d_col: Optional[str],
@@ -244,7 +274,7 @@ def _record_metadata_checks(checks: List[CheckRecord], findings: List[DEFinding]
     """Summarize the checks without treating missing design measurements as passes."""
     summary = ", ".join(f"{k} N={v}" for k, v in cond_donor_counts.items())
     scope = "各细胞类型中的最少合格供体数" if ct_col else "未按细胞类型分层，供体数可能高估"
-    low = any(f.rule_id in {"BFA-001", "BFA-001b", "BFA-005"} for f in findings)
+    low = any(f.rule_id in {"BFA-001", "BFA-001b", "BFA-001e", "BFA-005"} for f in findings)
     status = CheckStatus.ASSESSED if len(cond_donor_counts) >= 2 else CheckStatus.MISSING_EVIDENCE
     checks.append(CheckRecord(check_id="donor_replicates", title="供体/生物学重复设计",
                               status=CheckStatus.ISSUE_FOUND if low else status,

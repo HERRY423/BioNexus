@@ -205,9 +205,6 @@ class DEAuditEngine:
             raise ValueError("Supply both case and reference as distinct condition levels")
 
 
-        if case is not None or cell_type is not None:
-            cohort_summary["replicate_scope"] = {"case": case, "reference": reference, "cell_type": cell_type}
-
         # 4. Infer metadata column mappings
         d_col = c_col = ct_col = b_col = None
         if obs_df is not None:
@@ -239,6 +236,17 @@ class DEAuditEngine:
                 cols_used["batch"] = b_col
                 cohort_summary["batch_key"] = b_col
 
+        from bionexus.de.rules.sample_design import resolve_replicate_scope
+
+        scope, scoped_de_df = resolve_replicate_scope(
+            table=de_df, obs=obs_df, ct_col=ct_col, c_col=c_col,
+            cell_type=cell_type, case=case, reference=reference, contract=bool(analysis),
+            rgg=rgg_params if de_source not in {"de_table", "none"} else None,
+        )
+        cohort_summary["replicate_scope"] = scope
+        cell_type = scope["cell_type"]
+        case, reference = scope["case"], scope["reference"]
+        if obs_df is not None:
             self._audit_metadata(
                 obs_df=obs_df,
                 d_col=d_col,
@@ -318,7 +326,7 @@ class DEAuditEngine:
             )
 
         execution = self._collect_execution_record(
-            de_df=de_df,
+            de_df=scoped_de_df,
             de_source=de_source,
             rgg_params=rgg_params,
             code_path=code_path,
@@ -346,18 +354,18 @@ class DEAuditEngine:
                     required_for_pass=True,
                 )
             )
-        elif de_df is not None and not (pd is not None and de_df.empty):
+        elif scoped_de_df is not None and not scoped_de_df.empty:
             checks.append(
                 CheckRecord(
                     check_id="de_results",
                     title="差异表达结果表",
                     status=CheckStatus.ASSESSED,
-                    summary=f"已读取 {len(de_df)} 行差异表达结果（来源: {de_source}）。",
+                    summary=f"已读取 {len(scoped_de_df)} 行差异表达结果（来源: {de_source}）。",
                     required_for_pass=True,
                 )
             )
             self._audit_de_table(
-                de_df, findings, pi_decisions, checks, claim_text=claim_text,
+                scoped_de_df, findings, pi_decisions, checks, claim_text=claim_text,
                 structured_claims=[item["claim"] for item in condition_report["claims"]] if condition_report else None,
                 adjustment_method=execution.fdr_method,
             )
@@ -365,7 +373,7 @@ class DEAuditEngine:
                 from bionexus.de.rules.matrix_rules import _audit_lfc_concordance
 
                 cohort_summary["lfc_concordance"] = _audit_lfc_concordance(
-                    adata, de_df, findings, checks, d_col=d_col, c_col=c_col, ct_col=ct_col,
+                    adata, scoped_de_df, findings, checks, d_col=d_col, c_col=c_col, ct_col=ct_col,
                     cell_type=cell_type, case=case, ref=reference, min_cells_per_donor=self.min_cells_per_donor,
                     libraries=selected_libraries, rgg_params=rgg_params if de_source != "de_table" else None,
                 )
@@ -443,7 +451,7 @@ class DEAuditEngine:
         if claim_text and str(claim_text).strip():
             self._audit_claim_vs_table_facts(
                 claim_text=str(claim_text).strip(),
-                de_df=de_df,
+                de_df=scoped_de_df,
                 findings=findings,
                 checks=checks,
             )
@@ -455,7 +463,7 @@ class DEAuditEngine:
                 )
                 claim_ir = DeterministicClaimParser.parse(str(claim_text).strip(), claim_id="CLAIM-USER-DE")
                 reps_count = min(cohort_summary.get("conditions", {}).values(), default=0)
-                has_observational = bool(de_df is not None and not de_df.empty)
+                has_observational = bool(scoped_de_df is not None and not scoped_de_df.empty)
 
                 ev_profile = EvidenceProfile(
                     observational_data=has_observational,
@@ -583,7 +591,7 @@ class DEAuditEngine:
             declared=[*execution.declared_factors, *declared_factors], findings=findings, checks=checks,
             min_donors=self.min_donors_required, fdr=self.fdr_threshold,
             alternatives=alternative_report, selection_dependent=selection_report["status"] == "SELECTION_DEPENDENCE_RECORDED",
-            claim_report=condition_report, table=de_df, power_parameters=self.power_parameters, count_inputs=count_inputs,
+            claim_report=condition_report, table=scoped_de_df, power_parameters=self.power_parameters, count_inputs=count_inputs,
         )
         claim_boundary = self._determine_claim_boundary(
             findings, cohort_summary, claim_text, [c for c in checks if c.check_id != "selection_history"], execution

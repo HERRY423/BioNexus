@@ -31,5 +31,7 @@
   "tests/unit/test_de_measured_power.py",
   "tests/unit/test_de_replicate_strata.py",
   "tests/unit/test_de_table_concordance.py",
-  "tests/unit/test_biofailurebench.py"
+  "tests/unit/test_biofailurebench.py",
+  "tests/unit/test_claim_disclaimer_scope.py",
+  "tests/unit/test_inv009_panel.py"
 ]

@@ -79,6 +79,10 @@ def handle_bench(args: argparse.Namespace) -> int:
     from evals.biofailurebench import render_corpus_report, validate_corpus
 
     action = getattr(args, "bench_action", "validate")
+    if action == "inv009":
+        from evals.inv009 import run_panel
+
+        return run_panel(Path(args.output), Path(args.summary) if args.summary else None)
     if action == "validate":
         report = validate_corpus()
         if args.json:
@@ -349,6 +353,9 @@ def register_bench_arguments(subparsers: argparse._SubParsersAction) -> argparse
         "bench", help="BioFailureBench Scientific Trap Corpus and Community Submissions (BNS-014)"
     )
     bench_subs = p_bench.add_subparsers(dest="bench_action", help="BioFailureBench actions")
+    inv009 = bench_subs.add_parser("inv009", help="Score the bilingual causal-language panel with Wilson intervals")
+    inv009.add_argument("--output", default="evals/reports/inv009_metrics.json")
+    inv009.add_argument("--summary", help="Append a Markdown summary to a file")
 
     p_bench_validate = bench_subs.add_parser("validate", help="Validate corpus schema and taxonomy linkage")
     p_bench_validate.add_argument("--json", action="store_true", help="Output corpus report as JSON")

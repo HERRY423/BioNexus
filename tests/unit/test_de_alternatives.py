@@ -148,6 +148,29 @@ def test_direction_flip_identifies_specific_donor_even_with_other_runs_missing(s
     assert "direction_reversed" in summary["dependencies"][0]["observations"]
 
 
+@pytest.mark.parametrize("scope", ["explicit_cell_type", "reversed_contrast", "multiple_cell_types", "multiple_contrasts"])
+def test_standalone_lodo_plan_does_not_cover_other_audit_scopes(study, scope):
+    from bionexus.de.engine import audit_de
+
+    base = study / "baseline"
+    kwargs = {}
+    if scope in ("multiple_cell_types", "multiple_contrasts"):
+        table = pd.read_csv(base / "results.csv")
+        extra = table.assign(cell_type="B") if scope == "multiple_cell_types" else table.assign(numerator="recovery")
+        pd.concat([table, extra]).to_csv(base / "results.csv", index=False)
+        reseal(base)
+        kwargs["de_table"] = base / "results.csv"
+    elif scope == "explicit_cell_type":
+        kwargs["cell_type"] = "B"
+    else:
+        kwargs.update(case="control", reference="disease")
+    plan = make_plan(study)
+    results(study, [add_run(study, plan["specifications"][0], effect=-0.4, low=-1, high=0.2)])
+    audit = audit_de(alternative_plan=study / "plan.json", alternative_runs=study / "runs.json", **kwargs)
+    assert audit.alternative_analysis["claims"][0]["status"] == "DIRECTION_SENSITIVE"
+    assert audit.evidence_assessment["measurement_results"]["sensitivity_analysis"] is None
+
+
 def test_lost_significance_and_wider_interval_are_not_direction_reversal(study):
     plan = make_plan(study)
     entries = [add_run(study, s, padj=0.2, low=-0.2, high=2.6) for s in plan["specifications"]]

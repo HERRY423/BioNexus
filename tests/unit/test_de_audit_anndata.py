@@ -117,7 +117,7 @@ def test_donor_imbalance_dominance_detected():
     monocyte_idx = adata.obs["cell_type"] == "Monocytes"
     adata.obs.loc[monocyte_idx, "donor_id"] = "D1"
 
-    result = audit_differential_expression(adata=adata)
+    result = audit_differential_expression(adata=adata, cell_type="Monocytes")
     imb_finding = next(
         f for f in result.findings if f.category == FindingCategory.DONOR_IMBALANCE
     )
@@ -307,3 +307,13 @@ def test_rank_genes_groups_parse_failure_is_reported():
     parse = next(c for c in result.checks if c.check_id == "de_results")
     assert parse.status == CheckStatus.PARSE_FAILED
     assert any(f.rule_id == "BFA-PARSE" for f in result.findings)
+
+@pytest.mark.parametrize("groupby,basis", [("condition", "inferred_from_de_table"), ("batch", "unspecified")])
+def test_scanpy_scope_inference_requires_a_condition_test_in_one_cell_type(groupby, basis):
+    adata = _create_mock_anndata(n_cells=250, n_genes=4, cell_types=["T"],
+                                 donors=["D1", "D2"], conditions=["stim", "ctrl"])
+    adata.uns["rank_genes_groups"] = _official_rank_genes_groups_uns()
+    adata.uns["rank_genes_groups"]["params"]["groupby"] = groupby
+    scope = audit_differential_expression(adata=adata).cohort_summary["replicate_scope"]
+    assert scope["basis"] == basis
+    assert scope["cell_types"] == (["T"] if groupby == "condition" else [])
