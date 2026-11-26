@@ -54,8 +54,11 @@
       "prefix": "src/bionexus/de/",
       "members": [
         "src/bionexus/de/__init__.py",
+        "src/bionexus/de/alternatives.py",
         "src/bionexus/de/binding.py",
+        "src/bionexus/de/conditions.py",
         "src/bionexus/de/engine.py",
+        "src/bionexus/de/measurements.py",
         "src/bionexus/de/models.py",
         "src/bionexus/de/parsers.py",
         "src/bionexus/de/policy.py",
@@ -64,9 +67,8 @@
         "src/bionexus/de/rules/code_rules.py",
         "src/bionexus/de/rules/matrix_rules.py",
         "src/bionexus/de/rules/metadata_rules.py",
+        "src/bionexus/de/rules/sample_design.py",
         "src/bionexus/de/rules/table_rules.py",
-        "src/bionexus/de/conditions.py",
-        "src/bionexus/de/alternatives.py",
         "src/bionexus/de/selection.py"
       ]
     }

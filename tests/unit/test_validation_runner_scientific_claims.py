@@ -59,6 +59,36 @@ def test_all_stress_fit_dimensions_request_paired_model(paired_data, fit_capture
     assert len(calls) == 10
 
 
+@pytest.mark.parametrize(("supported_genes", "passes"), [(49, False), (50, True)])
+def test_public_reference_still_requires_half_of_top_100(paired_data, fit_capture, supported_genes, passes):
+    data = ad.concat([paired_data] * 10, index_unique="-")
+    data.obs["donor"] = np.repeat([f"d{i}" for i in range(8)], 100)
+    truth = pd.DataFrame({"gene": data.var_names[:supported_genes], "support": 1})
+    result = stress.test_dim1_public_reference(data, truth)
+    assert result["warrant_regime"] == "POPULATION_INFERENCE"
+    assert result["planning_power"]["dispersion_basis"] == "pseudobulk_moment_mean"
+    assert result["planning_power"]["dispersion"] == 0
+    assert result["passed"] is passes
+
+
+def test_donor_grid_preserves_both_planning_and_population_controls(paired_data):
+    paired_data.obs["donor"] = np.repeat([f"d{i}" for i in range(8)], 10)
+    result = stress.test_dim3_donor_perturbation(paired_data)
+    assert result["passed"]
+    rows = {item["n_donors"]: item for item in result["grid"]}
+    assert list(rows) == [8, 6, 4, 3, 2, 1]
+    assert not rows[8]["planning_default"]["population_claims_allowed"]
+    assert all(rows[n]["cohort_dispersion"]["population_claims_allowed"] for n in [8, 6, 4, 3])
+    assert not rows[2]["cohort_dispersion"]["population_claims_allowed"]
+    assert rows[1]["cohort_dispersion"]["regime"] == "ABSTAIN_UNREPLICATED"
+
+
+def test_missing_donors_cannot_satisfy_frozen_grid(paired_data):
+    result = stress.test_dim3_donor_perturbation(paired_data)
+    assert not result["passed"]
+    assert not result["grid"][0]["regime_correct"]
+
+
 def test_permutation_preserves_donor_pairs_and_does_not_claim_fdr(paired_data, fit_capture):
     calls, _ = fit_capture
     result = stress.test_dim5_permutation_null(paired_data)
