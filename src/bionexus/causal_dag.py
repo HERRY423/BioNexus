@@ -232,6 +232,10 @@ class CausalDAG:
         _dfs(start, end, [start], {start})
         return paths
 
+    def _is_directed_path(self, path: List[str]) -> bool:
+        """Return True if every consecutive edge in path follows arrow direction."""
+        return all(path[i + 1] in self.children(path[i]) for i in range(len(path) - 1))
+
     def is_path_blocked(self, path: List[str], conditioning_set: Set[str]) -> bool:
         """Evaluate if an undirected path is blocked given conditioning_set under d-separation rules.
 
@@ -505,9 +509,16 @@ class CausalDAG:
                 )
                 break
 
-        # 3. Independence / Unconfoundedness: Check for open backdoor between Z and Y
-        backdoors_zy = self.find_backdoor_paths(instrument, outcome)
-        open_zy = [path for path in backdoors_zy if not self.is_path_blocked(path, conditioned)]
+        # 3. Independence / Unconfoundedness: every non-causal path between Z and Y
+        # (neither a directed path from Z to Y nor reaching Y via a directed path from treatment)
+        # must be blocked by conditioning_set.
+        non_causal_zy = [
+            path
+            for path in self.all_simple_paths(instrument, outcome)
+            if not self._is_directed_path(path)
+            and not (treatment in path and self._is_directed_path(path[path.index(treatment):]))
+        ]
+        open_zy = [path for path in non_causal_zy if not self.is_path_blocked(path, conditioned)]
         if open_zy:
             violations.append(
                 f"{CausalViolationType.INVALID_INSTRUMENT_CONFOUNDED.value}: "

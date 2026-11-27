@@ -286,3 +286,54 @@ def test_invalid_instrument_pleiotropic_violation() -> None:
     assert not is_iv
     assert any(CausalViolationType.INVALID_INSTRUMENT_EXCLUSION_VIOLATED.value in v for v in iv_viols)
 
+
+def test_instrumental_variable_rejects_collider_opened_non_causal_paths() -> None:
+    # Classic MR with selection collider S: Z -> X -> Y, U -> X, U -> Y, X -> S <- Y
+    dag = CausalDAG("MRSelectionBiasDAG")
+    dag.add_node("Z", NodeType.INSTRUMENT)
+    dag.add_node("X", NodeType.TREATMENT)
+    dag.add_node("Y", NodeType.OUTCOME)
+    dag.add_node("U", NodeType.UNOBSERVED_CONFOUNDER)
+    dag.add_node("S", NodeType.COLLIDER_SELECTION)
+
+    dag.add_edge("Z", "X")
+    dag.add_edge("X", "Y")
+    dag.add_edge("U", "X")
+    dag.add_edge("U", "Y")
+    dag.add_edge("X", "S")
+    dag.add_edge("Y", "S")
+
+    # Unconditioned: S blocks Z -> X -> S <- Y and X blocks Z -> X <- U -> Y
+    is_iv_clean, viols_clean, _ = dag.instrumental_variable_criterion("Z", "X", "Y")
+    assert is_iv_clean
+    assert viols_clean == []
+
+    # Conditioning on selection collider S opens Z -> X -> S <- Y
+    is_iv_sel, viols_sel, details_sel = dag.instrumental_variable_criterion(
+        "Z", "X", "Y", conditioning_set={"S"}
+    )
+    assert not is_iv_sel
+    assert any(CausalViolationType.INVALID_INSTRUMENT_CONFOUNDED.value in v for v in viols_sel)
+    assert ["Z", "X", "S", "Y"] in details_sel["open_instrument_backdoors"]
+
+    # evaluate_causal_claim must not warrant IV when conditioning on collider S
+    res = dag.evaluate_causal_claim("X", "Y", conditioned_set={"S"}, requested_claim_class=ClaimClass.CAUSAL)
+    assert not res.is_warranted
+    assert res.identification_method == "unidentifiable"
+
+    # Conditioning on treatment X opens Z -> X <- U -> Y
+    is_iv_x, viols_x, details_x = dag.instrumental_variable_criterion(
+        "Z", "X", "Y", conditioning_set={"X"}
+    )
+    assert not is_iv_x
+    assert any(CausalViolationType.INVALID_INSTRUMENT_CONFOUNDED.value in v for v in viols_x)
+    assert ["Z", "X", "U", "Y"] in details_x["open_instrument_backdoors"]
+
+    # Direct collider Z -> S2 <- Y opened by conditioning on S2
+    dag.add_node("S2", NodeType.COLLIDER_SELECTION)
+    dag.add_edge("Z", "S2")
+    dag.add_edge("Y", "S2")
+    is_iv_s2, viols_s2, _ = dag.instrumental_variable_criterion("Z", "X", "Y", conditioning_set={"S2"})
+    assert not is_iv_s2
+    assert any(CausalViolationType.INVALID_INSTRUMENT_CONFOUNDED.value in v for v in viols_s2)
+
